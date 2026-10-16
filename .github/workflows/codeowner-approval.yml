@@ -20,9 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Read CODEOWNERS and the script from the base branch, so a pull request can't change its own rules.
+      # Use the branch's current tip. base.sha is the base as of the PR's last push and misses CODEOWNERS changes since.
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ github.event.pull_request.base.ref }}
           sparse-checkout: .github
       # The pull request that adds this check runs before main has the script, so it passes.
       - run: |
