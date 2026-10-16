@@ -170,7 +170,7 @@ Readings:
 
 ### The veto sees the facts the gate leaned on
 
-Before this, a draft the facts grounded could still be vetoed as "unsupported", because the veto never saw the facts. `lanes.answer_target` now appends a LIVE FACTS block to the veto's context (`lanes.veto_facts`): for each name or number in a gate-passing draft that the context lacks, the facts that backed it (`gate.facts_used`), the ones about that name first, then the newest, at most 2 per name or number and 8 per target. A thread fact shows only the replies that hold the name. The gate's own context stays without the block, because its substring check would accept any number in it. When the gate leaned on no fact, the veto's input is unchanged. qualify's critic reads the same context through `veto_context`.
+Before this, a draft the facts grounded could still be vetoed as "unsupported", because the veto never saw the facts. `lanes.answer_target` now appends a LIVE FACTS block to the veto's context (`lanes.veto_facts`): for each name or number in a gate-passing draft that the context lacks, the facts that backed it (`gate.facts_used`), the ones about that name first, then the newest, at most 2 per name or number and 8 per target, every name or number getting its best fact before any gets a second. A reply from beyond the page's dozen is shown as "a reply under this post said", with only the replies that hold the name, because a stranger's reply grounds a name for the gate but isn't a checked fact. The gate's own context stays without the block, because its substring check would accept any number in it. When the gate leaned on no fact, the veto's input is unchanged. qualify's critic reads the same context through `veto_context`.
 
 Measured with `uv run python -m harness.minds.lab.veto_facts` (report in `action/experiments/veto_facts.json`) on the sets above, the production veto (`claude-opus-5-5`, both orders, 410 calls) with and without the block. The gate ran with facts in both arms, so only drafts it passed reached the veto. Intervals resample threads, 2,000 draws.
 
@@ -194,7 +194,7 @@ Readings:
 - **The veto still rejects almost every real reply that needs an outside fact**: 20 of 22 wnba and 58 of 72 devtools with the block, mostly for reading as AI, off mission or mute risk. The block removes only the "unsupported" reason.
 - **Only drafts the gate passed by leaning on a fact can change.** Six invented-stat batches had a block; the rest had identical input in both arms and were judged once.
 - **One sample per arm**, at the API's default temperature. The intervals cover which threads were drawn, not the judge's own randomness.
-- **The context differs a little from production.** The measurement shows the veto every other reply in the thread; production shows at most 12 and indexes the rest as a thread fact.
+- **The context differs a little from production.** The measurement shows the veto every other reply in the thread; production shows at most 12 and indexes the rest as a thread fact, so the "a reply under this post said" lines were never measured.
 
 ## The typed actions
 

@@ -14,6 +14,7 @@ The measurements behind each step are in action/DESIGN.md.
 
 import json
 import random
+import re
 from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -284,25 +285,34 @@ VETO_FACTS_HEADER = ("LIVE FACTS (from sources such as box scores, rosters and t
 
 def _snippet(answer: str, token: str, width: int = FACT_CHARS) -> str:
     """The part of a fact's answer that holds `token`: only the matching lines of a multi-line fact (a thread),
-    and a window around the token when the answer is longer than `width`."""
+    and a window around the token when the answer is longer than `width`. The token matches as a whole word or
+    number, so "18" finds "18 points" and not the 18 in "6-18"."""
     key = token.lower().replace("’", "'").removesuffix("'s")
+    pattern = re.compile(rf"(?<![\w\-./']){re.escape(key)}(?![\w\-])")
+
+    def find(text: str) -> int:
+        m = pattern.search(text.lower().replace("’", "'"))
+        return m.start() if m else -1
+
     lines = [line for line in answer.splitlines() if line.strip()]
     if len(lines) > 1:
-        answer = " / ".join([line for line in lines if key in line.lower().replace("’", "'")] or lines[:1])
+        answer = " / ".join([line for line in lines if find(line) >= 0] or lines[:1])
     answer = " ".join(answer.split())
     if len(answer) <= width:
         return answer
-    start = max(0, min(answer.lower().replace("’", "'").find(key) - width // 2, len(answer) - width))
+    start = max(0, min(find(answer) - width // 2, len(answer) - width))
     return ("…" if start else "") + answer[start:start + width] + ("…" if start + width < len(answer) else "")
 
 
 def veto_facts(texts: list[str], context: str, post: str, index: ground.FactIndex | None) -> list[str]:
     """Lines for the live facts the gate leaned on to pass `texts`: the facts behind each name or number the context
-    lacks, facts about that name first, then the newest. Empty when the gate leaned on none, so the veto's input is
-    what it was before facts existed."""
+    lacks, facts about that name first, then the newest. Every name or number gets its best fact before any gets a
+    second, so one draft can't fill the block. Replies from the thread (posts.thread_facts) are labelled as what
+    someone replied, not as facts. Empty when the gate leaned on none, so the veto's input is what it was before
+    facts existed."""
     if not index:
         return []
-    chosen: dict[str, str] = {}
+    ranked: list[tuple[str, list[Fact]]] = []  # (name or number, its facts best first), in draft order
     for text in texts:
         by_token: dict[str, list[Fact]] = {}
         for f, token in gate.facts_used(text, context=context, facts=index, post=post):
@@ -311,9 +321,14 @@ def veto_facts(texts: list[str], context: str, post: str, index: ground.FactInde
             named = ground.anchor_words(token)
             facts = sorted(sorted(facts, key=lambda f: f.as_of, reverse=True),
                            key=lambda f: not (ground.subject_anchors(f) & named))
-            for f in facts[:FACTS_PER_TOKEN]:
-                if f.id not in chosen and len(chosen) < VETO_FACTS:
-                    chosen[f.id] = f"- fact, true as of {f.as_of}: {_snippet(f.answer, token)}"
+            ranked.append((token, facts[:FACTS_PER_TOKEN]))
+    chosen: dict[str, str] = {}
+    for rank in range(FACTS_PER_TOKEN):
+        for token, facts in ranked:
+            if rank < len(facts) and facts[rank].id not in chosen and len(chosen) < VETO_FACTS:
+                f = facts[rank]
+                said = "a reply under this post said" if posts.is_thread_fact(f) else f"fact, true as of {f.as_of}"
+                chosen[f.id] = f"- {said}: {_snippet(f.answer, token)}"
     return list(chosen.values())
 
 
