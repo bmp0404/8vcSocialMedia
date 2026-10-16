@@ -1,7 +1,7 @@
 """X posts about the brand's subjects, and the brand account's own activity.
 
 Both read through `x_common.get_backend`, so they work with whichever X backend has a
-credential: X API v2, Grok's X search, a logged-in browser profile, or fxtwitter (timelines only).
+credential: X API v2, Grok's X search, or fxtwitter (timelines only, no key).
 """
 
 from datetime import timedelta
@@ -11,6 +11,7 @@ from harness.sources.base import Source
 from harness.sources.common import SourceError, now_utc
 from harness.sources.watch import load_watch
 from harness.sources.x_common import XAccessError, get_backend, post_to_signal
+from harness.sources.x_fx import verify_counts
 
 BRAND_LOOKBACK = timedelta(days=7)
 
@@ -28,7 +29,7 @@ class XSearchSource(Source):
         since = now_utc() - timedelta(hours=watch.lookback_hours)
         signals: dict[str, Signal] = {}
         for query in watch.queries:
-            for post in backend.search(query, since, limit=watch.per_query):
+            for post in verify_counts(backend.search(query, since, limit=watch.per_query)):
                 signals.setdefault(post.id, post_to_signal(post, self.name, "post"))
         return list(signals.values())
 

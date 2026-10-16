@@ -38,8 +38,9 @@ def test_score_uses_average_rate_without_a_snapshot():
     assert t.age_minutes == 30.0
     assert t.engagement_per_hour == 2000.0  # 1000 engagements over 30 minutes
     assert not t.rate_from_delta
-    # 2000/h * freshness 0.5**(30/60) * crowding 1/(1+30/50)
-    assert t.score == pytest.approx(2000 * 0.5**0.5 * 0.625)
+    # 2000/h * freshness 0.5**(30/60) * crowding (1+30)**-0.5 * band 1.0 (followers unknown)
+    assert t.size_band == 1.0
+    assert t.score == pytest.approx(2000 * 0.5**0.5 * 31**-0.5)
 
 
 def test_score_uses_snapshot_delta_when_gap_is_long_enough():
@@ -47,6 +48,40 @@ def test_score_uses_snapshot_delta_when_gap_is_long_enough():
     t = rt.score_target(post(), NOW, prev)
     assert t.rate_from_delta
     assert t.engagement_per_hour == 1200.0  # 200 more engagements in 10 minutes
+
+
+def test_score_prefers_views_and_their_delta():
+    prev = rt.Snapshot(observed_at=iso_utc(NOW - timedelta(minutes=10)), engagement=800, views=40_000)
+    t = rt.score_target(post(views=50_000), NOW, prev)
+    assert t.views_per_hour == 60_000.0 and t.engagement_per_hour == 1200.0 and t.rate_from_delta
+    assert t.score == pytest.approx(60_000 * 0.5**0.5 * 31**-0.5)
+    first_seen = rt.score_target(post(views=50_000), NOW)
+    assert first_seen.views_per_hour == 100_000.0 and not first_seen.rate_from_delta
+
+
+@pytest.mark.parametrize(
+    "followers, minutes_old, replies, band",
+    [
+        (None, 30, 30, 1.0),
+        (10_000, 30, 30, 1.0),
+        (250_000, 30, 30, 1.0),
+        (9_999, 30, 30, 0.5),
+        (5_000, 30, 30, 0.5),
+        (4_999, 30, 30, 0.0),
+        (951_935, 5, 10, 0.3),  # a giant's post in its first minutes
+        (951_935, 15, 10, 0.0),
+        (951_935, 5, 50, 0.0),
+    ],
+)
+def test_size_band(followers, minutes_old, replies, band):
+    assert rt.size_band(followers, minutes_old, replies) == band
+
+
+def test_rank_drops_zero_band_and_caps_two_per_author():
+    posts = [post(f"a{i}", author_followers=50_000, likes=900 - i) for i in range(3)]
+    posts.append(post("giant", author="SportsCenter", author_followers=42_000_000))
+    ranked = rt.rank_targets(posts, NOW, {}, max_age_minutes=90)
+    assert [t.post.id for t in ranked] == ["a0", "a1"]
 
 
 def test_score_ignores_snapshot_taken_moments_ago():
@@ -104,10 +139,10 @@ def test_target_signal_carries_reply_lane_metrics():
 def test_snapshots_round_trip_skip_unverified_and_expire(tmp_path):
     path = tmp_path / "snaps.json"
     unverified = post("grok", metrics_verified=False)
-    rt.save_snapshots(path, {}, [post("a"), unverified], NOW)
+    rt.save_snapshots(path, {}, [post("a", views=5000), unverified], NOW)
     later = NOW + timedelta(hours=1)
     snaps = rt.load_snapshots(path, later)
-    assert set(snaps) == {"a"} and snaps["a"].engagement == 1000
+    assert set(snaps) == {"a"} and snaps["a"].engagement == 1000 and snaps["a"].views == 5000
     assert rt.load_snapshots(path, NOW + rt.SNAPSHOT_TTL + timedelta(minutes=1)) == {}
 
 
@@ -121,13 +156,13 @@ def test_post_metrics_flag_unverified_counts():
 
 @pytest.fixture
 def no_x_env(monkeypatch):
-    for var in ("X_BEARER_TOKEN", "XAI_API_KEY", "X_BROWSER_PROFILE", "HARNESS_X_BACKEND"):
+    for var in ("X_BEARER_TOKEN", "XAI_API_KEY", "HARNESS_X_BACKEND"):
         monkeypatch.delenv(var, raising=False)
     return monkeypatch
 
 
 def test_search_without_credentials_names_every_env_var(no_x_env):
-    with pytest.raises(XAccessError, match="X_BEARER_TOKEN or X_BROWSER_PROFILE or XAI_API_KEY"):
+    with pytest.raises(XAccessError, match="X_BEARER_TOKEN or XAI_API_KEY"):
         get_backend("search")
 
 
@@ -281,3 +316,56 @@ def test_reply_target_source_raises_when_every_read_fails(monkeypatch, tmp_path)
     _source_env(monkeypatch, tmp_path, backend, TOML)
     with pytest.raises(SourceError, match="every read failed; first error: @WNBA: WNBA is down"):
         rt.ReplyTargetSource().fetch("")
+
+
+class FlakyReader(FakeReader):
+    """404s `fails` times, then serves posts. Has a client for the profile check."""
+
+    def __init__(self, posts, fails, profile_code=200):
+        super().__init__(posts)
+        self.fails, self.calls = fails, 0
+        self.client = SimpleNamespace(get_json=lambda url, max_age_s=0: {"code": profile_code, "message": "User is suspended"})
+
+    def profile_statuses(self, handle, limit=20):
+        self.calls += 1
+        if self.calls <= self.fails:
+            raise RuntimeError("HTTP 404 from api.fxtwitter.com")
+        return self.posts
+
+
+def test_fx_retries_a_404_once():
+    reader = FlakyReader([fx_post("1", 10)], fails=1)
+    slept = []
+    got = FxXBackend(reader, sleep=slept.append).user_posts("IowaWBB", NOW - timedelta(hours=1), 5)
+    assert [p.id for p in got] == ["1"] and slept == [2.0] and reader.calls == 2
+
+
+@pytest.mark.parametrize(
+    "code, message",
+    [(200, "the profile exists, so fxtwitter is failing"), (404, "the account looks gone: User is suspended")],
+)
+def test_fx_second_404_checks_the_profile(code, message):
+    reader = FlakyReader([], fails=2, profile_code=code)
+    with pytest.raises(SourceError, match=message):
+        FxXBackend(reader, sleep=lambda s: None).user_posts("ValkyriesGS", NOW, 5)
+
+
+def test_fx_non_404_errors_are_not_retried():
+    reader = FakeReader(error=RuntimeError("HTTP 500"))
+    with pytest.raises(SourceError, match="HTTP 500"):
+        FxXBackend(reader, sleep=lambda s: pytest.fail("should not retry")).user_posts("WNBA", NOW, 5)
+
+
+def test_verify_counts_swaps_model_counts_for_fxtwitter_ones():
+    from harness.sources.x_fx import verify_counts
+
+    class StatusReader:
+        def status(self, pid):
+            if pid == "gone":
+                raise RuntimeError("HTTP 404")
+            return fx_post(pid, 20, likes=7)
+
+    posts = [post("ok"), post("g1", likes=99_999, metrics_verified=False), post("gone", metrics_verified=False)]
+    got = verify_counts(posts, StatusReader())
+    assert [p.id for p in got] == ["ok", "g1"]
+    assert got[1].likes == 7 and got[1].metrics_verified and got[1].views == 8903

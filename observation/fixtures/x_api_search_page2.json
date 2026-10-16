@@ -1,0 +1,55 @@
+{
+  "data": [
+    {
+      "id": "2110479708582840873",
+      "text": "Film session notes from last night are up. Spacing on the weak side changed after halftime.",
+      "author_id": "1452288739209347075",
+      "created_at": "2026-10-14T21:15:48.000Z",
+      "edit_history_tweet_ids": ["2110479708582840873"],
+      "public_metrics": {
+        "retweet_count": 88,
+        "reply_count": 14,
+        "like_count": 1020,
+        "quote_count": 6,
+        "bookmark_count": 77,
+        "impression_count": 41200
+      }
+    },
+    {
+      "id": "2110431272760246786",
+      "text": "Three things to watch in the opener: transition pace, bench minutes, and who takes the late-clock shots.",
+      "author_id": "918273645501239296",
+      "created_at": "2026-10-14T18:03:20.000Z",
+      "edit_history_tweet_ids": ["2110431272760246786"],
+      "public_metrics": {
+        "retweet_count": 5,
+        "reply_count": 2,
+        "like_count": 97,
+        "quote_count": 0,
+        "bookmark_count": 4,
+        "impression_count": 6034
+      }
+    }
+  ],
+  "includes": {
+    "users": [
+      {
+        "id": "1452288739209347075",
+        "name": "Fever Film Room",
+        "username": "fever_film_room",
+        "public_metrics": {"followers_count": 48210, "following_count": 812, "tweet_count": 15230, "listed_count": 301}
+      },
+      {
+        "id": "918273645501239296",
+        "name": "WNBA Nerd",
+        "username": "wnbanerd",
+        "public_metrics": {"followers_count": 15877, "following_count": 1203, "tweet_count": 40122, "listed_count": 190}
+      }
+    ]
+  },
+  "meta": {
+    "newest_id": "2110479708582840873",
+    "oldest_id": "2110431272760246786",
+    "result_count": 2
+  }
+}

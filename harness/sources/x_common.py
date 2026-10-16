@@ -1,9 +1,12 @@
 """One read-only interface over the ways we can read X.
 
 Three backends implement `XBackend`: the X API v2 with a bearer token (`x_api.py`), xAI's
-Grok with its X search tool (`x_grok.py`), and a logged-in browser profile (`x_browser.py`).
+Grok with its X search tool (`x_grok.py`), and fxtwitter account timelines (`x_fx.py`, no key).
 `get_backend()` picks the first one whose credential is present, so the X sources start
 working the moment a key lands in `.env`. Nothing here writes to X.
+
+There is deliberately no browser backend: X's Terms of Service (effective 2026-10-09) forbid
+scraping "in any form, for any purpose" without written consent. See observation/DESIGN.md.
 """
 
 import os
@@ -81,14 +84,13 @@ BACKEND_ENV = "HARNESS_X_BACKEND"
 BACKENDS = {
     "api": ("X_BEARER_TOKEN", {"search", "user_posts"}),
     "grok": ("XAI_API_KEY", {"search", "user_posts"}),
-    "browser": ("X_BROWSER_PROFILE", {"search", "user_posts"}),
     "fx": (None, {"user_posts"}),
 }
 # auto order per capability. Backends whose counts come from X itself go before Grok, whose
 # counts are the model's reading of the page.
 AUTO_ORDER = {
-    "search": ["api", "browser", "grok"],
-    "user_posts": ["api", "fx", "browser", "grok"],
+    "search": ["api", "grok"],
+    "user_posts": ["api", "fx", "grok"],
 }
 
 
@@ -101,10 +103,6 @@ def _build(name: str) -> XBackend:
         from harness.sources.x_grok import GrokXBackend
 
         return GrokXBackend(os.environ["XAI_API_KEY"])
-    if name == "browser":
-        from harness.sources.x_browser import BrowserXBackend
-
-        return BrowserXBackend(os.environ["X_BROWSER_PROFILE"])
     from harness.sources.x_fx import FxXBackend
 
     return FxXBackend()
