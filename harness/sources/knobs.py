@@ -77,6 +77,13 @@ class ObserveKnobs:
     # fxtwitter request, and that 1/s budget is shared with the context worker's tracker.
     thread_replies: int = 15
 
+    # --- observation agent ---
+    # Planning rounds (the second reads round one's results and may dig deeper), feed calls per
+    # round, and items per query or account list the agent may pass to one call.
+    agent_rounds: int = 2
+    agent_calls_per_round: int = 6
+    agent_list_items: int = 6
+
     @classmethod
     def from_dict(cls, overrides: dict) -> "ObserveKnobs":
         known = {f.name: f.type for f in fields(cls)}

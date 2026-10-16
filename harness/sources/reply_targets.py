@@ -206,6 +206,7 @@ class ReplyTargetSource(Source):
         since = now - timedelta(minutes=cfg.max_age_minutes)
         posts: list[XPost] = []
         errors: list[str] = []
+        reads_ok = 0
 
         handles = [(h, False) for h in cfg.accounts] + [(h, True) for h in cfg.broad_accounts]
         timelines = None
@@ -221,12 +222,14 @@ class ReplyTargetSource(Source):
                 except SourceError as e:
                     errors.append(f"@{handle}: {e}")
                     continue
+                reads_ok += 1
                 posts.extend(p for p in got if not broad or on_topic(p, cfg.keywords))
         if cfg.include_search and watch.x.queries:
             try:
                 searcher = get_backend("search")
                 for query in watch.x.queries:
                     got = verify_counts(searcher.search(query, since, limit=watch.x.per_query))
+                    reads_ok += 1
                     posts.extend(p for p in got if not cfg.keywords or on_topic(p, cfg.keywords))
             except XAccessError as e:
                 errors.append(f"search skipped: {e}")
@@ -234,7 +237,8 @@ class ReplyTargetSource(Source):
                 errors.append(f"search: {e}")
         for err in errors:
             print(f"[observe] {self.name}: {err}")
-        if not posts and errors:
+        # Reads that worked but found nothing fresh are a quiet hour, not a failure.
+        if not reads_ok and errors:
             raise SourceError(f"{self.name}: every read failed; first error: {errors[0]}")
 
         path = snapshot_path()
