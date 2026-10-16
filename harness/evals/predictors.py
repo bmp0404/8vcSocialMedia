@@ -20,6 +20,7 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, Protocol
 
 from harness.evals.dataset import Post
@@ -383,48 +384,49 @@ def _post_judge_api():
             f"post_judge isn't importable ({e}). It lands with PR #5 (dhilan/version-1); after merging, "
             "generate baml_sdk per eval/README.md and set HARNESS_JUDGE_PROVIDER / HARNESS_JUDGE_MODEL."
         ) from e
-    return (CandidatePost, RankingCandidate, DEFAULT_DATASET, grade_with_references, judge_settings,
-            rank_candidates, load_references, select_references)
+    return SimpleNamespace(CandidatePost=CandidatePost, RankingCandidate=RankingCandidate, dataset=DEFAULT_DATASET,
+                           grade_with_references=grade_with_references, judge_settings=judge_settings,
+                           rank_candidates=rank_candidates, load_references=load_references,
+                           select_references=select_references)
 
 
 def from_post_judge(per_class: int = 3, memory: str = "on") -> PostJudgePredictor:
     """Wire Dhilan's judge with references dated strictly before each candidate (a rolling origin)."""
-    CandidatePost, _, dataset_path, grade_with_references, judge_settings, _, load_references, select_references = (
-        _post_judge_api())
-    pool = load_references(dataset_path)
-    sha = hashlib.sha256(dataset_path.read_bytes()).hexdigest()
+    api = _post_judge_api()
+    pool = api.load_references(api.dataset)
+    sha = hashlib.sha256(api.dataset.read_bytes()).hexdigest()
 
     def grade(p: Post):
-        candidate = CandidatePost(text=p.clean_text, mission=MISSION, context="", lane="post")
-        refs = select_references(pool, p.clean_text, per_class=per_class, before=p.date, exclude_ids={p.id})
-        return grade_with_references(candidate, apply_memory(refs, memory, p.id), dataset_sha256=sha)
+        candidate = api.CandidatePost(text=p.clean_text, mission=MISSION, context="", lane="post")
+        refs = api.select_references(pool, p.clean_text, per_class=per_class, before=p.date, exclude_ids={p.id})
+        return api.grade_with_references(candidate, apply_memory(refs, memory, p.id), dataset_sha256=sha)
 
     pred = PostJudgePredictor(grade)
-    pred.model_info = dict(zip(("provider", "model"), judge_settings()))
+    pred.model_info = dict(zip(("provider", "model"), api.judge_settings()))
     return pred
 
 
 def from_post_judge_rank(per_class: int = 3, memory: str = "on", seed: int = 0) -> JudgeRankPredictor:
     """Wire rank_candidates; references predate the oldest post in the chunk."""
-    CandidatePost, RankingCandidate, dataset_path, _, judge_settings, rank_candidates, load_references, \
-        select_references = _post_judge_api()
-    pool = load_references(dataset_path)
-    sha = hashlib.sha256(dataset_path.read_bytes()).hexdigest()
+    api = _post_judge_api()
+    pool = api.load_references(api.dataset)
+    sha = hashlib.sha256(api.dataset.read_bytes()).hexdigest()
 
     def rank(chunk: list[Post]) -> dict[str, float]:
         oldest = min(p.date for p in chunk)
-        candidates = [RankingCandidate(id=p.id, post=CandidatePost(text=p.clean_text, mission=MISSION, context="",
-                                                                    lane="post")) for p in chunk]
-        refs = select_references(pool, " ".join(p.clean_text for p in chunk), per_class=per_class,
-                                 before=oldest, exclude_ids={p.id for p in chunk})
+        candidates = [api.RankingCandidate(id=p.id, post=api.CandidatePost(text=p.clean_text, mission=MISSION,
+                                                                            context="", lane="post"))
+                      for p in chunk]
+        refs = api.select_references(pool, " ".join(p.clean_text for p in chunk), per_class=per_class,
+                                     before=oldest, exclude_ids={p.id for p in chunk})
         leaked = [r.id for r in refs if str(r.date) >= oldest.isoformat()]
         if leaked:
             raise ValueError(f"rank_candidates got references from the chunk's day or later: {leaked}")
-        ev = rank_candidates(candidates, apply_memory(refs, memory, chunk[0].id), dataset_sha256=sha)
+        ev = api.rank_candidates(candidates, apply_memory(refs, memory, chunk[0].id), dataset_sha256=sha)
         return {item.candidate_id: item.score for item in ev.ranking.ranked}
 
     pred = JudgeRankPredictor(rank, seed=seed)
-    pred.model_info = dict(zip(("provider", "model"), judge_settings()))
+    pred.model_info = dict(zip(("provider", "model"), api.judge_settings()))
     return pred
 
 
