@@ -8,6 +8,16 @@ A confirmation retests a promotion against the champion it replaced, usually und
 instrument: pass `champion` (the old config) and a proposal with proposer kind "confirmation" whose
 source is the promoted record. If the confirmation isn't promoted again, the run appends an automatic
 revert of that record, so a promotion that fails its retest doesn't stay in force.
+
+`mode` says what a gate pass means:
+- "promote" (the default): the change joins the champion, at most one change per rolling 7 days across
+  every instrument (campaign.weekly_cap). A pass while the window is closed is recorded inconclusive.
+- "screen": the change becomes a `candidate`, which never touches the champion. The experiment queue
+  screens on items that existed when the spec was written and promotes only after a confirmation on
+  items rooted later (harness/improve/queue.py).
+- "stack": `champion` is the config before a promotion and the proposal re-applies it, to measure a
+  combination of promotions no run scored together (campaign.unmeasured). Recorded `stack_ok`, or
+  `stack_failed` when the combination is shown worse or fails a guardrail.
 """
 
 import hashlib
@@ -16,17 +26,20 @@ import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from harness.config import ROOT
-from harness.iterate import ledger, stats
+from harness.iterate import campaign, ledger, stats
 from harness.iterate.fitness import ArmResult, Fitness, Item, Metric
 from harness.iterate.knobs import Config, KnobError, diff, readers, unified_diff
 from harness.iterate.llm import BudgetExceeded, Meter, MeteredLLM, MockMeteredLLM
 
 Q = 0.1  # BH level; the memory research recommends q=0.1 across a run's hypotheses (research/memory.md, finding 1)
 N_BOOT = 2000
+MODES = ("promote", "screen", "stack")
+EXPLICIT_CHAMPION_KINDS = {"confirmation", "stack"}
 
 
 @dataclass
@@ -107,15 +120,21 @@ def _common(items: list[Item], *arms: ArmResult, metric_names: list[str]) -> lis
 
 def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provider: str, max_calls: int,
               seed: int = 0, directory: Path | None = None, run_note: str = "",
-              champion: Config | None = None) -> list[dict]:
+              champion: Config | None = None, mode: str = "promote", now: datetime | None = None) -> list[dict]:
+    if mode not in MODES:
+        raise ValueError(f"mode must be one of {MODES}, got {mode!r}")
+    now = now or datetime.now(timezone.utc)
     directory = directory or ledger.ledger_dir(provider)
-    started_at = ledger.now()
+    # Records carry `now`, so a run told it is next week (a test, a replay) files its decisions next week.
+    started_at = now.astimezone(timezone.utc).isoformat(timespec="seconds")
     run_id = f"run-{started_at[:19].replace('-', '').replace(':', '')}"
     current, _ = ledger.champion(directory)
     if champion is None:
+        if mode == "stack":
+            raise ValueError("a stack check needs the baseline config as `champion`")
         champion = current
-    elif any(p.proposer.get("kind") != "confirmation" for p in proposals):
-        raise ValueError("an explicit champion is only for confirmation runs")
+    elif any(p.proposer.get("kind") not in EXPLICIT_CHAMPION_KINDS for p in proposals):
+        raise ValueError("an explicit champion is only for confirmation and stack runs")
     meter = Meter(max_calls)
     print(f"[iterate] {run_id}: champion {champion.ref}, {len(proposals)} proposal(s), cap {max_calls} calls, "
           f"provider {provider}")
@@ -215,6 +234,12 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
         extra = res["failures"]["challenger"] - res["failures"]["champion"]
         if status == "promoted" and extra > max(2, 0.1 * len(items_by_fit[prop.fitness])):
             status, reason = "inconclusive", f"{reason}; blocked: the challenger failed on {extra} more items"
+        if mode == "stack":
+            worse = dec.status == "rejected" or bool(unproven)
+            status = "stack_failed" if worse else "stack_ok"
+            reason = (f"the promotions together are worse than without {prop.proposer.get('source')}: {dec.reason}"
+                      + (f"; not shown non-inferior on {', '.join(unproven)}" if unproven else "")
+                      if worse else f"measured together and not shown worse: {dec.reason}")
         decisions[id(prop)] = (status, reason, dec, p_adj, rej, noise)
 
     # At most one promotion per fitness per run: two winners were never measured together, so applying
@@ -245,17 +270,44 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
             if other is not prop and set(prop.changes) & set(other.changes):
                 demote(prop, f"{other.fitness} also promoted a change to {sorted(set(prop.changes) & set(other.changes))}")
 
+    # Campaign accounting: one counted promotion per rolling 7 days, across every fitness.
+    counted = [prop for prop, _cfg, res, _ in tested if decisions[id(prop)][0] == "promoted"
+               and prop.proposer.get("kind") not in campaign.UNCOUNTED_KINDS]
+    if mode == "promote" and counted:
+        cap = campaign.weekly_cap(ledger.records(directory), now)
+        if not cap.open:
+            for prop in counted:
+                demote(prop, f"{cap.holder} was promoted within the last 7 days and the engine promotes one change "
+                             f"per rolling week; the next can be promoted after {cap.opens_at.isoformat(timespec='minutes')}")
+        else:
+            # P-values are comparable across fitnesses where bounds aren't; ties go to the config hash.
+            res_of = {id(p): (r, c) for p, c, r, _ in tested}
+            best = min(counted, key=lambda p: (decisions[id(p)][3], res_of[id(p)][0]["paired"].p_one_sided,
+                                               res_of[id(p)][1].hash))
+            for prop in counted:
+                if prop is not best:
+                    demote(prop, f"the engine promotes one change per rolling week and {best.label or best.fitness} "
+                                 "cleared the gate with a smaller adjusted p-value in the same run")
+    if mode == "screen":
+        for prop, _cfg, _res, _ in tested:
+            s_, r_, d_, pa_, rj_, nf_ = decisions[id(prop)]
+            if s_ == "promoted":
+                decisions[id(prop)] = ("candidate", f"cleared the gate on the screening items ({r_}); it joins the "
+                                       "champion only after a confirmation on items rooted after it was proposed",
+                                       d_, pa_, rj_, nf_)
+
     recs = []
     report_paths = _write_reports(directory, run_id, arms, provider)
     for prop, cfg, res, err in results:
         recs.append(_record(prop, champion, cfg, fitnesses[prop.fitness], res, err, decisions.get(id(prop)),
                             family=len(tested), run_id=run_id, seed=seed, arms=arms, meter=meter,
-                            report=report_paths.get(prop.fitness)))
+                            report=report_paths.get(prop.fitness), ts=started_at))
     for prop, cfg, why in pending:
         recs.append(_record(prop, champion, cfg, fitnesses.get(prop.fitness), None, why, None, family=len(tested),
-                            run_id=run_id, seed=seed, arms=arms, meter=meter, report=None))
+                            run_id=run_id, seed=seed, arms=arms, meter=meter, report=None, ts=started_at))
     run = {"run_id": run_id, "started_at": started_at, "finished_at": ledger.now(), "provider": provider,
-           "champion": champion.ref, "max_calls": max_calls, "estimated_calls": spent, "llm_calls": meter.calls,
+           "mode": mode, "champion": champion.ref, "max_calls": max_calls, "estimated_calls": spent,
+           "llm_calls": meter.calls,
            "by_arm": dict(meter.by_arm), "bh": {"q": Q, "family_size": len(tested), "rejected": n_rej},
            "experiments": [r["id"] for r in recs], "note": run_note}
     for cfg in {champion.ref: champion, **{c.ref: c for _, c in kept}}.values():
@@ -296,11 +348,12 @@ def _write_reports(directory: Path, run_id: str, arms: dict[str, Arm], provider:
 
 def _record(prop: Proposal, champion: Config, cfg: Config | None, fit: Fitness | None, res: dict | None, err: str,
             decision, *, family: int, run_id: str, seed: int, arms: dict[str, Arm], meter: Meter,
-            report: str | None) -> dict:
+            report: str | None, ts: str) -> dict:
     challenger = cfg or champion
     params = diff(champion, challenger)
-    ts = ledger.now()
-    rid = hashlib.sha256(f"{run_id}:{prop.fitness}:{challenger.hash}:{prop.hypothesis}".encode()).hexdigest()[:6]
+    # The clock reading keeps two runs of one proposal in the same second from colliding on an id.
+    rid = hashlib.sha256(f"{run_id}:{prop.fitness}:{challenger.hash}:{prop.hypothesis}:{time.time_ns()}"
+                         .encode()).hexdigest()[:6]
     stage = fit.stage if fit else "unknown"
     ev: dict[str, Any] = {"dataset": None, "dataset_sha256": None, "n": 0, "unit": getattr(fit, "unit", None),
                           "clusters": 0, "cluster_unit": getattr(fit, "cluster_unit", None), "seed": seed,

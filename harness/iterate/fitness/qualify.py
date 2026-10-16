@@ -95,6 +95,7 @@ class MemoryPanelPredictor(PanelPredictor):
 class QualifyAUC:
     name = "qualify_auc"
     stage = "qualify"
+    llm_opinion = False  # the panel's scores are graded against the dataset's real tiers, never used as the score
     unit = "post"
     cluster_unit = "account"
     primary = Metric("within_account_auc", higher_is_better=True)
@@ -137,7 +138,7 @@ class QualifyAUC:
         return (cfg.get("qualify.panel"), cfg.get("qualify.model"), cfg.get("qualify.batch"), cfg.get("qualify.memory"))
 
     def items(self) -> list[Item]:
-        return [Item(p.id, p.account, p) for p in self.picked]
+        return [Item(p.id, p.account, p, root_at=p.created_at) for p in self.picked]
 
     def instrument(self) -> dict:
         data = (hconfig.ROOT / "data" / "devtools_virality_30d.csv").read_bytes()
