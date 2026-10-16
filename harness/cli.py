@@ -59,7 +59,9 @@ def run(args) -> None:
     print(f"\nTop {len(ranked)} recommendations (run {run_id}) -> {out}\n")
     for i, a in enumerate(ranked, 1):
         target = a.target_url or (f"@{a.target_handle}" if a.target_handle else "")
-        print(f"{i:>2}. [{a.predicted_score:.2f}] {a.type:<7} {a.mind:<18} {a.text}  {target}")
+        # qualify scores only the post lane's posts and quotes, unless the panel ranks (harness/qualify.py).
+        score = f"{a.predicted_score:.2f}" if a.panel or "ranker" in a.draft_meta else " -- "
+        print(f"{i:>2}. [{score}] {a.type:<7} {a.mind:<18} {a.text}  {target}")
 
 
 def record(args) -> None:

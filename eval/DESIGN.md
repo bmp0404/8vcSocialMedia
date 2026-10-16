@@ -123,6 +123,39 @@ The file shape is `{panelist name: description}`, the same as Aarav's `eval/pane
 
 `HARNESS_PANEL_MODEL` lets qualify score with another model on the same gateway, such as `gpt-6.1-sol`. Unset, qualify uses the run's LLM as before. A judge from another family also avoids rating its own drafts, which the backtest can't show because its posts are human-written.
 
+## Production qualify ranks posts with the learned ranker
+
+Qualify keeps the critic veto and no longer calls the panel by default. The ranker is the TF-IDF ridge from `harness/rank/post.py`, fitted on the post benchmark's 39 dev authors (861 posts) and saved in `eval/rankers/` with the SHA-256 of its JSON (`harness/rank/post_ranker.py`). `post_ranker.load()` refuses a model whose bytes don't match its manifest, and every scored draft carries the hash in `draft_meta["ranker"]`.
+
+Scores on the post benchmark's 37 test authors, 1,016 pairs, from `eval/rankers/post_ridge.manifest.json`:
+
+| Scorer | Accuracy | The saved ranker minus it, same pairs |
+| --- | --- | --- |
+| The saved ranker | 0.709 [0.644, 0.767] | |
+| Panel, `claude-sonnet-5-5`, one post per call | 0.723 [0.670, 0.781] | -0.014 [-0.081, 0.041] |
+| The same fit with every n-gram kept | | -0.005 [-0.026, 0.017] |
+| The ridge cross-fitted over all accounts (phase D) | 0.711 [0.650, 0.772], 932 pairs | +0.010 [-0.015, 0.033], 932 pairs |
+| Length | 0.602 | +0.107 [0.035, 0.185] |
+
+The panel and phase D numbers are from `data/bench/results/judges-posts.json`. The saved ranker keeps only n-grams that 5 or more accounts used, because the repository is public and an n-gram one account used can be a person's handle. That filter is the third row.
+
+What qualify does with it:
+
+- It scores the post lane's posts and quotes, which are people's takes and captions, and reorders them among the places they already hold in decide's list.
+- Replies and follows keep decide's order and get no score. On the reply benchmark, text added +0.002 [-0.034, 0.044] to timing and reach (`data/bench/results/replies.json`, `ranker_pooled_test`), so a text score has nothing to add there.
+- `predicted_score` becomes the ranker's percentile among its own training posts, 0 to 1. `draft_meta["ranker"]` holds that, the raw score (the predicted within-account z-score of log engagement) and the hash. Unscored actions keep `predicted_score` at 0.0, so the old review dashboard, which sorts by it, lists them last.
+- A round costs the critic's one call. The panel cost two more, one per order.
+
+`HARNESS_QUALIFY_RANKER=panel` (the `qualify.ranker` knob in `harness/iterate/knobs.py`) restores the old path exactly: the panel scores every draft in two orders and qualify sorts all of them by its mean.
+
+Not measured:
+
+- The ranker learned from dev-tool brand accounts. On the wnba profile it orders a fan account's captions by what it learned there, and nothing shows that order means anything. The panel had no wnba measurement either.
+- The benchmark pairs differ by 3x or more in engagement, and a round's post lane ships at most one caption or a few takes, so the ranker usually orders one to three drafts that differ less.
+- No outcome yet shows whether its order predicts what the account's own posts get.
+
+Refit with `uv run python -m harness.rank fit-post`, which needs the local corpus snapshot. A refit on the same corpus rewrites both files byte for byte.
+
 ## Fault attribution
 
 When an action underperforms, eval decides whether the agent or its input was at fault (`harness/evals/fault.py`). Three pieces of evidence feed a decision table:
