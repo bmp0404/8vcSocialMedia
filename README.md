@@ -4,11 +4,44 @@ An agentic harness that recommends X actions for a Caitlin Clark fan account, bu
 build session (Oct 15, 2026). It recommends actions and doesn't post anything; 8VC's Grok bot decides what
 gets posted.
 
+## The agent loop
+
+The agent's goal is to improve its recommendations over repeated rounds: start from the mission
+and remembered lessons, observe what is happening, propose actions, evaluate them, and carry
+what worked into the next round. Four subsystems own that loop:
+
+```text
+memory -> observe -> action -> eval -> memory -> next round
 ```
-observe (sources/) -> orient -> decide (minds/) -> qualify -> ranked JSON in out/
-      ^                                                            |
-      +------------- learn: predicted vs. actual -> lessons.md <---+
-```
+
+| Subsystem | Responsibility | Current implementation | Stage files |
+| --- | --- | --- | --- |
+| **Observe** | Collect signals and turn them into relevant narratives for the account. | `harness/sources/`, `harness/orient.py` | `observation/` |
+| **Action** | Use the mission, narratives, and remembered lessons to draft candidate actions. | `harness/minds/` | `action/` |
+| **Eval** | Score and critique candidates before review; compare predictions with recorded engagement after execution. | `harness/qualify.py`, `harness/learn.py` | `eval/` |
+| **Memory** | Store run history and outcomes, retain lessons, and make them available to the next round. | `harness/memory.py`, `harness/learn.py` | `memory/`, `data/harness.db` |
+
+Memory is shared context throughout the loop. Observe, action, and eval should contribute evidence
+that helps the next round make better decisions. `data/` supports all four subsystems with datasets
+and persisted records; it is not a separate decision stage. The observe subsystem currently uses
+the directory name `observation/`.
+
+### Run one round, then close the loop
+
+1. Set the account's mission in `mission/mission.md` and read existing lessons in `memory/lessons.md`.
+2. Run `python -m harness run --provider mock --sources sample` to observe sample signals,
+   generate candidates, score them, and save the run and ranked recommendations.
+3. Run `python -m harness review` to approve, edit, or kill candidates. Approved actions are
+   exported to `out/approved-run<id>.json` for the external posting bot.
+4. Once real engagement is available, run `python -m harness record <outcomes.json>` to store
+   outcomes for the corresponding action IDs.
+5. Run `python -m harness learn` with a configured provider to update lessons from those outcomes,
+   then start another round. The action subsystem reads the updated lessons.
+
+Today these are explicit CLI steps, not an unattended continuous agent. Automatic outcome collection,
+review-feedback learning, and continuous orchestration remain work to implement. Mock runs exercise
+the pipeline; they do not establish real engagement performance. The harness recommends actions;
+8VC's Grok bot owns posting.
 
 ## Quickstart
 
@@ -39,7 +72,8 @@ Keyboard: `j`/`k` move, `a` approve, `x` kill, `u` reset, `e` edit.
 
 ## Layout
 
-The central filesystem is organized into five directories:
+Python code lives in `harness/`. The four subsystems keep non-code assets in the following
+directories, with `data/` shared across the loop:
 
 ```text
 observation/  # Inputs and observations collected by the harness
@@ -71,3 +105,10 @@ data/         # Source documents, datasets, and supporting assets
 - [x] Human approve/kill checkpoint (`python -m harness review`)
 - [ ] Feed review verdicts and notes into `learn`
 - [ ] Pull real metrics automatically instead of `record`
+
+## Working on the harness
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) for subsystem ownership, file placement, shared
+contracts, and the branch/PR workflow. Coding agents must also read [AGENTS.md](AGENTS.md) and
+[CLAUDE.md](CLAUDE.md). Coordinate changes to shared interfaces with the other subsystem owners
+and keep the offline mock run passing.
