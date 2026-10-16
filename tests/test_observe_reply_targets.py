@@ -268,6 +268,13 @@ def _source_env(monkeypatch, tmp_path, backend, toml):
     monkeypatch.setattr(rt, "get_backend", lambda capability: backend)
     monkeypatch.setattr(rt, "now_utc", lambda: NOW)
 
+    # With sam/context-dynamics merged, _reader() returns a live fxtwitter client, and thread
+    # attachment would hit the network with these fake ids. Keep the source tests offline.
+    def no_reader():
+        raise XAccessError("no thread reader in tests")
+
+    monkeypatch.setattr(rt, "_reader", no_reader)
+
 
 TOML = """
 [brand]
