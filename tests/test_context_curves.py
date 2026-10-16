@@ -187,6 +187,13 @@ def test_curve_from_event_times_counts_ties_once_per_timestamp():
     assert c.y == [0.0, 2.0, 3.0]
 
 
+def test_curve_from_event_times_extends_to_fetch_time():
+    times = [T0 + timedelta(minutes=m) for m in (5, 12)]
+    c = curve_from_event_times(T0, times, end=T0 + timedelta(hours=10))
+    assert c.t == [0.0, 5.0, 12.0, 600.0]
+    assert c.y == [0.0, 1.0, 2.0, 2.0]
+
+
 def test_find_waves_merges_peaks_without_a_deep_trough():
     v = [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 8, 9, 0]
     # peaks at 0 and 13 are separated (trough 0, 13 bins * 15 min >= 180); 15 merges into 13.
