@@ -7,7 +7,9 @@ computes `score_100` as four times the sum of the five scores.
 
 ## Setup
 
-From the repository root, install the locked dependencies and generate the Python client.
+From the repository root, install the locked dependencies with `uv sync`. The generated Python client is committed, so a fresh checkout needs no BAML compiler.
+
+When changing BAML source, regenerate the client:
 The compiler and `baml-bridge` runtime must both be version 0.22.2.
 
 ```sh
@@ -16,8 +18,7 @@ baml toolchain install 0.22.2
 BAML_VERSION=0.22.2 baml generate --directory eval
 ```
 
-The generated `baml_sdk/` package is ignored by Git. Regenerate it after changing the BAML source
-or on a fresh checkout. In PowerShell, set `$env:BAML_VERSION = "0.22.2"` before running `baml`.
+The generated `baml_sdk/` Python sources are tracked. Regenerate them after changing BAML source and commit the generated diff with the source change. The generator writes an ignore-all file, so newly generated Python files must be explicitly staged with `git add -f`; never stage `__pycache__` or `.pyc` files. In PowerShell, set `$env:BAML_VERSION = "0.22.2"` before running `baml`.
 If the CLI reports a stale installed agent skill, run `baml agent install` for that toolchain.
 The compiler source of truth is [baml_src/main.baml](baml_src/main.baml).
 
