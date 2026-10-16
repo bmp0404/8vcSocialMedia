@@ -249,6 +249,27 @@ class TracingLLM(LLM):
         return self._call(self.inner.complete_json, system, prompt, *args, **kwargs)
 
 
+_TRACED_CLASSES: dict[type, type] = {}
+
+
+def traced(inner: LLM, trace: Trace) -> LLM:
+    """Wrap `inner` in a TracingLLM that still passes isinstance checks for inner's class.
+
+    Action routes models by class: the writer continues threads only when
+    isinstance(llm, AnthropicLLM), the veto switches to Opus 5.5 on the same check, and the lanes
+    detect mock runs with isinstance(llm, MockLLM). A plain TracingLLM failed all three, so a
+    traced real run wrote with the styled fallback on the default model and vetoed on it too,
+    and a traced mock run read fxtwitter and spent the real daily budget.
+    """
+    base = type(inner)
+    cls = _TRACED_CLASSES.get(base)
+    if cls is None:
+        cls = _TRACED_CLASSES[base] = type(f"Tracing{base.__name__}", (TracingLLM, base), {})
+    obj = object.__new__(cls)
+    TracingLLM.__init__(obj, inner, trace)
+    return obj
+
+
 def instrument() -> None:
     from harness import cli, memory
 
@@ -258,7 +279,7 @@ def instrument() -> None:
             setattr(cli, name, trace.span(name, getattr(cli, name)))
 
     get_llm = cli.get_llm
-    cli.get_llm = functools.wraps(get_llm)(lambda *a, **k: TracingLLM(get_llm(*a, **k), trace))
+    cli.get_llm = functools.wraps(get_llm)(lambda *a, **k: traced(get_llm(*a, **k), trace))
 
     bandit = getattr(cli, "bandit", None)
     if bandit and callable(getattr(bandit, "choose", None)):
