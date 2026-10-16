@@ -149,6 +149,53 @@ def timeline_prior_auc(rows: list[dict], gap_h: float = 72, min_posts: int = 5) 
     return out
 
 
+def reply_curves(rows: list[dict], min_coverage: float = 0.8, min_replies: int = 20) -> dict:
+    """Shapes of reply-arrival curves, and per-account decay exponents, from near-complete reply samples.
+
+    Replies are not the whole of engagement (they reach few non-followers), so
+    this checks the curve model on real arrival times rather than measuring virality.
+    """
+    from datetime import datetime
+
+    from harness.context.curves import InflectionParams, classify_shape, curve_from_event_times, features, to_grid
+    from harness.context.decay import crane_sornette_class, fit_alpha, post_peak_counts
+
+    samples = defaultdict(list)
+    for r in read_jsonl(CONTEXT_DIR / "reply_samples.jsonl"):
+        if "id" in r:
+            samples[r["reply_to_post"]].append(r)
+    p = InflectionParams()
+    shapes = defaultdict(Counter)
+    per_account = defaultdict(list)
+    onsets = defaultdict(list)
+    n = 0
+    for r in rows:
+        reps = samples.get(r["post_id"])
+        if r.get("label_eligible") != "True" or not reps:
+            continue
+        cov = reps[0].get("coverage")
+        if cov is None or cov < min_coverage or len(reps) < min_replies:
+            continue
+        created = datetime.fromisoformat(r["created_at_utc"])
+        times = [datetime.fromisoformat(x["created_at"]) for x in reps]
+        end = max(datetime.fromisoformat(x["fetched_at"]) for x in reps)
+        curve = curve_from_event_times(created, times, end=end)
+        f = features(curve, p)
+        shapes[r["Category"]][classify_shape(f, p)] += 1
+        per_account[r["Account"]].append(post_peak_counts(to_grid(curve, p.dt)))
+        onsets[r["Account"]].append((f.rise_bins or 0) <= 1)
+        n += 1
+    decay = {}
+    for acct, posts in per_account.items():
+        alpha = fit_alpha(posts)
+        if alpha is None:
+            continue
+        sudden = sum(onsets[acct]) >= len(onsets[acct]) / 2
+        decay[acct] = {"alpha": round(alpha, 3), "posts": len(posts), "sudden_onset_majority": sudden,
+                       "class": crane_sornette_class(alpha, sudden)}
+    return {"posts": n, "min_coverage": min_coverage, "shapes_by_category": shapes, "decay_by_account": decay}
+
+
 def run() -> dict:
     with ENRICHED.open(encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
@@ -224,6 +271,8 @@ def run() -> dict:
         for cat in ("Super Viral", "Medium Viral", "Deadweight")
         if (v := [r for r in amp if r["Category"] == cat])
     }
+
+    res["reply_curves"] = reply_curves(rows)
 
     if TIMELINE_POSTS.exists():
         with TIMELINE_POSTS.open(encoding="utf-8", newline="") as f:
