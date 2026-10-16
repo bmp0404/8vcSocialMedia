@@ -8,6 +8,7 @@ critic vetoed. Their records stay in memory.
 """
 
 import json
+import re
 from datetime import datetime, timedelta, timezone
 
 from harness import config, memory
@@ -29,13 +30,25 @@ KILL_REASONS = {
     "other": "Other",
 }
 TEXT_TYPES = {"post", "reply", "quote", "mention"}
+# A mock round's drafts are placeholder text that nobody posts. On sam/platform's data/harness.db on 2026-10-16,
+# 109 of the 110 pending drafts came from mock rounds and buried the one live draft, so they are shown only
+# when the harness itself runs on the mock provider, as in the README's offline walkthrough.
+MOCK = "mock"
 # A round's pending drafts stay in the queue this long. No measurement chose it: replies land a median 28
 # minutes after the post (action/DESIGN.md), so a reply draft a day old is almost always too late, and the
 # window only keeps a week of unreviewed rounds from burying today's.
 WINDOW = timedelta(hours=24)
+_AUTHOR = re.compile(r"^https?://(?:www\.)?(?:x|twitter)\.com/(\w+)/status")
+
+
+def author_of(url: str | None) -> str | None:
+    m = _AUTHOR.match(url or "")
+    return m[1] if m else None
+
+
 def _target(url: str | None, handle: str | None) -> dict | None:
     sid = status_id(url)
-    return {"status_id": sid, "url": url, "author": handle} if sid else None
+    return {"status_id": sid, "url": url, "author": handle or author_of(url)} if sid else None
 
 
 def _decided() -> set[str]:
@@ -73,9 +86,9 @@ def run_cards(decided: set[str], now: datetime | None = None) -> list[dict]:
     with memory.connect() as conn:
         rows = conn.execute(
             """SELECT a.id, a.run_id, a.data, r.started_at FROM actions a JOIN runs r ON r.id = a.run_id
-               WHERE r.started_at >= ? AND COALESCE(r.sources, '') != 'watch'
+               WHERE r.started_at >= ? AND COALESCE(r.sources, '') != 'watch' AND (? OR r.provider != ?)
                ORDER BY a.run_id DESC, a.predicted_score DESC""",
-            (since,),
+            (since, config.PROVIDER == MOCK, MOCK),
         ).fetchall()
     accounts: dict[int, str | None] = {}
     cards = []

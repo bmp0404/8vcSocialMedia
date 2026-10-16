@@ -1,0 +1,1045 @@
+/* The page is quiet so the posts can be read as X shows them. Color means one of two things: how fresh a
+   hot target is, and the one action that matters on a card. Contrast pairs are noted where they're set. */
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('./fonts/atkinson-next-latin.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('./fonts/atkinson-next-latin-ext.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  color-scheme: light dark;
+  --font: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --radius: 16px;
+  --avatar: 48px; /* react-tweet's header avatar */
+  --gutter: 16px; /* react-tweet's article padding left */
+
+  /* Light. X's own neutrals, so an embedded post looks at home. */
+  --page: #f7f9f9;
+  --card: #ffffff;
+  --ink: #0f1419; /* 18.6:1 on card */
+  --muted: #536471; /* 7.0:1 on card */
+  --line: #eff3f4;
+  --border: #cfd9de;
+  --fresh: #c2410c; /* 5.2:1 on card: a hot target under 10 minutes old */
+  --closing: #92400e; /* 7.2:1 on card: 10 to 30 minutes */
+  --primary-bg: #0f1419;
+  --primary-ink: #ffffff;
+  --danger-bg: #b42318; /* white on it is 6.5:1 */
+  --hover: rgb(15 20 25 / 0.06);
+  --focus: #1d9bf0;
+  --highlight: rgb(234 179 8 / 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #000000;
+    --card: #101214;
+    --ink: #e7e9ea; /* 15.6:1 on card */
+    --muted: #8b98a5; /* 6.4:1 on card */
+    --line: #202327;
+    --border: #2f3336;
+    --fresh: #fb923c; /* 8.4:1 on card */
+    --closing: #fbbf24; /* 11:1 on card */
+    --primary-bg: #eff3f4;
+    --primary-ink: #0f1419;
+    --danger-bg: #d92d20; /* white on it is 4.6:1 */
+    --hover: rgb(231 233 234 / 0.08);
+    --highlight: rgb(234 179 8 / 0.3);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- header */
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: env(safe-area-inset-top);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.tabs,
+.status {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 52px;
+  padding: 0 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+.tab[aria-current='page'] {
+  color: var(--ink);
+}
+
+.tab[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--ink);
+}
+
+.tab-count {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -6px;
+  padding-bottom: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.keys {
+  display: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .keys {
+    display: inline-block;
+  }
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.column {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 0 calc(32px + env(safe-area-inset-bottom));
+}
+
+.feed {
+  display: grid;
+  gap: 12px;
+}
+
+.loading,
+.hint {
+  margin: 0;
+  padding: 0 16px;
+  color: var(--muted);
+}
+
+.hint {
+  font-size: 14px;
+  padding-bottom: 12px;
+}
+
+.problem {
+  margin: 0 16px;
+  color: var(--ink);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.problem::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--danger-bg);
+  vertical-align: 1px;
+}
+
+.card .problem {
+  margin: 12px var(--gutter) 0;
+}
+
+.empty {
+  padding: 48px 16px;
+  color: var(--muted);
+}
+
+.empty p {
+  margin: 0 0 8px;
+  max-width: 44ch;
+}
+
+.empty-title {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- the card: a thread */
+
+.card {
+  position: relative;
+  padding: 0 0 16px;
+  background: var(--card);
+  border-block: 1px solid var(--line);
+}
+
+.card:focus-visible {
+  outline-offset: -2px;
+}
+
+@media (min-width: 640px) {
+  .card,
+  .receipt {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+}
+
+.node {
+  position: relative;
+}
+
+/* X's thread line runs down the avatar column: out of the post being answered, through the reply box,
+   into the draft. data-up and data-down say which way a node connects. */
+.node[data-up]::before,
+.node[data-down]::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--gutter) + var(--avatar) / 2 - 1px);
+  width: 2px;
+  background: var(--border);
+}
+
+.node[data-down]::after {
+  top: calc(12px + var(--avatar) + 4px);
+  bottom: 0;
+}
+
+.node[data-up]::before {
+  top: 0;
+  height: calc(var(--up-to-avatar, 12px) - 4px);
+}
+
+.node-composer {
+  display: grid;
+  grid-template-columns: var(--avatar) 1fr;
+  column-gap: 8px;
+  row-gap: 4px;
+  padding: 12px var(--gutter) 8px;
+}
+
+/* The empty avatar where the person's own words go. */
+.slot-avatar {
+  grid-row: 1 / span 3;
+  width: var(--avatar);
+  height: var(--avatar);
+  border: 2px dashed var(--border);
+  border-radius: 50%;
+}
+
+.composer-label {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.composer {
+  grid-column: 2;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.4;
+  resize: none;
+  field-sizing: content;
+  overflow-wrap: anywhere;
+}
+
+.composer::placeholder {
+  color: var(--muted);
+}
+
+.composer:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+.count {
+  grid-column: 2;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.count[data-over] {
+  color: var(--danger-bg);
+  font-weight: 700;
+}
+
+.node-draft {
+  --up-to-avatar: calc(26px + 12px); /* the caption line, then the post's own top padding */
+  transition: opacity 200ms ease;
+}
+
+.caption {
+  margin: 0;
+  padding: 8px var(--gutter) 0 calc(var(--gutter) + var(--avatar) + 8px);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+/* The draft stays in place while the box has words, so nothing moves while typing; it dims instead. */
+.node-draft[data-unused] {
+  opacity: 0.4;
+}
+
+.story {
+  margin: 16px var(--gutter) 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+  font-size: 15px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------------- react-tweet, inside a card */
+
+.post .react-tweet-theme {
+  --tweet-container-margin: 0;
+  --tweet-bg-color: transparent;
+  --tweet-bg-color-hover: transparent;
+  --tweet-border: 1px solid var(--border);
+  --tweet-font-color: var(--ink);
+  --tweet-font-color-secondary: var(--muted);
+  --tweet-twitter-icon-color: var(--ink);
+  /* X's own size for a post opened on its page; react-tweet's embed default is 20px. */
+  --tweet-body-font-size: 1.0625rem;
+  --tweet-body-line-height: 1.5rem;
+  max-width: none;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* X's timeline layout: everything under the author line sits in the column right of the avatar. */
+.post .rt-tweet-in-reply-to-root,
+.post .rt-tweet-body-root,
+.post .rt-tweet-media-root,
+.post .rt-quoted-tweet-container-root,
+.post .post-footer {
+  margin-left: calc(var(--avatar) + 8px);
+}
+
+.post .rt-tweet-in-reply-to-root {
+  display: block;
+  margin-top: -8px;
+}
+
+/* Names and handles wrap instead of ending in an ellipsis. */
+.post .rt-tweet-header-header {
+  padding-bottom: 8px;
+  white-space: normal;
+  overflow: visible;
+}
+
+.post .rt-tweet-header-author {
+  max-width: none;
+  min-width: 0;
+}
+
+.post .rt-tweet-header-authorLinkText,
+.post .rt-tweet-header-username {
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+/* Follow would act on X, and the logo repeats the link the post's age already gives. */
+.post .rt-tweet-header-authorFollow,
+.post .rt-tweet-header-brand {
+  display: none;
+}
+
+.post .rt-tweet-body-root {
+  overflow-wrap: anywhere;
+}
+
+.post-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.post-footer a {
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .post-footer a:hover {
+    text-decoration: underline;
+  }
+}
+
+.age[data-fresh='fresh'] {
+  color: var(--fresh);
+  font-weight: 700;
+}
+
+.age[data-fresh='closing'] {
+  color: var(--closing);
+  font-weight: 700;
+}
+
+.missing {
+  flex-basis: 100%;
+}
+
+::highlight(verify) {
+  background-color: var(--highlight);
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------- actions */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 0 var(--gutter);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform 120ms var(--ease-out), background-color 150ms ease;
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.primary {
+  flex: 1 1 auto;
+  background: var(--primary-bg);
+  color: var(--primary-ink);
+}
+
+@media (min-width: 640px) {
+  .primary {
+    flex: 0 0 auto;
+    min-width: 168px;
+  }
+}
+
+.quiet {
+  padding: 0 14px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .quiet:hover:not(:disabled) {
+    background: var(--hover);
+  }
+}
+
+.danger {
+  background: var(--danger-bg);
+  color: #fff;
+}
+
+.small {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+/* ---------------------------------------------------------------- kill and skip */
+
+.kill {
+  margin: 12px var(--gutter) 0;
+  padding: 0;
+  border: 0;
+  opacity: 1;
+  transition: opacity 150ms ease;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.kill legend {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.kill .actions {
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 120ms var(--ease-out);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--card);
+}
+
+@media (pointer: coarse) {
+  .chip {
+    min-height: 44px;
+  }
+}
+
+.note {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------- receipts and arrivals */
+
+.receipt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 10px 8px 10px 16px;
+  background: var(--card);
+  border-block: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.receipt p {
+  margin: 0;
+}
+
+.receipt-actions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.arrivals {
+  justify-self: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-bg);
+  color: var(--primary-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* ---------------------------------------------------------------- history */
+
+.verdicts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--card);
+  border-block: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  .verdicts {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+}
+
+.verdict {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.verdict + .verdict {
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  .verdict {
+    grid-template-columns: 1fr 160px;
+    gap: 24px;
+  }
+}
+
+.verdict p {
+  margin: 0;
+}
+
+.verdict-head {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.verdict-head [data-status] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.verdict-head [data-status='killed'] {
+  color: var(--muted);
+}
+
+.verdict-head a {
+  text-decoration: none;
+}
+
+.verdict-text {
+  margin-top: 4px !important;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.verdict-why {
+  margin-top: 4px !important;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.outcome {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.outcome p {
+  margin: 0;
+}
+
+.outcome-rank {
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- audit */
+
+.progress {
+  margin: 0 0 12px;
+  padding: 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.audit .card {
+  padding-bottom: 8px;
+}
+
+.facts {
+  margin: -4px 0 0;
+  padding: 0 var(--gutter) 0 calc(var(--gutter) + var(--avatar) + 8px);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.questions {
+  display: grid;
+  gap: 4px;
+  margin-top: 16px;
+  padding-bottom: 8px;
+}
+
+.question {
+  margin: 0;
+  padding: 12px 16px;
+  border: 0;
+}
+
+.question legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.question legend + * {
+  clear: left;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* An ordinal question is one scale, so its options sit together as one control. */
+.options[data-scale] {
+  gap: 0;
+}
+
+.option {
+  position: relative;
+}
+
+.option input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 15px;
+  transition: transform 120ms var(--ease-out);
+}
+
+.options[data-scale] .option span {
+  min-width: 52px;
+  justify-content: center;
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.options[data-scale] .option:first-child span {
+  margin-left: 0;
+  border-radius: 999px 0 0 999px;
+}
+
+.options[data-scale] .option:last-child span {
+  border-radius: 0 999px 999px 0;
+}
+
+.option input:checked + span {
+  position: relative;
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--card);
+}
+
+.option input:focus-visible + span {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.option input:active + span {
+  transform: scale(0.97);
+}
+
+.question:disabled .option input {
+  cursor: default;
+}
+
+.question:disabled .option input:not(:checked) + span {
+  opacity: 0.5;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  padding: 12px 16px 0;
+}
+
+.field-label {
+  font-weight: 700;
+}
+
+.field .note {
+  margin-top: 0;
+}
+
+.votes {
+  display: grid;
+  gap: 2px;
+  margin: 12px 0 0;
+  font-size: 14px;
+  opacity: 1;
+  transition: opacity 200ms ease;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.votes div {
+  display: grid;
+  grid-template-columns: minmax(0, 14ch) 1fr;
+  gap: 12px;
+}
+
+.votes dt {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.votes dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.votes [data-differs] dd {
+  color: var(--fresh);
+}
+
+.votes [data-differs] dd::after {
+  content: ', differs from yours';
+  font-weight: 400;
+}
+
+/* ---------------------------------------------------------------- the shortcuts sheet */
+
+.sheet {
+  width: min(420px, calc(100vw - 32px));
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), overlay 200ms allow-discrete,
+    display 200ms allow-discrete;
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+.sheet:not([open]) {
+  opacity: 0;
+  transform: scale(0.97);
+  transition-duration: 150ms;
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.sheet h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.sheet dl {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.sheet dl div {
+  display: grid;
+  grid-template-columns: 11ch 1fr;
+  gap: 12px;
+}
+
+.sheet dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+kbd {
+  font: inherit;
+  font-weight: 700;
+}
+
+.sheet form {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------------------------------------------------------------- motion: the queue closing up */
+
+::view-transition-group(*) {
+  animation-duration: 200ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+
+  .button,
+  .chip,
+  .option span,
+  .arrivals,
+  .sheet {
+    transition-property: opacity, background-color;
+  }
+
+  .button:active:not(:disabled),
+  .chip:active,
+  .option input:active + span {
+    transform: none;
+  }
+
+  .sheet,
+  .sheet:not([open]),
+  .arrivals {
+    transform: none;
+  }
+
+  @starting-style {
+    .sheet,
+    .arrivals {
+      transform: none;
+    }
+  }
+}

@@ -175,6 +175,17 @@ def test_the_queue_leaves_out_vetoed_textless_old_and_decided_drafts(store):
     assert [(c["id"], c["run_id"], c["context"], c["target"]) for c in res["cards"]] == [("p1", run_id, "Story headline", None)]
 
 
+def test_mock_rounds_are_shown_only_when_the_harness_runs_on_mock(store, monkeypatch):
+    monkeypatch.setattr(config, "PROVIDER", "mock")
+    save_round(Action(type="reply", text="mock draft", mind="reply_lane", narrative_id="n",
+                      target_url="https://x.com/sample_beatwriter/status/1", id="m1"))
+    (card,) = request("GET", "/api/queue")[1]["cards"]
+    assert card["target"]["author"] == "sample_beatwriter"  # named from the URL when the draft has no handle
+    monkeypatch.setattr(config, "PROVIDER", "anthropic")
+    save_round(Action(type="post", text="live draft", mind="caption", narrative_id="n", id="l1"))
+    assert [c["id"] for c in request("GET", "/api/queue")[1]["cards"]] == ["l1"]
+
+
 # ---------------------------------------------------------------- verdicts
 
 

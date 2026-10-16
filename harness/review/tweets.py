@@ -22,6 +22,7 @@ from harness import config, memory
 from harness.context.http import FetchError, PoliteClient
 from harness.outcomes.handoff import status_id
 from harness.review import hot
+from harness.review.queue import author_of
 from harness.review.routes import HTTPError, Request, route
 
 CACHE_DIR = Path(os.getenv("HARNESS_TWEET_CACHE") or Path.home() / ".cache" / "media-harness" / "tweets")
@@ -97,11 +98,14 @@ def token(status_id: str) -> str:
 # ---------------------------------------------------------------- what the harness stored about a post
 
 
-def _fields(sid: str, author, text, created_at=None, counts: dict | None = None, followers=None, reply_to=None) -> dict:
+def _fields(sid: str, author, text, created_at=None, counts: dict | None = None, followers=None, reply_to=None,
+            reply_to_status=None) -> dict:
+    """The stored-post shape `web/src/lib/tweet.ts` StoredPost reads."""
     counts = counts or {}
     return {"status_id": sid, "author": author or "", "text": text or "", "created_at": created_at,
             "likes": counts.get("likes"), "replies": counts.get("replies"), "reposts": counts.get("reposts"),
-            "quotes": counts.get("quotes"), "author_followers": followers, "in_reply_to": reply_to}
+            "quotes": counts.get("quotes"), "author_followers": followers, "in_reply_to": reply_to,
+            "in_reply_to_status": reply_to_status}
 
 
 def _from_hot(sid: str) -> dict | None:
@@ -124,9 +128,9 @@ def _from_labels(sid: str) -> dict | None:
         item = default_store().items([f"x:{sid}"])[0]
     except (KeyError, FileNotFoundError):
         return None
-    ctx = item.get("context") or {}
+    ctx, parent = item.get("context") or {}, item.get("parent_id") or ""
     return _fields(sid, item.get("author"), item.get("text"), item.get("created_at"), item.get("metrics"),
-                   item.get("author_followers"), ctx.get("parent_author"))
+                   item.get("author_followers"), ctx.get("parent_author"), parent.removeprefix("x:") or None)
 
 
 def _from_rounds(sid: str) -> dict | None:
@@ -138,7 +142,7 @@ def _from_rounds(sid: str) -> dict | None:
     if row is None:
         return None
     a = json.loads(row["data"])
-    found = _fields(sid, a.get("target_handle"), a.get("target_text"))
+    found = _fields(sid, a.get("target_handle") or author_of(a.get("target_url")), a.get("target_text"))
     trace = config.OUT_DIR / f"trace-run{row['run_id']}.json"
     if trace.is_file():
         data = json.loads(trace.read_text(encoding="utf-8"))
