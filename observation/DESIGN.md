@@ -57,6 +57,8 @@ Velocity is measured, not guessed, whenever signals have timestamps:
 
 `velocity_basis` says `data` when this happened and `llm` when no member had a timestamp, as with the sample fixtures. Measured velocity is absolute. A single run has no history of the same narrative to compare against.
 
+Every age, the 72-hour staleness cut and velocity are measured from `orient(..., now=)`. A live run leaves it out. A replay or backtest passes the replay cutoff, or orient would measure from today and drop every historical signal as stale. If `now` is left out and every timestamped signal is past the cut, `replay_now` measures from the newest signal instead and logs that it did, so a forgotten `now=` costs accuracy, not the whole input.
+
 `Narrative.reply_targets` holds only X status URLs, fastest first, with `created_at` and the raw counts so a UI can draw the post. X URLs also lead `signal_urls`, because main's mock `decide` replies to `signal_urls[0]`. Reply targets no narrative cited become a `reply-lane` narrative, ranked like the rest so a hot lane can win one of the two slots `decide` drafts for.
 
 ### Knobs
