@@ -70,6 +70,7 @@ python -m harness run                    # real run with the provider in .env
 | `record <file>` | Store real metrics: `[{"action_id": "...", "metrics": {"likes": 3}}]` |
 | `learn` | Rewrite `memory/lessons/<profile>.md` from reviews and outcomes; the minds read it next run |
 | `review` | Open the approve/edit/kill dashboard at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
+| `watch` | Poll both profiles' watch lists, draft for each post under 10 minutes old (`out/hot/<status_id>.json`) and add each thread to `data/threads/` at +1h and +24h; `watch status` and `watch stop` (see `harness/watcher/DESIGN.md`) |
 
 ### Review dashboard
 
@@ -105,6 +106,7 @@ data/         # Source documents, datasets, and supporting assets
 | `harness/memory.py` | SQLite log of runs, recommendations, and outcomes (`data/harness.db`) |
 | `harness/learn.py` | **Learn.** Writes `memory/lessons/<profile>.md` |
 | `harness/review/` | **Human checkpoint.** Stdlib HTTP server + single-page dashboard |
+| `harness/watcher/` | **Watch.** Continuous polling, the hot path for fresh posts, thread ingestion |
 | `harness/llm.py` | Provider switch: `anthropic`, `xai`, `openai` (any OpenAI-compatible gateway), `mock` |
 
 ## Status / TODO
