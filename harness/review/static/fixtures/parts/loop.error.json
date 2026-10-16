@@ -1,0 +1,10 @@
+{
+ "about": "The review server fails while reading the store.",
+ "routes": {},
+ "errors": {
+  "GET /api/loop": {
+   "status": 500,
+   "error": "OperationalError: database is locked"
+  }
+ }
+}

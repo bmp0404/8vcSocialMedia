@@ -1,0 +1,12 @@
+{
+ "routes": {
+  "GET /api/experiments": {
+   "available": true,
+   "experiments": [],
+   "champion": null,
+   "runs": {},
+   "problems": []
+  }
+ },
+ "errors": {}
+}

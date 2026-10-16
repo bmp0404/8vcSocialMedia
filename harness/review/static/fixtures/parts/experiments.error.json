@@ -1,0 +1,9 @@
+{
+ "routes": {},
+ "errors": {
+  "GET /api/experiments": {
+   "status": 500,
+   "error": "PermissionError: [Errno 13] Permission denied: 'eval/experiments/exp-20261016-action-f691d2.json'"
+  }
+ }
+}

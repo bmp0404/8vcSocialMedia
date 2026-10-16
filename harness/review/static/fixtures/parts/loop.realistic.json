@@ -1,0 +1,390 @@
+{
+ "about": "Run 14 is the real run 5 (out/trace-run5.json, its stdout in the ui worktree): ESPN and Google News, a failed x_targets read, orient's two narratives. Renumbered so api.js's simulated round (run 15) follows it.",
+ "routes": {
+  "GET /api/loop": {
+   "provider": "anthropic",
+   "sources": [
+    "espn_news",
+    "google_news",
+    "x_targets"
+   ],
+   "command": "python -m harness run --narratives 2 --per-mind 1 --retries 1",
+   "round": {
+    "id": "round-20261015-190907",
+    "started_at": "2026-10-16T02:09:07+00:00",
+    "provider": "anthropic",
+    "sources": [
+     "espn_news",
+     "google_news",
+     "x_targets"
+    ],
+    "command": "python -m harness run --narratives 2 --per-mind 1 --retries 1",
+    "status": "done",
+    "stage": "review",
+    "lines": [
+     {
+      "t": 0.98,
+      "stage": "observe",
+      "text": "[observe] espn_news: 52 signals"
+     },
+     {
+      "t": 3.32,
+      "stage": "observe",
+      "text": "[observe] google_news: 51 signals"
+     },
+     {
+      "t": 3.32,
+      "stage": "observe",
+      "text": "[observe] x_targets: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     },
+     {
+      "t": 3.32,
+      "stage": "observe",
+      "text": "[observe] x_targets: search skipped: no X read access for search: set X_BEARER_TOKEN or XAI_API_KEY in .env (see observation/DESIGN.md)"
+     },
+     {
+      "t": 3.32,
+      "stage": "observe",
+      "text": "[observe] x_targets failed: x_targets: every read failed; first error: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     },
+     {
+      "t": 3.34,
+      "stage": "orient",
+      "text": "[orient] sending 68 of 103 signals (14,189 chars)"
+     },
+     {
+      "t": 3.34,
+      "stage": "orient",
+      "text": "[orient] dropped as older than 72h: {'espn_news': 35}"
+     },
+     {
+      "t": 11.14,
+      "stage": "orient",
+      "text": "[orient] clark-boston-knee-surgery: relevance 0.95 velocity 0.81 (data)"
+     },
+     {
+      "t": 11.14,
+      "stage": "orient",
+      "text": "[orient] cunningham-reese-dream-discourse: relevance 0.85 velocity 0.75 (data)"
+     },
+     {
+      "t": 11.14,
+      "stage": "orient",
+      "text": "[orient] wnba-finals-valkyries-dream: relevance 0.65 velocity 0.81 (data)"
+     },
+     {
+      "t": 11.14,
+      "stage": "orient",
+      "text": "[orient] clark-effect-ratings-and-influence: relevance 0.90 velocity 0.65 (data)"
+     },
+     {
+      "t": 11.14,
+      "stage": "orient",
+      "text": "[orient] 2 narratives: clark-boston-knee-surgery, cunningham-reese-dream-discourse"
+     },
+     {
+      "t": 19.64,
+      "stage": "decide",
+      "text": "[decide] 5 minds proposed 3 actions"
+     },
+     {
+      "t": 28.34,
+      "stage": "qualify",
+      "text": "[qualify] kept 1/3 drafts"
+     },
+     {
+      "t": 28.34,
+      "stage": null,
+      "text": "Top 1 recommendations (run 14) -> out/recommendations-20261015-190936.json"
+     },
+     {
+      "t": 28.34,
+      "stage": null,
+      "text": " 1. [0.12] post    rivalry_banterer   Aliyah Boston played through a knee injury all season, then revealed she needed arthroscopic surgery. I get winded carrying groceries up one flight of stairs. Caitlin Clark hyping her up is the least surprising thing in basketball. Get well, Aliyah."
+     }
+    ],
+    "run_id": 14,
+    "exit_code": 0,
+    "finished_at": "2026-10-16T02:09:36+00:00"
+   },
+   "live": {
+    "status": "done",
+    "run_id": 14,
+    "started_at": "2026-10-16T02:09:07+00:00",
+    "elapsed_ms": 28354,
+    "stage": "qualify",
+    "done": [
+     {
+      "name": "observe",
+      "ms": 3322,
+      "n_out": 103
+     },
+     {
+      "name": "orient",
+      "ms": 7815,
+      "n_out": 2
+     },
+     {
+      "name": "decide",
+      "ms": 8505,
+      "n_out": 3
+     },
+     {
+      "name": "qualify",
+      "ms": 8697,
+      "n_out": 1
+     }
+    ],
+    "sources": [
+     {
+      "name": "espn_news",
+      "n": 52,
+      "error": ""
+     },
+     {
+      "name": "google_news",
+      "n": 51,
+      "error": ""
+     },
+     {
+      "name": "x_targets",
+      "n": 0,
+      "error": "failed: x_targets: every read failed; first error: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     }
+    ],
+    "llm_calls": 8
+   },
+   "latest": {
+    "run_id": 14,
+    "actions": 3,
+    "vetoed": 2,
+    "approved": 0,
+    "killed": 0,
+    "pending": 3,
+    "to_review": 1,
+    "by_type": {
+     "post": 3
+    },
+    "decisions": null
+   },
+   "trace": {
+    "run_id": 14,
+    "total_ms": 28354,
+    "stages": [
+     {
+      "name": "observe",
+      "start_ms": 0,
+      "ms": 3322,
+      "n_out": 103
+     },
+     {
+      "name": "orient",
+      "start_ms": 3322,
+      "ms": 7815,
+      "n_out": 2
+     },
+     {
+      "name": "decide",
+      "start_ms": 11138,
+      "ms": 8505,
+      "n_out": 3,
+      "ids": [
+       "1c140aaa",
+       "88f8c154",
+       "df20b8d6"
+      ]
+     },
+     {
+      "name": "qualify",
+      "start_ms": 19644,
+      "ms": 8697,
+      "n_out": 1,
+      "ids": [
+       "88f8c154"
+      ]
+     }
+    ],
+    "sources": [
+     {
+      "name": "espn_news",
+      "n": 52,
+      "start_ms": 0,
+      "ms": 978,
+      "error": ""
+     },
+     {
+      "name": "google_news",
+      "n": 51,
+      "start_ms": 978,
+      "ms": 2343,
+      "error": ""
+     },
+     {
+      "name": "x_targets",
+      "n": 0,
+      "start_ms": 3321,
+      "ms": 1,
+      "error": "failed: x_targets: every read failed; first error: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     }
+    ],
+    "signals": 103,
+    "narratives": [
+     {
+      "id": "clark-boston-knee-surgery",
+      "title": "Aliyah Boston's knee surgery and Caitlin Clark's 4-word message",
+      "relevance": 0.95,
+      "velocity": 0.815,
+      "angle": "Gently funny take on Boston playing a whole season on one good knee and Clark being her biggest hype woman, with the four words quoted accurately and the tone warm, not snarky.",
+      "velocity_basis": "data"
+     },
+     {
+      "id": "cunningham-reese-dream-discourse",
+      "title": "Sophie Cunningham vs. the league: Angel Reese, Dream defenses and officiating",
+      "relevance": 0.85,
+      "velocity": 0.746,
+      "angle": "Fan-in-on-the-joke quip about Cunningham having more takes than the broadcast crew, staying fair to Reese and sticking to what was actually said.",
+      "velocity_basis": "data"
+     }
+    ],
+    "n_drafts": 3,
+    "kept": 1,
+    "llm_calls": 8,
+    "llm_errors": 0,
+    "llm_ms": 44322,
+    "calls_by_stage": {
+     "orient": {
+      "n": 1,
+      "ms": 7813,
+      "errors": 0
+     },
+     "decide": {
+      "n": 5,
+      "ms": 27812,
+      "errors": 0
+     },
+     "qualify": {
+      "n": 2,
+      "ms": 8697,
+      "errors": 0
+     }
+    }
+   },
+   "runs": [
+    {
+     "id": 14,
+     "started_at": "2026-10-16T02:09:36+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 3,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 13,
+     "started_at": "2026-10-16T02:08:41+00:00",
+     "provider": "mock",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 12,
+     "started_at": "2026-10-16T02:05:36+00:00",
+     "provider": "anthropic",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": 1,
+     "n_killed": 3
+    },
+    {
+     "id": 11,
+     "started_at": "2026-10-16T01:52:29+00:00",
+     "provider": "anthropic",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": 2,
+     "n_killed": 3
+    },
+    {
+     "id": 10,
+     "started_at": "2026-10-15T23:41:02+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news",
+     "n_actions": 6,
+     "n_approved": 2,
+     "n_killed": 4
+    },
+    {
+     "id": 9,
+     "started_at": "2026-10-15T19:12:48+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news",
+     "n_actions": 4,
+     "n_approved": 1,
+     "n_killed": 2
+    },
+    {
+     "id": 8,
+     "started_at": "2026-10-15T03:30:15+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 7,
+     "n_approved": 3,
+     "n_killed": 4
+    },
+    {
+     "id": 7,
+     "started_at": "2026-10-14T22:05:51+00:00",
+     "provider": "anthropic",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": 2,
+     "n_killed": 3
+    },
+    {
+     "id": 6,
+     "started_at": "2026-10-14T18:44:09+00:00",
+     "provider": "mock",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": null,
+     "n_killed": 5
+    },
+    {
+     "id": 5,
+     "started_at": "2026-10-14T02:19:33+00:00",
+     "provider": "anthropic",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": 1,
+     "n_killed": 4
+    },
+    {
+     "id": 4,
+     "started_at": "2026-10-13T21:07:40+00:00",
+     "provider": "anthropic",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": 0,
+     "n_killed": 5
+    },
+    {
+     "id": 3,
+     "started_at": "2026-10-13T17:58:22+00:00",
+     "provider": "mock",
+     "sources": "sample",
+     "n_actions": 5,
+     "n_approved": null,
+     "n_killed": null
+    }
+   ],
+   "learn": {
+    "lessons_file": true,
+    "updated_at": "2026-10-14T23:12:40+00:00",
+    "bullets": 6
+   }
+  }
+ },
+ "errors": {}
+}

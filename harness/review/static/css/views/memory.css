@@ -1,0 +1,945 @@
+/* Memory view: lessons, reflections, reviewer edits and outcomes as strips in one rack of bays.
+   A solid holder means the belief is in force, amber means it is due for a retest, and the
+   hatched holder means held back: a retired lesson or a reflection that wasn't kept. */
+
+.mem {
+  padding-bottom: var(--s6);
+}
+
+.mem-counts {
+  font: 12px / 1.4 var(--font-mono);
+  color: var(--ink-2);
+  gap: var(--s1) var(--s3);
+}
+
+.mem-counts b {
+  color: var(--ink);
+}
+
+.mem-counts > span + span:not(.mem-store)::before {
+  content: "·";
+  margin-right: var(--s3);
+  color: var(--ink-faint);
+}
+
+.mem-counts > .mem-store {
+  margin-left: var(--s2);
+}
+
+.mem-store,
+.mem-id {
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+/* --- The rack: bay tabs on a rule, the tray below holds the strips ------------------------ */
+
+.mem-bays {
+  position: relative;
+  z-index: 1;
+  margin-bottom: -1px;
+}
+
+.mem .bay[aria-selected="true"] {
+  background: var(--board);
+}
+
+.mem-tray {
+  display: grid;
+  gap: var(--s3);
+  align-content: start;
+  padding: var(--s4) var(--s5) var(--s5);
+  border-top: 1px solid var(--rule);
+}
+
+.mem-tray > *,
+.mem-unavail > * {
+  max-width: 1120px;
+}
+
+.mem-bayhead {
+  row-gap: var(--s1);
+}
+
+.mem-bayhead .aside {
+  flex-basis: 100%;
+  max-width: 72ch;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* A segmented filter, quieter than the bays above it. */
+.mem-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+  margin-top: var(--s2);
+}
+
+.mem-seg button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 28px;
+  padding: 0 var(--s3);
+  font: 600 12.5px / 1 var(--font-ui);
+  color: var(--ink-2);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-control);
+  transition:
+    transform var(--d-press) var(--ease-out),
+    border-color var(--d-fast) ease;
+}
+
+.mem-seg button:active {
+  transform: scale(0.97);
+}
+
+.mem-seg .n {
+  font: 700 11px / 1 var(--font-mono);
+}
+
+.mem-seg button[aria-pressed="true"] {
+  color: var(--ink);
+  background: var(--strip);
+  border-color: var(--ink);
+}
+
+.mem-empty {
+  padding: var(--s5) 0;
+}
+
+.mem-empty h3 {
+  font: 700 var(--t-lead) / 1.3 var(--font-ui);
+}
+
+.mem-empty code {
+  white-space: nowrap;
+}
+
+.mem-due {
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+/* --- Strips -------------------------------------------------------------------------------- */
+
+.mem-list {
+  display: grid;
+  gap: var(--s2);
+  container-type: inline-size;
+}
+
+.mem-strip {
+  --holder-color: var(--human);
+  gap: var(--s2);
+  padding: var(--s3) var(--s4) var(--s3) calc(var(--holder) + var(--s4));
+}
+
+.mem-strip[data-state="stale"] {
+  --holder-color: var(--warn);
+}
+
+/* Selected by j/k or by following a link: slid out of line, as on the queue's board. */
+.mem-strip.strip[data-cur] {
+  transform: translateX(8px);
+  border-color: var(--ink);
+  box-shadow: var(--shadow-lift);
+  z-index: 1;
+}
+
+/* The slid-out strip with its ink border is the focus mark; a ring around it as well reads as two. */
+.mem-strip[data-cur]:focus-visible {
+  outline: none;
+}
+
+.mem-main {
+  display: grid;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.mem-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s3);
+  min-width: 0;
+}
+
+.mem-scope,
+.mem-status {
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.mem-scope {
+  flex: 1;
+  min-width: 0;
+}
+
+.mem-id {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 11.5px;
+}
+
+.mem-strip[data-state="stale"] .mem-status {
+  color: var(--warn);
+}
+
+.mem-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font: 600 var(--t-lead) / 1.38 var(--font-ui);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+/* Opening the evidence shows the whole text. */
+.mem-strip[data-open] .mem-text {
+  display: block;
+}
+
+.mem-strip[data-state="retired"] .mem-text {
+  color: var(--ink-3);
+}
+
+/* The measure of a belief: its held-out result and how it was tested, printed in one well. */
+.mem-proof {
+  display: grid;
+  gap: 5px;
+  padding: var(--s2) var(--s3);
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+.mem-measure {
+  font-size: var(--t-body);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.mem-measure b {
+  font: 700 13.5px / 1 var(--font-mono);
+}
+
+.mem-measure[data-untested] {
+  color: var(--warn);
+}
+
+.mem-p {
+  margin-left: var(--s2);
+  font: 12px var(--font-mono);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.mem-tested,
+.mem-note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  min-width: 0;
+}
+
+.mem-tested .label,
+.mem-note .label {
+  flex: none;
+}
+
+.mem-tested span:last-child,
+.mem-note span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mem-tested span:last-child {
+  color: var(--ink);
+}
+
+.mem-rule {
+  font: 12.5px / 1.4 var(--font-mono);
+}
+
+.mem-caveats {
+  display: grid;
+  gap: 3px;
+}
+
+.mem-caveats li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  font-size: var(--t-small);
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.mem-caveats .label {
+  flex: none;
+  color: var(--warn);
+}
+
+.mem-caveats li span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Time boxes on the right of a lesson, like the time boxes on a flight strip. */
+.mem-boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  align-self: start;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  overflow: hidden;
+}
+
+.mem-box {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  padding: 7px var(--s3) 8px;
+  background: var(--strip);
+}
+
+.mem-box dd {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mem-box dd b {
+  font: 700 15px / 1.15 var(--font-mono);
+}
+
+.mem-box small {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.mem-box[data-due] {
+  background: var(--warn-wash);
+}
+
+.mem-box[data-due] small,
+.mem-box[data-due] .label {
+  color: var(--warn);
+}
+
+.mem-tally {
+  grid-column: 1 / -1;
+}
+
+.mem-tally dd {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: var(--s4);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.mem-tally dd span {
+  display: grid;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.mem-tally dd b {
+  color: var(--ink);
+}
+
+.mem-tally [data-bad],
+.mem-tally [data-bad] b {
+  color: var(--struck);
+}
+
+.mem-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s4);
+  min-width: 0;
+}
+
+.mem-none {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.mem-refs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--s2);
+  min-width: 0;
+}
+
+.mem-ref {
+  padding: 2px 0;
+  font: 11.5px / 1.3 var(--font-mono);
+  color: var(--ink-2);
+  background: none;
+  border: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+button.mem-ref {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button.mem-ref:hover {
+    text-decoration-color: currentColor;
+  }
+  .mem-seg button[aria-pressed="false"]:hover {
+    border-color: var(--rule-strong);
+    color: var(--ink);
+  }
+  .mem-ep-link:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Two columns once the list is wide enough: the text on the left, the time boxes on the right. */
+@container (min-width: 720px) {
+  .mem-lesson {
+    grid-template-columns: minmax(0, 1fr) 296px;
+    column-gap: var(--s5);
+  }
+  .mem-lesson > .mem-boxes {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .mem-lesson > .mem-foot,
+  .mem-lesson > .mem-ev {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --- Evidence posts ------------------------------------------------------------------------ */
+
+.mem-ev {
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s3);
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+.mem-ev[hidden] {
+  display: none;
+}
+
+.mem-kv {
+  font-size: var(--t-small);
+}
+
+.mem-kv dd {
+  color: var(--ink-3);
+}
+
+.mem-evgroup {
+  display: grid;
+  gap: var(--s2);
+}
+
+.mem-n {
+  margin-left: var(--s1);
+  color: var(--ink);
+}
+
+.mem-eps {
+  display: grid;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  background: var(--strip);
+}
+
+.mem-ep {
+  display: grid;
+  gap: 4px;
+  padding: var(--s2) var(--s3);
+  border-top: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.mem-ep:first-child {
+  border-top: 0;
+}
+
+.mem-ep-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s2);
+  min-width: 0;
+}
+
+.mem-ep-who {
+  font: 700 12.5px / 1.3 var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+.mem-ep-when {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.mem-ep .chip {
+  min-height: 20px;
+  font-size: 11.5px;
+}
+
+.mem-ep-link {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-2);
+  text-decoration-color: var(--rule-strong);
+}
+
+.mem-ep-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.mem-ep-meta {
+  font: 11.5px / 1.4 var(--font-mono);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.mem-missing {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.mem-everr {
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skeleton.w40 {
+  width: 40%;
+}
+
+.skeleton.w60 {
+  width: 60%;
+}
+
+.skeleton.w75 {
+  width: 75%;
+}
+
+.skeleton.w90 {
+  width: 90%;
+}
+
+.skeleton.tall {
+  height: 16px;
+}
+
+.skeleton.w-stamp {
+  width: 56px;
+  height: 20px;
+}
+
+.mem-skel .mem-boxes {
+  display: grid;
+  align-content: start;
+  gap: var(--s3);
+  min-height: 132px;
+  padding: var(--s3);
+  background: var(--strip);
+}
+
+/* --- Reviewer edits ------------------------------------------------------------------------ */
+
+.mem-mind {
+  display: grid;
+  gap: var(--s2);
+}
+
+.mem-mind + .mem-mind {
+  margin-top: var(--s3);
+}
+
+.mem-mind .section-head h3 {
+  overflow-wrap: anywhere;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 12.5px;
+}
+
+.mem-diff {
+  display: grid;
+  gap: 4px;
+  padding: var(--s2) var(--s3);
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+.mem-drow {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s2);
+}
+
+.mem-dtext {
+  font-size: var(--t-body);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.mem-edit[data-long]:not([data-open]) .mem-dtext {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mem-whole {
+  justify-self: start;
+}
+
+.mem-dtext del,
+.mem-dtext ins {
+  padding: 1px 2px;
+  border-radius: 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.mem-dtext del {
+  color: var(--struck);
+  background: var(--struck-wash);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.mem-dtext ins {
+  color: var(--cleared);
+  background: var(--cleared-wash);
+  text-decoration: none;
+}
+
+.mem-dstats {
+  font: 11.5px / 1.4 var(--font-mono);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+/* --- Outcomes ------------------------------------------------------------------------------ */
+
+.mem-tablewrap {
+  overflow-x: auto;
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  box-shadow: var(--shadow-strip);
+}
+
+.mem-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mem-table th,
+.mem-table td {
+  padding: var(--s2) var(--s3);
+  border-top: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.mem-table thead th {
+  border-top: 0;
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* The action stays put while the metric columns scroll under it on narrow screens. */
+.mem-table tr > :first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--strip);
+  box-shadow: 1px 0 0 var(--rule);
+}
+
+.mem-table .mem-numcol {
+  text-align: right;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.mem-table tr > :nth-child(2) {
+  border-right: 1px solid var(--rule);
+}
+
+.mem-table td:nth-child(2) {
+  font-weight: 700;
+}
+
+.mem-table tbody th {
+  width: 46%;
+  font-weight: 400;
+}
+
+.mem-act {
+  display: grid;
+  gap: 2px;
+  min-width: 240px;
+}
+
+.mem-act-top {
+  font: 700 var(--t-label) / 1.3 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.mem-act-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+
+/* --- Unavailable and lessons.md ------------------------------------------------------------ */
+
+.mem-unavail {
+  display: grid;
+  gap: var(--s5);
+  padding: 0 var(--s5) var(--s5);
+}
+
+.mem-unavail > .notice {
+  flex-wrap: wrap;
+}
+
+.mem-unavail > .notice span:last-child {
+  flex: 1 1 32ch;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mem-sec {
+  display: grid;
+  gap: var(--s3);
+}
+
+.mem-mdbox {
+  margin-top: var(--s2);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--s3);
+}
+
+.mem-mdbox summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s3);
+  width: fit-content;
+  cursor: pointer;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.mem-mdbox summary .label {
+  color: var(--ink);
+}
+
+.mem-mdbox summary::marker {
+  color: var(--ink-3);
+}
+
+.mem-mdbox .mem-md {
+  margin-top: var(--s3);
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+}
+
+.mem-md {
+  padding: var(--s4) var(--s5);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.mem-md > * {
+  max-width: 72ch;
+}
+
+.mem-md > * + * {
+  margin-top: var(--s3);
+}
+
+.mem-md h3 {
+  font: 800 var(--t-lead) / 1.3 var(--font-ui);
+}
+
+.mem-md h4,
+.mem-md h5,
+.mem-md h6 {
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.mem-md * + h3,
+.mem-md * + h4 {
+  margin-top: var(--s5);
+}
+
+.mem-md ul {
+  list-style: disc;
+  padding-left: 1.25em;
+}
+
+.mem-md ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+}
+
+.mem-md li + li {
+  margin-top: var(--s1);
+}
+
+.mem-md blockquote {
+  margin: 0;
+  padding-left: var(--s3);
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-3);
+}
+
+.mem-md pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--s3);
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+.mem-md pre code {
+  padding: 0;
+  background: none;
+}
+
+.mem-md hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+/* --- First render: the strips set down one after another, once ----------------------------- */
+
+.mem-list[data-enter] > li:nth-child(-n + 10) {
+  animation: mem-set var(--d-base) var(--ease-out) both;
+}
+
+.mem-list[data-enter] > li:nth-child(2) { animation-delay: 35ms; }
+.mem-list[data-enter] > li:nth-child(3) { animation-delay: 70ms; }
+.mem-list[data-enter] > li:nth-child(4) { animation-delay: 105ms; }
+.mem-list[data-enter] > li:nth-child(5) { animation-delay: 140ms; }
+.mem-list[data-enter] > li:nth-child(6) { animation-delay: 175ms; }
+.mem-list[data-enter] > li:nth-child(n + 7):nth-child(-n + 10) { animation-delay: 200ms; }
+
+@keyframes mem-set {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes mem-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* --- Small screens ------------------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .mem-tray {
+    padding: var(--s3) var(--s3) var(--s4);
+  }
+  .mem-unavail {
+    padding: 0 var(--s3) var(--s4);
+  }
+  .mem-md {
+    padding: var(--s3) var(--s4);
+  }
+}
+
+@media (max-width: 480px) {
+  .mem-strip {
+    padding: var(--s3) var(--s3) var(--s3) calc(var(--holder) + var(--s3));
+  }
+  .mem-tested,
+  .mem-note,
+  .mem-caveats li {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .mem-drow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+  .mem-ep-link {
+    margin-left: 0;
+  }
+  .mem-table tbody th {
+    width: auto;
+  }
+  .mem-act {
+    min-width: 150px;
+    max-width: 176px;
+  }
+  .mem-act-text {
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mem-list[data-enter] > li:nth-child(-n + 10) {
+    animation-name: mem-fade;
+  }
+  .mem-seg button:active {
+    transform: none;
+  }
+}

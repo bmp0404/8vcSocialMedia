@@ -1,0 +1,11 @@
+{
+ "about": "Fixture scenario 'realistic'. Open /?fixture=realistic. Each view keeps its data in parts/<view>.realistic.json.",
+ "include": [
+  "parts/meta.realistic.json",
+  "parts/queue.realistic.json",
+  "parts/loop.realistic.json",
+  "parts/experiments.realistic.json",
+  "parts/memory.realistic.json",
+  "parts/evals.realistic.json"
+ ]
+}

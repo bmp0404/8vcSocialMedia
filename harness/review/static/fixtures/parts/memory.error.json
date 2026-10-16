@@ -1,0 +1,9 @@
+{
+ "routes": {},
+ "errors": {
+  "GET /api/memory": {
+   "status": 500,
+   "error": "Couldn't open the memory store: JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+  }
+ }
+}

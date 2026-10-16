@@ -1,0 +1,5845 @@
+{
+ "routes": {
+  "GET /api/runs": [
+   {
+    "id": 999,
+    "started_at": "@now-3m",
+    "provider": "anthropic",
+    "sources": "espn_news,google_news,x_targets,bluesky,attention,espn_scores,espn_injuries",
+    "n_actions": 160,
+    "n_approved": 32,
+    "n_killed": 32
+   },
+   {
+    "id": 998,
+    "started_at": "@now-1h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 0,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 997,
+    "started_at": "@now-2h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 1,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 996,
+    "started_at": "@now-3h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 2,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 995,
+    "started_at": "@now-4h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 3,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 994,
+    "started_at": "@now-5h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 4,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 993,
+    "started_at": "@now-6h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 5,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 992,
+    "started_at": "@now-7h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 6,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 991,
+    "started_at": "@now-8h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 7,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 990,
+    "started_at": "@now-9h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 8,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 989,
+    "started_at": "@now-10h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 9,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 988,
+    "started_at": "@now-11h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 10,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 987,
+    "started_at": "@now-12h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 11,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 986,
+    "started_at": "@now-13h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 12,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 985,
+    "started_at": "@now-14h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 13,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 984,
+    "started_at": "@now-15h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 14,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 983,
+    "started_at": "@now-16h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 15,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 982,
+    "started_at": "@now-17h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 16,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 981,
+    "started_at": "@now-18h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 17,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 980,
+    "started_at": "@now-19h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 18,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 979,
+    "started_at": "@now-20h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 19,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 978,
+    "started_at": "@now-21h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 20,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 977,
+    "started_at": "@now-22h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 21,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 976,
+    "started_at": "@now-23h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 22,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 975,
+    "started_at": "@now-24h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 23,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 974,
+    "started_at": "@now-25h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 24,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 973,
+    "started_at": "@now-26h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 25,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 972,
+    "started_at": "@now-27h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 26,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 971,
+    "started_at": "@now-28h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 27,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 970,
+    "started_at": "@now-29h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 28,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 969,
+    "started_at": "@now-30h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 29,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 968,
+    "started_at": "@now-31h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 30,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 967,
+    "started_at": "@now-32h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 31,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 966,
+    "started_at": "@now-33h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 32,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 965,
+    "started_at": "@now-34h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 33,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 964,
+    "started_at": "@now-35h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 34,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 963,
+    "started_at": "@now-36h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 35,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 962,
+    "started_at": "@now-37h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 36,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 961,
+    "started_at": "@now-38h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 37,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 960,
+    "started_at": "@now-39h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 38,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 959,
+    "started_at": "@now-40h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 39,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 958,
+    "started_at": "@now-41h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 40,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 957,
+    "started_at": "@now-42h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 41,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 956,
+    "started_at": "@now-43h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 42,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 955,
+    "started_at": "@now-44h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 43,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 954,
+    "started_at": "@now-45h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 44,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 953,
+    "started_at": "@now-46h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 45,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 952,
+    "started_at": "@now-47h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 46,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 951,
+    "started_at": "@now-48h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 47,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 950,
+    "started_at": "@now-49h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 48,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 949,
+    "started_at": "@now-50h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 49,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 948,
+    "started_at": "@now-51h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 50,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 947,
+    "started_at": "@now-52h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 51,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 946,
+    "started_at": "@now-53h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 52,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 945,
+    "started_at": "@now-54h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 53,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 944,
+    "started_at": "@now-55h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 54,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 943,
+    "started_at": "@now-56h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 55,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 942,
+    "started_at": "@now-57h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 56,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 941,
+    "started_at": "@now-58h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 57,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 940,
+    "started_at": "@now-59h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 58,
+    "n_approved": 0,
+    "n_killed": 0
+   },
+   {
+    "id": 939,
+    "started_at": "@now-60h",
+    "provider": "mock",
+    "sources": "sample",
+    "n_actions": 59,
+    "n_approved": 0,
+    "n_killed": 0
+   }
+  ],
+  "GET /api/runs/999": [
+   {
+    "id": "s00000",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00001",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00002",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00003",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00004",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00005",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00006",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00007",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00008",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00009",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00010",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00011",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00012",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00013",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00014",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00015",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00016",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00017",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00018",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00019",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00020",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00021",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00022",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00023",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00024",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00025",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00026",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00027",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00028",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00029",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00030",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00031",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00032",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00033",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00034",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00035",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00036",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00037",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00038",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00039",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00040",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00041",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00042",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00043",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00044",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00045",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00046",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00047",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00048",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00049",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00050",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00051",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00052",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00053",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00054",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00055",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00056",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00057",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00058",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00059",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00060",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00061",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00062",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00063",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00064",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00065",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00066",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00067",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00068",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00069",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00070",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00071",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00072",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00073",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00074",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00075",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00076",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00077",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00078",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00079",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00080",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00081",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00082",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00083",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00084",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00085",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00086",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00087",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00088",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00089",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00090",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00091",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00092",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00093",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00094",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00095",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00096",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00097",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00098",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00099",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00100",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00101",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00102",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00103",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00104",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00105",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00106",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00107",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00108",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00109",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00110",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00111",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00112",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00113",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00114",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00115",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00116",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00117",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00118",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00119",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00120",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00121",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00122",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00123",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00124",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00125",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00126",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00127",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00128",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00129",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00130",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00131",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00132",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00133",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00134",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00135",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00136",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00137",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00138",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00139",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-6-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00140",
+    "type": "reply",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-0-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00141",
+    "type": "post",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-1-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00142",
+    "type": "quote",
+    "text": "ok",
+    "mind": "caption",
+    "narrative_id": "narrative-2-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00143",
+    "type": "mention",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-3-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00144",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-4-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00145",
+    "type": "reply",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-5-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00146",
+    "type": "post",
+    "text": "ok",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-6-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00147",
+    "type": "quote",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "caption",
+    "narrative_id": "narrative-0-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00148",
+    "type": "mention",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-1-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00149",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-2-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00150",
+    "type": "reply",
+    "text": "ok",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-3-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.0,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00151",
+    "type": "post",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-4-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.1,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00152",
+    "type": "quote",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "caption",
+    "narrative_id": "narrative-5-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.2,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00153",
+    "type": "mention",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-6-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.3,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00154",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-0-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.4,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": true,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "killed",
+     "text": "edited 日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00155",
+    "type": "reply",
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mind": "reply_lane",
+    "narrative_id": "narrative-1-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.5,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00156",
+    "type": "post",
+    "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "mind": "stat_nerd",
+    "narrative_id": "narrative-2-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.6,
+    "panel": {},
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00157",
+    "type": "quote",
+    "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "mind": "caption",
+    "narrative_id": "narrative-3-very-long-slug-",
+    "rationale": "",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": null,
+    "predicted_score": 0.7,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "pending",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00158",
+    "type": "mention",
+    "text": "ok",
+    "mind": "community_builder_with_an_extremely_long_mind_name_that_wraps",
+    "narrative_id": "narrative-4-very-long-slug-very-long-slug-",
+    "rationale": "",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.8,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+    "review": {
+     "status": "approved",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   },
+   {
+    "id": "s00159",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "narrative-5-",
+    "rationale": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "target_url": null,
+    "target_handle": "a_very_long_handle",
+    "predicted_score": 0.9,
+    "panel": {
+     "p1": 0.1,
+     "p2": 0.9,
+     "p3": 0.5
+    },
+    "vetoed": false,
+    "critique": "",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "",
+     "reviewed_at": "@now-1m"
+    }
+   }
+  ],
+  "GET /api/runs/999/decisions": {
+   "available": true,
+   "decisions": [
+    {
+     "lane": "reply",
+     "opportunity": "https://x.com/WNBA/status/2110792840989024541",
+     "tool": "abstain",
+     "reason": "gate_rejected",
+     "detail": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     "question": "",
+     "action_id": null,
+     "candidates": [
+      {
+       "text": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+       "gate": [
+        {
+         "rule": "length",
+         "detail": "400 chars",
+         "start": 160,
+         "end": 400
+        }
+       ]
+      },
+      {
+       "text": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+       "gate": []
+      },
+      {
+       "schema_error": "reply: unexpected field(s) ['foo']"
+      }
+     ]
+    },
+    {
+     "lane": "post",
+     "opportunity": "nonexistent-narrative",
+     "tool": "ask_human",
+     "reason": "",
+     "detail": "",
+     "question": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in. This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ? Add it to action/takes.json; the harness picks the timing.",
+     "action_id": null,
+     "candidates": []
+    },
+    {
+     "lane": "reply",
+     "opportunity": "",
+     "tool": "abstain",
+     "reason": "a_reason_code_nobody_documented",
+     "detail": "",
+     "question": "",
+     "action_id": null,
+     "candidates": []
+    }
+   ]
+  },
+  "GET /api/runs/999/context": {
+   "available": true,
+   "started_at": "@now-3m",
+   "narratives": [
+    {
+     "id": "narrative-0-",
+     "title": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    },
+    {
+     "id": "narrative-1-",
+     "title": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    },
+    {
+     "id": "narrative-2-",
+     "title": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    },
+    {
+     "id": "narrative-3-",
+     "title": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    },
+    {
+     "id": "narrative-4-",
+     "title": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    },
+    {
+     "id": "narrative-5-",
+     "title": "日本のファンもクラークを応援してる 🏀🔥 العربية أيضاً — Ünïcödé, emoji 👩🏽‍🏫🇺🇸 and RTL mixed in.",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    },
+    {
+     "id": "narrative-6-",
+     "title": "This is a deliberately long draft that keeps going so the layout has to wrap it, with a URL https://www.espn.com/wnba/story/_/id/12345678/a-very-long-path-that-should-count-as-23 and an unbreakable token ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {
+         "author": null,
+         "text": "IKTR",
+         "likes": 15,
+         "followers": 114
+        },
+        {
+         "author": null,
+         "text": "RING CHASER!\nShe will NOT win a ring!",
+         "likes": 7,
+         "followers": 14264
+        },
+        {
+         "author": null,
+         "text": "Total set up! How is it a player can transfer to a team at end of season. Cant stand Bonner! They will lose to the Valkeries",
+         "likes": 6,
+         "followers": 63
+        },
+        {
+         "author": null,
+         "text": "DeQuitter probably gonna request a trade to Valkyries next",
+         "likes": 6,
+         "followers": 434
+        },
+        {
+         "author": null,
+         "text": "Thank you, DB! ☺️ The perfect VET for Atlanta Dream.",
+         "likes": 5,
+         "followers": 168
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {
+         "author": null,
+         "text": "and don't forget Unrivaled and FIBA 🔥",
+         "likes": 121,
+         "followers": 3389
+        },
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        },
+        {
+         "author": null,
+         "text": "ANGEL REESE IS AN ABSOLUTE FORCE.\n\nHer 2026 WNBA numbers are INSANE.\n\n• 99th percentile in offensive rebounding\n• 97th in defensive rebounding\n• 99th in steals\n• 97th in scoring\n• 91st in assists\n\nElite rebounding. Elite defensive activity. Huge offensive production. Reese is doing EVERYTHING.\nOne of the most complete statistical profiles in the WNBA.\n\nNot sure how to read the chart? Ask us!\nFollow @3PointStats for more basketball analytics!",
+         "likes": 40,
+         "followers": 1917
+        },
+        {
+         "author": null,
+         "text": "KEEP THE REESE PROP COMING",
+         "likes": 28,
+         "followers": 5952
+        },
+        {
+         "author": null,
+         "text": "Good boy admin",
+         "likes": 27,
+         "followers": 13332
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    }
+   ],
+   "signals": []
+  },
+  "GET /api/runs/999/approved": [],
+  "GET /api/runs/998": [],
+  "GET /api/runs/998/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/998/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/998/approved": [],
+  "GET /api/runs/997": [],
+  "GET /api/runs/997/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/997/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/997/approved": [],
+  "GET /api/runs/996": [],
+  "GET /api/runs/996/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/996/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/996/approved": [],
+  "GET /api/runs/995": [],
+  "GET /api/runs/995/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/995/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/995/approved": [],
+  "GET /api/runs/994": [],
+  "GET /api/runs/994/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/994/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/994/approved": [],
+  "GET /api/runs/993": [],
+  "GET /api/runs/993/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/993/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/993/approved": [],
+  "GET /api/runs/992": [],
+  "GET /api/runs/992/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/992/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/992/approved": [],
+  "GET /api/runs/991": [],
+  "GET /api/runs/991/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/991/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/991/approved": [],
+  "GET /api/runs/990": [],
+  "GET /api/runs/990/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/990/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/990/approved": [],
+  "GET /api/runs/989": [],
+  "GET /api/runs/989/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/989/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/989/approved": [],
+  "GET /api/runs/988": [],
+  "GET /api/runs/988/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/988/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/988/approved": [],
+  "GET /api/runs/987": [],
+  "GET /api/runs/987/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/987/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/987/approved": [],
+  "GET /api/runs/986": [],
+  "GET /api/runs/986/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/986/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/986/approved": [],
+  "GET /api/runs/985": [],
+  "GET /api/runs/985/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/985/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/985/approved": [],
+  "GET /api/runs/984": [],
+  "GET /api/runs/984/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/984/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/984/approved": [],
+  "GET /api/runs/983": [],
+  "GET /api/runs/983/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/983/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/983/approved": [],
+  "GET /api/runs/982": [],
+  "GET /api/runs/982/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/982/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/982/approved": [],
+  "GET /api/runs/981": [],
+  "GET /api/runs/981/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/981/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/981/approved": [],
+  "GET /api/runs/980": [],
+  "GET /api/runs/980/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/980/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/980/approved": [],
+  "GET /api/runs/979": [],
+  "GET /api/runs/979/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/979/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/979/approved": [],
+  "GET /api/runs/978": [],
+  "GET /api/runs/978/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/978/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/978/approved": [],
+  "GET /api/runs/977": [],
+  "GET /api/runs/977/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/977/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/977/approved": [],
+  "GET /api/runs/976": [],
+  "GET /api/runs/976/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/976/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/976/approved": [],
+  "GET /api/runs/975": [],
+  "GET /api/runs/975/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/975/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/975/approved": [],
+  "GET /api/runs/974": [],
+  "GET /api/runs/974/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/974/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/974/approved": [],
+  "GET /api/runs/973": [],
+  "GET /api/runs/973/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/973/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/973/approved": [],
+  "GET /api/runs/972": [],
+  "GET /api/runs/972/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/972/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/972/approved": [],
+  "GET /api/runs/971": [],
+  "GET /api/runs/971/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/971/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/971/approved": [],
+  "GET /api/runs/970": [],
+  "GET /api/runs/970/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/970/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/970/approved": [],
+  "GET /api/runs/969": [],
+  "GET /api/runs/969/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/969/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/969/approved": [],
+  "GET /api/runs/968": [],
+  "GET /api/runs/968/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/968/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/968/approved": [],
+  "GET /api/runs/967": [],
+  "GET /api/runs/967/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/967/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/967/approved": [],
+  "GET /api/runs/966": [],
+  "GET /api/runs/966/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/966/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/966/approved": [],
+  "GET /api/runs/965": [],
+  "GET /api/runs/965/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/965/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/965/approved": [],
+  "GET /api/runs/964": [],
+  "GET /api/runs/964/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/964/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/964/approved": [],
+  "GET /api/runs/963": [],
+  "GET /api/runs/963/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/963/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/963/approved": [],
+  "GET /api/runs/962": [],
+  "GET /api/runs/962/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/962/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/962/approved": [],
+  "GET /api/runs/961": [],
+  "GET /api/runs/961/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/961/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/961/approved": [],
+  "GET /api/runs/960": [],
+  "GET /api/runs/960/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/960/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/960/approved": [],
+  "GET /api/runs/959": [],
+  "GET /api/runs/959/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/959/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/959/approved": [],
+  "GET /api/runs/958": [],
+  "GET /api/runs/958/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/958/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/958/approved": [],
+  "GET /api/runs/957": [],
+  "GET /api/runs/957/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/957/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/957/approved": [],
+  "GET /api/runs/956": [],
+  "GET /api/runs/956/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/956/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/956/approved": [],
+  "GET /api/runs/955": [],
+  "GET /api/runs/955/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/955/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/955/approved": [],
+  "GET /api/runs/954": [],
+  "GET /api/runs/954/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/954/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/954/approved": [],
+  "GET /api/runs/953": [],
+  "GET /api/runs/953/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/953/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/953/approved": [],
+  "GET /api/runs/952": [],
+  "GET /api/runs/952/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/952/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/952/approved": [],
+  "GET /api/runs/951": [],
+  "GET /api/runs/951/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/951/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/951/approved": [],
+  "GET /api/runs/950": [],
+  "GET /api/runs/950/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/950/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/950/approved": [],
+  "GET /api/runs/949": [],
+  "GET /api/runs/949/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/949/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/949/approved": [],
+  "GET /api/runs/948": [],
+  "GET /api/runs/948/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/948/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/948/approved": [],
+  "GET /api/runs/947": [],
+  "GET /api/runs/947/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/947/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/947/approved": [],
+  "GET /api/runs/946": [],
+  "GET /api/runs/946/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/946/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/946/approved": [],
+  "GET /api/runs/945": [],
+  "GET /api/runs/945/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/945/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/945/approved": [],
+  "GET /api/runs/944": [],
+  "GET /api/runs/944/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/944/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/944/approved": [],
+  "GET /api/runs/943": [],
+  "GET /api/runs/943/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/943/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/943/approved": [],
+  "GET /api/runs/942": [],
+  "GET /api/runs/942/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/942/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/942/approved": [],
+  "GET /api/runs/941": [],
+  "GET /api/runs/941/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/941/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/941/approved": [],
+  "GET /api/runs/940": [],
+  "GET /api/runs/940/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/940/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/940/approved": [],
+  "GET /api/runs/939": [],
+  "GET /api/runs/939/decisions": {
+   "available": false,
+   "reason": "No decision log."
+  },
+  "GET /api/runs/939/context": {
+   "available": false,
+   "reason": "No trace."
+  },
+  "GET /api/runs/939/approved": []
+ },
+ "errors": {}
+}

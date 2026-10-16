@@ -1,0 +1,11 @@
+{
+ "about": "Fixture scenario 'empty'. Open /?fixture=empty. Each view keeps its data in parts/<view>.empty.json.",
+ "include": [
+  "parts/meta.empty.json",
+  "parts/queue.empty.json",
+  "parts/loop.empty.json",
+  "parts/experiments.empty.json",
+  "parts/memory.empty.json",
+  "parts/evals.empty.json"
+ ]
+}

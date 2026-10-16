@@ -1,0 +1,1024 @@
+/* Shell and shared components. A view's own layout lives in css/views/<view>.css. */
+
+/* --- Shell --------------------------------------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 212px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "rail main"
+    "rail readback";
+  height: 100dvh;
+  overflow: clip; /* nothing inside may widen the page; scrolling happens in .main and the lists */
+}
+
+.rail {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+  padding: var(--s4) var(--s3);
+  background: var(--board-deep);
+  border-right: 1px solid var(--rule);
+  overflow-y: auto;
+}
+
+.brand {
+  display: grid;
+  gap: 2px;
+  padding: var(--s1) var(--s2) 0;
+  text-decoration: none;
+}
+
+.brand-name {
+  font: 700 var(--t-lead) / 1.1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.brand-sub {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.nav {
+  display: grid;
+  gap: var(--s4);
+}
+
+.nav-group {
+  display: grid;
+  gap: 2px;
+}
+
+.nav-group > .label {
+  padding: 0 var(--s2) var(--s1);
+  color: var(--ink-2);
+}
+
+.nav-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 34px;
+  padding: 0 var(--s2);
+  border-radius: var(--r-control);
+  color: var(--ink-2);
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-link[aria-current="page"] {
+  color: var(--ink);
+  background: var(--strip);
+  box-shadow: var(--shadow-strip);
+}
+
+.nav-link[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--ink);
+}
+
+.nav-link .count {
+  font: 700 11px / 1 var(--font-mono);
+  color: var(--ink-2);
+}
+
+.nav-link .count.hot {
+  color: var(--strip);
+  background: var(--ink);
+  padding: 3px 5px;
+  border-radius: 3px;
+}
+
+.nav-link .ext {
+  font: 11px var(--font-mono);
+  color: var(--ink-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:not([aria-current="page"]):hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--strip) 55%, transparent);
+  }
+}
+
+.rail-foot {
+  margin-top: auto;
+  display: grid;
+  gap: var(--s2);
+  padding: 0 var(--s2);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.rail-foot .row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.rail-foot .row span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main {
+  grid-area: main;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.main:focus {
+  outline: none;
+}
+
+/* A page header inside a view: title, a line of context, actions on the right. */
+.viewhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s3) var(--s5);
+  padding: var(--s5) var(--s5) var(--s4);
+}
+
+.viewhead h1 {
+  font: 800 var(--t-title) / 1.15 var(--font-ui);
+  letter-spacing: -0.01em;
+}
+
+.viewhead .sub {
+  margin-top: var(--s1);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.viewhead .actions {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+}
+
+/* --- Readback bar: what the console just did, in the controller's words ------------------- */
+
+.readback {
+  grid-area: readback;
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  min-height: 36px;
+  padding: 0 var(--s5);
+  background: var(--board-deep);
+  border-top: 1px solid var(--rule);
+  font: 12px / 1.3 var(--font-mono);
+  color: var(--ink-2);
+  overflow: hidden;
+}
+
+.readback-text {
+  flex: 1 1 auto;
+  min-width: 16ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.readback-text b {
+  color: var(--ink);
+}
+
+.readback-text .ok {
+  color: var(--cleared);
+}
+
+.readback-text .bad {
+  color: var(--struck);
+}
+
+.readback-chips {
+  display: flex;
+  gap: var(--s1);
+}
+
+.readback-chips:not(:empty) + .readback-hints {
+  display: none;
+}
+
+.readback-chips {
+  flex-wrap: wrap;
+}
+
+.readback-hints {
+  display: flex;
+  gap: var(--s3);
+  white-space: nowrap;
+}
+
+.readback-hints span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* --- Bays: tabs that hold strips by state ------------------------------------------------- */
+
+.bays {
+  display: flex;
+  gap: var(--s1);
+  padding: 0 var(--s5);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bays::-webkit-scrollbar {
+  display: none;
+}
+
+.bay {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: var(--r-strip) var(--r-strip) 0 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: 600 13px / 1 var(--font-ui);
+  white-space: nowrap;
+}
+
+.bay span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--s3);
+}
+
+.bay .n {
+  font: 700 11.5px / 1 var(--font-mono);
+  padding: 0 var(--s2);
+  border-left: 1px solid var(--rule);
+  min-width: 2.4em;
+  justify-content: center;
+}
+
+.bay[aria-selected="true"] {
+  background: var(--strip);
+  color: var(--ink);
+  border-color: var(--rule);
+}
+
+.bay[aria-selected="true"] .n {
+  border-left-color: var(--rule);
+}
+
+.bay.attn .n {
+  color: var(--warn);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bay:not([aria-selected="true"]):hover {
+    color: var(--ink);
+  }
+}
+
+/* --- The strip ---------------------------------------------------------------------------- */
+
+/* A strip is one action on paper, held in a coloured holder that names its lane. */
+.strip {
+  --holder-color: var(--held);
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 10px var(--s3) 11px calc(var(--holder) + var(--s3));
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  box-shadow: var(--shadow-strip);
+  cursor: default;
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+}
+
+.strip::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--holder);
+  background: var(--holder-color);
+}
+
+.strip[data-lane="reply"] {
+  --holder-color: var(--reply);
+}
+
+.strip[data-lane="post"] {
+  --holder-color: var(--post);
+}
+
+.strip[data-lane="human"] {
+  --holder-color: var(--human);
+}
+
+/* Held strips get a hatched holder, like the hatched Eval box on the team's whiteboard. */
+.strip[data-held] {
+  --holder-color: repeating-linear-gradient(-45deg, var(--held) 0 3px, transparent 3px 6px);
+}
+
+.strip[data-held]::before {
+  background: var(--holder-color);
+}
+
+/* Struck: a controller draws a line through the strip. */
+.strip[data-status="killed"] .strip-text {
+  text-decoration: line-through;
+  text-decoration-color: var(--struck);
+  text-decoration-thickness: 2px;
+  color: var(--ink-3);
+}
+
+.strip-top {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.strip-top .label {
+  white-space: nowrap;
+}
+
+.strip-top .where {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.strip-score {
+  font: 700 15px / 1 var(--font-mono);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.strip-score small {
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--ink-3);
+  margin-left: 2px;
+}
+
+.strip-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: var(--t-body);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.strip-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--s2);
+  font: 12px / 1.3 var(--font-ui);
+  color: var(--ink-3);
+  min-width: 0;
+}
+
+.strip-foot > * {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A selected strip is cocked out of line, as controllers slide a strip out to mark it.
+   No transition: j/k moves happen hundreds of times a session. */
+.strip[aria-selected="true"] {
+  transform: translateX(8px);
+  border-color: var(--ink);
+  box-shadow: var(--shadow-lift);
+  z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .strip:not([aria-selected="true"]):hover {
+    border-color: var(--rule-strong);
+  }
+}
+
+/* --- Fields: the ruled cells across the top of a strip ------------------------------------ */
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  background: var(--strip);
+  overflow: hidden;
+}
+
+.field {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  flex: none;
+  padding: 7px var(--s3) 8px;
+  border-left: 1px solid var(--rule);
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* The one free-text cell takes the slack and truncates rather than pushing the others off. */
+.field.grow {
+  flex: 1 1 12ch;
+}
+
+.field.grow .v {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.field:first-child {
+  border-left: 0;
+}
+
+.field .v {
+  font: 700 13px / 1.2 var(--font-mono);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.field .v.ui {
+  font: 600 13.5px / 1.2 var(--font-ui);
+}
+
+
+/* --- Stamps and chips --------------------------------------------------------------------- */
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 7px 2px;
+  font: 700 11px / 1.2 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-2deg);
+  white-space: nowrap;
+}
+
+.stamp.cleared {
+  color: var(--cleared);
+}
+
+.stamp.struck {
+  color: var(--struck);
+}
+
+.stamp.held {
+  color: var(--ink-3);
+  border-style: dashed;
+}
+
+.stamp.ask {
+  color: var(--human);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 0 var(--s2);
+  font: 600 12px / 1 var(--font-ui);
+  color: var(--ink-2);
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+button.chip {
+  transition:
+    transform var(--d-press) var(--ease-out),
+    border-color var(--d-fast) ease,
+    background-color var(--d-fast) ease;
+}
+
+button.chip:active {
+  transform: scale(0.97);
+}
+
+button.chip[aria-pressed="true"] {
+  color: var(--struck);
+  border-color: var(--struck);
+  background: var(--struck-wash);
+}
+
+.chip kbd {
+  font-size: 9.5px;
+  line-height: 1.4;
+  min-width: 1.4em;
+}
+
+.chip.flag {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 45%, var(--rule));
+  background: var(--warn-wash);
+}
+
+.chip.ok {
+  color: var(--cleared);
+  border-color: color-mix(in srgb, var(--cleared) 40%, var(--rule));
+  background: var(--cleared-wash);
+}
+
+.chip.bad {
+  color: var(--struck);
+  border-color: color-mix(in srgb, var(--struck) 40%, var(--rule));
+  background: var(--struck-wash);
+}
+
+/* --- Sections and wells ------------------------------------------------------------------- */
+
+.panel {
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  box-shadow: var(--shadow-strip);
+}
+
+.section {
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s4) var(--s4) var(--s4);
+  border-top: 1px solid var(--rule);
+}
+
+.section:first-child {
+  border-top: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+.section-head h2,
+.section-head h3 {
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.section-head .aside {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.well {
+  padding: var(--s3);
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px var(--s4);
+  font-size: 13.5px;
+}
+
+.kv dt {
+  font: 700 var(--t-label) / 1.9 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.kv dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* --- Meters ------------------------------------------------------------------------------- */
+
+.meter {
+  position: relative;
+  height: 8px;
+  background: var(--strip-inset);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.meter > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink-3);
+  border-radius: 2px;
+}
+
+/* A range: a bar from low to high with a tick at the point estimate. */
+.range {
+  position: relative;
+  height: 14px;
+}
+
+.range::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  height: 2px;
+  background: var(--strip-inset);
+}
+
+.range > .span {
+  position: absolute;
+  top: 5px;
+  height: 4px;
+  background: var(--ink-faint);
+  border-radius: 2px;
+}
+
+.range > .pt {
+  position: absolute;
+  top: 1px;
+  width: 3px;
+  height: 12px;
+  margin-left: -1.5px;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+/* --- Status lamps ------------------------------------------------------------------------- */
+
+.lamp {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rule-strong);
+}
+
+.lamp.on {
+  background: var(--cleared);
+}
+
+.lamp.busy {
+  background: var(--warn);
+}
+
+.lamp.bad {
+  background: var(--struck);
+}
+
+/* --- States: empty, error, loading -------------------------------------------------------- */
+
+.state {
+  display: grid;
+  justify-items: start;
+  gap: var(--s2);
+  max-width: 56ch;
+  padding: var(--s6) var(--s5);
+}
+
+.state h2 {
+  font: 700 var(--t-lead) / 1.3 var(--font-ui);
+}
+
+.state p {
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.state .label {
+  color: var(--ink-2);
+}
+
+.state.error h2 {
+  color: var(--struck);
+}
+
+.state pre {
+  max-width: 100%;
+  overflow-x: auto;
+  font: 12px / 1.5 var(--font-mono);
+}
+
+.notice {
+  display: block;
+  padding: var(--s2) var(--s3);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  background: var(--strip-inset);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--r-strip);
+}
+
+.notice b {
+  color: var(--ink);
+}
+
+.notice.warn {
+  border-color: color-mix(in srgb, var(--warn) 50%, var(--rule));
+  background: var(--warn-wash);
+}
+
+.skeleton {
+  display: block;
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--strip-inset) 0 40%, var(--rule) 50%, var(--strip-inset) 60% 100%) 0 0 / 300% 100%;
+  animation: skeleton-sweep 1.4s linear infinite;
+}
+
+@keyframes skeleton-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* --- Fixture banner, toasts, sheets ------------------------------------------------------- */
+
+.fixture-banner {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 2px var(--s2);
+  font: 700 10.5px / 1.4 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--warn-wash);
+  border: 1px solid color-mix(in srgb, var(--warn) 50%, var(--rule));
+  border-radius: 3px;
+}
+
+.fixture-banner[hidden] {
+  display: none;
+}
+
+.fixture-banner a {
+  font-weight: 400;
+}
+
+.toasts {
+  position: fixed;
+  right: var(--s4);
+  bottom: 52px;
+  z-index: 50;
+  display: grid;
+  gap: var(--s2);
+  justify-items: end;
+  pointer-events: none;
+}
+
+.toast {
+  max-width: min(420px, calc(100vw - 32px));
+  padding: var(--s2) var(--s3);
+  font-size: var(--t-small);
+  color: var(--strip);
+  background: var(--ink);
+  border-radius: var(--r-control);
+  box-shadow: var(--shadow-lift);
+  pointer-events: auto;
+  transition:
+    opacity var(--d-base) var(--ease-out),
+    transform var(--d-base) var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.toast.error {
+  background: var(--struck);
+  color: #fff;
+}
+
+.toast.leaving {
+  opacity: 0;
+  transform: translateY(8px);
+  transition-duration: var(--d-fast);
+}
+
+dialog.sheet {
+  width: min(560px, calc(100vw - 32px));
+  max-height: min(80dvh, 720px);
+  padding: 0;
+  color: var(--ink);
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lift);
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--d-base) var(--ease-out),
+    transform var(--d-base) var(--ease-out),
+    overlay var(--d-base) allow-discrete,
+    display var(--d-base) allow-discrete;
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+dialog.sheet:not([open]) {
+  opacity: 0;
+  transform: scale(0.97);
+  transition-duration: var(--d-fast);
+}
+
+dialog.sheet::backdrop {
+  background: var(--overlay);
+  opacity: 1;
+  transition:
+    opacity var(--d-base) ease,
+    overlay var(--d-base) allow-discrete,
+    display var(--d-base) allow-discrete;
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+dialog.sheet:not([open])::backdrop {
+  opacity: 0;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--rule);
+}
+
+.sheet-head h2 {
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sheet-body {
+  padding: var(--s4);
+  overflow-y: auto;
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--s2) var(--s4);
+  align-items: baseline;
+  font-size: 13.5px;
+}
+
+.keys dt {
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+}
+
+.keys h3 {
+  grid-column: 1 / -1;
+  margin-top: var(--s3);
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.keys h3:first-child {
+  margin-top: 0;
+}
+
+/* --- Small screens ------------------------------------------------------------------------ */
+
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rail"
+      "main"
+      "readback";
+  }
+
+  .rail {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--s3);
+    padding: var(--s2) var(--s3);
+    padding-top: max(var(--s2), env(safe-area-inset-top));
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .brand-sub,
+  .nav-group > .label,
+  .rail-foot {
+    display: none;
+  }
+
+  .brand-name {
+    font-size: 13px;
+  }
+
+  .nav,
+  .nav-group {
+    display: flex;
+    gap: 2px;
+  }
+
+  .nav-link {
+    white-space: nowrap;
+    grid-template-columns: auto auto;
+  }
+
+  .nav-link[aria-current="page"]::before {
+    display: none;
+  }
+
+  .viewhead {
+    padding: var(--s4) var(--s3) var(--s3);
+  }
+
+  .bays {
+    padding: 0 var(--s3);
+  }
+
+  .readback {
+    padding: 0 var(--s3);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .readback-hints {
+    display: none;
+  }
+
+  .readback-text {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+  .btn:active:not(:disabled),
+  button.chip:active {
+    transform: none;
+  }
+  .toast,
+  dialog.sheet {
+    @starting-style {
+      transform: none;
+    }
+  }
+  .toast.leaving,
+  dialog.sheet:not([open]) {
+    transform: none;
+  }
+}

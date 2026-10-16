@@ -1,0 +1,497 @@
+/* Eval reports: a backtest on paper, the confounded measures in their own dashed panel, then
+   fault verdicts. Plots come from components/ci.js. */
+
+.ev {
+  container: ev / inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  padding: 0 var(--s5) var(--s6);
+}
+
+@media (max-width: 860px) {
+  .ev {
+    padding: 0 var(--s3) var(--s5);
+  }
+}
+
+.ev .section > *,
+.ev-report > * {
+  min-width: 0;
+}
+
+.ev-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.ev-pick .select {
+  max-width: min(420px, 70vw);
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.ev-report {
+  overflow: hidden;
+}
+
+.ev-fields {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.ev-fields .v.ev-wrap {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 28ch;
+}
+
+/* Segment tabs sit on a rule so the selected one reads as attached to the report below. */
+.ev-segs {
+  padding: var(--s3) var(--s4) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ev-bays {
+  padding: 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ev-bays .bay {
+  margin-bottom: -1px;
+}
+
+.ev-bays .bay[aria-selected="true"] {
+  background: var(--strip);
+}
+
+.ev-bays .bay:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ev-segnote {
+  padding: var(--s2) 0 0;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.ev-segs + .section {
+  border-top: 0;
+}
+
+.ev-note,
+.ev-legend {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+
+.ev-note code,
+.ev-empty code,
+.ev .state code {
+  overflow-wrap: anywhere;
+}
+
+/* --- Tables ------------------------------------------------------------------------------- */
+
+.ev-tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  background: var(--strip);
+}
+
+.ev-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ev-table th,
+.ev-table td {
+  padding: 6px var(--s2);
+  border-top: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+  font-weight: 400;
+}
+
+.ev-table thead th {
+  border-top: 0;
+  font: 700 var(--t-label) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  vertical-align: bottom;
+}
+
+.ev-table thead th small {
+  display: block;
+  margin-top: 2px;
+  font: 400 11px / 1.3 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ev-table .grp th {
+  font: 700 var(--t-label) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--strip-inset);
+}
+
+.ev-grpname {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.ev-table .r {
+  text-align: right;
+}
+
+.ev-table td.num {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ev-table td small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.ev-table tfoot td {
+  border-top: 0;
+  padding-top: var(--s1);
+}
+
+.ev-pname {
+  display: block;
+  min-width: 7rem;
+  max-width: 22rem;
+  font-size: 12px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* Forest plots: the plot column carries the gridlines, so its cells drop vertical padding and
+   the plot fills the row. */
+.ev-forest td.ev-plot,
+.ev-forest th.ev-plot {
+  width: 56%;
+  min-width: 150px;
+  padding: 0 var(--s3);
+  vertical-align: middle;
+}
+
+.ev-forest td.ev-plot .ci {
+  height: 34px;
+}
+
+.ev-compact td.ev-plot .ci {
+  height: 28px;
+}
+
+.ev-compact tbody td,
+.ev-compact tbody th {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.ev-forest tbody th[scope="row"],
+.ev-forest tbody td.num {
+  vertical-align: middle;
+}
+
+.ev-noresult {
+  font-size: 12px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.ev-fail {
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.ev-controls td {
+  min-width: 118px;
+}
+
+.ev-cell {
+  display: grid;
+  gap: 3px;
+}
+
+.ev-cell .num {
+  font-weight: 700;
+}
+
+.ev-cell .num small {
+  display: inline;
+  margin-left: 4px;
+}
+
+.ev-notes .ev-failcell {
+  min-width: 14rem;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+@container ev (max-width: 560px) {
+  .ev-pairs {
+    display: none;
+  }
+  .ev-forest td.ev-plot,
+  .ev-forest th.ev-plot {
+    min-width: 110px;
+    padding: 0 var(--s2);
+  }
+  .ev-pname {
+    min-width: 0;
+  }
+}
+
+/* --- Confounded measures: visibly apart from the headline -------------------------------- */
+
+.ev-confounded {
+  background: var(--strip-inset);
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--warn) 50%, var(--rule));
+  box-shadow: none;
+}
+
+.ev-confounded .section-head {
+  align-items: center;
+}
+
+/* --- Fault verdicts ----------------------------------------------------------------------- */
+
+.ev-fhead .ev-pick,
+.ev-fhead .ev-file {
+  margin-left: auto;
+}
+
+.ev-file {
+  font-size: 11px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.ev-faulthead {
+  display: grid;
+  gap: var(--s1);
+}
+
+.ev-fix {
+  font-size: 14px;
+  text-wrap: pretty;
+}
+
+.ev-faultgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: start;
+}
+
+@container ev (min-width: 900px) {
+  .ev-faultgrid {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+}
+
+.ev-counts {
+  display: grid;
+  gap: 2px;
+}
+
+.ev-counts ul {
+  display: grid;
+  gap: 2px;
+  margin-bottom: var(--s2);
+}
+
+.ev-count {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px var(--s2);
+  width: 100%;
+  padding: 6px var(--s2);
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-control);
+  transition:
+    transform var(--d-press) var(--ease-out),
+    border-color var(--d-fast) ease;
+}
+
+.ev-count:active {
+  transform: scale(0.98);
+}
+
+.ev-count[aria-pressed="true"] {
+  background: var(--strip-inset);
+  border-color: var(--ink);
+}
+
+.ev-count-all {
+  margin-top: var(--s1);
+}
+
+.ev-count-all .ev-count-word {
+  font: 700 var(--t-label) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.ev-count-word {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ev-count[data-zero] .ev-count-word,
+.ev-count[data-zero] .ev-count-n {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+.ev-count-gist {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.ev-count-n {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ev-count .meter {
+  grid-column: 1 / -1;
+  height: 4px;
+  margin-top: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ev-count:not([aria-pressed="true"]):hover {
+    border-color: var(--rule-strong);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-count:active {
+    transform: none;
+  }
+}
+
+.ev-vtable th[scope="row"] {
+  min-width: 9rem;
+  max-width: 14rem;
+}
+
+.ev-action {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.ev-stage {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.ev-vtable .chip {
+  white-space: normal;
+  min-height: 22px;
+}
+
+.ev-outcome {
+  display: grid;
+  gap: 4px;
+  min-width: 140px;
+}
+
+.ev-outcome .num {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.ev-outcome .num small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.ev-why {
+  min-width: 16rem;
+  overflow-wrap: anywhere;
+}
+
+.ev-why ul {
+  display: grid;
+  gap: 2px;
+}
+
+.ev-why li {
+  font-size: 12.5px;
+}
+
+.ev-missing {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--warn);
+}
+
+.ev-evid {
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.ev-none {
+  padding: var(--s4) var(--s2);
+}
+
+.ev-problems {
+  display: block;
+}
+
+.ev-problems ul {
+  margin-top: var(--s1);
+  display: grid;
+  gap: 2px;
+}
+
+.ev-problems li {
+  overflow-wrap: anywhere;
+}
+
+.ev-inline-error {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ev-skel-row {
+  display: grid;
+  grid-template-columns: 10rem minmax(0, 1fr) 6rem;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+}

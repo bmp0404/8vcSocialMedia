@@ -1,0 +1,11 @@
+{
+ "about": "Fixture scenario 'error'. Open /?fixture=error. Each view keeps its data in parts/<view>.error.json.",
+ "include": [
+  "parts/meta.error.json",
+  "parts/queue.error.json",
+  "parts/loop.error.json",
+  "parts/experiments.error.json",
+  "parts/memory.error.json",
+  "parts/evals.error.json"
+ ]
+}

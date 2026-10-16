@@ -1,0 +1,392 @@
+/* The post preview. Inside .xstage everything follows X's own look (palette, Chirp's fallback
+   stack, 15/20 text, 40px avatars, 16px card radius) so a draft reads the way it will on X.
+   Outside it, the console's own system applies. */
+
+.xstage {
+  display: grid;
+  background: var(--x-bg);
+  color: var(--x-ink);
+  border: 1px solid var(--x-line);
+  border-radius: var(--r-x);
+  font-family: var(--font-x);
+  overflow: hidden;
+}
+
+.xpost,
+.xreply,
+.xprofile {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.xpost + .xpost {
+  border-top: 1px solid var(--x-line);
+}
+
+.xpost.ours {
+  position: relative;
+  background: color-mix(in srgb, var(--x-blue) 4%, var(--x-bg));
+}
+
+/* The connector X draws between a post and the reply under it. */
+.xthread-line {
+  height: 0;
+  position: relative;
+}
+
+.xthread-line::before {
+  content: "";
+  position: absolute;
+  left: 35px;
+  top: -14px;
+  width: 2px;
+  height: 26px;
+  background: var(--x-line);
+}
+
+.xav {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font: 700 16px / 1 var(--font-x);
+  color: #fff;
+  background: hsl(var(--h, 210) 32% 46%);
+  user-select: none;
+}
+
+.xav.ours {
+  background: var(--ink);
+  color: var(--strip);
+}
+
+.xbody {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.xhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 6px;
+  font-size: 15px;
+  line-height: 20px;
+  min-width: 0;
+}
+
+.xname {
+  font-weight: 700;
+  color: var(--x-ink);
+  overflow-wrap: anywhere;
+}
+
+.xmuted {
+  color: var(--x-muted);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.xopen {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--x-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .xopen:hover {
+    color: var(--x-blue);
+    text-decoration: underline;
+  }
+}
+
+.xreplying {
+  font-size: 15px;
+}
+
+.xtext {
+  margin: 0;
+  font: 400 var(--t-x) / 20px var(--font-x);
+  color: var(--x-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.xmissing {
+  color: var(--x-muted);
+  font-style: italic;
+}
+
+.xmissing a {
+  color: var(--x-blue);
+}
+
+.xlink {
+  color: var(--x-blue);
+}
+
+.xmetrics {
+  display: flex;
+  justify-content: space-between;
+  max-width: 425px;
+  margin-top: 6px;
+  color: var(--x-muted);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.xmetrics.small {
+  justify-content: flex-start;
+  margin-top: 2px;
+}
+
+.xm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+}
+
+.xi {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.xvel {
+  margin-top: 6px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--x-muted);
+}
+
+.xvel .label {
+  color: var(--x-muted);
+  margin-right: 4px;
+}
+
+.xpost.quoted {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--x-line);
+  border-radius: var(--r-x);
+}
+
+.xpost.quoted .xav {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+}
+
+.xthread {
+  display: grid;
+  border-top: 1px solid var(--x-line);
+  padding-top: 10px;
+}
+
+.xthread > .label {
+  padding: 0 16px 2px;
+  color: var(--x-muted);
+}
+
+.xreply {
+  padding: 8px 16px;
+  opacity: 0.86;
+}
+
+.xreply .xav {
+  width: 32px;
+  height: 32px;
+  font-size: 13px;
+  justify-self: center;
+}
+
+.xreply .xtext {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.xprofile {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.xfollow {
+  padding: 0 16px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  font: 700 14px / 1 var(--font-x);
+  color: var(--x-bg);
+  background: var(--x-ink);
+  border-radius: 999px;
+}
+
+/* X's character ring. */
+.xring {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+}
+
+.xring svg {
+  width: 22px;
+  height: 22px;
+}
+
+.xring circle {
+  fill: none;
+  stroke-width: 2.4;
+}
+
+.xring .track {
+  stroke: var(--x-line);
+}
+
+.xring .fill {
+  stroke: var(--x-blue);
+  stroke-linecap: round;
+}
+
+.xring.near .fill {
+  stroke: var(--x-yellow);
+}
+
+.xring.over .fill {
+  stroke: var(--x-red);
+}
+
+.xring-left {
+  position: absolute;
+  font: 600 9.5px / 1 var(--font-x);
+  color: var(--x-muted);
+}
+
+.xring.over .xring-left {
+  color: var(--x-red);
+}
+
+/* --- The editor: a textarea over a mirror that underlines what the gate flagged ----------- */
+
+.editor {
+  display: grid;
+  gap: 6px;
+}
+
+.ed-wrap {
+  position: relative;
+  display: grid;
+}
+
+.ed-wrap > * {
+  grid-area: 1 / 1;
+}
+
+.ed-mirror,
+.ed-input {
+  margin: 0;
+  padding: 6px 8px;
+  min-height: 52px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ed-mirror {
+  color: transparent;
+  pointer-events: none;
+}
+
+.ed-mirror mark {
+  color: transparent;
+  background: color-mix(in srgb, var(--x-yellow) 32%, transparent);
+  border-bottom: 2px solid var(--warn);
+  border-radius: 2px;
+}
+
+.ed-input {
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  background: transparent;
+  border-color: color-mix(in srgb, var(--x-blue) 18%, var(--x-line));
+  color: var(--x-ink);
+  caret-color: var(--x-blue);
+  transition: border-color var(--d-fast) ease;
+}
+
+.ed-input:focus {
+  outline: none;
+  border-color: var(--x-blue);
+  box-shadow: 0 0 0 1px var(--x-blue);
+}
+
+.ed-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s3);
+  font-family: var(--font-ui);
+}
+
+.ed-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--x-muted);
+}
+
+.ed-count .num {
+  font-size: 12px;
+}
+
+.ed-gate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+}
+
+.ed-bar .btn {
+  margin-left: auto;
+}
+
+.ed-findings {
+  display: grid;
+  gap: 3px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.ed-findings:empty {
+  display: none;
+}
+
+.ed-findings li .label {
+  color: var(--warn);
+  margin-right: 4px;
+}
+
+@media (pointer: coarse) {
+  .ed-mirror,
+  .ed-input {
+    font-size: 16px;
+  }
+}

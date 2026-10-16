@@ -1,0 +1,11 @@
+{
+ "about": "Fixture scenario 'stress'. Open /?fixture=stress. Each view keeps its data in parts/<view>.stress.json.",
+ "include": [
+  "parts/meta.stress.json",
+  "parts/queue.stress.json",
+  "parts/loop.stress.json",
+  "parts/experiments.stress.json",
+  "parts/memory.stress.json",
+  "parts/evals.stress.json"
+ ]
+}

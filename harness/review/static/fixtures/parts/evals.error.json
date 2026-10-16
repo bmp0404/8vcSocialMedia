@@ -1,0 +1,9 @@
+{
+ "routes": {},
+ "errors": {
+  "GET /api/evals": {
+   "status": 500,
+   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+  }
+ }
+}

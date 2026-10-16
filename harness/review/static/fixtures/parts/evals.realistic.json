@@ -1,0 +1,3634 @@
+{
+ "routes": {
+  "GET /api/evals": {
+   "available": true,
+   "reports": [
+    {
+     "file": "backtest-20261015T205419-anthropic.json",
+     "at": "2026-10-15T20:54:19",
+     "provider": "anthropic",
+     "models": [
+      "claude-sonnet-5-5",
+      "gpt-6.1-sol"
+     ],
+     "protocol": "v2: within-account viral vs Deadweight, one post per model call",
+     "n_sampled": 144,
+     "predictors": [
+      "random",
+      "account",
+      "media",
+      "length",
+      "tfidf",
+      "panel@claude-sonnet-5-5",
+      "panel@gpt-6.1-sol",
+      "reader@claude-sonnet-5-5",
+      "reader@gpt-6.1-sol",
+      "panel@mean",
+      "reader@mean"
+     ]
+    }
+   ],
+   "problems": []
+  },
+  "GET /api/evals/backtest-20261015T205419-anthropic.json": {
+   "at": "2026-10-15T20:54:19",
+   "provider": "anthropic",
+   "models": [
+    "claude-sonnet-5-5",
+    "gpt-6.1-sol"
+   ],
+   "panel_path": "/Users/samgu/Programming Projects/8vcSocialMedia-worktrees/eval/eval/panels/devtools.json",
+   "memory": "on",
+   "config": {
+    "min_chars": 40,
+    "thread_gap_minutes": 3.0,
+    "min_age_hours": 48.0,
+    "per_tier": 4,
+    "n_boot": 2000,
+    "seed": 0,
+    "models": [
+     "claude-sonnet-5-5",
+     "gpt-6.1-sol"
+    ],
+    "batch": 1,
+    "judge_references_per_class": 3,
+    "memory": "on"
+   },
+   "n_eligible": 848,
+   "dropped": {
+    "unscorable_text_or_reply": 388,
+    "thread_continuation": 316,
+    "younger_than_48h": 113
+   },
+   "rescored_at": "2026-10-15T21:28:47",
+   "enriched_csv": "/tmp/eval-ctx/enriched.csv",
+   "protocol": "v2: within-account viral vs Deadweight, one post per model call",
+   "n_sampled": 144,
+   "n_scored_by_all": 144,
+   "sampled_categories": {
+    "Super Viral": 9,
+    "Medium Viral": 64,
+    "Deadweight": 71
+   },
+   "boost_flags": "loaded from the context worker's enriched CSV",
+   "seed": 0,
+   "results": {
+    "random": {
+     "relative": false,
+     "seconds": 0.0,
+     "failures": [],
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.4947916666666667,
+       "ci95": [
+        0.39351851851851855,
+        0.600896860986547
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.5066666666666667,
+       "ci95": [
+        0.36363636363636365,
+        0.6533333333333333
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.5327868852459017,
+       "ci95": [
+        0.43333333333333335,
+        0.6428571428571429
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5365853658536586,
+       "ci95": [
+        0.43820224719101125,
+        0.6521739130434783
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5428571428571428,
+       "ci95": [
+        0.42592592592592593,
+        0.6630434782608695
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.5370370370370371,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": -0.02271414305737491,
+       "super_viral_vs_rest_auc": 0.5901234567901235,
+       "super_vs_medium_auc": 0.6145833333333334
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.49411764705882355,
+       "ci95": [
+        0.39,
+        0.6082474226804123
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.5,
+       "ci95": [
+        0.3220338983050847,
+        0.6779661016949152
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.5309734513274337,
+       "ci95": [
+        0.4225352112676056,
+        0.6538461538461539
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5211267605633803,
+       "ci95": [
+        0.4166666666666667,
+        0.6363636363636364
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5625,
+       "ci95": [
+        0.4406779661016949,
+        0.6756756756756757
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.5,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": -0.054584380700688585,
+       "super_viral_vs_rest_auc": 0.5491071428571429,
+       "super_vs_medium_auc": 0.5714285714285714
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.4273211456863912,
+      "cross_account_spearman_range95": [
+       -0.13986013986013987,
+       0.8280752728705546
+      ]
+     }
+    },
+    "account": {
+     "relative": false,
+     "seconds": 0.0,
+     "failures": [],
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.5055555555555555,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.2006916700944085,
+       "super_viral_vs_rest_auc": 0.5946502057613169,
+       "super_vs_medium_auc": 0.5347222222222222
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5,
+       "ci95": [
+        0.5,
+        0.5
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.5107142857142857,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.22364361091448945,
+       "super_viral_vs_rest_auc": 0.5647321428571429,
+       "super_vs_medium_auc": 0.49878934624697335
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.40799768298270056,
+      "cross_account_spearman_range95": [
+       0.06601056253507603,
+       0.6693419514856722
+      ]
+     }
+    },
+    "media": {
+     "relative": false,
+     "seconds": 0.0,
+     "failures": [],
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.7369791666666666,
+       "ci95": [
+        0.6305418719211823,
+        0.839572192513369
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.6333333333333333,
+       "ci95": [
+        0.5714285714285714,
+        0.6951219512195121
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.7090163934426229,
+       "ci95": [
+        0.5669291338582677,
+        0.8555555555555555
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.573170731707317,
+       "ci95": [
+        0.5,
+        0.6513157894736842
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5214285714285715,
+       "ci95": [
+        0.3968253968253968,
+        0.6463414634146342
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.7074074074074074,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.4115451662833611,
+       "super_viral_vs_rest_auc": 0.6135802469135803,
+       "super_vs_medium_auc": 0.4861111111111111
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.7323529411764705,
+       "ci95": [
+        0.6062176165803109,
+        0.8360655737704918
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.6209677419354839,
+       "ci95": [
+        0.5638297872340425,
+        0.676923076923077
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.7123893805309734,
+       "ci95": [
+        0.5541666666666667,
+        0.8547008547008547
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5774647887323944,
+       "ci95": [
+        0.5,
+        0.6694915254237288
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5390625,
+       "ci95": [
+        0.4186046511627907,
+        0.6491228070175439
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.7067901234567903,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.3771205323150592,
+       "super_viral_vs_rest_auc": 0.55859375,
+       "super_vs_medium_auc": 0.42736077481840196
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.5773622851790792,
+      "cross_account_spearman_range95": [
+       0.31863474626616217,
+       0.7487085117483543
+      ]
+     }
+    },
+    "length": {
+     "relative": false,
+     "seconds": 0.0,
+     "failures": [],
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.6796875,
+       "ci95": [
+        0.5413043478260869,
+        0.8179190751445087
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.6666666666666666,
+       "ci95": [
+        0.49230769230769234,
+        0.85
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.6516393442622951,
+       "ci95": [
+        0.49206349206349204,
+        0.8166666666666667
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.47560975609756095,
+       "ci95": [
+        0.38235294117647056,
+        0.5733333333333334
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.6,
+       "ci95": [
+        0.5098039215686274,
+        0.6911764705882353
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.6388888888888888,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.2430873272402388,
+       "super_viral_vs_rest_auc": 0.460082304526749,
+       "super_vs_medium_auc": 0.3671875
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.7147058823529412,
+       "ci95": [
+        0.5823529411764706,
+        0.8325688073394495
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.7258064516129032,
+       "ci95": [
+        0.5535714285714286,
+        0.8867924528301887
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.6858407079646017,
+       "ci95": [
+        0.5303030303030303,
+        0.84375
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.4647887323943662,
+       "ci95": [
+        0.36507936507936506,
+        0.574468085106383
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.640625,
+       "ci95": [
+        0.5365853658536586,
+        0.7446808510638298
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.6759259259259259,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.27345254492353943,
+       "super_viral_vs_rest_auc": 0.5463169642857143,
+       "super_vs_medium_auc": 0.4430992736077482
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": -0.13986013986013987,
+      "cross_account_spearman_range95": [
+       -0.5034965034965035,
+       0.21441157892974216
+      ]
+     }
+    },
+    "tfidf": {
+     "relative": false,
+     "seconds": 3.6,
+     "failures": [],
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.671875,
+       "ci95": [
+        0.5459183673469388,
+        0.7990430622009569
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.7066666666666667,
+       "ci95": [
+        0.57,
+        0.8548387096774194
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.6229508196721312,
+       "ci95": [
+        0.46153846153846156,
+        0.7770700636942676
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.45121951219512196,
+       "ci95": [
+        0.3333333333333333,
+        0.5625
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.6428571428571429,
+       "ci95": [
+        0.5362318840579711,
+        0.75
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.6296296296296297,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.2184340070881584,
+       "super_viral_vs_rest_auc": 0.5415637860082304,
+       "super_vs_medium_auc": 0.5086805555555556
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.6294117647058823,
+       "ci95": [
+        0.4935897435897436,
+        0.7615894039735099
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.6451612903225806,
+       "ci95": [
+        0.5192307692307693,
+        0.8
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.5929203539823009,
+       "ci95": [
+        0.43564356435643564,
+        0.7575757575757576
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.4225352112676056,
+       "ci95": [
+        0.29411764705882354,
+        0.5471698113207547
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.640625,
+       "ci95": [
+        0.5223880597014925,
+        0.7666666666666667
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.6111111111111112,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.16475442151181396,
+       "super_viral_vs_rest_auc": 0.43638392857142855,
+       "super_vs_medium_auc": 0.4092009685230024
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.17482517482517482,
+      "cross_account_spearman_range95": [
+       -0.07005264683383462,
+       0.40559440559440557
+      ]
+     }
+    },
+    "panel@claude-sonnet-5-5": {
+     "relative": false,
+     "seconds": 26.2,
+     "failures": [],
+     "model_info": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5"
+     },
+     "calls": 144,
+     "retest": {
+      "n_posts": 40,
+      "spearman_between_runs": 0.9317243332098334,
+      "mean_abs_diff": 0.014225000000000002
+     },
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.796875,
+       "ci95": [
+        0.7237903225806451,
+        0.8862275449101796
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.8133333333333334,
+       "ci95": [
+        0.7235294117647059,
+        0.9104477611940298
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.7540983606557377,
+       "ci95": [
+        0.6529850746268657,
+        0.8764705882352941
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5060975609756098,
+       "ci95": [
+        0.3482142857142857,
+        0.6568627450980392
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.4714285714285714,
+       "ci95": [
+        0.33636363636363636,
+        0.6041666666666666
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.7592592592592593,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5574805896139626,
+       "super_viral_vs_rest_auc": 0.8469135802469135,
+       "super_vs_medium_auc": 0.7421875
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.788235294117647,
+       "ci95": [
+        0.7088235294117647,
+        0.8873239436619719
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.8064516129032258,
+       "ci95": [
+        0.7,
+        0.9166666666666666
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.7610619469026548,
+       "ci95": [
+        0.6595744680851063,
+        0.8910891089108911
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5211267605633803,
+       "ci95": [
+        0.34545454545454546,
+        0.68
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.4375,
+       "ci95": [
+        0.3148148148148148,
+        0.5821917808219178
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.7592592592592593,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5531592795595476,
+       "super_viral_vs_rest_auc": 0.82421875,
+       "super_vs_medium_auc": 0.7046004842615012
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.7762237762237763,
+      "cross_account_spearman_range95": [
+       0.43356643356643354,
+       0.9001765118147749
+      ]
+     }
+    },
+    "panel@gpt-6.1-sol": {
+     "relative": false,
+     "seconds": 60.0,
+     "failures": [],
+     "model_info": {
+      "provider": "anthropic",
+      "model": "gpt-6.1-sol"
+     },
+     "calls": 144,
+     "retest": {
+      "n_posts": 40,
+      "spearman_between_runs": 0.9863387228049311,
+      "mean_abs_diff": 0.013175000000000001
+     },
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8541666666666666,
+       "ci95": [
+        0.7586206896551724,
+        0.9502762430939227
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.8133333333333334,
+       "ci95": [
+        0.6875,
+        0.925
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.7950819672131147,
+       "ci95": [
+        0.6709677419354839,
+        0.9454545454545454
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5,
+       "ci95": [
+        0.3872549019607843,
+        0.6090909090909091
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5285714285714286,
+       "ci95": [
+        0.36666666666666664,
+        0.6944444444444444
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.7962962962962963,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5073804914378345,
+       "super_viral_vs_rest_auc": 0.7666666666666667,
+       "super_vs_medium_auc": 0.6354166666666666
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8647058823529412,
+       "ci95": [
+        0.7777777777777778,
+        0.9488636363636364
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.8387096774193549,
+       "ci95": [
+        0.7361111111111112,
+        0.9315068493150684
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.8230088495575221,
+       "ci95": [
+        0.7129629629629629,
+        0.9523809523809523
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.49295774647887325,
+       "ci95": [
+        0.3561643835616438,
+        0.6140350877192983
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5,
+       "ci95": [
+        0.3229166666666667,
+        0.685
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.7962962962962963,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5082103813163567,
+       "super_viral_vs_rest_auc": 0.7332589285714286,
+       "super_vs_medium_auc": 0.5871670702179177
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.606710432444202,
+      "cross_account_spearman_range95": [
+       0.37478166056101525,
+       0.8301238649809403
+      ]
+     }
+    },
+    "reader@claude-sonnet-5-5": {
+     "relative": false,
+     "seconds": 19.4,
+     "failures": [],
+     "model_info": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5"
+     },
+     "calls": 144,
+     "retest": {
+      "n_posts": 40,
+      "spearman_between_runs": 0.8369478465476818,
+      "mean_abs_diff": 0.0125
+     },
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.71875,
+       "ci95": [
+        0.6405622489959839,
+        0.8087248322147651
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.72,
+       "ci95": [
+        0.6194029850746269,
+        0.83125
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.6967213114754098,
+       "ci95": [
+        0.5929203539823009,
+        0.8072916666666666
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5548780487804879,
+       "ci95": [
+        0.4051724137931034,
+        0.6911764705882353
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.5571428571428572,
+       "ci95": [
+        0.47540983606557374,
+        0.6419753086419753
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.7861111111111112,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.49830187615774135,
+       "super_viral_vs_rest_auc": 0.7415637860082305,
+       "super_vs_medium_auc": 0.6423611111111112
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.6941176470588235,
+       "ci95": [
+        0.6129032258064516,
+        0.7897727272727273
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.6774193548387096,
+       "ci95": [
+        0.5616438356164384,
+        0.8090909090909091
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.6902654867256637,
+       "ci95": [
+        0.5878378378378378,
+        0.8012820512820513
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5704225352112676,
+       "ci95": [
+        0.41875,
+        0.7051282051282052
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.546875,
+       "ci95": [
+        0.45901639344262296,
+        0.6507936507936508
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.7675925925925926,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5068923345784004,
+       "super_viral_vs_rest_auc": 0.7181919642857143,
+       "super_vs_medium_auc": 0.6089588377723971
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.4720280119642767,
+      "cross_account_spearman_range95": [
+       0.14816194208498976,
+       0.6816469558471056
+      ]
+     }
+    },
+    "reader@gpt-6.1-sol": {
+     "relative": false,
+     "seconds": 49.8,
+     "failures": [],
+     "model_info": {
+      "provider": "anthropic",
+      "model": "gpt-6.1-sol"
+     },
+     "calls": 144,
+     "retest": {
+      "n_posts": 40,
+      "spearman_between_runs": 0.8133306828264799,
+      "mean_abs_diff": 0.015500000000000003
+     },
+     "source_run_at": "2026-10-15T20:54:19",
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8229166666666666,
+       "ci95": [
+        0.7486772486772487,
+        0.9029850746268657
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.8066666666666666,
+       "ci95": [
+        0.7164179104477612,
+        0.89375
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.8114754098360656,
+       "ci95": [
+        0.7094594594594594,
+        0.9134615384615384
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.524390243902439,
+       "ci95": [
+        0.4329268292682927,
+        0.608433734939759
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.6214285714285714,
+       "ci95": [
+        0.4928571428571429,
+        0.7313432835820896
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.8333333333333334,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.6094818932080813,
+       "super_viral_vs_rest_auc": 0.8094650205761317,
+       "super_vs_medium_auc": 0.6970486111111112
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8117647058823529,
+       "ci95": [
+        0.734375,
+        0.9032258064516129
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.7903225806451613,
+       "ci95": [
+        0.6779661016949152,
+        0.8851351351351351
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.8141592920353983,
+       "ci95": [
+        0.7086330935251799,
+        0.9245283018867925
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5140845070422535,
+       "ci95": [
+        0.4,
+        0.6172839506172839
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.609375,
+       "ci95": [
+        0.4745762711864407,
+        0.7327586206896551
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.8333333333333334,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.6186510745877368,
+       "super_viral_vs_rest_auc": 0.7522321428571429,
+       "super_vs_medium_auc": 0.5980629539951574
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.623033246356214,
+      "cross_account_spearman_range95": [
+       0.36434380944823747,
+       0.8084470891712846
+      ]
+     }
+    },
+    "panel@mean": {
+     "derived": true,
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8359375,
+       "ci95": [
+        0.75,
+        0.9338235294117647
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.82,
+       "ci95": [
+        0.704225352112676,
+        0.9322033898305084
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.7909836065573771,
+       "ci95": [
+        0.6785714285714286,
+        0.9308510638297872
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5304878048780488,
+       "ci95": [
+        0.3888888888888889,
+        0.6666666666666666
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.4714285714285714,
+       "ci95": [
+        0.3090909090909091,
+        0.631578947368421
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.7962962962962963,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5581511340641935,
+       "super_viral_vs_rest_auc": 0.8193415637860082,
+       "super_vs_medium_auc": 0.6987847222222222
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8411764705882353,
+       "ci95": [
+        0.7554585152838428,
+        0.9312977099236641
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.8387096774193549,
+       "ci95": [
+        0.734375,
+        0.94
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.8141592920353983,
+       "ci95": [
+        0.704225352112676,
+        0.9493670886075949
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5140845070422535,
+       "ci95": [
+        0.3333333333333333,
+        0.6666666666666666
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.4375,
+       "ci95": [
+        0.27450980392156865,
+        0.6097560975609756
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.7962962962962963,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.5589106175392631,
+       "super_viral_vs_rest_auc": 0.7840401785714286,
+       "super_vs_medium_auc": 0.6404358353510896
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.7202797202797203,
+      "cross_account_spearman_range95": [
+       0.48951048951048953,
+       0.8741258741258742
+      ]
+     }
+    },
+    "reader@mean": {
+     "derived": true,
+     "all": {
+      "n_posts": 144,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.828125,
+       "ci95": [
+        0.7465437788018433,
+        0.9155844155844156
+       ],
+       "n_pairs": 192
+      },
+      "same_media_status": {
+       "value": 0.82,
+       "ci95": [
+        0.7239583333333334,
+        0.9180327868852459
+       ],
+       "n_pairs": 75
+      },
+      "same_launch_type": {
+       "value": 0.8073770491803278,
+       "ci95": [
+        0.6958041958041958,
+        0.9235294117647059
+       ],
+       "n_pairs": 122
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5487804878048781,
+       "ci95": [
+        0.3974358974358974,
+        0.6864406779661016
+       ],
+       "n_pairs": 82
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.6214285714285714,
+       "ci95": [
+        0.46078431372549017,
+        0.7586206896551724
+       ],
+       "n_pairs": 70
+      },
+      "top_pick_is_viral": {
+       "value": 0.8425925925925926,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5055555555555555
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.6091287954858275,
+       "super_viral_vs_rest_auc": 0.7983539094650206,
+       "super_vs_medium_auc": 0.6814236111111112
+      }
+     },
+     "without_boost_suspect": {
+      "n_posts": 135,
+      "n_accounts": 27,
+      "headline_viral_vs_deadweight_auc": {
+       "value": 0.8176470588235294,
+       "ci95": [
+        0.7312138728323699,
+        0.9166666666666666
+       ],
+       "n_pairs": 170
+      },
+      "same_media_status": {
+       "value": 0.7983870967741935,
+       "ci95": [
+        0.684931506849315,
+        0.9076923076923077
+       ],
+       "n_pairs": 62
+      },
+      "same_launch_type": {
+       "value": 0.8097345132743363,
+       "ci95": [
+        0.6981981981981982,
+        0.9293478260869565
+       ],
+       "n_pairs": 113
+      },
+      "viral_vs_viral_by_engagement": {
+       "value": 0.5563380281690141,
+       "ci95": [
+        0.38235294117647056,
+        0.7068965517241379
+       ],
+       "n_pairs": 71
+      },
+      "deadweight_vs_deadweight_noise_check": {
+       "value": 0.609375,
+       "ci95": [
+        0.4473684210526316,
+        0.7586206896551724
+       ],
+       "n_pairs": 64
+      },
+      "top_pick_is_viral": {
+       "value": 0.8240740740740741,
+       "ci95": null,
+       "n_groups": 27,
+       "chance": 0.5107142857142857
+      },
+      "confounded_by_account_size": {
+       "spearman_vs_log_engagement": 0.6219496238082387,
+       "super_viral_vs_rest_auc": 0.7533482142857143,
+       "super_vs_medium_auc": 0.6101694915254238
+      }
+     },
+     "category_balanced": {
+      "segments": [
+       "Smaller/closest",
+       "Mid-size"
+      ],
+      "per_category": 4,
+      "draws": 500,
+      "cross_account_spearman_median": 0.5764579244525682,
+      "cross_account_spearman_range95": [
+       0.3068826024572417,
+       0.742558056438647
+      ]
+     }
+    }
+   },
+   "comparisons": {
+    "panel@claude-sonnet-5-5": {
+     "minus_media": {
+      "value": 0.05989583333333337,
+      "ci95": [
+       -0.04914529914529919,
+       0.1772486772486772
+      ]
+     },
+     "minus_length": {
+      "value": 0.1171875,
+      "ci95": [
+       -0.007500000000000062,
+       0.2584269662921348
+      ]
+     },
+     "minus_tfidf": {
+      "value": 0.125,
+      "ci95": [
+       -0.005780346820809301,
+       0.25
+      ]
+     },
+     "minus_reader@claude-sonnet-5-5": {
+      "value": 0.078125,
+      "ci95": [
+       0.022026431718061734,
+       0.13414634146341464
+      ]
+     },
+     "minus_reader@gpt-6.1-sol": {
+      "value": -0.02604166666666663,
+      "ci95": [
+       -0.09574468085106391,
+       0.03917050691244239
+      ]
+     },
+     "minus_reader@mean": {
+      "value": -0.03125,
+      "ci95": [
+       -0.09401709401709402,
+       0.03082191780821908
+      ]
+     }
+    },
+    "panel@gpt-6.1-sol": {
+     "minus_media": {
+      "value": 0.1171875,
+      "ci95": [
+       0.011111111111111183,
+       0.21637426900584789
+      ]
+     },
+     "minus_length": {
+      "value": 0.17447916666666663,
+      "ci95": [
+       0.06818181818181823,
+       0.30225988700564965
+      ]
+     },
+     "minus_tfidf": {
+      "value": 0.18229166666666663,
+      "ci95": [
+       0.021164021164021163,
+       0.33333333333333337
+      ]
+     },
+     "minus_reader@claude-sonnet-5-5": {
+      "value": 0.13541666666666663,
+      "ci95": [
+       0.030612244897959218,
+       0.24082568807339444
+      ]
+     },
+     "minus_reader@gpt-6.1-sol": {
+      "value": 0.03125,
+      "ci95": [
+       -0.06281407035175879,
+       0.11627906976744184
+      ]
+     },
+     "minus_reader@mean": {
+      "value": 0.02604166666666663,
+      "ci95": [
+       -0.0640394088669951,
+       0.11822660098522164
+      ]
+     }
+    },
+    "panel@mean": {
+     "minus_media": {
+      "value": 0.09895833333333337,
+      "ci95": [
+       -0.014150943396226356,
+       0.20454545454545459
+      ]
+     },
+     "minus_length": {
+      "value": 0.15625,
+      "ci95": [
+       0.03960396039603953,
+       0.2923076923076924
+      ]
+     },
+     "minus_tfidf": {
+      "value": 0.1640625,
+      "ci95": [
+       0.014619883040935644,
+       0.3007518796992481
+      ]
+     },
+     "minus_reader@claude-sonnet-5-5": {
+      "value": 0.1171875,
+      "ci95": [
+       0.026666666666666727,
+       0.2063106796116505
+      ]
+     },
+     "minus_reader@gpt-6.1-sol": {
+      "value": 0.01302083333333337,
+      "ci95": [
+       -0.067251461988304,
+       0.09068627450980393
+      ]
+     },
+     "minus_reader@mean": {
+      "value": 0.0078125,
+      "ci95": [
+       -0.06609195402298851,
+       0.0903225806451613
+      ]
+     }
+    },
+    "reader@claude-sonnet-5-5": {
+     "minus_media": {
+      "value": -0.01822916666666663,
+      "ci95": [
+       -0.13541666666666663,
+       0.10273972602739734
+      ]
+     },
+     "minus_length": {
+      "value": 0.0390625,
+      "ci95": [
+       -0.1105263157894737,
+       0.19161676646706594
+      ]
+     },
+     "minus_tfidf": {
+      "value": 0.046875,
+      "ci95": [
+       -0.05675675675675673,
+       0.1494565217391305
+      ]
+     }
+    },
+    "reader@gpt-6.1-sol": {
+     "minus_media": {
+      "value": 0.0859375,
+      "ci95": [
+       -0.030991735537190035,
+       0.1966292134831461
+      ]
+     },
+     "minus_length": {
+      "value": 0.14322916666666663,
+      "ci95": [
+       -0.02564102564102566,
+       0.32180851063829785
+      ]
+     },
+     "minus_tfidf": {
+      "value": 0.15104166666666663,
+      "ci95": [
+       0.05379746835443033,
+       0.2533333333333333
+      ]
+     }
+    },
+    "reader@mean": {
+     "minus_media": {
+      "value": 0.09114583333333337,
+      "ci95": [
+       -0.026666666666666616,
+       0.20443349753694584
+      ]
+     },
+     "minus_length": {
+      "value": 0.1484375,
+      "ci95": [
+       -0.020454545454545503,
+       0.319672131147541
+      ]
+     },
+     "minus_tfidf": {
+      "value": 0.15625,
+      "ci95": [
+       0.06557377049180335,
+       0.2536231884057971
+      ]
+     }
+    }
+   }
+  },
+  "GET /api/evals/faults": {
+   "available": true,
+   "files": [
+    {
+     "file": "fault-20261015T213000-stories.json",
+     "modified": "2026-10-15T21:30:00+00:00",
+     "n_verdicts": 72,
+     "counts": {
+      "no_fault": 6,
+      "variance": 47,
+      "insufficient_evidence": 19
+     },
+     "fix": []
+    },
+    {
+     "file": "fault-20261015T212900-fixture-evidence.json",
+     "modified": "2026-10-15T21:29:00+00:00",
+     "n_verdicts": 5,
+     "counts": {
+      "variance": 1,
+      "action_fault": 2,
+      "observe_fault": 1,
+      "insufficient_evidence": 1
+     },
+     "fix": []
+    }
+   ],
+   "problems": [],
+   "command": "python -m harness eval fault --stories --scores eval/reports/<backtest>.json:panel@mean --out eval/reports/fault-<date>.json"
+  },
+  "GET /api/evals/faults/fault-20261015T213000-stories.json": {
+   "file": "fault-20261015T213000-stories.json",
+   "verdicts": [
+    {
+     "action_id": "https://x.com/cursor_ai/status/2102448392773435706",
+     "verdict": "no_fault",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 5324 above the account's p90 5129"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.6024676497141137,
+     "evidence": {
+      "action_id": "https://x.com/cursor_ai/status/2102448392773435706",
+      "engagement": 5324,
+      "account_p10": 1535.2,
+      "account_p90": 5129.0,
+      "account_median": 3322.0,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": 0.8345864661654135,
+      "n_peer_posts": 5,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cursor_ai/status/2110087611763368271",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 5038 inside the account's band 1535.2-5277.2"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.5164008426120974,
+     "evidence": {
+      "action_id": "https://x.com/cursor_ai/status/2110087611763368271",
+      "engagement": 5038,
+      "account_p10": 1535.2,
+      "account_p90": 5277.2,
+      "account_median": 3322.0,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2107561157787824347",
+     "verdict": "no_fault",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 1906 above the account's p90 1488.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 4.833967046894804,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2107561157787824347",
+      "engagement": 1906,
+      "account_p10": 188.1,
+      "account_p90": 1488.4,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2104654757508129113",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 761 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.9315589353612168,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2104654757508129113",
+      "engagement": 761,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2102451801303998506",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 695 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.9942857142857143,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2102451801303998506",
+      "engagement": 695,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 699,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": 0.8071849298336093,
+      "n_peer_posts": 4,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2110495085049835940",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 467 inside the account's band 189-1510"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.1729323308270676,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2110495085049835940",
+      "engagement": 467,
+      "account_p10": 189.0,
+      "account_p90": 1510.0,
+      "account_median": 398,
+      "n_baseline_posts": 31,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2107942832921075726",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 385 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.5514285714285714,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2107942832921075726",
+      "engagement": 385,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 699,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2110086075096154399",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 376 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.9029940119760479,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2110086075096154399",
+      "engagement": 376,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 1.4413615560640731,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2102488097972007371",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 332 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7976047904191617,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2102488097972007371",
+      "engagement": 332,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 0.9781269908685496,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/Lovable/status/2102441067199295971",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 286 inside the account's band 136-397.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.3601895734597156,
+     "evidence": {
+      "action_id": "https://x.com/Lovable/status/2102441067199295971",
+      "engagement": 286,
+      "account_p10": 136.0,
+      "account_p90": 397.40000000000003,
+      "account_median": 210,
+      "n_baseline_posts": 17,
+      "story_peer_ratio": 0.9158605683262597,
+      "n_peer_posts": 4,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/coderabbitai/status/2102437018311532862",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 4 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 1.7254901960784315,
+     "evidence": {
+      "action_id": "https://x.com/coderabbitai/status/2102437018311532862",
+      "engagement": 219,
+      "account_p10": 0.6,
+      "account_p90": 274.8,
+      "account_median": 126.5,
+      "n_baseline_posts": 4,
+      "story_peer_ratio": 0.997134670487106,
+      "n_peer_posts": 7,
+      "draft_score": 0.1715,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/FactoryAI/status/2102439895109370349",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 172 inside the account's band 122.5-387.5"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.953168044077135,
+     "evidence": {
+      "action_id": "https://x.com/FactoryAI/status/2102439895109370349",
+      "engagement": 172,
+      "account_p10": 122.5,
+      "account_p90": 387.5,
+      "account_median": 180.5,
+      "n_baseline_posts": 16,
+      "story_peer_ratio": 0.9158605683262597,
+      "n_peer_posts": 6,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/kirodotdev/status/2104646075051102680",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 0.9371428571428572,
+     "evidence": {
+      "action_id": "https://x.com/kirodotdev/status/2104646075051102680",
+      "engagement": 163,
+      "account_p10": 124.6,
+      "account_p90": 216.8,
+      "account_median": 174,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": 1.9097744360902256,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/Lovable/status/2102470230719266861",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 144 inside the account's band 136-397.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.6304347826086957,
+     "evidence": {
+      "action_id": "https://x.com/Lovable/status/2102470230719266861",
+      "engagement": 144,
+      "account_p10": 136.0,
+      "account_p90": 397.40000000000003,
+      "account_median": 229,
+      "n_baseline_posts": 17,
+      "story_peer_ratio": 0.8345864661654135,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/Replit/status/2104609792937574413",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 122 inside the account's band 6-168"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.0933333333333333,
+     "evidence": {
+      "action_id": "https://x.com/Replit/status/2104609792937574413",
+      "engagement": 122,
+      "account_p10": 6.0,
+      "account_p90": 168.0,
+      "account_median": 111.5,
+      "n_baseline_posts": 16,
+      "story_peer_ratio": 1.4386630292545524,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/linear/status/2102504412572721181",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 107 inside the account's band 48.8-311.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7714285714285715,
+     "evidence": {
+      "action_id": "https://x.com/linear/status/2102504412572721181",
+      "engagement": 107,
+      "account_p10": 48.79999999999999,
+      "account_p90": 311.59999999999997,
+      "account_median": 139,
+      "n_baseline_posts": 15,
+      "story_peer_ratio": 1.1764705882352942,
+      "n_peer_posts": 1,
+      "draft_score": 0.177,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/ToolJet/status/2102808925938810996",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 1.4285714285714286,
+     "evidence": {
+      "action_id": "https://x.com/ToolJet/status/2102808925938810996",
+      "engagement": 9,
+      "account_p10": 6.0,
+      "account_p90": 9.6,
+      "account_median": 6,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story opus-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cursor_ai/status/2104666044220821594",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 3495 inside the account's band 1535.2-5277.2"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.0384672508540027,
+     "evidence": {
+      "action_id": "https://x.com/cursor_ai/status/2104666044220821594",
+      "engagement": 3495,
+      "account_p10": 1535.2,
+      "account_p90": 5277.2,
+      "account_median": 3365.5,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": 0.5286532951289399,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2104654757508129113",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 761 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.9315589353612168,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2104654757508129113",
+      "engagement": 761,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 0.625,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2110495085049835940",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 467 inside the account's band 189-1510"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.1729323308270676,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2110495085049835940",
+      "engagement": 467,
+      "account_p10": 189.0,
+      "account_p90": 1510.0,
+      "account_median": 398,
+      "n_baseline_posts": 31,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2104670026770919586",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 368 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.5271428571428571,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2104670026770919586",
+      "engagement": 368,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 699,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/kirodotdev/status/2107118899690967491",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 1.0670731707317074,
+     "evidence": {
+      "action_id": "https://x.com/kirodotdev/status/2107118899690967491",
+      "engagement": 174,
+      "account_p10": 124.6,
+      "account_p90": 216.8,
+      "account_median": 163,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/v0/status/2104633350170251519",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 3 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 0.2009273570324575,
+     "evidence": {
+      "action_id": "https://x.com/v0/status/2104633350170251519",
+      "engagement": 129,
+      "account_p10": 325.2,
+      "account_p90": 794.0,
+      "account_median": 646,
+      "n_baseline_posts": 3,
+      "story_peer_ratio": 0.7398843930635838,
+      "n_peer_posts": 5,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/FactoryAI/status/2104640328611639731",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 127 inside the account's band 125.5-387.5"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7052341597796143,
+     "evidence": {
+      "action_id": "https://x.com/FactoryAI/status/2104640328611639731",
+      "engagement": 127,
+      "account_p10": 125.5,
+      "account_p90": 387.5,
+      "account_median": 180.5,
+      "n_baseline_posts": 16,
+      "story_peer_ratio": 0.8125,
+      "n_peer_posts": 4,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/Netlify/status/2104664382126862705",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 4 inside the account's band 3-9.9"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.625,
+     "evidence": {
+      "action_id": "https://x.com/Netlify/status/2104664382126862705",
+      "engagement": 4,
+      "account_p10": 3.0,
+      "account_p90": 9.899999999999999,
+      "account_median": 7.0,
+      "n_baseline_posts": 22,
+      "story_peer_ratio": 0.7643266475644699,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story sonnet-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cursor_ai/status/2107897245282799864",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 3149 inside the account's band 1535.2-5277.2"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.889956208504026,
+     "evidence": {
+      "action_id": "https://x.com/cursor_ai/status/2107897245282799864",
+      "engagement": 3149,
+      "account_p10": 1535.2,
+      "account_p90": 5277.2,
+      "account_median": 3538.5,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": 0.5530085959885387,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story haiku-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2107942832921075726",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 385 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.5514285714285714,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2107942832921075726",
+      "engagement": 385,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 699,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story haiku-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/ToolJet/status/2108430902951051357",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 1.5714285714285714,
+     "evidence": {
+      "action_id": "https://x.com/ToolJet/status/2108430902951051357",
+      "engagement": 10,
+      "account_p10": 6.0,
+      "account_p90": 9.0,
+      "account_median": 6,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story haiku-5.5"
+     }
+    },
+    {
+     "action_id": "https://x.com/vercel/status/2101077346203971900",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 8 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 12.3585313174946,
+     "evidence": {
+      "action_id": "https://x.com/vercel/status/2101077346203971900",
+      "engagement": 2860,
+      "account_p10": 141.1,
+      "account_p90": 497.09999999999997,
+      "account_median": 230.5,
+      "n_baseline_posts": 8,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story fable-5.1"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2104670026770919586",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 368 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.5271428571428571,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2104670026770919586",
+      "engagement": 368,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 699,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story fable-5.1"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2102488097972007371",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 332 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7976047904191617,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2102488097972007371",
+      "engagement": 332,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story fable-5.1"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2102109776960463299",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "underperformed: engagement 189 below the account's p10 194.4",
+      "need both story and draft evidence to pick a stage"
+     ],
+     "missing": [
+      "story_peer_ratio",
+      "draft_score"
+     ],
+     "outcome_ratio": 0.4550898203592814,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2102109776960463299",
+      "engagement": 189,
+      "account_p10": 194.4,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story fable-5.1"
+     }
+    },
+    {
+     "action_id": "https://x.com/kirodotdev/status/2104646075051102680",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 0.9371428571428572,
+     "evidence": {
+      "action_id": "https://x.com/kirodotdev/status/2104646075051102680",
+      "engagement": 163,
+      "account_p10": 124.6,
+      "account_p90": 216.8,
+      "account_median": 174,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": 0.5286532951289399,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story fable-5.1"
+     }
+    },
+    {
+     "action_id": "https://x.com/kirodotdev/status/2102064625474785741",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 0.7314285714285714,
+     "evidence": {
+      "action_id": "https://x.com/kirodotdev/status/2102064625474785741",
+      "engagement": 127,
+      "account_p10": 139.0,
+      "account_p90": 216.8,
+      "account_median": 174,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": 0.47619047619047616,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story fable-5.1"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2102463672224543018",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 920 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.3232758620689655,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2102463672224543018",
+      "engagement": 920,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 695,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": 0.779783393501805,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2104988938817413583",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 810 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.1652298850574712,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2104988938817413583",
+      "engagement": 810,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 695,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/Lovable/status/2102460015290548249",
+     "verdict": "no_fault",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 461 above the account's p90 332.2"
+     ],
+     "missing": [],
+     "outcome_ratio": 2.18957345971564,
+     "evidence": {
+      "action_id": "https://x.com/Lovable/status/2102460015290548249",
+      "engagement": 461,
+      "account_p10": 136.0,
+      "account_p90": 332.2,
+      "account_median": 210,
+      "n_baseline_posts": 17,
+      "story_peer_ratio": 0.8345864661654135,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2102488097972007371",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 332 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7976047904191617,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2102488097972007371",
+      "engagement": 332,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 0.779783393501805,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/Lovable/status/2102470230719266861",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 144 inside the account's band 136-397.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.6304347826086957,
+     "evidence": {
+      "action_id": "https://x.com/Lovable/status/2102470230719266861",
+      "engagement": 144,
+      "account_p10": 136.0,
+      "account_p90": 397.40000000000003,
+      "account_median": 229,
+      "n_baseline_posts": 17,
+      "story_peer_ratio": 0.8071849298336093,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/linear/status/2102504412572721181",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 107 inside the account's band 48.8-311.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7714285714285715,
+     "evidence": {
+      "action_id": "https://x.com/linear/status/2102504412572721181",
+      "engagement": 107,
+      "account_p10": 48.79999999999999,
+      "account_p90": 311.59999999999997,
+      "account_median": 139,
+      "n_baseline_posts": 15,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": 0.177,
+      "critic_flags": [],
+      "notes": "story gpt-6-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2104988938817413583",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 810 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.1652298850574712,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2104988938817413583",
+      "engagement": 810,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 695,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": 0.49373433583959897,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6.1-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2105028155849478430",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 196 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.4718562874251497,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2105028155849478430",
+      "engagement": 196,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6.1-sol"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2102463672224543018",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 920 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.3232758620689655,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2102463672224543018",
+      "engagement": 920,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 695,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": 0.779783393501805,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-luna"
+     }
+    },
+    {
+     "action_id": "https://x.com/Replit/status/2104609792937574413",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 122 inside the account's band 6-168"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.0933333333333333,
+     "evidence": {
+      "action_id": "https://x.com/Replit/status/2104609792937574413",
+      "engagement": 122,
+      "account_p10": 6.0,
+      "account_p90": 168.0,
+      "account_median": 111.5,
+      "n_baseline_posts": 16,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-luna"
+     }
+    },
+    {
+     "action_id": "https://x.com/linear/status/2102504412572721181",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 107 inside the account's band 48.8-311.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7714285714285715,
+     "evidence": {
+      "action_id": "https://x.com/linear/status/2102504412572721181",
+      "engagement": 107,
+      "account_p10": 48.79999999999999,
+      "account_p90": 311.59999999999997,
+      "account_median": 139,
+      "n_baseline_posts": 15,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": 0.177,
+      "critic_flags": [],
+      "notes": "story gpt-6-luna"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2100265266026590322",
+     "verdict": "no_fault",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 2975 above the account's p90 1488.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 7.5437262357414445,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2100265266026590322",
+      "engagement": 2975,
+      "account_p10": 188.1,
+      "account_p90": 1488.4,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-astra"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2103636639038026093",
+     "verdict": "no_fault",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 2460 above the account's p90 1488.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 6.238276299112801,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2103636639038026093",
+      "engagement": 2460,
+      "account_p10": 188.1,
+      "account_p90": 1488.4,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-astra"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2107561157787824347",
+     "verdict": "no_fault",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 1906 above the account's p90 1488.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 4.833967046894804,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2107561157787824347",
+      "engagement": 1906,
+      "account_p10": 188.1,
+      "account_p90": 1488.4,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-astra"
+     }
+    },
+    {
+     "action_id": "https://x.com/Lovable/status/2108210970917314599",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 310 inside the account's band 136-397.4"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.4739336492890995,
+     "evidence": {
+      "action_id": "https://x.com/Lovable/status/2108210970917314599",
+      "engagement": 310,
+      "account_p10": 136.0,
+      "account_p90": 397.40000000000003,
+      "account_median": 210,
+      "n_baseline_posts": 17,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gpt-6-astra"
+     }
+    },
+    {
+     "action_id": "https://x.com/cursor_ai/status/2110087611763368271",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 5038 inside the account's band 1535.2-5277.2"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.5164008426120974,
+     "evidence": {
+      "action_id": "https://x.com/cursor_ai/status/2110087611763368271",
+      "engagement": 5038,
+      "account_p10": 1535.2,
+      "account_p90": 5277.2,
+      "account_median": 3322.0,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gemini-4-argon"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2110043605528408110",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 645 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.9228571428571428,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2110043605528408110",
+      "engagement": 645,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 699,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": 0.9448621553884712,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gemini-4-argon"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2110495085049835940",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 467 inside the account's band 189-1510"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.1729323308270676,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2110495085049835940",
+      "engagement": 467,
+      "account_p10": 189.0,
+      "account_p90": 1510.0,
+      "account_median": 398,
+      "n_baseline_posts": 31,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gemini-4-argon"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2110086075096154399",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 376 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.9029940119760479,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2110086075096154399",
+      "engagement": 376,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 1.4413615560640731,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gemini-4-argon"
+     }
+    },
+    {
+     "action_id": "https://x.com/FactoryAI/status/2110077467180580980",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 159 inside the account's band 122.5-387.5"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.8815426997245179,
+     "evidence": {
+      "action_id": "https://x.com/FactoryAI/status/2110077467180580980",
+      "engagement": 159,
+      "account_p10": 122.5,
+      "account_p90": 387.5,
+      "account_median": 180.5,
+      "n_baseline_posts": 16,
+      "story_peer_ratio": 1.193111855726272,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gemini-4-argon"
+     }
+    },
+    {
+     "action_id": "https://x.com/CloudflareDev/status/2110461480080654845",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 115 inside the account's band 114-1408.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.42962962962962964,
+     "evidence": {
+      "action_id": "https://x.com/CloudflareDev/status/2110461480080654845",
+      "engagement": 115,
+      "account_p10": 114.0,
+      "account_p90": 1408.6,
+      "account_median": 269,
+      "n_baseline_posts": 15,
+      "story_peer_ratio": 1.1729323308270676,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story gemini-4-argon"
+     }
+    },
+    {
+     "action_id": "https://x.com/cognition/status/2102147831519666639",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 699 inside the account's band 303.4-2313.8"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.0057471264367817,
+     "evidence": {
+      "action_id": "https://x.com/cognition/status/2102147831519666639",
+      "engagement": 699,
+      "account_p10": 303.4,
+      "account_p90": 2313.8,
+      "account_median": 695,
+      "n_baseline_posts": 25,
+      "story_peer_ratio": 1.4123797620907448,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story grok-4.7"
+     }
+    },
+    {
+     "action_id": "https://x.com/vercel/status/2102176023207166256",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 8 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 2.2937365010799136,
+     "evidence": {
+      "action_id": "https://x.com/vercel/status/2102176023207166256",
+      "engagement": 530,
+      "account_p10": 141.1,
+      "account_p90": 1196.0999999999995,
+      "account_median": 230.5,
+      "n_baseline_posts": 8,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story grok-4.7"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2102109776960463299",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "underperformed: engagement 189 below the account's p10 194.4",
+      "need both story and draft evidence to pick a stage"
+     ],
+     "missing": [
+      "draft_score"
+     ],
+     "outcome_ratio": 0.4550898203592814,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2102109776960463299",
+      "engagement": 189,
+      "account_p10": 194.4,
+      "account_p90": 1549.6000000000006,
+      "account_median": 416.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 1.002865329512894,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story grok-4.7"
+     }
+    },
+    {
+     "action_id": "https://x.com/Railway/status/2102073924783837479",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 9 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 0.5627009646302251,
+     "evidence": {
+      "action_id": "https://x.com/Railway/status/2102073924783837479",
+      "engagement": 174,
+      "account_p10": 89.80000000000001,
+      "account_p90": 1343.2,
+      "account_median": 310,
+      "n_baseline_posts": 9,
+      "story_peer_ratio": 0.8887159017506666,
+      "n_peer_posts": 4,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story grok-4.7"
+     }
+    },
+    {
+     "action_id": "https://x.com/FactoryAI/status/2102162709647430116",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 133 inside the account's band 122.5-387.5"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7382920110192838,
+     "evidence": {
+      "action_id": "https://x.com/FactoryAI/status/2102162709647430116",
+      "engagement": 133,
+      "account_p10": 122.5,
+      "account_p90": 387.5,
+      "account_median": 180.5,
+      "n_baseline_posts": 16,
+      "story_peer_ratio": 2.0501930501930503,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story grok-4.7"
+     }
+    },
+    {
+     "action_id": "https://x.com/ToolJet/status/2102808925938810996",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 1.4285714285714286,
+     "evidence": {
+      "action_id": "https://x.com/ToolJet/status/2102808925938810996",
+      "engagement": 9,
+      "account_p10": 6.0,
+      "account_p90": 9.6,
+      "account_median": 6,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story grok-4.7"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2110784104488980727",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "underperformed: engagement 112 below the account's p10 189",
+      "need both story and draft evidence to pick a stage"
+     ],
+     "missing": [
+      "story_peer_ratio (only 2 peer posts; need 3)",
+      "draft_score"
+     ],
+     "outcome_ratio": 0.2832080200501253,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2110784104488980727",
+      "engagement": 112,
+      "account_p10": 189.0,
+      "account_p90": 1510.0,
+      "account_median": 398,
+      "n_baseline_posts": 31,
+      "story_peer_ratio": 0.006487295712562898,
+      "n_peer_posts": 2,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story nemotron-3.5-super"
+     }
+    },
+    {
+     "action_id": "https://x.com/FactoryAI/status/2110865824278016116",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "underperformed: engagement 0 below the account's p10 123.4",
+      "need both story and draft evidence to pick a stage"
+     ],
+     "missing": [
+      "story_peer_ratio",
+      "draft_score"
+     ],
+     "outcome_ratio": 0.005780346820809248,
+     "evidence": {
+      "action_id": "https://x.com/FactoryAI/status/2110865824278016116",
+      "engagement": 0,
+      "account_p10": 123.4,
+      "account_p90": 365.6000000000001,
+      "account_median": 172,
+      "n_baseline_posts": 17,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story nemotron-3.5-super"
+     }
+    },
+    {
+     "action_id": "https://x.com/modal/status/2110792219921936647",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "underperformed: engagement 0 below the account's p10 115.1",
+      "need both story and draft evidence to pick a stage"
+     ],
+     "missing": [
+      "story_peer_ratio (only 1 peer posts; need 3)",
+      "draft_score"
+     ],
+     "outcome_ratio": 0.007194244604316547,
+     "evidence": {
+      "action_id": "https://x.com/modal/status/2110792219921936647",
+      "engagement": 0,
+      "account_p10": 115.1,
+      "account_p90": 288.79999999999995,
+      "account_median": 138.0,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": 0.005780346820809248,
+      "n_peer_posts": 1,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story nemotron-3.5-super"
+     }
+    },
+    {
+     "action_id": "https://x.com/cursor_ai/status/2105787358557999585",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 4219 inside the account's band 1535.2-5277.2"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.2699368040926873,
+     "evidence": {
+      "action_id": "https://x.com/cursor_ai/status/2105787358557999585",
+      "engagement": 4219,
+      "account_p10": 1535.2,
+      "account_p90": 5277.2,
+      "account_median": 3322.0,
+      "n_baseline_posts": 14,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story glm-5.3"
+     }
+    },
+    {
+     "action_id": "https://x.com/boltdotnew/status/2100646000016716180",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 5 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 117.71428571428571,
+     "evidence": {
+      "action_id": "https://x.com/boltdotnew/status/2100646000016716180",
+      "engagement": 823,
+      "account_p10": 3.0,
+      "account_p90": 548.8,
+      "account_median": 6,
+      "n_baseline_posts": 5,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": 0.16599999999999998,
+      "critic_flags": [],
+      "notes": "story glm-5.3"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2108249633789263917",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 554 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.4068441064638784,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2108249633789263917",
+      "engagement": 554,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story glm-5.3"
+     }
+    },
+    {
+     "action_id": "https://x.com/vllm_project/status/2106159655290589305",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 186 inside the account's band 119-728"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.85,
+     "evidence": {
+      "action_id": "https://x.com/vllm_project/status/2106159655290589305",
+      "engagement": 186,
+      "account_p10": 119.0,
+      "account_p90": 728.0,
+      "account_median": 219,
+      "n_baseline_posts": 21,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story glm-5.3"
+     }
+    },
+    {
+     "action_id": "https://x.com/vllm_project/status/2103297683188527487",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 147 inside the account's band 119-728"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.6727272727272727,
+     "evidence": {
+      "action_id": "https://x.com/vllm_project/status/2103297683188527487",
+      "engagement": 147,
+      "account_p10": 119.0,
+      "account_p90": 728.0,
+      "account_median": 219,
+      "n_baseline_posts": 21,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story glm-5.3"
+     }
+    },
+    {
+     "action_id": "https://x.com/cline/status/2103165327815450815",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 1486 inside the account's band 188.1-1549.6"
+     ],
+     "missing": [],
+     "outcome_ratio": 3.7693282636248417,
+     "evidence": {
+      "action_id": "https://x.com/cline/status/2103165327815450815",
+      "engagement": 1486,
+      "account_p10": 188.1,
+      "account_p90": 1549.6000000000006,
+      "account_median": 393.5,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story qwen-3.8"
+     }
+    },
+    {
+     "action_id": "https://x.com/vllm_project/status/2102593516740411733",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 296 inside the account's band 119-728"
+     ],
+     "missing": [],
+     "outcome_ratio": 1.4702970297029703,
+     "evidence": {
+      "action_id": "https://x.com/vllm_project/status/2102593516740411733",
+      "engagement": 296,
+      "account_p10": 119.0,
+      "account_p90": 728.0,
+      "account_median": 201,
+      "n_baseline_posts": 21,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story qwen-3.8"
+     }
+    },
+    {
+     "action_id": "https://x.com/vllm_project/status/2102051703579373706",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "underperformed: engagement 110 below the account's p10 129",
+      "need both story and draft evidence to pick a stage"
+     ],
+     "missing": [
+      "story_peer_ratio",
+      "draft_score"
+     ],
+     "outcome_ratio": 0.5045454545454545,
+     "evidence": {
+      "action_id": "https://x.com/vllm_project/status/2102051703579373706",
+      "engagement": 110,
+      "account_p10": 129.0,
+      "account_p90": 728.0,
+      "account_median": 219,
+      "n_baseline_posts": 21,
+      "story_peer_ratio": null,
+      "n_peer_posts": 0,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "story qwen-3.8"
+     }
+    }
+   ],
+   "summary": {
+    "counts": {
+     "no_fault": 6,
+     "variance": 47,
+     "insufficient_evidence": 19
+    },
+    "by_stage": {},
+    "fix": []
+   },
+   "liveness_check": {
+    "n_posts": 14,
+    "min_peers": 3,
+    "spearman_own_vs_peer": -0.10607896706108734
+   }
+  },
+  "GET /api/evals/faults/fault-20261015T212900-fixture-evidence.json": {
+   "file": "fault-20261015T212900-fixture-evidence.json",
+   "verdicts": [
+    {
+     "action_id": "inside-band",
+     "verdict": "variance",
+     "stage_to_fix": null,
+     "reasons": [
+      "engagement 6 inside the account's band 2-40"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.7,
+     "evidence": {
+      "action_id": "inside-band",
+      "engagement": 6,
+      "account_p10": 2,
+      "account_p90": 40,
+      "account_median": 9,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 1.4,
+      "n_peer_posts": 5,
+      "draft_score": 0.7,
+      "critic_flags": [],
+      "notes": ""
+     }
+    },
+    {
+     "action_id": "bad-draft",
+     "verdict": "action_fault",
+     "stage_to_fix": "action",
+     "reasons": [
+      "underperformed: engagement 0 below the account's p10 2",
+      "story alive: peers did 1.60x their usual over 6 posts",
+      "draft bad: judge score 0.24"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.1,
+     "evidence": {
+      "action_id": "bad-draft",
+      "engagement": 0,
+      "account_p10": 2,
+      "account_p90": 40,
+      "account_median": 9,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 1.6,
+      "n_peer_posts": 6,
+      "draft_score": 0.24,
+      "critic_flags": [],
+      "notes": "peers did well on the story; the judge called the draft weak"
+     }
+    },
+    {
+     "action_id": "dead-story",
+     "verdict": "observe_fault",
+     "stage_to_fix": "observe",
+     "reasons": [
+      "underperformed: engagement 1 below the account's p10 2",
+      "story dead: peers did 0.20x their usual over 4 posts",
+      "draft good: judge score 0.72"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.2,
+     "evidence": {
+      "action_id": "dead-story",
+      "engagement": 1,
+      "account_p10": 2,
+      "account_p90": 40,
+      "account_median": 9,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 0.2,
+      "n_peer_posts": 4,
+      "draft_score": 0.72,
+      "critic_flags": [],
+      "notes": "everyone on the story flopped, like Nemotron 3.5 Super on 2026-10-15"
+     }
+    },
+    {
+     "action_id": "critic-flag",
+     "verdict": "action_fault",
+     "stage_to_fix": "action",
+     "reasons": [
+      "underperformed: engagement 0 below the account's p10 2",
+      "story alive: peers did 1.20x their usual over 3 posts",
+      "draft bad: critic flagged invented benchmark number"
+     ],
+     "missing": [],
+     "outcome_ratio": 0.1,
+     "evidence": {
+      "action_id": "critic-flag",
+      "engagement": 0,
+      "account_p10": 2,
+      "account_p90": 40,
+      "account_median": 9,
+      "n_baseline_posts": 30,
+      "story_peer_ratio": 1.2,
+      "n_peer_posts": 3,
+      "draft_score": null,
+      "critic_flags": [
+       "invented benchmark number"
+      ],
+      "notes": ""
+     }
+    },
+    {
+     "action_id": "new-account",
+     "verdict": "insufficient_evidence",
+     "stage_to_fix": null,
+     "reasons": [
+      "account band rests on 2 posts; need 10"
+     ],
+     "missing": [
+      "n_baseline_posts"
+     ],
+     "outcome_ratio": 1.0,
+     "evidence": {
+      "action_id": "new-account",
+      "engagement": 0,
+      "account_p10": 0,
+      "account_p90": 1,
+      "account_median": 0,
+      "n_baseline_posts": 2,
+      "story_peer_ratio": null,
+      "n_peer_posts": null,
+      "draft_score": null,
+      "critic_flags": [],
+      "notes": "the two-follower fan account: no band yet, so no verdict"
+     }
+    }
+   ],
+   "summary": {
+    "counts": {
+     "variance": 1,
+     "action_fault": 2,
+     "observe_fault": 1,
+     "insufficient_evidence": 1
+    },
+    "by_stage": {
+     "action": 2,
+     "observe": 1
+    },
+    "fix": []
+   },
+   "liveness_check": null
+  }
+ },
+ "errors": {}
+}

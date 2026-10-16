@@ -1,0 +1,16 @@
+{
+ "routes": {
+  "GET /api/evals": {
+   "available": true,
+   "reports": [],
+   "problems": []
+  },
+  "GET /api/evals/faults": {
+   "available": true,
+   "files": [],
+   "problems": [],
+   "command": "python -m harness eval fault --stories --scores eval/reports/<backtest>.json:panel@mean --out eval/reports/fault-<date>.json"
+  }
+ },
+ "errors": {}
+}

@@ -1,0 +1,3355 @@
+{
+ "about": "Worst case: a round that broke in decide (long traceback), nine sources with long names and long failure reasons, unicode, 14 narratives with missing fields, 160 runs.",
+ "routes": {
+  "GET /api/loop": {
+   "provider": "anthropic",
+   "sources": [
+    "espn_news",
+    "google_news",
+    "x_targets",
+    "reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+    "fever_beat_writers_list",
+    "attention",
+    "x_search_mentions",
+    "youtube_highlights_ingest_v2_experimental",
+    "sample"
+   ],
+   "command": "python -m harness run --narratives 2 --per-mind 1 --retries 1",
+   "round": {
+    "id": "round-20261016-061502",
+    "started_at": "2026-10-16T01:15:02+00:00",
+    "provider": "anthropic",
+    "sources": [
+     "espn_news",
+     "google_news",
+     "x_targets",
+     "reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "fever_beat_writers_list",
+     "attention",
+     "x_search_mentions",
+     "youtube_highlights_ingest_v2_experimental",
+     "sample"
+    ],
+    "command": "python -m harness run --narratives 2 --per-mind 1 --retries 1",
+    "status": "failed",
+    "stage": "decide",
+    "lines": [
+     {
+      "t": 0.6,
+      "stage": "observe",
+      "text": "[observe] espn_news: 52 signals"
+     },
+     {
+      "t": 1.2,
+      "stage": "observe",
+      "text": "[observe] google_news: 51 signals"
+     },
+     {
+      "t": 1.6,
+      "stage": "observe",
+      "text": "[observe] x_targets failed: x_targets: every read failed; first error: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     },
+     {
+      "t": 2.2,
+      "stage": "observe",
+      "text": "[observe] reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be: 1840 signals"
+     },
+     {
+      "t": 2.8,
+      "stage": "observe",
+      "text": "[observe] fever_beat_writers_list: 37 signals"
+     },
+     {
+      "t": 3.1,
+      "stage": "observe",
+      "text": "[observe] attention: google_trends for 'Caitlin Clark' failed: HTTP 429 Too Many Requests (retry-after 3600s) https://trends.google.com/trends/api/widgetdata/multiline?hl=en-US&tz=420&req=%7B%22time%22%3A%222026-10-09+2026-10-16%22%2C%22resolution%22%3A%22HOUR%22%7D"
+     },
+     {
+      "t": 3.2,
+      "stage": "observe",
+      "text": "[observe] attention failed: attention: no attention source answered; Google Trends rate-limited this IP and the Wikipedia pageviews API returned 503 for every article in the list (Caitlin_Clark, Aliyah_Boston, Indiana_Fever, Angel_Reese, Sophie_Cunningham)"
+     },
+     {
+      "t": 3.4,
+      "stage": "observe",
+      "text": "[observe] x_search_mentions failed: 401 Unauthorized: set X_BEARER_TOKEN in .env"
+     },
+     {
+      "t": 4.0,
+      "stage": "observe",
+      "text": "[observe] youtube_highlights_ingest_v2_experimental: 12 signals"
+     },
+     {
+      "t": 4.6,
+      "stage": "observe",
+      "text": "[observe] sample: 4 signals"
+     },
+     {
+      "t": 4.7,
+      "stage": "orient",
+      "text": "[orient] sending 412 of 1996 signals (38,012 chars)"
+     },
+     {
+      "t": 4.7,
+      "stage": "orient",
+      "text": "[orient] dropped as older than 72h: {'espn_news': 18, 'reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be': 1203}"
+     },
+     {
+      "t": 4.7,
+      "stage": "orient",
+      "text": "[orient] dropped for prompt budget: {'reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be': 363}"
+     },
+     {
+      "t": 4.82,
+      "stage": "orient",
+      "text": "[orient] narrative-00-キャンプ-ñandú-: relevance 0.99 velocity 0.50 (llm)"
+     },
+     {
+      "t": 4.94,
+      "stage": "orient",
+      "text": "[orient] narrative-01-キャンプ-ñandú-x: relevance 0.97 velocity 0.60 (data)"
+     },
+     {
+      "t": 5.06,
+      "stage": "orient",
+      "text": "[orient] narrative-02-キャンプ-ñandú-xx: relevance 0.95 velocity 0.70 (data)"
+     },
+     {
+      "t": 5.18,
+      "stage": "orient",
+      "text": "[orient] narrative-03-キャンプ-ñandú-xxx: relevance 0.93 velocity 0.80 (llm)"
+     },
+     {
+      "t": 5.3,
+      "stage": "orient",
+      "text": "[orient] narrative-04-キャンプ-ñandú-xxxx: relevance 0.91 velocity 0.90 (data)"
+     },
+     {
+      "t": 5.42,
+      "stage": "orient",
+      "text": "[orient] narrative-05-キャンプ-ñandú-xxxxx: relevance 0.89 velocity 0.50 (data)"
+     },
+     {
+      "t": 5.54,
+      "stage": "orient",
+      "text": "[orient] narrative-06-キャンプ-ñandú-xxxxxx: relevance 0.87 velocity 0.60 (llm)"
+     },
+     {
+      "t": 5.66,
+      "stage": "orient",
+      "text": "[orient] narrative-07-キャンプ-ñandú-: relevance 0.85 velocity 0.70 (data)"
+     },
+     {
+      "t": 5.78,
+      "stage": "orient",
+      "text": "[orient] narrative-08-キャンプ-ñandú-x: relevance 0.83 velocity 0.80 (data)"
+     },
+     {
+      "t": 5.9,
+      "stage": "orient",
+      "text": "[orient] narrative-09-キャンプ-ñandú-xx: relevance 0.81 velocity 0.90 (llm)"
+     },
+     {
+      "t": 6.02,
+      "stage": "orient",
+      "text": "[orient] narrative-10-キャンプ-ñandú-xxx: relevance 0.79 velocity 0.50 (data)"
+     },
+     {
+      "t": 6.14,
+      "stage": "orient",
+      "text": "[orient] narrative-11-キャンプ-ñandú-xxxx: relevance 0.77 velocity 0.60 (data)"
+     },
+     {
+      "t": 6.26,
+      "stage": "orient",
+      "text": "[orient] narrative-12-キャンプ-ñandú-xxxxx: relevance 0.75 velocity 0.70 (llm)"
+     },
+     {
+      "t": 6.38,
+      "stage": "orient",
+      "text": "[orient] narrative-13-キャンプ-ñandú-xxxxxx: relevance 0.73 velocity 0.80 (data)"
+     },
+     {
+      "t": 6.5,
+      "stage": "orient",
+      "text": "[orient] narrative-14-キャンプ-ñandú-: relevance 0.71 velocity 0.90 (data)"
+     },
+     {
+      "t": 6.62,
+      "stage": "orient",
+      "text": "[orient] narrative-15-キャンプ-ñandú-x: relevance 0.69 velocity 0.50 (llm)"
+     },
+     {
+      "t": 6.74,
+      "stage": "orient",
+      "text": "[orient] narrative-16-キャンプ-ñandú-xx: relevance 0.67 velocity 0.60 (data)"
+     },
+     {
+      "t": 6.86,
+      "stage": "orient",
+      "text": "[orient] narrative-17-キャンプ-ñandú-xxx: relevance 0.65 velocity 0.70 (data)"
+     },
+     {
+      "t": 6.98,
+      "stage": "orient",
+      "text": "[orient] narrative-18-キャンプ-ñandú-xxxx: relevance 0.63 velocity 0.80 (llm)"
+     },
+     {
+      "t": 7.1,
+      "stage": "orient",
+      "text": "[orient] narrative-19-キャンプ-ñandú-xxxxx: relevance 0.61 velocity 0.90 (data)"
+     },
+     {
+      "t": 7.22,
+      "stage": "orient",
+      "text": "[orient] narrative-20-キャンプ-ñandú-xxxxxx: relevance 0.59 velocity 0.50 (data)"
+     },
+     {
+      "t": 7.34,
+      "stage": "orient",
+      "text": "[orient] narrative-21-キャンプ-ñandú-: relevance 0.57 velocity 0.60 (llm)"
+     },
+     {
+      "t": 7.46,
+      "stage": "orient",
+      "text": "[orient] narrative-22-キャンプ-ñandú-x: relevance 0.55 velocity 0.70 (data)"
+     },
+     {
+      "t": 7.58,
+      "stage": "orient",
+      "text": "[orient] narrative-23-キャンプ-ñandú-xx: relevance 0.53 velocity 0.80 (data)"
+     },
+     {
+      "t": 7.7,
+      "stage": "orient",
+      "text": "[orient] narrative-24-キャンプ-ñandú-xxx: relevance 0.51 velocity 0.90 (llm)"
+     },
+     {
+      "t": 7.82,
+      "stage": "orient",
+      "text": "[orient] narrative-25-キャンプ-ñandú-xxxx: relevance 0.49 velocity 0.50 (data)"
+     },
+     {
+      "t": 7.94,
+      "stage": "orient",
+      "text": "[orient] narrative-26-キャンプ-ñandú-xxxxx: relevance 0.47 velocity 0.60 (data)"
+     },
+     {
+      "t": 8.06,
+      "stage": "orient",
+      "text": "[orient] narrative-27-キャンプ-ñandú-xxxxxx: relevance 0.45 velocity 0.70 (llm)"
+     },
+     {
+      "t": 8.18,
+      "stage": "orient",
+      "text": "[orient] narrative-28-キャンプ-ñandú-: relevance 0.43 velocity 0.80 (data)"
+     },
+     {
+      "t": 8.3,
+      "stage": "orient",
+      "text": "[orient] narrative-29-キャンプ-ñandú-x: relevance 0.41 velocity 0.90 (data)"
+     },
+     {
+      "t": 8.42,
+      "stage": "orient",
+      "text": "[orient] narrative-30-キャンプ-ñandú-xx: relevance 0.39 velocity 0.50 (llm)"
+     },
+     {
+      "t": 8.54,
+      "stage": "orient",
+      "text": "[orient] narrative-31-キャンプ-ñandú-xxx: relevance 0.37 velocity 0.60 (data)"
+     },
+     {
+      "t": 8.66,
+      "stage": "orient",
+      "text": "[orient] narrative-32-キャンプ-ñandú-xxxx: relevance 0.35 velocity 0.70 (data)"
+     },
+     {
+      "t": 8.78,
+      "stage": "orient",
+      "text": "[orient] narrative-33-キャンプ-ñandú-xxxxx: relevance 0.33 velocity 0.80 (llm)"
+     },
+     {
+      "t": 8.9,
+      "stage": "orient",
+      "text": "[orient] narrative-34-キャンプ-ñandú-xxxxxx: relevance 0.31 velocity 0.90 (data)"
+     },
+     {
+      "t": 9.02,
+      "stage": "orient",
+      "text": "[orient] narrative-35-キャンプ-ñandú-: relevance 0.29 velocity 0.50 (data)"
+     },
+     {
+      "t": 9.14,
+      "stage": "orient",
+      "text": "[orient] narrative-36-キャンプ-ñandú-x: relevance 0.27 velocity 0.60 (llm)"
+     },
+     {
+      "t": 9.26,
+      "stage": "orient",
+      "text": "[orient] narrative-37-キャンプ-ñandú-xx: relevance 0.25 velocity 0.70 (data)"
+     },
+     {
+      "t": 9.38,
+      "stage": "orient",
+      "text": "[orient] narrative-38-キャンプ-ñandú-xxx: relevance 0.23 velocity 0.80 (data)"
+     },
+     {
+      "t": 9.5,
+      "stage": "orient",
+      "text": "[orient] narrative-39-キャンプ-ñandú-xxxx: relevance 0.21 velocity 0.90 (llm)"
+     },
+     {
+      "t": 9.6,
+      "stage": "orient",
+      "text": "[orient] 12 narratives: narrative-00-キャンプ-ñandú, narrative-01-キャンプ-ñandú, narrative-02-キャンプ-ñandú, narrative-03-キャンプ-ñandú, narrative-04-キャンプ-ñandú, narrative-05-キャンプ-ñandú, narrative-06-キャンプ-ñandú, narrative-07-キャンプ-ñandú, narrative-08-キャンプ-ñandú, narrative-09-キャンプ-ñandú, narrative-10-キャンプ-ñandú, narrative-11-キャンプ-ñandú"
+     },
+     {
+      "t": 15.8,
+      "stage": "decide",
+      "text": "[decide] meme_lord failed: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}}"
+     },
+     {
+      "t": 16.9,
+      "stage": "decide",
+      "text": "[decide] stat_nerd failed: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}}"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "Traceback (most recent call last):"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 198, in _run_module_as_main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/<frozen runpy>\", line 88, in _run_code"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/__main__.py\", line 5, in <module>"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 89, in main"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/cli.py\", line 26, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 131, in wrapped"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 118, in decide"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/_base.py\", line 449, in result"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/concurrent/futures/thread.py\", line 58, in run"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/minds/__init__.py\", line 71, in _one"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 218, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/trace.py\", line 206, in _call"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/harness/llm.py\", line 142, in complete_json"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "  File \"/Users/someone/Programming Projects/8vcSocialMedia-worktrees/ui/anthropic/_base_client.py\", line 1047, in request"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "    return self._retry_request(options, cast_to, retries_taken=retries_taken + 1, stream=stream, stream_cls=stream_cls)"
+     },
+     {
+      "t": 18.9,
+      "stage": null,
+      "text": "anthropic.InternalServerError: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CTx9yQwXz7v1u2t3s4r5q6p7o8n9m0lkjihgfedcba'}"
+     }
+    ],
+    "run_id": null,
+    "exit_code": 1,
+    "finished_at": "2026-10-16T01:15:41+00:00"
+   },
+   "live": {
+    "status": "running",
+    "run_id": null,
+    "started_at": "2026-10-16T01:15:03+00:00",
+    "elapsed_ms": 38000,
+    "stage": "decide",
+    "done": [
+     {
+      "name": "observe",
+      "ms": 6100,
+      "n_out": 1996
+     },
+     {
+      "name": "orient",
+      "ms": 11420,
+      "n_out": 12
+     }
+    ],
+    "sources": [
+     {
+      "name": "espn_news",
+      "n": 52,
+      "error": ""
+     },
+     {
+      "name": "google_news",
+      "n": 51,
+      "error": ""
+     },
+     {
+      "name": "x_targets",
+      "n": 0,
+      "error": "failed: x_targets: every read failed; first error: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     },
+     {
+      "name": "reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+      "n": 1840,
+      "error": ""
+     },
+     {
+      "name": "fever_beat_writers_list",
+      "n": 37,
+      "error": ""
+     },
+     {
+      "name": "attention",
+      "n": 0,
+      "error": ""
+     },
+     {
+      "name": "x_search_mentions",
+      "n": 0,
+      "error": ""
+     },
+     {
+      "name": "youtube_highlights_ingest_v2_experimental",
+      "n": 12,
+      "error": ""
+     },
+     {
+      "name": "sample",
+      "n": 4,
+      "error": ""
+     }
+    ],
+    "llm_calls": 9
+   },
+   "latest": {
+    "run_id": 213,
+    "actions": 1240,
+    "vetoed": 388,
+    "approved": 402,
+    "killed": 211,
+    "pending": 627,
+    "to_review": 239,
+    "by_type": {
+     "post": 600,
+     "reply": 400,
+     "quote": 140,
+     "mention": 100
+    },
+    "decisions": null
+   },
+   "trace": {
+    "run_id": 213,
+    "total_ms": 4812330,
+    "stages": [
+     {
+      "name": "observe",
+      "start_ms": 0,
+      "ms": 61204,
+      "n_out": 1996
+     },
+     {
+      "name": "orient",
+      "start_ms": 61204,
+      "ms": 302118,
+      "n_out": 14
+     },
+     {
+      "name": "decide",
+      "start_ms": 363322,
+      "ms": 1940552,
+      "n_out": 1240
+     },
+     {
+      "name": "qualify",
+      "start_ms": 2303874,
+      "ms": 1208040,
+      "n_out": 852
+     },
+     {
+      "name": "tournament",
+      "start_ms": 3511914,
+      "ms": 1300416,
+      "n_out": 10
+     }
+    ],
+    "sources": [
+     {
+      "name": "espn_news",
+      "n": 52,
+      "start_ms": 0,
+      "ms": 300,
+      "error": ""
+     },
+     {
+      "name": "google_news",
+      "n": 51,
+      "start_ms": 0,
+      "ms": 340,
+      "error": ""
+     },
+     {
+      "name": "x_targets",
+      "n": 0,
+      "start_ms": 0,
+      "ms": 380,
+      "error": "failed: x_targets: every read failed; first error: timelines skipped: fxtwitter timelines need harness.context.xreader from sam/context-dynamics, which isn't merged here"
+     },
+     {
+      "name": "reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+      "n": 1840,
+      "start_ms": 0,
+      "ms": 420,
+      "error": ""
+     },
+     {
+      "name": "fever_beat_writers_list",
+      "n": 37,
+      "start_ms": 0,
+      "ms": 460,
+      "error": ""
+     },
+     {
+      "name": "attention",
+      "n": 0,
+      "start_ms": 0,
+      "ms": 500,
+      "error": ""
+     },
+     {
+      "name": "x_search_mentions",
+      "n": 0,
+      "start_ms": 0,
+      "ms": 540,
+      "error": ""
+     },
+     {
+      "name": "youtube_highlights_ingest_v2_experimental",
+      "n": 12,
+      "start_ms": 0,
+      "ms": 580,
+      "error": ""
+     },
+     {
+      "name": "sample",
+      "n": 4,
+      "start_ms": 0,
+      "ms": 620,
+      "error": ""
+     }
+    ],
+    "signals": 12480,
+    "narratives": [
+     {
+      "id": "narrative-00-キャンプ-ñandú",
+      "title": "Aliyah Boston's knee surgery and Caitlin Clark's 4-word message, which every outlet is quoting slightly differently and the fans are counting words",
+      "relevance": 0.99,
+      "velocity": 0.2,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "data"
+     },
+     {
+      "id": "narrative-01-キャンプ-ñandú",
+      "title": "ケイトリン・クラークのオフシーズン:インディアナ・フィーバーのトレーニングキャンプ日程が発表され、ファンが盛り上がる",
+      "relevance": 0.94,
+      "velocity": 0.39,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "llm"
+     },
+     {
+      "id": "narrative-02-キャンプ-ñandú",
+      "title": "Sophie Cunningham vs. the league",
+      "relevance": 0.89,
+      "velocity": 0.58,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": ""
+     },
+     {
+      "id": "narrative-03-キャンプ-ñandú",
+      "title": "https://www.espn.com/wnba/story/_/id/50176202/2026-wnba-finals-valkyries-dream-schedule-scores-news-and-a-very-long-slug-without-breaks",
+      "relevance": 0.84,
+      "velocity": 0.77,
+      "velocity_basis": "data"
+     },
+     {
+      "id": "narrative-04-キャンプ-ñandú",
+      "title": "Ñandú-gate: Angel Reese’s “mid-court” remark and the officiating discourse",
+      "relevance": 0.79,
+      "velocity": 0.96,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "llm"
+     },
+     {
+      "id": "narrative-05-キャンプ-ñandú",
+      "title": "تغطية نهائيات WNBA بين فالكيريز ودريم",
+      "relevance": 0.74,
+      "velocity": null,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": ""
+     },
+     {
+      "id": "narrative-06-キャンプ-ñandú",
+      "title": "Aliyah Boston's knee surgery and Caitlin Clark's 4-word message, which every outlet is quoting slightly differently and the fans are counting words",
+      "relevance": 0.69,
+      "velocity": 0.39,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "data"
+     },
+     {
+      "id": "narrative-07-キャンプ-ñandú",
+      "title": "ケイトリン・クラークのオフシーズン:インディアナ・フィーバーのトレーニングキャンプ日程が発表され、ファンが盛り上がる",
+      "relevance": null,
+      "velocity": 0.58,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said."
+     },
+     {
+      "id": "narrative-08-キャンプ-ñandú",
+      "title": "Sophie Cunningham vs. the league",
+      "relevance": 0.59,
+      "velocity": 0.77,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": ""
+     },
+     {
+      "id": "narrative-09-キャンプ-ñandú",
+      "relevance": 0.54,
+      "velocity": 0.96,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "data"
+     },
+     {
+      "id": "narrative-10-キャンプ-ñandú",
+      "title": "Ñandú-gate: Angel Reese’s “mid-court” remark and the officiating discourse",
+      "relevance": 0.49,
+      "velocity": 0.2,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "llm"
+     },
+     {
+      "id": "narrative-11-キャンプ-ñandú",
+      "title": "تغطية نهائيات WNBA بين فالكيريز ودريم",
+      "relevance": 0.44,
+      "velocity": 0.39,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": ""
+     },
+     {
+      "id": "narrative-12-キャンプ-ñandú",
+      "title": "Aliyah Boston's knee surgery and Caitlin Clark's 4-word message, which every outlet is quoting slightly differently and the fans are counting words",
+      "relevance": 0.39,
+      "velocity": 0.58,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "data"
+     },
+     {
+      "id": "narrative-13-キャンプ-ñandú",
+      "title": "ケイトリン・クラークのオフシーズン:インディアナ・フィーバーのトレーニングキャンプ日程が発表され、ファンが盛り上がる",
+      "relevance": 0.34,
+      "velocity": 0.77,
+      "angle": "Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said. Fan-in-on-the-joke quip, staying fair to everyone and sticking to what was actually said.",
+      "velocity_basis": "llm"
+     }
+    ],
+    "n_drafts": 1240,
+    "kept": 852,
+    "llm_calls": 2604,
+    "llm_errors": 31,
+    "llm_ms": 9412004,
+    "calls_by_stage": {
+     "orient": {
+      "n": 3,
+      "ms": 290000,
+      "errors": 0
+     },
+     "decide": {
+      "n": 1240,
+      "ms": 5400000,
+      "errors": 29
+     }
+    }
+   },
+   "runs": [
+    {
+     "id": 213,
+     "started_at": "2026-10-16T00:00:00+00:00",
+     "provider": null,
+     "sources": "",
+     "n_actions": 0,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 212,
+     "started_at": "2026-10-16T07:13:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news",
+     "n_actions": 37,
+     "n_approved": 11,
+     "n_killed": 5
+    },
+    {
+     "id": 211,
+     "started_at": "2026-10-16T14:26:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 74,
+     "n_approved": 22,
+     "n_killed": 10
+    },
+    {
+     "id": 210,
+     "started_at": "2026-10-16T21:39:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 111,
+     "n_approved": 33,
+     "n_killed": 15
+    },
+    {
+     "id": 209,
+     "started_at": "2026-10-16T04:52:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 148,
+     "n_approved": 44,
+     "n_killed": 20
+    },
+    {
+     "id": 208,
+     "started_at": "2026-10-16T11:05:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 185,
+     "n_approved": null,
+     "n_killed": 25
+    },
+    {
+     "id": 207,
+     "started_at": "2026-10-16T18:18:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 222,
+     "n_approved": 66,
+     "n_killed": 30
+    },
+    {
+     "id": 206,
+     "started_at": "2026-10-16T01:31:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 259,
+     "n_approved": 77,
+     "n_killed": null
+    },
+    {
+     "id": 205,
+     "started_at": "2026-10-16T08:44:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 296,
+     "n_approved": 88,
+     "n_killed": 40
+    },
+    {
+     "id": 204,
+     "started_at": "2026-10-16T15:57:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news",
+     "n_actions": 333,
+     "n_approved": 99,
+     "n_killed": 45
+    },
+    {
+     "id": 203,
+     "started_at": "2026-10-16T22:10:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news",
+     "n_actions": 370,
+     "n_approved": null,
+     "n_killed": 50
+    },
+    {
+     "id": 202,
+     "started_at": "2026-10-16T05:23:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 407,
+     "n_approved": 121,
+     "n_killed": 55
+    },
+    {
+     "id": 201,
+     "started_at": "2026-10-15T12:36:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 444,
+     "n_approved": 132,
+     "n_killed": 60
+    },
+    {
+     "id": 200,
+     "started_at": "2026-10-15T19:49:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 481,
+     "n_approved": 143,
+     "n_killed": 65
+    },
+    {
+     "id": 199,
+     "started_at": "2026-10-15T02:02:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 518,
+     "n_approved": 154,
+     "n_killed": null
+    },
+    {
+     "id": 198,
+     "started_at": "2026-10-15T09:15:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 555,
+     "n_approved": null,
+     "n_killed": 75
+    },
+    {
+     "id": 197,
+     "started_at": "2026-10-15T16:28:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 592,
+     "n_approved": 176,
+     "n_killed": 80
+    },
+    {
+     "id": 196,
+     "started_at": "2026-10-15T23:41:00+00:00",
+     "provider": "mock",
+     "sources": "",
+     "n_actions": 629,
+     "n_approved": 187,
+     "n_killed": 85
+    },
+    {
+     "id": 195,
+     "started_at": "2026-10-15T06:54:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news",
+     "n_actions": 666,
+     "n_approved": 198,
+     "n_killed": 90
+    },
+    {
+     "id": 194,
+     "started_at": "2026-10-15T13:07:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news",
+     "n_actions": 703,
+     "n_approved": 209,
+     "n_killed": 95
+    },
+    {
+     "id": 193,
+     "started_at": "2026-10-15T20:20:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 740,
+     "n_approved": null,
+     "n_killed": 100
+    },
+    {
+     "id": 192,
+     "started_at": "2026-10-15T03:33:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 777,
+     "n_approved": 231,
+     "n_killed": null
+    },
+    {
+     "id": 191,
+     "started_at": "2026-10-15T10:46:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 814,
+     "n_approved": 242,
+     "n_killed": 110
+    },
+    {
+     "id": 190,
+     "started_at": "2026-10-15T17:59:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 851,
+     "n_approved": 253,
+     "n_killed": 115
+    },
+    {
+     "id": 189,
+     "started_at": "2026-10-14T00:12:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 888,
+     "n_approved": 264,
+     "n_killed": 120
+    },
+    {
+     "id": 188,
+     "started_at": "2026-10-14T07:25:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 925,
+     "n_approved": null,
+     "n_killed": 125
+    },
+    {
+     "id": 187,
+     "started_at": "2026-10-14T14:38:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 962,
+     "n_approved": 286,
+     "n_killed": 130
+    },
+    {
+     "id": 186,
+     "started_at": "2026-10-14T21:51:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news",
+     "n_actions": 999,
+     "n_approved": 297,
+     "n_killed": 135
+    },
+    {
+     "id": 185,
+     "started_at": "2026-10-14T04:04:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news",
+     "n_actions": 1036,
+     "n_approved": 308,
+     "n_killed": null
+    },
+    {
+     "id": 184,
+     "started_at": "2026-10-14T11:17:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 1073,
+     "n_approved": 319,
+     "n_killed": 145
+    },
+    {
+     "id": 183,
+     "started_at": "2026-10-14T18:30:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 1110,
+     "n_approved": null,
+     "n_killed": 150
+    },
+    {
+     "id": 182,
+     "started_at": "2026-10-14T01:43:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 1147,
+     "n_approved": 341,
+     "n_killed": 155
+    },
+    {
+     "id": 181,
+     "started_at": "2026-10-14T08:56:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 1184,
+     "n_approved": 352,
+     "n_killed": 160
+    },
+    {
+     "id": 180,
+     "started_at": "2026-10-14T15:09:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 1221,
+     "n_approved": 363,
+     "n_killed": 165
+    },
+    {
+     "id": 179,
+     "started_at": "2026-10-14T22:22:00+00:00",
+     "provider": "xai",
+     "sources": "",
+     "n_actions": 1258,
+     "n_approved": 374,
+     "n_killed": 170
+    },
+    {
+     "id": 178,
+     "started_at": "2026-10-14T05:35:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 1295,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 177,
+     "started_at": "2026-10-13T12:48:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news",
+     "n_actions": 32,
+     "n_approved": 396,
+     "n_killed": 180
+    },
+    {
+     "id": 176,
+     "started_at": "2026-10-13T19:01:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news",
+     "n_actions": 69,
+     "n_approved": 7,
+     "n_killed": 185
+    },
+    {
+     "id": 175,
+     "started_at": "2026-10-13T02:14:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 106,
+     "n_approved": 18,
+     "n_killed": 190
+    },
+    {
+     "id": 174,
+     "started_at": "2026-10-13T09:27:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 143,
+     "n_approved": 29,
+     "n_killed": 195
+    },
+    {
+     "id": 173,
+     "started_at": "2026-10-13T16:40:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 180,
+     "n_approved": null,
+     "n_killed": 200
+    },
+    {
+     "id": 172,
+     "started_at": "2026-10-13T23:53:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 217,
+     "n_approved": 51,
+     "n_killed": 205
+    },
+    {
+     "id": 171,
+     "started_at": "2026-10-13T06:06:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 254,
+     "n_approved": 62,
+     "n_killed": null
+    },
+    {
+     "id": 170,
+     "started_at": "2026-10-13T13:19:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 291,
+     "n_approved": 73,
+     "n_killed": 215
+    },
+    {
+     "id": 169,
+     "started_at": "2026-10-13T20:32:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 328,
+     "n_approved": 84,
+     "n_killed": 220
+    },
+    {
+     "id": 168,
+     "started_at": "2026-10-13T03:45:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news",
+     "n_actions": 365,
+     "n_approved": null,
+     "n_killed": 225
+    },
+    {
+     "id": 167,
+     "started_at": "2026-10-13T10:58:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news",
+     "n_actions": 402,
+     "n_approved": 106,
+     "n_killed": 230
+    },
+    {
+     "id": 166,
+     "started_at": "2026-10-13T17:11:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 439,
+     "n_approved": 117,
+     "n_killed": 235
+    },
+    {
+     "id": 165,
+     "started_at": "2026-10-12T00:24:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 476,
+     "n_approved": 128,
+     "n_killed": 240
+    },
+    {
+     "id": 164,
+     "started_at": "2026-10-12T07:37:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 513,
+     "n_approved": 139,
+     "n_killed": null
+    },
+    {
+     "id": 163,
+     "started_at": "2026-10-12T14:50:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 550,
+     "n_approved": null,
+     "n_killed": 250
+    },
+    {
+     "id": 162,
+     "started_at": "2026-10-12T21:03:00+00:00",
+     "provider": "openai",
+     "sources": "",
+     "n_actions": 587,
+     "n_approved": 161,
+     "n_killed": 255
+    },
+    {
+     "id": 161,
+     "started_at": "2026-10-12T04:16:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 624,
+     "n_approved": 172,
+     "n_killed": 260
+    },
+    {
+     "id": 160,
+     "started_at": "2026-10-12T11:29:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 661,
+     "n_approved": 183,
+     "n_killed": 265
+    },
+    {
+     "id": 159,
+     "started_at": "2026-10-12T18:42:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news",
+     "n_actions": 698,
+     "n_approved": 194,
+     "n_killed": 270
+    },
+    {
+     "id": 158,
+     "started_at": "2026-10-12T01:55:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news",
+     "n_actions": 735,
+     "n_approved": null,
+     "n_killed": 275
+    },
+    {
+     "id": 157,
+     "started_at": "2026-10-12T08:08:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 772,
+     "n_approved": 216,
+     "n_killed": null
+    },
+    {
+     "id": 156,
+     "started_at": "2026-10-12T15:21:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 809,
+     "n_approved": 227,
+     "n_killed": 285
+    },
+    {
+     "id": 155,
+     "started_at": "2026-10-12T22:34:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 846,
+     "n_approved": 238,
+     "n_killed": 290
+    },
+    {
+     "id": 154,
+     "started_at": "2026-10-12T05:47:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 883,
+     "n_approved": 249,
+     "n_killed": 295
+    },
+    {
+     "id": 153,
+     "started_at": "2026-10-11T12:00:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 920,
+     "n_approved": null,
+     "n_killed": 0
+    },
+    {
+     "id": 152,
+     "started_at": "2026-10-11T19:13:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 957,
+     "n_approved": 271,
+     "n_killed": 5
+    },
+    {
+     "id": 151,
+     "started_at": "2026-10-11T02:26:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 994,
+     "n_approved": 282,
+     "n_killed": 10
+    },
+    {
+     "id": 150,
+     "started_at": "2026-10-11T09:39:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news",
+     "n_actions": 1031,
+     "n_approved": 293,
+     "n_killed": null
+    },
+    {
+     "id": 149,
+     "started_at": "2026-10-11T16:52:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news",
+     "n_actions": 1068,
+     "n_approved": 304,
+     "n_killed": 20
+    },
+    {
+     "id": 148,
+     "started_at": "2026-10-11T23:05:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 1105,
+     "n_approved": null,
+     "n_killed": 25
+    },
+    {
+     "id": 147,
+     "started_at": "2026-10-11T06:18:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 1142,
+     "n_approved": 326,
+     "n_killed": 30
+    },
+    {
+     "id": 146,
+     "started_at": "2026-10-11T13:31:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 1179,
+     "n_approved": 337,
+     "n_killed": 35
+    },
+    {
+     "id": 145,
+     "started_at": "2026-10-11T20:44:00+00:00",
+     "provider": "anthropic",
+     "sources": "",
+     "n_actions": 1216,
+     "n_approved": 348,
+     "n_killed": 40
+    },
+    {
+     "id": 144,
+     "started_at": "2026-10-11T03:57:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 1253,
+     "n_approved": 359,
+     "n_killed": 45
+    },
+    {
+     "id": 143,
+     "started_at": "2026-10-11T10:10:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 1290,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 142,
+     "started_at": "2026-10-11T17:23:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 27,
+     "n_approved": 381,
+     "n_killed": 55
+    },
+    {
+     "id": 141,
+     "started_at": "2026-10-10T00:36:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news",
+     "n_actions": 64,
+     "n_approved": 392,
+     "n_killed": 60
+    },
+    {
+     "id": 140,
+     "started_at": "2026-10-10T07:49:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news",
+     "n_actions": 101,
+     "n_approved": 3,
+     "n_killed": 65
+    },
+    {
+     "id": 139,
+     "started_at": "2026-10-10T14:02:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 138,
+     "n_approved": 14,
+     "n_killed": 70
+    },
+    {
+     "id": 138,
+     "started_at": "2026-10-10T21:15:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 175,
+     "n_approved": null,
+     "n_killed": 75
+    },
+    {
+     "id": 137,
+     "started_at": "2026-10-10T04:28:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 212,
+     "n_approved": 36,
+     "n_killed": 80
+    },
+    {
+     "id": 136,
+     "started_at": "2026-10-10T11:41:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 249,
+     "n_approved": 47,
+     "n_killed": null
+    },
+    {
+     "id": 135,
+     "started_at": "2026-10-10T18:54:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 286,
+     "n_approved": 58,
+     "n_killed": 90
+    },
+    {
+     "id": 134,
+     "started_at": "2026-10-10T01:07:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 323,
+     "n_approved": 69,
+     "n_killed": 95
+    },
+    {
+     "id": 133,
+     "started_at": "2026-10-10T08:20:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 360,
+     "n_approved": null,
+     "n_killed": 100
+    },
+    {
+     "id": 132,
+     "started_at": "2026-10-10T15:33:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news",
+     "n_actions": 397,
+     "n_approved": 91,
+     "n_killed": 105
+    },
+    {
+     "id": 131,
+     "started_at": "2026-10-10T22:46:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news",
+     "n_actions": 434,
+     "n_approved": 102,
+     "n_killed": 110
+    },
+    {
+     "id": 130,
+     "started_at": "2026-10-10T05:59:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 471,
+     "n_approved": 113,
+     "n_killed": 115
+    },
+    {
+     "id": 129,
+     "started_at": "2026-10-09T12:12:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 508,
+     "n_approved": 124,
+     "n_killed": null
+    },
+    {
+     "id": 128,
+     "started_at": "2026-10-09T19:25:00+00:00",
+     "provider": "mock",
+     "sources": "",
+     "n_actions": 545,
+     "n_approved": null,
+     "n_killed": 125
+    },
+    {
+     "id": 127,
+     "started_at": "2026-10-09T02:38:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 582,
+     "n_approved": 146,
+     "n_killed": 130
+    },
+    {
+     "id": 126,
+     "started_at": "2026-10-09T09:51:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 619,
+     "n_approved": 157,
+     "n_killed": 135
+    },
+    {
+     "id": 125,
+     "started_at": "2026-10-09T16:04:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 656,
+     "n_approved": 168,
+     "n_killed": 140
+    },
+    {
+     "id": 124,
+     "started_at": "2026-10-09T23:17:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 693,
+     "n_approved": 179,
+     "n_killed": 145
+    },
+    {
+     "id": 123,
+     "started_at": "2026-09-09T06:30:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news",
+     "n_actions": 730,
+     "n_approved": null,
+     "n_killed": 150
+    },
+    {
+     "id": 122,
+     "started_at": "2026-09-09T13:43:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news",
+     "n_actions": 767,
+     "n_approved": 201,
+     "n_killed": null
+    },
+    {
+     "id": 121,
+     "started_at": "2026-09-09T20:56:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 804,
+     "n_approved": 212,
+     "n_killed": 160
+    },
+    {
+     "id": 120,
+     "started_at": "2026-09-09T03:09:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 841,
+     "n_approved": 223,
+     "n_killed": 165
+    },
+    {
+     "id": 119,
+     "started_at": "2026-09-09T10:22:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 878,
+     "n_approved": 234,
+     "n_killed": 170
+    },
+    {
+     "id": 118,
+     "started_at": "2026-09-09T17:35:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 915,
+     "n_approved": null,
+     "n_killed": 175
+    },
+    {
+     "id": 117,
+     "started_at": "2026-09-08T00:48:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 952,
+     "n_approved": 256,
+     "n_killed": 180
+    },
+    {
+     "id": 116,
+     "started_at": "2026-09-08T07:01:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 989,
+     "n_approved": 267,
+     "n_killed": 185
+    },
+    {
+     "id": 115,
+     "started_at": "2026-09-08T14:14:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 1026,
+     "n_approved": 278,
+     "n_killed": null
+    },
+    {
+     "id": 114,
+     "started_at": "2026-09-08T21:27:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news",
+     "n_actions": 1063,
+     "n_approved": 289,
+     "n_killed": 195
+    },
+    {
+     "id": 113,
+     "started_at": "2026-09-08T04:40:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news",
+     "n_actions": 1100,
+     "n_approved": null,
+     "n_killed": 200
+    },
+    {
+     "id": 112,
+     "started_at": "2026-09-08T11:53:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 1137,
+     "n_approved": 311,
+     "n_killed": 205
+    },
+    {
+     "id": 111,
+     "started_at": "2026-09-08T18:06:00+00:00",
+     "provider": "xai",
+     "sources": "",
+     "n_actions": 1174,
+     "n_approved": 322,
+     "n_killed": 210
+    },
+    {
+     "id": 110,
+     "started_at": "2026-09-08T01:19:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 1211,
+     "n_approved": 333,
+     "n_killed": 215
+    },
+    {
+     "id": 109,
+     "started_at": "2026-09-08T08:32:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 1248,
+     "n_approved": 344,
+     "n_killed": 220
+    },
+    {
+     "id": 108,
+     "started_at": "2026-09-08T15:45:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 1285,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 107,
+     "started_at": "2026-09-08T22:58:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 22,
+     "n_approved": 366,
+     "n_killed": 230
+    },
+    {
+     "id": 106,
+     "started_at": "2026-09-08T05:11:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 59,
+     "n_approved": 377,
+     "n_killed": 235
+    },
+    {
+     "id": 105,
+     "started_at": "2026-09-07T12:24:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news",
+     "n_actions": 96,
+     "n_approved": 388,
+     "n_killed": 240
+    },
+    {
+     "id": 104,
+     "started_at": "2026-09-07T19:37:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news",
+     "n_actions": 133,
+     "n_approved": 399,
+     "n_killed": 245
+    },
+    {
+     "id": 103,
+     "started_at": "2026-09-07T02:50:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 170,
+     "n_approved": null,
+     "n_killed": 250
+    },
+    {
+     "id": 102,
+     "started_at": "2026-09-07T09:03:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 207,
+     "n_approved": 21,
+     "n_killed": 255
+    },
+    {
+     "id": 101,
+     "started_at": "2026-09-07T16:16:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 244,
+     "n_approved": 32,
+     "n_killed": null
+    },
+    {
+     "id": 100,
+     "started_at": "2026-09-07T23:29:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 281,
+     "n_approved": 43,
+     "n_killed": 265
+    },
+    {
+     "id": 99,
+     "started_at": "2026-09-07T06:42:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 318,
+     "n_approved": 54,
+     "n_killed": 270
+    },
+    {
+     "id": 98,
+     "started_at": "2026-09-07T13:55:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 355,
+     "n_approved": null,
+     "n_killed": 275
+    },
+    {
+     "id": 97,
+     "started_at": "2026-09-07T20:08:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 392,
+     "n_approved": 76,
+     "n_killed": 280
+    },
+    {
+     "id": 96,
+     "started_at": "2026-09-07T03:21:00+00:00",
+     "provider": null,
+     "sources": "espn_news",
+     "n_actions": 429,
+     "n_approved": 87,
+     "n_killed": 285
+    },
+    {
+     "id": 95,
+     "started_at": "2026-09-07T10:34:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news",
+     "n_actions": 466,
+     "n_approved": 98,
+     "n_killed": 290
+    },
+    {
+     "id": 94,
+     "started_at": "2026-09-07T17:47:00+00:00",
+     "provider": "openai",
+     "sources": "",
+     "n_actions": 503,
+     "n_approved": 109,
+     "n_killed": null
+    },
+    {
+     "id": 93,
+     "started_at": "2026-09-06T00:00:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 540,
+     "n_approved": null,
+     "n_killed": 0
+    },
+    {
+     "id": 92,
+     "started_at": "2026-09-06T07:13:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 577,
+     "n_approved": 131,
+     "n_killed": 5
+    },
+    {
+     "id": 91,
+     "started_at": "2026-09-06T14:26:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 614,
+     "n_approved": 142,
+     "n_killed": 10
+    },
+    {
+     "id": 90,
+     "started_at": "2026-09-06T21:39:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 651,
+     "n_approved": 153,
+     "n_killed": 15
+    },
+    {
+     "id": 89,
+     "started_at": "2026-09-06T04:52:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 688,
+     "n_approved": 164,
+     "n_killed": 20
+    },
+    {
+     "id": 88,
+     "started_at": "2026-09-06T11:05:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 725,
+     "n_approved": null,
+     "n_killed": 25
+    },
+    {
+     "id": 87,
+     "started_at": "2026-09-06T18:18:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news",
+     "n_actions": 762,
+     "n_approved": 186,
+     "n_killed": null
+    },
+    {
+     "id": 86,
+     "started_at": "2026-09-06T01:31:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news",
+     "n_actions": 799,
+     "n_approved": 197,
+     "n_killed": 35
+    },
+    {
+     "id": 85,
+     "started_at": "2026-09-06T08:44:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 836,
+     "n_approved": 208,
+     "n_killed": 40
+    },
+    {
+     "id": 84,
+     "started_at": "2026-09-06T15:57:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 873,
+     "n_approved": 219,
+     "n_killed": 45
+    },
+    {
+     "id": 83,
+     "started_at": "2026-09-06T22:10:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 910,
+     "n_approved": null,
+     "n_killed": 50
+    },
+    {
+     "id": 82,
+     "started_at": "2026-09-06T05:23:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 947,
+     "n_approved": 241,
+     "n_killed": 55
+    },
+    {
+     "id": 81,
+     "started_at": "2026-09-05T12:36:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 984,
+     "n_approved": 252,
+     "n_killed": 60
+    },
+    {
+     "id": 80,
+     "started_at": "2026-09-05T19:49:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 1021,
+     "n_approved": 263,
+     "n_killed": null
+    },
+    {
+     "id": 79,
+     "started_at": "2026-09-05T02:02:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 1058,
+     "n_approved": 274,
+     "n_killed": 70
+    },
+    {
+     "id": 78,
+     "started_at": "2026-09-05T09:15:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news",
+     "n_actions": 1095,
+     "n_approved": null,
+     "n_killed": 75
+    },
+    {
+     "id": 77,
+     "started_at": "2026-09-05T16:28:00+00:00",
+     "provider": "anthropic",
+     "sources": "",
+     "n_actions": 1132,
+     "n_approved": 296,
+     "n_killed": 80
+    },
+    {
+     "id": 76,
+     "started_at": "2026-09-05T23:41:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 1169,
+     "n_approved": 307,
+     "n_killed": 85
+    },
+    {
+     "id": 75,
+     "started_at": "2026-09-05T06:54:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 1206,
+     "n_approved": 318,
+     "n_killed": 90
+    },
+    {
+     "id": 74,
+     "started_at": "2026-09-05T13:07:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 1243,
+     "n_approved": 329,
+     "n_killed": 95
+    },
+    {
+     "id": 73,
+     "started_at": "2026-09-05T20:20:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 1280,
+     "n_approved": null,
+     "n_killed": null
+    },
+    {
+     "id": 72,
+     "started_at": "2026-09-05T03:33:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 17,
+     "n_approved": 351,
+     "n_killed": 105
+    },
+    {
+     "id": 71,
+     "started_at": "2026-09-05T10:46:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 54,
+     "n_approved": 362,
+     "n_killed": 110
+    },
+    {
+     "id": 70,
+     "started_at": "2026-09-05T17:59:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 91,
+     "n_approved": 373,
+     "n_killed": 115
+    },
+    {
+     "id": 69,
+     "started_at": "2026-09-04T00:12:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news",
+     "n_actions": 128,
+     "n_approved": 384,
+     "n_killed": 120
+    },
+    {
+     "id": 68,
+     "started_at": "2026-09-04T07:25:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news",
+     "n_actions": 165,
+     "n_approved": null,
+     "n_killed": 125
+    },
+    {
+     "id": 67,
+     "started_at": "2026-09-04T14:38:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 202,
+     "n_approved": 6,
+     "n_killed": 130
+    },
+    {
+     "id": 66,
+     "started_at": "2026-09-04T21:51:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 239,
+     "n_approved": 17,
+     "n_killed": null
+    },
+    {
+     "id": 65,
+     "started_at": "2026-09-04T04:04:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 276,
+     "n_approved": 28,
+     "n_killed": 140
+    },
+    {
+     "id": 64,
+     "started_at": "2026-09-04T11:17:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 313,
+     "n_approved": 39,
+     "n_killed": 145
+    },
+    {
+     "id": 63,
+     "started_at": "2026-09-04T18:30:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 350,
+     "n_approved": null,
+     "n_killed": 150
+    },
+    {
+     "id": 62,
+     "started_at": "2026-09-04T01:43:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental",
+     "n_actions": 387,
+     "n_approved": 61,
+     "n_killed": 155
+    },
+    {
+     "id": 61,
+     "started_at": "2026-09-04T08:56:00+00:00",
+     "provider": "anthropic",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions,youtube_highlights_ingest_v2_experimental,sample",
+     "n_actions": 424,
+     "n_approved": 72,
+     "n_killed": 160
+    },
+    {
+     "id": 60,
+     "started_at": "2026-09-04T15:09:00+00:00",
+     "provider": "mock",
+     "sources": "",
+     "n_actions": 461,
+     "n_approved": 83,
+     "n_killed": 165
+    },
+    {
+     "id": 59,
+     "started_at": "2026-09-04T22:22:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news",
+     "n_actions": 498,
+     "n_approved": 94,
+     "n_killed": null
+    },
+    {
+     "id": 58,
+     "started_at": "2026-09-04T05:35:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets",
+     "n_actions": 535,
+     "n_approved": null,
+     "n_killed": 175
+    },
+    {
+     "id": 57,
+     "started_at": "2026-09-03T12:48:00+00:00",
+     "provider": null,
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be",
+     "n_actions": 572,
+     "n_approved": 116,
+     "n_killed": 180
+    },
+    {
+     "id": 56,
+     "started_at": "2026-09-03T19:01:00+00:00",
+     "provider": "mock",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list",
+     "n_actions": 609,
+     "n_approved": 127,
+     "n_killed": 185
+    },
+    {
+     "id": 55,
+     "started_at": "2026-09-03T02:14:00+00:00",
+     "provider": "xai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention",
+     "n_actions": 646,
+     "n_approved": 138,
+     "n_killed": 190
+    },
+    {
+     "id": 54,
+     "started_at": "2026-09-03T09:27:00+00:00",
+     "provider": "openai",
+     "sources": "espn_news,google_news,x_targets,reddit_r_wnba_with_a_plugin_name_far_longer_than_any_real_one_should_be,fever_beat_writers_list,attention,x_search_mentions",
+     "n_actions": 683,
+     "n_approved": 149,
+     "n_killed": 195
+    }
+   ],
+   "learn": {
+    "lessons_file": true,
+    "updated_at": null,
+    "bullets": 15
+   }
+  }
+ },
+ "errors": {}
+}

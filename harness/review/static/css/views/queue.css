@@ -1,0 +1,472 @@
+/* Queue: strips on the left in a bay cut into the board, the selected strip on paper at right. */
+
+#view[data-view="queue"] {
+  height: 100%;
+}
+
+.q {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  height: 100%;
+}
+
+.q-head {
+  padding-bottom: var(--s3);
+}
+
+.q-head .select {
+  max-width: 340px;
+}
+
+.q .bays .bay[aria-selected="true"] {
+  background: var(--board-deep);
+}
+
+.q-body {
+  display: grid;
+  grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+  min-height: 0;
+  border-top: 1px solid var(--rule);
+}
+
+/* No runs or a failed load: the list's message gets the whole width. */
+.q[data-solo] .q-body {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.q[data-solo] .q-detail {
+  display: none;
+}
+
+.q-list {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--s3) var(--s4) var(--s5) var(--s3);
+  background: var(--board-deep);
+  scrollbar-gutter: stable;
+}
+
+.q-strips {
+  display: grid;
+  gap: var(--s2);
+  padding-right: var(--s2); /* room for the cocked strip */
+}
+
+.q-notice {
+  margin-bottom: var(--s3);
+}
+
+.q-list .state {
+  padding: var(--s5) var(--s2);
+}
+
+.skeleton-strip {
+  gap: 10px;
+}
+
+.warn-text {
+  color: var(--warn);
+}
+
+.bad-text {
+  color: var(--struck);
+}
+
+/* One-time entrance when a bay first fills: the board being loaded with strips. */
+@media (prefers-reduced-motion: no-preference) {
+  .q-strips.enter > .strip:nth-child(-n + 10) {
+    animation: strip-in var(--d-base) var(--ease-out) both;
+  }
+  .q-strips.enter > .strip:nth-child(2) { animation-delay: 35ms; }
+  .q-strips.enter > .strip:nth-child(3) { animation-delay: 70ms; }
+  .q-strips.enter > .strip:nth-child(4) { animation-delay: 105ms; }
+  .q-strips.enter > .strip:nth-child(5) { animation-delay: 140ms; }
+  .q-strips.enter > .strip:nth-child(6) { animation-delay: 175ms; }
+  .q-strips.enter > .strip:nth-child(n + 7) { animation-delay: 200ms; }
+}
+
+@keyframes strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* --- Detail ------------------------------------------------------------------------------- */
+
+.q-detail {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+  background: var(--strip);
+  border-left: 1px solid var(--rule);
+}
+
+.q-back {
+  display: none;
+}
+
+.q-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  /* max-content rows: auto rows would let overflow-clipped children (fields, the X stage)
+     shrink to nothing once the column overflows. */
+  grid-auto-rows: max-content;
+  gap: var(--s4);
+  padding: var(--s4) var(--s5) var(--s5);
+}
+
+.q-scroll > .section {
+  padding: var(--s4) 0 0;
+}
+
+.q-fields {
+  box-shadow: none;
+}
+
+.q-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+.q-facts .muted {
+  flex-basis: 100%;
+}
+
+.q-diff {
+  display: grid;
+  gap: 6px;
+}
+
+.q-diff-text {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.q-diff-text del {
+  color: var(--struck);
+  background: var(--struck-wash);
+  text-decoration-thickness: 1.5px;
+}
+
+.q-diff-text ins {
+  color: var(--cleared);
+  background: var(--cleared-wash);
+  text-decoration: none;
+}
+
+.q-narr {
+  display: grid;
+  gap: var(--s2);
+}
+
+.q-narr-title {
+  font: 700 var(--t-lead) / 1.3 var(--font-ui);
+}
+
+.q-meters {
+  display: grid;
+  grid-template-columns: max-content minmax(80px, 220px) 4ch;
+  align-items: center;
+  gap: 6px var(--s3);
+}
+
+.q-basis {
+  font-size: 12.5px;
+}
+
+.q-ev {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s3);
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+.q-ev-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px var(--s3);
+  font-size: 12.5px;
+}
+
+.q-veto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s3);
+}
+
+.q-veto-side {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px var(--s2);
+  font-size: 12.5px;
+}
+
+.q-veto-side .num {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.q-veto-reason {
+  flex-basis: 100%;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.q-batch {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.q-batch .num {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.q-panel {
+  display: grid;
+  grid-template-columns: max-content minmax(80px, 1fr) 3ch;
+  align-items: center;
+  gap: 5px var(--s3);
+  font-size: 12.5px;
+}
+
+.q-panel-name {
+  color: var(--ink-3);
+}
+
+.q-refs {
+  display: grid;
+  gap: 6px;
+}
+
+.q-ref {
+  display: grid;
+  grid-template-columns: auto 5ch minmax(0, 1fr);
+  gap: var(--s2);
+  align-items: baseline;
+  font-size: 13px;
+}
+
+.q-cands {
+  display: grid;
+  gap: var(--s2);
+}
+
+.q-cand {
+  display: grid;
+  gap: 6px;
+  padding: var(--s3);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+}
+
+.q-cand.shipped {
+  border-color: color-mix(in srgb, var(--cleared) 45%, var(--rule));
+}
+
+.q-cand.broken {
+  border-style: dashed;
+  color: var(--ink-3);
+}
+
+.q-cand-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px var(--s2);
+}
+
+.q-cand-head .btn {
+  margin-left: auto;
+}
+
+.q-cand-text {
+  font: var(--t-x) / 20px var(--font-x);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.q-cand-gate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--s3);
+  font-size: 12px;
+  color: var(--warn);
+}
+
+.q-ask {
+  display: grid;
+  gap: var(--s1);
+  padding: var(--s3) var(--s4);
+  border-left: var(--holder) solid var(--human);
+  background: var(--strip-inset);
+  border-radius: 0 var(--r-strip) var(--r-strip) 0;
+}
+
+.q-ask-q {
+  font: 700 var(--t-lead) / 1.35 var(--font-ui);
+}
+
+.q-thread-note {
+  padding: 0 16px 12px;
+  font-size: 12.5px;
+}
+
+/* --- Decision bar ------------------------------------------------------------------------- */
+
+.q-decide {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s3) var(--s5);
+  padding-bottom: max(var(--s3), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--rule);
+  background: var(--strip);
+}
+
+.q-decide:empty {
+  display: none;
+}
+
+.q-decide-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.q-note {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.q-grow {
+  flex: 1;
+}
+
+.q-note-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.q-reasons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.q-reasons > .label {
+  margin-right: var(--s1);
+}
+
+.q-reasons.inline {
+  flex: 1;
+}
+
+/* --- Narrow screens: list first, detail slides over it ------------------------------------ */
+
+@media (max-width: 1100px) {
+  .q-body {
+    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  }
+  .q-scroll {
+    padding: var(--s4);
+  }
+  .q-decide {
+    padding: var(--s3) var(--s4);
+  }
+}
+
+@media (max-width: 860px) {
+  .q-body {
+    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+  }
+
+  .q-list {
+    padding: var(--s3);
+  }
+
+  /* A full-screen sheet over the shell, the way a phone opens a message. */
+  .q-detail {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    padding-top: env(safe-area-inset-top);
+    border-left: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition:
+      transform var(--d-sheet) var(--ease-drawer),
+      visibility 0s linear var(--d-sheet);
+  }
+
+  .q[data-detail-open] .q-detail {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform var(--d-sheet) var(--ease-drawer),
+      visibility 0s;
+  }
+
+  .q-back {
+    display: inline-flex;
+    justify-self: start;
+    margin: var(--s2) var(--s3) 0;
+  }
+
+  .q-scroll {
+    padding: var(--s3);
+  }
+
+  .q-decide {
+    padding: var(--s2) var(--s3);
+    padding-bottom: max(var(--s2), env(safe-area-inset-bottom));
+  }
+
+  .q-decide-row .btn {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+
+  .q-reasons > .label {
+    flex-basis: 100%;
+  }
+
+  .strip[aria-selected="true"] {
+    transform: none;
+  }
+}
+
+@media (max-width: 860px) and (prefers-reduced-motion: reduce) {
+  .q-detail {
+    transform: none;
+    opacity: 0;
+    transition:
+      opacity var(--d-fast) ease,
+      visibility 0s linear var(--d-fast);
+  }
+  .q[data-detail-open] .q-detail {
+    transform: none;
+    opacity: 1;
+    transition:
+      opacity var(--d-fast) ease,
+      visibility 0s;
+  }
+}

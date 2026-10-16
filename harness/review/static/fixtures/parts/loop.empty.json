@@ -1,0 +1,23 @@
+{
+ "about": "A fresh checkout: no runs, no rounds, memory/lessons.md still the placeholder.",
+ "routes": {
+  "GET /api/loop": {
+   "provider": "mock",
+   "sources": [
+    "sample"
+   ],
+   "command": "python -m harness run --narratives 2 --per-mind 1 --retries 1",
+   "round": null,
+   "live": null,
+   "latest": null,
+   "trace": null,
+   "runs": [],
+   "learn": {
+    "lessons_file": true,
+    "updated_at": "2026-10-15T19:20:11+00:00",
+    "bullets": 0
+   }
+  }
+ },
+ "errors": {}
+}
