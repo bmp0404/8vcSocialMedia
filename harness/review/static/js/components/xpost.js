@@ -44,6 +44,9 @@ export function metricsRow(m = {}) {
   </div>`;
 }
 
+// Some recorders write counts as strings ("152"); the preview does arithmetic on them.
+const n = (v) => (v == null || v === "" || Number.isNaN(+v) ? null : +v);
+
 /** A normalised target: whatever the run recorded about the post a reply or quote answers. */
 export function targetOf(action, context) {
   const meta = action.draft_meta?.target;
@@ -58,11 +61,11 @@ export function targetOf(action, context) {
     author: (base.author || action.target_handle || handleFromUrl(url) || "").replace(/^@/, ""),
     text: text || null,
     created_at: base.created_at || null,
-    age_minutes: base.age_minutes ?? null,
-    followers: base.author_followers ?? null,
-    metrics: { likes: base.likes, reposts: base.reposts, replies: base.replies, quotes: base.quotes, views: base.views },
-    engagement_per_hour: base.engagement_per_hour ?? null,
-    views_per_hour: base.views_per_hour ?? null,
+    age_minutes: n(base.age_minutes),
+    followers: n(base.author_followers),
+    metrics: { likes: n(base.likes), reposts: n(base.reposts), replies: n(base.replies), quotes: n(base.quotes), views: n(base.views) },
+    engagement_per_hour: n(base.engagement_per_hour),
+    views_per_hour: n(base.views_per_hour),
     thread: base.thread || [],
     thread_attached: base.thread_attached ?? null,
     verified: base.metrics_verified !== false && base.metrics_unverified !== 1,
@@ -114,10 +117,10 @@ export function threadReplies(thread, limit = 3) {
         <div class="xbody">
           <header class="xhead">
             <span class="xname">${r.author ? `@${r.author}` : "reply"}</span>
-            ${r.followers != null ? html`<span class="xmuted">${compact(r.followers)} followers</span>` : ""}
+            ${n(r.followers) != null ? html`<span class="xmuted">${compact(n(r.followers))} followers</span>` : ""}
           </header>
           <p class="xtext">${xText(r.text)}</p>
-          <div class="xmetrics small"><span class="xm">${icon("like")}<span>${compact(r.likes ?? 0)}</span><span class="sr-only">likes</span></span></div>
+          <div class="xmetrics small"><span class="xm">${icon("like")}<span>${compact(n(r.likes) ?? 0)}</span><span class="sr-only">likes</span></span></div>
         </div>
       </div>`,
     )}

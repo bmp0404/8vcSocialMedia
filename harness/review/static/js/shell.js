@@ -228,7 +228,7 @@ export async function boot() {
     if (fx) {
       const banner = $("#fixture-banner");
       banner.hidden = false;
-      setHTML(banner, html`Fixture: ${fx.name} <a href="${location.pathname}${location.hash}" title="Verdicts in fixture mode stay in this tab">Use live data</a>`);
+      setHTML(banner, html`Fixture: ${fx.name} <a href="${location.pathname}${location.hash}" title="Fixture data: verdicts stay in this tab. Switch to the live store.">Live</a>`);
     }
   } catch (e) {
     toast(e.message, { kind: "error" });

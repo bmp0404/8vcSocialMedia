@@ -205,8 +205,9 @@
 }
 
 .loop-n {
-  font: 700 var(--t-num) / 1 var(--font-mono);
-  letter-spacing: -0.02em;
+  font: 800 var(--t-num) / 1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .loop-what {
@@ -235,7 +236,7 @@
 
 .loop-detail .loop-fail {
   color: var(--struck);
-  font-family: var(--font-mono);
+  font-family: var(--font-code);
   font-size: 11.5px;
   -webkit-line-clamp: 4;
 }
@@ -267,7 +268,7 @@
 .loop-src {
   display: grid;
   gap: 1px;
-  font: 11.5px / 1.45 var(--font-mono);
+  font: 11.5px / 1.5 var(--font-code);
 }
 
 .loop-src li {
@@ -286,6 +287,8 @@
 
 .loop-src li > :last-child {
   flex: none;
+  font: 12px / 1.45 var(--font-ui);
+  font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 
@@ -308,11 +311,11 @@
 }
 
 .loop-ids {
-  font: 11.5px / 1.45 var(--font-mono);
+  font: 11.5px / 1.45 var(--font-code);
 }
 
 .loop-more {
-  font: 11.5px / 1.4 var(--font-mono);
+  font-size: 12px;
 }
 
 /* The return track: Learn's lessons go back to Decide in the next round. Drawn only when all six
@@ -352,7 +355,7 @@
   transform: translateX(-50%);
   padding: 0 var(--s2);
   background: var(--board);
-  font: 11.5px / 16px var(--font-mono);
+  font: 12px / 16px var(--font-ui);
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -524,8 +527,9 @@
   border-radius: var(--r-strip);
 }
 
+/* Log text in the code face; the stage tag keeps the board's B612 labels, times the UI figures. */
 .loop-lines {
-  font: 12px / 1.55 var(--font-mono);
+  font: 12px / 1.55 var(--font-code);
 }
 
 .loop-lines li {
@@ -536,11 +540,14 @@
 }
 
 .loop-lines .t {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
   color: var(--ink-3);
   text-align: right;
 }
 
 .loop-lines .s {
+  font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;

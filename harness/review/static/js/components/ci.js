@@ -37,11 +37,12 @@ const CSS = `
 .ci.muted .ci-pt { background: var(--ink-3); }
 .ci.muted .ci-pt.hollow { background: var(--ci-surface); border-color: var(--ink-3); }
 .ci-none { top: 50%; left: 0; right: 0; height: 0; border-top: 1px dashed var(--rule-strong); }
-.ci-axis { position: relative; display: block; height: 14px; font: 400 10px / 14px var(--font-mono); color: var(--ink-3); white-space: nowrap; }
+.ci-axis { container-type: inline-size; position: relative; display: block; height: 14px; font: 400 10.5px / 14px var(--font-ui); font-variant-numeric: tabular-nums; color: var(--ink-3); white-space: nowrap; }
 .ci-axis.has-dir { height: 30px; }
 .ci-axis .tick { position: absolute; top: 0; transform: translateX(-50%); }
 .ci-axis .tick.start { transform: none; }
 .ci-axis .tick.end { transform: translateX(-100%); }
+@container (max-width: 260px) { .ci-axis .tick[data-l="1"] { display: none; } }
 .ci-axis .dir { position: absolute; top: 16px; letter-spacing: 0.04em; }
 .ci-axis .dir.lo { left: 0; }
 .ci-axis .dir.hi { right: 0; }
@@ -160,16 +161,20 @@ export function ciRow({ domain, value = null, ci = null, refs = null, band = nul
 }
 
 /** Tick labels for rows drawn on the same domain, with optional direction words under them.
- *  At most `max` labels are printed, stepping out from zero (or the first tick) so zero keeps its
- *  label; pass every tick as `grid` to the rows to keep a gridline at each one. */
-export function ciAxis({ domain, ticks: tv = ticks(domain), format = (v) => String(v), low = "", high = "", max = 6 }) {
+ *  At most `max` labels print, stepping out from `anchor` (zero by default; chance at 0.5 for an
+ *  AUC) so the anchor keeps its label. Every other printed label is ranked lower and hides when the
+ *  axis is narrower than 260px, so the same markup reads on a phone. Pass every tick as `grid` to
+ *  the rows to keep a gridline at each one. */
+export function ciAxis({ domain, ticks: tv = ticks(domain), format = (v) => String(v), low = "", high = "", max = 6, anchor = 0 }) {
   const stride = Math.max(1, Math.ceil(tv.length / max));
-  const z = Math.max(0, tv.findIndex((v) => v === 0));
-  const shown = tv.filter((_, i) => (i - z) % stride === 0);
-  const labels = shown.map((v) => {
+  let z = tv.findIndex((v) => Math.abs(v - anchor) < 1e-9);
+  if (z < 0) z = 0;
+  const labels = tv.map((v, i) => {
+    const d = Math.abs(i - z);
+    if (d % stride) return "";
     const p = at(domain, v);
     const edge = p < 6 ? "start" : p > 94 ? "end" : "";
-    return html`<span class="tick ${edge}" style="left:${pctStyle(p)}">${format(v)}</span>`;
+    return html`<span class="tick ${edge}" data-l="${d % (stride * 2) === 0 ? 0 : 1}" style="left:${pctStyle(p)}">${format(v)}</span>`;
   });
   const dir = low || high;
   return html`<span class="ci-axis ${dir ? "has-dir" : ""}" aria-hidden="true">${labels}${low ? html`<span class="dir lo">← ${low}</span>` : ""}${high ? html`<span class="dir hi">${high} →</span>` : ""}</span>`;

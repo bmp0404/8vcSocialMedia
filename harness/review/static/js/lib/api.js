@@ -121,7 +121,7 @@ const fixturePosts = [
   ],
   [/^\/api\/gate$/, (m, body) => realOrDemoGate(body.text || "", body.kind || "post")],
   [/^\/api\/rounds$/, () => simulateRound()],
-  [/^\/api\/rounds\/stop$/, () => ({ status: "stopped" })],
+  [/^\/api\/rounds\/stop$/, () => stopSimulatedRound()],
 ];
 
 async function fixturePost(path, body) {
@@ -174,7 +174,7 @@ const DEMO_RULES = [
   ["ai_vocab", /\b(?:delve|testament|tapestry|pivotal|showcas\w*|unwavering|game[- ]changer|let that sink in|make no mistake)\b/gi, (m) => `'${m}'`],
   ["placeholder", /\[(?:verify|insert|todo|tbd)[^\]]*\]/gi, (m) => `unresolved placeholder '${m}'`],
 ];
-const DEMO_LIMITS = { reply: 160, quote: 200, post: 280, mention: 240 };
+const DEMO_LIMITS = { reply: 280, quote: 280, post: 280, mention: 280 }; // GateLimits.max_chars on sam/action
 
 // The gate is a pure function, so fixture mode asks the real server's gate first and only falls
 // back to the demo rules when this branch doesn't have harness.minds.gate.
@@ -201,7 +201,17 @@ function simulatedGate(text, kind) {
   return { available: true, simulated: true, passed: findings.length === 0, limit, findings };
 }
 
-let roundTimer = null;
+let roundTimers = [];
+function stopSimulatedRound() {
+  const loop = fixture.routes["GET /api/loop"];
+  if (!loop?.round || loop.round.status !== "running") throw new ApiError(409, "No round is running.", "/api/rounds/stop");
+  roundTimers.forEach(clearTimeout);
+  roundTimers = [];
+  Object.assign(loop.round, { status: "stopped", exit_code: -15, finished_at: new Date().toISOString() });
+  if (loop.live) loop.live.status = "stopped";
+  return clone(loop.round);
+}
+
 function simulateRound() {
   const loop = fixture.routes["GET /api/loop"];
   if (!loop) throw new ApiError(404, "this fixture has no loop data", "/api/rounds");
@@ -218,9 +228,9 @@ function simulateRound() {
   const started = new Date().toISOString();
   loop.round = { id: "round-demo", started_at: started, provider: loop.provider, sources: loop.sources, command: loop.command, status: "running", stage: "observe", lines: [], run_id: null, exit_code: null, finished_at: null };
   loop.live = { status: "running", stage: "observe", started_at: started, elapsed_ms: 0, done: [], llm_calls: 0 };
-  clearTimeout(roundTimer);
+  roundTimers.forEach(clearTimeout);
   const t0 = Date.now();
-  script.forEach(([at, stage, text], i) => {
+  roundTimers = script.map(([at, stage, text], i) =>
     setTimeout(() => {
       const r = loop.round;
       r.lines.push({ t: at / 1000, stage, text });
@@ -236,7 +246,7 @@ function simulateRound() {
         r.finished_at = new Date().toISOString();
         loop.live.status = "done";
       }
-    }, at);
-  });
+    }, at),
+  );
   return clone(loop.round);
 }

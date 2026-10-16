@@ -277,24 +277,24 @@ def post_take(req: Request):
 
 @route("POST", r"/api/gate")
 def post_gate(req: Request):
-    text, kind = req.body.get("text"), req.body.get("kind", "post")
-    if not isinstance(text, str):
-        raise HTTPError(400, "text must be a string")
+    """sam/action's slop gate on one draft: `{text, kind, context?}`. `context` is the post being
+    answered; with it the gate also runs its grounding rules, as the reply lane does."""
+    text, kind, context = req.body.get("text"), req.body.get("kind", "post"), req.body.get("context")
+    if not isinstance(text, str) or (context is not None and not isinstance(context, str)):
+        raise HTTPError(400, "text must be a string, and context a string when given")
     try:
         from harness.minds import gate
+        from harness.minds.settings import GateLimits
     except ImportError as e:
         return {
             "available": False,
             "reason": f"The slop gate (harness.minds.gate, from sam/action) isn't on this branch: {e}",
         }
-    if kind not in gate.MAX_CHARS:
-        raise HTTPError(400, f"the gate has no rules for {kind!r}; expected one of {sorted(gate.MAX_CHARS)}")
-    res = gate.check(text, kind)
-    findings = []
-    for f in res.findings:
-        row = {"rule": f.rule, "detail": f.detail}
-        # start/end are optional on gate.Finding (requested from sam/action) and mark the exact span.
-        if isinstance(getattr(f, "start", None), int) and isinstance(getattr(f, "end", None), int):
-            row |= {"start": f.start, "end": f.end}
-        findings.append(row)
-    return {"available": True, "passed": res.passed, "limit": gate.MAX_CHARS[kind], "findings": findings}
+    if kind not in gate.KINDS:
+        raise HTTPError(400, f"the gate has no rules for {kind!r}; expected one of {list(gate.KINDS)}")
+    res = gate.check(text, kind, context=context or None)
+    findings = [
+        {"rule": f.rule, "detail": f.detail, "start": f.start, "end": f.end}  # offsets are None for whole-text rules
+        for f in res.findings
+    ]
+    return {"available": True, "passed": res.passed, "limit": GateLimits().max_chars.get(kind, 280), "findings": findings}

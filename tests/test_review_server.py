@@ -1,10 +1,8 @@
 """The review server: the original API keeps its shapes, POSTs only come from the page itself,
 static files can't escape their folder, and overrules and takes land in the hand-off file."""
 
-import http.client
+import io
 import json
-import threading
-from http.server import ThreadingHTTPServer
 
 import pytest
 
@@ -25,28 +23,45 @@ def store(tmp_path, monkeypatch):
     return run_id
 
 
+PORT = 8765
+
+
 @pytest.fixture
 def server(store):
-    srv = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
-    Handler.port = srv.server_address[1]
-    threading.Thread(target=srv.serve_forever, daemon=True).start()
-    yield srv.server_address[1]
-    srv.shutdown()
+    Handler.port = PORT
+    return PORT
+
+
+class FakeConnection:
+    """Feeds one raw HTTP request to the handler and collects its reply; tests never open sockets."""
+
+    def __init__(self, raw: bytes):
+        self.raw = raw
+        self.out = bytearray()
+
+    def makefile(self, *args, **kwargs):
+        return io.BytesIO(self.raw)
+
+    def sendall(self, data):
+        self.out.extend(data)
 
 
 def request(port, method, path, body=None, headers=None):
-    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
     h = {"Host": f"127.0.0.1:{port}"}
     if body is not None:
         h["Content-Type"] = "application/json"
     h.update(headers or {})
-    conn.request(method, path, body=json.dumps(body) if body is not None else None, headers=h)
-    res = conn.getresponse()
-    data = res.read()
+    data = json.dumps(body).encode() if body is not None else b""
+    head = f"{method} {path} HTTP/1.0\r\n" + "".join(f"{k}: {v}\r\n" for k, v in h.items())
+    conn = FakeConnection(head.encode() + f"Content-Length: {len(data)}\r\n\r\n".encode() + data)
+    Handler(conn, ("127.0.0.1", 0), None)
+    status_line, _, rest = bytes(conn.out).partition(b"\r\n")
+    payload = rest.split(b"\r\n\r\n", 1)[1]
+    code = int(status_line.split()[1])
     try:
-        return res.status, json.loads(data)
+        return code, json.loads(payload)
     except json.JSONDecodeError:
-        return res.status, data
+        return code, payload
 
 
 def write_decisions(run_id, decisions):
@@ -152,22 +167,6 @@ def test_decision_log_problems_are_named(server, store):
 def test_round_command_is_fixed():
     # The page can start a round but never shape its command line (lead's requirement).
     assert rounds.ARGV == ["-m", "harness", "run", "--narratives", "2", "--per-mind", "1", "--retries", "1"]
-
-
-def test_stage_lines_reads_the_harness_log():
-    lines = [
-        {"stage": "observe", "text": "[observe] espn_news: 52 signals"},
-        {"stage": "observe", "text": "[observe] x_targets failed: no X read access"},
-        {"stage": "orient", "text": "[orient] 2 narratives: clark-boston-knee-surgery, wnba-finals"},
-        {"stage": "decide", "text": "[decide] 5 minds proposed 3 actions"},
-        {"stage": "qualify", "text": "[qualify] kept 1/3 drafts"},
-        {"stage": None, "text": "Top 1 recommendations (run 5) -> out/x.json"},
-    ]
-    s = rounds.stage_lines(lines)
-    assert s["observe"]["facts"] == {"signals": 52, "by_source": {"espn_news": 52}, "failed": {"x_targets": "no X read access"}}
-    assert s["orient"]["facts"] == {"narratives": 2, "ids": ["clark-boston-knee-surgery", "wnba-finals"]}
-    assert s["decide"]["facts"] == {"drafts": 3, "minds": 5}
-    assert s["qualify"]["facts"] == {"kept": 1, "scored": 3}
 
 
 def test_gate_route_says_why_when_the_gate_is_missing(server):

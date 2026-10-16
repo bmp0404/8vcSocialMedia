@@ -37,6 +37,12 @@
   overflow: hidden;
 }
 
+/* Field values: numbers in the UI face with tabular figures; B612 stays on the labels. */
+.ev .field .v {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
 .ev-fields {
   border: 0;
   border-radius: 0;
@@ -195,6 +201,12 @@
   vertical-align: middle;
 }
 
+.ev-forest thead .ci-axis {
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+}
+
 .ev-forest td.ev-plot .ci {
   height: 34px;
 }
@@ -312,6 +324,19 @@
   }
 }
 
+/* Stacked above the table, the counts go two to a row and drop their one-line glosses. */
+@container ev (max-width: 899px) {
+  .ev-counts ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container ev (max-width: 560px) {
+  .ev-count-gist {
+    display: none;
+  }
+}
+
 .ev-counts {
   display: grid;
   gap: 2px;
@@ -408,6 +433,13 @@
 .ev-action {
   overflow-wrap: anywhere;
   font-size: 12px;
+}
+
+.ev-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .ev-stage {

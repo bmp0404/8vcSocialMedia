@@ -20,7 +20,7 @@ const CONTROLS = [
 ];
 const SEGMENTS = [
   ["all", "All posts"],
-  ["without_boost_suspect", "Without boost-suspect posts"],
+  ["without_boost_suspect", "Without boost suspects"],
 ];
 const GROUPS = [
   ["base", "Baselines"],
@@ -145,13 +145,14 @@ function headlineSection() {
   const rows = preds.map(([name, res]) => ({ name, res, s: stat(seg(res)?.[HEADLINE]), pairs: seg(res)?.[HEADLINE]?.n_pairs }));
   const domain = domainOf(rows.flatMap((r) => (r.s ? [r.s.value, ...(r.s.ci || [])] : [])), { include: [0.5], clamp: [0, 1], count: 6 });
   const grid = ticks(domain, 6);
+  const axis = ciAxis({ domain, ticks: grid, format: (v) => (v === 0.5 ? "0.5 chance" : v.toFixed(1)), max: 7, anchor: 0.5 });
   const plot = (r) =>
     ciRow({ domain, value: r.s?.value ?? null, ci: r.s?.ci, refs: 0.5, grid, label: r.s ? `${r.name}: AUC ${num(r.s.value)}${r.s.ci ? `, 95% interval ${num(r.s.ci[0])} to ${num(r.s.ci[1])}` : ", no interval"}` : "" });
   return html`<section class="section" aria-labelledby="ev-h-head">
     <div class="section-head"><h2 id="ev-h-head">Headline · viral vs Deadweight, same account</h2><span class="aside">AUC with a 95% interval from resampling accounts</span></div>
     <div class="ev-tablewrap"><table class="ev-table ev-forest">
       <caption class="sr-only">Headline AUC by predictor; 0.5 is chance</caption>
-      <thead><tr><th scope="col">Predictor</th><th scope="col" class="ev-plot"><span class="sr-only">Interval plot</span></th><th scope="col" class="r">AUC</th><th scope="col" class="r ev-pairs">Pairs</th></tr></thead>
+      <thead><tr><th scope="col">Predictor</th><th scope="col" class="ev-plot"><span class="sr-only">Interval plot</span>${axis}</th><th scope="col" class="r">AUC</th><th scope="col" class="r ev-pairs">Pairs</th></tr></thead>
       ${GROUPS.map(([g, label]) => {
         const rs = rows.filter((r) => groupOf(r.name, r.res) === g);
         if (!rs.length) return "";
@@ -166,7 +167,6 @@ function headlineSection() {
           </tr>`)}
         </tbody>`;
       })}
-      <tfoot><tr><td></td><td class="ev-plot">${ciAxis({ domain, ticks: grid, format: (v) => v.toFixed(1), max: 7 })}</td><td></td><td class="ev-pairs"></td></tr></tfoot>
     </table></div>
     <p class="ev-legend">The line at 0.5 is chance. Filled point: the interval clears chance; hollow: it includes it.</p>
   </section>`;
@@ -221,7 +221,7 @@ function comparisonsSection() {
     <div class="section-head"><h2 id="ev-h-cmp">Paired differences</h2><span class="aside">Headline AUC of the predictor named in each group minus another predictor's, on the same posts (all posts)</span></div>
     <div class="ev-tablewrap"><table class="ev-table ev-forest ev-compact">
       <caption class="sr-only">Paired differences in headline AUC</caption>
-      <thead><tr><th scope="col">Against</th><th scope="col" class="ev-plot"><span class="sr-only">Interval plot</span></th><th scope="col" class="r">Difference</th></tr></thead>
+      <thead><tr><th scope="col">Against</th><th scope="col" class="ev-plot"><span class="sr-only">Interval plot</span>${ciAxis({ domain, ticks: grid, format: (v) => sgn(v, 2), max: 7 })}</th><th scope="col" class="r">Difference</th></tr></thead>
       ${rows.map(([name, rs]) => html`<tbody>
         <tr class="grp"><th scope="colgroup" colspan="3"><span class="ev-grpname">${name}</span> minus</th></tr>
         ${rs.map((r) => html`<tr>
@@ -336,7 +336,7 @@ function actionCell(id) {
     const tail = String(id).match(/status\/(\d+)/)?.[1] || "";
     return html`<a class="ev-action" href="${id}" target="_blank" rel="noopener noreferrer"><span class="mono">@${handle}</span> <span class="muted mono">…${tail.slice(-6)}</span></a>`;
   }
-  return html`<span class="mono ev-action">${id ?? "–"}</span>`;
+  return html`<span class="mono ev-action ev-clamp" title="${id ?? ""}">${id ?? "–"}</span>`;
 }
 
 function outcomeCell(v) {
@@ -367,6 +367,8 @@ function evidenceLine(e) {
 const RANK = ["action_fault", "observe_fault", "both", "unexplained", "insufficient_evidence", "uncertain", "no_fault", "variance"];
 const rank = (v) => (RANK.includes(v.verdict) ? RANK.indexOf(v.verdict) : RANK.length);
 
+const listWords = (xs) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
+
 function faultCounts(verdicts) {
   const c = {};
   for (const v of verdicts) c[v.verdict] = (c[v.verdict] || 0) + 1;
@@ -391,7 +393,7 @@ function faultsBody() {
   return html`
     <div class="ev-faulthead">
       <p class="ev-fix">${fix?.length
-        ? html`<b>Fix ${fix.join(" and ")}.</b> ${fix.map((st) => `${byStage[st] || 0} verdicts point at ${st}`).join("; ")}.`
+        ? html`<b>Fix ${listWords(fix)}.</b> ${fix.slice().sort((a, b) => (byStage[b] || 0) - (byStage[a] || 0)).map((st) => `${byStage[st] || 0} verdicts point at ${st}`).join("; ")}.`
         : fix
           ? html`<b>No stage to fix yet.</b> No stage has enough matching verdicts. One underperformance proves little: a tenth of ordinary posts land under their account's 10th percentile.`
           : html`<b>No summary in this file,</b> so the repeat threshold for naming a stage isn't recorded. ${Object.entries(byStage).map(([st, n]) => `${n} verdicts point at ${st}.`).join(" ")}`}</p>

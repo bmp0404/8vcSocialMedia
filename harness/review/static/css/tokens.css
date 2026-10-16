@@ -79,7 +79,10 @@
 
   /* Type */
   --font-ui: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "B612 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-mono: "B612 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; /* labels, fields, stamps */
+  /* Paths, knob names, hashes and logs. B612 Mono gives "." a full cell with narrow glyphs, so
+     "action.reply.generation" reads as "action. reply. generation"; the system mono doesn't. */
+  --font-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --font-x: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --t-label: 10.5px;  /* mono field labels, uppercase */

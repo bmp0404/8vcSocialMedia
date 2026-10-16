@@ -116,11 +116,13 @@ button {
 }
 
 .mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-code);
 }
 
+/* Numbers in the reading face with tabular figures. B612 Mono gives "." and ":" a full cell,
+   so 3.3 s reads as "3. 3 s"; it stays on labels, field values and stamps. */
 .num {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-variant-numeric: tabular-nums;
 }
 
@@ -134,7 +136,7 @@ button {
 }
 
 code {
-  font: 0.92em var(--font-mono);
+  font: 0.92em var(--font-code);
   padding: 0.05em 0.35em;
   border-radius: 3px;
   background: var(--strip-inset);

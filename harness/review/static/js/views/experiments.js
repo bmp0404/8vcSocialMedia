@@ -182,10 +182,22 @@ function championBlock() {
   const last = S.byId.get(lastId);
   const config = champ.config && typeof champ.config === "object" ? champ.config : {};
   const knobs = Object.entries(config);
-  // Which promoted experiment set each knob, latest promotion winning.
-  const setBy = new Map();
-  for (const id of history) for (const [k] of paramsOf(S.byId.get(id) || {})) setBy.set(k, id);
-  const changed = [...setBy.entries()];
+  // The net effect of the history: a knob counts as changed only when it now differs from the value
+  // the first record touching it started from, so a promotion undone by a revert drops out.
+  const startedAt = new Map();
+  const lastSet = new Map();
+  for (const id of history) {
+    for (const [k, v] of paramsOf(S.byId.get(id) || {})) {
+      if (!startedAt.has(k)) startedAt.set(k, v?.from);
+      lastSet.set(k, id);
+    }
+  }
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const changed = [...lastSet.entries()].filter(([k]) => k in config && !same(config[k], startedAt.get(k)));
+  const restored = new Set([...lastSet.keys()].filter((k) => k in config && same(config[k], startedAt.get(k))));
+  const nRev = history.filter((id) => isRevert(S.byId.get(id) || {})).length;
+  const nProm = history.length - nRev;
+  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   const groups = new Map();
   for (const [k, v] of knobs) {
     const g = k.includes(".") ? k.slice(0, k.indexOf(".")) : "other";
@@ -194,22 +206,38 @@ function championBlock() {
   }
   const since = lastId
     ? html`<span class="v">${last ? html`<button class="xp-link mono" type="button" data-goto="${lastId}">${lastId}</button>` : lastId}</span>
-        <span class="xp-fsub">${last?.decision?.at ? `promoted ${clock(last.decision.at, true)}` : "promoted"}</span>`
+        <span class="xp-fsub">${last && isRevert(last) ? "reverted" : "promoted"}${last?.decision?.at ? ` ${clock(last.decision.at, true)}` : ""}</span>`
     : html`<span class="v ui">Defaults</span><span class="xp-fsub">nothing promoted yet</span>`;
+  const note = changed.length
+    ? html`<ul class="xp-changed" aria-label="Knobs that differ from their defaults">
+        ${changed.slice(0, 3).map(([k, id]) => html`<li><span class="mono xp-knob">${k}</span> <span>${fmtVal(config[k])}</span> <span class="muted">set by</span> <button class="xp-link mono" type="button" data-goto="${id}">${id}</button></li>`)}
+        ${changed.length > 3 ? html`<li class="muted">${changed.length - 3} more knobs differ from their defaults; open All knobs below.</li>` : ""}
+      </ul>`
+    : html`<p class="xp-champ-note">${restored.size ? "Every knob is back at its registry default: later records undid what earlier ones promoted." : "Every knob is at its registry default."}</p>`;
   return html`<section class="panel xp-champ" aria-labelledby="xp-champ-h">
     <h2 id="xp-champ-h" class="sr-only">Config in force</h2>
     <div class="fields xp-fields">
-      <div class="field"><span class="label">Config in force</span><span class="v" title="${champ.config_hash || ""}">${short(champ.ref)}</span></div>
+      <div class="field"><span class="label">Config in force</span><span class="v mono" title="${champ.config_hash || ""}">${short(champ.ref)}</span></div>
       <div class="field"><span class="label">Since</span>${since}</div>
-      <div class="field"><span class="label">Promotions</span><span class="v">${history.length}</span></div>
+      <div class="field"><span class="label">Applied</span><span class="v ui">${history.length ? `${plural(nProm, "promotion")}${nRev ? `, ${plural(nRev, "revert")}` : ""}` : "None"}</span></div>
       <div class="field"><span class="label">Knobs</span><span class="v">${knobs.length}</span></div>
     </div>
-    ${changed.length
-      ? html`<ul class="xp-changed" aria-label="Knobs changed from their defaults">
-          ${changed.slice(0, 3).map(([k, id]) => html`<li><span class="mono xp-knob">${k}</span> <span>${fmtVal(config[k])}</span> <span class="muted">set by</span> <button class="xp-link mono" type="button" data-goto="${id}">${id}</button></li>`)}
-          ${changed.length > 3 ? html`<li class="muted">${changed.length - 3} more knobs changed by promotions; open All knobs below.</li>` : ""}
-        </ul>`
-      : html`<p class="xp-champ-note">Every knob is at its registry default.</p>`}
+    ${history.length
+      ? html`<ol class="xp-history" aria-label="How the champion got here, oldest first">
+          ${history.map((id) => {
+            const r = S.byId.get(id);
+            if (!r) return html`<li><span class="mono">${id}</span> <span class="muted">isn't in this ledger</span></li>`;
+            return html`<li>
+              <span class="xp-hdate num">${clock(r.decision?.at || r.created_at, true)}</span>
+              ${stamp(r)}
+              <button class="xp-link mono" type="button" data-goto="${id}">${id}</button>
+              <span class="xp-hchange">${changeLine(r)}</span>
+              ${isRevert(r) && r.decision?.reason ? html`<span class="xp-hwhy">${r.decision.reason}</span>` : ""}
+            </li>`;
+          })}
+        </ol>`
+      : ""}
+    ${note}
     ${knobs.length
       ? html`<details class="xp-config">
           <summary>All ${knobs.length} knobs</summary>
@@ -217,7 +245,9 @@ function championBlock() {
             <thead><tr><th scope="col">Knob</th><th scope="col">Value</th><th scope="col">Set by</th></tr></thead>
             ${[...groups.entries()].map(([g, rows]) => html`<tbody>
               <tr class="grp"><th scope="colgroup" colspan="3">${g}</th></tr>
-              ${rows.map(([k, v]) => html`<tr><th scope="row" class="mono">${k}</th><td class="mono">${fmtVal(v)}</td><td>${setBy.has(k) ? html`<button class="xp-link mono" type="button" data-goto="${setBy.get(k)}">${setBy.get(k)}</button>` : html`<span class="muted">default</span>`}</td></tr>`)}
+              ${rows.map(([k, v]) => html`<tr><th scope="row" class="mono">${k}</th><td class="mono">${fmtVal(v)}</td><td>${lastSet.has(k)
+                ? html`${restored.has(k) ? html`<span class="muted">default, restored by </span>` : ""}<button class="xp-link mono" type="button" data-goto="${lastSet.get(k)}">${lastSet.get(k)}</button>`
+                : html`<span class="muted">default</span>`}</td></tr>`)}
             </tbody>`)}
           </table></div>
         </details>`
@@ -288,7 +318,7 @@ function runLabel(runId, n) {
   const when = r?.started_at ? clock(r.started_at, true) : runId;
   const budget = r && finite(r.llm_calls) ? `${compact(r.llm_calls)}${finite(r.max_calls) ? ` of ${compact(r.max_calls)}` : ""} calls` : "";
   const fam = finite(r?.bh?.family_size) ? `family of ${r.bh.family_size}` : `${n} shown`;
-  return html`<span class="label" title="${runId}">Run · ${when}</span>
+  return html`<span class="label" title="${runId}">Run</span><span class="xp-run-when">${when}</span>
     <span class="xp-run-meta">${[fam, budget].filter(Boolean).join(" · ")}</span>
     ${r?.note ? html`<span class="xp-run-note">${r.note}</span>` : ""}`;
 }
@@ -505,7 +535,7 @@ function correctionSection(x) {
 function familyList(x, family) {
   if (family.length < 2) return "";
   return html`<div class="xp-family">
-    <span class="label">Same family · ${family.length} experiments in ${x.run_id}</span>
+    <p class="xp-famhead"><span class="label">Same family</span> ${family.length} experiments in <span class="mono">${x.run_id}</span></p>
     <ul>${family.map((o) => {
       const m = primaryOf(o);
       const imp = m ? improvement(m.delta, m.higher_is_better) : null;

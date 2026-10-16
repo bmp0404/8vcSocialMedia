@@ -14,6 +14,18 @@
   overflow: hidden;
 }
 
+/* Field values: numbers in the UI face with tabular figures, identifiers in the code face. B612
+   stays on the uppercase labels, where its full-width "." and ":" never land inside a number. */
+.xp .field .v {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.xp .field .v.mono {
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+
 .xp-fields {
   border: 0;
   border-radius: 0;
@@ -49,6 +61,59 @@
   gap: 2px var(--s2);
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+/* The champion's history, oldest first: date, stamp, record, change; a revert adds its reason. */
+.xp-history {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+
+.xp-history li {
+  display: grid;
+  grid-template-columns: 9.5rem max-content max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 2px var(--s3);
+  padding: 6px var(--s3);
+  font-size: 13px;
+}
+
+.xp-history li + li {
+  border-top: 1px dashed var(--rule);
+}
+
+.xp-history .stamp {
+  font-size: 10px;
+}
+
+.xp-hdate {
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.xp-hchange {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.xp-hwhy {
+  grid-column: 2 / -1;
+  font-size: 12px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+@container xp (max-width: 700px) {
+  .xp-history li {
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+  .xp-hdate {
+    grid-column: 1 / -1;
+  }
+  .xp-hchange,
+  .xp-hwhy {
+    grid-column: 1 / -1;
+  }
 }
 
 .xp-config {
@@ -98,7 +163,7 @@
 }
 
 .xp-link.mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-code);
   font-size: 0.92em;
 }
 
@@ -280,9 +345,13 @@
   color: var(--ink-2);
 }
 
+.xp-run-when {
+  font-weight: 600;
+  color: var(--ink);
+}
+
 .xp-run-meta {
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
 }
 
 .xp-run-note {
@@ -401,7 +470,7 @@
 }
 
 .xp-dname {
-  font: 700 14px / 1.3 var(--font-mono);
+  font: 700 14px / 1.3 var(--font-code);
   overflow-wrap: anywhere;
   min-width: 0;
 }
@@ -482,7 +551,7 @@
 .xp-diff pre {
   margin-top: var(--s2);
   overflow-x: auto;
-  font: 12px / 1.55 var(--font-mono);
+  font: 12px / 1.55 var(--font-code);
   white-space: pre;
 }
 
@@ -517,7 +586,7 @@
 }
 
 .xp-mhead h3 {
-  font: 700 14px / 1.3 var(--font-mono);
+  font: 700 14px / 1.3 var(--font-code);
   overflow-wrap: anywhere;
 }
 
@@ -541,7 +610,8 @@
 }
 
 .xp-arms dd {
-  font: 700 18px / 1.2 var(--font-mono);
+  font: 700 18px / 1.2 var(--font-ui);
+  font-variant-numeric: tabular-nums;
 }
 
 .xp-arms dd small {
@@ -726,7 +796,7 @@
 
 .xp-prompt pre.well {
   overflow-x: auto;
-  font: 11.5px / 1.5 var(--font-mono);
+  font: 11.5px / 1.5 var(--font-code);
 }
 
 .xp-problems {
@@ -745,4 +815,9 @@
 
 .xp .state code {
   overflow-wrap: anywhere;
+}
+
+.xp-famhead {
+  font-size: var(--t-small);
+  color: var(--ink-3);
 }

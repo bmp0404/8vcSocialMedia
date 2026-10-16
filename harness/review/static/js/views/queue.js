@@ -8,7 +8,7 @@
 import { registerView, setHints } from "../shell.js";
 import { $, $$, html, isTyping, on, raw, setHTML } from "../lib/dom.js";
 import { ago, clock, compact, fixed, handleFromUrl, human, isXPost, stampTime, X_LIMIT, xLength } from "../lib/format.js";
-import { avatar, charRing, metricsRow, profileCard, targetCard, targetOf, threadReplies, xText } from "../components/xpost.js";
+import { avatar, charRing, profileCard, targetCard, targetOf, threadReplies, xText } from "../components/xpost.js";
 
 // Mirrors harness/minds/schema.py ABSTAIN_REASONS (sam/action) for branches where the server
 // can't import it; /api/meta's abstain_reasons wins when present.
@@ -118,6 +118,9 @@ async function loadRun(id) {
 
 // --- Entries and bays -----------------------------------------------------------------------
 
+const sentence = (t) => (/[.!?]$/.test(t.trim()) ? t.trim() : `${t.trim()}.`);
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
 const laneOf = (a) => a.lane || (a.mind === "human" ? "human" : ["reply", "quote"].includes(a.type) && a.mind === "reply_lane" ? "reply" : a.type === "reply" ? "reply" : "post");
 const textOf = (a) => a.review?.text ?? a.text;
 
@@ -202,7 +205,7 @@ function renderHead() {
               <select id="q-run" class="select">
                 ${S.runs.map(
                   (r) => html`<option value="${r.id}" ${r.id === S.runId ? raw("selected") : ""}>
-                    Run ${r.id} · ${clock(r.started_at, true)} · ${r.n_actions} drafts${r.n_approved ? ` · ${r.n_approved} cleared` : ""}
+                    Run ${r.id} · ${clock(r.started_at, true)} · ${plural(r.n_actions, "draft")}${r.n_approved ? ` · ${r.n_approved} cleared` : ""}
                   </option>`,
                 )}
               </select>
@@ -358,10 +361,10 @@ function kindForGate(type) {
   return TEXT_KINDS.has(type) ? type : "post";
 }
 
-function editorHtml(key, text, kind, original) {
+function editorHtml(key, text, kind, original, context = "") {
   const n = xLength(text);
   const edited = original != null && text.trim() !== original.trim();
-  return html`<div class="editor" data-editor="${key}" data-kind="${kind}">
+  return html`<div class="editor" data-editor="${key}" data-kind="${kind}" data-context="${context}">
     <div class="ed-wrap">
       <div class="ed-mirror xtext" aria-hidden="true"></div>
       <textarea class="ed-input xtext" aria-label="Draft text. Press E to edit, Escape to stop." spellcheck="true" rows="2">${text}</textarea>
@@ -497,7 +500,7 @@ function previewForAction(a, key, editable) {
         <span class="xmuted">· draft</span>
       </header>
       ${a.type === "reply" && t ? html`<p class="xmuted xreplying">Replying to <span class="xlink">@${t.author}</span></p>` : ""}
-      ${editable ? editorHtml(key, text, kindForGate(a.type), a.text) : html`<p class="xtext">${xText(text)}</p>`}
+      ${editable ? editorHtml(key, text, kindForGate(a.type), a.text, t?.text || "") : html`<p class="xtext">${xText(text)}</p>`}
       ${a.type === "quote" && t ? targetCard(t, { quoted: true, runStartedAt: S.context?.started_at }) : ""}
     </div>
   </div>`;
@@ -587,7 +590,7 @@ function abstainDetail(e) {
       ["Reason", human(d.reason), "grow"],
       ["Drafts", `${cands.length} written, ${cands.filter((c) => c.text && !(c.gate || []).length && c.veto?.passed !== false).length} passed`],
     ])}
-    <p class="notice"><b>The harness held back:</b> ${abstainLabel(d.reason)}.${d.detail ? ` ${d.detail}.` : ""} ${canWrite ? "You can overrule it: release one of its drafts, or write your own." : "There was nothing to answer, so there's nothing to release."}</p>
+    <p class="notice"><b>The harness held back:</b> ${abstainLabel(d.reason)}.${d.detail ? ` ${sentence(d.detail)}` : ""} ${!canWrite ? "There was nothing to answer, so there's nothing to release." : usable.length ? "To overrule it, release one of its drafts or write your own." : "To overrule it, write the reply yourself."}</p>
     ${t ? html`<div class="xstage">${targetCard(t, { runStartedAt: S.context?.started_at })}</div>` : ""}
     ${canWrite
       ? html`<section class="section">
@@ -595,7 +598,7 @@ function abstainDetail(e) {
           <div class="xstage"><div class="xpost ours">${avatar(handle, { ours: true })}<div class="xbody">
             <header class="xhead"><span class="xname">${handle ? `@${handle}` : "Our account"}</span><span class="xmuted">· overrule</span></header>
             ${t ? html`<p class="xmuted xreplying">Replying to <span class="xlink">@${t.author}</span></p>` : ""}
-            ${editorHtml(e.key, text, kind, null)}
+            ${editorHtml(e.key, text, kind, null, t?.text || "")}
           </div></div></div>
           ${factsHtml(text)}
         </section>`
@@ -694,26 +697,28 @@ function updateEditor(ed, typed) {
   autosize(ta);
   clearTimeout(S.gateTimer);
   const kind = ed.dataset.kind;
+  const context = ed.dataset.context || "";
   if (!text.trim()) {
     ed.querySelector("[data-gate]").innerHTML = `<span class="muted">The gate checks as you type.</span>`;
     ed.querySelector("[data-findings]").innerHTML = "";
     ed.querySelector(".ed-mirror").innerHTML = "";
     return;
   }
-  const cached = S.gateCache.get(`${kind}\u0000${text}`);
+  const cacheKey = `${kind}\u0000${context}\u0000${text}`;
+  const cached = S.gateCache.get(cacheKey);
   if (cached) return paintGate(ed, text, cached);
   ed.querySelector("[data-gate]").innerHTML = `<span class="muted">checking…</span>`;
-  S.gateTimer = setTimeout(() => runGate(ed, text, kind), typed ? 180 : 0);
+  S.gateTimer = setTimeout(() => runGate(ed, text, kind, context, cacheKey), typed ? 180 : 0);
 }
 
-async function runGate(ed, text, kind) {
+async function runGate(ed, text, kind, context, cacheKey) {
   let res;
   try {
-    res = await S.ctx.api.post("/api/gate", { text, kind });
+    res = await S.ctx.api.post("/api/gate", context ? { text, kind, context } : { text, kind });
   } catch (err) {
     res = { available: false, reason: err.message };
   }
-  S.gateCache.set(`${kind}\u0000${text}`, res);
+  S.gateCache.set(cacheKey, res);
   if (ed.isConnected && ed.querySelector("textarea").value === text) paintGate(ed, text, res);
 }
 
@@ -764,7 +769,7 @@ function currentText(e) {
   return S.edits.get(e.key) ?? textOf(e.a);
 }
 
-async function verdict(e, status, { via = "key" } = {}) {
+async function verdict(e, status) {
   if (!e || e.kind !== "action") return;
   const a = e.a;
   const prev = { ...a.review };
@@ -805,13 +810,12 @@ async function verdict(e, status, { via = "key" } = {}) {
     S.ctx.toast(`Couldn't save the verdict: ${err.message}`, { kind: "error" });
     S.ctx.readback(html`<b class="bad">NOT SAVED</b> ${what} · ${err.message}`);
   }
-  void via;
 }
 
 function readbackStrike(a) {
   const set = S.reasons.get(a.id) || new Set();
   const chips = Object.entries(reasonsMeta()).map(([code, label], i) => ({ key: String(i + 1), label, on: set.has(code) }));
-  S.ctx.readback(html`<b class="bad">STRUCK</b> ${a.type} by ${human(a.mind)} · why? press 1–${chips.length} · <kbd>z</kbd> undo`, { chips });
+  S.ctx.readback(html`<b class="bad">STRUCK</b> ${a.type} by ${human(a.mind)} · why?`, { chips });
 }
 
 let reasonTimer = 0;
@@ -1051,9 +1055,9 @@ function wire(el) {
       return;
     }
     if (!e) return;
-    if (act === "clear") return verdict(e, "approved", { via: "click" });
-    if (act === "strike") return verdict(e, "killed", { via: "click" });
-    if (act === "reset") return verdict(e, "pending", { via: "click" });
+    if (act === "clear") return verdict(e, "approved");
+    if (act === "strike") return verdict(e, "killed");
+    if (act === "reset") return verdict(e, "pending");
     if (act === "release") return release(e);
     if (act === "take") return submitTake(e);
     if (act === "revert") {
