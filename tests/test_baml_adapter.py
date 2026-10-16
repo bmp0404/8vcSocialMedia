@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 import types
@@ -67,7 +68,9 @@ class MockRunTests(unittest.TestCase):
             "assert out and out[0].id == 'sample-0', out\n"
             "print(sorted(m for m in sys.modules if m.startswith('baml')))\n"
         )
-        proc = subprocess.run([sys.executable, "-c", script], cwd=ROOT, capture_output=True, text=True, check=True)
+        env = {**os.environ, "HARNESS_ORIENT": "baml"}
+        proc = subprocess.run([sys.executable, "-c", script], cwd=ROOT, env=env, capture_output=True, text=True, check=True)
+        self.assertIn("via baml", proc.stdout)
         self.assertEqual(proc.stdout.strip().splitlines()[-1], "[]")
 
 
