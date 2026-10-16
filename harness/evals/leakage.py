@@ -2,9 +2,10 @@
 
 If the model memorized a post and how it performed, a backtest measures recall instead of judgment.
 The probe gives the model the first half of each post and asks for the rest word for word. A model
-that saw the post in training reproduces it; one that didn't writes something plausible. The control
-compares each continuation with other posts from the same account, which measures how much overlap
-house style alone produces.
+that saw the post in training reproduces it; one that didn't writes something plausible. The result
+is the count of verbatim continuations and of posts the model claims to recognize. Word overlap with
+the real second half isn't reported: a post's second half shares names with its first, so overlap
+measures that carry-over, not memory.
 """
 
 import random
@@ -26,28 +27,11 @@ POSTS:
 Return JSON: {{"probes": {{"<id>": {{"recognized": false, "continuation": "..."}}}}}}"""
 
 WORDS = re.compile(r"[a-z0-9]+")
-MAX_WORDS = 30
 VERBATIM_WORDS = 8
 
 
 def words(text: str) -> list[str]:
     return WORDS.findall(text.lower())
-
-
-def lcs_len(a: list[str], b: list[str]) -> int:
-    prev = [0] * (len(b) + 1)
-    for x in a:
-        cur = [0]
-        for j, y in enumerate(b):
-            cur.append(prev[j] + 1 if x == y else max(prev[j + 1], cur[j]))
-        prev = cur
-    return prev[-1]
-
-
-def overlap(truth: str, guess: str) -> float:
-    """Longest common word subsequence over the first MAX_WORDS words of the truth, as a share of them."""
-    t, g = words(truth)[:MAX_WORDS], words(guess)[:MAX_WORDS]
-    return lcs_len(t, g) / len(t) if t else 0.0
 
 
 def verbatim(truth: str, guess: str, n: int = VERBATIM_WORDS) -> bool:
@@ -74,7 +58,7 @@ def pick(posts: list[Post], n: int, seed: int, min_words: int = 20) -> list[Post
     return (viral + rest)[:n]
 
 
-def probe(llm: LLM, posts: list[Post], batch: int = 10, seed: int = 0) -> dict:
+def probe(llm: LLM, posts: list[Post], batch: int = 10) -> dict:
     items = []
     for start in range(0, len(posts), batch):
         chunk = posts[start:start + batch]
@@ -90,27 +74,16 @@ def probe(llm: LLM, posts: list[Post], batch: int = 10, seed: int = 0) -> dict:
             items.append({"post": p, "recognized": bool(got.get("recognized")),
                           "continuation": str(got.get("continuation", ""))})
 
-    rng = random.Random(seed)
     rows = []
     for it in items:
         p, guess = it["post"], it["continuation"]
         rest = halves(p.clean_text)[1]
-        peers = [q for q in posts if q.account == p.account and q.id != p.id] or [q for q in posts if q.id != p.id]
-        control = halves(rng.choice(peers).clean_text)[1] if peers else ""
-        rows.append({
-            "id": p.id, "account": p.account, "category": p.category, "recognized": it["recognized"],
-            "overlap": overlap(rest, guess), "control_overlap": overlap(control, guess) if control else None,
-            "verbatim": verbatim(rest, guess), "truth": rest, "continuation": guess,
-        })
-    n = len(rows)
-    controls = [r["control_overlap"] for r in rows if r["control_overlap"] is not None]
+        rows.append({"id": p.id, "account": p.account, "category": p.category, "recognized": it["recognized"],
+                     "verbatim": verbatim(rest, guess), "truth": rest, "continuation": guess})
     return {
-        "n_posts": n,
+        "n_posts": len(rows),
         "n_super_viral": sum(r["category"] == "Super Viral" for r in rows),
-        "mean_overlap": sum(r["overlap"] for r in rows) / n if n else None,
-        "mean_control_overlap": sum(controls) / len(controls) if controls else None,
         "n_verbatim": sum(r["verbatim"] for r in rows),
         "n_recognized": sum(r["recognized"] for r in rows),
-        "n_overlap_over_half": sum(r["overlap"] > 0.5 for r in rows),
         "rows": rows,
     }

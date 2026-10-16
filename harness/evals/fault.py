@@ -4,30 +4,27 @@ The team's rule (CONTRIBUTING.md): a bad draft from good inputs is an action fau
 draft about a dead story is an observe fault. This module turns that rule into a decision table over
 three pieces of evidence, each measured against something real where possible:
 
-- outcome: our engagement relative to the account's own median. Did it underperform?
+- outcome: our engagement against the account's own spread. Below its 10th percentile is an
+  underperformance; inside the 10th-90th band is ordinary variance and nothing gets fixed.
 - story: how other accounts' posts on the same narrative did, each relative to its author's median.
   Was the input alive? For a reply, the peers are the other replies to the same target post.
 - draft: a quality score for our text (the post judge's score_100 / 100) plus any critic flags.
-  Was the draft sensible?
 
 A verdict names the stage to fix and cites the evidence it used. When evidence a verdict needs is
 missing, the verdict is `insufficient_evidence` with the missing fields listed, never a guess.
+One verdict proves little: by construction a tenth of ordinary posts land under the 10th percentile.
+`aggregate` recommends changing a stage only after `min_repeats` matching verdicts.
+All thresholds are in settings.FaultConfig and none has been tested.
 """
 
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 
-# Hand-set and uncalibrated: no run has tested these cut-offs. The backtest's judge scores on the
-# dev-tool holdout are the first evidence that could set DRAFT_* (see eval/DESIGN.md).
-UNDERPERFORM_RATIO = 0.5  # below half the account's usual engagement
-STORY_ALIVE_RATIO = 1.0  # peers on the story did at least their usual
-STORY_DEAD_RATIO = 0.5  # peers on the story did under half their usual
-DRAFT_GOOD = 0.6
-DRAFT_BAD = 0.4
-MIN_BASELINE_POSTS = 5
-MIN_PEER_POSTS = 3
+from harness.evals.settings import FaultConfig
 
 VERDICTS = {
-    "no_fault": None,
+    "no_fault": None,  # outperformed the account's usual band
+    "variance": None,  # inside the band: ordinary spread, fix nothing
     "action_fault": "action",
     "observe_fault": "observe",
     "both": "observe",  # a better draft on a dead story still flops, so fix the input first
@@ -41,9 +38,11 @@ VERDICTS = {
 class FaultEvidence:
     action_id: str
     engagement: float | None = None  # ours, at the end of the measurement window
-    account_median: float | None = None  # the account's median for the same action type
+    account_p10: float | None = None  # the account's own spread for the same action type and window
+    account_p90: float | None = None
+    account_median: float | None = None
     n_baseline_posts: int | None = None
-    story_peer_ratio: float | None = None  # median of peers' engagement / their own author median
+    story_peer_ratio: float | None = None  # median of peers' (engagement + 1) / (their author median + 1)
     n_peer_posts: int | None = None
     draft_score: float | None = None  # 0-1, from the post judge graded after the fact
     critic_flags: list[str] = field(default_factory=list)
@@ -58,6 +57,7 @@ class FaultVerdict:
     reasons: list[str]
     missing: list[str] = field(default_factory=list)
     outcome_ratio: float | None = None
+    evidence: dict = field(default_factory=dict)  # the FaultEvidence the verdict was computed from
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -68,39 +68,42 @@ def outcome_ratio(engagement: float, account_median: float) -> float:
     return (engagement + 1) / (account_median + 1)
 
 
-def _verdict(e: FaultEvidence, verdict: str, reasons: list[str], missing=(), ratio=None) -> FaultVerdict:
-    return FaultVerdict(e.action_id, verdict, VERDICTS[verdict], reasons, list(missing), ratio)
+def _verdict(e: FaultEvidence, verdict: str, reasons: list[str], missing=()) -> FaultVerdict:
+    ratio = outcome_ratio(e.engagement, e.account_median) if None not in (e.engagement, e.account_median) else None
+    return FaultVerdict(e.action_id, verdict, VERDICTS[verdict], reasons, list(missing), ratio, asdict(e))
 
 
-def attribute(e: FaultEvidence) -> FaultVerdict:
-    missing = [name for name, value in (("engagement", e.engagement), ("account_median", e.account_median),
-                                        ("n_baseline_posts", e.n_baseline_posts)) if value is None]
+def attribute(e: FaultEvidence, cfg: FaultConfig = FaultConfig()) -> FaultVerdict:
+    need = (("engagement", e.engagement), ("account_p10", e.account_p10), ("account_p90", e.account_p90),
+            ("n_baseline_posts", e.n_baseline_posts))
+    missing = [name for name, value in need if value is None]
     if missing:
         return _verdict(e, "insufficient_evidence", ["can't tell whether the action underperformed"], missing)
-    if e.n_baseline_posts < MIN_BASELINE_POSTS:
+    if e.n_baseline_posts < cfg.min_baseline_posts:
         return _verdict(e, "insufficient_evidence",
-                        [f"account median rests on {e.n_baseline_posts} posts; need {MIN_BASELINE_POSTS}"],
+                        [f"account band rests on {e.n_baseline_posts} posts; need {cfg.min_baseline_posts}"],
                         ["n_baseline_posts"])
-
-    ratio = outcome_ratio(e.engagement, e.account_median)
-    if ratio >= UNDERPERFORM_RATIO:
-        return _verdict(e, "no_fault", [f"outcome ratio {ratio:.2f} >= {UNDERPERFORM_RATIO}"], ratio=ratio)
-    reasons = [f"underperformed: outcome ratio {ratio:.2f} < {UNDERPERFORM_RATIO}"]
+    if e.engagement > e.account_p90:
+        return _verdict(e, "no_fault", [f"engagement {e.engagement:g} above the account's p90 {e.account_p90:g}"])
+    if e.engagement >= e.account_p10:
+        return _verdict(e, "variance", [f"engagement {e.engagement:g} inside the account's band "
+                                        f"{e.account_p10:g}-{e.account_p90:g}"])
+    reasons = [f"underperformed: engagement {e.engagement:g} below the account's p10 {e.account_p10:g}"]
 
     missing = []
     if e.story_peer_ratio is None or e.n_peer_posts is None:
         missing.append("story_peer_ratio")
-    elif e.n_peer_posts < MIN_PEER_POSTS:
-        missing.append(f"story_peer_ratio (only {e.n_peer_posts} peer posts; need {MIN_PEER_POSTS})")
+    elif e.n_peer_posts < cfg.min_peer_posts:
+        missing.append(f"story_peer_ratio (only {e.n_peer_posts} peer posts; need {cfg.min_peer_posts})")
     if e.draft_score is None and not e.critic_flags:
         missing.append("draft_score")
     if missing:
         return _verdict(e, "insufficient_evidence", reasons + ["need both story and draft evidence to pick a stage"],
-                        missing, ratio)
+                        missing)
 
-    if e.story_peer_ratio >= STORY_ALIVE_RATIO:
+    if e.story_peer_ratio >= cfg.story_alive_ratio:
         story = "alive"
-    elif e.story_peer_ratio < STORY_DEAD_RATIO:
+    elif e.story_peer_ratio < cfg.story_dead_ratio:
         story = "dead"
     else:
         story = "borderline"
@@ -109,13 +112,8 @@ def attribute(e: FaultEvidence) -> FaultVerdict:
     if e.critic_flags:
         draft = "bad"
         reasons.append(f"draft bad: critic flagged {', '.join(e.critic_flags)}")
-    elif e.draft_score >= DRAFT_GOOD:
-        draft = "good"
-    elif e.draft_score < DRAFT_BAD:
-        draft = "bad"
     else:
-        draft = "borderline"
-    if not e.critic_flags:
+        draft = "good" if e.draft_score >= cfg.draft_good else "bad" if e.draft_score < cfg.draft_bad else "borderline"
         reasons.append(f"draft {draft}: judge score {e.draft_score:.2f}")
 
     table = {
@@ -124,4 +122,14 @@ def attribute(e: FaultEvidence) -> FaultVerdict:
         ("dead", "bad"): "both",
         ("alive", "good"): "unexplained",
     }
-    return _verdict(e, table.get((story, draft), "uncertain"), reasons, ratio=ratio)
+    return _verdict(e, table.get((story, draft), "uncertain"), reasons)
+
+
+def aggregate(verdicts: list[FaultVerdict], cfg: FaultConfig = FaultConfig()) -> dict:
+    """Count verdicts by stage and name the stages that reached `min_repeats` matching verdicts."""
+    stages = Counter(v.stage_to_fix for v in verdicts if v.stage_to_fix)
+    return {
+        "counts": dict(Counter(v.verdict for v in verdicts)),
+        "by_stage": dict(stages),
+        "fix": sorted(stage for stage, n in stages.items() if n >= cfg.min_repeats),
+    }
