@@ -127,8 +127,8 @@ def selftest_search() -> None:
             os.environ["MEMSTORE_PATH"] = str(empty)
             assert prompt_block() == "" and context_for("") == "", "prompt text on an empty store"
 
-            root = Path(tmp, "store")
-            os.environ["MEMSTORE_PATH"] = str(root)
+            os.environ["MEMSTORE_PATH"] = str(Path(tmp, "store"))
+            root = store_root()  # <MEMSTORE_PATH>/<profile>
             put(root, "lesson", "demo-video-launches", "Example: demo videos on launch day", "launch, ship, release",
                 "- **Example:** a made-up lesson about demo clips; stated on 2026-10-15.",
                 "confidence: 0.8\nevidence: [post-1, post-2, post-3]\n")

@@ -25,6 +25,7 @@ SOURCES = [s.strip() for s in os.getenv("HARNESS_SOURCES", "sample").split(",") 
 PROFILES_DIR = ROOT / "mission" / "profiles"
 DEFAULT_PROFILE = "wnba"
 PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json", "prompts.toml")
+OPTIONAL_PROFILE_FILES = ("takes.json",)  # a person's own takes; a profile may have none
 # Each points one profile file somewhere else, for tests and one-off runs; it applies to the active profile.
 FILE_OVERRIDES = {"observe.toml": "HARNESS_OBSERVE_CONFIG", "panel.json": "HARNESS_PANEL",
                   "reply_framing.json": "HARNESS_REPLY_FRAMING"}
@@ -63,12 +64,15 @@ def profile_dir(name: str | None = None) -> Path:
 
 
 def profile_file(filename: str, name: str | None = None) -> Path:
-    """The profile's `filename`, or the path its override variable names when `name` isn't given."""
-    if filename not in PROFILE_FILES:
-        raise ValueError(f"{filename!r} isn't a profile file; expected one of {PROFILE_FILES}")
+    """The profile's `filename`, or the path its override variable names when `name` isn't given. A missing
+    required file raises; an optional one (OPTIONAL_PROFILE_FILES) returns its path for the caller to check."""
+    if filename not in PROFILE_FILES + OPTIONAL_PROFILE_FILES:
+        raise ValueError(f"{filename!r} isn't a profile file; expected one of {PROFILE_FILES + OPTIONAL_PROFILE_FILES}")
     variable = FILE_OVERRIDES.get(filename)
     override = os.getenv(variable, "") if variable and name is None else ""
     path = Path(override) if override else profile_dir(name) / filename
+    if filename in OPTIONAL_PROFILE_FILES:
+        return path
     if not path.is_file():
         raise ProfileError(f"{filename} not found at {path}" + (f" ({variable} points there)" if override else ""))
     return path

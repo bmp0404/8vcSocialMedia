@@ -185,7 +185,7 @@ def selftest_episodes() -> None:
         assert sorted(first) == sorted([f"ep-{draft.id}", f"ep-{reply.id}"]), first
         assert round_end(run_id, provider="mock") == [], "second call writes nothing"
 
-        path = tmp / "store" / "episodes" / f"ep-{draft.id}.md"
+        path = store_root() / "episodes" / f"ep-{draft.id}.md"
         with path.open(encoding="utf-8", newline="\n") as f:
             note = parse(f.read(), path)
         assert note.type == "episode" and note.meta["source"] == "run"
@@ -195,7 +195,7 @@ def selftest_episodes() -> None:
         assert "review_status" not in note.meta, "pending review is not a verdict"
         assert "Line one line two — café" in note.body and "0.71" in note.body
 
-        ledger = _read_ledger(tmp / "store" / LEDGER)
+        ledger = _read_ledger(store_root() / LEDGER)
         assert set(ledger) == {draft.id, reply.id}
         assert ledger[draft.id]["outcome_at"] and ledger[reply.id]["outcome_at"] is None
 

@@ -157,11 +157,13 @@ _mock_root: Path | None = None
 
 
 def store_root() -> Path:
-    """Where the active mission profile's store lives: MEMSTORE_PATH when set, a temp store under mock,
-    else memory/store/<profile>/. Seeding and locking are store.py's job."""
+    """Where the active mission profile's store lives: <MEMSTORE_PATH>/<profile>/ when MEMSTORE_PATH is set,
+    a temp store under mock, else memory/store/<profile>/. MEMSTORE_PATH replaces memory/store/, not one
+    profile's store: a process that switches profiles under one MEMSTORE_PATH would otherwise share a store
+    seeded by whichever profile came first. Seeding and locking are store.py's job."""
     global _mock_root
     if os.getenv("MEMSTORE_PATH"):
-        return Path(os.environ["MEMSTORE_PATH"])
+        return Path(os.environ["MEMSTORE_PATH"]) / config.profile_name()
     if config.PROVIDER == "mock":
         if _mock_root is None:
             _mock_root = Path(tempfile.mkdtemp(prefix="memstore-"))
@@ -221,5 +223,5 @@ def selftest_note() -> None:
 
     assert set(TYPES) == {"entity", "fact", "lesson", "procedure", "episode", "reflection"}
     os.environ["MEMSTORE_PATH"] = str(tmp.parent)
-    assert store_root() == tmp.parent
+    assert store_root() == tmp.parent / config.profile_name()
     print("selftest_note: ok")

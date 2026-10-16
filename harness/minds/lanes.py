@@ -332,7 +332,7 @@ def offered(narratives: list[Narrative]) -> tuple[frozenset[str], frozenset[str]
 
 def load_takes(path: Path | None = None) -> list[dict]:
     """A person's own takes: the profile's takes.json, a list of {"text", "quote_url"?}. Never rewritten."""
-    path = path or config.profile_dir() / "takes.json"
+    path = path or config.profile_file("takes.json")
     if not path.exists():
         return []
     takes = json.loads(path.read_text(encoding="utf-8"))

@@ -135,3 +135,23 @@ def test_action_prompts_carry_the_active_profiles_wording():
     for template, key in ((lanes.PLAN_SYSTEM, "plan_care"), (w.CAPTION_SYSTEM, "caption_example"),
                           (veto.VETO_SYSTEM, "side_rule"), (veto.VETO_SYSTEM, "risk_people")):
         assert "{" + key + "}" in template
+
+
+def test_one_memstore_path_still_gives_each_profile_its_own_store(tmp_path, monkeypatch):
+    # The engine's --state-dir and tests set MEMSTORE_PATH; a process that switches profiles under it used
+    # to share one store, seeded by whichever profile came first.
+    monkeypatch.setenv("MEMSTORE_PATH", str(tmp_path / "stores"))
+    monkeypatch.setattr(config, "LESSONS_PATH", tmp_path / "no-lessons.md")
+    with config.use_profile("devtools"):
+        memstore.list_notes()  # seeds the devtools store
+        assert memstore.store_root() == tmp_path / "stores" / "devtools"
+        assert "dev-audience-voice" in config.lessons()
+    memstore.list_notes()
+    assert memstore.store_root() == tmp_path / "stores" / "wnba"
+    assert [t for t in devtools_seed_titles() if t in config.lessons()] == []
+
+
+def test_takes_are_an_optional_profile_file():
+    assert config.profile_file("takes.json") == config.PROFILES_DIR / "wnba" / "takes.json"  # need not exist
+    with pytest.raises(ValueError, match="isn't a profile file"):
+        config.profile_file("secrets.json")
