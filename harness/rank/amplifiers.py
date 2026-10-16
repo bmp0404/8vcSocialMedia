@@ -285,19 +285,26 @@ def _pool_report(rows: list[dict], lists: dict[str, list[Account]], pooled: tupl
             if not cands:
                 continue
             yields[f"{name}+candidates_{label}"] = yield_per_day(accs + cands)
+            # Per handle, only candidates whose page reaches into the window: the others' rate is unknown, not 0.
+            seen = [a for a in cands if a.covered_days]
+            if not seen:
+                continue
             diffs = []
             for _ in range(n_boot):
-                cs, bs = rng.choices(cands, k=len(cands)), rng.choices(accs, k=len(accs))
+                cs, bs = rng.choices(seen, k=len(seen)), rng.choices(accs, k=len(accs))
                 diffs.append(yield_per_day(cs, resample=resample)["open_fresh_per_day"] / len(cs)
                              - yield_per_day(bs, resample=resample)["open_fresh_per_day"] / len(bs))
-            point = yields[f"candidates_{label}"]["open_fresh_per_day"] / len(cands) - base
-            yields[f"per_handle_candidates_{label}_minus_{name}"] = {"diff": round(point, 3), "ci95": _ci(diffs)}
+            point = yield_per_day(seen)["open_fresh_per_day"] / len(seen) - base
+            yields[f"per_handle_candidates_{label}_minus_{name}"] = {"diff": round(point, 3), "ci95": _ci(diffs),
+                                                                     "candidates": len(seen)}
     scored = [a for a in everything if a.threads]
     return {
         "fetched": len(rows), "errors": sum("error" in r for r in rows),
         "timelines_with_no_original_post": sum(not any(is_original(p, r["handle"]) for p in r["timeline"])
                                                for r in rows if "error" not in r),
         "timeline_posts_read": sum(len(r["timeline"]) for r in rows if "error" not in r),
+        "with_window_coverage": sum(bool(a.covered_days) for a in everything),
+        "window_coverage_days_median": round(statistics.median([a.covered_days for a in everything if a.covered_days] or [0]), 2),
         "with_scored_threads": len(scored), "scored_threads": sum(len(a.threads) for a in scored),
         "open_rate_of_scored_threads": open_rate([k for a in scored for k in a.threads]),
         "busy_on_topic_posts_in_window": sum(len(a.posts) for a in topical),

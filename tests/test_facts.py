@@ -380,3 +380,8 @@ def test_a_newer_game_replaces_the_older_ones_facts():
     [fever] = [f for f in facts if f.subject == "entity-indiana-fever"]
     assert "19 points" in boston.answer and "31 points" not in boston.answer and boston.as_of == "2026-10-02"
     assert fever.as_of == "2026-10-02"
+
+
+def test_game_facts_refuse_a_team_that_didnt_play():
+    with pytest.raises(ValueError, match="didn't play"):
+        espn.game_facts(SUMMARY, "u", team="Indiana Fever ")

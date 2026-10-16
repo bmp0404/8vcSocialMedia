@@ -82,6 +82,8 @@ def game_facts(summary: dict, url: str, team: str | None = None) -> list[Fact]:
         sides[c["team"]["displayName"]] = {"score": str(c.get("score", "")), "record": record, "winner": bool(c.get("winner"))}
     if len(sides) != 2:
         return []
+    if team and team not in sides:
+        raise ValueError(f"game_facts: {team!r} didn't play in this game; competitors are {sorted(sides)}")
     season = ((summary.get("header") or {}).get("season") or {}).get("type")
     stage = {2: "regular season", 3: "postseason"}.get(season, "")
     series = "; ".join(s.get("summary", "") for s in comp.get("series") or [] if s.get("type") == "playoff" and s.get("summary"))

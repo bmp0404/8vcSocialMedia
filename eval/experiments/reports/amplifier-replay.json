@@ -32,6 +32,8 @@
    "errors": 13,
    "timelines_with_no_original_post": 25,
    "timeline_posts_read": 1240,
+   "with_window_coverage": 21,
+   "window_coverage_days_median": 0.52,
    "with_scored_threads": 2,
    "scored_threads": 2,
    "open_rate_of_scored_threads": 1.0,
@@ -66,9 +68,10 @@
     "per_handle_candidates_on_topic_minus_platform": {
      "diff": -0.546,
      "ci95": [
-      -0.82,
+      -0.84,
       -0.33
-     ]
+     ],
+     "candidates": 21
     },
     "platform+candidates_any_post": {
      "handles": 77,
@@ -79,11 +82,12 @@
      "open_fresh_per_day": 17.68
     },
     "per_handle_candidates_any_post_minus_platform": {
-     "diff": -0.393,
+     "diff": -0.095,
      "ci95": [
-      -0.75,
-      -0.0
-     ]
+      -0.73,
+      0.9
+     ],
+     "candidates": 21
     },
     "watch+candidates_on_topic": {
      "handles": 86,
@@ -98,7 +102,8 @@
      "ci95": [
       -0.79,
       -0.44
-     ]
+     ],
+     "candidates": 21
     },
     "watch+candidates_any_post": {
      "handles": 86,
@@ -109,11 +114,12 @@
      "open_fresh_per_day": 23.82
     },
     "per_handle_candidates_any_post_minus_watch": {
-     "diff": -0.445,
+     "diff": -0.146,
      "ci95": [
-      -0.74,
-      -0.08
-     ]
+      -0.71,
+      0.8
+     ],
+     "candidates": 21
     }
    }
   }

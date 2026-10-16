@@ -321,7 +321,7 @@
   "401856947"
  ],
  "month_of_games_variant": {
-  "note": "Every game from the 30 days before each post, each kept as its own fact, instead of each team's and player's most recent game. Same threads and drafts, run before game facts were keyed by most recent game (harness/facts/espn.py). Replaced because it let more invented WNBA stats through.",
+  "note": "Every game from the 30 days before each post, each kept as its own fact, instead of each team's and player's most recent game. Same threads and drafts, run after the 3PT and pair fixes and before game facts were keyed by most recent game (harness/facts/espn.py), so it differs from the final rule only in that keying. Replaced because it let more invented WNBA stats through.",
   "wnba_real_replies": {
    "facts_live_per_thread_median": 1016,
    "change_in_rejected_rate": {
