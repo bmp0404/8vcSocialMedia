@@ -7,6 +7,7 @@ from harness import bandit, config, dataset, memory
 from harness.backtest import backtest
 from harness.evolve import _examples, evolve, leaderboard
 from harness.export import export_csv
+from harness.ideas import generate as generate_ideas
 from harness.hooks import sharpen_hooks
 from harness.learn import learn
 from harness.llm import get_llm
@@ -49,7 +50,8 @@ def run(args) -> None:
 
     actions = decide(
         llm, mission, [active[v] for v in chosen], narratives,
-        lessons=config.lessons(), playbook=config.playbook(), examples=examples, per_mind=args.per_mind,
+        lessons=config.lessons() + getattr(args, "avoid", ""), playbook=config.playbook(), examples=examples,
+        per_mind=args.per_mind,
     )
     kept = qualify(llm, mission, actions)
     ranked = tournament(llm, mission, kept, rounds=args.rounds, field=args.field)
@@ -153,6 +155,11 @@ def main() -> None:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--calibrate", action="store_true", help="apply the fitted panel weights")
     p.set_defaults(func=lambda a: backtest(get_llm(a.provider), a.per_category, a.pairs, a.seed, a.calibrate))
+
+    p = sub.add_parser("ideas", help="run N rounds and append new, de-duplicated posts to out/ideas.csv")
+    add_run_args(p)
+    p.add_argument("--rounds-of-ideas", "-n", dest="n", type=int, default=5, help="how many runs to do")
+    p.set_defaults(func=lambda a: generate_ideas(run, a, a.n))
 
     p = sub.add_parser("export", help="write suggested X posts/replies to a CSV in out/")
     p.add_argument("--runs", type=int, nargs="*", help="run ids (default: all)")
