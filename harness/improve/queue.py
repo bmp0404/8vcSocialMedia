@@ -16,6 +16,8 @@ One TOML file per experiment, named `<id>.toml`:
     knobs = { "action.reply.generation" = "styled" }
     # kind = "code" also needs: commit = "<sha in this checkout's history>", summary = "what it does"
 
+    threads = ["action/fixtures/x_threads.json"]  # optional, action_lineup only: fixture threads to screen on
+
     [guardrails]                          # optional; tightens the instrument's own, never loosens
     veto_pass_rate = 0.05
 
@@ -48,7 +50,7 @@ QUEUE_DIR = config.ROOT / "eval" / "experiments" / "queue"
 ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 COMMIT = re.compile(r"^[0-9a-f]{7,40}$")
 TOP_KEYS = {"id", "proposed_at", "proposed_by", "profile", "fitness", "hypothesis", "source", "label", "change",
-            "guardrails", "budget"}
+            "guardrails", "budget", "threads"}
 REQUIRED = ("id", "proposed_at", "proposed_by", "profile", "fitness", "hypothesis", "change")
 CHANGE_KEYS = {"kind", "knobs", "commit", "summary"}
 BUDGET_KEYS = {"screen_calls", "confirm_calls"}
@@ -80,6 +82,7 @@ class Spec:
     commit: str | None = None
     summary: str | None = None
     guardrails: dict[str, float] = field(default_factory=dict)
+    threads: tuple[Path, ...] = ()  # fixture thread files, for instruments that take them
     screen_calls: int = DEFAULT_CALLS
     confirm_calls: int = DEFAULT_CALLS
 
@@ -199,11 +202,21 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT) -> 
     for key in ("source", "label"):
         if key in data and not isinstance(data[key], str):
             raise SpecError(f"{sid}: {key} must be a string")
+    threads = data.get("threads", [])
+    if threads:
+        if not getattr(fit, "accepts_threads", False):
+            raise SpecError(f"{sid}: {data['fitness']} doesn't take thread files")
+        if not isinstance(threads, list) or not all(isinstance(t, str) for t in threads):
+            raise SpecError(f"{sid}: threads must be a list of repo-relative paths")
+        missing = [t for t in threads if not (repo / t).is_file()]
+        if missing:
+            raise SpecError(f"{sid}: thread file(s) {missing} not found under {repo}")
     return Spec(id=sid, path=path, proposed_at=_datetime(data["proposed_at"]), proposed_by=data["proposed_by"].strip(),
                 profile=data["profile"], fitness=data["fitness"], hypothesis=data["hypothesis"].strip(),
                 knobs=dict(knob_values), kind=kind, source=data.get("source"), label=data.get("label", ""),
                 commit=commit, summary=summary, guardrails={k: float(v) for k, v in guardrails.items()},
-                screen_calls=calls["screen_calls"], confirm_calls=calls["confirm_calls"])
+                threads=tuple(repo / t for t in threads), screen_calls=calls["screen_calls"],
+                confirm_calls=calls["confirm_calls"])
 
 
 def load(directory: Path, catalog: dict[str, type], *, repo: Path = config.ROOT) -> tuple[list[Spec], dict[str, str]]:

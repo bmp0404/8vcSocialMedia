@@ -120,5 +120,10 @@ def main() -> None:
 
     add_watch_commands(sub)
 
+    # Improvement loop (sam/improve): `python -m harness improve`, plus `improve status` and `improve stop`.
+    from harness.improve.cli import add_commands as add_improve_commands
+
+    add_improve_commands(sub)
+
     args = parser.parse_args()
     args.func(args)

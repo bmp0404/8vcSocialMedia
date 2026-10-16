@@ -12,6 +12,7 @@ from harness.iterate.fitness import Metric
 class Lineup:
     knobs = ("action.reply.generation", "action.samples")
     llm_opinion = False
+    accepts_threads = True
     secondaries = (Metric("veto_pass_rate", True, guardrail=True, margin=0.10), Metric("reply_chars", False))
 
 
@@ -21,6 +22,7 @@ class Opinion(Lineup):
 
 class Undeclared:
     knobs = Lineup.knobs
+    accepts_threads = False
     secondaries = Lineup.secondaries
 
 
@@ -145,3 +147,18 @@ def _rec(phase, status):
 def test_phase_follows_the_ledger(records, expected):
     other = {"proposer": {"kind": "queue", "spec": "else", "phase": "screen"}, "decision": {"status": "candidate"}}
     assert queue.phase("styled", records + [other]).next == expected
+
+
+def test_thread_files_must_exist_and_suit_the_instrument(tmp_path):
+    (tmp_path / "fx.json").write_text("{}", encoding="utf-8")
+    with_threads = GOOD.replace('source = "research', 'threads = ["fx.json"]\nsource = "research')
+    spec = queue.parse(write(tmp_path, with_threads), CATALOG, repo=tmp_path)
+    assert spec.threads == (tmp_path / "fx.json",)
+    with pytest.raises(queue.SpecError, match="not found"):
+        queue.parse(write(tmp_path, with_threads.replace("fx.json", "gone.json")), CATALOG, repo=tmp_path)
+
+    class NoThreads(Lineup):
+        accepts_threads = False
+
+    with pytest.raises(queue.SpecError, match="doesn't take thread files"):
+        queue.parse(write(tmp_path, with_threads), {"action_lineup": NoThreads}, repo=tmp_path)
