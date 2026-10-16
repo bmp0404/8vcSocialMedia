@@ -1,6 +1,6 @@
 import pytest
 
-from harness.llm import LLM, parse_json
+from harness.llm import LLM, AnthropicLLM, MockLLM, parse_json
 
 
 def test_parse_json_takes_the_first_value_when_more_follows():
@@ -29,3 +29,8 @@ def test_complete_json_retries_once_then_gives_up():
     assert "wasn't valid JSON" in llm.prompts[1]
     with pytest.raises(ValueError):
         Scripted(["nope", "still nope"]).complete_json("SYS", "p")
+
+
+def test_only_the_mock_backend_says_it_is_mock():
+    assert MockLLM().is_mock is True
+    assert getattr(AnthropicLLM.__new__(AnthropicLLM), "is_mock", False) is False

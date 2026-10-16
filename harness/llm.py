@@ -68,7 +68,9 @@ class OpenAICompatLLM(LLM):
 class MockLLM(LLM):
     """Offline backend so the pipeline runs end to end without any API key."""
 
-    is_mock = True  # read through wrappers by harness/minds/routing.py; class checks break under tracing
+    # Mock detection has to survive wrappers: a tracing proxy fails isinstance(llm, MockLLM), and a
+    # mock run then fetched live data and spent the real budget. Callers read this attribute instead.
+    is_mock = True
 
     def complete(self, system: str, prompt: str) -> str:
         return "(mock completion)"
