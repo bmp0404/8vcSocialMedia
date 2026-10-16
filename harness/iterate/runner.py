@@ -18,6 +18,10 @@ revert of that record, so a promotion that fails its retest doesn't stay in forc
 - "stack": `champion` is the config before a promotion and the proposal re-applies it, to measure a
   combination of promotions no run scored together (campaign.unmeasured). Recorded `stack_ok`, or
   `stack_failed` when the combination is shown worse or fails a guardrail.
+
+A queue spec with a baseline passes `champion` too: the ledger's champion with the baseline applied, which
+the run checks. Its record's knob diff runs from that arm to the challenger, so a promotion moves only the
+spec's own change into the champion.
 """
 
 import hashlib
@@ -133,8 +137,19 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
         if mode == "stack":
             raise ValueError("a stack check needs the baseline config as `champion`")
         champion = current
-    elif any(p.proposer.get("kind") not in EXPLICIT_CHAMPION_KINDS for p in proposals):
-        raise ValueError("an explicit champion is only for confirmation and stack runs")
+    else:
+        for p in proposals:
+            if p.proposer.get("kind") in EXPLICIT_CHAMPION_KINDS:
+                continue
+            # A queue spec with a baseline compares two arms that both carry it (harness/improve/queue.py), so its
+            # champion arm is the ledger's champion with the baseline applied, and nothing else.
+            baseline = p.proposer.get("baseline") if p.proposer.get("kind") == "queue" else None
+            if not baseline:
+                raise ValueError("an explicit champion is only for confirmation and stack runs, and for queue specs "
+                                 "with a baseline")
+            if champion.hash != current.with_changes(baseline).hash:
+                raise ValueError(f"a baseline run's champion must be the ledger's champion with {baseline} applied; "
+                                 f"got {champion.ref}")
     meter = Meter(max_calls)
     print(f"[iterate] {run_id}: champion {champion.ref}, {len(proposals)} proposal(s), cap {max_calls} calls, "
           f"provider {provider}")

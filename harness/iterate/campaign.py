@@ -13,6 +13,7 @@
 `Restricted` wraps an instrument to apply rule 2 and to tighten its guardrails for one experiment.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from typing import Any
@@ -205,31 +206,40 @@ def _project(cfg: Config, knobs: tuple[str, ...]) -> dict:
 
 
 def unmeasured(records: list[dict], configs: dict[str, Config], fit_knobs: dict[str, tuple[str, ...]],
-               champion: Config) -> list[Stack]:
+               champion: Config, reads: dict[str, Callable[[Config], tuple[str, ...]]] | None = None) -> list[Stack]:
     """For each fitness, whether the champion's values for its knobs were ever an arm in a decided run on it.
 
     `records` must be in decision order (ledger.records). Defaults count as measured only if a run scored
     them too; a fitness whose knobs are all at their defaults is skipped, since no promotion moved them.
+
+    `reads` maps a fitness to the knobs an arm under a config reads (ActionLineup.reads). With it, configs are
+    compared on those knobs only, so a promotion of a knob the champion's own arm doesn't read, which a queue
+    spec with a baseline makes, leaves the champion's arm measured: it runs the same code as before.
     """
     out = []
     for name, ks in fit_knobs.items():
-        want = _project(champion, ks)
-        if want == _project(DEFAULT, ks):
+        arm_reads = (reads or {}).get(name)
+
+        def project(cfg: Config, ks=ks, arm_reads=arm_reads) -> dict:
+            return _project(cfg, ks if arm_reads is None else tuple(k for k in ks if k in arm_reads(cfg)))
+
+        want = project(champion)
+        if want == project(DEFAULT):
             continue
         measured = any(
             r["eval"].get("fitness") == name and r["decision"]["status"] in MEASURED and r["eval"].get("metrics")
-            and any((c := configs.get(r[side]["ref"])) is not None and _project(c, ks) == want
+            and any((c := configs.get(r[side]["ref"])) is not None and project(c) == want
                     for side in ("champion", "challenger"))
             for r in records)
         if measured:
             continue
-        # Replay promotions to find the last one that moved this fitness's knobs and the config before it.
+        # Replay promotions to find the last one that moved what this fitness's arm runs and the config before it.
         cfg, latest, before = DEFAULT, None, None
         for r in records:
             if r["decision"]["status"] != "promoted":
                 continue
             after = cfg.with_changes({k: v["to"] for k, v in r["change"]["params"].items()})
-            if _project(after, ks) != _project(cfg, ks):
+            if project(after) != project(cfg):
                 latest, before = r, cfg
             cfg = after
         if latest is None:

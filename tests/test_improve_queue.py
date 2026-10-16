@@ -214,3 +214,50 @@ def test_the_format_example_in_the_module_docstring_parses(tmp_path):
     (repo / "action" / "fixtures" / "x_threads.json").write_text("{}", encoding="utf-8")
     spec = queue.parse(write(tmp_path, example, "styled-reply.toml"), CATALOG, repo=repo)
     assert spec.id == "styled-reply" and spec.threads and spec.guardrails == {"veto_pass_rate": 0.05}
+
+
+BASELINE = GOOD.replace('[change]', '[baseline]\nknobs = { "action.samples" = 6 }\n\n[change]')
+
+
+def test_a_baseline_parses_and_is_part_of_what_the_spec_tests(tmp_path):
+    spec = queue.parse(write(tmp_path, BASELINE), CATALOG)
+    assert spec.baseline == {"action.samples": 6}
+    assert spec.digest != SPEC.digest
+    assert spec.proposer("screen", spec.proposed_at)["baseline"] == {"action.samples": 6}
+    assert "baseline" not in SPEC.proposer("screen", SPEC.proposed_at)
+    # The change may move a knob the baseline sets; the change wins.
+    over = BASELINE.replace('"action.reply.generation" = "styled"', '"action.samples" = 8')
+    assert queue.parse(write(tmp_path, over), CATALOG).knobs == {"action.samples": 8}
+
+
+@pytest.mark.parametrize("edit, message", [
+    (lambda t: t.replace('knobs = { "action.samples" = 6 }', 'knobs = { "action.samples" = 6 }\nwhy = "x"'),
+     r"\[baseline\] takes only"),
+    (lambda t: t.replace('knobs = { "action.samples" = 6 }', "knobs = {}"), "one to 4 knobs"),
+    (lambda t: t.replace('knobs = { "action.samples" = 6 }', 'knobs = { "judge.model" = "gpt-6.1-sol" }'),
+     "can't measure baseline"),
+    (lambda t: t.replace('"action.samples" = 6 }', '"action.samples" = 99 }'), "outside"),
+    (lambda t: t.replace('knobs = { "action.samples" = 6 }', 'knobs = { "action.reply.generation" = "styled" }'),
+     "only repeats"),
+])
+def test_bad_baselines_are_refused_with_the_reason(tmp_path, edit, message):
+    with pytest.raises(queue.SpecError, match=message):
+        queue.parse(write(tmp_path, edit(BASELINE)), CATALOG)
+
+
+def test_the_live_queue_parses_and_specs_written_before_baselines_keep_their_digest():
+    """Every file in eval/experiments/queue parses against the loop's own catalog, and styled-reply still has
+    the digest its screen record carries, so adding baselines didn't send a decided spec back to its screen."""
+    import json
+
+    from harness import config
+    from harness.improve.scheduler import default_catalog
+    from harness.iterate import ledger
+
+    specs, errors = queue.load(queue.QUEUE_DIR, default_catalog())
+    assert errors == {} and specs
+    styled = next(s for s in specs if s.id == "styled-reply")
+    records = [r for r in ledger.records(config.ROOT / "eval" / "experiments") if r["proposer"].get("spec") == "styled-reply"]
+    assert records and {r["proposer"]["spec_digest"] for r in records} == {styled.digest}, json.dumps(
+        [r["proposer"] for r in records])
+    assert queue.phase(styled, records).next == "done"

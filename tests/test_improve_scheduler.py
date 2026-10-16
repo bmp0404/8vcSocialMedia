@@ -452,3 +452,85 @@ def test_a_step_a_dead_process_left_running_is_marked_interrupted_and_run_again(
     assert rows["experiments:99"] == "interrupted" and len(_records(cfg)) == 1
     report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
     assert "stopped in the middle of the experiments step" in report
+
+
+class Reads(FakeFit):
+    """qualify.batch matters only under the single reader, and only that arm reads it, like the lineup's
+    continuation knobs under the persona champion. `bad` names a config the instrument refuses to run."""
+
+    bad = None
+
+    @staticmethod
+    def reads(config):
+        return ("qualify.panel",) + (("qualify.batch",) if config.get("qualify.panel") == "single_reader" else ())
+
+    def check_config(self, config):
+        return self.bad if self.bad and config.get("qualify.batch") == 1 else None
+
+    def run_arm(self, config, items, llm_for, *, seed, repeat):
+        win = float(config.get("qualify.panel") == "single_reader" and config.get("qualify.batch") == 1)
+        return ArmResult(values={it.id: win for it in items}, secondary={"safety": {it.id: 1.0 for it in items}})
+
+
+BATCH_SPEC = SPEC.replace('knobs = { "qualify.panel" = "single_reader" }', 'knobs = { "qualify.batch" = 1 }')
+BASELINE_SPEC = BATCH_SPEC.replace("[change]", '[baseline]\nknobs = { "qualify.panel" = "single_reader" }\n\n[change]')
+
+
+def _reads_scheduler(cfg, clock, fit=Reads):
+    return sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, q: "ok", catalog={"fake": Reads},
+                         build=lambda fitness, profile, threads=(): fit())
+
+
+def test_a_spec_with_a_baseline_screens_confirms_and_promotes_only_its_change(setup):
+    cfg, _, _, clock = setup
+    (cfg.queue_dir / "reader.toml").write_text(BASELINE_SPEC, encoding="utf-8")
+    s = _reads_scheduler(cfg, clock)
+    s.experiments()
+    clock.t += timedelta(hours=6)
+    s.experiments()
+    screen, confirm = _records(cfg)
+    assert [(r["proposer"]["phase"], r["decision"]["status"]) for r in (screen, confirm)] == [
+        ("screen", "candidate"), ("confirm", "promoted")]
+    for r in (screen, confirm):
+        assert r["proposer"]["baseline"] == {"qualify.panel": "single_reader"}
+        assert r["change"]["params"] == {"qualify.batch": {"from": 0, "to": 1}}
+    champion = ledger.champion(cfg.ledger_dir)[0]
+    assert champion.get("qualify.batch") == 1 and champion.get("qualify.panel") == "personas"
+    clock.t += timedelta(hours=6)
+    out = s.experiments()  # the champion's own arm doesn't read the promoted knob: no stack check
+    assert out["stacks"] == [] and len(_records(cfg)) == 2
+
+
+def test_a_change_no_arm_reads_is_refused_before_it_costs_a_call(setup):
+    cfg, _, _, clock = setup
+    (cfg.queue_dir / "reader.toml").write_text(BATCH_SPEC, encoding="utf-8")  # no baseline: both arms are personas
+    s = _reads_scheduler(cfg, clock)
+    (entry,) = s.experiments()["specs"]
+    assert entry["state"] == "refused" and "neither arm reads ['qualify.batch']" in entry["note"]
+    assert _records(cfg) == []
+    s.run_cycle()
+    report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
+    assert "Queue spec reader won't test what it says: neither arm reads" in report
+
+
+def test_a_config_the_instrument_cannot_run_as_written_is_refused(setup):
+    cfg, _, _, clock = setup
+    (cfg.queue_dir / "reader.toml").write_text(BASELINE_SPEC, encoding="utf-8")
+
+    class Refuses(Reads):
+        bad = "the profile has no handle"
+
+    (entry,) = _reads_scheduler(cfg, clock, Refuses).experiments()["specs"]
+    assert (entry["state"], entry["note"]) == ("refused", "the profile has no handle") and _records(cfg) == []
+
+
+def test_needed_models_skip_model_knobs_no_arm_reads():
+    from harness.iterate import knobs
+    from harness.iterate.fitness.action import ActionLineup
+
+    cont = knobs.DEFAULT.with_changes({"action.reply.generation": "continuation"})
+    filtered = cont.with_changes({"action.continuation.page_filter": True})
+    named = {"claude-opus-5-5", "claude-fable-5-dd-los-6.5-tpg"}  # the two detectors and the instrument's veto
+    assert sch.Scheduler.needed_models(ActionLineup(), [cont]) == named | {knobs.OPUS45}
+    assert sch.Scheduler.needed_models(ActionLineup(), [cont, filtered]) == named | {knobs.OPUS45, knobs.OPUS55}
+    assert knobs.SONNET not in sch.Scheduler.needed_models(ActionLineup(), [cont])  # persona's model, unread here
