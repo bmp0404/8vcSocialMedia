@@ -121,3 +121,45 @@ def test_bluesky_maps_counts_skips_opt_outs_and_uses_link_titles():
     assert s.created_at == "2026-10-13T16:21:48Z"
     assert s.metrics == {"likes": 103, "reposts": 30, "replies": 2, "quotes": 9}
     assert signals[1].text == "Finals preview video"
+
+
+class FakeSeries:
+    """Stands in for harness.context.collectors.base.Series: points plus a median baseline."""
+
+    def __init__(self, points, term="Caitlin Clark", source="wikipedia"):
+        self.points, self.term, self.source = points, term, source
+
+    def baseline(self, end, days=14):
+        from datetime import timedelta
+
+        vals = sorted(v for ts, v in self.points if end - timedelta(days=days) <= ts < end)
+        mid = len(vals) // 2
+        return None if not vals else vals[mid] if len(vals) % 2 else (vals[mid - 1] + vals[mid]) / 2
+
+
+def test_attention_spike_compares_last_day_to_median():
+    from datetime import timedelta
+
+    from harness.sources.attention import attention_signal
+
+    now = datetime(2026, 10, 15, 21, tzinfo=timezone.utc)
+    daily = [(now - timedelta(days=d), 100.0) for d in range(14, 1, -1)] + [(now - timedelta(hours=3), 300.0)]
+    s = attention_signal(FakeSeries(daily), now, baseline_days=14)
+    assert s.kind == "attention" and s.metrics == {"spike_ratio": 3.0, "level": 300.0, "baseline": 100.0}
+    assert s.text == "wikipedia attention to 'Caitlin Clark' is 3.0x its 14-day median"
+
+
+def test_attention_uses_newest_bucket_when_source_lags():
+    from datetime import timedelta
+
+    from harness.sources.attention import spike
+
+    now = datetime(2026, 10, 15, 21, tzinfo=timezone.utc)
+    lagging = [(now - timedelta(days=d), 50.0) for d in range(10, 2, -1)] + [(now - timedelta(days=2), 75.0)]
+    assert spike(FakeSeries(lagging), now, 14) == (1.5, 75.0, 50.0)
+
+
+def test_attention_without_data_is_none():
+    from harness.sources.attention import spike
+
+    assert spike(FakeSeries([]), datetime(2026, 10, 15, tzinfo=timezone.utc), 14) is None

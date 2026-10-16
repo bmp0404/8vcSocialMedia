@@ -78,6 +78,10 @@ def signal_heat(s: Signal, now: datetime) -> float | None:
         if age < 0:  # not started: anticipation builds as tip-off nears
             return 0.8 * 0.5 ** (-age / 24)
         return 0.8 * 0.5 ** (age / NEWS_HALF_LIFE_H)
+    if s.kind == "attention":
+        # Twice the usual attention is half-hot, four times is fully hot; at or below normal adds nothing.
+        ratio = float(s.metrics.get("spike_ratio", 0.0))
+        return min(1.0, max(0.0, math.log2(ratio) / 2)) if ratio > 0 else 0.0
     rate = engagement_per_hour(s, now)
     if rate is not None or s.kind in X_KINDS:
         rate = rate or 0.0

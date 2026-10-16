@@ -37,6 +37,11 @@ queries = ["Caitlin Clark", "WNBA Finals", "Indiana Fever"]
 lookback_hours = 24
 per_query = 25
 
+[attention]
+# Terms for the context worker's attention collectors (Wikipedia, GDELT, Hacker News).
+terms = ["Caitlin Clark", "Indiana Fever", "WNBA Finals"]
+baseline_days = 14
+
 [reply_targets]
 # Accounts whose fresh posts draw enough traffic that an early reply gets seen.
 # A first guess from the brief's storylines; nobody has checked them against real reply traffic.

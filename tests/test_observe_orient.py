@@ -123,3 +123,8 @@ def test_orient_mock_ranks_by_relevance_times_measured_velocity_and_hides_own_po
     # own_post is never offered to the LLM; newest first, so the fresh story is id 0
     assert [n.signal_urls for n in narratives] == [["https://n/new"], ["https://n/old"]]
     assert all(n.velocity_basis == "data" for n in narratives)
+
+
+@pytest.mark.parametrize("ratio, expected", [(1.0, 0.0), (0.5, 0.0), (2.0, 0.5), (4.0, 1.0), (16.0, 1.0)])
+def test_attention_heat_from_spike_ratio(ratio, expected):
+    assert o.signal_heat(sig("attention", 20, spike_ratio=ratio), NOW) == pytest.approx(expected)
