@@ -13,13 +13,20 @@ Pairing: the champion and every challenger see the same lineups. The champion re
 real replies and the generated reply's position with a different seed, because a judge's verdict
 moves with lineup composition (research/action.md, finding 3); its gap to the champion is the noise floor.
 
-A generator that produces nothing usable counts as detected, so failing to write can't help an arm.
+An arm that ships nothing for a thread (its generator failed, or its pipeline abstained) counts as
+detected, so silence can't win on detection, and as passing the veto, since nothing unsafe shipped.
+`abstain_rate` reports how often that happened. Instrument version 2 adopted this rule; version 1
+scored a failed generation as vetoed, which never occurred in the version 1 runs.
+
+A second detector from another model family (GPT) scores the same lineups as a secondary, because a
+pipeline that screens its drafts with Opus 5.5 is being measured by the model that selected them.
 """
 
 import hashlib
 import json
 import random
 import re
+import threading
 from pathlib import Path
 
 from harness import config as hconfig
@@ -27,8 +34,11 @@ from harness.iterate.fitness import ArmResult, Item, LLMFor, Metric
 from harness.iterate.knobs import OPUS55, Config
 from harness.iterate.stats import Stat, mean_stat
 
+INSTRUMENT_VERSION = 2
 DEFAULT_THREADS = hconfig.ROOT / "action" / "fixtures" / "x_threads.json"
+PERSONA_FIXTURE = hconfig.ROOT / "eval" / "experiments" / "fixtures" / "persona_json-main.json"
 DETECTOR_MODEL = OPUS55
+GPT_DETECTOR_MODEL = "claude-fable-5-dd-los-6.5-tpg"  # gpt-6.5-sol on the gateway; the research's GPT judge
 LINEUP_POOL = 6  # the lineup's real replies come from the 6 most-liked
 CONTEXT = slice(6, 18)  # ranks 7-18: shown to every generator, never in a lineup
 MIN_REPLIES = 12
@@ -107,16 +117,15 @@ def _context_lines(thread: dict) -> str:
 
 
 def gen_persona_json(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
-    """Main's decide prompt with the reply_sniper persona: the current default."""
-    from harness.minds import PROMPT, load_minds
-
+    """Main's decide prompt with the reply_sniper persona, frozen in PERSONA_FIXTURE: the current default."""
+    frozen = json.loads(PERSONA_FIXTURE.read_text(encoding="utf-8"))
     narrative = {"id": f"thread-{thread['id']}", "title": thread["text"][:80],
                  "summary": f"@{thread['author']} posted: \"{thread['text']}\"\n\nOther replies already in the thread:\n"
                             f"{_context_lines(thread)}",
                  "relevance": 1.0, "velocity": 1.0, "angle": "", "signal_urls": [thread["url"]], "explore": False}
-    prompt = PROMPT.format(mission=hconfig.mission(), lessons=_lessons(cfg, seed), narratives=json.dumps([narrative], indent=1),
-                           n=1)
-    persona = load_minds()["reply_sniper"]
+    prompt = frozen["prompt"].format(mission=hconfig.mission(), lessons=_lessons(cfg, seed),
+                                     narratives=json.dumps([narrative], indent=1), n=1)
+    persona = frozen["persona"]
     data = llm_for(cfg.get("action.reply.model")).complete_json(
         persona, prompt, mock=lambda: {"actions": [{"type": "reply", "text": f"mock persona_json reply {thread['id']}"}]})
     actions = data.get("actions", []) if isinstance(data, dict) else []
@@ -145,7 +154,64 @@ def gen_continuation(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> s
     return tidy_draft(llm.continue_text("Saved page text:", prefill, stop=["\n@"], max_tokens=80))
 
 
-GENERATORS = {"persona_json": gen_persona_json, "styled": gen_styled, "continuation": gen_continuation}
+_PIPELINE_LOCK = threading.Lock()
+
+
+class Abstained(Exception):
+    """The config's pipeline chose not to ship anything for this thread."""
+
+
+def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
+    """sam/action's reply lane for one target (harness/minds/lanes.py:answer_target): continuation
+    writer, slop gate with the thread as context, Opus veto in two orders, random pick among survivors.
+
+    The thread is handed over as Observe's `thread` field with the same 12 context replies every other
+    generator sees, and live fetching is disabled, so the pipeline can't read the lineup's replies."""
+    try:
+        from harness.minds import veto as action_veto
+        from harness.minds import writer as action_writer
+        from harness.minds.lanes import answer_target
+        from harness.minds.settings import ActionConfig
+        from harness.minds.thread import ThreadUnavailable
+    except ImportError as e:
+        raise RuntimeError(f"the pipeline generator needs sam/action's reply lane ({e}); run from a checkout "
+                           "that has it merged") from e
+    from harness.llm import MockLLM
+    from harness.models import Narrative
+
+    acfg = ActionConfig(reply_samples=cfg.get("action.samples"), page_replies=cfg.get("action.page_replies"),
+                        veto_model=cfg.get("action.veto.model"), veto_max_p_ai=cfg.get("action.veto.max_p_ai"),
+                        continuation_model=cfg.get("action.continuation.model"))
+    narrative = Narrative(id=f"thread-{thread['id']}", title=thread["text"][:80], summary=thread["text"])
+    target = {"url": thread["url"], "author": thread["author"], "text": thread["text"], "narrative": narrative,
+              "replies": len(thread["context"]),
+              "thread": [{"text": r["text"], "likes": r["likes"], "author": None} for r in thread["context"]]}
+
+    def no_fetch(url: str):
+        raise ThreadUnavailable("offline lineup fitness: live fetching is disabled")
+
+    probe = llm_for(cfg.get("action.continuation.model"))
+    if not hasattr(probe, "meter"):  # the mock provider: sam/action's code has its own mock paths
+        decision, action = answer_target(MockLLM(), hconfig.mission(), "", target, acfg, no_fetch)
+    else:
+        from harness.iterate.llm import metered_anthropic_class
+
+        cls = metered_anthropic_class(probe.meter, probe.arm)
+        with _PIPELINE_LOCK:  # the swap below is module-global, so one pipeline arm at a time
+            saved = action_writer.AnthropicLLM, action_veto.AnthropicLLM
+            action_writer.AnthropicLLM = action_veto.AnthropicLLM = cls
+            try:
+                decision, action = answer_target(cls(cfg.get("action.continuation.model")), hconfig.mission(), "",
+                                                 target, acfg, no_fetch)
+            finally:
+                action_writer.AnthropicLLM, action_veto.AnthropicLLM = saved
+    if action is None:
+        raise Abstained(f"{decision.reason}: {decision.detail}"[:200])
+    return tidy_draft(action.text)
+
+
+GENERATORS = {"persona_json": gen_persona_json, "styled": gen_styled, "continuation": gen_continuation,
+              "pipeline": gen_pipeline}
 
 
 def _lessons(cfg: Config, seed: int) -> str:
@@ -177,52 +243,74 @@ class ActionLineup:
     cluster_unit = "thread"
     primary = Metric("ai_detection_rate", higher_is_better=False)
     secondaries = (Metric("veto_pass_rate", higher_is_better=True, guardrail=True, margin=VETO_MARGIN),
-                   Metric("generation_failure_rate", higher_is_better=False),
+                   Metric("ai_detection_rate_gpt", higher_is_better=False),
+                   Metric("abstain_rate", higher_is_better=False),
                    Metric("reply_chars", higher_is_better=False))
-    knobs = ("action.reply.generation", "action.reply.model", "action.continuation.model", "memory.lessons")
+    knobs = ("action.reply.generation", "action.reply.model", "action.continuation.model", "memory.lessons",
+             "action.samples", "action.page_replies", "action.veto.model", "action.veto.max_p_ai")
 
-    def __init__(self, threads_path: Path = DEFAULT_THREADS, limit: int | None = None):
-        self.threads_path = Path(threads_path)
+    def __init__(self, threads_paths: list[Path] | Path = DEFAULT_THREADS, limit: int | None = None):
+        self.threads_paths = [Path(p) for p in (threads_paths if isinstance(threads_paths, list) else [threads_paths])]
         self.limit = limit
 
     def items(self) -> list[Item]:
-        threads = load_threads(self.threads_path)[: self.limit]
-        return [Item(t["id"], t["id"], t) for t in threads]
+        threads, seen = [], set()
+        for path in self.threads_paths:
+            for t in load_threads(path):
+                if t["id"] not in seen:
+                    seen.add(t["id"])
+                    threads.append(t)
+        return [Item(t["id"], t["id"], t) for t in threads[: self.limit]]
 
     def instrument(self) -> dict:
-        data = self.threads_path.read_bytes()
-        # Outside this checkout (tonight: the sam/action worktree), name the repo-relative path it will have.
-        shown = (self.threads_path.relative_to(hconfig.ROOT) if self.threads_path.is_relative_to(hconfig.ROOT)
-                 else Path(*self.threads_path.parts[-3:]))
-        return {"dataset": shown.as_posix(), "dataset_sha256": hashlib.sha256(data).hexdigest(),
+        digest = hashlib.sha256()
+        shown = []
+        for path in self.threads_paths:
+            digest.update(path.read_bytes())
+            # Outside this checkout (a worker's worktree), name the repo-relative path it will have.
+            shown.append((path.relative_to(hconfig.ROOT) if path.is_relative_to(hconfig.ROOT)
+                          else Path(*path.parts[-3:])).as_posix())
+        persona = json.loads(PERSONA_FIXTURE.read_text(encoding="utf-8"))
+        return {"version": INSTRUMENT_VERSION, "dataset": " + ".join(shown), "dataset_sha256": digest.hexdigest(),
+                "persona_json_sha256": persona["sha256"], "gpt_detector_model": GPT_DETECTOR_MODEL,
                 "detector_model": DETECTOR_MODEL, "lineup_system": LINEUP_SYSTEM, "lineup_pool": LINEUP_POOL,
                 "context_ranks": [CONTEXT.start + 1, CONTEXT.stop], "min_replies": MIN_REPLIES, "chance": 0.2,
                 "veto_model": VETO_MODEL, "veto_system": VETO_SYSTEM, "veto_margin": VETO_MARGIN}
 
-    def estimate_calls(self, n_items: int) -> int:
-        return 3 * n_items  # one generation, one lineup judgment, one veto
+    def estimate_calls(self, config: Config, n_items: int, repeat: bool = False) -> int:
+        """Two detectors and the instrument's veto per thread, plus generation: one call, or for the
+        pipeline its samples plus its own veto, which judges every survivor in one call per order."""
+        if config.get("action.reply.generation") == "pipeline":
+            return n_items * (3 + config.get("action.samples") + 2)
+        return 4 * n_items
 
     def _one(self, cfg: Config, thread: dict, llm_for: LLMFor, seed: int, lineup_seed: int) -> tuple[str, dict]:
         method = cfg.get("action.reply.generation")
+        why = ""
         try:
             draft = GENERATORS[method](cfg, thread, llm_for, seed)
-        except Exception as e:  # noqa: BLE001 - a failed generation is scored as detected, below
+        except Abstained as e:
+            draft, why = "", f"abstained: {e}"
+        except Exception as e:  # noqa: BLE001 - scored as shipping nothing, below
             print(f"[iterate] {method} failed on {thread['id']}: {str(e)[:120]}")
-            draft = ""
+            draft, why = "", f"failed: {type(e).__name__}: {str(e)[:160]}"
         if not draft:
-            return thread["id"], {"draft": "", "detected": 1.0, "generation_failed": 1.0, "veto_pass": 0.0}
+            return thread["id"], {"draft": "", "shipped": False, "why": why or "empty draft", "detected": 1.0,
+                                  "detected_gpt": 1.0, "veto_pass": 1.0, "abstained": 1.0}
         shown, pos = lineup(thread, draft, lineup_seed)
         user = f"POST:\n@{thread['author']} posted:\n{thread['text']}\n\nREPLIES:\n" + "\n".join(
             f"{i + 1}. {s}" for i, s in enumerate(shown))
-        detector = llm_for(DETECTOR_MODEL)
-        for _ in range(3):
-            try:
-                pick = int(detector.complete_json(LINEUP_SYSTEM, user)["ai_reply"])
-                break
-            except Exception as e:  # noqa: BLE001 - retried, then the item drops out as a failure
-                err = str(e)[:120]
-        else:
-            return thread["id"], {"draft": draft, "error": f"detector failed: {err}"}
+        picks = {}
+        for name, model in (("opus", DETECTOR_MODEL), ("gpt", GPT_DETECTOR_MODEL)):
+            for _ in range(3):
+                try:
+                    picks[name] = int(llm_for(model).complete_json(LINEUP_SYSTEM, user)["ai_reply"])
+                    break
+                except Exception as e:  # noqa: BLE001 - retried, then the item drops out as a failure
+                    err = str(e)[:120]
+            else:
+                return thread["id"], {"draft": draft, "error": f"{name} detector failed: {err}"}
+        pick = picks["opus"]
         veto_user = (f"POST:\n@{thread['author']} posted:\n{thread['text']}\n\nOTHER REPLIES:\n{_context_lines(thread)}"
                      f"\n\nDRAFT REPLY:\n{draft}")
         try:
@@ -232,8 +320,9 @@ class ActionLineup:
                 raise ValueError(f"veto must be true or false, got {vetoed!r}")
         except Exception as e:  # noqa: BLE001 - the item drops out of every arm as a failure
             return thread["id"], {"draft": draft, "error": f"veto failed: {str(e)[:120]}"}
-        return thread["id"], {"draft": draft, "position": pos, "pick": pick, "detected": float(pick == pos),
-                              "generation_failed": 0.0, "veto_pass": float(not vetoed),
+        return thread["id"], {"draft": draft, "shipped": True, "position": pos, "pick": pick, "pick_gpt": picks["gpt"],
+                              "detected": float(pick == pos), "detected_gpt": float(picks["gpt"] == pos),
+                              "abstained": 0.0, "veto_pass": float(not vetoed),
                               "veto_reasons": verdict.get("reasons", [])}
 
     def run_arm(self, config: Config, items: list[Item], llm_for: LLMFor, *, seed: int, repeat: bool) -> ArmResult:
@@ -242,7 +331,7 @@ class ActionLineup:
         lineup_seed = seed + 1 if repeat else seed
         with ThreadPoolExecutor(6) as pool:
             rows = dict(pool.map(lambda it: self._one(config, it.payload, llm_for, seed + int(repeat), lineup_seed), items))
-        res = ArmResult(values={}, secondary={"veto_pass_rate": {}, "generation_failure_rate": {}, "reply_chars": {}})
+        res = ArmResult(values={}, secondary={m.name: {} for m in self.secondaries})
         for iid, row in rows.items():
             res.detail[iid] = row
             if "error" in row:
@@ -250,7 +339,8 @@ class ActionLineup:
                 continue
             res.values[iid] = row["detected"]
             res.secondary["veto_pass_rate"][iid] = row["veto_pass"]
-            res.secondary["generation_failure_rate"][iid] = row["generation_failed"]
+            res.secondary["ai_detection_rate_gpt"][iid] = row["detected_gpt"]
+            res.secondary["abstain_rate"][iid] = row["abstained"]
             res.secondary["reply_chars"][iid] = float(len(row["draft"]))
         return res
 

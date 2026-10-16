@@ -16,6 +16,20 @@ ACTION_STYLED = Proposal(
     "Short style rules on the same model read less like AI than the persona JSON call (research: 81% against 100%).",
     {**RESEARCH, "source": "research/action.md, findings 1 and 2"}, "styled prompt (sonnet)")
 
+ACTION_PIPELINE = Proposal(
+    "action_lineup", {"action.reply.generation": "pipeline", "action.samples": 4},
+    "sam/action's reply lane (4 continuations, slop gate, two-order Opus veto, random pick) reads less like AI "
+    "than the persona JSON call and is no less safe, because its veto removes the invented claims and insults "
+    "plain continuation shipped in exp-20261016-action-f691d2.",
+    {**RESEARCH, "source": "research/action.md, findings 2-4; exp-20261016-action-f691d2"},
+    "sam/action reply lane, 4 samples")
+
+QUALIFY_BATCH1 = Proposal(
+    "qualify_auc", {"qualify.batch": 1},
+    "Scoring each post in its own call separates viral from Deadweight better than scoring an account's posts "
+    "together, because batched scores assimilate toward their neighbours (research: 0.12 AUC from order alone).",
+    {**RESEARCH, "source": "research/eval.md, finding 1"}, "one post per call")
+
 QUALIFY_READER = Proposal(
     "qualify_auc", {"qualify.panel": "single_reader"},
     "One no-persona reader separates viral from Deadweight posts within an account at least as well as the persona "
@@ -42,5 +56,6 @@ QUALIFY_MEMORY_SHUFFLED = Proposal(
 PLANS = {
     "first": [ACTION_CONTINUATION],
     "action": [ACTION_CONTINUATION, ACTION_STYLED],
-    "qualify": [QUALIFY_READER, QUALIFY_GPT, QUALIFY_MEMORY, QUALIFY_MEMORY_SHUFFLED],
+    "pipeline": [ACTION_PIPELINE],
+    "qualify": [QUALIFY_BATCH1, QUALIFY_READER, QUALIFY_GPT, QUALIFY_MEMORY, QUALIFY_MEMORY_SHUFFLED],
 }

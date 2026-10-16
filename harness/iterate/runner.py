@@ -136,10 +136,10 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
     items_by_fit = {name: fitnesses[name].items() for name in {p.fitness for p, _ in planned}}
     kept, spent = [], 0
     for name in items_by_fit:
-        n = len(items_by_fit[name])
-        base = 2 * fitnesses[name].estimate_calls(n)
+        n, fit = len(items_by_fit[name]), fitnesses[name]
+        base = fit.estimate_calls(champion, n) + fit.estimate_calls(champion, n, repeat=True)
         for prop, cfg in [(p, c) for p, c in planned if p.fitness == name]:
-            cost = fitnesses[name].estimate_calls(n) + (base if not any(p.fitness == name for p, _ in kept) else 0)
+            cost = fit.estimate_calls(cfg, n) + (base if not any(p.fitness == name for p, _ in kept) else 0)
             if spent + cost > max_calls:
                 pending.append((prop, cfg, f"not run: needs about {cost} calls, {max_calls - spent} left of {max_calls}"))
                 continue

@@ -7,17 +7,21 @@ from pathlib import Path
 from harness.iterate import knobs, ledger
 
 
-def _fitnesses(args) -> dict:
+def _fitnesses(args, provider: str) -> dict:
     from harness.iterate.fitness.action import DEFAULT_THREADS, ActionLineup
 
-    out = {"action_lineup": ActionLineup(Path(args.threads) if getattr(args, "threads", None) else DEFAULT_THREADS,
-                                         limit=getattr(args, "limit", None))}
+    paths = [Path(t) for t in getattr(args, "threads", None) or []] or [DEFAULT_THREADS]
+    out = {"action_lineup": ActionLineup(paths, limit=getattr(args, "limit", None))}
     try:
         from harness.iterate.fitness.qualify import QualifyAUC
     except ImportError as e:  # harness.evals lands with sam/eval
         print(f"[iterate] qualify_auc unavailable: {e}")
     else:
-        out["qualify_auc"] = QualifyAUC(per_tier=getattr(args, "per_tier", 4))
+        from harness.iterate.fitness.qualify import CACHE_REPORT
+
+        # Never mix the eval worker's real scores into a mock run.
+        out["qualify_auc"] = QualifyAUC(per_tier=getattr(args, "per_tier", 4),
+                                        cache_report=None if provider == "mock" else CACHE_REPORT)
     return out
 
 
@@ -30,8 +34,8 @@ def run(args) -> None:
     provider = (args.provider or "mock").lower()
     if provider not in ("mock", "anthropic"):
         raise SystemExit("iterate runs on --provider mock or anthropic (the gateway serves every model it tests)")
-    recs = run_batch(PLANS[args.plan], _fitnesses(args), provider=provider, max_calls=args.max_calls, seed=args.seed,
-                     run_note=args.note or f"plan {args.plan}")
+    recs = run_batch(PLANS[args.plan], _fitnesses(args, provider), provider=provider, max_calls=args.max_calls, seed=args.seed,
+                     directory=Path(args.ledger_dir) if args.ledger_dir else None, run_note=args.note or f"plan {args.plan}")
     for r in recs:
         m = next((x for x in r["eval"]["metrics"] if x.get("primary")), None)
         line = f"{r['id']}: {r['decision']['status']}"
@@ -73,7 +77,9 @@ def register(sub: argparse._SubParsersAction) -> None:
     r.add_argument("--provider", help="mock (default) or anthropic")
     r.add_argument("--max-calls", type=int, default=150, help="hard cap on LLM calls for the whole batch")
     r.add_argument("--seed", type=int, default=0)
-    r.add_argument("--threads", help="thread fixture for action_lineup (default action/fixtures/x_threads.json)")
+    r.add_argument("--threads", action="append",
+                   help="thread fixture for action_lineup; repeat to combine (default action/fixtures/x_threads.json)")
+    r.add_argument("--ledger-dir", help="write records here instead of eval/experiments/ (or out/iterate/ on mock)")
     r.add_argument("--limit", type=int, help="use only the first N threads")
     r.add_argument("--per-tier", type=int, default=4, help="qualify_auc: posts per tier per account")
     r.add_argument("--note")
