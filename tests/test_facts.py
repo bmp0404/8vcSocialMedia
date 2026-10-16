@@ -263,6 +263,29 @@ def test_refresh_reads_recent_posts_for_a_profile_without_a_scoreboard():
     assert {f.answer for f in store.load(s)} == {"We shipped 2.0"}
 
 
+class FlakyReader(FakeReader):
+    def __init__(self, failing):
+        self.failing = failing
+
+    def profile_statuses(self, handle, limit=20):
+        from harness.context.http import FetchError
+        if handle in self.failing:
+            raise FetchError(f"HTTP 404 from api.fxtwitter.com for /2/profile/{handle}/statuses")
+        return super().profile_statuses(handle, limit)
+
+
+def test_refresh_skips_a_timeline_it_cant_read_and_keeps_the_others(capsys):
+    from harness.sources.watch import load_watch
+    with config.use_profile("devtools"):
+        handles = load_watch().reply_targets.accounts
+    s = FakeStore()
+    counts = store.refresh("devtools", at=AT, reader=FlakyReader({handles[0]}), store=s)
+    assert set(counts) == {f"posts:{h}" for h in handles[1:]}
+    assert f"[facts] skipped @{handles[0]}: HTTP 404" in capsys.readouterr().out
+    with pytest.raises(store.FactsError, match="every timeline read failed"):
+        store.refresh("devtools", at=AT, reader=FlakyReader(set(handles)), store=FakeStore())
+
+
 def test_refresh_refuses_the_mock_providers_throwaway_store(monkeypatch):
     monkeypatch.setattr(config, "PROVIDER", "mock")
     monkeypatch.delenv("MEMSTORE_PATH", raising=False)
