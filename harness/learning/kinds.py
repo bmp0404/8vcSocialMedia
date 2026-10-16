@@ -100,6 +100,11 @@ def heldout_sentence(result: dict, outcome: str) -> str:
             f"{result['other_with_trait']} of {result['other_posts']} {plural[other]} from the same accounts")
 
 
+def bullet(label: str, text: str, when: str) -> str:
+    """One body line in the store's format: `- **Label:** statement; stated on YYYY-MM-DD.`"""
+    return f"- **{label}:** {text.rstrip('.')}; stated on {when}."
+
+
 def _clip(text: str, n: int) -> str:
     text = " ".join((text or "").split())
     return text if len(text) <= n else text[: n - 1] + "…"
@@ -193,14 +198,15 @@ class Episode(_Kind):
 
     def body(self) -> str:
         d = self.note_fields()["created"]
-        lines = [f"- {d}: @{self.author_username} {self.action_type}: {_clip(self.text, 400)}"]
+        lines = [bullet(self.action_type.capitalize(), f"@{self.author_username}: {_clip(self.text, 400)}", d)]
         for o in self.outcomes:
             if o.label or o.raw or o.metrics:
                 detail = ", ".join(f"{k} {v}" for k, v in o.metrics.items())
-                lines.append(f"- {day(o.at) or d}: {o.source} outcome {o.label or 'unlabeled'}"
-                             + (f" ({o.raw})" if o.raw else "") + (f"; {detail}" if detail else "")
-                             + (f"; reasons: {', '.join(o.reasons)}" if o.reasons else "")
-                             + (f"; note: {_clip(o.note, 200)}" if o.note else ""))
+                lines.append(bullet(f"{o.source.capitalize()} outcome",
+                                    f"{o.label or 'unlabeled'}" + (f" ({o.raw})" if o.raw else "")
+                                    + (f", {detail}" if detail else "")
+                                    + (f", reasons {' '.join(o.reasons)}" if o.reasons else "")
+                                    + (f", note: {_clip(o.note, 200)}" if o.note else ""), day(o.at) or d))
         return "\n".join(lines)
 
 
@@ -225,6 +231,7 @@ class Reflection(_Kind):
     rule_problem: str = ""  # why the model's rule was unusable, if it gave a bad one
     transfer_hint: str = ""  # the model's guess at "general" or "domain"; scope ignores it until tested
     filters: dict = field(default_factory=dict)  # what reflect.usable dropped, and whether boost flags existed
+    caveats: list[str] = field(default_factory=list)  # known reasons to doubt the test, from reflect.caveats_for
     created: str = ""
 
     def note_fields(self) -> dict:
@@ -234,13 +241,14 @@ class Reflection(_Kind):
 
     def body(self) -> str:
         h = self.heldout
-        lines = [f"- {self.created}: {self.claim}",
-                 f"- {self.created}: shared by {', '.join(f'[[{e}]]' for e in self.evidence)}; "
-                 f"absent from {', '.join(f'[[{e}]]' for e in self.contrast)}",
-                 f"- {self.created}: predicate: {self.predicate}"
-                 + (f" (tested as: {rule_text(self.rule)})" if self.rule else "")]
+        lines = [bullet("Claim", self.claim, self.created),
+                 bullet("Evidence", f"shared by {' '.join(f'[[{e}]]' for e in self.evidence)}, absent from "
+                        f"{' '.join(f'[[{e}]]' for e in self.contrast)}", self.created),
+                 bullet("Predicate", self.predicate + (f" (tested as: {rule_text(self.rule)})" if self.rule else ""),
+                        self.created)]
         if h:
-            lines.append(f"- {self.created}: held-out test {self.status}: {heldout_sentence(h, self.outcome)}")
+            lines.append(bullet("Held-out test", f"{self.status}, {heldout_sentence(h, self.outcome)}", self.created))
+        lines += [bullet("Caveat", c, self.created) for c in self.caveats]
         return "\n".join(lines)
 
 
@@ -269,6 +277,7 @@ class Lesson(_Kind):
     inconclusive: int = 0  # held-out tests that showed neither
     last_test: dict = field(default_factory=dict)  # the latest supporting stats.heldout_test result
     labeled_at_test: int = 0  # labeled episodes in its domain when last tested, for the retest trigger
+    caveats: list[str] = field(default_factory=list)  # known reasons to doubt it, shown wherever it is shown
     created: str = ""
     updated: str = ""
 
@@ -278,13 +287,14 @@ class Lesson(_Kind):
 
     def body(self) -> str:
         return "\n".join(
-            [f"- {self.created}: {self.text}",
-             f"- {self.updated}: {heldout_sentence(self.last_test, FAILURE if self.polarity == 'avoid' else SUCCESS)}; "
-             f"{self.support} supporting, {self.contradict} contradicting and {self.inconclusive} inconclusive "
-             f"tests; retest by {self.valid_until}",
-             f"- {self.updated}: tested as: {rule_text(self.rule) or self.predicate}; "
-             f"in {', '.join(f'[[{r}]]' for r in self.reflections)}",
-             f"- {self.created}: evidence {', '.join(f'[[{e}]]' for e in self.evidence[:12])}"]
+            [bullet("Lesson", self.text, self.created),
+             bullet("Held-out test", f"{heldout_sentence(self.last_test, FAILURE if self.polarity == 'avoid' else SUCCESS)}, "
+                    f"{self.support} supporting, {self.contradict} contradicting and {self.inconclusive} inconclusive "
+                    f"tests, retest by {self.valid_until}", self.updated),
+             bullet("Tested as", f"{rule_text(self.rule) or self.predicate} in "
+                    f"{' '.join(f'[[{r}]]' for r in self.reflections)}", self.updated),
+             bullet("Evidence", " ".join(f"[[{e}]]" for e in self.evidence[:12]), self.created)]
+            + [bullet("Caveat", c, self.updated) for c in self.caveats]
         )
 
 
@@ -309,7 +319,7 @@ class Entity(_Kind):
                 "updated": self.updated, "tags": [self.entity_type]}
 
     def body(self) -> str:
-        return f"- {self.updated}: {self.summary}"
+        return bullet("Profile", self.summary, self.updated)
 
 
 @dataclass
@@ -332,7 +342,8 @@ class Fact(_Kind):
                 "created": self.as_of, "updated": self.as_of, "tags": [self.status], "source": self.source_url}
 
     def body(self) -> str:
-        return f"- {self.as_of}: [[{self.subject}]] {self.answer} Source: \"{_clip(self.quote, 300)}\" ({self.source_url})"
+        return "\n".join([bullet("Fact", f"[[{self.subject}]] {self.answer}", self.as_of),
+                          bullet("Quote", f"\"{_clip(self.quote, 300)}\" ({self.source_url})", self.as_of)])
 
 
 @dataclass
@@ -371,11 +382,9 @@ class Procedure(_Kind):
     def body(self) -> str:
         lines = []
         for p in self.pairs:
-            line = (f"- {day(p.at) or self.updated}: [[ep-{p.action_id}]] {p.verdict} after an edit. "
-                    f"Draft: \"{_clip(p.original, 240)}\" Kept: \"{_clip(p.edited, 240)}\"")
-            if p.note:
-                line += f" Note: {_clip(p.note, 200)}"
-            lines.append(line)
+            text = (f"[[ep-{p.action_id}]] {p.verdict} after an edit. Draft: \"{_clip(p.original, 240)}\" "
+                    f"Kept: \"{_clip(p.edited, 240)}\"" + (f" Note: {_clip(p.note, 200)}" if p.note else ""))
+            lines.append(bullet("Edit", text, day(p.at) or self.updated))
         return "\n".join(lines)
 
 

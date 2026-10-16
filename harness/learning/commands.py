@@ -9,11 +9,10 @@ from harness.llm import DEFAULT_MODELS, AnthropicLLM, get_llm
 
 
 def _ingest_dataset(args) -> None:
-    from harness.learning.dataset import CONTEXT_PATH, DATASET_PATH, ingest_dataset
+    from harness.learning.dataset import DATASET_PATH, ingest_dataset
 
     store = get_store()
-    ingest_dataset(store, Path(args.csv) if args.csv else DATASET_PATH,
-                   Path(args.context) if args.context else CONTEXT_PATH, domain=args.domain,
+    ingest_dataset(store, Path(args.csv) if args.csv else DATASET_PATH, _context_paths(args), domain=args.domain,
                    per_category=load_settings().ingest.exemplars_per_category)
     flush(store)
 
@@ -69,28 +68,50 @@ def _settings(args):
         r.label_model = args.label_model
     if getattr(args, "allow_unfiltered", False):
         r.require_boost_flags = False
+    if getattr(args, "label_source", None):
+        r.label_source = args.label_source
     return settings
 
 
+def _context_paths(args) -> list[Path]:
+    from harness.learning.dataset import BOOST_PATH, CONTEXT_PATH
+
+    return [Path(c) for c in args.context] if getattr(args, "context", None) else [CONTEXT_PATH, BOOST_PATH]
+
+
 def _dataset_episodes(args, settings):
-    from harness.learning.dataset import CONTEXT_PATH, DATASET_PATH, attach_context, load_dataset
+    from harness.learning.dataset import DATASET_PATH, attach_context_files, load_dataset
 
     episodes = load_dataset(Path(args.csv) if args.csv else DATASET_PATH,
                             thread_gap_seconds=settings.reflect.thread_gap_seconds)
-    if CONTEXT_PATH.exists():
-        print(f"[reflect] attached {attach_context(episodes, CONTEXT_PATH)} rows of {CONTEXT_PATH.name}")
+    matched = attach_context_files(episodes, _context_paths(args))
+    print(f"[reflect] context rows matched: {matched or 'none (no context files found)'}")
     return episodes
 
 
+def _labeled(episodes, r):
+    """The episodes and outcome definition for the configured label source."""
+    from harness.learning.dataset import AUTHOR_PRIOR_DEFINITION, OUTCOME_DEFINITION, relabel_by_author_prior
+
+    if r.label_source == "category":
+        return episodes, OUTCOME_DEFINITION
+    if r.label_source == "author_prior":
+        n = relabel_by_author_prior(episodes)
+        if not n:
+            raise SystemExit("label_source author_prior needs label_above_author_prior from devtools_enriched.csv")
+        print(f"[reflect] {n} episodes labeled by author prior")
+        return episodes, AUTHOR_PRIOR_DEFINITION
+    raise SystemExit(f"unknown label_source {r.label_source!r}; use category or author_prior")
+
+
 def _reflect(args) -> None:
-    from harness.learning.dataset import OUTCOME_DEFINITION
     from harness.learning.reflect import reflect, report_json
 
     settings = _settings(args)
     r = settings.reflect
-    episodes = _dataset_episodes(args, settings)
+    episodes, definition = _labeled(_dataset_episodes(args, settings), r)
     store = get_store()
-    report = reflect(episodes, llm_for(args.provider, r.proposer_model), store, definition=OUTCOME_DEFINITION,
+    report = reflect(episodes, llm_for(args.provider, r.proposer_model), store, definition=definition,
                      domain=args.domain, settings=r, labeler=llm_for(args.provider, r.label_model), seed=args.seed)
     flush(store)
     if args.json:
@@ -115,8 +136,10 @@ def _revalidate(args) -> None:
     settings = _settings(args)
     r = settings.reflect
     store = get_store()
-    results = revalidate(_dataset_episodes(args, settings), llm_for(args.provider, r.proposer_model), store,
-                         domain=args.domain, settings=r, labeler=llm_for(args.provider, r.label_model))
+    episodes, _ = _labeled(_dataset_episodes(args, settings), r)
+    results = revalidate(episodes, llm_for(args.provider, r.proposer_model), store,
+                         domain=args.domain, settings=r, labeler=llm_for(args.provider, r.label_model),
+                         force=args.force)
     flush(store)
     print(json.dumps(results, indent=1) if results else "[revalidate] no lessons are due")
 
@@ -136,7 +159,8 @@ def _exemplar_check(args) -> None:
 def add_commands(sub) -> None:
     p = sub.add_parser("ingest-dataset", help="write exemplar posts and account profiles from the data team's table")
     p.add_argument("--csv", help="defaults to data/devtools_virality_30d.csv")
-    p.add_argument("--context", help="defaults to data/context/devtools_enriched.csv when it exists")
+    p.add_argument("--context", action="append", help="context CSV joined on Post URL; repeatable. Defaults to "
+                   "data/context/devtools_enriched.csv and boost_flags.csv when they exist")
     p.add_argument("--domain", default="devtools")
     p.set_defaults(func=_ingest_dataset)
 
@@ -158,6 +182,9 @@ def add_commands(sub) -> None:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--json", help="also write the full report to this path")
     p.add_argument("--label-model", help="model for answering predicates; use one other than the proposer's")
+    p.add_argument("--context", action="append", help="context CSV joined on Post URL; repeatable")
+    p.add_argument("--label-source", choices=["category", "author_prior"],
+                   help="dataset Category cutoffs, or the context worker's within-account label")
     p.add_argument("--allow-unfiltered", action="store_true",
                    help="run without boost_suspect flags, so boosted successes stay in")
     p.set_defaults(func=_reflect)
@@ -167,6 +194,9 @@ def add_commands(sub) -> None:
     p.add_argument("--csv")
     p.add_argument("--domain", default="devtools")
     p.add_argument("--label-model")
+    p.add_argument("--context", action="append")
+    p.add_argument("--label-source", choices=["category", "author_prior"])
+    p.add_argument("--force", action="store_true", help="retest every non-retired lesson, due or not")
     p.add_argument("--allow-unfiltered", action="store_true")
     p.set_defaults(func=_revalidate)
 

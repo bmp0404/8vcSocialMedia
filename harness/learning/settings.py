@@ -31,6 +31,9 @@ class ReflectSettings:
     thread_gap_seconds: int = 180
     min_label_age_hours: float = 48  # younger posts' engagement is still growing
     require_boost_flags: bool = True  # refuse to run on the dataset without the context worker's boost flags
+    # "category": the CSV's raw cutoffs (Deadweight vs viral). "author_prior": the context worker's within-account
+    # label, which leaves far more comparable posts (477 in 33 accounts vs about 150 in 18 after filters).
+    label_source: str = "category"
     proposer_model: str = ""  # "" uses HARNESS_MODEL or the provider default
     label_model: str = ""  # use a different model from the proposer when the gateway has one
 
@@ -55,7 +58,10 @@ class RecallSettings:
     other_author_factor: float = 0.5
     half_life_days: float = 30.0
     undated_recency: float = 0.5
-    home_domains: list = field(default_factory=lambda: ["brand"])  # domains whose lessons apply at full weight
+    # Domains whose lessons and past posts apply at full weight. "brand" is the account's own runs; add
+    # "devtools" when the account is a dev-tool brand. Other domains' episodes are excluded, and their lessons
+    # count only once they pass on a second domain (scope "general").
+    home_domains: list = field(default_factory=lambda: ["brand"])
     home_authors: list = field(default_factory=lambda: ["brand"])  # usernames whose past posts count as ours
 
 

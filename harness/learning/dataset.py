@@ -18,6 +18,7 @@ from harness.learning.kinds import FAILURE, SUCCESS, Entity, Episode, Outcome, s
 
 DATASET_PATH = config.ROOT / "data" / "devtools_virality_30d.csv"
 CONTEXT_PATH = config.ROOT / "data" / "context" / "devtools_enriched.csv"
+BOOST_PATH = config.ROOT / "data" / "context" / "boost_flags.csv"  # boost_suspect, label_eligible (context worker)
 RAW_COLUMNS = {"Category", "Account", "Post Content", "Media", "Likes", "Replies", "Retweets", "Engagement",
                "Post URL", "Date", "Segment"}
 CATEGORY_LABELS = {"Super Viral": SUCCESS, "Medium Viral": SUCCESS, "Deadweight": FAILURE}
@@ -161,6 +162,46 @@ def attach_context(episodes: list[Episode], path: Path = CONTEXT_PATH) -> int:
     return matched
 
 
+def attach_context_files(episodes: list[Episode], paths: list[Path]) -> dict[str, int]:
+    """Attach every context file that exists; returns rows matched per file name.
+
+    The context worker's announce lexicon (`pre_hook_announce`) widens `is_launch`, so launch posts the
+    keyword rule misses are still paired only with launch posts.
+    """
+    matched = {p.name: attach_context(episodes, p) for p in paths if p.exists()}
+    for ep in episodes:
+        if ep.features.get("pre_hook_announce") is True:
+            ep.features["is_launch"] = True
+    return matched
+
+
+AUTHOR_PRIOR_DEFINITION = (
+    "success = more engagement than the account's own median over its earlier posts; failure = at or below that "
+    "median (the context worker's label_above_author_prior, computed from past posts only)"
+)
+
+
+def relabel_by_author_prior(episodes: list[Episode]) -> int:
+    """Swap each dataset outcome's label for the context worker's within-account label.
+
+    `label_above_author_prior` compares a post with its author's median over earlier posts, so the label
+    itself controls for account size and every account with a mix of both can be compared. Episodes without
+    the column become unlabeled. Returns how many episodes got a label.
+    """
+    labeled = 0
+    for ep in episodes:
+        above = ep.features.get("label_above_author_prior")
+        for o in ep.outcomes:
+            if o.source != "dataset":
+                continue
+            if isinstance(above, bool):
+                o.label, o.raw = (SUCCESS if above else FAILURE), ("above" if above else "at or below") + " author prior"
+                labeled += 1
+            else:
+                o.label = ""
+    return labeled
+
+
 def account_profiles(episodes: list[Episode], domain: str) -> list[Entity]:
     """One Entity per author: post count, outcome mix, engagement median and range, dates, media share."""
     by_author: dict[str, list[Episode]] = defaultdict(list)
@@ -224,13 +265,11 @@ def exemplars(episodes: list[Episode], per_category: int = 5) -> list[Episode]:
     return sorted(picked.values(), key=lambda e: e.id)
 
 
-def ingest_dataset(store, path: Path = DATASET_PATH, context_path: Path | None = CONTEXT_PATH,
+def ingest_dataset(store, path: Path = DATASET_PATH, context_paths: list[Path] | None = None,
                    domain: str = "devtools", per_category: int = 5) -> dict:
     """Write exemplar posts as episodes and every account as an entity profile."""
     episodes = load_dataset(path)
-    matched = 0
-    if context_path is not None and context_path.exists():
-        matched = attach_context(episodes, context_path)
+    matched = attach_context_files(episodes, context_paths if context_paths is not None else [CONTEXT_PATH, BOOST_PATH])
     for ep in episodes:
         ep.features["domain"] = domain
     chosen = exemplars(episodes, per_category)
