@@ -18,6 +18,7 @@ DEFAULT_PATH = config.ROOT / "mission" / "observe.toml"
 @dataclass
 class EspnWatch:
     leagues: list[str] = field(default_factory=list)
+    scoreboard_leagues: list[str] = field(default_factory=list)
     teams: dict[str, list[str]] = field(default_factory=dict)
     articles_per_league: int = 15
 
@@ -55,7 +56,7 @@ class ReplyTargetWatch:
     broad_accounts: list[str] = field(default_factory=list)
     keywords: list[str] = field(default_factory=list)
     include_search: bool = True
-    max_age_minutes: int = 180
+    max_age_minutes: int = 90
     limit: int = 10
 
 

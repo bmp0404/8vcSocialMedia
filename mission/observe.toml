@@ -8,8 +8,11 @@
 x_handle = ""
 
 [espn]
-# ESPN site-API paths, <sport>/<league>. espn_news and espn_scores read every league here.
+# ESPN site-API paths, <sport>/<league>. espn_news reads every league here.
 leagues = ["basketball/wnba", "basketball/womens-college-basketball"]
+# espn_scores and espn_injuries read these. Women's college basketball is left out until its
+# season starts in November: today its scoreboard returns two unrelated Nov 1 games.
+scoreboard_leagues = ["basketball/wnba"]
 articles_per_league = 15
 
 # Extra team-filtered news, keyed by league. ESPN team ids: Indiana Fever 5, Iowa 2294.
@@ -43,11 +46,14 @@ terms = ["Caitlin Clark", "Indiana Fever", "WNBA Finals"]
 baseline_days = 14
 
 [reply_targets]
-# Accounts whose fresh posts draw enough traffic that an early reply gets seen.
-# A first guess from the brief's storylines; nobody has checked them against real reply traffic.
-# Everything these accounts post is on topic.
+# Accounts whose fresh posts draw enough traffic that an early reply gets seen. Everything these
+# accounts post is on topic. The Valkyries' real account is "valkyries" (57k); "GSValkyries" is a
+# squatter. CClarkReport (56k), a Clark news account, replied in two of today's Clark threads and sits in the
+# 10k-250k band that scores best (see harness/sources/reply_targets.py). Beat writers in that band
+# still need picking by someone who knows them; today's repliers were mostly fan accounts.
 accounts = [
-  "WNBA", "IndianaFever", "CaitlinClark22", "IowaWBB", "AtlantaDream", "GSValkyries", "HerHoopStats",
+  "WNBA", "IndianaFever", "CaitlinClark22", "IowaWBB", "AtlantaDream", "valkyries", "HerHoopStats",
+  "CClarkReport",
 ]
 # Big general outlets. Their posts count only when the text matches a keyword below, because
 # most of what they post (other sports) is no use to this account.
@@ -59,6 +65,7 @@ keywords = [
 # Also rank the top posts from the [x] searches as targets.
 include_search = true
 # Posts older than this are past the window where a new reply still lands near the top.
-max_age_minutes = 180
+# Uncalibrated: no study measures reply position against post age on X.
+max_age_minutes = 90
 # How many targets to emit per run.
 limit = 10

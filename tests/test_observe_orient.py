@@ -13,16 +13,21 @@ from harness.sources.common import iso_utc
 NOW = datetime(2026, 10, 15, 21, 0, tzinfo=timezone.utc)
 
 
-def sig(kind="news", hours_old=0.0, url=None, **metrics) -> Signal:
+def sig(kind="news", hours_old=0.0, url=None, author="someone", text=None, source="test", **metrics) -> Signal:
     return Signal(
-        source="test",
-        text=f"{kind} {hours_old}",
+        source=source,
+        text=text or f"{kind} {hours_old} {url}",
         url=url,
-        author="someone",
+        author=author,
         created_at=iso_utc(NOW - timedelta(hours=hours_old)),
         metrics=metrics,
         kind=kind,
     )
+
+
+def game(hours_until: float, **metrics) -> Signal:
+    starts = int((NOW + timedelta(hours=hours_until)).timestamp())
+    return Signal(source="espn_scores", text="game", created_at=None, kind="schedule", metrics={"starts_at_unix": starts, **metrics})
 
 
 @pytest.mark.parametrize(
@@ -30,9 +35,9 @@ def sig(kind="news", hours_old=0.0, url=None, **metrics) -> Signal:
     [
         (sig("news", 0), 0.6),
         (sig("news", 12), 0.3),
-        (sig("game", 0, game_live=1), 1.0),
-        (sig("game", -24), 0.4),  # tip-off in 24 hours
-        (sig("game", 12, game_final=1), 0.4),
+        (game(0, game_live=1), 1.0),
+        (game(24), 0.4),  # tip-off in 24 hours
+        (game(-12, game_final=1), 0.4),
         (sig("post", 1, engagement_per_hour=10_000), 1.0),
         (sig("post", 1, engagement_per_hour=99), 2 / math.log10(10_001)),
         (sig("post", 1), 0.0),  # an X post with no counts is cold, not unknown
@@ -70,21 +75,34 @@ def test_more_fresh_coverage_means_higher_velocity():
     assert 0 < one < five < 1
 
 
-def test_build_narratives_uses_ids_and_measured_velocity():
+def test_build_narratives_uses_ids_puts_x_urls_first_and_measures_velocity():
     signals = [
-        sig("news", 1, url="https://espn.com/a"),
-        sig("reply_target", 0.5, url="https://x.com/WNBA/status/9", engagement_per_hour=500),
-        sig("news", 2, url="https://espn.com/a"),  # same URL twice collapses
+        sig("news", 1, url="https://espn.com/a", author="ESPN"),
+        sig("reply_target", 0.5, url="https://x.com/WNBA/status/9", author="WNBA", text="tip-off soon", engagement_per_hour=500),
+        sig("news", 2, url="https://espn.com/a", author="ESPN", text="same url again"),
     ]
     data = {"narratives": [{"id": "n", "title": "t", "summary": "s", "relevance": 0.9, "velocity": 0.1, "signal_ids": [0, 1, 2, 99]}]}
     (n,) = o.build_narratives(data, signals, NOW)
-    assert n.signal_urls == ["https://espn.com/a", "https://x.com/WNBA/status/9"]
+    assert n.signal_urls == ["https://x.com/WNBA/status/9", "https://espn.com/a"]
     assert n.velocity_basis == "data"
-    heats = [o.signal_heat(s, NOW) for s in signals]
-    assert n.velocity == o.narrative_velocity(heats)
+    # ESPN counts once, at its hotter (newer) article
+    expected = o.narrative_velocity([o.signal_heat(signals[0], NOW), o.signal_heat(signals[1], NOW)])
+    assert n.velocity == expected
     assert n.reply_targets == [
-        {"url": "https://x.com/WNBA/status/9", "author": "someone", "text": "reply_target 0.5", "age_minutes": 30, "engagement_per_hour": 500.0}
+        {"url": "https://x.com/WNBA/status/9", "author": "WNBA", "text": "tip-off soon", "age_minutes": 30, "engagement_per_hour": 500.0}
     ]
+
+
+def test_member_heats_count_each_author_once_and_collapse_duplicate_text():
+    bot = [sig("social", 0.1, author="bot", text=f"Same link {i}", likes=50) for i in range(6)]
+    copies = [sig("news", 1, author=f"outlet{i}", text="Boston has knee surgery!") for i in range(3)]
+    heats = o.member_heats(bot + copies, NOW)
+    assert len(heats) == 2  # one for the bot, one for the copied headline
+
+
+def test_reply_targets_only_take_x_status_urls():
+    members = [sig("post", 1, url="https://bsky.app/profile/a/post/1", engagement_per_hour=99), sig("post", 1, url="https://x.com/a/status/1")]
+    assert [r["url"] for r in o.reply_targets(members, NOW)] == ["https://x.com/a/status/1"]
 
 
 def test_build_narratives_keeps_llm_velocity_when_no_timestamps():
@@ -111,6 +129,30 @@ def test_uncited_targets_become_the_reply_lane():
     assert lane.id == "reply-lane"
     assert [r["url"] for r in lane.reply_targets] == ["https://x.com/b/status/2"]
     assert o.uncited_targets([n], [cited], NOW) is None
+
+
+def test_order_signals_puts_targets_first_drops_stale_and_interleaves_sources():
+    signals = [
+        sig("news", 1, source="google_news", url="g1"),
+        sig("news", 2, source="google_news", url="g2"),
+        sig("news", 3, source="google_news", url="g3"),
+        sig("news", 80, source="google_news", url="g-old"),
+        sig("news", 5, source="espn_news", url="e1"),
+        sig("reply_target", 1.5, source="x_targets", url="https://x.com/a/status/1"),
+        sig("own_post", 0.1, source="x_brand", url="https://x.com/me/status/2"),
+    ]
+    ordered, stale = o.order_signals(signals, NOW)
+    assert [s.url for s in ordered] == ["https://x.com/a/status/1", "g1", "e1", "g2", "g3"]
+    assert stale == {"google_news": 1}
+
+
+def test_fit_payload_stops_at_budget_and_reports_drops(monkeypatch):
+    monkeypatch.setattr(o, "PAYLOAD_CHARS", 300)
+    signals = [sig("news", i, source=f"s{i}", text="x" * 100) for i in range(5)]
+    kept, payload, dropped = o.fit_payload(signals, NOW)
+    assert len(payload) <= 300 and 0 < len(kept) < 5
+    assert sum(dropped.values()) == 5 - len(kept)
+    assert [row["id"] for row in __import__("json").loads(payload)] == list(range(len(kept)))
 
 
 def test_orient_mock_ranks_by_relevance_times_measured_velocity_and_hides_own_posts():

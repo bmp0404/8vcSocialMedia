@@ -1,15 +1,22 @@
 """Reply-lane target discovery: fresh, fast-moving X posts where an early reply gets seen.
 
-A two-follower account gets reach by replying near the top of a busy thread. A good target is
-(1) moving fast now, (2) young, so the thread is still filling and still being shown, and
-(3) not yet crowded with replies that bury ours. `score_target` multiplies those three.
+A reply from an account the viewer doesn't follow never reaches For You: X's home mixer drops
+out-of-network replies (`OONRetweetReplyFilter`, xai-org/x-algorithm at 92f0918). A two-follower
+account's reply is seen only inside the parent's thread, so the parent's live traffic is the
+whole opportunity. A good target is (1) drawing traffic now, (2) young, so the thread is still
+being shown, (3) not yet crowded with replies that bury ours, and (4) from an account in the
+size band where a small account's reply isn't filtered or buried. `score_target` multiplies them.
 
-Velocity comes from two snapshots of the same post when we have them (the previous run's counts
-are kept in a small JSON file under out/), otherwise from the average rate since posting.
+Traffic is views per hour when the backend reports views (fxtwitter and the X API do; views move
+faster and more smoothly than likes), otherwise engagements per hour. Each comes from the delta
+between this run's counts and the previous run's (kept in a small JSON file under out/), or the
+average since posting when there is no earlier snapshot. Posts scored on views and posts scored
+on engagement aren't on one scale, which only happens when backends are mixed in one run.
 """
 
 import json
 import os
+from collections import Counter
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -20,23 +27,32 @@ from harness.sources.base import Source
 from harness.sources.common import SourceError, iso_utc, now_utc, parse_time
 from harness.sources.watch import load_watch
 from harness.sources.x_common import XAccessError, XPost, get_backend
+from harness.sources.x_fx import verify_counts
 
-# Uncalibrated guesses; nobody has measured reply visibility against post age for this account.
-# Half-life of a post's attention, in minutes.
+# Uncalibrated: nobody has measured reply visibility against post age on X. Half-life of a
+# post's attention, in minutes.
 HALF_LIFE_MIN = 60.0
-# Replies at which an early reply's visibility halves.
-CROWD_REPLIES = 50.0
 # Floor on age so a two-minute-old post with 3 likes doesn't read as 90 likes an hour.
 MIN_AGE_MIN = 5.0
 # A delta between snapshots closer than this is mostly noise.
 MIN_SNAPSHOT_GAP_MIN = 2.0
 SNAPSHOT_TTL = timedelta(days=2)
+# Above this many followers on the parent (or root) author, X runs an LLM reply-quality check and
+# can label a low-credibility reply RiskyHighVizReply (grox/flows/reply_spam/constants.py:8 and
+# task_filter.py:185-226 in x-algorithm). A new account starts with near-zero UserCred.
+BIG_ACCOUNT = 250_000
+# The 10k and 5k edges are judgment, not measurement: below ~10k followers a thread rarely has
+# traffic worth the reply.
+MID_ACCOUNT, SMALL_ACCOUNT = 10_000, 5_000
+# Several fast replies to one account look like reply spam to X's fast_reply_spam_post check.
+MAX_PER_AUTHOR = 2
 
 
 @dataclass
 class Snapshot:
     observed_at: str
-    engagement: int
+    engagement: int | None = None
+    views: int | None = None
 
 
 @dataclass
@@ -44,7 +60,9 @@ class TargetScore:
     post: XPost
     age_minutes: float
     engagement_per_hour: float | None
+    views_per_hour: float | None
     rate_from_delta: bool
+    size_band: float
     score: float
 
 
@@ -56,24 +74,51 @@ def engagement(post: XPost) -> int | None:
     return sum(c or 0 for c in counts)
 
 
+def size_band(followers: int | None, age_minutes: float, replies: int) -> float:
+    """Weight for the parent author's size. 1.0 when the backend didn't report followers."""
+    if followers is None:
+        return 1.0
+    if MID_ACCOUNT <= followers <= BIG_ACCOUNT:
+        return 1.0
+    if SMALL_ACCOUNT <= followers < MID_ACCOUNT:
+        return 0.5
+    if followers > BIG_ACCOUNT and age_minutes < 10 and replies < 50:
+        return 0.3  # a giant's post in its first minutes, before the thread fills
+    return 0.0
+
+
+def _per_hour(now_count: int | None, prev_count: int | None, gap_min: float, age_min: float) -> tuple[float | None, bool]:
+    if now_count is None:
+        return None, False
+    if prev_count is not None and gap_min >= MIN_SNAPSHOT_GAP_MIN:
+        return max(now_count - prev_count, 0) / gap_min * 60, True
+    return now_count / max(age_min, MIN_AGE_MIN) * 60, False
+
+
 def score_target(post: XPost, now: datetime, prev: Snapshot | None = None) -> TargetScore:
     created = parse_time(post.created_at)
     if created is None:
         raise ValueError(f"post {post.id} has no parseable created_at: {post.created_at!r}")
     age = max((now - created).total_seconds() / 60, 0.0)
-    eng = engagement(post)
-    rate, from_delta = None, False
-    if eng is not None:
-        prev_at = parse_time(prev.observed_at) if prev else None
-        gap = (now - prev_at).total_seconds() / 60 if prev_at else 0.0
-        if prev and gap >= MIN_SNAPSHOT_GAP_MIN:
-            rate, from_delta = max(eng - prev.engagement, 0) / gap * 60, True
-        else:
-            rate = eng / max(age, MIN_AGE_MIN) * 60
+    prev_at = parse_time(prev.observed_at) if prev else None
+    gap = (now - prev_at).total_seconds() / 60 if prev_at else 0.0
+    eng_rate, eng_delta = _per_hour(engagement(post), prev.engagement if prev else None, gap, age)
+    view_rate, view_delta = _per_hour(post.views, prev.views if prev else None, gap, age)
+    traffic = view_rate if view_rate is not None else eng_rate
+    replies = post.replies or 0
+    band = size_band(post.author_followers, age, replies)
     freshness = 0.5 ** (age / HALF_LIFE_MIN)
-    crowding = 1 / (1 + (post.replies or 0) / CROWD_REPLIES)
-    score = (rate or 0.0) * freshness * crowding
-    return TargetScore(post, round(age, 1), None if rate is None else round(rate, 1), from_delta, score)
+    crowding = (1 + replies) ** -0.5  # each extra reply pushes ours down; the first few cost most
+    score = (traffic or 0.0) * freshness * crowding * band
+    return TargetScore(
+        post,
+        round(age, 1),
+        None if eng_rate is None else round(eng_rate, 1),
+        None if view_rate is None else round(view_rate, 1),
+        view_delta if view_rate is not None else eng_delta,
+        band,
+        score,
+    )
 
 
 def rank_targets(
@@ -83,18 +128,29 @@ def rank_targets(
     max_age_minutes: float,
     exclude_authors: set[str] = frozenset(),
 ) -> list[TargetScore]:
-    """Score posts, drop replies, stale posts and excluded authors, best first. Dedupes by id."""
+    """Best targets first. Drops replies, stale posts, excluded authors and zero size bands;
+    dedupes by id; keeps at most MAX_PER_AUTHOR per author.
+
+    Replies are dropped, so every target is the root of its own conversation, and two targets
+    can never share a root.
+    """
     excluded = {a.lower() for a in exclude_authors}
     best: dict[str, TargetScore] = {}
     for post in posts:
         if post.is_reply or post.author.lower() in excluded:
             continue
         scored = score_target(post, now, snapshots.get(post.id))
-        if scored.age_minutes > max_age_minutes:
+        if scored.age_minutes > max_age_minutes or scored.size_band == 0:
             continue
         if post.id not in best or scored.score > best[post.id].score:
             best[post.id] = scored
-    return sorted(best.values(), key=lambda t: t.score, reverse=True)
+    per_author: Counter = Counter()
+    ranked = []
+    for t in sorted(best.values(), key=lambda t: t.score, reverse=True):
+        per_author[t.post.author.lower()] += 1
+        if per_author[t.post.author.lower()] <= MAX_PER_AUTHOR:
+            ranked.append(t)
+    return ranked
 
 
 def on_topic(post: XPost, keywords: list[str]) -> bool:
@@ -104,9 +160,16 @@ def on_topic(post: XPost, keywords: list[str]) -> bool:
 
 def target_signal(t: TargetScore) -> Signal:
     metrics = t.post.metrics()
-    metrics.update(age_minutes=t.age_minutes, target_score=round(t.score, 2), rate_from_delta=int(t.rate_from_delta))
+    metrics.update(
+        age_minutes=t.age_minutes,
+        target_score=round(t.score, 2),
+        rate_from_delta=int(t.rate_from_delta),
+        size_band=t.size_band,
+    )
     if t.engagement_per_hour is not None:
         metrics["engagement_per_hour"] = t.engagement_per_hour
+    if t.views_per_hour is not None:
+        metrics["views_per_hour"] = t.views_per_hour
     return Signal(
         source="x_targets",
         text=t.post.text,
@@ -133,8 +196,8 @@ def load_snapshots(path: Path, now: datetime) -> dict[str, Snapshot]:
 def save_snapshots(path: Path, snaps: dict[str, Snapshot], posts: list[XPost], now: datetime) -> None:
     for post in posts:
         eng = engagement(post)
-        if eng is not None and post.metrics_verified:
-            snaps[post.id] = Snapshot(observed_at=iso_utc(now), engagement=eng)
+        if post.metrics_verified and (eng is not None or post.views is not None):
+            snaps[post.id] = Snapshot(observed_at=iso_utc(now), engagement=eng, views=post.views)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({k: asdict(v) for k, v in snaps.items()}, indent=1), encoding="utf-8")
 
@@ -170,7 +233,7 @@ class ReplyTargetSource(Source):
             try:
                 searcher = get_backend("search")
                 for query in watch.x.queries:
-                    got = searcher.search(query, since, limit=watch.x.per_query)
+                    got = verify_counts(searcher.search(query, since, limit=watch.x.per_query))
                     posts.extend(p for p in got if not cfg.keywords or on_topic(p, cfg.keywords))
             except XAccessError as e:
                 errors.append(f"search skipped: {e}")

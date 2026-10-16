@@ -53,7 +53,9 @@ class GoogleNewsSource(Source):
         for query in watch.queries:
             q = f"{query} when:{watch.window}" if watch.window else query
             xml_text = get_text(URL, source=self.name, params={"q": q, "hl": "en-US", "gl": "US", "ceid": "US:en"})
-            for s in rss_signals(xml_text, query)[: watch.per_query]:
+            # Google ranks results by relevance, so newest-first must be imposed before the cut.
+            items = sorted(rss_signals(xml_text, query), key=lambda s: s.created_at or "", reverse=True)
+            for s in items[: watch.per_query]:
                 # The same story under several queries is one story; keep the first.
                 key = s.text.lower()
                 if key not in seen:

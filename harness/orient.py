@@ -4,12 +4,20 @@ The LLM groups signals and judges fit with the mission. It no longer has to gues
 story moves when the signals carry timestamps and counts: `signal_heat` turns each signal into a
 0-1 heat from its age and engagement rate, and `narrative_velocity` combines a narrative's heats.
 The LLM's velocity survives only for narratives whose signals have no timestamps (the sample
-fixtures, for example), and `Narrative.velocity_basis` records which one was used.
+fixtures, for example), and `Narrative.velocity_basis` records which one was used. Measured
+velocity is absolute: it compares a narrative with fixed scales, not with its own history,
+because a single run has no baseline to compare against.
+
+The prompt is built to a character budget rather than sliced: reply targets go first, stale
+items are dropped, and the rest is interleaved across sources so no one source crowds out others.
 """
 
 import json
 import math
-from datetime import datetime
+import re
+from collections import Counter, defaultdict
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlsplit
 
 from harness.llm import LLM
 from harness.models import Narrative, Signal
@@ -26,8 +34,11 @@ Cite each narrative's evidence by signal id. Use only ids from the list."""
 PROMPT = """MISSION:
 {mission}
 
-SIGNALS (age_h is hours since posted; counts are as of now):
+SIGNALS (age_h is hours since posted, negative for games not yet started; counts are as of now):
 {signals}
+
+Return at most {limit} narratives, the ones the account can best join. Keep each summary to one
+sentence and cite at most 8 signal ids per narrative.
 
 Return JSON: {{"narratives": [{{"id": "kebab-slug", "title": "...", "summary": "...",
 "relevance": 0.0, "velocity": 0.0, "angle": "...", "signal_ids": [0]}}]}}"""
@@ -42,18 +53,35 @@ NEWS_HALF_LIFE_H = 12.0
 NEWS_MAX_HEAT = 0.6
 # Total heat at which a narrative's velocity reaches 1.
 VELOCITY_FULL_HEAT = 5.0
-# Signals sent to the LLM, newest first, and characters of text per signal.
-MAX_SIGNALS = 150
+# Prompt budget. 45k characters is about 11k tokens, well inside the model's context; the
+# 60k-character slice it replaces cut reply targets off the end once ESPN and Google News
+# alone reached 58,828 characters (research/observe.md, finding 1).
+PAYLOAD_CHARS = 45_000
 TEXT_CHARS = 280
+# Older items are about a story that has already moved on.
+MAX_AGE = timedelta(hours=72)
 
 X_KINDS = {"post", "reply_target", "mention", "own_post"}
 TARGET_KINDS = {"post", "reply_target", "mention"}
+FIRST_KINDS = ("reply_target", "mention")
+X_HOSTS = {"x.com", "twitter.com", "www.x.com", "www.twitter.com", "mobile.twitter.com"}
 COUNT_KEYS = ("likes", "reposts", "replies", "quotes")
 
 
+def _when(s: Signal) -> datetime | None:
+    """When the item happened: its post time, or a scheduled game's tip-off."""
+    if s.kind == "schedule" and isinstance(s.metrics.get("starts_at_unix"), (int, float)):
+        return datetime.fromtimestamp(s.metrics["starts_at_unix"], tz=timezone.utc)
+    return parse_time(s.created_at)
+
+
 def _age_hours(s: Signal, now: datetime) -> float | None:
-    created = parse_time(s.created_at)
-    return None if created is None else (now - created).total_seconds() / 3600
+    when = _when(s)
+    return None if when is None else (now - when).total_seconds() / 3600
+
+
+def is_x_post(url: str | None) -> bool:
+    return bool(url) and urlsplit(url).netloc.lower() in X_HOSTS and "/status/" in url
 
 
 def engagement_per_hour(s: Signal, now: datetime) -> float | None:
@@ -72,7 +100,7 @@ def signal_heat(s: Signal, now: datetime) -> float | None:
     age = _age_hours(s, now)
     if age is None:
         return None
-    if s.kind == "game":
+    if s.kind == "schedule":
         if s.metrics.get("game_live"):
             return 1.0
         if age < 0:  # not started: anticipation builds as tip-off nears
@@ -89,16 +117,39 @@ def signal_heat(s: Signal, now: datetime) -> float | None:
     return NEWS_MAX_HEAT * 0.5 ** (max(age, 0.0) / NEWS_HALF_LIFE_H)
 
 
+def _text_key(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()[:60]
+
+
+def member_heats(members: list[Signal], now: datetime) -> list[float]:
+    """One heat per distinct author or publisher, after collapsing near-identical text.
+
+    Counting items would measure bots: the bursts found on 2026-10-15 were one account posting
+    the same link six times (research/observe.md, finding 5). An author counts once, at its hottest.
+    """
+    best: dict[str, float] = {}
+    seen: set[str] = set()
+    for s in members:
+        heat = signal_heat(s, now)
+        key = _text_key(s.text)
+        if heat is None or key in seen:
+            continue
+        seen.add(key)
+        who = (s.author or s.source).lower()
+        best[who] = max(best.get(who, 0.0), heat)
+    return list(best.values())
+
+
 def narrative_velocity(heats: list[float]) -> float:
     """Diminishing returns on total heat: one hot item counts, ten lukewarm ones count more."""
     return round(min(1.0, math.log1p(sum(heats)) / math.log1p(VELOCITY_FULL_HEAT)), 3)
 
 
 def reply_targets(members: list[Signal], now: datetime, limit: int = 5) -> list[dict]:
-    """X posts a reply or quote can point at, fastest first."""
+    """X posts a reply or quote can point at, fastest first. Nothing that isn't an X status URL."""
     rows = []
     for s in members:
-        if s.kind not in TARGET_KINDS or not s.url:
+        if s.kind not in TARGET_KINDS or not is_x_post(s.url):
             continue
         created = parse_time(s.created_at)
         rate = engagement_per_hour(s, now)
@@ -115,26 +166,64 @@ def reply_targets(members: list[Signal], now: datetime, limit: int = 5) -> list[
     return rows[:limit]
 
 
-def _payload(signals: list[Signal], now: datetime) -> str:
-    rows = []
-    for i, s in enumerate(signals):
+def _row(i: int, s: Signal, now: datetime) -> dict:
+    row = {"id": i, "source": s.source, "text": s.text[:TEXT_CHARS]}
+    if s.kind:
+        row["kind"] = s.kind
+    if s.author:
+        row["author"] = s.author
+    age = _age_hours(s, now)
+    if age is not None:
+        row["age_h"] = round(age, 1)
+    counts = {k: v for k, v in s.metrics.items() if isinstance(v, (int, float)) and k != "starts_at_unix"}
+    if counts:
+        row["metrics"] = counts
+    return row
+
+
+def order_signals(signals: list[Signal], now: datetime) -> tuple[list[Signal], Counter]:
+    """Priority order for the prompt, and how many items per source were dropped as stale.
+
+    The brand's own posts are left out (there is nothing to join). Reply targets and mentions go
+    first, newest first. The rest is interleaved across sources, each newest first, so a source
+    with 60 headlines can't push out one with 5 posts.
+    """
+    stale: Counter = Counter()
+    first, by_source = [], defaultdict(list)
+    for s in signals:
+        if s.kind == "own_post":
+            continue
         age = _age_hours(s, now)
-        row = {"id": i, "source": s.source, "kind": s.kind or None, "author": s.author, "text": s.text[:TEXT_CHARS]}
-        if age is not None:
-            row["age_h"] = round(age, 1)
-        counts = {k: v for k, v in s.metrics.items() if isinstance(v, (int, float))}
-        if counts:
-            row["metrics"] = counts
+        if age is not None and age > MAX_AGE.total_seconds() / 3600:
+            stale[s.source] += 1
+            continue
+        (first if s.kind in FIRST_KINDS else by_source[s.source]).append(s)
+
+    def recency(s: Signal) -> float:
+        age = _age_hours(s, now)
+        return abs(age) if age is not None else float("inf")  # a game days out is not current either
+
+    ordered = sorted(first, key=recency)
+    queues = [sorted(q, key=recency) for q in by_source.values()]
+    while any(queues):
+        for q in queues:
+            if q:
+                ordered.append(q.pop(0))
+    return ordered, stale
+
+
+def fit_payload(ordered: list[Signal], now: datetime) -> tuple[list[Signal], str, Counter]:
+    """Take signals in order until the JSON reaches PAYLOAD_CHARS. Returns kept, JSON, dropped per source."""
+    kept, rows, size, dropped = [], [], 2, Counter()
+    for s in ordered:
+        row = json.dumps(_row(len(kept), s, now), ensure_ascii=False)
+        if size + len(row) + 1 > PAYLOAD_CHARS:
+            dropped[s.source] += 1
+            continue
+        kept.append(s)
         rows.append(row)
-    return json.dumps(rows, ensure_ascii=False)
-
-
-def _select(signals: list[Signal], now: datetime) -> list[Signal]:
-    """Drop the brand's own posts (nothing to join) and keep the newest MAX_SIGNALS."""
-    usable = [s for s in signals if s.kind != "own_post"]
-    # abs(): a game two weeks out is no more current than a story two weeks old.
-    usable.sort(key=lambda s: abs(_age_hours(s, now)) if parse_time(s.created_at) else float("inf"))
-    return usable[:MAX_SIGNALS]
+        size += len(row) + 1
+    return kept, "[" + ",".join(rows) + "]", dropped
 
 
 def build_narratives(data: dict, signals: list[Signal], now: datetime) -> list[Narrative]:
@@ -143,8 +232,11 @@ def build_narratives(data: dict, signals: list[Signal], now: datetime) -> list[N
     for raw in data.get("narratives", []):
         ids = [i for i in raw.get("signal_ids", []) if isinstance(i, int) and 0 <= i < len(signals)]
         members = [signals[i] for i in ids]
-        heats = [h for h in (signal_heat(s, now) for s in members) if h is not None]
-        urls = list(dict.fromkeys(s.url for s in members if s.url)) or list(raw.get("signal_urls", []))
+        heats = member_heats(members, now)
+        # X post URLs first: anything downstream that takes signal_urls[0] as a reply target
+        # (main's mock decide does) then points at a post, not a news article.
+        member_urls = sorted(dict.fromkeys(s.url for s in members if s.url), key=lambda u: not is_x_post(u))
+        urls = member_urls or list(raw.get("signal_urls", []))
         narratives.append(
             Narrative(
                 id=raw["id"],
@@ -167,7 +259,7 @@ def uncited_targets(narratives: list[Narrative], signals: list[Signal], now: dat
     left = [s for s in signals if s.kind == "reply_target" and s.url not in cited]
     if not left:
         return None
-    heats = [h for h in (signal_heat(s, now) for s in left) if h is not None]
+    heats = member_heats(left, now)
     return Narrative(
         id="reply-lane",
         title="Fast-moving posts from watched accounts",
@@ -183,7 +275,13 @@ def uncited_targets(narratives: list[Narrative], signals: list[Signal], now: dat
 
 def orient(llm: LLM, mission: str, signals: list[Signal], top: int = 5, now: datetime | None = None) -> list[Narrative]:
     now = now or now_utc()
-    chosen = _select(signals, now)
+    ordered, stale = order_signals(signals, now)
+    chosen, payload, dropped = fit_payload(ordered, now)
+    print(f"[orient] sending {len(chosen)} of {len(signals)} signals ({len(payload):,} chars)")
+    if stale:
+        print(f"[orient] dropped as older than {MAX_AGE.total_seconds() / 3600:.0f}h: {dict(stale)}")
+    if dropped:
+        print(f"[orient] dropped for prompt budget: {dict(dropped)}")
 
     def mock():
         return {
@@ -201,7 +299,8 @@ def orient(llm: LLM, mission: str, signals: list[Signal], top: int = 5, now: dat
             ]
         }
 
-    data = llm.complete_json(SYSTEM, PROMPT.format(mission=mission, signals=_payload(chosen, now)), mock=mock)
+    prompt = PROMPT.format(mission=mission, signals=payload, limit=top * 2)
+    data = llm.complete_json(SYSTEM, prompt, mock=mock)
     narratives = build_narratives(data, chosen, now)
     for n in narratives:
         print(f"[orient] {n.id}: relevance {n.relevance:.2f} velocity {n.velocity:.2f} ({n.velocity_basis})")

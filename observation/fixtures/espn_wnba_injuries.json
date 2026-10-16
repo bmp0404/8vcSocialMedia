@@ -1,0 +1,54 @@
+{
+ "injuries": [
+  {
+   "displayName": "Atlanta Dream",
+   "injuries": [
+    {
+     "athlete": {
+      "displayName": "Allisha Gray"
+     },
+     "status": "Out",
+     "date": "2026-10-15T22:14Z",
+     "shortComment": "Gray (hand) participated in Thursday's practice, Annie Costabile of The Athletic reports."
+    },
+    {
+     "athlete": {
+      "displayName": "Matilde Villa"
+     },
+     "status": "Out",
+     "date": "2026-09-23T22:50Z",
+     "shortComment": "Villa (coach's decision) has been ruled out for Wednesday's game against New York."
+    },
+    {
+     "athlete": {
+      "displayName": "Allisha Gray"
+     },
+     "status": "Out",
+     "date": "2026-10-15T22:14Z",
+     "shortComment": "Gray (hand) participated in Thursday's practice, Annie Costabile of The Athletic reports."
+    }
+   ]
+  },
+  {
+   "displayName": "Indiana Fever",
+   "injuries": [
+    {
+     "athlete": {
+      "displayName": "Aliyah Boston"
+     },
+     "status": "Out",
+     "date": "2026-10-15T15:05Z",
+     "shortComment": "out"
+    },
+    {
+     "athlete": {
+      "displayName": "Tyasha Harris"
+     },
+     "status": "Out",
+     "date": "2026-09-26T19:21Z",
+     "shortComment": "Harris (leg) will miss the rest of the season, WNBA reporter Kareem Copeland reports."
+    }
+   ]
+  }
+ ]
+}

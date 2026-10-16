@@ -49,14 +49,39 @@ def test_espn_news_maps_articles_and_drops_headless_ones():
     assert first.metrics == {}
 
 
-def test_espn_scoreboard_marks_live_games_and_scores():
+def test_espn_scoreboard_emits_schedule_without_created_at():
     pre, live = game_signals(json.loads(_fixture("espn_wnba_scoreboard.json")), "basketball/wnba")
-    assert pre.kind == "game" and pre.created_at == "2026-10-17T19:30:00Z"
-    assert pre.metrics == {"game_live": 0, "game_final": 0, "score_GS": 0, "score_ATL": 0}
+    assert pre.kind == "schedule" and pre.created_at is None
+    assert pre.metrics == {
+        "game_live": 0,
+        "game_final": 0,
+        "starts_at_unix": 1792265400,  # 2026-10-17T19:30Z
+        "event_id": 401918305,
+        "score_GS": 0,
+        "score_ATL": 0,
+    }
     assert "WNBA Finals - Game 1" in pre.text
     assert pre.url == "https://www.espn.com/wnba/game/_/gameId/401918305/dream-valkyries"
     assert live.metrics["game_live"] == 1
     assert live.metrics["score_GS"] == 61 and live.metrics["score_ATL"] == 58
+
+
+def test_espn_odds_line_from_summary():
+    from harness.sources.espn import odds_line
+
+    assert odds_line(json.loads(_fixture("espn_wnba_summary_odds.json"))) == "GS -2.5, O/U 154.5"
+    assert odds_line({}) == ""
+
+
+def test_espn_injuries_dedupe_repeated_entries():
+    from harness.sources.espn import injury_signals
+
+    signals = injury_signals(json.loads(_fixture("espn_wnba_injuries.json")), "basketball/wnba")
+    names = [s.text.split(" (")[0] for s in signals]
+    assert names == ["Allisha Gray", "Matilde Villa", "Aliyah Boston", "Tyasha Harris"]
+    boston = signals[2]
+    assert boston.text.startswith("Aliyah Boston (Indiana Fever): Out.")
+    assert boston.created_at == "2026-10-15T15:05:00Z" and boston.kind == "news"
 
 
 def test_google_news_strips_publisher_suffix_and_parses_dates():
@@ -163,3 +188,8 @@ def test_attention_without_data_is_none():
     from harness.sources.attention import spike
 
     assert spike(FakeSeries([]), datetime(2026, 10, 15, tzinfo=timezone.utc), 14) is None
+
+
+def test_devtools_profile_loads_and_differs():
+    devtools = load_watch(DEFAULT_PATH.with_name("observe.devtools.toml"))
+    assert devtools.espn.leagues == [] and "coderabbitai" in devtools.reply_targets.accounts
