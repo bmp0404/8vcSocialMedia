@@ -308,3 +308,60 @@ def test_limit_clusters_always_keeps_the_named_items_and_caps_the_rest():
     items = Fake().items()
     kept = campaign.limit_clusters(items, 2, earliest=False, keep=frozenset({"i0"}))
     assert sorted({it.cluster for it in kept}) == ["c0", "c8", "c9"]
+
+
+# ---------------------------------------------------------------- a queue spec with a baseline
+
+
+def reads_batch_under_reader(c):
+    """An arm that reads qualify.batch only under the single reader, as the lineup's continuation knobs are read
+    only by the continuation arms."""
+    return ("qualify.panel",) + (("qualify.batch",) if c.get("qualify.panel") == "single_reader" else ())
+
+
+def _baseline_promotion(tmp_path):
+    fake = Fake(wins=lambda c: c.get("qualify.panel") == "single_reader" and c.get("qualify.batch") == 1)
+    base = ledger.champion(tmp_path)[0].with_changes(READER)
+    prop = Proposal("fake", BATCH, "batching helps the single reader",
+                    {"kind": "queue", "source": "spec", "baseline": dict(READER)})
+    (rec,) = run_batch([prop], {"fake": fake}, provider="mock", max_calls=1000, directory=tmp_path, champion=base)
+    return fake, base, rec
+
+
+def test_a_baseline_run_scores_both_arms_from_the_baseline_and_promotes_only_the_change(tmp_path):
+    _, base, rec = _baseline_promotion(tmp_path)
+    assert rec["decision"]["status"] == "promoted"
+    assert rec["champion"]["ref"] == base.ref and rec["change"]["params"] == {"qualify.batch": {"from": 0, "to": 1}}
+    champ, _ = ledger.champion(tmp_path)
+    assert champ.get("qualify.batch") == 1 and champ.get("qualify.panel") == "personas"  # the baseline stays out
+
+
+def test_a_baseline_run_refuses_any_champion_but_the_ledgers_with_its_baseline(tmp_path):
+    prop = Proposal("fake", BATCH, "x", {"kind": "queue", "source": "spec", "baseline": dict(READER)})
+    with pytest.raises(ValueError, match="with .* applied"):
+        run_batch([prop], {"fake": Fake()}, provider="mock", max_calls=1000, directory=tmp_path,
+                  champion=knobs.DEFAULT)
+    bare = Proposal("fake", BATCH, "x", {"kind": "queue", "source": "spec"})
+    with pytest.raises(ValueError, match="baseline"):
+        run_batch([bare], {"fake": Fake()}, provider="mock", max_calls=1000, directory=tmp_path,
+                  champion=knobs.DEFAULT.with_changes(READER))
+
+
+def test_a_promoted_knob_the_champions_arm_never_reads_is_not_a_stack(tmp_path):
+    fake, _, _ = _baseline_promotion(tmp_path)
+    recs, configs = ledger.records(tmp_path), ledger.configs(tmp_path)
+    champ, _ = ledger.champion(tmp_path)
+    # Compared on every knob, the champion (personas, batch 1) was never an arm: a stack check would run two
+    # arms of identical code, and on a small sample its guardrail could revert a real result.
+    assert [s.fitness for s in campaign.unmeasured(recs, configs, _fit_knobs(fake), champ)] == ["fake"]
+    # Compared on what each arm reads, the champion's arm is the defaults' arm.
+    assert campaign.unmeasured(recs, configs, _fit_knobs(fake), champ, {"fake": reads_batch_under_reader}) == []
+
+
+def test_a_promotion_of_a_knob_the_champions_arm_reads_is_still_a_stack(tmp_path):
+    fake, other = Fake(), Fake("other", ("qualify.batch",))
+    first, second = _stacked_ledger(tmp_path, fake)
+    champ, _ = ledger.champion(tmp_path)  # single reader and batch 1: the arm reads both
+    (s,) = campaign.unmeasured(ledger.records(tmp_path), ledger.configs(tmp_path), _fit_knobs(fake, other), champ,
+                               {"fake": reads_batch_under_reader})
+    assert s.latest == second["id"] and s.baseline.get("qualify.batch") == 0

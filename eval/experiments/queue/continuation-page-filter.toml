@@ -1,0 +1,35 @@
+# Why this is open. Before the writer continues a page, the live lane asks Opus 5.5 for each reply's P(AI) and
+# drops those at 50 or more (harness/minds/lanes.py:answer_target, ActionConfig.filter_page_bots). The reason
+# given is research finding 10, that the two most AI-looking "human" replies in a thread got 19 and 23 likes
+# (harness/minds/settings.py), and the comment there says "no tuning yet". No run has measured whether the filter
+# changes the drafts: the lineup's pipeline arm ran before the filter existed (action/DESIGN.md, "Gaps"). It is
+# the hot path's slowest step, 14 to 16 seconds on 12-reply pages (harness/watcher/DESIGN.md), and 7 seconds on
+# the one live hot target whose page had replies (out/hot/2111087699574903061.json on sam/platform). This tests
+# it where it acts, on the writer: raw continuation with and without the filter, on devtools, which had 14 of the
+# watcher's first 20 hot targets. A promotion says keep it. An inconclusive or rejected record is the evidence
+# for dropping it from the hot path, with its interval as the bound on what that costs. The lineup's pages hold
+# up to 12 replies and hot pages 0 to 3, so this doesn't measure the filter on a fresh post's page.
+id = "continuation-page-filter"
+proposed_at = 2026-10-16T16:09:00Z
+proposed_by = "agent:B9 builder"
+profile = "devtools"
+fitness = "action_lineup"
+hypothesis = "Dropping the page replies the veto judge reads as bots before continuing the page makes the reply harder for the lineup detector to find, without lowering the veto pass rate or raising the GPT detector's rate."
+source = "harness/minds/settings.py (filter_page_bots, research finding 10) and harness/watcher/DESIGN.md (14 to 16 s per hot draft)"
+label = "continuation after the page bot filter"
+
+[baseline]
+knobs = { "action.reply.generation" = "continuation" }
+
+[change]
+kind = "code"
+knobs = { "action.continuation.page_filter" = true }
+commit = "ebd16a5"
+summary = "The lineup's raw continuation arm drops the page replies the veto judge puts at P(AI) 50 or more before writing, the live lane's page bot filter."
+
+[budget]
+# 4 calls a thread for the champion and its repeat, 5 for the challenger, which adds the filter's call: 13 a
+# thread. devtools has no fixture threads, so both phases use the watcher's: a screen up to 40 (520 calls and 3
+# probes), a confirmation up to 30 (393).
+screen_calls = 540
+confirm_calls = 400

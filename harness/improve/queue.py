@@ -28,6 +28,18 @@ A code change is tested through the knob that switches it on, because the engine
 can hash, diff and revert; the commit must already be in the checkout the loop runs from, so the arm
 really runs that code. Anything else in the file is an error, so a typo can't silently drop a guardrail.
 
+A spec may also name a baseline, for a knob only some arms read:
+
+    [baseline]                            # optional; one to four knobs both arms set
+    knobs = { "action.reply.generation" = "continuation" }
+
+Both arms then start from the champion with the baseline applied, and only the challenger adds the
+change. The champion's own arm may not read the knob a question is about: the lineup's champion
+writes with the persona prompt, which reads no continuation knob, so a continuation question
+compared against it would run the same code twice. A change may move a knob the baseline sets; the
+change wins. A promotion still moves only the change's knobs into the champion, because the record's
+knob diff runs from the baseline's arm to the challenger's.
+
 Each spec goes through two phases, both recorded in the ledger with `proposer.spec` set to its id and
 `proposer.spec_digest` to a hash of what it tests: a screen on items rooted at or before the proposal,
 then, if it passed (a `candidate`), a confirmation on items rooted after it. The cutoff is the later of
@@ -54,10 +66,13 @@ QUEUE_DIR = config.ROOT / "eval" / "experiments" / "queue"
 ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 COMMIT = re.compile(r"^[0-9a-f]{7,40}$")
 TOP_KEYS = {"id", "proposed_at", "proposed_by", "profile", "fitness", "hypothesis", "source", "label", "change",
-            "guardrails", "budget", "threads"}
+            "guardrails", "budget", "threads", "baseline"}
 REQUIRED = ("id", "proposed_at", "proposed_by", "profile", "fitness", "hypothesis", "change")
 CHANGE_KEYS = {"kind", "knobs", "commit", "summary"}
 BUDGET_KEYS = {"screen_calls", "confirm_calls"}
+# A baseline sets the arm a question needs, not what it tests. Four covers the reply lane's settings that differ
+# from the champion (generator, samples, framing, page size); more would be a different champion. Policy.
+MAX_BASELINE = 4
 DEFAULT_CALLS = 400
 MAX_CALLS = 2000  # one phase may not spend more than a whole batch's allowance
 # Confirmation needs this many clusters (threads or accounts) rooted after the proposal. The instrument
@@ -95,6 +110,7 @@ class Spec:
     thread_names: tuple[str, ...] = ()  # the same files as the spec names them, relative to the repository
     screen_calls: int = DEFAULT_CALLS
     confirm_calls: int = DEFAULT_CALLS
+    baseline: dict[str, Any] = field(default_factory=dict)  # knobs both arms set; empty means the champion
 
     @property
     def digest(self) -> str:
@@ -103,12 +119,15 @@ class Spec:
                  for name, path in zip(self.thread_names, self.threads)]
         what = {"fitness": self.fitness, "profile": self.profile, "knobs": self.knobs, "kind": self.kind,
                 "commit": self.commit, "guardrails": self.guardrails, "threads": files}
+        if self.baseline:  # only when set, so a spec written before baselines keeps its digest and its records
+            what["baseline"] = self.baseline
         return hashlib.sha256(json.dumps(what, sort_keys=True).encode()).hexdigest()[:12]
 
     def proposer(self, phase: str, cutoff: datetime) -> dict:
         return {"kind": "queue", "spec": self.id, "spec_digest": self.digest, "phase": phase, "source": self.source,
                 "by": self.proposed_by, "proposed_at": cutoff.isoformat(timespec="seconds"),
-                **({"commit": self.commit, "summary": self.summary} if self.kind == "code" else {})}
+                **({"commit": self.commit, "summary": self.summary} if self.kind == "code" else {}),
+                **({"baseline": dict(self.baseline)} if self.baseline else {})}
 
 
 def _datetime(value: Any) -> datetime:
@@ -179,10 +198,22 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT, now
     unmeasured = set(knob_values) - set(fit.knobs)
     if unmeasured:
         raise SpecError(f"{sid}: {data['fitness']} can't measure {sorted(unmeasured)}; it reads {list(fit.knobs)}")
+    baseline = data.get("baseline", {})
+    if not isinstance(baseline, dict) or set(baseline) != ({"knobs"} if baseline else set()):
+        raise SpecError(f"{sid}: [baseline] takes only knobs = {{ ... }}")
+    base_values = baseline.get("knobs", {})
+    if baseline and (not isinstance(base_values, dict) or not 1 <= len(base_values) <= MAX_BASELINE):
+        raise SpecError(f"{sid}: baseline.knobs must set one to {MAX_BASELINE} knobs")
+    if set(base_values) - set(fit.knobs):
+        raise SpecError(f"{sid}: {data['fitness']} can't measure baseline knob(s) "
+                        f"{sorted(set(base_values) - set(fit.knobs))}; it reads {list(fit.knobs)}")
     try:
-        DEFAULT.with_changes(knob_values)
+        base = DEFAULT.with_changes(base_values)
+        repeats = base.with_changes(knob_values).hash == base.hash and set(knob_values) <= set(base_values)
     except KnobError as e:
         raise SpecError(f"{sid}: {e}") from e
+    if repeats:  # whatever the champion holds, both arms would run the same config
+        raise SpecError(f"{sid}: the change only repeats values the baseline already sets")
     commit = summary = None
     if kind == "code":
         commit, summary = change.get("commit"), change.get("summary")
@@ -242,7 +273,7 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT, now
                 knobs=dict(knob_values), kind=kind, source=data.get("source"), label=data.get("label", ""),
                 commit=commit, summary=summary, guardrails={k: float(v) for k, v in guardrails.items()},
                 threads=tuple(repo / t for t in threads), thread_names=tuple(threads), screen_calls=calls["screen_calls"],
-                confirm_calls=calls["confirm_calls"])
+                confirm_calls=calls["confirm_calls"], baseline=dict(base_values))
 
 
 def load(directory: Path, catalog: dict[str, type], *, repo: Path = config.ROOT,

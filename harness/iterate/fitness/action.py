@@ -172,12 +172,43 @@ def gen_styled(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
     return tidy_draft(data.get("reply", "") if isinstance(data, dict) else "")
 
 
+def framing(cfg: Config):
+    """The profile's ReplyFraming when the config writes under it, else None (neutral handles)."""
+    if cfg.get("action.continuation.framing") != "profile":
+        return None
+    from harness.minds.writer import load_framing
+
+    return load_framing()
+
+
+def drop_page_bots(cfg: Config, thread: dict, replies: list[str], llm_for: LLMFor) -> list[str]:
+    """The page without the replies the veto judge puts at P(AI) 50 or more, the live lane's page bot filter
+    (lanes.answer_target). As there, a malformed answer leaves the page whole."""
+    from harness.minds import veto
+    from harness.minds.settings import ActionConfig
+
+    judge = llm_for(cfg.get("action.veto.model"))
+    try:
+        scores = veto.judge_p_ai(judge, replies, context=f"POST by @{thread['author']}:\n{thread['text']}",
+                                 mission=hconfig.mission())
+    except veto.VetoError:
+        return replies
+    return [r for r, p in zip(replies, scores) if p < ActionConfig().page_max_p_ai]
+
+
 def gen_continuation(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
-    """The thread as a saved page with neutral handles and no counts; the model writes the next reply."""
+    """The thread as a saved page with neutral handles and no counts; the model writes the next reply. The config
+    can cut the page to fewer replies, drop the ones the veto judge reads as bots first, and write the reply under
+    the profile's framing handle instead of the next neutral one."""
     a = thread["author"]
-    lines = "\n".join(f"@user{i + 1:02d}: {r['text']}" for i, r in enumerate(thread["context"]))
+    replies = [r["text"] for r in thread["context"][: cfg.get("action.page_replies")]]
+    if cfg.get("action.continuation.page_filter") and replies:
+        replies = drop_page_bots(cfg, thread, replies, llm_for)
+    lines = "\n".join(f"@user{i + 1:02d}: {r}" for i, r in enumerate(replies))
+    framed = framing(cfg)
+    handle = framed.framing_handle if framed else f"user{len(replies) + 1:02d}"
     prefill = (f'x.com: {a} on X: "{thread["text"]}"\n\n{a} @{a}\n{thread["text"]}\n\nReplies (sorted by relevance):\n\n'
-               f"{lines}\n@user{len(thread['context']) + 1:02d}:")
+               f"{lines}\n@{handle}:")
     llm = llm_for(cfg.get("action.continuation.model"))
     if not hasattr(llm, "continue_text"):
         raise TypeError(f"{type(llm).__name__} can't prefill; continuation needs MeteredLLM")
@@ -211,8 +242,7 @@ def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
     The thread is handed over as Observe's `thread` field with the same 12 context replies every other
     generator sees, and live fetching is disabled, so the pipeline can't read the lineup's replies."""
     try:
-        from harness.minds import veto as action_veto
-        from harness.minds import writer as action_writer
+        from harness.minds import routing as action_routing
         from harness.minds.lanes import answer_target
         from harness.minds.settings import ActionConfig
         from harness.minds.thread import ThreadUnavailable
@@ -233,21 +263,26 @@ def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
     def no_fetch(url: str):
         raise ThreadUnavailable("offline lineup fitness: live fetching is disabled")
 
+    framed = framing(cfg)
     probe = llm_for(cfg.get("action.continuation.model"))
     if pipeline_mode(probe) == "mock":  # sam/action's code has its own mock paths for harness.llm.MockLLM
-        decision, action = answer_target(MockLLM(), hconfig.mission(), "", target, acfg, no_fetch)
+        decision, action = answer_target(MockLLM(), hconfig.mission(), "", target, acfg, no_fetch, framing=framed)
     else:
         from harness.iterate.llm import metered_anthropic_class
 
         cls = metered_anthropic_class(probe.meter, probe.arm)
+        # The writer prefills through the client of the LLM it is handed, which is metered. The veto, the page
+        # filter and the styled writer reach other models through routing.on_model, which builds an AnthropicLLM
+        # by that module's name, so the swap goes there. It used to target names in writer and veto that their
+        # move to routing removed, and every live pipeline arm then raised AttributeError.
         with _PIPELINE_LOCK:  # the swap below is module-global, so one pipeline arm at a time
-            saved = action_writer.AnthropicLLM, action_veto.AnthropicLLM
-            action_writer.AnthropicLLM = action_veto.AnthropicLLM = cls
+            saved = action_routing.AnthropicLLM
+            action_routing.AnthropicLLM = cls
             try:
                 decision, action = answer_target(cls(cfg.get("action.continuation.model")), hconfig.mission(), "",
-                                                 target, acfg, no_fetch)
+                                                 target, acfg, no_fetch, framing=framed)
             finally:
-                action_writer.AnthropicLLM, action_veto.AnthropicLLM = saved
+                action_routing.AnthropicLLM = saved
     if action is None:
         raise Abstained(f"{decision.reason}: {decision.detail}"[:200])
     return tidy_draft(action.text)
@@ -255,6 +290,17 @@ def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
 
 GENERATORS = {"persona_json": gen_persona_json, "styled": gen_styled, "continuation": gen_continuation,
               "pipeline": gen_pipeline}
+# The knobs each generator reads, besides action.reply.generation, which picks it. Two configs that agree on these
+# run the same code, so a stack check compares them this way and the queue refuses a change no arm would read.
+# tests/test_iterate_action.py records every cfg.get an arm makes and checks it against this table.
+READS = {
+    "persona_json": ("action.reply.model", "memory.lessons"),
+    "styled": ("action.reply.model",),
+    "continuation": ("action.continuation.model", "action.page_replies", "action.continuation.framing",
+                     "action.continuation.page_filter"),
+    "pipeline": ("action.samples", "action.page_replies", "action.veto.model", "action.veto.max_p_ai",
+                 "action.continuation.model", "action.continuation.framing"),
+}
 
 
 def _lessons(cfg: Config, seed: int) -> str:
@@ -292,7 +338,8 @@ class ActionLineup:
                    Metric("abstain_rate", higher_is_better=False),
                    Metric("reply_chars", higher_is_better=False))
     knobs = ("action.reply.generation", "action.reply.model", "action.continuation.model", "memory.lessons",
-             "action.samples", "action.page_replies", "action.veto.model", "action.veto.max_p_ai")
+             "action.samples", "action.page_replies", "action.veto.model", "action.veto.max_p_ai",
+             "action.continuation.framing", "action.continuation.page_filter")
 
     def __init__(self, threads_paths: list[Path] | Path = DEFAULT_THREADS, limit: int | None = None,
                  rejudge_report: Path | None = None, extra_threads: list[dict] | None = None,
@@ -336,14 +383,32 @@ class ActionLineup:
                 "veto_model": VETO_MODEL, "veto_system": VETO_SYSTEM, "veto_margin": VETO_MARGIN,
                 "gpt_detection_margin": GPT_DETECTION_MARGIN}
 
+    @staticmethod
+    def reads(config: Config) -> tuple[str, ...]:
+        """The knobs an arm under `config` reads: its generator's (READS), and the judge model when raw
+        continuation filters its page."""
+        method = config.get("action.reply.generation")
+        judge = ("action.veto.model",) if method == "continuation" and config.get("action.continuation.page_filter") else ()
+        return ("action.reply.generation", *READS[method], *judge)
+
+    def check_config(self, config: Config) -> str | None:
+        """Why an arm under `config` wouldn't run what its knobs say, or None. Asked inside the spec's profile."""
+        if "action.continuation.framing" in self.reads(config) and config.get("action.continuation.framing") == "profile" \
+                and framing(config) is None:
+            return (f"action.continuation.framing is profile, but the {hconfig.profile_name()} profile's "
+                    "reply_framing.json has no handle, so the arm would write under neutral handles anyway")
+        return None
+
     def estimate_calls(self, config: Config, n_items: int, repeat: bool = False) -> int:
-        """Two detectors and the instrument's veto per thread, plus generation: one call, or for the
-        pipeline its samples plus its own veto, which judges every survivor in one call per order."""
+        """Two detectors and the instrument's veto per thread, plus generation: one call, a second when raw
+        continuation filters its page, or for the pipeline its page filter, its samples and its own veto, which
+        judges every survivor in one call per order."""
         if self.rejudge is not None:
             return n_items  # the veto only, on drafts that shipped
-        if config.get("action.reply.generation") == "pipeline":
-            return n_items * (3 + config.get("action.samples") + 2)
-        return 4 * n_items
+        method = config.get("action.reply.generation")
+        if method == "pipeline":
+            return n_items * (3 + 1 + config.get("action.samples") + 2)
+        return n_items * (4 + int(method == "continuation" and config.get("action.continuation.page_filter")))
 
     def _one(self, cfg: Config, thread: dict, llm_for: LLMFor, seed: int, lineup_seed: int) -> tuple[str, dict]:
         method = cfg.get("action.reply.generation")

@@ -86,6 +86,12 @@ def _stop(args) -> None:
                      "(an experiment run finishes before it stops)")
 
 
+def _validate(args) -> None:
+    from harness.improve import validate
+
+    raise SystemExit(validate.main(args))
+
+
 def add_commands(sub) -> None:
     p = sub.add_parser("improve", help="run the unattended improvement loop: facts, benchmark, instruments, "
                                        "queued experiments, morning report")
@@ -108,3 +114,12 @@ def add_commands(sub) -> None:
     s = isub.add_parser("stop", help="send the running loop SIGTERM and wait for it to exit")
     s.add_argument("--wait", type=_positive, default=1800.0, help="seconds to wait for the step in flight")
     s.set_defaults(func=_stop)
+    s = isub.add_parser("validate", help="run queue specs through the loop's parser and admission checks; no model "
+                                         "calls, and nothing written outside a temporary directory")
+    s.add_argument("specs", nargs="*", help="spec files (default: every file in the queue directory)")
+    s.add_argument("--queue-dir", help="the queue directory (default eval/experiments/queue)")
+    s.add_argument("--threads-dir", help="the watcher's thread reads the loop folds in (default data/threads)")
+    s.add_argument("--ledger-dir", help="the experiment ledger the loop reads (default eval/experiments)")
+    s.add_argument("--instruments", help="the instrument ledger (default eval/experiments/instruments.json)")
+    s.add_argument("--experiment-calls", type=int, help="the loop's per-cycle experiment allowance (default 800)")
+    s.set_defaults(func=_validate)

@@ -110,12 +110,27 @@ REGISTRY: tuple[Knob, ...] = (
          choices=MODELS, reader="harness/llm.py:DEFAULT_MODELS"),
     Knob("action.continuation.model", str, OPUS45, "action", "Model for continuation; needs prefill.",
          choices=(OPUS45,), reader=""),
+    # The next two exist so the lineup can test what the live lane already does. Their defaults are the lineup arms'
+    # behavior before they existed; the live lane doesn't read the champion, so promoting one changes no live run.
+    Knob("action.continuation.framing", str, "neutral", "action",
+         "The handle a continuation is written under: a neutral one, or the profile's framing handle "
+         "(reply_framing.json, where null means neutral). framing_probe.py measured the wnba handle at 4 of 16 "
+         "veto passes against 2 of 16 for neutral handles; no lineup run has measured it.",
+         choices=("neutral", "profile"),
+         reader="harness/iterate/fitness/action.py (lineup arms; the live lane always reads reply_framing.json)"),
+    Knob("action.continuation.page_filter", bool, False, "action",
+         "Raw continuation only: drop the page's replies the veto judge reads as bots before writing, as the live "
+         "lane always does (ActionConfig.filter_page_bots). One Opus 5.5 call per thread.",
+         reader="harness/iterate/fitness/action.py:gen_continuation (lineup only)"),
     Knob("action.per_mind", int, 3, "action", "Drafts each mind proposes per run.", lo=1, hi=8,
          reader="harness/cli.py --per-mind"),
     Knob("action.samples", int, 1, "action", "Drafts sampled per reply opportunity before the gate and veto.",
          lo=1, hi=12, reader="harness/minds/settings.py:ActionConfig.reply_samples (sam/action, 6)"),
-    Knob("action.page_replies", int, 12, "action", "Real replies on the continuation page.", lo=5, hi=20,
-         reader="harness/minds/settings.py:ActionConfig.page_replies (sam/action)"),
+    # lo was 5. A fresh post has few replies: the watcher's first 20 hot targets had 0 to 3 when it saw them.
+    Knob("action.page_replies", int, 12, "action",
+         "Real replies on the continuation page. Under the lane's min_page_replies (5) the reply lane writes with "
+         "the styled prompt instead; the lineup's raw continuation arm continues however many it is given.",
+         lo=1, hi=20, reader="harness/minds/settings.py:ActionConfig.page_replies (sam/action)"),
     Knob("action.veto.model", str, OPUS55, "action", "Model of the reply lane's veto.", choices=MODELS,
          reader="harness/minds/settings.py:ActionConfig.veto_model (sam/action)"),
     Knob("action.veto.max_p_ai", int, 50, "action", "Veto a draft the judge puts at or above this P(AI), either order.",

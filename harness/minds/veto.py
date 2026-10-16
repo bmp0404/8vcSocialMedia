@@ -97,7 +97,13 @@ def _one_pass(judge: LLM, texts: list[str], lane: str, context: str, mission: st
 
 def p_ai_scores(llm: LLM, cfg: ActionConfig, texts: list[str], *, context: str, mission: str = "") -> list[int]:
     """One-order P(AI) for real replies on the page. Raises VetoError on a malformed answer."""
-    return [v.p_ai for v in _one_pass(_judge_llm(llm, cfg), texts, "reply", context, mission)]
+    return judge_p_ai(_judge_llm(llm, cfg), texts, context=context, mission=mission)
+
+
+def judge_p_ai(judge: LLM, texts: list[str], *, context: str, mission: str = "") -> list[int]:
+    """`p_ai_scores` from a judge already bound to its model. The lineup instrument calls this with its own
+    metered client, because routing.on_model would build an unmetered one."""
+    return [v.p_ai for v in _one_pass(judge, texts, "reply", context, mission)]
 
 
 def veto(llm: LLM, cfg: ActionConfig, texts: list[str], *, lane: str, context: str, mission: str) -> list[VetoResult]:

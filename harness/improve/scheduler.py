@@ -33,6 +33,7 @@ from harness import config
 from harness.improve import fold, queue, report, watchday
 from harness.improve import instruments as instrument_ledger
 from harness.iterate import campaign, ledger
+from harness.iterate.knobs import Config
 from harness.iterate.runner import Proposal, run_batch
 
 OUT_DIR = config.OUT_DIR / "improve"
@@ -218,6 +219,23 @@ def default_catalog() -> dict[str, type]:
     from harness.iterate.fitness.qualify import QualifyAUC
 
     return {"action_lineup": ActionLineup, "qualify_auc": QualifyAUC}
+
+
+@dataclass(frozen=True)
+class Plan:
+    """A spec's next phase as the loop would run it (Scheduler.admit)."""
+
+    phase: str  # "screen" or "confirm"
+    mode: str  # run_batch's mode: "screen", or "promote" for a confirmation
+    proposal: Proposal
+    base: Config  # the config both arms start from: the champion with the spec's baseline applied
+    challenger: Config
+    fit: campaign.Restricted  # the instrument cut to the items this phase uses
+    budget: int  # calls the phase may spend, after the probes
+    estimate: int  # what run_batch will budget for the three arms on `fit`'s items
+    needed: set[str]  # models probed before the run
+    probes: int
+    cutoff: datetime
 
 
 class Scheduler:
@@ -438,9 +456,11 @@ class Scheduler:
 
     @staticmethod
     def needed_models(fit, configs) -> set[str]:
-        """The judge models an instrument names and the model knobs it reads in the configs it will run."""
+        """The judge models an instrument names and the model knobs it reads in the configs it will run: the ones
+        each arm reads when the instrument says (`reads`), else every model knob it lists."""
         named = {v for k, v in fit.instrument().items() if k.endswith("_model") and isinstance(v, str)}
-        return named | {c.get(k) for c in configs for k in fit.knobs if k.endswith(".model")}
+        reads = getattr(fit, "reads", None)
+        return named | {c.get(k) for c in configs for k in (reads(c) if reads else fit.knobs) if k.endswith(".model")}
 
     @staticmethod
     def _estimate(fit, champion, changes: dict, n: int) -> int:
@@ -505,7 +525,8 @@ class Scheduler:
         records, configs = ledger.records(directory), ledger.configs(directory)
         champion, _ = ledger.champion(directory)
         blocked: dict[str, str] = {}  # fitness -> why its specs can't run this cycle
-        for s in campaign.unmeasured(records, configs, {n: c.knobs for n, c in self.catalog.items()}, champion):
+        reads = {n: c.reads for n, c in self.catalog.items() if hasattr(c, "reads")}
+        for s in campaign.unmeasured(records, configs, {n: c.knobs for n, c in self.catalog.items()}, champion, reads):
             latest = next(r for r in records if r["id"] == s.latest)
             profile = latest["proposer"].get("profile") or config.profile_name()
             hold, untrusted = self.rulers(s.fitness)
@@ -557,80 +578,117 @@ class Scheduler:
 
     def _spec(self, spec: queue.Spec, entry: dict, now: datetime, left: int) -> tuple[int, int]:
         """Run or explain one spec's next phase. Returns (calls left this cycle, calls spent)."""
+        with profile_env(spec.profile):
+            plan = self.admit(spec, entry, now, left)
+            if plan is None:
+                return left, 0
+            waiting = self._probe_note(plan.needed)
+            if waiting:
+                entry.update(state="deferred", note=waiting)
+                return left - plan.probes, plan.probes
+            recs, calls = self._run([plan.proposal], plan.fit, mode=plan.mode, max_calls=plan.budget,
+                                    champion=plan.base if spec.baseline else None)
+        entry.update(state="ran", phase=plan.phase, record=recs[0]["id"], decision=recs[0]["decision"]["status"],
+                     note=recs[0]["decision"]["reason"][:200])
+        return left - plan.probes - calls, plan.probes + calls
+
+    def admit(self, spec: queue.Spec, entry: dict, now: datetime, left: int) -> Plan | None:
+        """Everything the loop decides about a spec's next phase before it spends a call: which phase, whether
+        it may run now, on which items, within which budget, and which models it would probe. Returns None
+        with `entry` saying why when the phase can't run; `harness improve validate` prints the same answer.
+        Call it inside the spec's profile (profile_env)."""
         directory = self.cfg.ledger_dir
         first_seen = self.state.spec_seen(f"{spec.id}:{spec.digest}", now)
         cutoff = max(spec.proposed_at, first_seen)
         ph = queue.phase(spec, ledger.records(directory))
         if ph.next == "done":
             entry.update(state="done", note="decided")
-            return left, 0
+            return None
         pending = [r for r in (ph.screen if ph.next == "screen" else ph.confirm) if r["decision"]["status"] == "pending"]
         if len(pending) >= MAX_PENDING:
             entry.update(state="stale", note=f"the {ph.next} phase didn't run {len(pending)} times (last reason: "
                                              f"{pending[-1]['decision']['reason'][:140]}); change what the spec tests "
                                              "or give it a new id to try again")
-            return left, 0
+            return None
         champion, _ = ledger.champion(directory)
-        if champion.with_changes(spec.knobs).hash == champion.hash:
-            entry.update(state="done", note="the champion already has these values")
-            return left, 0
+        base = champion.with_changes(spec.baseline)  # both arms start here; the champion when there's no baseline
+        challenger = base.with_changes(spec.knobs)
+        if challenger.hash == base.hash:
+            entry.update(state="done", note="the champion already has these values" if not spec.baseline
+                         else "the champion with the baseline already has these values")
+            return None
         hold, untrusted = self.rulers(spec.fitness)
         if hold:
             entry.update(state="held", note=hold)
-            return left, 0
+            return None
         prop = Proposal(spec.fitness, spec.knobs, spec.hypothesis,
                         {**spec.proposer(ph.next, cutoff), "profile": spec.profile}, spec.label)
         screen = ph.next == "screen"
         waited = now - (first_seen if screen else campaign.decided_at(ph.screen[-1]))
-        with profile_env(spec.profile):
-            built = self._build(spec.fitness, spec.profile, spec.threads)
-            # A screen always keeps the fixture threads its spec names; the cap applies to the watcher's.
-            keep = frozenset(it.id for it in self.catalog[spec.fitness](list(spec.threads)).items()) \
-                if screen and spec.threads else frozenset()
-            window = {"by": cutoff} if screen else {"after": cutoff}
-            base = campaign.Restricted(built, **window, guardrails=spec.guardrails, untrusted=untrusted)
-            if not screen:
-                clusters = len({it.cluster for it in base.items()})
-                if clusters < queue.MIN_CONFIRM_CLUSTERS:
-                    entry.update(state="stale" if waited > STALE_AFTER else "waiting",
-                                 note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {base.cluster_unit}s "
-                                      f"rooted after {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
-                    return left, 0
-                cap = campaign.weekly_cap(ledger.records(directory), now)
-                if not cap.open:
-                    entry.update(state="held", note=f"confirmation waits for the weekly cap ({cap.holder}) to "
-                                                    f"reopen at {cap.opens_at.isoformat(timespec='minutes')}")
-                    return left, 0
-            else:
-                from harness.iterate.propose import is_settled
+        built = self._build(spec.fitness, spec.profile, spec.threads)
+        refused = self.refusal(built, spec, base, challenger)
+        if refused:
+            entry.update(state="refused", note=refused)
+            return None
+        # A screen always keeps the fixture threads its spec names; the cap applies to the watcher's.
+        keep = frozenset(it.id for it in self.catalog[spec.fitness](list(spec.threads)).items()) \
+            if screen and spec.threads else frozenset()
+        window = {"by": cutoff} if screen else {"after": cutoff}
+        restricted = campaign.Restricted(built, **window, guardrails=spec.guardrails, untrusted=untrusted)
+        if not screen:
+            clusters = len({it.cluster for it in restricted.items()})
+            if clusters < queue.MIN_CONFIRM_CLUSTERS:
+                entry.update(state="stale" if waited > STALE_AFTER else "waiting",
+                             note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {restricted.cluster_unit}s "
+                                  f"rooted after {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
+                return None
+            cap = campaign.weekly_cap(ledger.records(directory), now)
+            if not cap.open:
+                entry.update(state="held", note=f"confirmation waits for the weekly cap ({cap.holder}) to "
+                                                f"reopen at {cap.opens_at.isoformat(timespec='minutes')}")
+                return None
+        else:
+            from harness.iterate.propose import is_settled
 
-                # Another spec version's candidate isn't a decision: its confirmation never ran.
-                decided = [r for r in ledger.records(directory)
-                           if not (r["proposer"].get("kind") == "queue" and r["decision"]["status"] == "candidate")]
-                sha = {spec.fitness: base.instrument().get("dataset_sha256")}
-                if is_settled(prop, champion, decided, {spec.fitness: base.knobs}, ledger.configs(directory), sha):
-                    entry.update(state="done", note="the ledger already decided this change against an equivalent "
-                                                    "champion on the same items; screening it again would test them twice")
-                    return left, 0
-            needed = self.needed_models(base, [champion, champion.with_changes(spec.knobs)])
-            probes = len(needed) if self.cfg.provider != "mock" else 0
-            budget = min(spec.screen_calls if screen else spec.confirm_calls, left) - probes
-            restricted = self._sized(base, dict(**window, guardrails=spec.guardrails, untrusted=untrusted, keep=keep),
-                                     queue.SCREEN_CLUSTERS if screen else queue.CONFIRM_CLUSTERS,
-                                     1 if screen else queue.MIN_CONFIRM_CLUSTERS, budget, champion, spec.knobs)
-            if restricted is None:
-                entry.update(state="stale" if waited > STALE_AFTER else "deferred",
-                             note=f"even its smallest set of items needs more than the {budget} calls available "
-                                  "to it this cycle")
-                return left, 0
-            waiting = self._probe_note(needed)
-            if waiting:
-                entry.update(state="deferred", note=waiting)
-                return left - probes, probes
-            recs, calls = self._run([prop], restricted, mode="screen" if screen else "promote", max_calls=budget)
-        entry.update(state="ran", phase=ph.next, record=recs[0]["id"], decision=recs[0]["decision"]["status"],
-                     note=recs[0]["decision"]["reason"][:200])
-        return left - probes - calls, probes + calls
+            # Another spec version's candidate isn't a decision: its confirmation never ran.
+            decided = [r for r in ledger.records(directory)
+                       if not (r["proposer"].get("kind") == "queue" and r["decision"]["status"] == "candidate")]
+            sha = {spec.fitness: restricted.instrument().get("dataset_sha256")}
+            if is_settled(prop, base, decided, {spec.fitness: restricted.knobs}, ledger.configs(directory), sha):
+                entry.update(state="done", note="the ledger already decided this change against an equivalent "
+                                                "champion on the same items; screening it again would test them twice")
+                return None
+        needed = self.needed_models(restricted, [base, challenger])
+        probes = len(needed) if self.cfg.provider != "mock" else 0
+        budget = min(spec.screen_calls if screen else spec.confirm_calls, left) - probes
+        sized = self._sized(restricted, dict(**window, guardrails=spec.guardrails, untrusted=untrusted, keep=keep),
+                            queue.SCREEN_CLUSTERS if screen else queue.CONFIRM_CLUSTERS,
+                            1 if screen else queue.MIN_CONFIRM_CLUSTERS, budget, base, spec.knobs)
+        if sized is None:
+            entry.update(state="stale" if waited > STALE_AFTER else "deferred",
+                         note=f"even its smallest set of items needs more than the {budget} calls available "
+                              "to it this cycle")
+            return None
+        estimate = self._estimate(sized, base, spec.knobs, len(sized.items()))
+        return Plan(ph.next, "screen" if screen else "promote", prop, base, challenger, sized, budget, estimate, needed,
+                    probes, cutoff)
+
+    @staticmethod
+    def refusal(fit, spec: queue.Spec, base: Config, challenger: Config) -> str | None:
+        """Why the instrument wouldn't test what the spec asks, or None: a changed knob neither arm reads, so both
+        would run the same code, or a config the instrument says it can't run as written (check_config)."""
+        reads = getattr(fit, "reads", None)
+        if reads is not None:
+            unread = sorted(set(spec.knobs) - set(reads(base)) - set(reads(challenger)))
+            if unread:
+                return (f"neither arm reads {unread}: the arm both sides would run reads only {list(reads(base))}, so "
+                        "they'd run the same code; add a [baseline] whose arm reads them")
+        check = getattr(fit, "check_config", None)
+        for cfg in (base, challenger) if check is not None else ():
+            why = check(cfg)
+            if why:
+                return why
+        return None
 
     def _sized(self, base: campaign.Restricted, kwargs: dict, cap: int, floor: int, budget: int, champion,
                changes: dict) -> campaign.Restricted | None:
