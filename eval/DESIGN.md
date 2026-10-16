@@ -45,6 +45,8 @@ All runs use protocol v2 (described below) on the same sample: 27 accounts that 
 | panel, GPT (`gpt-6.1-sol`) | 0.854 [0.76, 0.95] | 0.813 | 0.500 |
 | panel, mean of both | 0.836 [0.75, 0.93] | 0.820 | 0.530 |
 
+Without the 9 posts the context worker flags as boost suspects (its enriched CSV at `7f1c759`), 135 posts and 170 pairs remain, and the headline barely moves: panel Claude 0.788, panel GPT 0.865, media type 0.732.
+
 Paired differences on the same pairs, panel minus baseline:
 
 | | minus media | minus length | minus TF-IDF | minus same-model reader |
@@ -61,6 +63,14 @@ What I take from this:
 - Rerunning the same posts gave Spearman 0.93 (Claude panel), 0.99 (GPT panel) and 0.81 to 0.84 (single readers), so the readers are noisier.
 
 Expect much less in production. On same-author tweet pairs with the same link, wording models reach about 65% and people 61% (Tan, Lee and Pang 2014, arXiv 1405.1438), and content explains R² 0.055 of engagement against 0.317 for author features (arXiv 1812.06034). A judge scoring 0.8 there would be extraordinary.
+
+### The post judge
+
+The backtest scores Dhilan's judge (`harness/post_judge`, PR #5) on the same protocol as the panel, through two predictors in `harness/evals/predictors.py`. `post_judge` grades each post alone against references that `select_references` picks with `before` set to the candidate's day. `post_judge_rank` calls `rank_candidates` on up to 4 posts from one account, in a shuffled order and its reverse, and compares only posts ranked in the same call. The batch-order finding above applies to `rank_candidates`, which scores candidates listwise. A `post_judge_refs_only` baseline scores each post by word overlap with the judge's viral references minus its Deadweight ones; the judge earns its cost only by beating that lookup. `--memory shuffled` keeps the same references but permutes their labels, which is the memory ablation.
+
+The first judge run aborted when one post hit the BAML client's `max_tokens = 2500` three times. Failed posts now drop out of every predictor's numbers instead. The judge numbers are not in this branch yet.
+
+How the judge ran: a scratch worktree merged `dhilan/version-1` with this branch. The `baml` CLI came from `brew install baml` (system-wide; the lead has since ruled out system-wide installs without asking), then `baml toolchain install 0.22.2` and `BAML_VERSION=0.22.2 baml generate --directory eval --agent-skill-check off`, which skipped installing BAML's agent skill. The judge ran as `HARNESS_JUDGE_PROVIDER=anthropic HARNESS_JUDGE_MODEL=claude-sonnet-5-5` through the gateway, not the Claude Code CLI client, which would have started a Claude Code session per post.
 
 ### Leakage
 
@@ -90,7 +100,7 @@ I ruled out these alternatives:
 - **Calibration columns.** v1 compared the panel's mean P(engage) with "beats the account median", two different events. On this tail-sampled data, no calibration means anything for deployment anyway.
 - **A single date holdout** for unfitted predictors. It threw away two thirds of the posts and gave the youngest, least mature slice as the test set.
 
-Boosted launches are still in every number. The context worker's `boost_suspect` flags aren't merged, so each run prints a warning. When `data/context/devtools_enriched.csv` lands, the report adds a second evaluation without boosted rows. Use only its `pre_*` columns as features. Its `eng_ratio_author_median` includes the post itself and later posts.
+Boost flags and eligibility come from the context worker's `data/context/devtools_enriched.csv` when it exists (`apply_enriched` in `harness/evals/dataset.py`), or from `HARNESS_ENRICHED`. The file isn't on `main` yet, so a run without it prints a warning and keeps boosted launches in. With it, the report adds a second evaluation without boost suspects, and its `label_eligible` replaces the local thread and age rules: it uses fxtwitter's `replying_to`, which catches self-replies the 3-minute rule misses. On the 1,277 posts with scorable text, the two rules disagree on 109: the context label drops 106 that the local rules keep and keeps 3 they drop, which leaves 745 eligible posts instead of 848. The headline sample above used the local rules. Read only its `boost_*` and `label_eligible` columns here, use only `pre_*` columns as features, and never its `outcome_*` columns.
 
 ## The audience panel is brand-agnostic now
 
@@ -136,11 +146,12 @@ The hatched Eval box on the whiteboard's second row sits after the observation a
 
 **Time-travel recall, built** (`harness/evals/observe_eval.py`, `harness eval observe`). At a cutoff an hour after a launch's first post, orient sees only the dataset's posts from the 24 hours before, with no engagement counts, because those are final values. A story is live if at least two other accounts post about it in the next 24 hours. Recall is the share of live stories orient names in its top 5 narratives. The floor is a naive observer that takes the 5 most recent posts.
 
-| Run | Live stories | Orient recall@5 | Most-recent floor |
+| Orient version | Report | Orient recall@5 | Most-recent floor |
 | --- | --- | --- | --- |
-| `eval/reports/observe-20261015T210330-anthropic.json`, `claude-sonnet-5-5` | 11 at 9 cutoffs | 0.82 (9 of 11) | 0.55 (6 of 11) |
+| `main` before PR #10 | `eval/reports/observe-20261015T210330-anthropic.json` | 0.82 (9 of 11) | 0.55 (6 of 11) |
+| `main` at `a9de2d5`, after the Observe PR | `eval/reports/observe-20261015T211253-anthropic.json` | 0.73 (8 of 11) | 0.55 (6 of 11) |
 
-Eleven stories is a smoke test, and two cutoffs share the same Opus 5.5 launch. Both misses were orient failures, not judgment: on 59 and 72 signals, main's orient returned JSON cut off mid-object, because `harness/llm.py` caps output at 4,096 tokens and orient echoes every signal URL. The Observe worker should know that orient breaks at about 60 signals.
+Both runs used `claude-sonnet-5-5` on the same 11 live stories at 9 cutoffs. Eleven stories is a smoke test, and two cutoffs share the same Opus 5.5 launch, so the two versions are indistinguishable. The old orient's two misses were failures, not judgment: on 59 and 72 signals it returned JSON cut off mid-object, because `harness/llm.py` caps output at 4,096 tokens and that orient echoed every signal URL. The merged orient had no failures; it missed GPT-6.1 Sol, the second Opus 5.5 wave and Nemotron 3.5 Super. The merged orient also drops signals older than its age limit relative to `now`, so the replay passes the cutoff as `now`.
 
 **Not built yet:**
 
