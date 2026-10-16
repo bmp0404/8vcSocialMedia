@@ -6,7 +6,6 @@ profile's memory store after `write`, because the store is found by profile name
 """
 
 import json
-import os
 import shutil
 import tomllib
 import urllib.parse
