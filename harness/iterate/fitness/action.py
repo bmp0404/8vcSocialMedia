@@ -211,8 +211,7 @@ def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
     The thread is handed over as Observe's `thread` field with the same 12 context replies every other
     generator sees, and live fetching is disabled, so the pipeline can't read the lineup's replies."""
     try:
-        from harness.minds import veto as action_veto
-        from harness.minds import writer as action_writer
+        from harness.minds import routing as action_routing
         from harness.minds.lanes import answer_target
         from harness.minds.settings import ActionConfig
         from harness.minds.thread import ThreadUnavailable
@@ -240,14 +239,18 @@ def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
         from harness.iterate.llm import metered_anthropic_class
 
         cls = metered_anthropic_class(probe.meter, probe.arm)
+        # The writer prefills through the client of the LLM it is handed, which is metered. The veto, the page
+        # filter and the styled writer reach other models through routing.on_model, which builds an AnthropicLLM
+        # by that module's name, so the swap goes there. It used to target names in writer and veto that their
+        # move to routing removed, and every live pipeline arm then raised AttributeError.
         with _PIPELINE_LOCK:  # the swap below is module-global, so one pipeline arm at a time
-            saved = action_writer.AnthropicLLM, action_veto.AnthropicLLM
-            action_writer.AnthropicLLM = action_veto.AnthropicLLM = cls
+            saved = action_routing.AnthropicLLM
+            action_routing.AnthropicLLM = cls
             try:
                 decision, action = answer_target(cls(cfg.get("action.continuation.model")), hconfig.mission(), "",
                                                  target, acfg, no_fetch)
             finally:
-                action_writer.AnthropicLLM, action_veto.AnthropicLLM = saved
+                action_routing.AnthropicLLM = saved
     if action is None:
         raise Abstained(f"{decision.reason}: {decision.detail}"[:200])
     return tidy_draft(action.text)
