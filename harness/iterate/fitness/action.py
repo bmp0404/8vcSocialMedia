@@ -24,6 +24,8 @@ Instrument versions, each recorded in the ledger's `eval.instrument`:
 - v3: the veto also reads the mission and vetoes a draft that takes the side the mission isn't on, or
   that says nothing specific to the post. v2 passed "Let's go Angel Reese, another championship" for a
   Caitlin Clark fan account, and a bare "...".
+- v4: the GPT detector's rate becomes a guardrail with a 10-point margin. The measurement is unchanged;
+  a challenger it finds noticeably more often can no longer be promoted.
 
 `rejudge_report` re-judges a saved run's drafts with the current veto instead of drafting again. The
 detectors are untouched, so it isolates a change to the veto, and it pins the challenger to the exact
@@ -50,7 +52,7 @@ from harness.iterate.fitness import ArmResult, Item, LLMFor, Metric
 from harness.iterate.knobs import OPUS55, Config
 from harness.iterate.stats import Stat, mean_stat
 
-INSTRUMENT_VERSION = 3
+INSTRUMENT_VERSION = 4
 DEFAULT_THREADS = hconfig.ROOT / "action" / "fixtures" / "x_threads.json"
 PERSONA_FIXTURE = hconfig.ROOT / "eval" / "experiments" / "fixtures" / "persona_json-main.json"
 DETECTOR_MODEL = OPUS55
