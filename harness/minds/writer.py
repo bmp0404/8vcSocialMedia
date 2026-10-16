@@ -85,11 +85,16 @@ def styled_replies(llm: LLM, mission: str, author: str, post_text: str, replies:
     return [_first_line(x) for x in out.get("replies", []) if isinstance(x, str)][: cfg.reply_samples]
 
 
+MOCK_ORDINALS = ("one", "two", "three", "four", "five", "six", "seven", "eight")
+
+
 def captions(llm: LLM, mission: str, source: str, cfg: ActionConfig) -> list[str]:
     user = (f"SOURCE:\n{source}\n\nWrite {cfg.caption_samples} different captions. "
             'Return JSON: {"captions": ["..."]}')
     out = routing.on_model(llm, cfg.styled_model, "the caption writer").complete_json(
         CAPTION_SYSTEM.format(mission=mission, max_chars=cfg.caption_max_chars), user,
-        mock=lambda: {"captions": [f"mock caption {i + 1}" for i in range(cfg.caption_samples)]},
+        # Spelled-out ordinals, not digits: the gate rejects a number absent from the source, so
+        # "mock caption 1" failed every mock round whose source text had no "1" in it.
+        mock=lambda: {"captions": [f"mock caption {MOCK_ORDINALS[i % len(MOCK_ORDINALS)]}" for i in range(cfg.caption_samples)]},
     )
     return [_first_line(x) for x in out.get("captions", []) if isinstance(x, str)][: cfg.caption_samples]
