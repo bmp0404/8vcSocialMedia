@@ -1,0 +1,33 @@
+# Why this is open. The watcher drafts while a post is under 10 minutes old, and its continuation arm continues
+# the page however few replies it has (harness/watcher/DESIGN.md, "The _sgu_ protocol"). Its first 20 hot
+# targets had 0 to 3 replies when it saw them, and the two it drafted had pages of 2 and 0 (out/hot on
+# sam/platform). The live lane's own floor, 5 replies before it falls back to the styled prompt, has no
+# measurement behind it (harness/minds/settings.py, min_page_replies). What is measured is the two ends, both in
+# action/DESIGN.md: a page of real replies, where Opus found the reply 6 times in 19, and no replies at all, 17
+# times in 19. Nothing measured a page of 2. The gate promotes only if the thin page reads less like AI. A
+# rejected record says the hot path's continuation arm costs detection on fresh posts and should wait for more
+# replies or use another writer; an inconclusive one bounds that cost. Runs on devtools, where most hot targets
+# are.
+id = "continuation-thin-page"
+proposed_at = 2026-10-16T16:10:00Z
+proposed_by = "agent:B9 builder"
+profile = "devtools"
+fitness = "action_lineup"
+hypothesis = "Continuing a page of the first 2 real replies, the size the hot path continues, makes the reply no easier for the lineup detector to find than continuing the full page of up to 12."
+source = "action/DESIGN.md (cont_real 6/19 against 17/19 with no replies) and the watcher's hot targets on sam/platform (0 to 3 replies when seen)"
+label = "continuation on a 2-reply page"
+
+[baseline]
+knobs = { "action.reply.generation" = "continuation" }
+
+[change]
+kind = "code"
+knobs = { "action.page_replies" = 2 }
+commit = "ebd16a5"
+summary = "The lineup's raw continuation arm puts only the first action.page_replies real replies on the page, so it can write from a page as thin as a fresh post's."
+
+[budget]
+# 4 calls a thread an arm, 12 for three arms, on the watcher's devtools threads: a screen up to 40 (480 calls and
+# 3 probes), a confirmation up to 30 (363).
+screen_calls = 500
+confirm_calls = 400

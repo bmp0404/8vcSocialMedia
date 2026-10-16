@@ -1,0 +1,37 @@
+# Why this is open. The live reply lane writes every continuation under the wnba profile's framing handle,
+# clarkfanaccount (mission/profiles/wnba/reply_framing.json, passed in harness/minds/lanes.py:reply_lane), and
+# no lineup run has measured it: every action_lineup arm so far wrote under neutral handles. The evidence for the
+# handle is harness/minds/lab/framing_probe.py, 16 drafts per framing on 4 threads, scored by the veto alone: 4
+# passed under the handle and 2 under neutral handles (action/DESIGN.md, "Writing from the account's side").
+# side_experiment.py changed the planner and the handle together, so it can't separate them. The reply lane's
+# first promotion was reverted for drafts that spoke as the rival's fans (eval/experiments/DESIGN.md, the v3
+# retest), the failure the handle is meant to fix. Here the detector decides, and the veto pass rate the probe
+# measured is a guardrail beside it. The devtools profile has no handle (its reply_framing.json is null), so this
+# runs on wnba; if the handle helps here, a devtools handle is worth choosing, and this file with
+# profile = "devtools" tests it. The baseline makes both arms raw continuation, because the champion writes with
+# the persona prompt, which reads no framing.
+id = "continuation-framing"
+proposed_at = 2026-10-16T16:08:00Z
+proposed_by = "agent:B9 builder"
+profile = "wnba"
+fitness = "action_lineup"
+hypothesis = "Continuing the page under the profile's framing handle instead of a neutral one makes the reply harder for the lineup detector to find, without lowering the veto pass rate or raising the GPT detector's rate."
+source = "harness/minds/lab/framing_probe.py, in action/DESIGN.md: 4 of 16 veto passes under clarkfanaccount against 2 of 16 under neutral handles"
+label = "continuation under the framing handle"
+threads = ["action/fixtures/x_threads.json"]
+
+[baseline]
+knobs = { "action.reply.generation" = "continuation" }
+
+[change]
+kind = "code"
+knobs = { "action.continuation.framing" = "profile" }
+commit = "ebd16a5"
+summary = "The lineup's continuation arm writes the reply under the profile's reply_framing.json handle, as the live reply lane does."
+
+[budget]
+# Raw continuation costs 4 calls a thread an arm: the writer, two detectors and the instrument's veto. Three arms
+# make 12. A screen keeps the 17 fixture threads and adds up to 40 of the watcher's: at most 684 calls and 3
+# probes. A confirmation uses up to 30 threads: 363.
+screen_calls = 700
+confirm_calls = 400
