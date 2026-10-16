@@ -78,18 +78,30 @@ Without `HARNESS_PROVIDER=anthropic` (in the environment or `.env`) the hot path
 
 ## First live runs
 
-On 2026-10-16 the watcher ran three times from 09:32 to 10:58 UTC, which is 5:32 to 6:58 in the morning in New York and the middle of the night in San Francisco. The longest run lasted 60 minutes (09:44 to 10:44); the first was stopped after 12 minutes to change code, the third after 12 to merge sam/platform.
+On 2026-10-16 the watcher ran four times between 09:32 and 12:15 UTC, 5:32 to 8:15 in the morning in New York. The second run lasted 60 minutes and the fourth, on the merged code, 68; the first and third were stopped after 12 minutes, to change code and to merge sam/platform. The fourth was stopped when free disk fell under 2 GB (other runs' swap), the rule this batch ran under.
 
-| | 60-minute run |
-| --- | --- |
-| Handles polled successfully | 45 of 46. `@ChantelJennings` is a protected account, so fxtwitter can't read its timeline; the backoff cut it to 6 polls. |
-| Polls | 1,343, of which 1,218 succeeded (91%). The 125 failures were 122 fxtwitter 404s and 3 HTTP 500s, spread over 44 handles; each succeeded on a later cycle. |
-| Requests | 1,781, 0.49 per second. Timeline polls were 1,751 of them: 0.26 per second for devtools and 0.23 for wnba, above the planned 0.2 because xreader retries every 404 once. |
-| New watched posts | 0. The newest original post on any of the 46 timelines was from 03:18 UTC, six and a half hours before the run. |
-| Hot targets | 0 |
-| Threads ingested | 10 reads in the 60-minute run, 38 over all three runs: 22 kept at coverage 0.8 or more, 12 below it, 4 with no replies. All were +24h reads of posts 24 to 48 hours old at the first poll. 88 jobs wait for later windows. |
+| | Run 2, 09:44 to 10:44 | Run 4, 11:07 to 12:15 |
+| --- | --- | --- |
+| Handles polled successfully | 45 of 46 | 45 of 46 |
+| Polls | 1,343, 1,218 succeeded (91%) | 1,468, 1,303 succeeded (89%) |
+| Failed polls | 122 fxtwitter 404s, 3 HTTP 500s, over 44 handles | 163 404s, 2 HTTP 500s, over 46 handles |
+| Requests | 1,781, 0.49 per second | 1,956, 0.48 per second |
+| Timeline requests per second | devtools 0.26, wnba 0.23 | devtools 0.26, wnba 0.23 |
+| New watched posts | 0 | 2, both under 10 minutes old |
+| Hot targets | 0 | 2, each file written within 6 s of detection |
 
-No post went live while the watcher ran, so the hot path never ran on a fresh post. To time it, I ran `hot.run_hot` with the real gateway on two posts from the watch lists, 11 hours old, writing to a scratch directory instead of `out/hot/`:
+`@ChantelJennings` is a protected account, so fxtwitter can't read its timeline; the backoff cut it to 6 or 7 polls an hour. Every other failing handle succeeded on a later cycle. The timeline rate is above the planned 0.2 per list because xreader retries every 404 once. Until 12:10 no watched account had posted an original since 03:18 UTC; fxtwitter itself was live, since @Reuters showed a post 3 minutes old.
+
+The two hot targets:
+
+| Post | Seen at | Arm | Result | Plan | File written at |
+| --- | --- | --- | --- | --- | --- |
+| @HerHoopStats 2111067014940803107, wnba | 77 s old | styled | plan abstained, `no_angle`: the post names neither player nor team | 3.0 s | 81 s old |
+| @Netlify 2111067657877487647, devtools | 54 s old | styled | plan abstained, `off_mission`: a welcome to new web-hosting sign-ups, nothing on coding agents | 5.3 s | 60 s old |
+
+Thread ingestion over all four runs read 39 threads: 23 kept at coverage 0.8 or more, 12 below it, 4 with no replies. All were +24h reads of posts 24 to 48 hours old at the first poll; the two hot posts' +1h reads were still pending when the watcher stopped. `data/threads/` holds the 23 kept threads in 60 KB.
+
+Neither hot target reached the writer, so the draft path's timing comes from runs of `hot.run_hot` with the real gateway on two posts from the watch lists, 11 hours old, written to a scratch directory instead of `out/hot/`:
 
 | Post | Arm | Result | Plan | Draft steps | Total |
 | --- | --- | --- | --- | --- | --- |
@@ -102,6 +114,8 @@ Before `veto_parallel_orders`, the styled draft took 55.1 s, 24 s of it in the t
 ## Not verified, and open questions
 
 - No hot target has been answered from `_sgu_`, so matching a hot target and ranking a real reply have run only against fakes.
+- Both live hot targets ended at the plan, so the writer, gate and veto have run on a fresh post only with the mock provider; with the real gateway they ran on 11-hour-old posts.
+- No +1h read of a post first seen fresh has run live; every live ingestion was a +24h read.
 - The 48-hour maturity rule in sam/corpus (`MATURE_AFTER`) excludes every item collected here from the current reply benchmark, because the last read is at +24h. Either add a +48h checkpoint or let the benchmark use the +24h counts; the brief asked for +1h and +24h, so this is for the lead.
 - `data/threads/` holds replies by individual X users, with handles and follower counts. Decide before committing it to the public repository; the corpus snapshot raised the same question.
 - `success` at rank percentile 0.5 and `insufficient_thread` below 5 replies are guesses.
