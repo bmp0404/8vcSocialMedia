@@ -286,3 +286,20 @@ def test_daily_budget_and_post_spacing_come_from_todays_logs(tmp_out):
     assert b.left("post") == 0 and b.left("quote") == 0  # spaced: a post went out 30 minutes ago
     assert b.left("reply") == min(ActionConfig().run_caps["reply"], ActionConfig().daily_caps["reply"] - 1)
     assert lanes.Budget.from_logs(ActionConfig(), now=now + timedelta(hours=2)).left("post") == 1
+
+
+def test_page_drops_replies_the_judge_reads_as_bots():
+    bot = "The defensive talent in the WNBA is unreal and the energy is electric right now"
+    thread = REPLIES + [{"text": bot, "likes": 1}]
+    llm = Routed(styled=["state farm about to be loud"],
+                 veto=lambda c: {"p_ai": 95 if "energy is electric" in c else 5, "unsupported": False, "risk": False, "reason": ""})
+    actions, _ = run(llm, [narrative([target(replies=thread)])])
+    (a,) = [a for a in actions if a.type == "reply"]
+    assert a.draft_meta["page_dropped_as_bots"] == [bot] and a.draft_meta["page_replies"] == len(REPLIES)
+
+
+def test_bot_filter_is_a_knob():
+    thread = REPLIES + [{"text": "the energy is electric right now for real", "likes": 1}]
+    llm = Routed(styled=["ok then sure"], veto=lambda c: {"p_ai": 95 if "electric" in c else 5, "unsupported": False, "risk": False})
+    actions, _ = run(llm, [narrative([target(replies=thread)])], cfg=ActionConfig(filter_page_bots=False))
+    assert [a.draft_meta["page_dropped_as_bots"] for a in actions if a.type == "reply"] == [[]]

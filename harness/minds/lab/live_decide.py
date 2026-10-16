@@ -45,7 +45,12 @@ def main() -> None:
     args = p.parse_args()
 
     now = time.time()
-    targets = [t for h in args.handles for t in targets_for(h, now, args.posts)]
+    targets = []
+    for h in args.handles:
+        try:
+            targets += targets_for(h, now, args.posts)
+        except (RuntimeError, thread.ThreadUnavailable) as e:
+            print(f"[live] skipping {h}: {e}")
     n = Narrative(id="live", title="Live posts from " + ", ".join(args.handles),
                   summary="; ".join(t["text"][:120] for t in targets), relevance=0.8, velocity=0.8,
                   signal_urls=[t["url"] for t in targets])

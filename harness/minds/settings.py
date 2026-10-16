@@ -39,8 +39,11 @@ class ActionConfig:
     veto_model: str = "claude-opus-5-5"  # caught 90-100% of generated replies where GPT caught 40-77%
     veto_max_p_ai: int = 50  # a draft the judge puts at or above this P(AI), in either order, is vetoed (no measurement)
     post_judge_min_grounding: int = 3  # Dhilan's 0-5 grounding score; below this is a veto (no measurement)
-    # --- exemplars and the page: drop scraped replies that read as bots
-    corpus_max_p_ai: int = 50  # research finding 10; corpus scored by harness.minds.lab.score_corpus
+    # --- the continuation page: drop scraped replies the judge reads as bots, so the writer doesn't
+    # copy them (research finding 10: the two most AI-looking "human" replies got 19 and 23 likes
+    # against 170-2,026 for the top replies). One single-order judge call per target; no tuning yet.
+    page_max_p_ai: int = 50
+    filter_page_bots: bool = True
     # --- post lane
     caption_max_chars: int = 100  # research finding 8: House of Highlights-style captions
     caption_samples: int = 4

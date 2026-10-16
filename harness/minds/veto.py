@@ -79,6 +79,11 @@ def _one_pass(judge: LLM, texts: list[str], lane: str, context: str) -> list[Ver
         raise VetoError(f"judge answered in the wrong shape: {e!r}") from e
 
 
+def p_ai_scores(llm: LLM, cfg: ActionConfig, texts: list[str], *, context: str) -> list[int]:
+    """One-order P(AI) for real replies on the page. Raises VetoError on a malformed answer."""
+    return [v.p_ai for v in _one_pass(_judge_llm(llm, cfg), texts, "reply", context)]
+
+
 def veto(llm: LLM, cfg: ActionConfig, texts: list[str], *, lane: str, context: str) -> list[VetoResult]:
     """Judge `texts` forward and reversed. A draft passes only if both passes clear it."""
     texts = list(dict.fromkeys(t for t in texts if t.strip()))

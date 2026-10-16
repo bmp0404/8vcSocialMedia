@@ -23,18 +23,15 @@ REPORT = config.ROOT / "action" / "experiments" / "gate_calibration.json"
 TCO = re.compile(r"https?://t\.co/\w+")
 
 
-def _rates(texts: list[str], kind: str) -> dict:
-    per_rule = {name: [] for name in gate.RULES}
-    rejected = 0
-    for t in texts:
-        res = gate.check(t, kind)
-        rejected += not res.passed
-        for f in res.findings:
-            if len(per_rule[f.rule]) < 50:
-                per_rule[f.rule].append(t)
-    out = {"n": len(texts), "rejected": rejected, "rejected_rate": round(rejected / max(len(texts), 1), 3), "rules": {}}
+def _rates(texts: list[str], kind: str, contexts: list[str | None] | None = None) -> dict:
+    contexts = contexts or [None] * len(texts)
+    results = [gate.check(t, kind, context=c) for t, c in zip(texts, contexts)]
+    style = [r for r in results if any(f.rule not in gate.GROUNDING_RULES for f in r.findings)]
+    out = {"n": len(texts), "rejected": sum(not r.passed for r in results),
+           "rejected_rate": round(sum(not r.passed for r in results) / max(len(texts), 1), 3),
+           "rejected_by_style_rules_rate": round(len(style) / max(len(texts), 1), 3), "rules": {}}
     for name in gate.RULES:
-        hits = [t for t in texts if any(f.rule == name for f in gate.check(t, kind).findings)]
+        hits = [t for t, r in zip(texts, results) if any(f.rule == name for f in r.findings)]
         out["rules"][name] = {"hits": len(hits), "rate": round(len(hits) / max(len(texts), 1), 3),
                               "examples": [h[:140] for h in hits[:3]]}
     return out
@@ -51,7 +48,13 @@ def main() -> None:
     args = p.parse_args()
 
     threads = json.loads(FIXTURE.read_text(encoding="utf-8"))["threads"]
-    replies = [r["text"] for t in threads for r in t["direct_replies"] if r["text"].strip()]
+    replies, contexts = [], []
+    for t in threads:
+        texts = [r["text"] for r in t["direct_replies"] if r["text"].strip()]
+        for i, text in enumerate(texts):
+            # What a writer answering this post would have seen: the post and the other replies.
+            replies.append(text)
+            contexts.append(f"@{t['author']}: {t['text']}\n" + "\n".join(texts[:i] + texts[i + 1:]))
     top3 = [r["text"] for t in threads for r in sorted(t["direct_replies"], key=lambda r: -r["likes"])[:3]]
     with open(config.ROOT / "data" / "devtools_virality_30d.csv", encoding="utf-8") as f:
         devtools = [TCO.sub("", row["Post Content"]).strip() for row in csv.DictReader(f)]
@@ -59,6 +62,7 @@ def main() -> None:
 
     report = {
         "x_replies": _rates(replies, "reply"),
+        "x_replies_with_thread_context": _rates(replies, "reply", contexts),
         "devtools_posts": _rates(devtools, "post"),
         "reply_length_chars": {
             "all_replies": {"p50": _pct([len(t) for t in replies], 0.5), "p90": _pct([len(t) for t in replies], 0.9)},
@@ -75,9 +79,9 @@ def main() -> None:
             m: _rates([d["text"] for d in ds], ds[0].get("kind", "reply")) for m, ds in sorted(by_method.items())
         }
     REPORT.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
-    for corpus in ("x_replies", "devtools_posts"):
+    for corpus in ("x_replies", "x_replies_with_thread_context", "devtools_posts"):
         r = report[corpus]
-        print(f"{corpus}: n={r['n']} rejected={r['rejected_rate']:.1%}")
+        print(f"{corpus}: n={r['n']} rejected={r['rejected_rate']:.1%} (style rules alone {r['rejected_by_style_rules_rate']:.1%})")
         for name, v in r["rules"].items():
             if v["hits"]:
                 print(f"   {name:<18} {v['hits']:>4} ({v['rate']:.1%})  e.g. {v['examples'][0][:90]!r}")
