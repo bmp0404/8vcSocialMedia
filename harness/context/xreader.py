@@ -48,6 +48,8 @@ class XPost:
     quoted_id: str | None = None
     is_repost: bool = False  # True when it appears on a timeline because `reposted_by` reposted it
     reposted_by: str | None = None
+    # True for another account's post that a with-replies timeline shows above the account's reply to it
+    timeline_context: bool = False
     media_types: list[str] = field(default_factory=list)
     n_links: int = 0  # non-media URLs in the text
     n_mentions: int = 0
@@ -109,7 +111,7 @@ class ReplySample:
 class XReader(Protocol):
     def status(self, status_id: str) -> XPost: ...
 
-    def profile_statuses(self, handle: str, limit: int = 20) -> list[XPost]: ...
+    def profile_statuses(self, handle: str, limit: int = 20, with_replies: bool = False) -> list[XPost]: ...
 
     def conversation(self, status_id: str, ranking_mode: str = "likes") -> list[XPost]: ...
 
@@ -195,22 +197,35 @@ class FxTwitterReader:
         data, fetched_at = self._get(f"/status/{_status_id(status_id)}", max_age_s)
         return _parse(data["tweet"], fetched_at)
 
-    def profile_statuses(self, handle: str, limit: int = 20, max_age_s=_READER_DEFAULT) -> list[XPost]:
-        """Newest first. Includes the account's reposts, marked `is_repost=True`."""
+    def profile_statuses(
+        self, handle: str, limit: int = 20, with_replies: bool = False, max_age_s=_READER_DEFAULT
+    ) -> list[XPost]:
+        """Newest first. Includes the account's reposts, marked `is_repost=True`.
+
+        By default this reads X's Posts tab, which leaves the account's replies
+        out. `with_replies=True` reads Posts and replies instead. That tab also
+        shows the other accounts' posts the account answered; those come back
+        with `timeline_context=True`, not as reposts (seen on @CClarkReport,
+        2026-10-16, where they carry no `reposted_by`).
+        """
         handle = handle.lstrip("@")
         posts: list[XPost] = []
         cursor = None
         while len(posts) < limit:
-            path = f"/2/profile/{urllib.parse.quote(handle)}/statuses"
+            query = ["with_replies=1"] if with_replies else []
             if cursor:
-                path += "?cursor=" + urllib.parse.quote(cursor)
+                query.append("cursor=" + urllib.parse.quote(cursor))
+            path = f"/2/profile/{urllib.parse.quote(handle)}/statuses" + ("?" + "&".join(query) if query else "")
             data, fetched_at = self._get(path, max_age_s)
             batch = [_parse(r, fetched_at) for r in data.get("results") or [] if r.get("type", "status") == "status"]
             if not batch:
                 break
             for p in batch:
                 if p.reposted_by is None and p.author_handle.lower() != handle.lower():
-                    p.is_repost, p.reposted_by = True, handle
+                    if with_replies:
+                        p.timeline_context = True
+                    else:
+                        p.is_repost, p.reposted_by = True, handle
             posts.extend(batch)
             cursor = (data.get("cursor") or {}).get("bottom")
             if not cursor:

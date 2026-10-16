@@ -1,0 +1,237 @@
+{
+ "_about": "Trimmed from GET api.fxtwitter.com/2/profile/CClarkReport/statuses?with_replies=1 on 2026-10-16. Other accounts' posts without reposted_by are the posts CClarkReport replied to.",
+ "code": 200,
+ "results": [
+  {
+   "type": "status",
+   "id": "2110371680623505424",
+   "text": "Caitlin Clark’s new “Midnight Fever” color way for the Caitlin 1 is out now!",
+   "likes": 1738,
+   "reposts": 102,
+   "replies": 29,
+   "quotes": 4,
+   "bookmarks": 27,
+   "views": 19658,
+   "replying_to": null,
+   "reposted_by": null,
+   "lang": "en",
+   "author": {
+    "screen_name": "CClarkReport",
+    "followers": 56317,
+    "verification": {
+     "verified": true,
+     "verified_at": null,
+     "type": "individual"
+    }
+   },
+   "raw_text": {
+    "facets": [
+     {
+      "type": "media"
+     }
+    ]
+   },
+   "media": {
+    "all": [
+     {
+      "type": "photo"
+     }
+    ]
+   }
+  },
+  {
+   "type": "status",
+   "id": "2110373599190405247",
+   "text": "Nike is running out of stock fast, some other retailers still have stock https://bit.ly/4jXkBEF #sponsored",
+   "likes": 18,
+   "reposts": 0,
+   "replies": 0,
+   "quotes": 0,
+   "bookmarks": 0,
+   "views": 1457,
+   "replying_to": {
+    "screen_name": "CClarkReport",
+    "status": "2110371680623505424",
+    "url": "https://x.com/CClarkReport/status/2110371680623505424",
+    "profile_url": "https://x.com/CClarkReport"
+   },
+   "reposted_by": null,
+   "lang": "en",
+   "author": {
+    "screen_name": "CClarkReport",
+    "followers": 56317,
+    "verification": {
+     "verified": true,
+     "verified_at": null,
+     "type": "individual"
+    }
+   },
+   "raw_text": {
+    "facets": [
+     {
+      "type": "url"
+     },
+     {
+      "type": "hashtag"
+     },
+     {
+      "type": "media"
+     }
+    ]
+   },
+   "media": {
+    "all": [
+     {
+      "type": "photo"
+     }
+    ]
+   }
+  },
+  {
+   "type": "status",
+   "id": "2106419802117976116",
+   "text": "I promise you I just went 10-0 on my picks",
+   "likes": 30172,
+   "reposts": 1026,
+   "replies": 869,
+   "quotes": 220,
+   "bookmarks": 569,
+   "views": 2578260,
+   "replying_to": null,
+   "reposted_by": null,
+   "lang": "en",
+   "author": {
+    "screen_name": "CaitlinClark22",
+    "followers": 640140,
+    "verification": {
+     "verified": true,
+     "verified_at": null,
+     "type": "individual"
+    }
+   },
+   "raw_text": {
+    "facets": []
+   },
+   "media": {
+    "all": []
+   }
+  },
+  {
+   "type": "status",
+   "id": "2106422136889856352",
+   "text": "@CaitlinClark22 CC seeing Pat after the game",
+   "likes": 272,
+   "reposts": 3,
+   "replies": 1,
+   "quotes": 0,
+   "bookmarks": 3,
+   "views": 15334,
+   "replying_to": {
+    "screen_name": "CaitlinClark22",
+    "status": "2106419802117976116",
+    "url": "https://x.com/CaitlinClark22/status/2106419802117976116",
+    "profile_url": "https://x.com/CaitlinClark22"
+   },
+   "reposted_by": null,
+   "lang": "en",
+   "author": {
+    "screen_name": "CClarkReport",
+    "followers": 56317,
+    "verification": {
+     "verified": true,
+     "verified_at": null,
+     "type": "individual"
+    }
+   },
+   "raw_text": {
+    "facets": [
+     {
+      "type": "mention"
+     },
+     {
+      "type": "media"
+     }
+    ]
+   },
+   "media": {
+    "all": [
+     {
+      "type": "gif"
+     }
+    ]
+   }
+  },
+  {
+   "type": "status",
+   "id": "2106410515002179836",
+   "text": "Did ESPN just say the new Caitlin Clark show is the largest launch in Nike history? Caitlin is an incredible ball player, but that simply cannot be true.",
+   "likes": 224,
+   "reposts": 4,
+   "replies": 31,
+   "quotes": 7,
+   "bookmarks": 18,
+   "views": 47733,
+   "replying_to": null,
+   "reposted_by": null,
+   "lang": "en",
+   "author": {
+    "screen_name": "JimmieChesh",
+    "followers": 464,
+    "verification": {
+     "verified": false,
+     "verified_at": null,
+     "type": null
+    }
+   },
+   "raw_text": {
+    "facets": []
+   },
+   "media": {
+    "all": []
+   }
+  },
+  {
+   "type": "status",
+   "id": "2106410826999500938",
+   "text": "@JimmieChesh It is https://x.com/cclarkreport/status/2105786953970975155?s=46",
+   "likes": 134,
+   "reposts": 1,
+   "replies": 1,
+   "quotes": 0,
+   "bookmarks": 1,
+   "views": 3945,
+   "replying_to": null,
+   "reposted_by": null,
+   "quote": {
+    "id": "2105786953970975155"
+   },
+   "lang": "en",
+   "author": {
+    "screen_name": "CClarkReport",
+    "followers": 56317,
+    "verification": {
+     "verified": true,
+     "verified_at": null,
+     "type": "individual"
+    }
+   },
+   "raw_text": {
+    "facets": [
+     {
+      "type": "mention"
+     },
+     {
+      "type": "url"
+     }
+    ]
+   },
+   "media": {
+    "all": []
+   }
+  }
+ ],
+ "cursor": {
+  "top": null,
+  "bottom": null
+ }
+}
