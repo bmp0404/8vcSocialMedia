@@ -1,0 +1,41 @@
+{
+  "source_dir": "/Users/samgu/Programming Projects/8vcSocialMedia-worktrees/context-dynamics/data/context",
+  "copied_at": "2026-10-16T07:03:09+00:00",
+  "files": {
+    "x_metrics.jsonl": {
+      "about": "the dataset posts (data/devtools_virality_30d.csv) re-read through fxtwitter",
+      "sha256": "5d1fe5db5fc5a6be7d09fdd8d99f221bbe2c71a51e21b59b3cd5eb265f116f13",
+      "lines": 1665,
+      "bytes": 1320132,
+      "gz_bytes": 270787
+    },
+    "author_timelines.jsonl": {
+      "about": "posts from the dataset accounts' timelines, reposts included",
+      "sha256": "339758f174e5ee0a77dbd916568ed14686490cd68d16801c07130b0dec3de76a",
+      "lines": 7484,
+      "bytes": 6797607,
+      "gz_bytes": 1163650
+    },
+    "reply_samples.jsonl": {
+      "about": "replies to dataset posts, first page in likes and recency order, merged",
+      "sha256": "60197b0dfb2355b441771a6c1341a4386924afbf0ab73e609b77cabaa0247614",
+      "lines": 7221,
+      "bytes": 6026470,
+      "gz_bytes": 1033571
+    },
+    "boost_flags.csv": {
+      "about": "boost, thread-continuation and maturity flags for the dataset posts",
+      "sha256": "bc22aad2987132aa7f0ddbf74ed37734c6cdddca25c5bd46456c9043dcdcb6d5",
+      "lines": 1666,
+      "bytes": 238921,
+      "gz_bytes": 29965
+    },
+    "timeline_posts.csv": {
+      "about": "the accounts' own posts in the window with enriched columns and flags",
+      "sha256": "b67d4803fddcbd87e1a5b5585d23eaf39289b342cc30b3c193ffda709862eea8",
+      "lines": 2546,
+      "bytes": 1426822,
+      "gz_bytes": 249242
+    }
+  }
+}
