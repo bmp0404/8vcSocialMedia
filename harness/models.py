@@ -34,7 +34,9 @@ class Narrative:
     # model's guess because no member signal had a timestamp.
     velocity_basis: str = ""
     # X posts in this narrative that a reply or quote can target, hottest first. Each dict has
-    # url, author, text, age_minutes and engagement_per_hour (null when X gave no counts).
+    # url, author, text, created_at, age_minutes and engagement_per_hour (null when X gave no
+    # counts), plus likes, reposts, replies, quotes, views, author_followers and views_per_hour
+    # when the source reported them.
     reply_targets: list[dict] = field(default_factory=list)
 
 

@@ -89,8 +89,22 @@ def test_build_narratives_uses_ids_puts_x_urls_first_and_measures_velocity():
     expected = o.narrative_velocity([o.signal_heat(signals[0], NOW), o.signal_heat(signals[1], NOW)])
     assert n.velocity == expected
     assert n.reply_targets == [
-        {"url": "https://x.com/WNBA/status/9", "author": "WNBA", "text": "tip-off soon", "age_minutes": 30, "engagement_per_hour": 500.0}
+        {
+            "url": "https://x.com/WNBA/status/9",
+            "author": "WNBA",
+            "text": "tip-off soon",
+            "created_at": "2026-10-15T20:30:00Z",
+            "age_minutes": 30,
+            "engagement_per_hour": 500.0,
+        }
     ]
+
+
+def test_reply_target_rows_carry_raw_counts_when_present():
+    s = sig("reply_target", 0.5, url="https://x.com/a/status/1", likes=10, views=900, author_followers=50_000, size_band=1.0)
+    (row,) = o.reply_targets([s], NOW)
+    assert (row["likes"], row["views"], row["author_followers"]) == (10, 900, 50_000)
+    assert "size_band" not in row and "reposts" not in row
 
 
 def test_member_heats_count_each_author_once_and_collapse_duplicate_text():
@@ -146,10 +160,11 @@ def test_order_signals_puts_targets_first_drops_stale_and_interleaves_sources():
     assert stale == {"google_news": 1}
 
 
-def test_fit_payload_stops_at_budget_and_reports_drops(monkeypatch):
-    monkeypatch.setattr(o, "PAYLOAD_CHARS", 300)
+def test_fit_payload_stops_at_budget_and_reports_drops():
+    from harness.sources.knobs import ObserveKnobs
+
     signals = [sig("news", i, source=f"s{i}", text="x" * 100) for i in range(5)]
-    kept, payload, dropped = o.fit_payload(signals, NOW)
+    kept, payload, dropped = o.fit_payload(signals, NOW, ObserveKnobs(payload_chars=300))
     assert len(payload) <= 300 and 0 < len(kept) < 5
     assert sum(dropped.values()) == 5 - len(kept)
     assert [row["id"] for row in __import__("json").loads(payload)] == list(range(len(kept)))

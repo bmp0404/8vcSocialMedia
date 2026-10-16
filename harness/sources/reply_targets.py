@@ -25,27 +25,13 @@ from harness import config
 from harness.models import Signal
 from harness.sources.base import Source
 from harness.sources.common import SourceError, iso_utc, now_utc, parse_time
+from harness.sources.knobs import ObserveKnobs, current
 from harness.sources.watch import load_watch
 from harness.sources.x_common import XAccessError, XPost, get_backend
 from harness.sources.x_fx import verify_counts
 
-# Uncalibrated: nobody has measured reply visibility against post age on X. Half-life of a
-# post's attention, in minutes.
-HALF_LIFE_MIN = 60.0
-# Floor on age so a two-minute-old post with 3 likes doesn't read as 90 likes an hour.
-MIN_AGE_MIN = 5.0
-# A delta between snapshots closer than this is mostly noise.
-MIN_SNAPSHOT_GAP_MIN = 2.0
+# Storage housekeeping, not a tunable: snapshots older than this can't give a useful delta.
 SNAPSHOT_TTL = timedelta(days=2)
-# Above this many followers on the parent (or root) author, X runs an LLM reply-quality check and
-# can label a low-credibility reply RiskyHighVizReply (grox/flows/reply_spam/constants.py:8 and
-# task_filter.py:185-226 in x-algorithm). A new account starts with near-zero UserCred.
-BIG_ACCOUNT = 250_000
-# The 10k and 5k edges are judgment, not measurement: below ~10k followers a thread rarely has
-# traffic worth the reply.
-MID_ACCOUNT, SMALL_ACCOUNT = 10_000, 5_000
-# Several fast replies to one account look like reply spam to X's fast_reply_spam_post check.
-MAX_PER_AUTHOR = 2
 
 
 @dataclass
@@ -74,41 +60,45 @@ def engagement(post: XPost) -> int | None:
     return sum(c or 0 for c in counts)
 
 
-def size_band(followers: int | None, age_minutes: float, replies: int) -> float:
-    """Weight for the parent author's size. 1.0 when the backend didn't report followers."""
+def size_band(followers: int | None, age_minutes: float, replies: int, k: ObserveKnobs | None = None) -> float:
+    """Weight for the parent author's size, from the bands in ObserveKnobs. 1.0 when followers are unknown."""
+    k = k or current()
     if followers is None:
         return 1.0
-    if MID_ACCOUNT <= followers <= BIG_ACCOUNT:
+    if k.mid_account <= followers <= k.big_account:
         return 1.0
-    if SMALL_ACCOUNT <= followers < MID_ACCOUNT:
-        return 0.5
-    if followers > BIG_ACCOUNT and age_minutes < 10 and replies < 50:
-        return 0.3  # a giant's post in its first minutes, before the thread fills
+    if k.small_account <= followers < k.mid_account:
+        return k.small_band
+    if followers > k.big_account and age_minutes < k.giant_window_min and replies < k.giant_max_replies:
+        return k.giant_band
     return 0.0
 
 
-def _per_hour(now_count: int | None, prev_count: int | None, gap_min: float, age_min: float) -> tuple[float | None, bool]:
+def _per_hour(
+    now_count: int | None, prev_count: int | None, gap_min: float, age_min: float, k: ObserveKnobs
+) -> tuple[float | None, bool]:
     if now_count is None:
         return None, False
-    if prev_count is not None and gap_min >= MIN_SNAPSHOT_GAP_MIN:
+    if prev_count is not None and gap_min >= k.min_snapshot_gap_min:
         return max(now_count - prev_count, 0) / gap_min * 60, True
-    return now_count / max(age_min, MIN_AGE_MIN) * 60, False
+    return now_count / max(age_min, k.min_age_min) * 60, False
 
 
-def score_target(post: XPost, now: datetime, prev: Snapshot | None = None) -> TargetScore:
+def score_target(post: XPost, now: datetime, prev: Snapshot | None = None, k: ObserveKnobs | None = None) -> TargetScore:
+    k = k or current()
     created = parse_time(post.created_at)
     if created is None:
         raise ValueError(f"post {post.id} has no parseable created_at: {post.created_at!r}")
     age = max((now - created).total_seconds() / 60, 0.0)
     prev_at = parse_time(prev.observed_at) if prev else None
     gap = (now - prev_at).total_seconds() / 60 if prev_at else 0.0
-    eng_rate, eng_delta = _per_hour(engagement(post), prev.engagement if prev else None, gap, age)
-    view_rate, view_delta = _per_hour(post.views, prev.views if prev else None, gap, age)
+    eng_rate, eng_delta = _per_hour(engagement(post), prev.engagement if prev else None, gap, age, k)
+    view_rate, view_delta = _per_hour(post.views, prev.views if prev else None, gap, age, k)
     traffic = view_rate if view_rate is not None else eng_rate
     replies = post.replies or 0
-    band = size_band(post.author_followers, age, replies)
-    freshness = 0.5 ** (age / HALF_LIFE_MIN)
-    crowding = (1 + replies) ** -0.5  # each extra reply pushes ours down; the first few cost most
+    band = size_band(post.author_followers, age, replies, k)
+    freshness = 0.5 ** (age / k.target_half_life_min)
+    crowding = (1 + replies) ** -k.crowding_exponent
     score = (traffic or 0.0) * freshness * crowding * band
     return TargetScore(
         post,
@@ -127,19 +117,21 @@ def rank_targets(
     snapshots: dict[str, Snapshot],
     max_age_minutes: float,
     exclude_authors: set[str] = frozenset(),
+    k: ObserveKnobs | None = None,
 ) -> list[TargetScore]:
     """Best targets first. Drops replies, stale posts, excluded authors and zero size bands;
-    dedupes by id; keeps at most MAX_PER_AUTHOR per author.
+    dedupes by id; keeps at most k.max_per_author per author.
 
     Replies are dropped, so every target is the root of its own conversation, and two targets
     can never share a root.
     """
+    k = k or current()
     excluded = {a.lower() for a in exclude_authors}
     best: dict[str, TargetScore] = {}
     for post in posts:
         if post.is_reply or post.author.lower() in excluded:
             continue
-        scored = score_target(post, now, snapshots.get(post.id))
+        scored = score_target(post, now, snapshots.get(post.id), k)
         if scored.age_minutes > max_age_minutes or scored.size_band == 0:
             continue
         if post.id not in best or scored.score > best[post.id].score:
@@ -148,7 +140,7 @@ def rank_targets(
     ranked = []
     for t in sorted(best.values(), key=lambda t: t.score, reverse=True):
         per_author[t.post.author.lower()] += 1
-        if per_author[t.post.author.lower()] <= MAX_PER_AUTHOR:
+        if per_author[t.post.author.lower()] <= k.max_per_author:
             ranked.append(t)
     return ranked
 
