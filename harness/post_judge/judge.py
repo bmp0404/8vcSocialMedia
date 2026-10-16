@@ -8,6 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from baml_sdk import CandidatePost, GradePost, PostGrade, Performance, ReferencePost
+from harness.baml_reply import ReplyRecorder, fractional_values, json_closes, raw_array_length
 from .references import load_references, normalized_text, select_references
 
 DEFAULT_DATASET = Path(__file__).resolve().parents[2] / "data/devtools_virality_30d.csv"
@@ -46,6 +47,25 @@ def validate_grade(grade: PostGrade, references: list[ReferencePost]) -> int:
     return sum(scores) * 4
 
 
+def check_reply(grade: PostGrade, raw: str | None) -> None:
+    """Reject a grade whose raw reply BAML's parser repaired in a way that changes the evidence.
+
+    The parser drops a comparison that fails to parse and accepts a reply cut off partway, so a
+    grade can parse with comparisons or limitations missing. Rounded fractional scores are logged:
+    the rubric is whole points, so rounding moves a score by less than one.
+    """
+    if raw is None:
+        raise InvalidGradeError("Judge reply wasn't recorded, so its comparisons can't be counted")
+    if not json_closes(raw, "comparisons"):
+        raise InvalidGradeError("Judge reply was cut off before its JSON closed")
+    sent = raw_array_length(raw, "comparisons")
+    if sent is not None and sent != len(grade.comparisons):
+        raise InvalidGradeError(f"Judge reply had {sent} comparisons; the parser kept {len(grade.comparisons)}")
+    fractions = fractional_values(raw, "score")
+    if fractions:
+        print(f"[judge] rubric scores {fractions} were fractions; BAML rounded them to whole points")
+
+
 def grade_post(candidate: CandidatePost, dataset: Path = DEFAULT_DATASET, *,
                per_class: int = 3, before: date | None = None,
                exclude_ids: set[str] | None = None) -> Evaluation:
@@ -72,8 +92,10 @@ def grade_with_references(candidate: CandidatePost, references: list[ReferencePo
         raise ValueError("Candidate text must not appear in the reference pool")
     provider, model = judge_settings()
     for attempt in range(2):
-        grade = GradePost(candidate, references, provider=provider, model=model)
+        reply = ReplyRecorder()
+        grade = GradePost(candidate, references, provider=provider, model=model, on_event=reply)
         try:
+            check_reply(grade, reply.text)
             score = validate_grade(grade, references)
             break
         except InvalidGradeError:

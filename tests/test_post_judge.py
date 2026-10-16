@@ -3,12 +3,15 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import ANY, patch
+
+import pydantic
 
 from baml_sdk import (
     CandidatePost, Comparison, Confidence, Criterion, GradePost_spec, Performance, PostGrade, ReferencePost, Verdict,
 )
-from harness.post_judge.judge import grade_with_references, validate_grade
+from baml_sdk.ai import content, events
+from harness.post_judge.judge import InvalidGradeError, check_reply, grade_with_references, validate_grade
 from harness.post_judge.references import load_references, select_references
 
 
@@ -27,6 +30,19 @@ def grade(refs, score=3):
         comparisons=[Comparison(reference_id=p.id, observation="Fixture comparison") for p in refs],
         strengths=[], improvements=["Add context"], limitations=["Offline fixture"],
     )
+
+
+def judge_replying(*replies):
+    """A stand-in for GradePost that reports each grade's JSON as the model's raw reply, as the real
+    call does through on_event. A (grade, raw text) pair sends that text instead."""
+    queue = list(replies)
+
+    def fake(candidate, references, *, provider, model, on_event):
+        reply = queue.pop(0)
+        result, raw = reply if isinstance(reply, tuple) else (reply, reply.model_dump_json())
+        on_event(events.AssistantMessage(content=[content.Text(text=raw)], client_id="fixture"))
+        return result
+    return fake
 
 
 class ReferenceTests(unittest.TestCase):
@@ -94,8 +110,12 @@ class GradeTests(unittest.TestCase):
         self.assertEqual(validate_grade(grade(self.refs, 5), self.refs), 100)
 
     def test_invalid_scores_and_invented_citations_rejected(self):
+        with self.assertRaises(pydantic.ValidationError):
+            Criterion(score=6, reason="Out of range")
+        out_of_range = grade(self.refs)
+        out_of_range.clarity = Criterion.model_construct(score=6, reason="Bypassed validation")
         with self.assertRaisesRegex(ValueError, "outside"):
-            validate_grade(grade(self.refs, 6), self.refs)
+            validate_grade(out_of_range, self.refs)
         invalid = grade(self.refs)
         invalid.comparisons[0].reference_id = "invented"
         with self.assertRaisesRegex(ValueError, "unknown reference"):
@@ -107,23 +127,25 @@ class GradeTests(unittest.TestCase):
             validate_grade(invalid, self.refs)
 
     def test_explicit_pool_returns_provenance(self):
-        with patch("harness.post_judge.judge.GradePost", return_value=grade(self.refs)) as judge:
+        with patch("harness.post_judge.judge.GradePost", side_effect=judge_replying(grade(self.refs))) as judge:
             result = grade_with_references(self.candidate, self.refs, dataset_sha256="train-only-hash")
         self.assertEqual(result.score_100, 60)
         self.assertEqual(result.dataset_sha256, "train-only-hash")
-        judge.assert_called_once_with(self.candidate, self.refs, provider="openai", model="gpt-4.1-mini")
+        judge.assert_called_once_with(self.candidate, self.refs, provider="openai", model="gpt-4.1-mini", on_event=ANY)
         self.assertEqual(result.references, self.refs)
 
     def test_invalid_grade_is_retried_once_without_changing_evidence(self):
         invalid = grade(self.refs[:1])
-        with patch("harness.post_judge.judge.GradePost", side_effect=[invalid, grade(self.refs)]) as judge:
+        with patch("harness.post_judge.judge.GradePost", side_effect=judge_replying(invalid, grade(self.refs))) as judge:
             result = grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
         self.assertEqual(result.score_100, 60)
         self.assertEqual(judge.call_count, 2)
-        self.assertEqual(judge.call_args_list[0], judge.call_args_list[1])
+        first, second = judge.call_args_list
+        self.assertEqual((first.args, first.kwargs["provider"]), (second.args, second.kwargs["provider"]))
 
     def test_repeated_invalid_grade_still_fails(self):
-        with patch("harness.post_judge.judge.GradePost", return_value=grade(self.refs[:1])) as judge:
+        replies = judge_replying(grade(self.refs[:1]), grade(self.refs[:1]))
+        with patch("harness.post_judge.judge.GradePost", side_effect=replies) as judge:
             with self.assertRaisesRegex(ValueError, "both successful and poor"):
                 grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
         self.assertEqual(judge.call_count, 2)
@@ -149,9 +171,9 @@ class GradeTests(unittest.TestCase):
 
     def test_claude_code_is_default(self):
         with patch.dict("os.environ", {}, clear=True):
-            with patch("harness.post_judge.judge.GradePost", return_value=grade(self.refs)) as judge:
+            with patch("harness.post_judge.judge.GradePost", side_effect=judge_replying(grade(self.refs))) as judge:
                 result = grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
-        judge.assert_called_once_with(self.candidate, self.refs, provider="claude_code", model="sonnet")
+        judge.assert_called_once_with(self.candidate, self.refs, provider="claude_code", model="sonnet", on_event=ANY)
         self.assertEqual(result.judge_provider, "claude_code")
         self.assertEqual(result.judge_model, "sonnet")
 
@@ -161,6 +183,43 @@ class GradeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "must be claude_code, openai, or anthropic"):
                     grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
                 judge.assert_not_called()
+
+    def test_dropped_comparison_is_retried(self):
+        # The raw reply held three comparisons; the parser kept two.
+        full = grade(self.refs)
+        raw = full.model_dump_json().replace('"comparisons":[', '"comparisons":[{"reference_id":"x"},')
+        with patch("harness.post_judge.judge.GradePost", side_effect=judge_replying((full, raw), full)) as judge:
+            result = grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
+        self.assertEqual(judge.call_count, 2)
+        self.assertEqual(result.score_100, 60)
+
+    def test_cut_off_reply_is_retried_then_fails(self):
+        full = grade(self.refs)
+        cut = (full, full.model_dump_json()[:-40])
+        with patch("harness.post_judge.judge.GradePost", side_effect=judge_replying(cut, cut)) as judge:
+            with self.assertRaisesRegex(InvalidGradeError, "cut off"):
+                grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
+        self.assertEqual(judge.call_count, 2)
+
+    def test_check_reply(self):
+        full = grade(self.refs)
+        check_reply(full, f"Here it is: {full.model_dump_json()} Done.")
+        with self.assertRaisesRegex(InvalidGradeError, "wasn't recorded"):
+            check_reply(full, None)
+        with self.assertRaisesRegex(InvalidGradeError, "had 3 comparisons; the parser kept 2"):
+            check_reply(full, full.model_dump_json().replace('"comparisons":[', '"comparisons":[{},'))
+        with patch("builtins.print") as printed:
+            check_reply(full, full.model_dump_json().replace('"score":3', '"score":3.4', 1))
+        self.assertIn("[3.4]", printed.call_args.args[0])
+        # Brackets in prose ahead of a reply cut inside a comparison must not hide the cut.
+        cut = full.model_dump_json().split('"observation":"Fixture comparison"')[0] + '"observation":"Fixt'
+        with self.assertRaisesRegex(InvalidGradeError, "cut off"):
+            check_reply(full, "Evaluation [rubric v1]:\n" + cut)
+        # A fenced block wins over an earlier draft, so its dropped comparison is counted.
+        fenced = full.model_dump_json().replace('"comparisons":[', '"comparisons":[{},')
+        drafted = f"{full.model_dump_json()}\n```json\n{fenced}\n```"
+        with self.assertRaisesRegex(InvalidGradeError, "had 3 comparisons"):
+            check_reply(full, drafted)
 
     def test_model_failure_propagates(self):
         with patch("harness.post_judge.judge.GradePost", side_effect=RuntimeError("provider unavailable")):
