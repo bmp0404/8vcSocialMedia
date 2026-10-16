@@ -1,11 +1,8 @@
+import io
 import json
 import tempfile
-import threading
 import unittest
 from pathlib import Path
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
-from http.server import ThreadingHTTPServer
 
 from engine.demo.server import Queue, candidate_payload, make_handler
 
@@ -41,27 +38,38 @@ class DemoTests(unittest.TestCase):
         self.assertEqual(candidate_payload(self.payload), self.payload)
 
     def test_public_jobs_and_authenticated_worker(self):
-        server = ThreadingHTTPServer(('127.0.0.1', 0), make_handler(self.queue, 'worker-token'))
-        thread = threading.Thread(target=server.serve_forever, daemon=True)
-        thread.start()
-        self.addCleanup(server.server_close)
-        self.addCleanup(server.shutdown)
-        base = f'http://127.0.0.1:{server.server_port}'
-        with urlopen(base + '/healthz') as res:
-            self.assertTrue(json.load(res)['ok'])
-        with urlopen(base + '/api/status') as res:
-            self.assertIn('worker_online', json.load(res))
-        for path, token in (('/internal/claim', ''), ('/internal/finish', 'wrong')):
-            req = Request(base + path, b'{}', {'Authorization': 'Bearer ' + token})
-            with self.assertRaises(HTTPError) as err:
-                urlopen(req)
-            self.assertEqual(err.exception.code, 401)
-        req = Request(base + '/api/jobs', json.dumps(self.payload).encode())
-        with urlopen(req) as res:
-            self.assertEqual(res.status, 202)
-            job_id = json.load(res)['id']
-        with urlopen(Request(base + '/api/jobs/' + job_id)) as res:
-            self.assertEqual(json.load(res)['status'], 'queued')
+        handler = make_handler(self.queue, 'worker-token')
+
+        def request(path, payload=None, token=None):
+            body = json.dumps(payload).encode() if payload is not None else b''
+            method = 'POST' if payload is not None else 'GET'
+            headers = f"{method} {path} HTTP/1.0\r\nContent-Length: {len(body)}\r\n"
+            if token:
+                headers += f"Authorization: Bearer {token}\r\n"
+
+            class Connection:
+                def __init__(self):
+                    self.response = bytearray()
+
+                def makefile(self, *args):
+                    return io.BytesIO(headers.encode() + b'\r\n' + body)
+
+                def sendall(self, data):
+                    self.response.extend(data)
+
+            connection = Connection()
+            handler(connection, ('127.0.0.1', 1234), None)
+            head, content = bytes(connection.response).split(b'\r\n\r\n', 1)
+            return int(head.split()[1]), json.loads(content)
+
+        self.assertEqual(request('/healthz'), (200, {'ok': True}))
+        self.assertIn('worker_online', request('/api/status')[1])
+        for path, token in (('/internal/claim', None), ('/internal/finish', 'wrong')):
+            self.assertEqual(request(path, {}, token)[0], 401)
+        status, job = request('/api/jobs', self.payload)
+        self.assertEqual(status, 202)
+        self.assertEqual(request('/api/jobs/' + job['id'])[1]['status'], 'queued')
+        self.assertEqual(request('/internal/claim', {}, 'worker-token')[1]['job']['id'], job['id'])
 
 
 if __name__ == '__main__':
