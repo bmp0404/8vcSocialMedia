@@ -68,12 +68,16 @@ export function setParams(params) {
   for (const k of Object.keys(merged)) if (merged[k] == null || merged[k] === "") delete merged[k];
   const q = new URLSearchParams(merged).toString();
   history.replaceState(null, "", `#/${id}${q ? `?${q}` : ""}`);
+  if (current) current.query = q;
 }
 
 async function route() {
   const { id, params } = parseHash();
   const def = views.get(id) || views.get("queue");
-  if (current?.def === def) return;
+  // setParams() uses replaceState, which fires no hashchange, so reaching here with the same view
+  // means someone followed a link or edited the URL: remount with the new params.
+  const query = location.hash.split("?")[1] || "";
+  if (current?.def === def && current.query === query) return;
   current?.def.unmount?.();
   const el = $("#view");
   el.replaceChildren();
@@ -81,7 +85,7 @@ async function route() {
   if (def.css) loadCSS(def.css);
   document.title = `${def.title} · Clearance`;
   const navigated = current != null; // not the first load
-  current = { def, el, params };
+  current = { def, el, params, query };
   renderNav();
   $("#main").scrollTop = 0;
   try {
