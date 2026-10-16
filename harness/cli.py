@@ -67,6 +67,11 @@ def main() -> None:
     p.add_argument("--retries", type=int, default=2, help="revision rounds when the critic vetoes every draft")
     p.set_defaults(func=run)
 
+    # Outcomes: match approved actions to real posts and record their metrics (sam/outcomes).
+    from harness.outcomes.cli import add_commands as add_outcomes_commands
+
+    add_outcomes_commands(sub)
+
     p = sub.add_parser("record", help="store observed metrics: JSON list of {action_id, metrics}")
     p.add_argument("file")
     p.set_defaults(func=record)
