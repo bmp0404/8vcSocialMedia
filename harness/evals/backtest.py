@@ -121,6 +121,9 @@ def evaluate(posts: list[Post], preds: dict[str, Prediction], relative: bool = F
         "confounded_by_account_size": {
             "spearman_vs_log_engagement": m.spearman(s, log_eng),
             "super_viral_vs_rest_auc": m.pairwise_accuracy(s, [p.category == "Super Viral" for p in posts])[0],
+            # Across accounts, among viral posts. The context worker's past-only author floor gets 0.763 here.
+            "super_vs_medium_auc": m.pairwise_accuracy(
+                [x for x, p in zip(s, posts) if p.viral], [p.category == "Super Viral" for p in posts if p.viral])[0],
         },
     }
 
@@ -329,15 +332,15 @@ def markdown(report: dict) -> str:
         f"{first['headline_viral_vs_deadweight_auc']['n_pairs']}. Brackets are 95% intervals from resampling "
         "accounts. Every number is an upper bound for production (see eval/DESIGN.md).",
         "",
-        "| Predictor | Viral vs Deadweight, same account (headline) | Same media status | Same launch type "
-        "| Viral vs viral | Deadweight vs Deadweight (noise) | Top pick is viral |",
+        "| Predictor | Viral vs Deadweight, same account (headline) | Viral vs viral, same account (second headline) "
+        "| Same media status | Same launch type | Deadweight vs Deadweight (noise) | Top pick is viral |",
         "| --- | --- | --- | --- | --- | --- | --- |",
     ]
     for name, r in report["results"].items():
         a = r["all"]
         lines.append(
-            f"| {name} | {_fmt(a['headline_viral_vs_deadweight_auc'])} | {_fmt(a['same_media_status'])} "
-            f"| {_fmt(a['same_launch_type'])} | {_fmt(a['viral_vs_viral_by_engagement'])} "
+            f"| {name} | {_fmt(a['headline_viral_vs_deadweight_auc'])} | {_fmt(a['viral_vs_viral_by_engagement'])} "
+            f"| {_fmt(a['same_media_status'])} | {_fmt(a['same_launch_type'])} "
             f"| {_fmt(a['deadweight_vs_deadweight_noise_check'])} | {_fmt(a['top_pick_is_viral'])} |"
         )
     unboosted = {n: r["without_boost_suspect"] for n, r in report["results"].items()
@@ -353,8 +356,9 @@ def markdown(report: dict) -> str:
         lines.append(f"- `{name}`: {'; '.join(parts)}")
     lines += ["", "Confounded by account size (cross-account; a model that knows which brands are big scores well "
               "here without judging the writing):", "",
-              "| Predictor | Spearman vs log engagement | Super Viral vs rest AUC | Category-balanced protocol "
-              "(aarav/self-improving) |", "| --- | --- | --- | --- |"]
+              "| Predictor | Spearman vs log engagement | Super Viral vs rest AUC | Super vs Medium Viral AUC "
+              "(author floor 0.763) | Category-balanced protocol (aarav/self-improving) |",
+              "| --- | --- | --- | --- | --- |"]
     for name, r in report["results"].items():
         c = r["all"]["confounded_by_account_size"]
         cb = r.get("category_balanced") or {}
@@ -363,7 +367,8 @@ def markdown(report: dict) -> str:
                f"{cb['cross_account_spearman_range95'][1]:.2f})")
         sp = "n/a" if c["spearman_vs_log_engagement"] is None else f"{c['spearman_vs_log_engagement']:.3f}"
         sv = "n/a" if c["super_viral_vs_rest_auc"] is None else f"{c['super_viral_vs_rest_auc']:.3f}"
-        lines.append(f"| {name} | {sp} | {sv} | {bal} |")
+        sm = "n/a" if c.get("super_vs_medium_auc") is None else f"{c['super_vs_medium_auc']:.3f}"
+        lines.append(f"| {name} | {sp} | {sv} | {sm} | {bal} |")
     notes = []
     for name, r in report["results"].items():
         if r.get("retest"):

@@ -28,7 +28,7 @@
   "thread_continuation": 316,
   "younger_than_48h": 113
  },
- "rescored_at": "2026-10-15T21:09:19",
+ "rescored_at": "2026-10-15T21:28:47",
  "enriched_csv": "/tmp/eval-ctx/enriched.csv",
  "protocol": "v2: within-account viral vs Deadweight, one post per model call",
  "n_sampled": 144,
@@ -191,6 +191,7 @@
    "relative": false,
    "seconds": 0.0,
    "failures": [],
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -242,7 +243,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": -0.02271414305737491,
-     "super_viral_vs_rest_auc": 0.5901234567901235
+     "super_viral_vs_rest_auc": 0.5901234567901235,
+     "super_vs_medium_auc": 0.6145833333333334
     }
    },
    "without_boost_suspect": {
@@ -296,7 +298,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": -0.054584380700688585,
-     "super_viral_vs_rest_auc": 0.5491071428571429
+     "super_viral_vs_rest_auc": 0.5491071428571429,
+     "super_vs_medium_auc": 0.5714285714285714
     }
    },
    "category_balanced": {
@@ -895,6 +898,7 @@
    "relative": false,
    "seconds": 0.0,
    "failures": [],
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -946,7 +950,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.2006916700944085,
-     "super_viral_vs_rest_auc": 0.5946502057613169
+     "super_viral_vs_rest_auc": 0.5946502057613169,
+     "super_vs_medium_auc": 0.5347222222222222
     }
    },
    "without_boost_suspect": {
@@ -1000,7 +1005,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.22364361091448945,
-     "super_viral_vs_rest_auc": 0.5647321428571429
+     "super_viral_vs_rest_auc": 0.5647321428571429,
+     "super_vs_medium_auc": 0.49878934624697335
     }
    },
    "category_balanced": {
@@ -1599,6 +1605,7 @@
    "relative": false,
    "seconds": 0.0,
    "failures": [],
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -1650,7 +1657,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.4115451662833611,
-     "super_viral_vs_rest_auc": 0.6135802469135803
+     "super_viral_vs_rest_auc": 0.6135802469135803,
+     "super_vs_medium_auc": 0.4861111111111111
     }
    },
    "without_boost_suspect": {
@@ -1704,7 +1712,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.3771205323150592,
-     "super_viral_vs_rest_auc": 0.55859375
+     "super_viral_vs_rest_auc": 0.55859375,
+     "super_vs_medium_auc": 0.42736077481840196
     }
    },
    "category_balanced": {
@@ -2303,6 +2312,7 @@
    "relative": false,
    "seconds": 0.0,
    "failures": [],
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -2354,7 +2364,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.2430873272402388,
-     "super_viral_vs_rest_auc": 0.460082304526749
+     "super_viral_vs_rest_auc": 0.460082304526749,
+     "super_vs_medium_auc": 0.3671875
     }
    },
    "without_boost_suspect": {
@@ -2408,7 +2419,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.27345254492353943,
-     "super_viral_vs_rest_auc": 0.5463169642857143
+     "super_viral_vs_rest_auc": 0.5463169642857143,
+     "super_vs_medium_auc": 0.4430992736077482
     }
    },
    "category_balanced": {
@@ -3007,6 +3019,7 @@
    "relative": false,
    "seconds": 3.6,
    "failures": [],
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -3058,7 +3071,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.2184340070881584,
-     "super_viral_vs_rest_auc": 0.5415637860082304
+     "super_viral_vs_rest_auc": 0.5415637860082304,
+     "super_vs_medium_auc": 0.5086805555555556
     }
    },
    "without_boost_suspect": {
@@ -3112,7 +3126,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.16475442151181396,
-     "super_viral_vs_rest_auc": 0.43638392857142855
+     "super_viral_vs_rest_auc": 0.43638392857142855,
+     "super_vs_medium_auc": 0.4092009685230024
     }
    },
    "category_balanced": {
@@ -4009,6 +4024,7 @@
     "spearman_between_runs": 0.9317243332098334,
     "mean_abs_diff": 0.014225000000000002
    },
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -4060,7 +4076,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5574805896139626,
-     "super_viral_vs_rest_auc": 0.8469135802469135
+     "super_viral_vs_rest_auc": 0.8469135802469135,
+     "super_vs_medium_auc": 0.7421875
     }
    },
    "without_boost_suspect": {
@@ -4114,7 +4131,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5531592795595476,
-     "super_viral_vs_rest_auc": 0.82421875
+     "super_viral_vs_rest_auc": 0.82421875,
+     "super_vs_medium_auc": 0.7046004842615012
     }
    },
    "category_balanced": {
@@ -6019,6 +6037,7 @@
     "spearman_between_runs": 0.9863387228049311,
     "mean_abs_diff": 0.013175000000000001
    },
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -6070,7 +6089,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5073804914378345,
-     "super_viral_vs_rest_auc": 0.7666666666666667
+     "super_viral_vs_rest_auc": 0.7666666666666667,
+     "super_vs_medium_auc": 0.6354166666666666
     }
    },
    "without_boost_suspect": {
@@ -6124,7 +6144,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5082103813163567,
-     "super_viral_vs_rest_auc": 0.7332589285714286
+     "super_viral_vs_rest_auc": 0.7332589285714286,
+     "super_vs_medium_auc": 0.5871670702179177
     }
    },
    "category_balanced": {
@@ -8029,6 +8050,7 @@
     "spearman_between_runs": 0.8369478465476818,
     "mean_abs_diff": 0.0125
    },
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -8080,7 +8102,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.49830187615774135,
-     "super_viral_vs_rest_auc": 0.7415637860082305
+     "super_viral_vs_rest_auc": 0.7415637860082305,
+     "super_vs_medium_auc": 0.6423611111111112
     }
    },
    "without_boost_suspect": {
@@ -8134,7 +8157,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5068923345784004,
-     "super_viral_vs_rest_auc": 0.7181919642857143
+     "super_viral_vs_rest_auc": 0.7181919642857143,
+     "super_vs_medium_auc": 0.6089588377723971
     }
    },
    "category_balanced": {
@@ -9607,6 +9631,7 @@
     "spearman_between_runs": 0.8133306828264799,
     "mean_abs_diff": 0.015500000000000003
    },
+   "source_run_at": "2026-10-15T20:54:19",
    "all": {
     "n_posts": 144,
     "n_accounts": 27,
@@ -9658,7 +9683,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.6094818932080813,
-     "super_viral_vs_rest_auc": 0.8094650205761317
+     "super_viral_vs_rest_auc": 0.8094650205761317,
+     "super_vs_medium_auc": 0.6970486111111112
     }
    },
    "without_boost_suspect": {
@@ -9712,7 +9738,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.6186510745877368,
-     "super_viral_vs_rest_auc": 0.7522321428571429
+     "super_viral_vs_rest_auc": 0.7522321428571429,
+     "super_vs_medium_auc": 0.5980629539951574
     }
    },
    "category_balanced": {
@@ -11224,7 +11251,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5581511340641935,
-     "super_viral_vs_rest_auc": 0.8193415637860082
+     "super_viral_vs_rest_auc": 0.8193415637860082,
+     "super_vs_medium_auc": 0.6987847222222222
     }
    },
    "without_boost_suspect": {
@@ -11278,7 +11306,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.5589106175392631,
-     "super_viral_vs_rest_auc": 0.7840401785714286
+     "super_viral_vs_rest_auc": 0.7840401785714286,
+     "super_vs_medium_auc": 0.6404358353510896
     }
    },
    "category_balanced": {
@@ -11295,176 +11324,512 @@
     ]
    },
    "predictions": {
-    "https://x.com/n8n_io/status/2105609247111467462": {
-     "score": 0.07,
+    "https://x.com/upstash/status/2110098341120098652": {
+     "score": 0.0495,
      "detail": {}
     },
-    "https://x.com/CockroachDB/status/2107119975513080227": {
-     "score": 0.068,
+    "https://x.com/convex/status/2105073497664008404": {
+     "score": 0.11199999999999999,
      "detail": {}
     },
-    "https://x.com/neondatabase/status/2105789222678634606": {
-     "score": 0.055999999999999994,
+    "https://x.com/resend/status/2103123046005678242": {
+     "score": 0.052500000000000005,
      "detail": {}
     },
-    "https://x.com/n8n_io/status/2107386299581653024": {
-     "score": 0.091,
+    "https://x.com/boltdotnew/status/2107846455180288289": {
+     "score": 0.16749999999999998,
      "detail": {}
     },
-    "https://x.com/upstash/status/2104320882550415734": {
-     "score": 0.104,
+    "https://x.com/CockroachDB/status/2099912777414369730": {
+     "score": 0.0305,
      "detail": {}
     },
-    "https://x.com/tldraw/status/2104983011062104324": {
-     "score": 0.055,
+    "https://x.com/Replit/status/2102828063184568709": {
+     "score": 0.1215,
      "detail": {}
     },
-    "https://x.com/tldraw/status/2105003566351908892": {
-     "score": 0.275,
+    "https://x.com/resend/status/2109705935098892758": {
+     "score": 0.097,
      "detail": {}
     },
-    "https://x.com/n8n_io/status/2102409055088312518": {
-     "score": 0.015000000000000001,
+    "https://x.com/convex/status/2102094480400912753": {
+     "score": 0.1805,
      "detail": {}
     },
-    "https://x.com/motherduck/status/2100701824936202249": {
-     "score": 0.0485,
+    "https://x.com/posthog/status/2109706421919248499": {
+     "score": 0.1485,
      "detail": {}
     },
-    "https://x.com/kilocode/status/2100990080739385567": {
-     "score": 0.0505,
+    "https://x.com/triggerdotdev/status/2100615804639396090": {
+     "score": 0.07500000000000001,
      "detail": {}
     },
-    "https://x.com/warpdotdev/status/2100623731294978243": {
-     "score": 0.1175,
+    "https://x.com/motherduck/status/2107478490308083950": {
+     "score": 0.086,
      "detail": {}
     },
-    "https://x.com/biomejs/status/2110015673296400420": {
-     "score": 0.1775,
+    "https://x.com/resend/status/2107168738198057179": {
+     "score": 0.0265,
      "detail": {}
     },
-    "https://x.com/resend/status/2105673390556364852": {
-     "score": 0.0915,
+    "https://x.com/linear/status/2108599715478851601": {
+     "score": 0.0675,
      "detail": {}
     },
-    "https://x.com/AmpCode/status/2103413581182361813": {
-     "score": 0.0115,
-     "detail": {}
-    },
-    "https://x.com/CockroachDB/status/2107949104684748942": {
-     "score": 0.0625,
-     "detail": {}
-    },
-    "https://x.com/biomejs/status/2105319094346015015": {
-     "score": 0.0925,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2101368657247101436": {
-     "score": 0.034999999999999996,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2100321324170150301": {
-     "score": 0.11599999999999999,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2104971969494233559": {
-     "score": 0.035500000000000004,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2108233328143053130": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2108210104419922065": {
-     "score": 0.08499999999999999,
-     "detail": {}
-    },
-    "https://x.com/coderabbitai/status/2099868543709753769": {
-     "score": 0.0915,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2105695896566735281": {
-     "score": 0.1365,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2099864565697872320": {
-     "score": 0.11249999999999999,
-     "detail": {}
-    },
-    "https://x.com/zeddotdev/status/2104559249854550430": {
-     "score": 0.10550000000000001,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2110059335833317584": {
-     "score": 0.14300000000000002,
+    "https://x.com/expo/status/2109237727367426405": {
+     "score": 0.0865,
      "detail": {}
     },
     "https://x.com/Replit/status/2105084123358568584": {
      "score": 0.0815,
      "detail": {}
     },
-    "https://x.com/CockroachDB/status/2100294013462929812": {
-     "score": 0.064,
+    "https://x.com/zeddotdev/status/2105301337881641226": {
+     "score": 0.0255,
      "detail": {}
     },
-    "https://x.com/Railway/status/2104572401468199274": {
-     "score": 0.11249999999999999,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2107896848044437766": {
-     "score": 0.22,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2104630655271501951": {
-     "score": 0.042499999999999996,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2102110133946052855": {
-     "score": 0.016,
+    "https://x.com/upstash/status/2100626014866956729": {
+     "score": 0.1315,
      "detail": {}
     },
     "https://x.com/posthog/status/2102424081253752928": {
      "score": 0.10400000000000001,
      "detail": {}
     },
-    "https://x.com/upstash/status/2108368797946315060": {
-     "score": 0.1215,
+    "https://x.com/neondatabase/status/2102420442527256938": {
+     "score": 0.047,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105789222678634606": {
+     "score": 0.055999999999999994,
      "detail": {}
     },
     "https://x.com/n8n_io/status/2108560485381460192": {
      "score": 0.0335,
      "detail": {}
     },
-    "https://x.com/kilocode/status/2103138729154294223": {
-     "score": 0.06949999999999999,
+    "https://x.com/resend/status/2100228217911280071": {
+     "score": 0.10250000000000001,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2108210104419922065": {
+     "score": 0.08499999999999999,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108316518907892218": {
+     "score": 0.07350000000000001,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2110059335833317584": {
+     "score": 0.14300000000000002,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2099868543709753769": {
+     "score": 0.0915,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103501168911454222": {
+     "score": 0.089,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2106097814392783116": {
+     "score": 0.1125,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2104971969494233559": {
+     "score": 0.035500000000000004,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2105695896566735281": {
+     "score": 0.1365,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2101368657247101436": {
+     "score": 0.034999999999999996,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105716649714196849": {
+     "score": 0.0915,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2100601169458413732": {
+     "score": 0.019,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2100971841330221306": {
+     "score": 0.10350000000000001,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2107837302999224623": {
+     "score": 0.184,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2110093275684352234": {
+     "score": 0.0475,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2105326971320443307": {
+     "score": 0.256,
      "detail": {}
     },
     "https://x.com/boltdotnew/status/2105319354606793003": {
      "score": 0.064,
      "detail": {}
     },
+    "https://x.com/polar_sh/status/2105650325004951746": {
+     "score": 0.027999999999999997,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104983011062104324": {
+     "score": 0.055,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2105647817217700085": {
+     "score": 0.0735,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2100623731294978243": {
+     "score": 0.1175,
+     "detail": {}
+    },
     "https://x.com/boltdotnew/status/2100646000016716180": {
      "score": 0.16599999999999998,
      "detail": {}
     },
-    "https://x.com/Railway/status/2103566393862136150": {
-     "score": 0.19,
+    "https://x.com/boltdotnew/status/2108242330037661739": {
+     "score": 0.0815,
      "detail": {}
     },
-    "https://x.com/upstash/status/2110098341120098652": {
-     "score": 0.0495,
+    "https://x.com/biomejs/status/2105319094346015015": {
+     "score": 0.0925,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2104559249854550430": {
+     "score": 0.10550000000000001,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105402878252953967": {
+     "score": 0.0335,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107949104684748942": {
+     "score": 0.0625,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104320882550415734": {
+     "score": 0.104,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105728858427412814": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104931792218096074": {
+     "score": 0.1865,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104963491308433438": {
+     "score": 0.051000000000000004,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2100284079866568773": {
+     "score": 0.054000000000000006,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2100990080739385567": {
+     "score": 0.0505,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103510268013605147": {
+     "score": 0.10500000000000001,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 0.099,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2106364896049061891": {
+     "score": 0.22,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2102409055088312518": {
+     "score": 0.015000000000000001,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2105609247111467462": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2107532184341156080": {
+     "score": 0.2205,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2110036161297055898": {
+     "score": 0.042499999999999996,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100988806950252683": {
+     "score": 0.164,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2107468131841331475": {
+     "score": 0.052500000000000005,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2105345363813286280": {
+     "score": 0.184,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104572401468199274": {
+     "score": 0.11249999999999999,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103862323962388891": {
+     "score": 0.1375,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102767517219360794": {
+     "score": 0.0915,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2099894783284273290": {
+     "score": 0.069,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2106054567125532976": {
+     "score": 0.38,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2100267285373989020": {
+     "score": 0.21500000000000002,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108612014964904428": {
+     "score": 0.039,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2105349140842791077": {
+     "score": 0.129,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.091,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2099924996394975675": {
+     "score": 0.0375,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2108589139235082681": {
+     "score": 0.03,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2100321324170150301": {
+     "score": 0.11599999999999999,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2101024983518765242": {
+     "score": 0.0185,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2102834407140684058": {
+     "score": 0.0305,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2101808371896852966": {
+     "score": 0.05449999999999999,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102414494471188631": {
+     "score": 0.27249999999999996,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2107182156946739330": {
+     "score": 0.131,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2105673390556364852": {
+     "score": 0.0915,
      "detail": {}
     },
     "https://x.com/convex/status/2108273573534306427": {
      "score": 0.07100000000000001,
      "detail": {}
     },
-    "https://x.com/linear/status/2102504412572721181": {
-     "score": 0.177,
+    "https://x.com/greptile/status/2103140056256888894": {
+     "score": 0.199,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104630655271501951": {
+     "score": 0.042499999999999996,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105736025880530995": {
+     "score": 0.195,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105372353081291121": {
+     "score": 0.1275,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102077291081896307": {
+     "score": 0.2875,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2100667636367630683": {
+     "score": 0.1725,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105003566351908892": {
+     "score": 0.275,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2107462795516313992": {
+     "score": 0.14500000000000002,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2104640828794941782": {
+     "score": 0.08399999999999999,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2104958085492081025": {
+     "score": 0.271,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2105689279251063086": {
+     "score": 0.055,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106028700638785617": {
+     "score": 0.031,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2107161297024376889": {
+     "score": 0.017499999999999998,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2108256629137571935": {
+     "score": 0.091,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102110133946052855": {
+     "score": 0.016,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2102744822561824931": {
+     "score": 0.042499999999999996,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2100294013462929812": {
+     "score": 0.064,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2103566393862136150": {
+     "score": 0.19,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2110068941364318514": {
+     "score": 0.1565,
      "detail": {}
     },
     "https://x.com/zeddotdev/status/2104945383998881832": {
      "score": 0.1885,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2107896848044437766": {
+     "score": 0.22,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2108211047966384185": {
+     "score": 0.0815,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105327144457163238": {
+     "score": 0.032,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107119975513080227": {
+     "score": 0.068,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106019538924179955": {
+     "score": 0.22599999999999998,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2105178613763207269": {
+     "score": 0.1065,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104978612323594461": {
+     "score": 0.137,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102095624586002517": {
+     "score": 0.035,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2105688995313176789": {
+     "score": 0.0135,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2104615440966095345": {
+     "score": 0.031,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099845821910901045": {
+     "score": 0.0925,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2103140490749395097": {
+     "score": 0.0365,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2100268607477273048": {
+     "score": 0.15150000000000002,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2104488818170630389": {
+     "score": 0.1965,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2110015673296400420": {
+     "score": 0.1775,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2100701824936202249": {
+     "score": 0.0485,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2105353453815861370": {
+     "score": 0.107,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2103413581182361813": {
+     "score": 0.0115,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2102367584398246284": {
+     "score": 0.07250000000000001,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105690247854272834": {
+     "score": 0.22949999999999998,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2102825133283188976": {
+     "score": 0.155,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2102421737073713559": {
+     "score": 0.1975,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104603046005403857": {
+     "score": 0.031,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2103319070674178473": {
+     "score": 0.1965,
      "detail": {}
     },
     "https://x.com/prisma/status/2103135542062076393": {
@@ -11475,136 +11840,44 @@
      "score": 0.0985,
      "detail": {}
     },
-    "https://x.com/resend/status/2102825133283188976": {
-     "score": 0.155,
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.06,
      "detail": {}
     },
-    "https://x.com/CockroachDB/status/2099845821910901045": {
-     "score": 0.0925,
+    "https://x.com/e2b/status/2099864565697872320": {
+     "score": 0.11249999999999999,
      "detail": {}
     },
-    "https://x.com/triggerdotdev/status/2102065355548205144": {
-     "score": 0.099,
+    "https://x.com/posthog/status/2107530135448760403": {
+     "score": 0.11050000000000001,
      "detail": {}
     },
-    "https://x.com/Railway/status/2100267285373989020": {
-     "score": 0.21500000000000002,
+    "https://x.com/QodoAI/status/2107088320543269021": {
+     "score": 0.0135,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2108368797946315060": {
+     "score": 0.1215,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2106156271485542621": {
+     "score": 0.035500000000000004,
      "detail": {}
     },
     "https://x.com/Replit/status/2102488104380797123": {
      "score": 0.049,
      "detail": {}
     },
-    "https://x.com/greptile/status/2103501168911454222": {
-     "score": 0.089,
+    "https://x.com/linear/status/2102504412572721181": {
+     "score": 0.177,
      "detail": {}
     },
     "https://x.com/coderabbitai/status/2103499952769089633": {
      "score": 0.0135,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2104603046005403857": {
-     "score": 0.031,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2108589139235082681": {
-     "score": 0.03,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2100601169458413732": {
-     "score": 0.019,
-     "detail": {}
-    },
-    "https://x.com/triggerdotdev/status/2100615804639396090": {
-     "score": 0.07500000000000001,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2105716649714196849": {
-     "score": 0.0915,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2103123046005678242": {
-     "score": 0.052500000000000005,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2102828063184568709": {
-     "score": 0.1215,
-     "detail": {}
-    },
-    "https://x.com/CockroachDB/status/2102834407140684058": {
-     "score": 0.0305,
-     "detail": {}
-    },
-    "https://x.com/polar_sh/status/2105650325004951746": {
-     "score": 0.027999999999999997,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2107168738198057179": {
-     "score": 0.0265,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2107837302999224623": {
-     "score": 0.184,
-     "detail": {}
-    },
-    "https://x.com/triggerdotdev/status/2105326971320443307": {
-     "score": 0.256,
-     "detail": {}
-    },
-    "https://x.com/CockroachDB/status/2099912777414369730": {
-     "score": 0.0305,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2106054567125532976": {
-     "score": 0.38,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2107532184341156080": {
-     "score": 0.2205,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2101808371896852966": {
-     "score": 0.05449999999999999,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2108256629137571935": {
-     "score": 0.091,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2102421737073713559": {
-     "score": 0.1975,
-     "detail": {}
-    },
-    "https://x.com/warpdotdev/status/2107161297024376889": {
-     "score": 0.017499999999999998,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2107478490308083950": {
-     "score": 0.086,
-     "detail": {}
-    },
-    "https://x.com/Railway/status/2105688995313176789": {
-     "score": 0.0135,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2105327144457163238": {
-     "score": 0.032,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2102077291081896307": {
-     "score": 0.2875,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2110036161297055898": {
-     "score": 0.042499999999999996,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2100228217911280071": {
-     "score": 0.10250000000000001,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2105728858427412814": {
-     "score": 0.07,
      "detail": {}
     },
     "https://x.com/upstash/status/2102350503158100079": {
@@ -11615,260 +11888,16 @@
      "score": 0.246,
      "detail": {}
     },
-    "https://x.com/prisma/status/2107468131841331475": {
-     "score": 0.052500000000000005,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2104963491308433438": {
-     "score": 0.051000000000000004,
-     "detail": {}
-    },
-    "https://x.com/warpdotdev/status/2105353453815861370": {
-     "score": 0.107,
-     "detail": {}
-    },
-    "https://x.com/greptile/status/2108623827760775515": {
-     "score": 0.099,
-     "detail": {}
-    },
-    "https://x.com/coderabbitai/status/2108211047966384185": {
-     "score": 0.0815,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2105345363813286280": {
-     "score": 0.184,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2104615440966095345": {
-     "score": 0.031,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2105690247854272834": {
-     "score": 0.22949999999999998,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2106019538924179955": {
-     "score": 0.22599999999999998,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2104640828794941782": {
-     "score": 0.08399999999999999,
-     "detail": {}
-    },
     "https://x.com/coderabbitai/status/2102437018311532862": {
      "score": 0.1715,
      "detail": {}
     },
-    "https://x.com/zeddotdev/status/2103319070674178473": {
-     "score": 0.1965,
+    "https://x.com/triggerdotdev/status/2102065355548205144": {
+     "score": 0.099,
      "detail": {}
     },
-    "https://x.com/neondatabase/status/2105736025880530995": {
-     "score": 0.195,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2101024983518765242": {
-     "score": 0.0185,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2102414494471188631": {
-     "score": 0.27249999999999996,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2108599715478851601": {
-     "score": 0.0675,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2110093275684352234": {
-     "score": 0.0475,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2102420442527256938": {
-     "score": 0.047,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2106156271485542621": {
-     "score": 0.035500000000000004,
-     "detail": {}
-    },
-    "https://x.com/Railway/status/2104978612323594461": {
-     "score": 0.137,
-     "detail": {}
-    },
-    "https://x.com/AmpCode/status/2105178613763207269": {
-     "score": 0.1065,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2100988806950252683": {
-     "score": 0.164,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2105402878252953967": {
-     "score": 0.0335,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2108253718013759752": {
-     "score": 0.06,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2105349140842791077": {
-     "score": 0.129,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2102095624586002517": {
-     "score": 0.035,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2109237727367426405": {
-     "score": 0.0865,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2104958085492081025": {
-     "score": 0.271,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2107462795516313992": {
-     "score": 0.14500000000000002,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2108316518907892218": {
-     "score": 0.07350000000000001,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2103510268013605147": {
-     "score": 0.10500000000000001,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2105073497664008404": {
-     "score": 0.11199999999999999,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2100971841330221306": {
-     "score": 0.10350000000000001,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2108612014964904428": {
-     "score": 0.039,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2109706421919248499": {
-     "score": 0.1485,
-     "detail": {}
-    },
-    "https://x.com/zeddotdev/status/2106097814392783116": {
-     "score": 0.1125,
-     "detail": {}
-    },
-    "https://x.com/n8n_io/status/2104488818170630389": {
-     "score": 0.1965,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2107530135448760403": {
-     "score": 0.11050000000000001,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2105689279251063086": {
-     "score": 0.055,
-     "detail": {}
-    },
-    "https://x.com/greptile/status/2103140056256888894": {
-     "score": 0.199,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2106364896049061891": {
-     "score": 0.22,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2103140490749395097": {
-     "score": 0.0365,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2107182156946739330": {
-     "score": 0.131,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2108242330037661739": {
-     "score": 0.0815,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2107846455180288289": {
-     "score": 0.16749999999999998,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2106028700638785617": {
-     "score": 0.031,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2102744822561824931": {
-     "score": 0.042499999999999996,
-     "detail": {}
-    },
-    "https://x.com/coderabbitai/status/2102767517219360794": {
-     "score": 0.0915,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2102367584398246284": {
-     "score": 0.07250000000000001,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2110068941364318514": {
-     "score": 0.1565,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2100667636367630683": {
-     "score": 0.1725,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2099894783284273290": {
-     "score": 0.069,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2109705935098892758": {
-     "score": 0.097,
-     "detail": {}
-    },
-    "https://x.com/greptile/status/2100268607477273048": {
-     "score": 0.15150000000000002,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2105647817217700085": {
-     "score": 0.0735,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2102094480400912753": {
-     "score": 0.1805,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2103862323962388891": {
-     "score": 0.1375,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2104931792218096074": {
-     "score": 0.1865,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2100284079866568773": {
-     "score": 0.054000000000000006,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2107088320543269021": {
-     "score": 0.0135,
-     "detail": {}
-    },
-    "https://x.com/zeddotdev/status/2105301337881641226": {
-     "score": 0.0255,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2099924996394975675": {
-     "score": 0.0375,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2105372353081291121": {
-     "score": 0.1275,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2100626014866956729": {
-     "score": 0.1315,
+    "https://x.com/kilocode/status/2103138729154294223": {
+     "score": 0.06949999999999999,
      "detail": {}
     }
    }
@@ -11926,7 +11955,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.6091287954858275,
-     "super_viral_vs_rest_auc": 0.7983539094650206
+     "super_viral_vs_rest_auc": 0.7983539094650206,
+     "super_vs_medium_auc": 0.6814236111111112
     }
    },
    "without_boost_suspect": {
@@ -11980,7 +12010,8 @@
     },
     "confounded_by_account_size": {
      "spearman_vs_log_engagement": 0.6219496238082387,
-     "super_viral_vs_rest_auc": 0.7533482142857143
+     "super_viral_vs_rest_auc": 0.7533482142857143,
+     "super_vs_medium_auc": 0.6101694915254238
     }
    },
    "category_balanced": {
@@ -11997,139 +12028,83 @@
     ]
    },
    "predictions": {
-    "https://x.com/n8n_io/status/2105609247111467462": {
-     "score": 0.105,
+    "https://x.com/upstash/status/2110098341120098652": {
+     "score": 0.065,
      "detail": {}
     },
-    "https://x.com/CockroachDB/status/2107119975513080227": {
-     "score": 0.095,
+    "https://x.com/convex/status/2105073497664008404": {
+     "score": 0.155,
      "detail": {}
     },
-    "https://x.com/neondatabase/status/2105789222678634606": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/n8n_io/status/2107386299581653024": {
+    "https://x.com/resend/status/2103123046005678242": {
      "score": 0.07,
      "detail": {}
     },
-    "https://x.com/upstash/status/2104320882550415734": {
+    "https://x.com/boltdotnew/status/2107846455180288289": {
+     "score": 0.19,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099912777414369730": {
+     "score": 0.065,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102828063184568709": {
+     "score": 0.14,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2109705935098892758": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102094480400912753": {
+     "score": 0.13,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2109706421919248499": {
+     "score": 0.19,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2100615804639396090": {
      "score": 0.05,
      "detail": {}
     },
-    "https://x.com/tldraw/status/2104983011062104324": {
+    "https://x.com/motherduck/status/2107478490308083950": {
+     "score": 0.065,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2107168738198057179": {
+     "score": 0.035,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2108599715478851601": {
+     "score": 0.075,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2109237727367426405": {
      "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2105003566351908892": {
-     "score": 0.28,
-     "detail": {}
-    },
-    "https://x.com/n8n_io/status/2102409055088312518": {
-     "score": 0.03,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2100701824936202249": {
-     "score": 0.07500000000000001,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2100990080739385567": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/warpdotdev/status/2100623731294978243": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/biomejs/status/2110015673296400420": {
-     "score": 0.22,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2105673390556364852": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/AmpCode/status/2103413581182361813": {
-     "score": 0.025,
-     "detail": {}
-    },
-    "https://x.com/CockroachDB/status/2107949104684748942": {
-     "score": 0.04,
-     "detail": {}
-    },
-    "https://x.com/biomejs/status/2105319094346015015": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2101368657247101436": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2100321324170150301": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2104971969494233559": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2108233328143053130": {
-     "score": 0.060000000000000005,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2108210104419922065": {
-     "score": 0.08,
-     "detail": {}
-    },
-    "https://x.com/coderabbitai/status/2099868543709753769": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2105695896566735281": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2099864565697872320": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/zeddotdev/status/2104559249854550430": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2110059335833317584": {
-     "score": 0.095,
      "detail": {}
     },
     "https://x.com/Replit/status/2105084123358568584": {
      "score": 0.12,
      "detail": {}
     },
-    "https://x.com/CockroachDB/status/2100294013462929812": {
-     "score": 0.13,
+    "https://x.com/zeddotdev/status/2105301337881641226": {
+     "score": 0.06,
      "detail": {}
     },
-    "https://x.com/Railway/status/2104572401468199274": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2107896848044437766": {
-     "score": 0.215,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2104630655271501951": {
+    "https://x.com/upstash/status/2100626014866956729": {
      "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2102110133946052855": {
-     "score": 0.04,
      "detail": {}
     },
     "https://x.com/posthog/status/2102424081253752928": {
      "score": 0.165,
      "detail": {}
     },
-    "https://x.com/upstash/status/2108368797946315060": {
+    "https://x.com/neondatabase/status/2102420442527256938": {
+     "score": 0.075,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105789222678634606": {
      "score": 0.095,
      "detail": {}
     },
@@ -12137,36 +12112,428 @@
      "score": 0.065,
      "detail": {}
     },
-    "https://x.com/kilocode/status/2103138729154294223": {
+    "https://x.com/resend/status/2100228217911280071": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2108210104419922065": {
+     "score": 0.08,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108316518907892218": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2110059335833317584": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2099868543709753769": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103501168911454222": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2106097814392783116": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2104971969494233559": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2105695896566735281": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2101368657247101436": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105716649714196849": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2100601169458413732": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2100971841330221306": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2107837302999224623": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2110093275684352234": {
      "score": 0.065,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2105326971320443307": {
+     "score": 0.19,
      "detail": {}
     },
     "https://x.com/boltdotnew/status/2105319354606793003": {
      "score": 0.07,
      "detail": {}
     },
+    "https://x.com/polar_sh/status/2105650325004951746": {
+     "score": 0.04,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104983011062104324": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2105647817217700085": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2100623731294978243": {
+     "score": 0.1,
+     "detail": {}
+    },
     "https://x.com/boltdotnew/status/2100646000016716180": {
      "score": 0.12,
      "detail": {}
     },
-    "https://x.com/Railway/status/2103566393862136150": {
-     "score": 0.14,
+    "https://x.com/boltdotnew/status/2108242330037661739": {
+     "score": 0.095,
      "detail": {}
     },
-    "https://x.com/upstash/status/2110098341120098652": {
-     "score": 0.065,
+    "https://x.com/biomejs/status/2105319094346015015": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2104559249854550430": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105402878252953967": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107949104684748942": {
+     "score": 0.04,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104320882550415734": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105728858427412814": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104931792218096074": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104963491308433438": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2100284079866568773": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2100990080739385567": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103510268013605147": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2106364896049061891": {
+     "score": 0.125,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2102409055088312518": {
+     "score": 0.03,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2105609247111467462": {
+     "score": 0.105,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2107532184341156080": {
+     "score": 0.125,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2110036161297055898": {
+     "score": 0.05500000000000001,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100988806950252683": {
+     "score": 0.10500000000000001,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2107468131841331475": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2105345363813286280": {
+     "score": 0.14500000000000002,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104572401468199274": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103862323962388891": {
+     "score": 0.13,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102767517219360794": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2099894783284273290": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2106054567125532976": {
+     "score": 0.32,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2100267285373989020": {
+     "score": 0.13,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108612014964904428": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2105349140842791077": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2099924996394975675": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2108589139235082681": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2100321324170150301": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2101024983518765242": {
+     "score": 0.045,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2102834407140684058": {
+     "score": 0.035,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2101808371896852966": {
+     "score": 0.16999999999999998,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102414494471188631": {
+     "score": 0.22999999999999998,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2107182156946739330": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2105673390556364852": {
+     "score": 0.1,
      "detail": {}
     },
     "https://x.com/convex/status/2108273573534306427": {
      "score": 0.07500000000000001,
      "detail": {}
     },
-    "https://x.com/linear/status/2102504412572721181": {
+    "https://x.com/greptile/status/2103140056256888894": {
+     "score": 0.165,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104630655271501951": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105736025880530995": {
+     "score": 0.125,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105372353081291121": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102077291081896307": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2100667636367630683": {
+     "score": 0.175,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105003566351908892": {
+     "score": 0.28,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2107462795516313992": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2104640828794941782": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2104958085492081025": {
+     "score": 0.14,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2105689279251063086": {
+     "score": 0.06,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106028700638785617": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2107161297024376889": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2108256629137571935": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102110133946052855": {
+     "score": 0.04,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2102744822561824931": {
+     "score": 0.035,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2100294013462929812": {
+     "score": 0.13,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2103566393862136150": {
+     "score": 0.14,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2110068941364318514": {
      "score": 0.16,
      "detail": {}
     },
     "https://x.com/zeddotdev/status/2104945383998881832": {
      "score": 0.125,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2107896848044437766": {
+     "score": 0.215,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2108211047966384185": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105327144457163238": {
+     "score": 0.05500000000000001,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107119975513080227": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106019538924179955": {
+     "score": 0.22,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2105178613763207269": {
+     "score": 0.13,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104978612323594461": {
+     "score": 0.21,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102095624586002517": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2105688995313176789": {
+     "score": 0.02,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2104615440966095345": {
+     "score": 0.08,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099845821910901045": {
+     "score": 0.07,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2103140490749395097": {
+     "score": 0.06,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2100268607477273048": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2104488818170630389": {
+     "score": 0.13,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2110015673296400420": {
+     "score": 0.22,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2100701824936202249": {
+     "score": 0.07500000000000001,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2105353453815861370": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2103413581182361813": {
+     "score": 0.025,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2102367584398246284": {
+     "score": 0.09,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105690247854272834": {
+     "score": 0.14,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2102825133283188976": {
+     "score": 0.1,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2102421737073713559": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104603046005403857": {
+     "score": 0.05,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2103319070674178473": {
+     "score": 0.21,
      "detail": {}
     },
     "https://x.com/prisma/status/2103135542062076393": {
@@ -12177,136 +12544,44 @@
      "score": 0.175,
      "detail": {}
     },
-    "https://x.com/resend/status/2102825133283188976": {
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2099864565697872320": {
+     "score": 0.12,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2107530135448760403": {
      "score": 0.1,
      "detail": {}
     },
-    "https://x.com/CockroachDB/status/2099845821910901045": {
-     "score": 0.07,
+    "https://x.com/QodoAI/status/2107088320543269021": {
+     "score": 0.02,
      "detail": {}
     },
-    "https://x.com/triggerdotdev/status/2102065355548205144": {
-     "score": 0.07,
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.060000000000000005,
      "detail": {}
     },
-    "https://x.com/Railway/status/2100267285373989020": {
-     "score": 0.13,
+    "https://x.com/upstash/status/2108368797946315060": {
+     "score": 0.095,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2106156271485542621": {
+     "score": 0.095,
      "detail": {}
     },
     "https://x.com/Replit/status/2102488104380797123": {
      "score": 0.095,
      "detail": {}
     },
-    "https://x.com/greptile/status/2103501168911454222": {
-     "score": 0.09,
+    "https://x.com/linear/status/2102504412572721181": {
+     "score": 0.16,
      "detail": {}
     },
     "https://x.com/coderabbitai/status/2103499952769089633": {
      "score": 0.02,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2104603046005403857": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2108589139235082681": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2100601169458413732": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/triggerdotdev/status/2100615804639396090": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2105716649714196849": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2103123046005678242": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2102828063184568709": {
-     "score": 0.14,
-     "detail": {}
-    },
-    "https://x.com/CockroachDB/status/2102834407140684058": {
-     "score": 0.035,
-     "detail": {}
-    },
-    "https://x.com/polar_sh/status/2105650325004951746": {
-     "score": 0.04,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2107168738198057179": {
-     "score": 0.035,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2107837302999224623": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/triggerdotdev/status/2105326971320443307": {
-     "score": 0.19,
-     "detail": {}
-    },
-    "https://x.com/CockroachDB/status/2099912777414369730": {
-     "score": 0.065,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2106054567125532976": {
-     "score": 0.32,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2107532184341156080": {
-     "score": 0.125,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2101808371896852966": {
-     "score": 0.16999999999999998,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2108256629137571935": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2102421737073713559": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/warpdotdev/status/2107161297024376889": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2107478490308083950": {
-     "score": 0.065,
-     "detail": {}
-    },
-    "https://x.com/Railway/status/2105688995313176789": {
-     "score": 0.02,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2105327144457163238": {
-     "score": 0.05500000000000001,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2102077291081896307": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2110036161297055898": {
-     "score": 0.05500000000000001,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2100228217911280071": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2105728858427412814": {
-     "score": 0.1,
      "detail": {}
     },
     "https://x.com/upstash/status/2102350503158100079": {
@@ -12317,260 +12592,16 @@
      "score": 0.125,
      "detail": {}
     },
-    "https://x.com/prisma/status/2107468131841331475": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2104963491308433438": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/warpdotdev/status/2105353453815861370": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/greptile/status/2108623827760775515": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/coderabbitai/status/2108211047966384185": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2105345363813286280": {
-     "score": 0.14500000000000002,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2104615440966095345": {
-     "score": 0.08,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2105690247854272834": {
-     "score": 0.14,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2106019538924179955": {
-     "score": 0.22,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2104640828794941782": {
-     "score": 0.09,
-     "detail": {}
-    },
     "https://x.com/coderabbitai/status/2102437018311532862": {
      "score": 0.125,
      "detail": {}
     },
-    "https://x.com/zeddotdev/status/2103319070674178473": {
-     "score": 0.21,
+    "https://x.com/triggerdotdev/status/2102065355548205144": {
+     "score": 0.07,
      "detail": {}
     },
-    "https://x.com/neondatabase/status/2105736025880530995": {
-     "score": 0.125,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2101024983518765242": {
-     "score": 0.045,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2102414494471188631": {
-     "score": 0.22999999999999998,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2108599715478851601": {
-     "score": 0.075,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2110093275684352234": {
+    "https://x.com/kilocode/status/2103138729154294223": {
      "score": 0.065,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2102420442527256938": {
-     "score": 0.075,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2106156271485542621": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/Railway/status/2104978612323594461": {
-     "score": 0.21,
-     "detail": {}
-    },
-    "https://x.com/AmpCode/status/2105178613763207269": {
-     "score": 0.13,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2100988806950252683": {
-     "score": 0.10500000000000001,
-     "detail": {}
-    },
-    "https://x.com/prisma/status/2105402878252953967": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/e2b/status/2108253718013759752": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2105349140842791077": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2102095624586002517": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2109237727367426405": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/tursodatabase/status/2104958085492081025": {
-     "score": 0.14,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2107462795516313992": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2108316518907892218": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/kilocode/status/2103510268013605147": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2105073497664008404": {
-     "score": 0.155,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2100971841330221306": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/Replit/status/2108612014964904428": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2109706421919248499": {
-     "score": 0.19,
-     "detail": {}
-    },
-    "https://x.com/zeddotdev/status/2106097814392783116": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/n8n_io/status/2104488818170630389": {
-     "score": 0.13,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2107530135448760403": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/motherduck/status/2105689279251063086": {
-     "score": 0.06,
-     "detail": {}
-    },
-    "https://x.com/greptile/status/2103140056256888894": {
-     "score": 0.165,
-     "detail": {}
-    },
-    "https://x.com/expo/status/2106364896049061891": {
-     "score": 0.125,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2103140490749395097": {
-     "score": 0.06,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2107182156946739330": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2108242330037661739": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/boltdotnew/status/2107846455180288289": {
-     "score": 0.19,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2106028700638785617": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2102744822561824931": {
-     "score": 0.035,
-     "detail": {}
-    },
-    "https://x.com/coderabbitai/status/2102767517219360794": {
-     "score": 0.1,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2102367584398246284": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2110068941364318514": {
-     "score": 0.16,
-     "detail": {}
-    },
-    "https://x.com/neondatabase/status/2100667636367630683": {
-     "score": 0.175,
-     "detail": {}
-    },
-    "https://x.com/posthog/status/2099894783284273290": {
-     "score": 0.095,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2109705935098892758": {
-     "score": 0.07,
-     "detail": {}
-    },
-    "https://x.com/greptile/status/2100268607477273048": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2105647817217700085": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/convex/status/2102094480400912753": {
-     "score": 0.13,
-     "detail": {}
-    },
-    "https://x.com/resend/status/2103862323962388891": {
-     "score": 0.13,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2104931792218096074": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/tldraw/status/2100284079866568773": {
-     "score": 0.09,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2107088320543269021": {
-     "score": 0.02,
-     "detail": {}
-    },
-    "https://x.com/zeddotdev/status/2105301337881641226": {
-     "score": 0.06,
-     "detail": {}
-    },
-    "https://x.com/QodoAI/status/2099924996394975675": {
-     "score": 0.05,
-     "detail": {}
-    },
-    "https://x.com/linear/status/2105372353081291121": {
-     "score": 0.12,
-     "detail": {}
-    },
-    "https://x.com/upstash/status/2100626014866956729": {
-     "score": 0.1,
      "detail": {}
     }
    }
