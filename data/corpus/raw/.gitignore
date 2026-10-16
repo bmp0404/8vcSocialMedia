@@ -1,0 +1,4 @@
+# The fxtwitter snapshot holds individuals' replies, handles and bios, and this repo is public.
+# Only MANIFEST.json is committed. Rebuild with `python -m harness.corpus rebuild --src <dir>`
+# (harness/corpus/DESIGN.md, "Rebuilding the local files").
+*.gz

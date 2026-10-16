@@ -5,7 +5,9 @@ Files (the contract the labeling UI is built against):
 - `schema.json`: `{"version", "fields": [{"name", "kind", "values", "question", "applies_to"}]}`.
 - `items.jsonl`: one item per line, keyed by `item_id` (`x:<status_id>`).
 - `llm/<run_id>.jsonl`: one annotator answer per line: `item_id`, `run_id`, `annotator` (`model`,
-  `response_model`, `prompt_sha`), `labels`, `rationale`, `usage`, `at`, `error`.
+  `response_model`, `prompt_sha`), `labels`, `rationale`, `usage`, `at`, `error`. The committed
+  `rationale` is empty; the text sits in the gitignored `rationales/<run_id>.jsonl` and `llm_labels`
+  joins it back where this machine has it.
 - `human.jsonl`: append-only human labels: `item_id`, `labeler`, `labels` (may be partial), `note`, `at`.
 - `audit.json`: the frozen audit set behind `queue("audit")`, written by `build_audit`.
 
@@ -79,7 +81,17 @@ class Store:
                 with path.open(encoding="utf-8") as f:
                     for row in map(json.loads, f):
                         rows[row["item_id"]].append(row)
+            # Rationales live in the gitignored rationales/ folder (they can quote the item); join them
+            # back by (item, run, time) where this machine has them.
+            why = {}
+            for path in sorted((self.root / "rationales").glob("*.jsonl")):
+                with path.open(encoding="utf-8") as f:
+                    for r in map(json.loads, f):
+                        why[(r["item_id"], r["run_id"], r["at"])] = r["rationale"]
             for v in rows.values():
+                for r in v:
+                    if not r.get("rationale"):
+                        r["rationale"] = why.get((r["item_id"], r["run_id"], r["at"]), "")
                 v.sort(key=lambda r: r["at"])
             self._llm = dict(rows)
         return self._llm

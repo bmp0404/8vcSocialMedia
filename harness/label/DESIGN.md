@@ -148,8 +148,9 @@ That is 19,840 logged calls of the 40,000 budget. About 52 more went out from pr
 Files under `data/labels/`, the contract the UI batch builds against:
 
 - `schema.json`: `{"version", "fields": [{"name", "kind", "values", "question", "applies_to"}]}`. The UI renders its controls from this.
-- `items.jsonl`: one item per line with the contract keys `item_id` (`x:<status_id>`), `kind`, `status_id`, `url`, `author`, `author_followers`, `text`, `created_at`, `parent_id`, `metrics`, `source`, plus one extra key, `context`, holding what the annotator prompt needs (bio, media, minutes after the parent, flags).
-- `llm/<run_id>.jsonl`: the reference annotators' answers, `item_id`, `run_id`, `annotator` (`model`, `response_model`, `prompt_sha`, and `effort`), `labels`, `rationale`, `usage`, `at`, `error`. Every model with a file here votes.
+- `items.jsonl`: one item per line with the contract keys `item_id` (`x:<status_id>`), `kind`, `status_id`, `url`, `author`, `author_followers`, `text`, `created_at`, `parent_id`, `metrics`, `source`, plus one extra key, `context`, holding what the annotator prompt needs (bio, media, minutes after the parent, flags). Gitignored, because it holds individuals' replies; `python -m harness.corpus rebuild` writes it from the local snapshot (`harness/corpus/DESIGN.md`, "Rebuilding the local files").
+- `llm/<run_id>.jsonl`: the reference annotators' answers, `item_id`, `run_id`, `annotator` (`model`, `response_model`, `prompt_sha`, and `effort`), `labels`, `rationale`, `usage`, `at`, `error`. Every model with a file here votes. The committed `rationale` is always empty.
+- `rationales/<run_id>.jsonl`: gitignored `item_id`, `run_id`, `at`, `rationale`. The runner writes the rationale here because it can quote the item, and `llm_labels` joins it back by item, run and time.
 - `screening/`: the pilot runs of models that were compared but not chosen. They never vote.
 - `human.jsonl`: append-only `item_id`, `labeler`, `labels` (partial is fine), `note`, `at`.
 - `audit.json`: the frozen audit set behind `queue("audit")`.

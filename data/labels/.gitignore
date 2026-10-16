@@ -1,0 +1,4 @@
+# Item text, handles and bios, and the annotators' rationales (which can quote an item), stay local
+# because this repo is public. Rebuild with `python -m harness.corpus rebuild` (harness/corpus/DESIGN.md).
+items.jsonl
+rationales/

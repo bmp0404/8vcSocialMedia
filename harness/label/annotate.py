@@ -1,7 +1,9 @@
 """Run LLM annotators over label items through the host gateway, one item per call.
 
 Each annotator run appends one row per item to `data/labels/llm/<run_id>.jsonl` (the label-store
-contract) and one row per HTTP attempt to `data/labels/calls/<run_id>.jsonl`. A rerun skips items
+contract) and one row per HTTP attempt to `data/labels/calls/<run_id>.jsonl`. The rationale can quote
+the item, and the repo is public, so it goes to the gitignored `data/labels/rationales/<run_id>.jsonl`
+and the committed row keeps an empty `rationale`; the store joins the two locally. A rerun skips items
 that already have a good row, so an interrupted run resumes where it stopped.
 
 Limits from the brief: at most 40,000 calls across every run, at most 16 in flight, back off on
@@ -25,6 +27,7 @@ from harness.label.schema import LABELS_DIR, SCHEMA, validate_labels
 
 LLM_DIR = LABELS_DIR / "llm"
 CALLS_DIR = LABELS_DIR / "calls"
+RATIONALES_DIR = LABELS_DIR / "rationales"
 CALL_BUDGET = 40_000
 MAX_IN_FLIGHT = 16
 FAIL_WINDOW = 200
@@ -207,7 +210,7 @@ async def annotate_one(client, annotator: Annotator, run_id: str, item: dict, pa
                     if issues:
                         problem = "; ".join(issues)
             except ValueError as e:
-                problem = f"not JSON: {e}"
+                problem = "not JSON"  # the parser's message quotes the answer, which can quote the item
         call.update(ok=problem is None, error=problem, response_model=resp.model, stop=resp.stop_reason,
                     seconds=round(time.monotonic() - t0, 2), **usage)
         calls_log.write(json.dumps(call, ensure_ascii=False) + "\n")
@@ -230,17 +233,19 @@ async def annotate_one(client, annotator: Annotator, run_id: str, item: dict, pa
 
 async def run_annotator(annotator: Annotator, run_id: str, items: list[dict], by_id: dict, guard: Guard,
                         concurrency: int, schema: dict = SCHEMA, llm_dir: Path = LLM_DIR,
-                        calls_dir: Path = CALLS_DIR, client=None) -> RunStats:
-    llm_dir.mkdir(parents=True, exist_ok=True)
-    calls_dir.mkdir(parents=True, exist_ok=True)
+                        calls_dir: Path = CALLS_DIR, client=None, rationales_dir: Path = RATIONALES_DIR) -> RunStats:
+    for d in (llm_dir, calls_dir, rationales_dir):
+        d.mkdir(parents=True, exist_ok=True)
     out_path, calls_path = llm_dir / f"{run_id}.jsonl", calls_dir / f"{run_id}.jsonl"
+    why_path = rationales_dir / f"{run_id}.jsonl"
     done = done_items(out_path)
     todo = [it for it in items if it["item_id"] not in done]
     stats = RunStats()
     client = client or anthropic.AsyncAnthropic(max_retries=0, timeout=120)
     lane = asyncio.Semaphore(concurrency)
     queue = iter(todo)
-    with out_path.open("a", encoding="utf-8") as out, calls_path.open("a", encoding="utf-8") as calls_log:
+    with out_path.open("a", encoding="utf-8") as out, calls_path.open("a", encoding="utf-8") as calls_log, \
+            why_path.open("a", encoding="utf-8") as why:
         async def worker():
             for item in queue:
                 if annotator.model in guard.stopped_models:
@@ -251,7 +256,11 @@ async def run_annotator(annotator: Annotator, run_id: str, items: list[dict], by
                         row = await annotate_one(client, annotator, run_id, item, parent, guard, stats, calls_log, schema)
                     except (BudgetExceeded, FailureRateStop):
                         return
-                out.write(json.dumps(row, ensure_ascii=False) + "\n")
+                if row["rationale"]:
+                    why.write(json.dumps({k: row[k] for k in ("item_id", "run_id", "at", "rationale")},
+                                         ensure_ascii=False) + "\n")
+                    why.flush()
+                out.write(json.dumps(row | {"rationale": ""}, ensure_ascii=False) + "\n")
                 out.flush()
                 calls_log.flush()
                 if row["error"]:

@@ -15,7 +15,7 @@ The reply result is a product decision, not just a number. If a reply's words do
 
 ## Corpus
 
-`python -m harness.corpus snapshot --src <sam/context-dynamics checkout>/data/context` copies the context worker's fxtwitter reads into `data/corpus/raw/` as gzip (2.6 MB) and writes `MANIFEST.json` with each file's sha256 and line count. The originals are gitignored on that branch, so the snapshot is the committed copy. `python -m harness.corpus verify` checks the gzips against the manifest. `load()` reads only the snapshot.
+`python -m harness.corpus snapshot --src <sam/context-dynamics checkout>/data/context` copies the context worker's fxtwitter reads into `data/corpus/raw/` as gzip (2.6 MB) and writes `MANIFEST.json` with each file's sha256 and line count. `python -m harness.corpus verify` checks the gzips against the manifest. `load()` reads only the snapshot.
 
 | Source file | Rows read | Rows skipped (fetch errors, empty threads) |
 | --- | --- | --- |
@@ -34,7 +34,27 @@ Every item has its text, author, follower count at the read, creation time decod
 
 `reposters.jsonl` is left out of the snapshot. Nothing here reads it, and it holds 16,000 strangers' bios.
 
-The repository is public. The snapshot and `data/labels/items.jsonl` contain about 7,000 replies by individual X users, with their handles and bios. Decide before pushing whether that belongs in a public repo.
+### Rebuilding the local files
+
+The repository is public, and the snapshot holds about 7,000 replies by individual X users with their handles and bios. So only `MANIFEST.json` is committed. These files stay local and gitignored:
+
+| Path | Holds | Rebuilt from |
+| --- | --- | --- |
+| `data/corpus/raw/*.gz` | the snapshot | the context worker's raw reads |
+| `data/labels/items.jsonl` | every item's text, author, bio and counts | the snapshot |
+| `data/labels/rationales/*.jsonl` | the annotators' one-sentence reasons, which can quote an item | the local branch `sam/corpus` |
+
+One command rebuilds all three and checks the snapshot against the committed hashes:
+
+```sh
+uv run python -m harness.corpus rebuild \
+  --src "/Users/samgu/Programming Projects/8vcSocialMedia-worktrees/context-dynamics/data/context" \
+  --rationales-from sam/corpus
+```
+
+The raw reads live in that `context-dynamics` worktree's `data/context/` (gitignored there too; the tracker that wrote beside them has finished). A copy of the snapshot, `items.jsonl` and the unfiltered LLM rows is in `~/.long-run/8vc-harness/evidence/b2/local-data/`. Omit `--src` to keep the snapshot already in place. Omit `--rationales-from` on a machine without `sam/corpus`; the store then shows empty rationales.
+
+`sam/corpus` is the unfiltered local history: it commits the snapshot, `items.jsonl` and the rationales. Never push it. `sam/corpus-clean` is the same work with those files removed from every commit, the rationales blanked, and the TF-IDF word lists dropped from the old results files.
 
 ## Reply benchmark
 

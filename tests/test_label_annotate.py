@@ -184,3 +184,38 @@ def test_guard_seeds_each_window_from_the_call_logs(tmp_path):
     g = annotate.Guard(budget_left=10)
     g.seed(tmp_path)
     assert "gpt" in g.stopped_models and "claude" not in g.stopped_models
+
+
+def test_run_annotator_keeps_rationales_out_of_the_committed_rows(tmp_path):
+    good = response(json.dumps({"labels": GOOD, "rationale": "asks whether it runs on arm64"}))
+    bad = response("Sure! The reply says 'does it run on arm64?' so...")  # not JSON, quotes the item
+    client = FakeClient([good, bad] + [bad] * annotate.MAX_ATTEMPTS)
+    item2 = dict(ITEM, item_id="x:3")
+    stats = asyncio.run(annotate.run_annotator(
+        annotate.Annotator("m"), "r", [ITEM, item2], {"x:1": PARENT}, annotate.Guard(budget_left=50), 1,
+        llm_dir=tmp_path / "llm", calls_dir=tmp_path / "calls", client=client, rationales_dir=tmp_path / "why"))
+    rows = [json.loads(l) for l in (tmp_path / "llm" / "r.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert stats.ok_items == 1 and stats.error_items == 1
+    assert all(r["rationale"] == "" for r in rows)
+    why = [json.loads(l) for l in (tmp_path / "why" / "r.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert why == [{"item_id": "x:2", "run_id": "r", "at": rows[0]["at"], "rationale": "asks whether it runs on arm64"}]
+    calls = (tmp_path / "calls" / "r.jsonl").read_text(encoding="utf-8") + (tmp_path / "llm" / "r.jsonl").read_text(encoding="utf-8")
+    assert "arm64" not in calls  # the error for the non-JSON answer does not quote it
+
+
+def test_rationales_from_ref_reads_a_local_branch(tmp_path, monkeypatch):
+    import subprocess
+    from harness import config
+    from harness.label.local import rationales_from_ref
+    repo = tmp_path / "repo"
+    (repo / "data/labels/llm").mkdir(parents=True)
+    row = {"item_id": "x:1", "run_id": "r", "at": "t", "rationale": "because", "labels": {}}
+    (repo / "data/labels/llm/r.jsonl").write_text(json.dumps(row) + "\n" + json.dumps(row | {"item_id": "x:2", "rationale": ""}) + "\n",
+                                                  encoding="utf-8")
+    for cmd in (["init", "-q", "-b", "backup"], ["add", "."],
+                ["-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "--no-verify", "-m", "x"]):
+        subprocess.run(["git", "-C", str(repo), *cmd], check=True)
+    monkeypatch.setattr(config, "ROOT", repo)
+    assert rationales_from_ref("backup", tmp_path / "why") == {"r.jsonl": 1}
+    assert json.loads((tmp_path / "why" / "r.jsonl").read_text(encoding="utf-8")) == {
+        "item_id": "x:1", "run_id": "r", "at": "t", "rationale": "because"}

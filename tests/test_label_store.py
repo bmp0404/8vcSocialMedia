@@ -182,3 +182,15 @@ def test_audit_set_is_frozen_stratified_and_shrinks_as_people_label(store, tmp_p
     assert [e["item_id"] for e in store.queue("audit")] == audit["items"]
     store.append_human(audit["items"][0], "sam", {"format": "tip"})
     assert [e["item_id"] for e in store.queue("audit")] == audit["items"][1:]
+
+
+def test_llm_labels_join_local_rationales(store, tmp_path):
+    assert all(r["rationale"] == "r" for r in store.llm_labels("x:1"))
+    for path in (tmp_path / "llm").glob("*.jsonl"):  # the committed rows carry no rationale
+        rows = [json.loads(l) | {"rationale": ""} for l in path.read_text(encoding="utf-8").splitlines()]
+        write_jsonl(path, rows)
+    (tmp_path / "rationales").mkdir()
+    write_jsonl(tmp_path / "rationales" / "run-gpt.jsonl",
+                [{"item_id": "x:1", "run_id": "run-gpt", "at": "2026-10-16T01:30:00+00:00", "rationale": "joke"}])
+    rows = Store(tmp_path).llm_labels("x:1")
+    assert {r["annotator"]["model"]: r["rationale"] for r in rows} == {"claude": "", "gpt": "joke"}

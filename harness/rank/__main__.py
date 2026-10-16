@@ -198,7 +198,14 @@ def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False,
         g = [p.group for p in ps]
         return {"length": accuracy(cl, g).to_dict(), "tfidf_minus_length": paired_difference(cr, cl, g).to_dict()}
     full = post.ridge_fit([post.clean_text(corpus.get(s).text) for s in targets], [targets[s][1] for s in targets], alpha)
-    words = sorted(((k[2:], v) for k, v in full.weights.items() if k.startswith("w:")), key=lambda kv: kv[1])
+    # Only words that 5 or more accounts used: the list explains the model without naming any one
+    # account's people or handles (this file is committed to a public repo).
+    users = defaultdict(set)
+    for sid, (acct, _) in targets.items():
+        for g in set(post._word_grams(post.clean_text(corpus.get(sid).text))):
+            users[g].add(acct)
+    words = sorted(((k[2:], v) for k, v in full.weights.items() if k.startswith("w:") and len(users[k[2:]]) >= 5),
+                   key=lambda kv: kv[1])
     res["tfidf_ridge"] = {
         "vs_length_all": vs_length(pairs), "vs_length_test": vs_length(test),
         "top_word_weights": {"lift": [w for w, _ in words[-25:]][::-1], "sink": [w for w, _ in words[:25]]},
