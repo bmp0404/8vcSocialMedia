@@ -9,7 +9,8 @@ What `trace` checks, for one claim and the texts of the sources it cites:
 - every name in it appears as a whole word in a cited source: the capitalized words the slop gate treats as names
   (`gate.capitalized_names`, which skips a sentence's first word), any word with a capital after its first letter
   or a digit inside it ("PostgreSQL", "vLLM"), and every @handle;
-- every number in it appears in a cited source with the same unit, the rule `harness.facts.ground` uses;
+- every number in it appears in a cited source with the same unit, the rule `harness.facts.ground` uses, except
+  that a year, or a number followed by no word or a stopword on either side, needs only the same digits;
 - for factual sections, enough of its content words appear in its cited sources (`CONTENT_OVERLAP`).
 A paraphrase that keeps the names and numbers but changes what is claimed about them can still pass. The overlap
 rule narrows that gap; it doesn't close it, which is why the report asks a person to read every claim.
@@ -78,6 +79,9 @@ def names(text: str) -> list[str]:
     return list(dict.fromkeys(found))
 
 
+YEAR = re.compile(r"^(?:19|20)\d\d$")
+
+
 def _numbers(text: str) -> set[tuple[str, str]]:
     """(unit, number) for each number, and ("pair", "8-16") for a hyphenated pair, which matches only as written."""
     out = set()
@@ -85,6 +89,12 @@ def _numbers(text: str) -> set[tuple[str, str]]:
         token = m.group(0)
         out.add(("pair", token) if ground.is_pair(token) else (ground.unit_after(text, m.end()), token))
     return out
+
+
+def _weak(unit: str, token: str) -> bool:
+    """A number whose unit says nothing: none, a stopword ("$25 and"), or a year, which any following word can follow.
+    `ground.unit_after` reads whatever word comes next, which suits box scores but not "Select 2026 is sold out"."""
+    return not unit or unit in STOPWORDS or bool(YEAR.match(token))
 
 
 def trace(claim: str, sources: list[str], overlap: float | None = None) -> list[str]:
@@ -98,8 +108,11 @@ def trace(claim: str, sources: list[str], overlap: float | None = None) -> list[
         if key not in source_words and key.removesuffix("s") not in source_words:  # "APIs" against "API"
             problems.append(f"name {name!r} isn't in what it cites")
     have = set().union(*(_numbers(s) for s in sources))
+    tokens = {t for u, t in have if u != "pair"}
     for unit, token in sorted(_numbers(claim)):
-        if (unit, token) not in have:
+        weak_match = unit != "pair" and token in tokens and (_weak(unit, token) or any(
+            _weak(u, t) for u, t in have if t == token))
+        if (unit, token) not in have and not weak_match:
             shown = token if unit == "pair" else f"{token} ({unit or 'no unit'})"
             problems.append(f"number {shown!r} isn't in what it cites")
     if overlap is not None:

@@ -410,6 +410,8 @@ def render_report(d: Draft) -> str:
     out += ["", "## What a person must edit", "",
             "- mission.md: read every cited line against its source, cut what's wrong, add what the account stands for "
             "that no page says, then delete the provisional first line.",
+            "- mission.md's Do and Don't rules come from the devtools mission. Where the account's own voice breaks one, "
+            "for example posts that ask readers to comment or retweet, decide which wins and edit the other.",
             "- observe.toml: prune the watch list, move accounts to `broad_accounts`, and check the keywords and queries.",
             f"- panel.json, prompts.toml, reply_framing.json and qualify.toml are copies of the `{TEMPLATE_PROFILE}` profile. "
             "They fit a developer-tools brand; rewrite them for any other kind.", ""]

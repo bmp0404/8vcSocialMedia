@@ -20,9 +20,17 @@ MATURE_AFTER = timedelta(hours=48)
 # it keeps out posts that did merely well. Five exemplars fit in the mission without crowding it.
 EXEMPLAR_MIN_MULTIPLE = 2.0
 EXEMPLAR_COUNT = 5
+# An exemplar shows the voice, so its words have to carry it. On @supabase's corpus timeline the two strongest posts
+# were "Love that guy" and a five-word caption, both riding on an image; six words keeps such posts out.
+EXEMPLAR_MIN_WORDS = 6
 # The watcher polls each handle once per 120 s interval, and the devtools list's 24 handles keep one profile
 # at about 0.2 timeline requests a second (harness/watcher/DESIGN.md). A drafted list stays inside that.
 WATCH_MAX = 24
+# An old post at the start of a read is a stray (usually the pinned post) when the gap after it is this long and
+# this many times the account's median gap. No data picked either number; both only need to catch a pinned post
+# months or years older than the rest.
+STRAY_GAP = timedelta(days=30)
+STRAY_FACTOR = 10
 # An account the brand engaged with once is as likely noise as a relationship, so it needs two posts.
 WATCH_MIN_EVENTS = 2
 ENGAGEMENT_KINDS = ("reply", "quote", "mention", "repost")
@@ -104,7 +112,7 @@ class Baselines:
     originals_per_day: float
     replies_per_day: float
     reposts_per_day: float
-    oldest_original: str | None
+    oldest_original: str | None  # the start of the recent run the originals' rate is measured on
     mature_originals: int  # the originals the medians and exemplars use
     median_engagement: float | None  # likes + reposts + replies + quotes, as XPost.engagement
     median_likes: float | None
@@ -116,11 +124,28 @@ class Baselines:
 FORMATS = ("text_only", "photo", "video", "gif", "link", "quote")
 
 
+def recent_run(posts: list[XPost]) -> list[XPost]:
+    """The posts oldest first, without old strays at the start of the read.
+
+    A timeline read starts with the pinned post, which can be years old: on @supabase's corpus timeline one old post
+    stretched the window to four years and put the rate at 0.09 a day. The oldest post is dropped while its gap to
+    the next exceeds both STRAY_GAP and STRAY_FACTOR times the median gap. Only the start is trimmed, so an account
+    that really did go quiet for months mid-read keeps that silence in its rate."""
+    run = sorted(posts, key=lambda p: p.created_at)
+    while len(run) >= 3:
+        gaps = [b.created_at - a.created_at for a, b in zip(run, run[1:])]
+        if gaps[0] > max(STRAY_GAP, STRAY_FACTOR * statistics.median(gaps)):
+            run = run[1:]
+        else:
+            break
+    return run
+
+
 def _per_day(posts: list[XPost], read_at: datetime) -> float:
-    if not posts:
+    run = recent_run(posts)
+    if not run:
         return 0.0
-    oldest = min(p.created_at for p in posts)
-    return round(len(posts) / max((read_at - oldest) / timedelta(days=1), 1.0), 3)
+    return round(len(run) / max((read_at - run[0].created_at) / timedelta(days=1), 1.0), 3)
 
 
 def _formats(p: XPost) -> set[str]:
@@ -151,7 +176,7 @@ def baselines(tl: Timeline) -> Baselines:
         read_at=read_at.isoformat(), originals=n, continuations=len(tl.continuations), replies=len(tl.replies),
         reposts=len(tl.reposts), originals_per_day=_per_day(tl.originals, read_at),
         replies_per_day=_per_day(tl.replies, read_at), reposts_per_day=_per_day(tl.reposts, read_at),
-        oldest_original=min(p.created_at for p in tl.originals).isoformat() if tl.originals else None,
+        oldest_original=recent_run(tl.originals)[0].created_at.isoformat() if tl.originals else None,
         mature_originals=len(settled), median_engagement=_median([p.engagement for p in settled]),
         median_likes=_median([p.likes for p in settled]),
         median_views=_median([p.views for p in settled if p.views is not None]),
@@ -180,13 +205,13 @@ def words_of(text: str) -> list[str]:
 def exemplars(tl: Timeline, k: int = EXEMPLAR_COUNT, min_multiple: float = EXEMPLAR_MIN_MULTIPLE) -> list[Exemplar]:
     """The account's strongest settled originals relative to its own median, at least `min_multiple` times it.
 
-    Only originals with three or more words count, because an exemplar is there to show the voice. The median
+    Only originals with EXEMPLAR_MIN_WORDS words or more count, because an exemplar is there to show the voice. The median
     is over every settled original; a median of 0 is treated as 1 so a post with any engagement can qualify."""
     settled = mature(tl.originals)
     if not settled:
         return []
     median = max(statistics.median(p.engagement for p in settled), 1)
-    scored = [(p.engagement / median, p) for p in settled if len(words_of(p.text)) >= 3]
+    scored = [(p.engagement / median, p) for p in settled if len(words_of(p.text)) >= EXEMPLAR_MIN_WORDS]
     keep = sorted(((m, p) for m, p in scored if m >= min_multiple), key=lambda mp: (-mp[0], int(mp[1].id)))
     return [Exemplar(p.id, p.url, p.text, p.engagement, round(m, 2)) for m, p in keep[:k]]
 

@@ -3,7 +3,9 @@
 Every reader and page here is fake; nothing touches the network."""
 
 import json
+import random
 import tomllib
+from collections import Counter
 from datetime import date, datetime, timedelta, timezone
 
 import pytest
@@ -12,8 +14,9 @@ from harness import config
 from harness.context import snowflake
 from harness.context.http import FetchError
 from harness.context.xreader import XPost
+from harness.corpus.load import Corpus, Item
 from harness.llm import MockLLM
-from harness.onboard import claims, history, profile, site
+from harness.onboard import claims, history, profile, site, validate
 from harness.sources.watch import parse_watch
 
 READ = datetime(2026, 10, 16, 12, 0, tzinfo=timezone.utc)
@@ -88,6 +91,19 @@ def test_rate_window_is_at_least_a_day():
     assert b.originals_per_day == 2.0
 
 
+def test_a_pinned_post_years_older_than_the_rest_doesnt_stretch_the_rate():
+    pinned = post("our pinned intro post", days_ago=900, n=1)
+    recent = [post(f"post number {i} here", days_ago=10 - i, n=10 + i) for i in range(10)]  # one a day for 10 days
+    assert [p.id for p in history.recent_run([pinned] + recent)] == [p.id for p in recent]
+    assert history.baselines(history.split(BRAND, [pinned] + recent)).originals_per_day == 1.0
+
+
+def test_a_long_silence_mid_read_stays_in_the_rate():
+    # Gaps of 40, 1 and 50 days: the first gap is long but not ten times the 40-day median, so nothing is a stray.
+    posts = [post("a b c", days_ago=d, n=i) for i, d in enumerate([100, 60, 59, 9])]
+    assert len(history.recent_run(posts)) == 4
+
+
 def test_baselines_refuse_an_empty_read():
     with pytest.raises(ValueError, match="no posts"):
         history.baselines(history.split(BRAND, []))
@@ -97,15 +113,16 @@ def test_baselines_refuse_an_empty_read():
 
 
 def test_exemplars_are_measured_against_the_accounts_own_median():
-    base = [post(f"ordinary post number {i}", days_ago=10 + i, likes=10, n=i) for i in range(5)]
-    double = post("exactly twice the median here", days_ago=5, likes=20, n=10)  # 2.0x: the bound is inclusive
-    under = post("just under twice the median", days_ago=5, likes=19, n=11)
-    big = post("five times the median wow", days_ago=6, likes=50, n=12)
+    base = [post(f"ordinary post number {i}", days_ago=10 + i, likes=10, n=i) for i in range(7)]  # median 10
+    double = post("exactly twice the median here today", days_ago=5, likes=20, n=10)  # 2.0x: the bound is inclusive
+    under = post("just under twice the median sadly", days_ago=5, likes=19, n=11)
+    big = post("five times the median wow look", days_ago=6, likes=50, n=12)
     young = post("viral but still young post", days_ago=1, likes=900, n=13)  # not settled
     reply = post("@x a reply that did great", days_ago=5, likes=500, replying_to="x", n=14)
     rp = post("a repost that did great", days_ago=5, likes=500, author="x", repost=True, n=15)
     no_words = post("https://t.co/abc @x", days_ago=5, likes=100, n=16)  # nothing to show the voice
-    tl = history.split(BRAND, base + [double, under, big, young, reply, rp, no_words])
+    caption = post("Love that guy https://t.co/x", days_ago=5, likes=900, n=17)  # an image's caption
+    tl = history.split(BRAND, base + [double, under, big, young, reply, rp, no_words, caption])
     ex = history.exemplars(tl)
     assert [e.id for e in ex] == [big.id, double.id]
     assert [e.multiple for e in ex] == [5.0, 2.0]
@@ -114,14 +131,14 @@ def test_exemplars_are_measured_against_the_accounts_own_median():
 
 def test_exemplars_cap_and_break_ties_by_id():
     base = [post(f"ordinary post number {i}", days_ago=20 + i, likes=1, n=i) for i in range(9)]
-    strong = [post(f"strong post number {i}", days_ago=10, likes=10, n=20 + i) for i in range(7)]
+    strong = [post(f"this strong post number {i} reads well here", days_ago=10, likes=10, n=20 + i) for i in range(7)]
     ex = history.exemplars(history.split(BRAND, base + strong), k=5)
     assert [e.id for e in ex] == sorted((p.id for p in strong), key=int)[:5]
 
 
 def test_a_zero_median_counts_as_one():
     tl = history.split(BRAND, [post(f"quiet post number {i}", days_ago=10 + i, n=i) for i in range(3)]
-                       + [post("two likes is twice nothing", days_ago=5, likes=2, n=9)])
+                       + [post("two likes is twice nothing at all", days_ago=5, likes=2, n=9)])
     assert [e.multiple for e in history.exemplars(tl)] == [2.0]
 
 
@@ -269,12 +286,21 @@ def test_quotes_must_appear_verbatim_once_normalized():
     ("It retries failed jobs up to 25 retries.", "number '25 (retrie)'"),  # ground.unit_after drops the s
     ("Uptime is 99.9% for every team.", None),
     ("It runs on PostgreSQL and MySQL.", "name 'MySQL'"),
+    ("Retries up to 25 for teams.", None),  # "25 for": a stopword says nothing about the unit
+    ("The 2026 conference is for teams.", "number '2026 (conference)'"),  # no 2026 in the page at all
     ("It runs on PostgreSQL for Stripe.", "name 'Stripe'"),
     ("Teams can ask @acmehelp for help.", "name '@acmehelp'"),
 ])
 def test_trace_requires_names_and_numbers_from_the_sources(claim, problem):
     problems = claims.trace(claim, [PAGE])
     assert (problem is None and problems == []) or (problem is not None and any(problem in p for p in problems))
+
+
+def test_years_and_numbers_followed_by_stopwords_match_on_digits():
+    source = "Supabase Select 2026 is sold out. The Pro plan is $25 and up."
+    assert claims.trace("Select 2026 conference", [source]) == []
+    assert claims.trace("Pro costs $25 per month", [source]) == []  # the source's "25 and" says nothing either
+    assert claims.trace("Pro has 25 regions", ["Pro has 25 seats"]) != []  # two real units that differ
 
 
 def test_trace_content_overlap_and_no_source():
@@ -440,3 +466,105 @@ def test_draft_json_has_no_page_text(tmp_path):
     profile.write(d, profiles_dir=tmp_path, out_dir=tmp_path / "out")
     summary = json.loads((tmp_path / "out" / "acme-j" / "draft.json").read_text(encoding="utf-8"))
     assert summary["watch"] == ["partner2", "fan", "partner"] and "pages" not in summary
+
+
+# ---------------------------------------------------------------- validation on the corpus
+
+
+CUT = READ - timedelta(days=10)
+
+
+def item(author, days_ago, n, text="some words in a post", kind="post", parent_author=None, parent_id=None,
+         reposted_by=(), sources=("author_timelines",), quoted_id=None, likes=0) -> Item:
+    pid = sid(READ - timedelta(days=days_ago), n)
+    return Item(status_id=pid, kind=kind, author=author, text=text, created_at=snowflake.to_datetime(pid),
+                author_followers=None, author_verified=None, author_description=None, parent_id=parent_id,
+                parent_author=parent_author, quoted_id=quoted_id, media_types=[], n_links=0, n_mentions=0, lang="en",
+                metrics={"likes": likes, "reposts": 0, "replies": 0, "quotes": 0, "bookmarks": 0, "views": 0,
+                         "fetched_at": READ.isoformat()}, sources=list(sources), reposted_by=list(reposted_by))
+
+
+def corpus_fixture():
+    other_post = item("bob", 5, 1, "bob ships a thing")
+    quoted = item("carol", 4, 2, "carol says something")
+    items = [
+        item(BRAND, 20, 3, "old post with @dave"),
+        item(BRAND, 12, 4, "still before the cutoff @dave"),
+        item(BRAND, 9.5, 5, "just after the cutoff, hi @erin"),
+        item(BRAND, 3, 6, "quoting carol here", quoted_id=quoted.status_id),
+        item(BRAND, 3, 7, "and a thread reply", kind="reply", parent_author=BRAND, parent_id="1"),
+        item(BRAND, 2, 8, "@bob nice one", kind="reply", parent_author="bob", parent_id=other_post.status_id,
+             sources=("reply_samples",)),
+        item("frank", 6, 9, "frank's post the brand reposted", reposted_by=[BRAND]),
+        item("zed", 1, 10, "a peer post with words"),
+        item("zed", 15, 11, "a peer post before the cutoff"),
+        other_post, quoted,
+    ]
+    return Corpus(sorted(items, key=lambda i: int(i.status_id)), Counter(), Counter())
+
+
+def test_corpus_reader_replays_a_window_of_the_brands_tabs():
+    c = corpus_fixture()
+    before = validate.CorpusReader(c, end=CUT).profile_statuses(BRAND, limit=100)
+    assert [p.text for p in before] == ["still before the cutoff @dave", "old post with @dave"]
+    assert all(p.fetched_at == CUT.isoformat() for p in before)  # read no later than the cutoff
+    after = validate.CorpusReader(c, start=CUT).profile_statuses(BRAND, limit=100)
+    assert "@bob nice one" not in [p.text for p in after]  # replies to others are only on the replies tab
+    tabs = validate.CorpusReader(c, start=CUT).profile_statuses(BRAND, limit=100, with_replies=True)
+    by_text = {p.text: p for p in tabs}
+    assert by_text["frank's post the brand reposted"].is_repost
+    assert by_text["quoting carol here"].quoted_author == "carol"
+    assert by_text["@bob nice one"].replying_to == "bob"
+    assert "and a thread reply" in by_text and "bob ships a thing" not in by_text
+
+
+def test_engaged_accounts_after_the_cutoff_count_every_kind_once_per_post():
+    after = validate.engaged_accounts(corpus_fixture(), BRAND, CUT, None)
+    assert after == {"erin": 1, "carol": 1, "bob": 1, "frank": 1}
+    assert validate.engaged_accounts(corpus_fixture(), BRAND, None, CUT) == {"dave": 2}
+
+
+def test_recall_counts_accounts_and_engagements():
+    r = validate.recall(["Erin", "carol", "nobody"], {"erin": 3, "carol": 1, "bob": 4})
+    assert r == {"size": 3, "accounts": 3, "hit": 2, "recall": 0.667, "events": 8, "events_hit": 4, "event_recall": 0.5}
+    assert validate.recall([], {})["recall"] is None
+
+
+def test_popular_list_leaves_out_the_brand_and_its_own_history():
+    c = corpus_fixture()
+    extra = [item("zed", 14, 20, "hey @dave"), item("yan", 14, 21, "hey @dave and @zed"), item("yan", 13, 22, "@zed again")]
+    c = Corpus(sorted(c.items + extra, key=lambda i: int(i.status_id)), Counter(), Counter())
+    assert validate.popular_list(c, BRAND, CUT, (BRAND, "zed", "yan")) == ["dave", "zed"]
+
+
+def test_fit_posts_split_the_brands_later_posts_its_engagements_and_peers():
+    posts = validate.fit_posts(corpus_fixture(), BRAND, CUT, random.Random(1), (BRAND, "zed", "bob"))
+    groups = {p.text: p.group for p in posts}
+    assert groups == {"just after the cutoff, hi @erin": "own", "quoting carol here": "own",
+                      "frank's post the brand reposted": "engaged", "carol says something": "engaged",
+                      "bob ships a thing": "engaged", "a peer post with words": "peer"}
+
+
+def test_off_mission_rates_and_pairs():
+    def row(group, onb, dev):
+        verdict = {"off": {"tool": "abstain", "reason": "off_mission"}, "reply": {"tool": "reply", "reason": ""},
+                   "angle": {"tool": "abstain", "reason": "no_angle"}, "error": {"tool": "error", "reason": ""}}
+        return {"group": group, "onboarded": verdict[onb], "devtools": verdict[dev]}
+    rows = [row("own", "reply", "off"), row("own", "off", "off"), row("own", "angle", "reply"),
+            row("engaged", "reply", "off"), row("engaged", "error", "off"), row("peer", "off", "reply")]
+    rates = validate.off_mission_rates(rows, "onboarded")
+    assert rates["own"] == {"judged": 3, "off_mission": 1, "rate": 0.333, "errors": 0}
+    assert rates["engaged"] == {"judged": 1, "off_mission": 0, "rate": 0.0, "errors": 1}
+    assert rates["brand_engaged"] == {"judged": 4, "off_mission": 1, "rate": 0.25}
+    assert validate.off_mission_rates(rows, "devtools")["brand_engaged"] == {"judged": 5, "off_mission": 4, "rate": 0.8}
+    assert validate.paired(rows, ("own", "engaged")) == {"pairs": 4, "only_devtools_off": 2, "only_onboarded_off": 0}
+
+
+def test_judge_uses_the_planner_and_survives_a_failed_call():
+    p = validate.FitPost("https://x.com/zed/status/1", "zed", "a post", "peer")
+    assert validate.judge(MockLLM(), "MISSION", p)["tool"] == "reply"
+
+    class Down(MockLLM):
+        def complete_json(self, system, prompt, mock=None):
+            raise RuntimeError("gateway 502")
+    assert validate.judge(Down(), "MISSION", p) == {"tool": "error", "reason": "", "detail": "RuntimeError: gateway 502"}
