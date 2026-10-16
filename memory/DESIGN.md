@@ -2,6 +2,12 @@
 
 This covers the `sam/memory` part of the memory layer. Krish's store (`harness/memstore/`) is described in [README.md](README.md) and specified in [IMPLEMENTATION.md](IMPLEMENTATION.md). Rushi's per-round log format is in [format/](format/README.md). Everything below writes into Krish's store through one adapter and never stores notes of its own.
 
+## The result that matters
+
+With the context worker's boost flags and label eligibility applied, reflection found nothing it could confirm on the dev-tool dataset. Fresh runs supported 0 of 8 hypotheses on the dataset's Category label and 0 of 6 on the within-account label (`label_above_author_prior`, which compares a post with its author's earlier median). Four lessons from earlier, unfiltered runs held on the Category label (3 of 4, on 42 held-out posts in 6 account strata), and none held on the within-account label (192 posts in 34 strata). The context worker's leakage check found that at the two tails of the Category label the account explains nearly everything, so a lesson that holds only there is mostly about account size.
+
+`memory/lessons.md` says so: no lesson has passed a within-account held-out test yet, and the four Category-only lessons are listed below that line as unproven. On this dataset the job does what it should, which is decline to invent lessons.
+
 ## What memory did before this branch
 
 - `harness/memory.py` kept one review row per action. `set_review` overwrote it with `INSERT OR REPLACE` (line 107 on `main`) and deleted it on a reset to pending (line 104). A verdict that flipped, or the draft a human edited, was gone after the next click.
@@ -39,7 +45,7 @@ Each kind is a dataclass in `harness/learning/kinds.py` that maps onto one of Kr
 | --- | --- | --- |
 | `Episode` | episode, `post-<tweet id>` (dataset) or `ep-<action id>` (ours) | The post or draft, what the agent saw (`observation`), how the draft was made and picked (`decision`: mind, provider, siblings, `draft_meta`, `chosen_by_bot`), peer posts on the same story (`peers`), and one `Outcome` per source |
 | `Reflection` | reflection, `refl-<hash>` | A claim about why cited episodes share an outcome, the contrasting episodes, the predicate and optional rule that tested it, the test result, and caveats |
-| `Lesson` | lesson, `lesson-<hash>` | Advice, its predicate or rule, the effect from the latest supporting test, evidence ids, vote counts (support, contradict, inconclusive), `valid_until`, scope, caveats |
+| `Lesson` | lesson, `lesson-<hash>` | Advice, its predicate or rule, the effect from the latest supporting test, evidence ids, vote counts (support, contradict, inconclusive), the label sources it passed on (`labels_passed`), `valid_until`, scope, caveats |
 | `Entity` | entity, `entity-<slug>` | An account, team or brand profile with stats |
 | `Fact` | fact, `fact-<hash of subject and question>` | One answer about the brand, its verbatim quote and source URL, `as_of`, `valid_until`, `supersedes` |
 | `Procedure` | procedure, `procedure-review-edits-<mind>` | Every edit reviewers made to one mind's drafts: the draft, the kept text, the verdict, the note and a word diff |
@@ -104,7 +110,7 @@ CREATE TABLE IF NOT EXISTS review_events (
 
 `set_review(action_id, status, text=None, note="", reasons=None)` takes kill reason codes from `memory.REVIEW_REASONS` (`off_message`, `factually_shaky`, `stale_story`, `wrong_target`, `slop`, `tone`, `other`) and stores them as a JSON list; an unknown code raises `ValueError`. The table is new, so existing `data/harness.db` files get it on the next connect.
 
-`harness/learning/reviews.py` folds the events into one summary per action: the latest verdict, how many times it flipped, the notes, the reasons, and each distinct edit. `learn` then writes one procedure note per mind with every edit pair, labels approved and killed drafts as episodes for reflection (grouped by narrative, so drafts are compared on the same story), and renders `memory/lessons.md`. `review_events` stays the source of truth; procedure notes are rebuilt from it with stable ids on every run.
+`harness/learning/reviews.py` folds the events into one summary per action: the latest verdict, how many times it flipped, the notes, the reasons, and each distinct edit. `learn` then writes one procedure note per mind with every edit pair, labels approved and killed drafts as episodes for reflection (grouped by narrative, so drafts are compared on the same story), and renders `memory/lessons.md`. The file lists lessons that passed on a within-account label (a review verdict, real metrics or the author-prior label) first, says plainly when there are none, and lists Category-only lessons after that as unproven. `review_events` stays the source of truth; procedure notes are rebuilt from it with stable ids on every run.
 
 ## New ingest sources
 
@@ -114,7 +120,7 @@ CREATE TABLE IF NOT EXISTS review_events (
 
 ## Ranking at round start
 
-`harness/learning/ranking.py` supplies the ranking Krish's `context_for` can call, and `round_start(narratives, mode=None)` is the entry point for `engine/`. For each narrative it takes the store's search hits plus every active lesson, then scores each memory as relevance plus trust plus recency, each scaled to [0, 1], as in Generative Agents. Trust is a lesson's effect, or a fixed value per kind. Lessons past `valid_until`, retired lessons, rejected reflections, superseded facts and other domains' episodes are left out. Episodes are capped at one success and one failure, so a mind sees a contrast. Lessons are few and abstract, so every active one is a candidate and keyword relevance only reorders them; ExpeL likewise puts its whole insight list in the prompt.
+`harness/learning/ranking.py` supplies the ranking Krish's `context_for` can call, and `round_start(narratives, mode=None)` is the entry point for `engine/`. For each narrative it takes the store's search hits plus every active lesson, then scores each memory as relevance plus trust plus recency, each scaled to [0, 1], as in Generative Agents. Trust is a lesson's effect, halved (`confounded_label_factor`) when it passed only on the Category label, or a fixed value per kind. Lessons past `valid_until`, retired lessons, rejected reflections, superseded facts and other domains' episodes are left out. Episodes are capped at one success and one failure, so a mind sees a contrast. Lessons are few and abstract, so every active one is a candidate and keyword relevance only reorders them; ExpeL likewise puts its whole insight list in the prompt.
 
 `mode` is the ablation switch: `off` returns nothing, and `shuffled` returns the same number of picks per kind drawn at random from memories that pass the filters. The `observe` part of the result lists lessons and facts due for a recheck.
 

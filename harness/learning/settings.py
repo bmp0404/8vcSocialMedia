@@ -33,6 +33,7 @@ class ReflectSettings:
     require_boost_flags: bool = True  # refuse to run on the dataset without the context worker's boost flags
     # "category": the CSV's raw cutoffs (Deadweight vs viral). "author_prior": the context worker's within-account
     # label, which leaves far more comparable posts (477 in 33 accounts vs about 150 in 18 after filters).
+    # `learn` sets "review" for the account's own drafts. Every test records its label source.
     label_source: str = "category"
     proposer_model: str = ""  # "" uses HARNESS_MODEL or the provider default
     label_model: str = ""  # use a different model from the proposer when the gateway has one
@@ -56,6 +57,9 @@ class RecallSettings:
     # neighbors from the same account beat the account's own majority label (0.853 vs 0.798 on the same
     # posts); neighbors from other accounts fell short of it (0.649 vs 0.787). The 0.5 itself is a guess.
     other_author_factor: float = 0.5
+    # Lessons that passed only on the dataset's Category label, whose cutoffs mostly track account size. Shown,
+    # marked as confounded, at reduced trust. No evidence for 0.5.
+    confounded_label_factor: float = 0.5
     half_life_days: float = 30.0
     undated_recency: float = 0.5
     # Domains whose lessons and past posts apply at full weight. "brand" is the account's own runs; add

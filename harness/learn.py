@@ -37,6 +37,7 @@ def learn(llm: LLM, store=None) -> str | None:
     # Our own drafts carry no boost flags: nothing pays to push a draft that was never posted.
     settings = load_settings()
     settings.reflect.require_boost_flags = False
+    settings.reflect.label_source = "review"
     reflect(episodes, llm, store, definition=REVIEW_DEFINITION, domain=HOME, settings=settings.reflect,
             key=reviews.by_narrative)
     text = render_lessons(store, today_utc(), settings.recall)

@@ -422,6 +422,8 @@ def vote(lesson: Lesson, verdict: str, result: dict, test_id: str, today: str, d
     if verdict == "supported":
         lesson.support += 1
         lesson.status = "active"
+        if result.get("label_source") and result["label_source"] not in lesson.labels_passed:
+            lesson.labels_passed.append(result["label_source"])
         if result.get("boost_filter") == "on":  # passed with boosted successes removed
             lesson.caveats = [c for c in lesson.caveats if not c.startswith("boost flags were unavailable")]
         lesson.confidence = result["effect"]
@@ -572,7 +574,7 @@ def reflect(
         h = c.hypothesis
         predicate = str(h["predicate"]).strip()
         result = {**result, "verdict": verdict, "checked_by": "rule" if c.rule else "labeler", "q": s.fdr_q,
-                  "tests_in_run": n_tests, "boost_filter": filters["boost_filter"]}
+                  "tests_in_run": n_tests, "boost_filter": filters["boost_filter"], "label_source": s.label_source}
         refl = Reflection(
             id="refl-" + short_hash(str(h.get("claim", "")), ",".join(sorted(c.evidence))),
             claim=str(h.get("claim", "")).strip(),
@@ -619,6 +621,7 @@ def reflect(
                 last_test=result,
                 labeled_at_test=labeled_count,
                 caveats=refl.caveats,
+                labels_passed=[s.label_source],
                 created=today,
                 updated=today,
             )
@@ -632,7 +635,8 @@ def reflect(
 
     for lid, result, verdict in zip(voted, lesson_results, lesson_verdicts):
         result = {**result, "verdict": verdict, "checked_by": "rule" if existing[lid].rule else "labeler",
-                  "q": s.fdr_q, "tests_in_run": n_tests, "boost_filter": filters["boost_filter"]}
+                  "q": s.fdr_q, "tests_in_run": n_tests, "boost_filter": filters["boost_filter"],
+                  "label_source": s.label_source}
         save(store, vote(existing[lid], verdict, result, f"reflect-{today}-seed{seed}", today, domain,
                          labeled_count, s.valid_days))
         report.lessons_voted.append(lid)
@@ -670,7 +674,7 @@ def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: Re
                             min_posts_with_trait=s.min_posts_with_trait) for l in due]
     out = []
     for lesson, result, verdict in zip(due, results, verdicts(results, s.fdr_q)):
-        result = {**result, "verdict": verdict, "boost_filter": filters["boost_filter"]}
+        result = {**result, "verdict": verdict, "boost_filter": filters["boost_filter"], "label_source": s.label_source}
         save(store, vote(lesson, verdict, result, f"revalidation-{today}", today, domain, len(pool), s.valid_days))
         out.append((lesson.id, verdict, result))
     return out

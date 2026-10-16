@@ -18,11 +18,12 @@ HELDOUT = {"target_posts": 40, "target_with_trait": 31, "other_posts": 35, "othe
 
 def lesson(lid: str, confidence: float = 0.5, *, status: str = "active", valid_until: str = "2026-12-01",
            domain: str = "brand", scope: str = "domain", updated: str = "2026-10-15",
-           text: str = "Lead with a concrete number", polarity: str = "avoid", last_test: dict | None = None) -> Lesson:
+           text: str = "Lead with a concrete number", polarity: str = "avoid", last_test: dict | None = None,
+           labels_passed: tuple = ("review",)) -> Lesson:
     return Lesson(id=lid, text=text, predicate="Does the post open with a number?", confidence=confidence,
                   evidence=["post-1"], reflections=["reflection-1"], valid_until=valid_until, scope=scope,
                   domain=domain, polarity=polarity, status=status, last_test=last_test or {}, created="2026-09-01",
-                  updated=updated)
+                  updated=updated, labels_passed=list(labels_passed))
 
 
 def episode(eid: str, label: str, *, author: str = "brand", boost: bool | None = None, domain: str = "",
@@ -400,7 +401,28 @@ def test_render_lessons_puts_home_lessons_first_and_drops_stale_ones():
 
 def test_render_lessons_with_none_active():
     store = stored(lesson("lesson-stale", valid_until="2026-10-01"))
-    assert render_lessons(store, TODAY, S) == LESSONS_HEADER + "(No tested lessons yet.)\n"
+    assert render_lessons(store, TODAY, S) == LESSONS_HEADER + "No lesson has passed a within-account held-out test yet.\n"
+
+
+def test_render_lessons_marks_category_only_lessons_as_confounded():
+    store = stored(lesson("lesson-cat", 0.4, labels_passed=("category",), text="Attach a video"),
+                   lesson("lesson-cat-stale", 0.9, labels_passed=("category",), valid_until="2026-10-01"))
+    assert render_lessons(store, TODAY, S) == LESSONS_HEADER + (
+        "No lesson has passed a within-account held-out test yet.\n"
+        "\n"
+        "1 lesson passed only on the dataset's Category label, which mostly tracks account size. Treat each as unproven:\n"
+        "\n"
+        "- Attach a video (not tested on held-out posts; learned from brand; retest by 2026-12-01; lesson-cat)\n"
+    )
+
+
+def test_trust_discounts_category_only_lessons():
+    within = mem(lesson("lesson-a", 0.6, labels_passed=("author_prior",)))
+    category = mem(lesson("lesson-b", 0.6, labels_passed=("category",)))
+    unknown = mem(lesson("lesson-c", 0.6, labels_passed=()))
+    assert trust(within, TODAY, S) == 0.6
+    assert trust(category, TODAY, S) == 0.6 * S.confounded_label_factor
+    assert trust(unknown, TODAY, S) == 0.6 * S.confounded_label_factor
 
 
 # settings
