@@ -17,3 +17,5 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Tests import harness from the repo root; without this, `uv run pytest` can't find it.
+pythonpath = ["."]
