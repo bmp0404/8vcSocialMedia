@@ -10,6 +10,7 @@ Code is in `harness/corpus/` (loader, benchmarks, statistics) and `harness/rank/
 - Within a thread, how soon a reply came is most of the signal. Delay alone ranks the more-liked reply 0.755 of the time on test threads. A model on delay, followers and verified status reaches 0.769.
 - Adding the reply's text features to that model changes accuracy by +0.002 (95% interval -0.034 to +0.044) over both test weeks. Hashed word n-grams make it worse by 0.071, and LLM label fields add +0.007 (-0.036 to +0.040). On this data the words of a reply add nothing measurable to timing and reach.
 - Within an account, the words of a post do carry signal. A TF-IDF ridge model, scored only on accounts it never saw, ranks the better post 0.711 of the time on test authors, 0.116 above length alone. Most of it is purpose: launches beat event promos.
+- Neither production judge beats that ridge. The audience panel ties it (0.723, +0.017 [-0.044, 0.087]) at one LLM call per draft; the BAML judge scores 0.639, below Claude's label model by 0.084 [0.013, 0.155].
 
 The reply result is a product decision, not just a number. If a reply's words don't move its likes, the harness earns its keep by choosing the thread and the moment and by vetoing bad drafts. The words can come from a person.
 
@@ -146,6 +147,30 @@ TF-IDF minus length on the same test pairs: +0.116 [0.038, 0.200]. A logistic mo
 Aarav reports 0.756 on 844 viral-against-deadweight pairs. On clean pairs of that kind (100+ against 10 or fewer, same filters as above) only 129 pairs from 12 accounts remain, and the ridge scores 0.581 [0.495, 0.773]. With thread continuations and immature posts put back, 4,785 pairs from 38 accounts score 0.664 [0.545, 0.771]. So I could not reproduce 0.756 on these files, and the version with easy pairs scores higher than the clean one, but both intervals are wide. On the broader 3x pairs the content signal holds at about 0.71.
 
 `data/bench/results/posts.json` holds these numbers. Rerun with `python -m harness.rank posts`.
+
+## The production judges on the post benchmark
+
+Phase D asks whether the judges Qualify uses rank an account's posts better than the learned rankers. `python -m harness.rank judges` scores the 598 posts in the 1,016 test-author pairs, one post per call so no batch order can move a score, on Claude Sonnet 5.5 through the gateway:
+
+- **panel**: `harness.qualify.panel_scores` with the dev-tool personas (`eval/panels/devtools.json`), the mean of the four panelists' 0-to-1 guesses. Production runs the panel on the run's model when `HARNESS_PANEL_MODEL` is unset, which is Sonnet. Production also scores a run's drafts together in two orders; one post per call is the version without order effects.
+- **BAML judge**: `GradePost` (`eval/baml_src/main.baml`, `harness/post_judge`), `score_100` after the same evidence checks `grade_with_references` makes. Its references come from the dataset CSV, dated before the candidate's day and never from the candidate's own account, so it ranks an account it knows nothing about, as the TF-IDF ridge and the label model do. 27 posts got no grade: 23 too early for three successful references from other accounts, 2 with no text once links are removed, and 2 whose grade cited a reference it wasn't given on both tries.
+
+| Scorer on test-author pairs | Accuracy | Judge minus TF-IDF ridge | Judge minus label model |
+| --- | --- | --- | --- |
+| Claude label model (fitted on dev authors) | 0.730 [0.667, 0.783] | | |
+| panel | 0.723 [0.670, 0.781] | +0.017 [-0.044, 0.087] | -0.007 [-0.046, 0.035] |
+| TF-IDF ridge (cross-fitted by account) | 0.711 [0.650, 0.772] | | |
+| BAML judge | 0.639 [0.582, 0.698] | -0.065 [-0.152, 0.033] | **-0.084 [-0.155, -0.013]** |
+| length | 0.602 [0.548, 0.661] | | |
+| format logistic | 0.592 [0.526, 0.654] | | |
+
+Against the format logistic, the panel gains +0.131 [0.055, 0.214] and the BAML judge +0.048 [-0.030, 0.128]; against length, +0.121 [0.054, 0.198] and +0.032 [-0.021, 0.082].
+
+Neither judge beats the TF-IDF ridge with an interval above zero. The panel ties it and the label model at one Sonnet call per draft; the ridge costs nothing to run. The BAML judge does worse than the label model and no better than length. Its rubric scores take 18 distinct values and it called 504 of 571 posts "Revise", so it separates posts little. The case for production Qualify is the learned post ranker plus the critic's veto, with the panel kept only if a later test shows it adds something the ranker misses.
+
+The run used 1,186 calls (598 panel, 588 BAML replies) of the 3,000 allowed. Per-post scores are cached in `data/bench/results/judges/` and every number above is in `data/bench/results/judges-posts.json`.
+
+I did not score the judges on the reply benchmark. Its 967 test replies would cost about 2,000 calls, and neither judge sees when a reply came, which is most of what decides it (delay alone scores 0.755). The question that matters there, whether a reply's words add to timing, is answered by the ranker above.
 
 ## Openness
 

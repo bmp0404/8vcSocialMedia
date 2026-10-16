@@ -1,0 +1,149 @@
+{
+ "model": "claude-sonnet-5-5",
+ "test_pairs": 1016,
+ "test_items": 598,
+ "test_authors": 37,
+ "calls_this_run": 1186,
+ "scored_items": {
+  "panel": 598,
+  "baml_judge": 571
+ },
+ "failures": {
+  "panel": 0,
+  "baml_judge": {
+   "references: Need 3 distinct-account Succ": 23,
+   "InvalidGradeError: Judge cited an unknow": 2,
+   "references: candidate text must not be e": 2
+  }
+ },
+ "accuracy": {
+  "tfidf_ridge": {
+   "estimate": 0.7114,
+   "ci95": [
+    0.6498,
+    0.7724
+   ],
+   "pairs": 932,
+   "clusters": 34
+  },
+  "claude_label_model": {
+   "estimate": 0.7303,
+   "ci95": [
+    0.6672,
+    0.783
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "format_logistic": {
+   "estimate": 0.5915,
+   "ci95": [
+    0.5262,
+    0.6541
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "length": {
+   "estimate": 0.6024,
+   "ci95": [
+    0.5478,
+    0.6613
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "panel": {
+   "estimate": 0.7229,
+   "ci95": [
+    0.6696,
+    0.7812
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "baml_judge": {
+   "estimate": 0.6389,
+   "ci95": [
+    0.582,
+    0.6977
+   ],
+   "pairs": 907,
+   "clusters": 36
+  }
+ },
+ "paired": {
+  "panel - tfidf_ridge": {
+   "estimate": 0.0172,
+   "ci95": [
+    -0.044,
+    0.0873
+   ],
+   "pairs": 932,
+   "clusters": 34
+  },
+  "panel - claude_label_model": {
+   "estimate": -0.0074,
+   "ci95": [
+    -0.0459,
+    0.0346
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "panel - format_logistic": {
+   "estimate": 0.1314,
+   "ci95": [
+    0.0554,
+    0.214
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "panel - length": {
+   "estimate": 0.1206,
+   "ci95": [
+    0.0536,
+    0.1979
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "baml_judge - tfidf_ridge": {
+   "estimate": -0.0646,
+   "ci95": [
+    -0.1524,
+    0.0325
+   ],
+   "pairs": 836,
+   "clusters": 33
+  },
+  "baml_judge - claude_label_model": {
+   "estimate": -0.0843,
+   "ci95": [
+    -0.1552,
+    -0.0128
+   ],
+   "pairs": 907,
+   "clusters": 36
+  },
+  "baml_judge - format_logistic": {
+   "estimate": 0.048,
+   "ci95": [
+    -0.0298,
+    0.1282
+   ],
+   "pairs": 907,
+   "clusters": 36
+  },
+  "baml_judge - length": {
+   "estimate": 0.032,
+   "ci95": [
+    -0.0209,
+    0.0818
+   ],
+   "pairs": 907,
+   "clusters": 36
+  }
+ }
+}
