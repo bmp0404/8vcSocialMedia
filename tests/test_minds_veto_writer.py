@@ -11,7 +11,8 @@ CFG = ActionConfig()
 
 
 class Judge(LLM):
-    """Flags candidates by text: 'ai' -> high P(AI), 'lie' -> unsupported, 'mean' -> risk.
+    """Flags candidates by text: 'ai' -> high P(AI), 'lie' -> unsupported, 'mean' -> risk,
+    'cheer' -> off mission.
     `flip` flags 'edge' only on the first (forward) pass, to make a split verdict."""
 
     def __init__(self, flip=False, count_off=False):
@@ -21,24 +22,24 @@ class Judge(LLM):
         self.calls += 1
         cands = re.findall(r"^\d+\. (.*)$", prompt.split("CANDIDATES:")[1], re.M)
         out = [{"p_ai": 90 if "ai" in c or (self.flip and self.calls == 1 and "edge" in c) else 5,
-                "unsupported": "lie" in c, "risk": "mean" in c, "reason": c} for c in cands]
+                "unsupported": "lie" in c, "risk": "mean" in c, "off_mission": "cheer" in c, "reason": c} for c in cands]
         return {"verdicts": out[:-1] if self.count_off else out}
 
 
 def test_veto_maps_reversed_verdicts_back_to_the_right_draft():
-    res = veto.veto(Judge(), CFG, ["fine one", "sounds ai", "fine two"], lane="reply", context="ctx")
+    res = veto.veto(Judge(), CFG, ["fine one", "sounds ai", "fine two"], lane="reply", context="ctx", mission="m")
     assert [(r.text, r.passed) for r in res] == [("fine one", True), ("sounds ai", False), ("fine two", True)]
     assert all(r.fwd.reason == r.rev.reason == r.text for r in res)
 
 
 def test_veto_asks_in_two_orders():
     j = Judge()
-    veto.veto(j, CFG, ["a b", "c d"], lane="reply", context="ctx")
+    veto.veto(j, CFG, ["a b", "c d"], lane="reply", context="ctx", mission="m")
     assert j.calls == 2
 
 
 def test_veto_reasons():
-    res = {r.text: r for r in veto.veto(Judge(), CFG, ["ai voice", "a lie", "so mean", "fine"], lane="reply", context="c")}
+    res = {r.text: r for r in veto.veto(Judge(), CFG, ["ai voice", "a lie", "so mean", "fine"], lane="reply", context="c", mission="m")}
     assert res["ai voice"].why == "reads as AI"
     assert res["a lie"].why == "unsupported claim"
     assert res["so mean"].why == "mute/report risk"
@@ -46,22 +47,22 @@ def test_veto_reasons():
 
 
 def test_split_verdict_is_a_veto():
-    (r,) = veto.veto(Judge(flip=True), CFG, ["edge case"], lane="reply", context="c")
+    (r,) = veto.veto(Judge(flip=True), CFG, ["edge case"], lane="reply", context="c", mission="m")
     assert not r.passed and r.why == "split verdict between orders" and not r.orders_agree
 
 
 def test_wrong_verdict_count_vetoes_the_batch():
-    res = veto.veto(Judge(count_off=True), CFG, ["a", "b"], lane="reply", context="c")
+    res = veto.veto(Judge(count_off=True), CFG, ["a", "b"], lane="reply", context="c", mission="m")
     assert all(not r.passed and "2 candidates" in r.why for r in res)
 
 
 def test_threshold_is_a_knob():
     loose = ActionConfig(veto_max_p_ai=95)
-    assert veto.veto(Judge(), loose, ["sounds ai"], lane="reply", context="c")[0].passed
+    assert veto.veto(Judge(), loose, ["sounds ai"], lane="reply", context="c", mission="m")[0].passed
 
 
 def test_mock_judge_passes():
-    assert all(r.passed for r in veto.veto(MockLLM(), CFG, ["a", "b"], lane="reply", context="c"))
+    assert all(r.passed for r in veto.veto(MockLLM(), CFG, ["a", "b"], lane="reply", context="c", mission="m"))
 
 
 def test_judge_model_is_opus_for_the_gateway(monkeypatch):
@@ -221,3 +222,54 @@ def test_fallback_to_the_run_model_is_loud(capsys):
     assert "the veto judge wants claude-opus-5-5" in capsys.readouterr().out
     with pytest.raises(writer.WriterUnavailable):
         writer.continue_page(opaque, "PAGE", "h", CFG)
+
+
+
+# ---- mission fit (Iterate's 27-thread run shipped these past the old veto)
+
+REAL_SHIPPED = ["Let's go Angel Reese, another championship \U0001F3C6", "talking shit about a rookie"]
+
+
+class MissionJudge(LLM):
+    """Answers the way the mission check should on Iterate's shipped strings, and records the prompt."""
+
+    def __init__(self):
+        self.systems = []
+
+    def complete_json(self, system, prompt, mock=None):
+        self.systems.append(system)
+        cands = re.findall(r"^\d+\. (.*)$", prompt.split("CANDIDATES:")[1], re.M)
+        return {"verdicts": [{"p_ai": 20, "unsupported": "championship" in c, "off_mission": "Let's go Angel Reese" in c,
+                              "risk": "shit about" in c, "reason": ""} for c in cands]}
+
+
+def test_mission_fit_vetoes_cheering_the_rival_and_insults():
+    j = MissionJudge()
+    mission = "Caitlin Clark and Indiana Fever fan account. Rivalry banter beats generic praise. Never cruel."
+    res = {r.text: r for r in veto.veto(j, CFG, REAL_SHIPPED + ["fever defense next year though"], lane="reply",
+                                        context="POST by @WNBA: Angel Reese has found a way to win", mission=mission)}
+    assert res[REAL_SHIPPED[0]].why == "unsupported claim, off mission"
+    assert res[REAL_SHIPPED[1]].why == "mute/report risk"
+    assert res["fever defense next year though"].passed
+    assert len(j.systems) == 2 and all(mission in s and "off_mission" in s for s in j.systems)
+
+
+def test_missing_off_mission_field_counts_as_a_veto():
+    class OldShape(LLM):
+        def complete_json(self, system, prompt, mock=None):
+            return {"verdicts": [{"p_ai": 5, "unsupported": False, "risk": False}]}
+
+    (r,) = veto.veto(OldShape(), CFG, ["fine reply here"], lane="reply", context="c", mission="m")
+    assert not r.passed and r.why == "off mission"
+
+
+def test_off_mission_split_between_orders_is_a_veto():
+    class Flip(LLM):
+        calls = 0
+
+        def complete_json(self, system, prompt, mock=None):
+            Flip.calls += 1
+            return {"verdicts": [{"p_ai": 5, "unsupported": False, "risk": False, "off_mission": Flip.calls == 1}]}
+
+    (r,) = veto.veto(Flip(), CFG, ["go valks"], lane="reply", context="c", mission="m")
+    assert not r.passed and r.why == "split verdict between orders"

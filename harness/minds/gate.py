@@ -86,6 +86,7 @@ class _Ctx:
     kind: str
     limits: GateLimits
     context: str | None  # lowercased, or None when the caller has no context to ground against
+    post: str | None = None  # lowercased text of the post being answered, when the caller has it
 
 
 def _is_emoji(ch: str) -> bool:
@@ -194,6 +195,27 @@ def _rule_wrapped_in_quotes(text: str, c: _Ctx) -> list[str]:
     return [("whole draft wrapped in quotes", None, None)] if len(t) > 2 and t[0] in quotes and t.endswith(quotes[t[0]]) else []
 
 
+TOKEN = re.compile(r"[A-Za-z0-9][A-Za-z0-9'\u2019]*")
+REPEATS = re.compile(r"(.)\1{2,}")  # "CANADAAA" -> "CANADA"
+
+
+def _rule_content_free(text: str, c: _Ctx) -> list:
+    """No words at all (ellipses, emoji, punctuation), or a few words that touch nothing in the post."""
+    if not text.strip():
+        return []  # the empty rule reports this
+    words = TOKEN.findall(text)
+    if not words:
+        return [("no words: only punctuation, ellipses or emoji", None, None)]
+    reference = c.post if c.post is not None else c.context
+    if len(words) >= c.limits.min_words_without_post_reference or reference is None:
+        return []
+    ref = REPEATS.sub(r"\1", reference)
+    if any(len(w) >= 3 and REPEATS.sub(r"\1", w.lower()) in ref for w in words):
+        return []
+    return [(f"{len(words)} word(s) that share nothing with the post (min {c.limits.min_words_without_post_reference} "
+             "without a reference)", None, None)]
+
+
 # ---- grounding rules (skipped when the caller passes no context)
 
 
@@ -231,6 +253,7 @@ RULES = {
     "url": _rule_url,
     "engagement_bait": _rule_engagement_bait,
     "wrapped_in_quotes": _rule_wrapped_in_quotes,
+    "content_free": _rule_content_free,
     "unknown_handle": _rule_unknown_handle,
     "ungrounded_number": _rule_ungrounded_number,
     "ungrounded_name": _rule_ungrounded_name,
@@ -239,12 +262,14 @@ GROUNDING_RULES = ("unknown_handle", "ungrounded_number", "ungrounded_name")
 
 
 def check(text: str, kind: str = "reply", *, context: str | None = None, limits: GateLimits | None = None,
-          rules: dict | None = None) -> GateResult:
+          rules: dict | None = None, post: str | None = None) -> GateResult:
     """Run every rule on `text`. `kind` is the action type. `context` is everything the writer
-    saw (post, thread, facts); without it the grounding rules are skipped."""
+    saw (post, thread, facts); without it the grounding rules are skipped. `post` is the text being
+    answered; the content-free rule checks short drafts against it (falling back to `context`)."""
     if kind not in KINDS:
         raise ValueError(f"gate.check: unknown kind {kind!r}; expected one of {list(KINDS)}")
     text = unicodedata.normalize("NFC", text)
-    ctx = _Ctx(kind, limits or GateLimits(), unicodedata.normalize("NFC", context).lower() if context is not None else None)
+    norm = lambda x: unicodedata.normalize("NFC", x).lower() if x is not None else None  # noqa: E731
+    ctx = _Ctx(kind, limits or GateLimits(), norm(context), norm(post))
     findings = [Finding(name, d, a, b) for name, rule in (rules or RULES).items() for d, a, b in rule(text, ctx)]
     return GateResult(passed=not findings, findings=findings)

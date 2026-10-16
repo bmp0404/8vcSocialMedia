@@ -64,7 +64,7 @@ class Routed(LLM):
 
 
 def ok(_c):
-    return {"p_ai": 10, "unsupported": False, "risk": False, "reason": "fine"}
+    return {"p_ai": 10, "unsupported": False, "off_mission": False, "risk": False, "reason": "fine"}
 
 
 def run(llm, narratives, chorus=(), takes=(), cfg=None, budget=None):
@@ -186,8 +186,8 @@ def test_all_drafts_failing_the_gate_abstains(monkeypatch):
 
 
 def test_veto_rejecting_everything_abstains_and_keeps_evidence():
-    llm = Routed(styled=["state farm about to be loud", "ok fine"],
-                 veto=lambda c: {"p_ai": 80, "unsupported": False, "risk": False, "reason": "explains the joke"})
+    llm = Routed(styled=["state farm about to be loud", "ok fine then, game three"],
+                 veto=lambda c: {"p_ai": 80, "unsupported": False, "off_mission": False, "risk": False, "reason": "explains the joke"})
     actions, decisions = run(llm, [narrative([target(replies=[])])])
     d = by_lane(decisions, "reply")[0]
     assert (d.reason, d.detail) == ("judge_rejected", "veto: 2x reads as AI")
@@ -337,7 +337,7 @@ def test_page_drops_replies_the_judge_reads_as_bots():
     bot = "The defensive talent in the WNBA is unreal and the energy is electric right now"
     thread = REPLIES + [{"text": bot, "likes": 1}]
     llm = Routed(styled=["state farm about to be loud"],
-                 veto=lambda c: {"p_ai": 95 if "energy is electric" in c else 5, "unsupported": False, "risk": False, "reason": ""})
+                 veto=lambda c: {"p_ai": 95 if "energy is electric" in c else 5, "unsupported": False, "off_mission": False, "risk": False, "reason": ""})
     actions, _ = run(llm, [narrative([target(replies=thread)])])
     (a,) = [a for a in actions if a.type == "reply"]
     assert a.draft_meta["page_dropped_as_bots"] == [bot] and a.draft_meta["page_replies"] == len(REPLIES)
@@ -345,7 +345,7 @@ def test_page_drops_replies_the_judge_reads_as_bots():
 
 def test_bot_filter_is_a_knob():
     thread = REPLIES + [{"text": "the energy is electric right now for real", "likes": 1}]
-    llm = Routed(styled=["ok then sure"], veto=lambda c: {"p_ai": 95 if "electric" in c else 5, "unsupported": False, "risk": False})
+    llm = Routed(styled=["ok then sure"], veto=lambda c: {"p_ai": 95 if "electric" in c else 5, "unsupported": False, "off_mission": False, "risk": False})
     actions, _ = run(llm, [narrative([target(replies=thread)])], cfg=ActionConfig(filter_page_bots=False))
     assert [a.draft_meta["page_dropped_as_bots"] for a in actions if a.type == "reply"] == [[]]
 

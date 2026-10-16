@@ -130,7 +130,7 @@ def test_grounding_rules_need_context():
     assert grounded("went 0-10 since college") == {"ungrounded_number"}
     assert grounded("10-0 is crazy") == set()
     assert grounded("ask @CaitlinClark22") == set()
-    assert grounded("ask @alikidd33") == {"unknown_handle"}
+    assert grounded("go ask @alikidd33 about it") == {"unknown_handle"}
     assert grounded("tell Saban to pick better") == {"ungrounded_name"}
     assert grounded("Saban never picks against bama") == set()  # sentence-initial words aren't treated as names
     assert rules("went 0-10 since college") == set()  # no context, no grounding rules
@@ -160,3 +160,36 @@ def test_check_signature_keeps_text_and_kind_positional():
     assert gate.check("ok then", "reply").passed
     with pytest.raises(TypeError):
         gate.check("ok then", "reply", "context passed positionally")
+
+
+
+# ---- content-free drafts (Iterate's 27-thread run shipped a bare "...")
+
+POST = "A history of winning. Angel Reese has found a way to win at every stage of her life"
+
+
+def content(text: str, post: str | None = POST) -> set[str]:
+    return {f.rule for f in gate.check(text, "reply", post=post).findings} & {"content_free"}
+
+
+@pytest.mark.parametrize("text", ["...", "\u2026", "\U0001F525\U0001F525\U0001F525", "?!", "\U0001F602"])
+def test_no_words_is_content_free(text):
+    assert content(text) == {"content_free"}
+    assert content(text, post=None) == {"content_free"}  # needs no post to tell
+
+
+def test_short_draft_needs_a_word_from_the_post():
+    assert content("queen") == {"content_free"}
+    assert content("Reese again") == set()  # shares a name with the post
+    assert content("REESEEE") == set()  # elongated words still match
+    assert content("Let's go Angel Reese, another championship \U0001F3C6") == set()  # long enough; the veto judges it
+    assert content("talking shit about a rookie") == set()  # five words; the veto's risk check owns this one
+
+
+def test_short_draft_without_a_post_or_context_passes():
+    assert content("queen", post=None) == set()
+
+
+def test_word_cutoff_is_a_knob():
+    loose = GateLimits(min_words_without_post_reference=1)
+    assert {f.rule for f in gate.check("queen", "reply", post=POST, limits=loose).findings} == set()
