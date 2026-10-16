@@ -20,6 +20,7 @@ grounding criterion, 0-5. Its overall score isn't used, because its rubric rewar
 and its default references are dev-tool posts.
 """
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 
 from harness.llm import LLM
@@ -105,8 +106,13 @@ def veto(llm: LLM, cfg: ActionConfig, texts: list[str], *, lane: str, context: s
         return []
     judge = _judge_llm(llm, cfg)
     try:
-        fwd = _one_pass(judge, texts, lane, context, mission)
-        rev = _one_pass(judge, texts[::-1], lane, context, mission)[::-1]
+        if cfg.veto_parallel_orders:
+            with ThreadPoolExecutor(2) as pool:
+                orders = [pool.submit(_one_pass, judge, t, lane, context, mission) for t in (texts, texts[::-1])]
+                fwd, rev = orders[0].result(), orders[1].result()[::-1]
+        else:
+            fwd = _one_pass(judge, texts, lane, context, mission)
+            rev = _one_pass(judge, texts[::-1], lane, context, mission)[::-1]
     except VetoError as e:
         return [VetoResult(t, False, None, None, str(e)) for t in texts]
     results = []

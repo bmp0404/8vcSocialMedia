@@ -13,6 +13,7 @@ Two inputs are adapted rather than reused:
   still gets the banter writer whatever the arm; the file's `method` says what actually ran.
 - The thread is read through the watcher's XReader, inside the shared fxtwitter throttle, instead
   of `thread.fetch_replies`, which keeps its own per-process limit.
+- The same copy sets `veto_parallel_orders`, so the veto's forward and reversed passes run at once.
 
 There is no orient narrative, so the facts block the gate and veto read is the mission plus this
 post. The human arm runs the plan, so an off-mission post is still abstained on, and then asks the
@@ -111,7 +112,8 @@ def run_hot(llm: LLM, profile: str, post, *, reader, out_dir: Path, cfg: ActionC
         elif arm == "human":
             record.update(offer="human_prompt", prompt=_human_prompt(post.author_handle, plan.get("intent", ""), account))
         else:
-            arm_cfg = replace(cfg, min_page_replies=0 if arm == "continuation" else cfg.page_replies + 1)
+            arm_cfg = replace(cfg, min_page_replies=0 if arm == "continuation" else cfg.page_replies + 1,
+                              veto_parallel_orders=True)
             grounding = None if routing.is_mock(llm) else veto.grounding_checker(cfg)
             decision, action = lanes.answer_target(
                 llm, mission, lanes.facts_block(mission, [narrative]), {**target, "narrative": narrative}, arm_cfg,
