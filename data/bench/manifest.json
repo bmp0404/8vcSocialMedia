@@ -10,7 +10,7 @@
  "replies": {
   "rule": "direct replies to the same root, mature, not by the root's author, with words; winner has >= 5 likes and >= 3.0x the loser's likes",
   "split": "dev: root before 2026-10-06; test: from 2026-10-06",
-  "week0": "2026-09-14T00:00:00+00:00",
+  "week0": "2026-09-15T00:00:00+00:00",
   "dev_cutoffs": [
    "2026-09-29T00:00:00+00:00"
   ],
@@ -192,7 +192,7 @@
    "2102098669889552711": {
     "pairs": 22,
     "split": "dev",
-    "week": 1,
+    "week": 0,
     "root_created_at": "2026-09-21T18:12:32.663000+00:00",
     "coverage": 0.6486486486486487,
     "author": "linear"
@@ -200,7 +200,7 @@
    "2102104259219406886": {
     "pairs": 20,
     "split": "dev",
-    "week": 1,
+    "week": 0,
     "root_created_at": "2026-09-21T18:34:45.263000+00:00",
     "coverage": 0.7884615384615384,
     "author": "cognition"
@@ -208,7 +208,7 @@
    "2102147831519666639": {
     "pairs": 50,
     "split": "dev",
-    "week": 1,
+    "week": 0,
     "root_created_at": "2026-09-21T21:27:53.709000+00:00",
     "coverage": 0.8695652173913043,
     "author": "cognition"
@@ -216,7 +216,7 @@
    "2102164322860613725": {
     "pairs": 24,
     "split": "dev",
-    "week": 1,
+    "week": 0,
     "root_created_at": "2026-09-21T22:33:25.551000+00:00",
     "coverage": 0.8709677419354839,
     "author": "cline"
@@ -456,7 +456,7 @@
    "2104572401468199274": {
     "pairs": 50,
     "split": "dev",
-    "week": 2,
+    "week": 1,
     "root_created_at": "2026-09-28T14:02:16.231000+00:00",
     "coverage": 0.7536231884057971,
     "author": "Railway"
@@ -464,7 +464,7 @@
    "2104597797672784234": {
     "pairs": 50,
     "split": "dev",
-    "week": 2,
+    "week": 1,
     "root_created_at": "2026-09-28T15:43:11.158000+00:00",
     "coverage": 0.6116504854368932,
     "author": "cognition"
@@ -472,7 +472,7 @@
    "2104633216145436831": {
     "pairs": 50,
     "split": "dev",
-    "week": 2,
+    "week": 1,
     "root_created_at": "2026-09-28T18:03:55.580000+00:00",
     "coverage": 0.6666666666666666,
     "author": "cognition"
@@ -480,7 +480,7 @@
    "2104646075051102680": {
     "pairs": 42,
     "split": "dev",
-    "week": 2,
+    "week": 1,
     "root_created_at": "2026-09-28T18:55:01.382000+00:00",
     "coverage": 0.9583333333333334,
     "author": "kirodotdev"
@@ -488,7 +488,7 @@
    "2104653657216012791": {
     "pairs": 48,
     "split": "dev",
-    "week": 2,
+    "week": 1,
     "root_created_at": "2026-09-28T19:25:09.111000+00:00",
     "coverage": 0.6136363636363636,
     "author": "vercel"
@@ -496,7 +496,7 @@
    "2104666044220821594": {
     "pairs": 50,
     "split": "dev",
-    "week": 2,
+    "week": 1,
     "root_created_at": "2026-09-28T20:14:22.403000+00:00",
     "coverage": 0.4383561643835616,
     "author": "cursor_ai"
@@ -704,7 +704,7 @@
    "2107105089957859761": {
     "pairs": 12,
     "split": "dev",
-    "week": 3,
+    "week": 2,
     "root_created_at": "2026-10-05T13:46:16.222000+00:00",
     "coverage": 0.9285714285714286,
     "author": "expo"
@@ -712,7 +712,7 @@
    "2107165034463867001": {
     "pairs": 50,
     "split": "dev",
-    "week": 3,
+    "week": 2,
     "root_created_at": "2026-10-05T17:44:28.106000+00:00",
     "coverage": 0.46258503401360546,
     "author": "cognition"
@@ -944,7 +944,7 @@
    "2109630227085168640": {
     "pairs": 14,
     "split": "test",
-    "week": 4,
+    "week": 3,
     "root_created_at": "2026-10-12T13:00:15.828000+00:00",
     "coverage": 0.9047619047619048,
     "author": "supabase"
@@ -952,7 +952,7 @@
    "2109706421919248499": {
     "pairs": 27,
     "split": "test",
-    "week": 4,
+    "week": 3,
     "root_created_at": "2026-10-12T18:03:02.092000+00:00",
     "coverage": 1.0,
     "author": "posthog"
@@ -960,7 +960,7 @@
    "2109723187563184493": {
     "pairs": 50,
     "split": "test",
-    "week": 4,
+    "week": 3,
     "root_created_at": "2026-10-12T19:09:39.333000+00:00",
     "coverage": 1.0,
     "author": "FactoryAI"
@@ -968,7 +968,7 @@
    "2109783879490191502": {
     "pairs": 50,
     "split": "test",
-    "week": 4,
+    "week": 3,
     "root_created_at": "2026-10-12T23:10:49.416000+00:00",
     "coverage": 0.1113013698630137,
     "author": "cursor_ai"
@@ -1043,7 +1043,7 @@
   "rule": "an account's own mature originals in the window, no thread tails, boost_suspect excluded; winner has >= 10 engagement and >= 3.0x the loser's",
   "split": "seeded 50/50 by author (author_split)",
   "max_pairs_per_author": 50,
-  "pairs": 2233,
+  "pairs": 2173,
   "authors": {
    "ampcode": {
     "pairs": 1,
@@ -1054,19 +1054,15 @@
     "split": "test"
    },
    "augmentcode": {
-    "pairs": 7,
+    "pairs": 5,
     "split": "test"
    },
    "biomejs": {
     "pairs": 2,
     "split": "test"
    },
-   "boltdotnew": {
-    "pairs": 13,
-    "split": "dev"
-   },
    "browserbase": {
-    "pairs": 15,
+    "pairs": 14,
     "split": "dev"
    },
    "bunjavascript": {
@@ -1078,7 +1074,7 @@
     "split": "test"
    },
    "checklyhq": {
-    "pairs": 20,
+    "pairs": 19,
     "split": "dev"
    },
    "clickhousedb": {
@@ -1130,7 +1126,7 @@
     "split": "test"
    },
    "descopeinc": {
-    "pairs": 26,
+    "pairs": 24,
     "split": "test"
    },
    "drizzleorm": {
@@ -1146,7 +1142,7 @@
     "split": "test"
    },
    "factoryai": {
-    "pairs": 50,
+    "pairs": 48,
     "split": "dev"
    },
    "flydotio": {
@@ -1166,15 +1162,15 @@
     "split": "test"
    },
    "infisical": {
-    "pairs": 7,
+    "pairs": 2,
     "split": "test"
    },
    "inngest": {
-    "pairs": 3,
+    "pairs": 2,
     "split": "dev"
    },
    "kilocode": {
-    "pairs": 45,
+    "pairs": 40,
     "split": "test"
    },
    "kirodotdev": {
@@ -1182,7 +1178,7 @@
     "split": "test"
    },
    "linear": {
-    "pairs": 38,
+    "pairs": 34,
     "split": "dev"
    },
    "llama_index": {
@@ -1254,7 +1250,7 @@
     "split": "dev"
    },
    "prisma": {
-    "pairs": 44,
+    "pairs": 40,
     "split": "dev"
    },
    "qodoai": {
@@ -1278,7 +1274,7 @@
     "split": "dev"
    },
    "retool": {
-    "pairs": 9,
+    "pairs": 8,
     "split": "dev"
    },
    "sanity_io": {
@@ -1286,7 +1282,7 @@
     "split": "dev"
    },
    "sourcegraph": {
-    "pairs": 5,
+    "pairs": 3,
     "split": "test"
    },
    "speakeasydev": {
@@ -1298,7 +1294,7 @@
     "split": "test"
    },
    "strapijs": {
-    "pairs": 50,
+    "pairs": 41,
     "split": "test"
    },
    "supabase": {
@@ -1318,11 +1314,11 @@
     "split": "dev"
    },
    "tooljet": {
-    "pairs": 25,
+    "pairs": 18,
     "split": "dev"
    },
    "triggerdotdev": {
-    "pairs": 5,
+    "pairs": 4,
     "split": "dev"
    },
    "tursodatabase": {

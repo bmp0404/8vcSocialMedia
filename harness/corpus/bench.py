@@ -22,8 +22,9 @@ from harness.corpus.load import Corpus, Item
 BENCH_DIR = config.ROOT / "data" / "bench"
 SEED = 20261016
 
-# Weeks start on the Monday before the dataset's first post (2026-09-15).
-WEEK0 = datetime(2026, 9, 14, tzinfo=timezone.utc)
+# Weeks start at 00:00 UTC on the dataset's first day (Tuesday 2026-09-15), so every cutoff below
+# is a week boundary: week 0 is Sep 15 to 21, and test weeks 3 and 4 start at the two test cutoffs.
+WEEK0 = datetime(2026, 9, 15, tzinfo=timezone.utc)
 WEEK = timedelta(days=7)
 # Threads whose root post is older than this are dev; the rest are test. Every design choice
 # (margins, features, regularization, label fields) was made looking at dev only.
