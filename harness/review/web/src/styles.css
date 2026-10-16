@@ -471,8 +471,16 @@ code {
   min-width: 0;
 }
 
+.post .rt-quoted-tweet-header-header {
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow: visible;
+}
+
 .post .rt-tweet-header-authorLinkText,
-.post .rt-tweet-header-username {
+.post .rt-tweet-header-username,
+.post .rt-quoted-tweet-header-authorText,
+.post .rt-quoted-tweet-header-username {
   overflow: visible;
   white-space: normal;
   text-overflow: clip;

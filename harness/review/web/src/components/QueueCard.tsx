@@ -113,7 +113,7 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
   const over = weight > MAX_WEIGHTED_CHARS
 
   return (
-    <article className="card" aria-labelledby={`${id}-title`} data-hot={card.source === 'hot' ? '' : undefined}>
+    <article className="card" tabIndex={-1} aria-labelledby={`${id}-title`} data-hot={card.source === 'hot' ? '' : undefined}>
       <h2 id={`${id}-title`} className="sr-only">
         {card.target ? `${noun} to @${card.target.author ?? 'a post'}` : `A ${noun}`}
       </h2>

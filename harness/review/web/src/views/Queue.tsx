@@ -148,7 +148,9 @@ function Receipt({ verdict, onUndo }: { verdict: Verdict; onUndo: () => void }) 
   const said =
     body.status === 'approved'
       ? `Approved ${body.text && body.note ? 'your' : 'the'} ${what}${to}.`
-      : `${card.draft ? 'Killed the draft' : 'Skipped the post'}${to}.`
+      : card.draft
+        ? `Killed the ${what}${to}.`
+        : `Skipped ${card.target?.author ? `@${card.target.author}'s post` : 'the post'}.`
   return (
     <div className="receipt" role="status">
       <p>{said}</p>
