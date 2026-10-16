@@ -1,0 +1,901 @@
+{
+ "top": 5,
+ "window_h": 24,
+ "n_cutoffs": 9,
+ "n_live": 11,
+ "n_orient_errors": 0,
+ "recall": 0.7272727272727273,
+ "naive_recall": 0.5454545454545454,
+ "rows": [
+  {
+   "cutoff": "2026-09-21T17:34:12.970000+00:00",
+   "n_signals": 34,
+   "live": [
+    "grok-4.7"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [
+    "grok-4.7"
+   ],
+   "narratives": [
+    {
+     "id": "mcp-and-agent-native-workflows",
+     "title": "MCP servers and agent-ready prompts become the default onboarding path",
+     "summary": "Trigger.dev, Resend, and Strapi are exposing product functionality through MCP, CLI and agent prompts so agents can set up, debug and operate the product from the editor.",
+     "relevance": 0.92,
+     "velocity": 0.527,
+     "angle": "Share a specific MCP tool-design lesson, such as which operations agents should be allowed to run unattended versus where they should stop and ask, with a short example.",
+     "signal_urls": [
+      "https://x.com/triggerdotdev/status/2102065414704660787",
+      "https://x.com/triggerdotdev/status/2102065403019378889",
+      "https://x.com/triggerdotdev/status/2102065391111705060",
+      "https://x.com/triggerdotdev/status/2102065379438944658",
+      "https://x.com/triggerdotdev/status/2102065367741088158",
+      "https://x.com/triggerdotdev/status/2102065355548205144",
+      "https://x.com/resend/status/2102035680432206007",
+      "https://x.com/resend/status/2102035665580155178",
+      "https://x.com/resend/status/2102035644650565742",
+      "https://x.com/strapijs/status/2102057814696882352"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "new-model-day-one-in-coding-tools",
+     "title": "New frontier models landing in coding agents on day one",
+     "summary": "Dev-tool platforms are racing to ship same-day support for new models (Grok 4.7 on Railway cloud agents, Claude Fable 5.1 in Kiro enterprise, Kimi K3 free in Cline Desktop).",
+     "relevance": 0.95,
+     "velocity": 0.46,
+     "angle": "Post a concrete first-hour result with the new model on a real coding task (latency, tool-call accuracy, cost per run) and a fair comparison to the prior default.",
+     "signal_urls": [
+      "https://x.com/Railway/status/2102073924783837479",
+      "https://x.com/kirodotdev/status/2102064625474785741",
+      "https://x.com/cline/status/2101754721677840702"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-onboarding-education-programs",
+     "title": "Agentic IDE education and challenges",
+     "summary": "Kiro's University Challenge teaches steering, hooks, MCP and Powers over a week with credits, while Lovable and Strapi push community and ambassador programs.",
+     "relevance": 0.6,
+     "velocity": 0.55,
+     "angle": "Offer a short, useful lesson on structuring steering files or hooks for agents, as a peer rather than a competitor.",
+     "signal_urls": [
+      "https://x.com/kirodotdev/status/2102081961665744917",
+      "https://x.com/Lovable/status/2102071205373300934",
+      "https://x.com/strapijs/status/2102057814696882352"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agents-testing-ui-and-mobile",
+     "title": "Testing and verification for agent-written code",
+     "summary": "Storybook covers component testing in an era of agent-written UI, and Expo plans cloud device testing for agents without Xcode or a Mac.",
+     "relevance": 0.65,
+     "velocity": 0.407,
+     "angle": "Post a concrete example of how an agent loop can verify its own UI changes, and where component tests catch what it misses.",
+     "signal_urls": [
+      "https://x.com/storybookjs/status/2102076831604035927",
+      "https://x.com/expo/status/2102040916080927044"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "dev-conference-season",
+     "title": "September conference and community event cluster",
+     "summary": "Timescale at Ignition Community Conference, Cloudflare Connect with TanStack's Tanner Linsley, a Strapi community call, and an n8n NYC event are all announced.",
+     "relevance": 0.4,
+     "velocity": 0.629,
+     "angle": "Mention a specific session or booth topic worth attending and offer a concrete takeaway for developers.",
+     "signal_urls": [
+      "https://x.com/TimescaleDB/status/2102082971310379498",
+      "https://x.com/CloudflareDev/status/2102072501299974231",
+      "https://x.com/n8n_io/status/2102066379268501955",
+      "https://x.com/strapijs/status/2101974719725486587"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-22T17:37:01.213000+00:00",
+   "n_signals": 71,
+   "live": [
+    "opus-5.5"
+   ],
+   "naive_surfaced": [
+    "opus-5.5"
+   ],
+   "surfaced": [
+    "opus-5.5"
+   ],
+   "narratives": [
+    {
+     "id": "opus-5-5-rollout",
+     "title": "Claude Opus 5.5 rolls out across coding tools",
+     "summary": "Devin, Cursor, Lovable, Factory and CodeRabbit all shipped Opus 5.5 within the last hour, each reporting benchmark, cost, token or step-count results.",
+     "relevance": 0.97,
+     "velocity": 0.76,
+     "angle": "Post a fair side-by-side of the published Opus 5.5 numbers (CursorBench 57.8%, 20-25% fewer output tokens, ~50% more tokens in review) and note that the results depend on workload and effort setting.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/coderabbitai/status/2102437018311532862"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "mcp-agent-integrations",
+     "title": "MCP and programmatic access for agents",
+     "summary": "Linear Inbox, Strapi, Netlify, Resend and Temporal are exposing products to agents through MCP, APIs and skills, while PostHog flags MCP safety problems like unversioned live edits.",
+     "relevance": 0.85,
+     "velocity": 0.77,
+     "angle": "Make the point that agent-facing APIs need drafts, versioning and rollback, citing the 1,093 live edits with no history.",
+     "signal_urls": [
+      "https://x.com/linear/status/2102431323889775037",
+      "https://x.com/posthog/status/2102424160299610259",
+      "https://x.com/posthog/status/2102424178666471694",
+      "https://x.com/resend/status/2102391741198565573",
+      "https://x.com/resend/status/2102391570981134695",
+      "https://x.com/strapijs/status/2102337395773346109",
+      "https://x.com/Netlify/status/2102422240172105944",
+      "https://x.com/temporalio/status/2102395877033754982"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "opus-5-5-eval-tradeoffs",
+     "title": "Opus 5.5 real-world evals: quality gains vs token cost",
+     "summary": "CodeRabbit's review-pipeline test (51 vs 49, and 10 vs 5 on harder cases) shows better catches but ~50% more tokens, while Factory and Lovable report efficiency gains.",
+     "relevance": 0.9,
+     "velocity": 0.667,
+     "angle": "Share a concrete take on cost per bug caught or per task, contrasting CodeRabbit's extra tokens with Factory's 20-25% fewer output tokens.",
+     "signal_urls": [
+      "https://x.com/coderabbitai/status/2102437018311532862",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/cursor_ai/status/2102448392773435706"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-databases-infra",
+     "title": "Databases built for agent fleets and search",
+     "summary": "Cockroach Continuum targets per-agent databases, Neon adds Function Triggers, PlanetScale covers Postgres text search, and MotherDuck queries 100B+ rows with DuckDB.",
+     "relevance": 0.7,
+     "velocity": 0.636,
+     "angle": "Offer a technical take on isolating many agent databases versus sharing one, with concrete limits on provisioning and cost.",
+     "signal_urls": [
+      "https://x.com/CockroachDB/status/2102407070750323054",
+      "https://x.com/neondatabase/status/2102420442527256938",
+      "https://x.com/PlanetScale/status/2102439385543131200",
+      "https://x.com/motherduck/status/2102414494471188631"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-self-healing-loops",
+     "title": "Self-driving products and agents that fix bugs",
+     "summary": "PostHog's thread of seven self-fixes (flaky tests, MCP duplication, survey leaks) sits alongside Expo's issue-to-PR simulator loop and Temporal's agent guardrails.",
+     "relevance": 0.8,
+     "velocity": 0.524,
+     "angle": "Highlight the most technical example, such as the tracing-cache race condition or the MCP payload duplication, and what signal-to-PR pipelines need to be trustworthy.",
+     "signal_urls": [
+      "https://x.com/posthog/status/2102424254306521120",
+      "https://x.com/posthog/status/2102424229534917033",
+      "https://x.com/posthog/status/2102424212384453036",
+      "https://x.com/posthog/status/2102424178666471694",
+      "https://x.com/posthog/status/2102424160299610259",
+      "https://x.com/expo/status/2102421737073713559",
+      "https://x.com/temporalio/status/2102395877033754982",
+      "https://x.com/posthog/status/2102424081253752928"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-22T19:08:24.120000+00:00",
+   "n_signals": 73,
+   "live": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "naive_surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "narratives": [
+    {
+     "id": "opus-5-5-rollout-across-coding-tools",
+     "title": "Claude Opus 5.5 rolls out across coding tools",
+     "summary": "Devin, Cursor, Lovable and Factory all shipped Opus 5.5 within hours, each citing benchmark, cost or token-efficiency numbers, and CodeRabbit added review-pipeline results.",
+     "relevance": 0.95,
+     "velocity": 0.724,
+     "angle": "Post a concrete side-by-side of Opus 5.5 on a real task: cost per task, output tokens and steps versus Opus 5, flagging where the vendors' numbers (CursorBench, FrontierCode) differ.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/coderabbitai/status/2102437018311532862"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "model-benchmarks-cost-per-task",
+     "title": "Cost per task becomes the headline coding-benchmark metric",
+     "summary": "FrontierCode 1.1, CursorBench and Lovable's 0-to-1 benchmark all pair scores with cost or token efficiency rather than accuracy alone.",
+     "relevance": 0.85,
+     "velocity": 0.728,
+     "angle": "Make the fair-comparison point: scores across different benchmarks and effort levels aren't comparable, so share a normalized cost-per-merged-fix view.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102463672224543018",
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/coderabbitai/status/2102437018311532862",
+      "https://x.com/cognition/status/2102147831519666639"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "mcp-agent-auth-and-safety",
+     "title": "Agent auth, MCP and destructive-action safeguards",
+     "summary": "WorkOS argues for agent-native sign-up standards and step-up auth, while PostHog shows MCP edits going live with no draft or rollback and duplicated payloads wasting context.",
+     "relevance": 0.82,
+     "velocity": 0.53,
+     "angle": "Offer a concrete checklist for MCP write tools: draft state, versioning, rollback, and deduplicated payloads to save context.",
+     "signal_urls": [
+      "https://x.com/WorkOS/status/2102464173787771157",
+      "https://x.com/WorkOS/status/2102468210847252591",
+      "https://x.com/WorkOS/status/2102135783234613741",
+      "https://x.com/posthog/status/2102424160299610259",
+      "https://x.com/posthog/status/2102424178666471694",
+      "https://x.com/linear/status/2102431323889775037"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "databases-for-agentic-workloads",
+     "title": "Databases reshaped for agent fleets and search",
+     "summary": "CockroachDB pitches per-agent isolated databases, PlanetScale explains Postgres text search internals, and MotherDuck queries 100B+ rows with DuckDB.",
+     "relevance": 0.65,
+     "velocity": 0.621,
+     "angle": "Give a technical comparison of database-per-agent isolation versus multi-tenant schemas, including provisioning cost and failure blast radius.",
+     "signal_urls": [
+      "https://x.com/CockroachDB/status/2102407070750323054",
+      "https://x.com/PlanetScale/status/2102439385543131200",
+      "https://x.com/motherduck/status/2102414494471188631",
+      "https://x.com/TimescaleDB/status/2102467334354919555"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "gpt-6-sol-luna-launch",
+     "title": "GPT-6 Sol and Luna land in Devin and Lovable",
+     "summary": "GPT-6 Sol and Luna are reported to match or beat GPT-5.6 at much lower cost, with Lovable and Devin publishing benchmark gains.",
+     "relevance": 0.93,
+     "velocity": 0.431,
+     "angle": "Compare the claimed 61% cost drop and sub-$0.10 per task against our own workload, and show where Sol vs Luna is the right default.",
+     "signal_urls": [
+      "https://x.com/Lovable/status/2102470230719266861",
+      "https://x.com/cognition/status/2102463672224543018",
+      "https://x.com/Lovable/status/2102460017182171367",
+      "https://x.com/Lovable/status/2102460015290548249"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-22T19:22:56.001000+00:00",
+   "n_signals": 73,
+   "live": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "naive_surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "narratives": [
+    {
+     "id": "opus-5-5-rollout",
+     "title": "Claude Opus 5.5 rolls out across coding tools",
+     "summary": "Cursor, Devin, Lovable and Factory all shipped Opus 5.5 within hours, each reporting cost, token or step-count gains, and CodeRabbit added review-pipeline numbers.",
+     "relevance": 0.95,
+     "velocity": 0.718,
+     "angle": "Post a concrete side-by-side of Opus 5.5 results across tools (CursorBench 57.8%, 20-25% fewer tokens, 40% cheaper per task) and note what still depends on workload and effort level.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/coderabbitai/status/2102437018311532862"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-mcp-auth-context",
+     "title": "Agent infrastructure: MCP, auth and context",
+     "summary": "Teams are tackling agent registration, step-up auth, app context and MCP payload waste, from Auth.md to Linear Inbox over MCP.",
+     "relevance": 0.8,
+     "velocity": 0.622,
+     "angle": "Share a concrete MCP lesson, such as duplicated payloads wasting context or unversioned agent edits, and a fix that works.",
+     "signal_urls": [
+      "https://x.com/WorkOS/status/2102464173787771157",
+      "https://x.com/WorkOS/status/2102468210847252591",
+      "https://x.com/WorkOS/status/2102135783234613741",
+      "https://x.com/linear/status/2102431323889775037",
+      "https://x.com/posthog/status/2102424178666471694",
+      "https://x.com/posthog/status/2102424160299610259",
+      "https://x.com/Netlify/status/2102422240172105944"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "gpt-6-sol-luna-cost",
+     "title": "GPT-6 Sol and Luna launch with cost-per-task claims",
+     "summary": "Devin and Lovable report GPT-6 Sol matching or beating GPT-5.6 at much lower cost, with Luna under $0.10 per task.",
+     "relevance": 0.93,
+     "velocity": 0.426,
+     "angle": "Compare the cost-per-task and quality claims for GPT-6 Sol/Luna against Opus 5.5 on a shared benchmark and call out where the numbers aren't directly comparable.",
+     "signal_urls": [
+      "https://x.com/Lovable/status/2102470230719266861",
+      "https://x.com/cognition/status/2102463672224543018",
+      "https://x.com/Lovable/status/2102460017182171367",
+      "https://x.com/Lovable/status/2102460015290548249"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-first-database-apis",
+     "title": "Databases and APIs built for agents",
+     "summary": "CockroachDB's Continuum, Neon Function Triggers and Resend's API coverage target agent-driven workloads.",
+     "relevance": 0.65,
+     "velocity": 0.591,
+     "angle": "Describe what a database or API needs for per-agent isolation and programmatic control, with a concrete example.",
+     "signal_urls": [
+      "https://x.com/CockroachDB/status/2102407070750323054",
+      "https://x.com/neondatabase/status/2102420442527256938",
+      "https://x.com/resend/status/2102391741198565573",
+      "https://x.com/resend/status/2102391570981134695",
+      "https://x.com/PlanetScale/status/2102439385543131200"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "model-benchmarks-frontiercode",
+     "title": "FrontierCode and CursorBench leaderboard shifts",
+     "summary": "Vendors cite FrontierCode 1.1 and CursorBench to rank new models, with Opus 5.5 taking #1 and Grok 4.7 scoring 59.4%.",
+     "relevance": 0.85,
+     "velocity": 0.414,
+     "angle": "Explain what each benchmark measures and where scores diverge, so engineers can read the leaderboard rather than just the headline rank.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102463672224543018",
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/cognition/status/2102147831519666639"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-28T19:04:27.534000+00:00",
+   "n_signals": 41,
+   "live": [
+    "sonnet-5.5"
+   ],
+   "naive_surfaced": [
+    "sonnet-5.5"
+   ],
+   "surfaced": [
+    "sonnet-5.5"
+   ],
+   "narratives": [
+    {
+     "id": "claude-5-5-model-rollout",
+     "title": "Claude Opus 5.5 and Sonnet 5.5 land across coding tools",
+     "summary": "Kiro, Factory, v0 and Replit all shipped Claude 5.5 models within hours, with Kiro citing Fable 5.1-level performance at 40% lower cost than Opus 5 and Factory sharing early behavioral observations.",
+     "relevance": 0.95,
+     "velocity": 0.66,
+     "angle": "Post a concrete early result from running Sonnet 5.5 or Opus 5.5 on a real coding task, noting cost per task against Opus 5 and where it checks the real requirement rather than just the failing test.",
+     "signal_urls": [
+      "https://x.com/kirodotdev/status/2104646075051102680",
+      "https://x.com/FactoryAI/status/2104640328611639731",
+      "https://x.com/v0/status/2104633350170251519",
+      "https://x.com/Replit/status/2104609792937574413"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agents-as-platform-users",
+     "title": "Platforms building for AI agents as users",
+     "summary": "Railway's SSH-provisioned agent VMs, Cloudflare's agentic cf CLI, the Retool plugin in ChatGPT, Resend's session on how agents see products, and n8n's new agent type all treat agents as first-class users of dev platforms.",
+     "relevance": 0.85,
+     "velocity": 0.682,
+     "angle": "Make a concrete point on what agent-friendly means in practice: no signup, CLI/MCP-first, and typed config that agents can read and write.",
+     "signal_urls": [
+      "https://x.com/Railway/status/2104572401468199274",
+      "https://x.com/CloudflareDev/status/2104594002838524197",
+      "https://x.com/retool/status/2104634650497036606",
+      "https://x.com/retool/status/2104634671719989545",
+      "https://x.com/resend/status/2104631515217104987",
+      "https://x.com/n8n_io/status/2104488818170630389"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "database-branching-and-isolation",
+     "title": "Databases: branching, isolation and scaling",
+     "summary": "Neon on branch-based restores, Cockroach on sub-3-second virtual clusters, and PlanetScale's Neki on isolating and resharding large tenants all address provisioning and scale pain.",
+     "relevance": 0.8,
+     "velocity": 0.543,
+     "angle": "Compare how branch-based restores, virtual clusters and resharding each change recovery time and provisioning workflow, with numbers where available.",
+     "signal_urls": [
+      "https://x.com/neondatabase/status/2104640828794941782",
+      "https://x.com/CockroachDB/status/2104606063492264182",
+      "https://x.com/PlanetScale/status/2104626303550857666"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-pricing-and-benchmarks",
+     "title": "Coding agents compete on price and benchmark rank",
+     "summary": "Devin cut prices 15-70% while claiming first on FrontierCode 1.1 Extended, and Cline reports climbing to #2 coding agent on OpenRouter after its desktop release.",
+     "relevance": 0.85,
+     "velocity": 0.42,
+     "angle": "Offer a fair comparison of cost per completed task across agents, and ask what FrontierCode 1.1 Extended actually measures before treating the rank as settled.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2104633216145436831",
+      "https://x.com/cline/status/2104629249948999967",
+      "https://x.com/cognition/status/2104597797672784234"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "chatgpt-and-mcp-integrations",
+     "title": "ChatGPT plugins and WebMCP drive integrations",
+     "summary": "Retool's ChatGPT plugin rollout and the Netlify and OpenAI WebMCP Challenge winners show MCP and plugin integration becoming a main distribution path.",
+     "relevance": 0.8,
+     "velocity": 0.428,
+     "angle": "Quote a winner or the plugin launch with a short note on what the MCP and CLI path gives developers that a chat plugin does not.",
+     "signal_urls": [
+      "https://x.com/Netlify/status/2104641327506030873",
+      "https://x.com/retool/status/2104634671719989545",
+      "https://x.com/retool/status/2104634650497036606"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-29T18:37:26.474000+00:00",
+   "n_signals": 42,
+   "live": [
+    "gpt-6.1-sol"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [],
+   "narratives": [
+    {
+     "id": "chatgpt-subscription-in-dev-tools",
+     "title": "ChatGPT subscriptions become the login for coding tools",
+     "summary": "Devin, v0, and Warp now let users sign in with a ChatGPT Plus/Pro plan and draw model usage from it, while PlanetScale and tldraw ship ChatGPT/Codex plugins.",
+     "relevance": 0.9,
+     "velocity": 0.763,
+     "angle": "Compare how each tool meters usage against the ChatGPT plan (Devin's configurable cap vs. Warp's Work/Codex quota) and what that does to per-task cost for a team.",
+     "signal_urls": [
+      "https://x.com/v0/status/2104997515905102118",
+      "https://x.com/cognition/status/2104996242719993876",
+      "https://x.com/cognition/status/2104996240190792029",
+      "https://x.com/warpdotdev/status/2104988839177855450",
+      "https://x.com/PlanetScale/status/2104999004371141053",
+      "https://x.com/tldraw/status/2105003566351908892"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-workflows-and-environments",
+     "title": "Agent tooling moves to remote and shared workspaces",
+     "summary": "Zed's Delta threads share multi-repo context with uncommitted edits, Fly's Sprites host Codex work, and Expo's team merged 791 PRs with agentic CI.",
+     "relevance": 0.75,
+     "velocity": 0.648,
+     "angle": "Describe a concrete example of sharing agent state, such as uncommitted edits, versus pushing to a branch for review.",
+     "signal_urls": [
+      "https://x.com/zeddotdev/status/2104945383998881832",
+      "https://x.com/flydotio/status/2104714509185396751",
+      "https://x.com/expo/status/2104958820959351060",
+      "https://x.com/coderhq/status/2104960934489772434",
+      "https://x.com/temporalio/status/2104957008420188314"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "chatgpt-plugins-apps-ecosystem",
+     "title": "Dev platforms ship ChatGPT/Codex plugins and apps",
+     "summary": "tldraw's multiplayer canvas and PlanetScale's plugin land in ChatGPT, Codex and OpenAI's new always-on assistant, pointing to a new distribution channel for developer products.",
+     "relevance": 0.8,
+     "velocity": 0.437,
+     "angle": "Share a concrete walkthrough of what it takes to ship a plugin for ChatGPT/Codex and what the integration surface looks like.",
+     "signal_urls": [
+      "https://x.com/tldraw/status/2105003566351908892",
+      "https://x.com/PlanetScale/status/2104999004371141053",
+      "https://x.com/tldraw/status/2104983011062104324"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "october-dev-events",
+     "title": "Early-October conference and event cluster",
+     "summary": "SF Tech Week, Runtime, init(), Builder's Day and MongoDB.local NYC are all announcing talks, workshops and raffles in the same window.",
+     "relevance": 0.4,
+     "velocity": 0.86,
+     "angle": "Post a short list of the technical sessions worth attending, focused on running agents in production.",
+     "signal_urls": [
+      "https://x.com/modal/status/2105000134342041780",
+      "https://x.com/WorkOS/status/2104964453502529569",
+      "https://x.com/prisma/status/2104963491308433438",
+      "https://x.com/CircleCI/status/2104963027116110133",
+      "https://x.com/temporalio/status/2104957008420188314",
+      "https://x.com/strapijs/status/2104934723449389315",
+      "https://x.com/resend/status/2104994209992479097"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "database-performance-releases",
+     "title": "Database releases tout concurrency and operations gains",
+     "summary": "Turso 0.8.0 claims up to 500x lower tail latency under concurrent writes, and CockroachDB's Continuum pitches one-system operation with an AI operator.",
+     "relevance": 0.7,
+     "velocity": 0.382,
+     "angle": "Ask for the benchmark setup behind the concurrent-write numbers and offer a fair comparison with SQLite WAL mode.",
+     "signal_urls": [
+      "https://x.com/tursodatabase/status/2104958085492081025",
+      "https://x.com/CockroachDB/status/2104945311797895291"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-10-07T19:14:00.769000+00:00",
+   "n_signals": 59,
+   "live": [
+    "opus-5.5"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [],
+   "narratives": [
+    {
+     "id": "cloud-coding-agents",
+     "title": "Cloud and remote coding agents go mainstream",
+     "summary": "Cline Cloud Agents run in browser sandboxes and open PRs, Cursor lets you control local agents from iOS, and Replit and Microsoft are shipping sandboxed local builds on Windows.",
+     "relevance": 0.92,
+     "velocity": 0.706,
+     "angle": "Offer a fair comparison of where the agent runs (cloud sandbox vs local machine vs phone-controlled), covering trade-offs in isolation, latency, repo access and PR workflow.",
+     "signal_urls": [
+      "https://x.com/cline/status/2107909398060568975",
+      "https://x.com/cline/status/2107909392649826516",
+      "https://x.com/Replit/status/2107896848044437766",
+      "https://x.com/cursor_ai/status/2107618665751576970",
+      "https://x.com/cursor_ai/status/2107618653701296162",
+      "https://x.com/v0/status/2107571659842769322",
+      "https://x.com/Lovable/status/2107893301420654769",
+      "https://x.com/boltdotnew/status/2107846455180288289"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-governance-human-accountability",
+     "title": "Agent governance, context and accountability",
+     "summary": "Debate over whether work can be assigned to agents, plus platform-level controls such as Coder Agents' governed MCP servers, Airlock policies and Qodo's AI-traceability data.",
+     "relevance": 0.8,
+     "velocity": 0.679,
+     "angle": "Share a concrete take on traceability from agent action to code change, such as what to log per PR, using the 45% Qodo stat as a hook.",
+     "signal_urls": [
+      "https://x.com/WorkOS/status/2107900608535798045",
+      "https://x.com/WorkOS/status/2107899792823369778",
+      "https://x.com/WorkOS/status/2107881038924173610",
+      "https://x.com/coderhq/status/2107863631618539929",
+      "https://x.com/QodoAI/status/2107803705458282846",
+      "https://x.com/PulumiCorp/status/2107841423961968881",
+      "https://x.com/sanity_io/status/2107839109918257252"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "deterministic-workflows-vs-agents",
+     "title": "Fewer agents, more deterministic flows",
+     "summary": "Windmill argues most agents are better as a flow with one AI step, Sanity splits context into layers and a Sanity docs agent moves decisions off the LLM, and Checkly credits Go's type system for catching agent mistakes.",
+     "relevance": 0.78,
+     "velocity": 0.476,
+     "angle": "Share a concrete example of an agent pipeline where moving decisions into typed, retryable code improved latency or reliability.",
+     "signal_urls": [
+      "https://x.com/WindmillDev/status/2107863599205032184",
+      "https://x.com/sanity_io/status/2107839109918257252",
+      "https://x.com/sanity_io/status/2107818224784146866",
+      "https://x.com/checklyHQ/status/2107803127009210801"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "turso-toasty-sqlite-rust",
+     "title": "Turso's Toasty: Rails-style ORM for Rust on SQLite",
+     "summary": "A Turso thread walks through local concurrent writes with BEGIN CONCURRENT, serverless batching, and sync, alongside PlanetScale's database load-shedding and Timescale refresh policies.",
+     "relevance": 0.72,
+     "velocity": 0.476,
+     "angle": "Reply with a concrete benchmark or example of BEGIN CONCURRENT vs the single SQLite write lock, and how batching cuts round trips over HTTP.",
+     "signal_urls": [
+      "https://x.com/tursodatabase/status/2107837309487886688",
+      "https://x.com/tursodatabase/status/2107837308011765891",
+      "https://x.com/tursodatabase/status/2107837305562276127",
+      "https://x.com/tursodatabase/status/2107837302999224623",
+      "https://x.com/tursodatabase/status/2107837312415703289",
+      "https://x.com/PlanetScale/status/2107858620725473653",
+      "https://x.com/TimescaleDB/status/2107810339295248653"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "local-and-open-models-tooling",
+     "title": "Open and small models ship for local and routing use",
+     "summary": "EmbeddingGemma 2 is available on Ollama, vLLM's Vela 2.0 handles span-level routing decisions in sizes from 0.3B to 9B, and OpenDocRouter unifies document-parsing models behind one API.",
+     "relevance": 0.72,
+     "velocity": 0.409,
+     "angle": "Post a short practical guide on picking an embedding or router model for a coding-assistant pipeline, with concrete latency and size trade-offs.",
+     "signal_urls": [
+      "https://x.com/ollama/status/2107584722465616123",
+      "https://x.com/vllm_project/status/2107690067619930450",
+      "https://x.com/llama_index/status/2107863919536595237",
+      "https://x.com/modal/status/2107556185490731322"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-10-13T17:22:52.929000+00:00",
+   "n_signals": 45,
+   "live": [
+    "gemini-4-argon"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [
+    "gemini-4-argon"
+   ],
+   "narratives": [
+    {
+     "id": "agent-sandboxes-and-isolated-environments",
+     "title": "Sandboxes and isolated environments for agents",
+     "summary": "Factory shipped Environments and Remote Control, Pulumi Neo runs in a Docker Sandbox, Resend connects to Fly Sprites without exposing API keys, Xata offers throwaway branches, and Railway added sandboxes.",
+     "relevance": 0.88,
+     "velocity": 0.666,
+     "angle": "Compare the isolation models: what each sandbox protects, how secrets are handled, and what an agent can still break.",
+     "signal_urls": [
+      "https://x.com/FactoryAI/status/2109723187563184493",
+      "https://x.com/FactoryAI/status/2110037841967493258",
+      "https://x.com/PulumiCorp/status/2110016633796534561",
+      "https://x.com/resend/status/2109705959983796309",
+      "https://x.com/resend/status/2109705935098892758",
+      "https://x.com/xata/status/2110023162096488779",
+      "https://x.com/Railway/status/2110038855932157970"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "mcp-and-plugin-integrations-into-coding-agents",
+     "title": "Dev platforms plugging into coding agents via MCP and plugins",
+     "summary": "Inngest joined the Claude Code plugin directory, Supabase works with Cursor through its MCP server, Strapi published a custom-tools MCP guide, and PostHog says its MCP server gets 5x the daily use of its AI product.",
+     "relevance": 0.92,
+     "velocity": 0.583,
+     "angle": "Share a concrete walkthrough of exposing our product as an MCP server or plugin, with the setup commands and one real query it answers.",
+     "signal_urls": [
+      "https://x.com/inngest/status/2110047342032253024",
+      "https://x.com/supabase/status/2110040855360741868",
+      "https://x.com/strapijs/status/2109949254085079536",
+      "https://x.com/posthog/status/2109706445549945051",
+      "https://x.com/resend/status/2109705959983796309"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-reliability-and-observability",
+     "title": "Making agents reliable in production with observability",
+     "summary": "Temporal, Grafana, Checkly and Cockroach are pitching durable execution, agentic SRE, signal-driven failover and automated cluster investigation for production agents.",
+     "relevance": 0.72,
+     "velocity": 0.661,
+     "angle": "Show a concrete failure mode of an agent in production and the trace or signal that caught it.",
+     "signal_urls": [
+      "https://x.com/temporalio/status/2109826799618142581",
+      "https://x.com/grafana/status/2109977453372522956",
+      "https://x.com/grafana/status/2109977452911247648",
+      "https://x.com/checklyHQ/status/2110007805629374962",
+      "https://x.com/CockroachDB/status/2110016967339802940",
+      "https://x.com/sanity_io/status/2110047364102705341"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "ai-engineer-nyc-and-reinvent-events",
+     "title": "AI Engineer NYC and re:Invent event chatter",
+     "summary": "Temporal, Sourcegraph and Sanity are posting booth previews and talks from AI Engineer NYC, with re:Invent dinners and other conferences on the way.",
+     "relevance": 0.5,
+     "velocity": 0.678,
+     "angle": "Reply with a specific talk takeaway or a short technical demo to bring to the booth, not just a meetup plug.",
+     "signal_urls": [
+      "https://x.com/temporalio/status/2109698214710690091",
+      "https://x.com/Sourcegraph/status/2109697832085275101",
+      "https://x.com/sanity_io/status/2110047364102705341",
+      "https://x.com/temporalio/status/2110056246141129127",
+      "https://x.com/motherduck/status/2110036161297055898",
+      "https://x.com/resend/status/2110010458568892908"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "frontiercode-benchmark-and-model-leaderboards",
+     "title": "FrontierCode and DeepSWE: new coding model rankings",
+     "summary": "Gemini 4 Argon tops the Gemini models on FrontierCode 1.1 at 60.5% with a discount in Devin, Meta's Muse Wonder leads DeepSWE, and FrontierCode now measures mergeability on Artificial Analysis.",
+     "relevance": 0.95,
+     "velocity": 0.314,
+     "angle": "Post a fair comparison of how these models score on mergeability versus pass-rate benchmarks, then share our own result on a real PR from our stack.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2110043605528408110",
+      "https://x.com/cognition/status/2109729058745725037",
+      "https://x.com/cline/status/2109755052227490281",
+      "https://x.com/cline/status/2109755053586473047"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-10-15T16:50:32.538000+00:00",
+   "n_signals": 72,
+   "live": [
+    "nemotron-3.5-super"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [],
+   "narratives": [
+    {
+     "id": "agentic-dev-platforms-enterprise",
+     "title": "Agentic development moves into enterprise and deploy workflows",
+     "summary": "Factory runs agentic dev inside Blackstone's data centers, Retool covers Claude Code governance, Netlify deploys Cursor Origin repos, and Vercel's Ship SF features Anthropic and Meta engineers.",
+     "relevance": 0.7,
+     "velocity": 0.668,
+     "angle": "Describe a concrete governance or deploy-preview pattern for agent-written code, like access scopes and PR previews, rather than a generic take.",
+     "signal_urls": [
+      "https://x.com/FactoryAI/status/2110765256402473416",
+      "https://x.com/retool/status/2110725236119552485",
+      "https://x.com/Netlify/status/2110714001369842141",
+      "https://x.com/vercel/status/2110766047842476111",
+      "https://x.com/warpdotdev/status/2110469311769055496"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "agent-aware-email-and-integrations",
+     "title": "Designing for agents: email, MCP and auth for background workers",
+     "summary": "Resend's guide to agent-readable email, WorkOS Pipes for tokens in headless jobs, and Clerk and MotherDuck MCP and plugin releases all point to dev platforms adapting for agents as consumers.",
+     "relevance": 0.8,
+     "velocity": 0.442,
+     "angle": "Add a technical data point on what agents get wrong, such as image-only CTAs losing details versus live text, and offer a quick checklist for your own API or docs.",
+     "signal_urls": [
+      "https://x.com/resend/status/2110440095006462434",
+      "https://x.com/resend/status/2110440022243717281",
+      "https://x.com/resend/status/2110439990463512757",
+      "https://x.com/WorkOS/status/2110763016098643992",
+      "https://x.com/clerk/status/2110421070763421886",
+      "https://x.com/motherduck/status/2110435492529402281",
+      "https://x.com/browserbase/status/2110415570684580054"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "postgres-realtime-and-branching",
+     "title": "Postgres gets realtime queries and branching without migration",
+     "summary": "Neon launched realtime live SQL queries in public beta, and Xata offers branching on RDS or Cloud SQL via logical replication.",
+     "relevance": 0.8,
+     "velocity": 0.415,
+     "angle": "Do a fair comparison of live queries versus logical replication branching: what each is good for, and the latency and operational tradeoffs.",
+     "signal_urls": [
+      "https://x.com/neondatabase/status/2110758792954581464",
+      "https://x.com/xata/status/2110747919959941523"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "gemini-4-argon-launch",
+     "title": "Gemini 4 Argon launches across dev tools",
+     "summary": "Gemini 4 Argon is showing up in coding tools and platforms, with Cline reporting 3x day-one users and 30% fewer tokens, Cloudflare offering 50% off, and Netlify showing a build.",
+     "relevance": 0.95,
+     "velocity": 0.347,
+     "angle": "Share a concrete result from running Argon on your own tool, such as tokens per task or latency, and compare it fairly against Claude Sonnet 5.5 using the same task set.",
+     "signal_urls": [
+      "https://x.com/cline/status/2110495085049835940",
+      "https://x.com/CloudflareDev/status/2110461480080654845",
+      "https://x.com/Netlify/status/2110714410696147090"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "ai-code-review-burden",
+     "title": "AI code quality and review effort",
+     "summary": "Qodo's survey finds 36.4% of developers say review takes the same time but more effort to catch subtle AI bugs, alongside discussion of agents misreading business terms.",
+     "relevance": 0.7,
+     "velocity": 0.41,
+     "angle": "Reply with how giving reviewers intent and contracts up front changed your review results, backed by a specific number.",
+     "signal_urls": [
+      "https://x.com/QodoAI/status/2110460964076240934",
+      "https://x.com/QodoAI/status/2110460962486501543",
+      "https://x.com/QodoAI/status/2110770473587892351",
+      "https://x.com/retool/status/2110725236119552485"
+     ],
+     "velocity_basis": "data",
+     "reply_targets": []
+    }
+   ]
+  }
+ ],
+ "at": "2026-10-15T21:12:53",
+ "provider": "anthropic"
+}
