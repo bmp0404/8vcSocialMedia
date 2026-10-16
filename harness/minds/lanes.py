@@ -440,12 +440,27 @@ def load_takes(path: Path | None = None) -> list[dict]:
     return takes
 
 
+def _status_ids(urls) -> frozenset[str]:
+    return frozenset(m.group(1) for u in urls if (m := thread.STATUS_ID.search(u or "")))
+
+
+def _off_mission(url: str | None, off_mission: frozenset[str]) -> bool:
+    """True when `url` is an X post the reply planner abstained on as off_mission this round, in any URL form."""
+    return bool(url) and bool(_status_ids([url]) & off_mission)
+
+
 def _human_takes(takes: list[dict], offer: Offer, narratives: list[Narrative],
-                 budget: Budget) -> tuple[list[Action], list[Decision]]:
+                 budget: Budget, off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
     actions, decisions, done = [], [], shipped_takes()
     for take in takes:
         text = take["text"]
         if text in done:
+            continue
+        if _off_mission(take.get("quote_url"), off_mission):
+            # Not shipped, so it stays in takes.json and a later round can quote it.
+            decisions.append(Decision(POST_LANE, text, "abstain", "off_mission",
+                                      f"human take quotes {take['quote_url']}, which the reply planner called "
+                                      "off_mission this round"))
             continue
         kind = "quote" if take.get("quote_url") else "post"
         call = {"tool": kind, "text": text} | ({"target_url": take["quote_url"]} if kind == "quote" else {})
@@ -485,13 +500,18 @@ def credit_for(url: str, sources: dict[str, str]) -> str:
 
 
 def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionConfig, budget: Budget,
-             offer: Offer, grounding, sources: dict[str, str]) -> tuple[list[Action], list[Decision]]:
+             offer: Offer, grounding, sources: dict[str, str],
+             off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
     """Quote a real X post, or link a news story, with a caption that stands on its own and the source
-    credited. Never links an opaque redirect."""
+    credited. Never links an opaque redirect, and never quotes a post the reply planner called off_mission this
+    round: the round would otherwise answer a post it had just judged off the account's subjects."""
     ranked = sorted(narratives, key=lambda n: -n.relevance * n.velocity)
-    targets = reply_targets(narratives)
+    all_targets = reply_targets(narratives)
+    targets = [t for t in all_targets if not _off_mission(t["url"], off_mission)]
     # X posts the narratives cite but Observe didn't offer as reply targets can still be quoted.
-    cited = [(n, u) for n in ranked for u in n.signal_urls if u in offer.target_urls]
+    all_cited = [(n, u) for n in ranked for u in n.signal_urls if u in offer.target_urls]
+    cited = [(n, u) for n, u in all_cited if not _off_mission(u, off_mission)]
+    skipped = sorted({t["url"] for t in all_targets if t not in targets} | {u for n, u in all_cited if (n, u) not in cited})
     news = [(n, u) for n in ranked for u in n.signal_urls if u and not thread.STATUS_ID.search(u)]
     linkable = [(n, u) for n, u in news if urlparse(u).netloc.removeprefix("www.") not in REDIRECT_HOSTS]
     if targets and budget.left("quote") > 0:
@@ -506,6 +526,9 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     elif news and not linkable and not (targets or cited):
         return [], [Decision(POST_LANE, news[0][1], "abstain", "no_linkable_source",
                              f"only redirect links ({', '.join(sorted(REDIRECT_HOSTS))}) to caption")]
+    elif not (targets or cited or news) and skipped:
+        return [], [Decision(POST_LANE, skipped[0], "abstain", "off_mission",
+                             f"the only X posts to quote, {skipped}, are ones the reply planner called off_mission")]
     elif not (targets or cited or news) and ranked and not any(n.signal_urls for n in ranked) and budget.left("post") > 0:
         # No link anywhere: the material came in by hand (the operator dashboard's manual signals),
         # so the caption is of the story itself, with nothing to link or credit.
@@ -547,7 +570,9 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
 
 def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[Action], cfg: ActionConfig,
               budget: Budget, takes: list[dict], grounding=None, sources: dict[str, str] | None = None,
-              revising: bool = False) -> tuple[list[Action], list[Decision]]:
+              revising: bool = False, off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
+    """`off_mission` holds the status IDs of X posts the reply planner abstained on as off_mission this round;
+    neither a caption nor a take quotes them."""
     urls, handles = offered(narratives)
     offer = Offer(target_urls=urls, target_handles=handles)
     actions, decisions, angles = [], [], []
@@ -570,11 +595,11 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
 
     if revising:  # a retry revises chorus drafts; takes and captions already had their turn this run
         return actions, decisions
-    took, d = _human_takes(takes, offer, narratives, budget)
+    took, d = _human_takes(takes, offer, narratives, budget, off_mission)
     actions += took
     decisions += d
     if not took and narratives:
-        cap, d = _caption(llm, mission, narratives, cfg, budget, offer, grounding, sources or {})
+        cap, d = _caption(llm, mission, narratives, cfg, budget, offer, grounding, sources or {}, off_mission)
         actions += cap
         decisions += d
         top = max(narratives, key=lambda n: n.relevance * n.velocity)
@@ -610,8 +635,11 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
         a, d = reply_lane(llm, mission, lessons, narratives, cfg, budget, fetch, grounding, facts)
         actions += a
         decisions += d
+    # Posts the planner judged off the account's subjects this round; the post lane must not quote them either.
+    off_mission = _status_ids(d.opportunity for d in decisions
+                              if d.lane == REPLY_LANE and d.tool == "abstain" and d.reason == "off_mission")
     a, d = post_lane(llm, mission, narratives, chorus, cfg, budget, load_takes() if takes is None else takes, grounding,
-                     sources, revising)
+                     sources, revising, off_mission)
     actions += a
     decisions += d
     for action in actions:
