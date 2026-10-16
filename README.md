@@ -26,6 +26,16 @@ python -m harness run                    # real run with the provider in .env
 | `run` | Observe, orient, decide, and qualify, then write ranked recommendations to `out/` |
 | `record <file>` | Store real metrics: `[{"action_id": "...", "metrics": {"likes": 3}}]` |
 | `learn` | Rewrite `memory/lessons.md` from predicted vs. actual; the minds read it next run |
+| `review` | Open the approve/edit/kill dashboard at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
+
+### Review dashboard
+
+`python -m harness review` lists each run's recommendations, best predicted first, with tabs for
+To review / Approved / Killed / Critic vetoed. You can edit a draft before approving it (the original
+text is kept as `original_text` in the export), override a critic veto, and leave a note.
+Keyboard: `j`/`k` move, `a` approve, `x` kill, `u` reset, `e` edit.
+
+`out/approved-run<id>.json` is the hand-off file for the posting bot.
 
 ## Layout
 
@@ -38,6 +48,7 @@ python -m harness run                    # real run with the provider in .env
 | `harness/qualify.py` | **Qualify.** Simulated audience panel scores drafts; a critic vetoes |
 | `harness/memory.py` | SQLite log of runs, recommendations, and outcomes (`data/harness.db`) |
 | `harness/learn.py` | **Learn.** Writes `memory/lessons.md` |
+| `harness/review/` | **Human checkpoint.** Stdlib HTTP server + single-page dashboard |
 | `harness/llm.py` | Provider switch: `anthropic`, `xai`, `openai` (any OpenAI-compatible gateway), `mock` |
 
 ## Status / TODO
@@ -46,5 +57,6 @@ python -m harness run                    # real run with the provider in .env
 - [ ] `sources/reddit.py`: needs Reddit OAuth (unauthenticated requests return 403)
 - [ ] Replace `mission/mission.md` with 8VC's mission file
 - [ ] Hand-off format/transport to 8VC's Grok bot
-- [ ] Human approve/kill checkpoint (review UI) before hand-off
+- [x] Human approve/kill checkpoint (`python -m harness review`)
+- [ ] Feed review verdicts and notes into `learn`
 - [ ] Pull real metrics automatically instead of `record`
