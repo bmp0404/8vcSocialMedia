@@ -1,0 +1,112 @@
+{
+ "what": "Time-travel recall@5 of orient on the dev-tool dataset, HARNESS_ORIENT=json against HARNESS_ORIENT=baml",
+ "method": "harness/evals/observe_eval.time_travel from sam/eval 77ca08d, run unchanged against each orient: 9 cutoffs, 11 live stories per run, mission eval/fixtures/devtools_mission.md, 5 runs per backend. json is main de1bef8; baml is this branch's OrientSignals. Gateway model claude-sonnet-5-5, 2026-10-15/16.",
+ "caveat": "11 stories per run: one story is 0.091 of recall. The json prompt alone ranged 0.545 to 0.818 across runs. The gateway reports anthropic-SDK input tokens as 4 per call, so json input_tokens are not comparable.",
+ "json": {
+  "recall_per_rep": [
+   0.818,
+   0.818,
+   0.818,
+   0.545,
+   0.636
+  ],
+  "mean": 0.727,
+  "naive": 0.5454545454545454,
+  "orient_errors": 0,
+  "output_tokens_per_rep": [
+   17573,
+   17818,
+   17215,
+   17880,
+   17471
+  ],
+  "input_tokens_per_rep": [
+   36,
+   36,
+   36,
+   36,
+   36
+  ],
+  "surfaced_by_story": {
+   "2026-09-21T17:34 grok-4.7": "5/5",
+   "2026-09-22T17:37 opus-5.5": "5/5",
+   "2026-09-22T19:08 gpt-6-sol": "3/5",
+   "2026-09-22T19:08 opus-5.5": "5/5",
+   "2026-09-22T19:22 gpt-6-sol": "4/5",
+   "2026-09-22T19:22 opus-5.5": "5/5",
+   "2026-09-28T19:04 sonnet-5.5": "5/5",
+   "2026-09-29T18:37 gpt-6.1-sol": "1/5",
+   "2026-10-07T19:14 opus-5.5": "1/5",
+   "2026-10-13T17:22 gemini-4-argon": "3/5",
+   "2026-10-15T16:50 nemotron-3.5-super": "3/5"
+  }
+ },
+ "baml": {
+  "recall_per_rep": [
+   0.727,
+   0.636,
+   0.727,
+   0.727,
+   0.727
+  ],
+  "mean": 0.709,
+  "naive": 0.5454545454545454,
+  "orient_errors": 0,
+  "output_tokens_per_rep": [
+   17828,
+   18175,
+   18396,
+   18118,
+   18237
+  ],
+  "input_tokens_per_rep": [
+   62822,
+   62822,
+   62822,
+   62822,
+   62822
+  ],
+  "surfaced_by_story": {
+   "2026-09-21T17:34 grok-4.7": "5/5",
+   "2026-09-22T17:37 opus-5.5": "5/5",
+   "2026-09-22T19:08 gpt-6-sol": "5/5",
+   "2026-09-22T19:08 opus-5.5": "5/5",
+   "2026-09-22T19:22 gpt-6-sol": "5/5",
+   "2026-09-22T19:22 opus-5.5": "5/5",
+   "2026-09-28T19:04 sonnet-5.5": "5/5",
+   "2026-09-29T18:37 gpt-6.1-sol": "0/5",
+   "2026-10-07T19:14 opus-5.5": "2/5",
+   "2026-10-13T17:22 gemini-4-argon": "2/5",
+   "2026-10-15T16:50 nemotron-3.5-super": "0/5"
+  }
+ },
+ "live_orient": {
+  "when": "2026-10-16T05:00:08.167646+00:00",
+  "signals": 221,
+  "sources": "espn_news, espn_injuries, google_news, bluesky (x_targets failed: no X read access on main)",
+  "json_first_run": {
+   "narratives_parsed": 1,
+   "output_tokens": 2578,
+   "note": "raw reply not kept; a rerun on the same signals parsed 10"
+  },
+  "json_rerun_top5": [
+   "boston-knee-surgery-clark-message",
+   "sophie-cunningham-vs-angel-reese-finals",
+   "wnba-finals-valkyries-dream",
+   "iowa-hawkeyes-womens-hoops-preview",
+   "fever-boston-injury-timeline-questions"
+  ],
+  "baml_top5": [
+   "cunningham-vs-reese-discourse",
+   "boston-knee-surgery-clark-message",
+   "iowa-womens-basketball-year-three-jensen",
+   "boston-played-through-injury-white-comments",
+   "wnba-finals-valkyries-dream"
+  ],
+  "baml_usage": {
+   "input_tokens": 20098,
+   "output_tokens": 3421,
+   "narratives_parsed": 9
+  }
+ }
+}
