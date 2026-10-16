@@ -33,6 +33,20 @@ class Predictor(Protocol):
     def predict(self, posts: list[Post]) -> dict[str, Prediction]: ...
 
 
+def with_retries(fn: Callable, attempts: int = 3) -> Callable:
+    """Retry a model call that failed validation (bad JSON, an invented citation). Judge calls fail
+    now and then, and one failure shouldn't abort a 100-call backtest."""
+    def call(*args):
+        for i in range(attempts):
+            try:
+                return fn(*args)
+            except Exception as e:  # noqa: BLE001 - re-raised after the last attempt
+                if i == attempts - 1:
+                    raise
+                print(f"[backtest] retrying after {type(e).__name__}: {str(e)[:120]}")
+    return call
+
+
 class RandomPredictor:
     """Chance level, seeded per post so a rerun gives the same numbers."""
 
@@ -132,7 +146,7 @@ class PostJudgePredictor:
     probabilistic = True
 
     def __init__(self, grade: Callable[[Post], Any], holdout_from: date, workers: int = 4):
-        self.grade, self.holdout_from, self.workers = grade, holdout_from, workers
+        self.grade, self.holdout_from, self.workers = with_retries(grade), holdout_from, workers
 
     def _one(self, p: Post) -> tuple[str, Prediction]:
         ev = self.grade(p)
@@ -169,7 +183,7 @@ class JudgeRankPredictor:
     def __init__(self, rank: Callable[[list[Post]], dict[str, float]], batch: int = 6, workers: int = 4):
         if not 2 <= batch <= 6:
             raise ValueError("rank_candidates takes 2 to 6 candidates per call")
-        self.rank, self.batch, self.workers = rank, batch, workers
+        self.rank, self.batch, self.workers = with_retries(rank), batch, workers
 
     def _chunks(self, posts: list[Post]) -> list[list[Post]]:
         by_account: dict[str, list[Post]] = defaultdict(list)
