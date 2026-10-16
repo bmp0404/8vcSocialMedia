@@ -72,9 +72,9 @@ def test_gate_length_rule_uses_the_weighted_count():
 
 
 def test_review_refuses_an_approved_edit_x_would_reject():
-    from harness.review import check_edit
+    from harness.review import check_approval
 
-    check_edit("approved", "fine " + "https://example.com/" + "x" * 400)
-    check_edit("killed", "字" * 200)  # only approvals hand anything off
+    check_approval("a1", "approved", "fine " + "https://example.com/" + "x" * 400)
+    check_approval("a1", "killed", "字" * 200)  # only approvals hand anything off
     with pytest.raises(ValueError, match="weighs 400 as X counts it"):
-        check_edit("approved", "字" * 200)
+        check_approval("a1", "approved", "字" * 200)

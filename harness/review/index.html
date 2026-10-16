@@ -135,6 +135,7 @@ function cardHtml(a, i) {
       ${a.vetoed ? `<span class="veto">⚠ critic veto</span>` : ""}
       ${st !== "pending" ? `<span class="status-${st}">${st}</span>` : ""}
       ${a.review.text ? `<span>· edited</span>` : ""}
+      ${/\[VERIFY\b/i.test(text) ? `<span class="veto">⚠ check the [VERIFY] fact before approving</span>` : ""}
     </div>
     ${targetHtml(a) ? `<div class="meta target">${targetHtml(a)}</div>` : ""}
     ${isFollow ? "" : `<textarea aria-label="Post text">${esc(text)}</textarea><div class="count"></div>`}

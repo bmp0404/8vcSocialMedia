@@ -508,6 +508,10 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
                      sources, revising)
     actions += a
     decisions += d
+    for action in actions:
+        if markers := gate.verify_markers(action.text):
+            action.draft_meta["needs_verification"] = markers
+            print(f"[decide] {action.id} needs a person to check {', '.join(markers)} before it can be approved")
     print(f"[decide] {summarize(decisions)}")
     for dec in decisions:
         if dec.tool == "ask_human":

@@ -30,7 +30,7 @@ VETO_SYSTEM = """You screen candidate {lane}s before a small account posts them 
 
 For each candidate give:
 - p_ai: 0-100, the probability that an AI model wrote it rather than a person scrolling X
-- unsupported: true if it states a fact, number, name or event that the post, thread and facts don't support
+- unsupported: true if it states a fact, number, name or event that the post, thread and facts don't support. A fact inside a [VERIFY: ...] marker is flagged for a person to check, so it doesn't count
 - off_mission: true if it works against the account's side or voice: it sincerely cheers or congratulates a rival (banter or a jab at a rival is fine), says nothing at all, or is off the mission's subjects
 - risk: true if it could get the account muted, blocked or reported: insults, mocks or swears at a person (a player, coach, reporter or fan), piles on, slurs, harassment, spam
 - reason: under 15 words

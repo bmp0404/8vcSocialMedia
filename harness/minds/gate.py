@@ -54,7 +54,10 @@ ENGAGEMENT_BAIT = re.compile(
     r"\b(?:like|rt|retweet|repost|share)(?: this)? if\b|\bwho (?:agrees|else)\b|\btag (?:someone|a friend|your)\b"
     r"|\b(?:drop|comment) (?:a|your|below)\b|\bfollow (?:me )?for\b|\bsmash (?:that|the) like\b", re.I)
 PLACEHOLDER = re.compile(
-    r"\[(?:verify|insert|todo|tbd|link|name|stat|video|image|photo|gif|media|clip)\b[^\]]*\]|\{[a-z_]+\}|\bTODO\b|\bTBD\b", re.I)
+    r"\[(?:insert|todo|tbd|link|name|stat|video|image|photo|gif|media|clip)\b[^\]]*\]|\{[a-z_]+\}|\bTODO\b|\bTBD\b", re.I)
+# CLAUDE.md: a fact the model can't ground is written as [VERIFY: ...]. The marker passes the gate so a
+# person sees the draft and checks the fact or cuts it; review and the hand-off refuse it unresolved.
+VERIFY = re.compile(r"\[VERIFY\b[^\]]*\]", re.I)
 URL = re.compile(r"https?://|\bwww\.|\bt\.co/|\bpic\.(?:twitter|x)\.com|\b[\w-]+\.(?:com|net|org|ly|co|io|gg|tv)/", re.I)
 HANDLE = re.compile(r"(?<![\w@])@(\w{1,15})")
 HASHTAG = re.compile(r"(?<![\w&])#\w+")
@@ -179,6 +182,17 @@ def _rule_reply_sentences(text: str, c: _Ctx) -> list[str]:
     return [(f"{n} sentences in a reply (max {cap})", None, None)] if n > cap else []
 
 
+def verify_markers(text: str) -> list[str]:
+    """The [VERIFY: ...] markers a person still has to resolve."""
+    return VERIFY.findall(text or "")
+
+
+def _unmarked(text: str) -> str:
+    """`text` with each [VERIFY: ...] blanked to spaces of the same length, so spans keep their places and the
+    grounding rules don't flag the number or name the marker already flags."""
+    return VERIFY.sub(lambda m: " " * len(m.group(0)), text)
+
+
 def _rule_placeholder(text: str, c: _Ctx) -> list[str]:
     return [(f"unresolved placeholder {m.group(0)!r}", m.start(), m.end()) for m in PLACEHOLDER.finditer(text)]
 
@@ -225,20 +239,21 @@ def _rule_unknown_handle(text: str, c: _Ctx) -> list[str]:
     if c.context is None:
         return []
     return [(f"@{m.group(1)} isn't in the post or thread", m.start(), m.end())
-            for m in HANDLE.finditer(text) if f"@{m.group(1).lower()}" not in c.context]
+            for m in HANDLE.finditer(_unmarked(text)) if f"@{m.group(1).lower()}" not in c.context]
 
 
 def _rule_ungrounded_number(text: str, c: _Ctx) -> list[str]:
     if c.context is None:
         return []
     return [(f"number {m.group(0)!r} isn't in the context", m.start(), m.end())
-            for m in NUMBER.finditer(text) if m.group(0) not in c.context]
+            for m in NUMBER.finditer(_unmarked(text)) if m.group(0) not in c.context]
 
 
 def _rule_ungrounded_name(text: str, c: _Ctx) -> list[str]:
     if c.context is None:
         return []
-    return [(f"name {w!r} isn't in the context", a, b) for w, a, b in capitalized_names(text) if w.lower() not in c.context]
+    return [(f"name {w!r} isn't in the context", a, b) for w, a, b in capitalized_names(_unmarked(text))
+            if w.lower() not in c.context]
 
 
 RULES = {
