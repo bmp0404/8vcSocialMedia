@@ -333,7 +333,7 @@ def test_a_failed_handle_is_logged_and_skipped_and_the_rest_still_poll(tmp_path)
     reader = FakeReader({"IndianaFever": [xpost(T0 - M, author="IndianaFever")]})
     reader.fail.add("WNBA")
     w = watcher(tmp_path, reader, Clock())
-    assert w.poll(WNBA) == 0
+    assert w.poll(WNBA) is None
     assert w.poll(Watched("wnba", "IndianaFever", False)) == 1
     polls = rows(w.state.path, "polls")
     assert [(p["handle"], p["ok"]) for p in polls] == [("WNBA", 0), ("IndianaFever", 1)]
@@ -446,3 +446,14 @@ def test_a_second_watcher_refuses_while_the_first_is_alive(tmp_path):
     w.pid_path.write_text(str(os.getppid()), encoding="utf-8")  # a live process that isn't this one
     with pytest.raises(loop.AlreadyRunning, match=f"pid {os.getppid()}"):
         w.run()
+
+
+def test_a_handle_that_keeps_failing_is_polled_less_often(tmp_path):
+    reader = live_reader()
+    reader.fail.add("WNBA")
+    w = loop.Watcher(config_for(tmp_path, interval_s=0.2, duration_s=2.0), MockLLM(), reader, echo=False)
+    w.watchlists = {"wnba": Watchlist("wnba", (WNBA, Watched("wnba", "IndianaFever", False)), ())}
+    w.run()
+    polls = Counter(p["handle"] for p in rows(w.state.path, "polls"))
+    # Failures at 0, 0.2, 0.6 and 1.4 s: the second and later failures wait 2, then 4 intervals.
+    assert polls["WNBA"] == 4 and polls["IndianaFever"] >= 8

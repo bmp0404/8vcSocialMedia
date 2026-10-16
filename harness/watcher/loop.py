@@ -41,6 +41,10 @@ DEFAULT_INGEST_EVERY_S = 15.0
 INGEST_RETRY = timedelta(minutes=5)
 INGEST_ATTEMPTS = 3
 SYNC_EVERY_S = 1800.0  # outcomes' own TIMELINE_EVERY: half the +1h window
+# A handle that fails again and again waits 2, 4, then 8 intervals between tries. On the first live
+# run @ChantelJennings answered 404 or 500 on every poll, and each failed poll costs up to five
+# requests in retries, all inside the shared throttle. One failure only skips the cycle.
+MAX_BACKOFF = 8
 HEARTBEAT_S = 300.0
 
 
@@ -131,8 +135,9 @@ class Watcher:
             out.extend(x[i] for x in lists if i < len(x))
         return out
 
-    def poll(self, w: Watched) -> int:
-        """Read one handle's timeline and record what's new. Returns the number of new watched posts."""
+    def poll(self, w: Watched) -> int | None:
+        """Read one handle's timeline and record what's new. Returns the number of new watched posts,
+        or None when the read failed."""
         start, before = time.monotonic(), self._thread_requests()
         try:
             posts = self.reader.profile_statuses(w.handle, limit=self.cfg.timeline_limit)
@@ -141,7 +146,7 @@ class Watcher:
             self.state.log_poll(self.clock(), w.profile, w.handle, ok=False, requests=self._thread_requests() - before,
                                 seconds=time.monotonic() - start, error=error)
             self.log(f"[poll] {w.profile} @{w.handle} skipped this cycle: {error}")
-            return 0
+            return None
         wl, new = self.watchlists[w.profile], 0
         for p in posts:
             if not wl.counts(w.handle, p) or self.state.known(p.id):
@@ -296,6 +301,7 @@ class Watcher:
         worker.start()
         t0 = time.monotonic()
         due = {w: t0 + i * self.cfg.interval_s / len(order) for i, w in enumerate(order)}
+        failures = dict.fromkeys(order, 0)
         next_ingest = next_sync = t0
         next_beat = t0 + HEARTBEAT_S
         try:
@@ -306,9 +312,12 @@ class Watcher:
                     break
                 w = min(due, key=due.get)
                 if due[w] <= now_m:
-                    self.poll(w)
-                    # Behind schedule (a busy shared throttle), wait half an interval rather than polling again at once.
-                    due[w] = max(due[w] + self.cfg.interval_s, now_m + self.cfg.interval_s / 2)
+                    failures[w] = 0 if self.poll(w) is not None else failures[w] + 1
+                    if failures[w] > 1:
+                        due[w] = now_m + self.cfg.interval_s * min(2 ** (failures[w] - 1), MAX_BACKOFF)
+                    else:
+                        # Behind schedule (a busy shared throttle), wait half an interval rather than polling again at once.
+                        due[w] = max(due[w] + self.cfg.interval_s, now_m + self.cfg.interval_s / 2)
                     continue
                 if now_m >= next_ingest and self.ingest_one():
                     next_ingest = now_m + self.cfg.ingest_every_s
