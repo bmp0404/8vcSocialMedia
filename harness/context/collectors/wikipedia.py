@@ -8,14 +8,17 @@ monthly]", checked 2026-10-15). Hourly views exist only in the bulk dump files.
 
 from __future__ import annotations
 
+import gzip
 import json
 import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 
 from harness.context.collectors.base import Series, client
-from harness.context.http import FetchError
+from harness.context.http import USER_AGENT, FetchError
 
 PAGEVIEWS = "https://wikimedia.org/api/rest_v1/metrics/pageviews"
+DUMPS = "https://dumps.wikimedia.org/other/pageviews"
 SPARQL = "https://query.wikidata.org/sparql"
 
 
@@ -33,6 +36,32 @@ def pageviews(article: str, start: datetime, end: datetime, granularity: str = "
         raise FetchError(f"wikimedia returned no pageviews for {article!r} ({start:%Y-%m-%d}..{end:%Y-%m-%d})")
     points = [(datetime.strptime(i["timestamp"], "%Y%m%d%H").replace(tzinfo=timezone.utc), float(i["views"])) for i in items]
     return Series(term=article, source="wikipedia", resolution="1d", points=points, fetched_at=resp.fetched_at)
+
+
+def hourly_from_dump(titles: list[str], hour: datetime, project: str = "en") -> dict[str, int]:
+    """Views per title (desktop + mobile) in one UTC hour, from the hourly dump file.
+
+    Each file covers every wiki and is 55-66 MB gzipped; it is streamed and
+    filtered, not stored. Files land about 2-2.5 hours after the hour starts.
+    Use this only for the few hours that matter (around a post), never in bulk.
+    """
+    url = f"{DUMPS}/{hour:%Y}/{hour:%Y-%m}/pageviews-{hour:%Y%m%d-%H}0000.gz"
+    wanted = {t.replace(" ", "_") for t in titles}
+    codes = {project, f"{project}.m"}
+    counts = {t: 0 for t in wanted}
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp, gzip.GzipFile(fileobj=resp) as gz:
+            for raw in gz:
+                parts = raw.split(b" ")
+                if len(parts) < 3 or parts[0].decode("ascii", "replace") not in codes:
+                    continue
+                title = parts[1].decode("utf-8", "replace")
+                if title in wanted:
+                    counts[title] += int(parts[2])
+    except OSError as e:
+        raise FetchError(f"wikimedia dump {url} unavailable: {e}") from e
+    return counts
 
 
 def top_articles(day: datetime, project: str = "en.wikipedia") -> list[tuple[str, int]]:

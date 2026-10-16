@@ -34,30 +34,21 @@ from harness.context import snowflake
 from harness.context.backfill import CONTEXT_DIR, read_jsonl
 from harness.context.curves import Amplifier, Snapshot, detect
 from harness.context.http import FetchError
+from harness.context.settings import TrackerParams
 from harness.context.xreader import XReader
 
 TRACKER_DIR = CONTEXT_DIR / "tracker"
 
 
-def _schedule() -> list[float]:
-    """Ages in minutes at which a post is due: every 5 min to 1 h, 15 min to 24 h, hourly to 72 h, 6-hourly to 7 d."""
-    ages = [5.0 * k for k in range(1, 13)]
-    ages += [60.0 + 15 * k for k in range(1, 93)]
-    ages += [1440.0 + 60 * k for k in range(1, 49)]
-    ages += [4320.0 + 360 * k for k in range(1, 17)]
-    return ages
+SCHEDULE = TrackerParams().schedule()
 
 
-SCHEDULE = _schedule()
-AMPLIFIER_MIN_FOLLOWERS = 100_000
-
-
-def next_due(created_at: datetime, last_observed: datetime | None, now: datetime) -> bool:
+def next_due(created_at: datetime, last_observed: datetime | None, now: datetime, schedule: list[float] = SCHEDULE) -> bool:
     """True when some scheduled age has passed that no snapshot has covered yet."""
     age = (now - created_at).total_seconds() / 60
-    if age > SCHEDULE[-1] + 60:
+    if age > schedule[-1] + 60:
         return False
-    passed = [a for a in SCHEDULE if a <= age]
+    passed = [a for a in schedule if a <= age]
     if not passed:
         return False
     if last_observed is None:
@@ -67,10 +58,11 @@ def next_due(created_at: datetime, last_observed: datetime | None, now: datetime
 
 
 class Tracker:
-    def __init__(self, reader: XReader, root: Path = TRACKER_DIR, max_start_age_h: float = 6.0):
+    def __init__(self, reader: XReader, root: Path = TRACKER_DIR, params: TrackerParams = TrackerParams()):
         self.reader = reader
         self.root = root
-        self.max_start_age_h = max_start_age_h
+        self.params = params
+        self.schedule = params.schedule()
         root.mkdir(parents=True, exist_ok=True)
         self.tracked_path = root / "tracked.json"
         self.watch_path = root / "watch.json"
@@ -84,7 +76,7 @@ class Tracker:
     def watch(self) -> dict:
         if self.watch_path.exists():
             return json.loads(self.watch_path.read_text(encoding="utf-8"))
-        return {"handles": [], "every_min": 15, "last_polled": {}}
+        return {"handles": [], "every_min": self.params.watch_every_min, "last_polled": {}}
 
     def _save(self, path: Path, data: dict) -> None:
         tmp = path.with_suffix(".tmp")
@@ -133,7 +125,7 @@ class Tracker:
                 continue
             last[h] = now.isoformat(timespec="seconds")
             for p in posts:
-                if p.is_repost or now - p.created_at > timedelta(hours=self.max_start_age_h):
+                if p.is_repost or now - p.created_at > timedelta(hours=self.params.max_start_age_h):
                     continue
                 if p.id not in self.tracked():
                     self.add(p.id, reason=f"watch:@{h}", author=p.author_handle)
@@ -147,7 +139,7 @@ class Tracker:
         for post_id, meta in self.tracked().items():
             created = datetime.fromisoformat(meta["created_at"])
             last = max((s.observed_at for s in snaps.get(post_id, [])), default=None)
-            if not next_due(created, last, now):
+            if not next_due(created, last, now, self.schedule):
                 continue
             try:
                 post = self.reader.status(post_id)
@@ -175,7 +167,8 @@ class Tracker:
         now = now or datetime.now(timezone.utc)
         return {"discovered": self.poll_watch(now), "polled": self.poll_posts(now, with_replies)}
 
-    def loop(self, interval_s: float = 60.0, with_replies: bool = False, max_passes: int | None = None) -> None:
+    def loop(self, interval_s: float | None = None, with_replies: bool = False, max_passes: int | None = None) -> None:
+        interval_s = interval_s or self.params.loop_interval_s
         n = 0
         while max_passes is None or n < max_passes:
             print(f"[tracker] {datetime.now(timezone.utc):%H:%M:%S} {self.poll_once(with_replies=with_replies)}")
@@ -190,7 +183,7 @@ class Tracker:
             return None
         seen = {}
         for r in rows:
-            if (r.get("author_followers") or 0) >= AMPLIFIER_MIN_FOLLOWERS and r["id"] not in seen:
+            if (r.get("author_followers") or 0) >= self.params.amplifier_min_followers and r["id"] not in seen:
                 seen[r["id"]] = Amplifier(
                     at=datetime.fromisoformat(r["created_at"]),
                     handle=r["author_handle"],

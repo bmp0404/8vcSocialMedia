@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 from harness.context import snowflake
+from harness.context.settings import TrackerParams
 from harness.context.tracker import SCHEDULE, Tracker, next_due
 from harness.context.xreader import XPost
 
@@ -90,7 +91,7 @@ def test_watch_discovers_then_polls_on_schedule(tmp_path):
 def test_watch_skips_posts_older_than_start_age(tmp_path):
     pid = str(snowflake.floor_id(T0) | 1)
     reader = FakeReader(pid, lambda: at(7 * 60))
-    tr = Tracker(reader, root=tmp_path, max_start_age_h=6)
+    tr = Tracker(reader, root=tmp_path, params=TrackerParams(max_start_age_h=6))
     tr.add_watch(["acct"])
     assert tr.poll_watch(at(7 * 60)) == 0
 

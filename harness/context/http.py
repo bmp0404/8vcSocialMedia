@@ -9,6 +9,7 @@ fetched, which matters because some sources (X metrics) change over time.
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import os
@@ -139,8 +140,12 @@ class PoliteClient:
             try:
                 req = urllib.request.Request(url, headers=req_headers)
                 with urllib.request.urlopen(req, timeout=self.timeout_s) as resp:
-                    body = resp.read().decode("utf-8", errors="replace")
+                    raw = resp.read()
                     status = resp.status
+                # Some hosts (the Wayback Machine's id_ captures) send gzip without saying so.
+                if raw[:2] == b"\x1f\x8b":
+                    raw = gzip.decompress(raw)
+                body = raw.decode("utf-8", errors="replace")
                 break
             except urllib.error.HTTPError as e:
                 status = e.code

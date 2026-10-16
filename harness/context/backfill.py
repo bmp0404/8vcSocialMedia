@@ -20,6 +20,7 @@ from pathlib import Path
 from harness import config
 from harness.context import snowflake
 from harness.context.http import FetchError, PoliteClient
+from harness.context.settings import DEFAULT
 from harness.context.xreader import FxTwitterReader, XReader
 
 DATASET = config.ROOT / "data" / "devtools_virality_30d.csv"
@@ -102,7 +103,7 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def run(limit: int | None = None, timelines: bool = True, interval_s: float = 2.0) -> None:
+def run(limit: int | None = None, timelines: bool = True, interval_s: float = DEFAULT.fetch.bulk_interval_s) -> None:
     rows = load_dataset()
     # The bulk job runs at 0.5 req/s because Observe shares this IP's fxtwitter budget.
     # max_age_s=None reuses cached responses, so reruns do not refetch.
