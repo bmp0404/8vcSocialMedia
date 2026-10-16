@@ -303,7 +303,9 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
                     "written_as": framing.framing_handle if framing and method == "continuation" else None,
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
-                    "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground)},
+                    "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground),
+                    # What the veto judged the draft against; qualify's critic gets the same (Integration run 37).
+                    "veto_context": context},
     )
     return Decision(REPLY_LANE, url, "reply", detail=detail, candidates=cands), action
 
@@ -439,7 +441,7 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
                rationale=f"caption of a real source ({credit})" if credit else "caption of hand-supplied material",
                draft_meta={"method": "caption" if url else "caption, no link", "writer_model": cfg.styled_model,
                            "source_url": url or None, "credit": credit or None,
-                           "judge": judge_meta(cfg, picked, cands, ground)})
+                           "judge": judge_meta(cfg, picked, cands, ground), "veto_context": context})
     return [a], [Decision(POST_LANE, url or n.id, kind, detail="caption of a real source" if url else "caption, no link",
                           action_id=a.id, candidates=cands)]
 
