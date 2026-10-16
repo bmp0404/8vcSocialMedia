@@ -16,6 +16,9 @@ def main() -> None:
 
     sub.add_parser("enrich", help="write data/context/devtools_enriched.csv and accounts.csv")
 
+    p = sub.add_parser("collect", help="collect context signals, reply samples or reposters for the dataset")
+    p.add_argument("job", choices=["context", "replies", "reposters", "all-x"])
+
     p = sub.add_parser("check", help="fetch one real data point from every keyless source")
     p.add_argument("only", nargs="*", help="run only these checks")
 
@@ -39,6 +42,16 @@ def main() -> None:
         enrich.run()
     elif args.cmd == "track":
         _track(args)
+    elif args.cmd == "collect":
+        from harness.context import collect
+
+        if args.job == "context":
+            out = collect.collect_context()
+            print(f"[collect] context for {len(out['accounts'])} accounts, {len(out['errors'])} errors")
+        if args.job in ("replies", "all-x"):
+            print(f"[collect] replies for {collect.collect_replies()} posts")
+        if args.job in ("reposters", "all-x"):
+            print(f"[collect] reposters for {collect.collect_reposters()} posts")
     elif args.cmd == "check":
         from harness.context import live_check
 

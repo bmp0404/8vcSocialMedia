@@ -112,6 +112,7 @@ def run(limit: int | None = None, timelines: bool = True, interval_s: float = DE
     print(f"[backfill] fetched {n} posts -> {X_METRICS}")
     if timelines:
         handles = sorted({r["Account"] for r in rows})
-        since = datetime(2026, 9, 14, tzinfo=timezone.utc)
+        # Two weeks before the first dataset post, so early posts have a past-only author baseline.
+        since = datetime(2026, 8, 31, tzinfo=timezone.utc)
         m = backfill_timelines(reader, handles, since)
         print(f"[backfill] fetched {m} timelines -> {TIMELINES}")

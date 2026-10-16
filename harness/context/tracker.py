@@ -9,9 +9,11 @@ record it while it happens. The tracker does two things each pass:
 2. Poll: for each tracked post whose next scheduled age has passed, fetch its
    counts once and append a `curves.Snapshot` line.
 
-The schedule is dense early and sparse late (see `SCHEDULE`), because most
-posts do most of their growth in the first hours and a step jump is only
-detectable where polling is at least as fine as the 15-minute curve grid.
+The default schedule is log-spaced (5 min to 7 days, 10 polls per post,
+`TrackerParams.log_schedule`), because early speed predicts final size. Dense
+mode (`TrackerParams(dense=True)`) polls every 5-15 minutes for the first day;
+use it for the brand's own posts, because a step jump is only detectable where
+polling is at least as fine as the 15-minute curve grid.
 
 Storage, under data/context/tracker/ (gitignored, append-only JSONL):
     tracked.json     {post_id: {"author", "created_at", "added_at", "reason"}}
@@ -192,8 +194,33 @@ class Tracker:
                 )
         return list(seen.values())
 
+    def early_metrics(self, post_id: str, snaps: list[Snapshot], followers: int | None) -> dict:
+        """Minutes to the k-th reply, and the like-per-view rate X's cold-start ranking sees."""
+        created = snowflake.to_datetime(post_id)
+        out: dict = {}
+        replies = {r["id"]: r for r in read_jsonl(self.reply_path) if r["reply_to_post"] == post_id and "id" in r}
+        times = sorted((datetime.fromisoformat(r["created_at"]) - created).total_seconds() / 60 for r in replies.values())
+        coverage = [r.get("coverage") for r in replies.values() if r.get("coverage") is not None]
+        out["reply_coverage"] = max(coverage) if coverage else None
+        for k in self.params.reply_ks:
+            out[f"t_to_reply_{k}_min"] = round(times[k - 1], 1) if len(times) >= k else None
+        early = [
+            s for s in snaps
+            if s.views and (s.observed_at - created).total_seconds() / 60 <= self.params.cold_start_window_min
+        ]
+        last = max(early, key=lambda s: s.observed_at) if early else None
+        out["early_like_rate"] = round(last.likes / last.views, 5) if last else None
+        out["cold_start_eligible"] = followers is not None and followers <= self.params.cold_start_max_followers
+        return out
+
     def report(self, post_id: str, metric: str = "engagement") -> dict:
         snaps = self.snapshots().get(post_id, [])
         created = snowflake.to_datetime(post_id)
         inf = detect(created, snaps, metric=metric, amplifiers=self.amplifiers(post_id))
-        return {"post_id": post_id, "n_snapshots": len(snaps), **inf.to_dict()}
+        followers = None
+        if snaps:
+            try:
+                followers = self.reader.status(post_id).author_followers
+            except FetchError:
+                followers = None
+        return {"post_id": post_id, "n_snapshots": len(snaps), **self.early_metrics(post_id, snaps, followers), **inf.to_dict()}

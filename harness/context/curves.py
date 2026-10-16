@@ -11,10 +11,13 @@ Pipeline:
               --classify-----> one shape label + independent flags
 
 Shape labels (exactly one per curve, checked in this order):
-    insufficient     too little data to say anything
+    insufficient     observed too briefly or too few snapshots to say anything
+    stillborn        observed long enough, and almost nobody engaged
     step_jump        one bin after the first hour carries >= 25% of the total and
                      arrives abruptly: the usual mark of a large account quoting
                      or reposting the post
+    circadian_echo   a second peak 20-28 h after the first: the audience waking
+                     up again, not news (Kobayashi and Lambiotte 2016)
     multi_wave       two or more separate velocity peaks: re-ignition, often news
     delayed_takeoff  quiet first hour, then a gradual rise to a peak >= 3 h in:
                      the mark of algorithmic pickup
@@ -30,9 +33,17 @@ Flags (any number per curve):
     count_drop       a count fell by >= 5% of its peak: X purging fake engagement
     unexplained_step a step_jump with no known amplifier at that moment, when
                      amplifier data was supplied
+    view_surge_low_conversion
+                     views jump far above their recent rate while engagement per
+                     view collapses: promoted impressions or a big account's
+                     repost, reach the brand's own audience did not earn
+    slow_start       engagement at 60 min below the author's median at 60 min
+                     (only when that baseline is supplied)
 
-Every threshold lives in `InflectionParams`. None of them has been fitted to
-data; they encode the definitions above, and the tests pin those definitions.
+Every threshold lives in `InflectionParams`. None has been fitted to labelled
+outcomes; they encode the definitions above, and the tests pin those
+definitions. The drip-feed cutoffs were set against simulated Poisson arrivals
+(see the comment on them).
 """
 
 from __future__ import annotations
@@ -126,6 +137,9 @@ class InflectionParams:
     min_total: float = 20.0
     min_duration: float = 60.0
     min_snapshots: int = 3  # including the implicit zero at creation
+    # circadian_echo: consecutive wave peaks this many minutes apart are a daily echo
+    circadian_min_gap: float = 1200.0
+    circadian_max_gap: float = 1680.0
     # waves
     wave_min_frac: float = 0.3  # a wave peak is >= 30% of the highest peak
     trough_frac: float = 0.3  # waves are separated by a trough <= 30% of the smaller peak
@@ -156,6 +170,10 @@ class InflectionParams:
     drip_max_dispersion: float = 0.15
     drip_min_age: float = 120.0
     drip_max_len_ratio: float = 1.25
+    surge_rate_ratio: float = 5.0  # view rate >= 5x the median of earlier intervals ...
+    surge_conversion_frac: float = 0.3  # ... with engagement per view <= 0.3x the rate so far
+    surge_min_views: float = 1000.0
+    surge_min_prior_intervals: int = 2
     like_only_min_likes: float = 100.0
     like_only_max_other_frac: float = 0.01
     drop_frac: float = 0.05
@@ -380,11 +398,16 @@ def features(curve: Curve, p: InflectionParams = InflectionParams()) -> CurveFea
 
 
 def classify_shape(f: CurveFeatures, p: InflectionParams = InflectionParams()) -> str:
-    if f.final < p.min_total or f.duration_min < p.min_duration or f.n_snapshots < p.min_snapshots:
+    if f.duration_min < p.min_duration or f.n_snapshots < p.min_snapshots:
         return "insufficient"
+    if f.final < p.min_total:
+        return "stillborn"
     if f.step_bins_min:
         return "step_jump"
     if f.n_waves >= 2:
+        gaps = [b - a for a, b in zip(f.wave_peaks_min, f.wave_peaks_min[1:])]
+        if all(p.circadian_min_gap <= g <= p.circadian_max_gap for g in gaps):
+            return "circadian_echo"
         return "multi_wave"
     if f.t_peak_min is None:
         return "insufficient"
@@ -446,6 +469,29 @@ def min_dispersion(
     return best
 
 
+def view_surge_low_conversion(snapshots: list[Snapshot], p: InflectionParams = InflectionParams()) -> dict | None:
+    """The first interval whose view rate is >= surge_rate_ratio x the median rate of earlier
+    intervals while its engagement per view is <= surge_conversion_frac x the cumulative rate
+    before it. Returns the interval's numbers, or None. Needs snapshots with views."""
+    snaps = [s for s in sorted(snapshots, key=lambda s: s.observed_at) if s.views is not None]
+    rates: list[float] = []
+    for a, b in zip(snaps, snaps[1:]):
+        minutes = (b.observed_at - a.observed_at).total_seconds() / 60
+        if minutes <= 0:
+            continue
+        d_views = b.views - a.views
+        rate = d_views / minutes
+        if len(rates) >= p.surge_min_prior_intervals and d_views >= p.surge_min_views and a.views > 0:
+            prior = sorted(rates)[len(rates) // 2]
+            conv_before = a.engagement / a.views
+            conv_now = (b.engagement - a.engagement) / d_views
+            if prior > 0 and rate >= p.surge_rate_ratio * prior and conv_now <= p.surge_conversion_frac * conv_before:
+                return {"at": b.observed_at.isoformat(), "view_rate_ratio": round(rate / prior, 2),
+                        "conversion_ratio": round(conv_now / conv_before, 3) if conv_before else None}
+        rates.append(rate)
+    return None
+
+
 def like_only_burst(snapshots: list[Snapshot], p: InflectionParams = InflectionParams()) -> bool:
     """Any interval between consecutive snapshots where likes rose >= like_only_min_likes and
     reposts + replies + quotes together rose by <= like_only_max_other_frac of that."""
@@ -464,8 +510,13 @@ def detect(
     metric: str = "engagement",
     params: InflectionParams = InflectionParams(),
     amplifiers: list[Amplifier] | None = None,
+    baseline_60: float | None = None,
 ) -> Inflection:
-    """Classify one post's curve and raise its flags. `amplifiers=None` means "not looked up"."""
+    """Classify one post's curve and raise its flags.
+
+    `amplifiers=None` means "not looked up". `baseline_60` is the author's
+    median `metric` at 60 minutes, when known.
+    """
     curve = build_curve(created_at, snapshots, metric)
     f = features(curve, params)
     shape = classify_shape(f, params)
@@ -486,6 +537,12 @@ def detect(
     if f.max_drop_share >= params.drop_frac:
         flags.append("count_drop")
         stats["max_drop_share"] = f.max_drop_share
+    surge = view_surge_low_conversion(snapshots, params)
+    if surge:
+        flags.append("view_surge_low_conversion")
+        stats["view_surge"] = surge
+    if baseline_60 is not None and curve.duration >= 60 and _interp(curve.t, curve.y, 60) < baseline_60:
+        flags.append("slow_start")
 
     explained: list[str] = []
     if shape == "step_jump" and amplifiers is not None:
@@ -498,4 +555,5 @@ def detect(
     return Inflection(shape=shape, flags=flags, features=f, explained_by=explained, stats=stats)
 
 
-BOOST_FLAGS = {"drip_feed", "like_only_burst", "count_drop", "unexplained_step"}
+INAUTHENTIC_FLAGS = {"drip_feed", "like_only_burst", "count_drop"}
+PAID_REACH_FLAGS = {"view_surge_low_conversion", "unexplained_step"}

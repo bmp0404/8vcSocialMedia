@@ -27,15 +27,33 @@ class Story:
     front_page: bool = False
 
 
-def stories(query: str, start: datetime, end: datetime, front_page_only: bool = False, max_hits: int = 1000) -> list[Story]:
-    """Stories matching `query` created in [start, end), newest first."""
+def stories(
+    query: str,
+    start: datetime,
+    end: datetime,
+    front_page_only: bool = False,
+    max_hits: int = 1000,
+    title_only: bool = False,
+    min_points: int = 0,
+) -> list[Story]:
+    """Stories matching `query` created in [start, end), newest first.
+
+    `front_page_only` works only for stories on the front page right now;
+    Algolia drops the tag afterwards. Use `min_points` as the historical proxy.
+    `title_only` cuts noise for company names that are common words.
+    """
     tags = "(story,front_page)" if front_page_only else "story"
+    filters = f"created_at_i>={int(start.timestamp())},created_at_i<{int(end.timestamp())}"
+    if min_points:
+        filters += f",points>={min_points}"
     params = {
         "query": query,
         "tags": tags,
-        "numericFilters": f"created_at_i>={int(start.timestamp())},created_at_i<{int(end.timestamp())}",
+        "numericFilters": filters,
         "hitsPerPage": min(max_hits, 1000),
     }
+    if title_only:
+        params["restrictSearchableAttributes"] = "title"
     url = f"{ALGOLIA}/search_by_date?" + urllib.parse.urlencode(params)
     past = end < datetime.now(timezone.utc) - timedelta(days=2)
     data = client().get_json(url, max_age_s=None if past else 3600)
@@ -74,7 +92,7 @@ def story_volume(query: str, start: datetime, end: datetime) -> Series:
     )
 
 
-def front_page(day: datetime) -> list[Story]:
-    """Stories that reached the front page, created on `day` (UTC)."""
+def big_stories(day: datetime, min_points: int = 500) -> list[Story]:
+    """Stories created on `day` (UTC) with at least `min_points` today: a proxy for a big front-page day."""
     start = day.replace(hour=0, minute=0, second=0, microsecond=0)
-    return stories("", start, start + timedelta(days=1), front_page_only=True)
+    return stories("", start, start + timedelta(days=1), min_points=min_points)
