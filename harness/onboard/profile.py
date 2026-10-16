@@ -417,6 +417,8 @@ def render_report(d: Draft) -> str:
     for n, c in enumerate(d.watch, 1):
         examples = " ".join(f"[{i}](https://x.com/{d.handle}/status/{i})" for i in c.evidence)
         out.append(f"| {n} | @{c.handle} | {c.why()} | {examples} |")
+    if not d.watch:
+        out.append("| | none qualified | The watcher refuses a profile whose watch list is empty; add accounts by hand. | |")
     below = [c for c in d.ranked if c not in d.watch][:10]
     if below:
         out += ["", "Next below the cut:", ""] + [f"- @{c.handle}: {c.why()}" for c in below]

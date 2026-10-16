@@ -18,6 +18,7 @@ from harness.corpus.load import Corpus, Item
 from harness.llm import MockLLM
 from harness.onboard import claims, history, profile, site, validate
 from harness.sources.watch import parse_watch
+from harness.watcher import watchlist
 
 READ = datetime(2026, 10, 16, 12, 0, tzinfo=timezone.utc)
 BRAND = "acme"
@@ -374,7 +375,7 @@ def pages_web():
     return FakeWeb({"https://acme.dev": HOME, "https://acme.dev/features": FEATURES})
 
 
-def test_draft_and_write_produce_a_profile_that_loads_and_traces(tmp_path):
+def test_draft_and_write_produce_a_profile_that_loads_and_traces(tmp_path, monkeypatch):
     posts, replies = timeline()
     d = profile.draft("@acme", "acme-draft", reader=FakeReader(posts, replies), llm=MockLLM(), site="https://acme.dev",
                       get=pages_web(), today=date(2026, 10, 16), profiles_dir=tmp_path)
@@ -395,6 +396,8 @@ def test_draft_and_write_produce_a_profile_that_loads_and_traces(tmp_path):
     report = (target / "ONBOARDING.md").read_text(encoding="utf-8")
     assert "@partner" in report and "Median engagement" in report
     assert not list(tmp_path.glob(".acme-draft.onboarding-*"))  # the temporary directory was renamed away
+    monkeypatch.setattr(config, "PROFILES_DIR", tmp_path)
+    assert [w.handle for w in watchlist.load("acme-draft").handles] == ["partner2", "fan", "partner"]  # as the watcher reads it
 
 
 def test_onboarding_refuses_an_existing_profile_before_reading_anything(tmp_path):
