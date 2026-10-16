@@ -277,34 +277,27 @@ def test_off_mission_split_between_orders_is_a_veto():
 
 # ---- writing from the account's side (Iterate v3: 12 of 20 vetoes spoke as the other team's fans)
 
-ACCOUNT = writer.Account("clarkfanaccount", "Caitlin Clark Fan Account", "Fever fan. Banter, never cruel.",
-                         ("rest up AB, we need you",))
+ACCOUNT = writer.Account("clarkfanaccount")
 
 
-def test_page_is_signed_in_as_the_account_and_keeps_others_neutral():
-    page = writer.build_page("WNBA", "Angel Reese has found a way to win", ["first reply", "second reply"], ACCOUNT)
-    assert "Signed in as Caitlin Clark Fan Account (@clarkfanaccount). Bio: Fever fan. Banter, never cruel." in page
-    assert "@clarkfanaccount: rest up AB, we need you" in page
-    assert "@user01: first reply\n@user02: second reply" in page
-    assert "likes" not in page and "followers" not in page
-
-
-def test_continuations_are_written_as_the_account():
+def test_continuations_reply_as_the_account():
     llm = fake_anthropic("ok")
     writer.continuations(llm, "WNBA", "post", ["r"] * 8, ActionConfig(reply_samples=4), seed="u", account=ACCOUNT)
     prefills = [k["messages"][-1]["content"] for k in llm.client.kwargs]
     assert len(prefills) == 4 and all(p.endswith("\n@clarkfanaccount:") for p in prefills)
+    # The page itself stays as before: no header, other handles neutral, no counts.
+    assert all("Signed in" not in p and "@user01: r" in p and "likes" not in p for p in prefills)
 
 
 def test_load_account_validates_loudly(tmp_path):
     good = tmp_path / "a.json"
-    good.write_text(json.dumps({"_note": "x", "handle": "@me", "display_name": "Me", "bio": "fan", "past_replies": ["hi"]}),
-                    encoding="utf-8")
-    assert writer.load_account(good) == writer.Account("me", "Me", "fan", ("hi",))
-    bad = tmp_path / "b.json"
-    bad.write_text(json.dumps({"handle": "me", "display_name": "", "bio": "fan"}), encoding="utf-8")
-    with pytest.raises(ValueError, match="needs non-empty handle, display_name and bio"):
-        writer.load_account(bad)
+    good.write_text(json.dumps({"_note": "x", "handle": "@me"}), encoding="utf-8")
+    assert writer.load_account(good) == writer.Account("me")
+    for bad in ({"handle": ""}, {"handle": "me", "bio": "fan"}, {}):
+        path = tmp_path / "b.json"
+        path.write_text(json.dumps(bad), encoding="utf-8")
+        with pytest.raises(ValueError, match="needs exactly one non-empty 'handle'"):
+            writer.load_account(path)
     assert writer.load_account(tmp_path / "missing.json") is None
 
 

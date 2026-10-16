@@ -1,7 +1,4 @@
 {
- "_note": "Who the reply lane writes as. The continuation page shows this as the signed-in account so drafts come from its side. Set handle to the real account's handle (Observe's mission/observe.toml [brand] x_handle should match) and paste a few of its real past replies; leave past_replies empty rather than inventing any.",
- "handle": "clarkfanaccount",
- "display_name": "Caitlin Clark Fan Account",
- "bio": "Caitlin Clark, Indiana Fever and Iowa Hawkeyes fan. Rivalry banter, never cruel.",
- "past_replies": []
+ "_note": "Who the reply lane writes as: continuation samples reply as this handle, which is what moves drafts to the account's side (harness/minds/lab/framing_probe.py: 4/16 drafts passed the veto with this handle, 2/16 with neutral handles, and a 'signed in as' header with a bio made the model write reply-box text instead of replies). Set it to the real account's handle; Observe's mission/observe.toml [brand] x_handle should match.",
+ "handle": "clarkfanaccount"
 }

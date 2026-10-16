@@ -56,9 +56,6 @@ class Account:
     """The account the reply lane writes as (action/account.json)."""
 
     handle: str
-    display_name: str
-    bio: str
-    past_replies: tuple[str, ...] = ()
 
 
 def load_account(path: Path | None = None) -> Account | None:
@@ -67,24 +64,15 @@ def load_account(path: Path | None = None) -> Account | None:
     if not path.exists():
         return None
     raw = {k: v for k, v in json.loads(path.read_text(encoding="utf-8")).items() if not k.startswith("_")}
-    known = {"handle", "display_name", "bio", "past_replies"}
-    if set(raw) - known or not all(isinstance(raw.get(k), str) and raw[k].strip() for k in ("handle", "display_name", "bio")):
-        raise ValueError(f"{path}: needs non-empty handle, display_name and bio strings, and optional past_replies; "
+    if set(raw) != {"handle"} or not isinstance(raw["handle"], str) or not raw["handle"].strip("@ "):
+        raise ValueError(f"{path}: needs exactly one non-empty 'handle' string (keys starting with _ are notes); "
                          f"got keys {sorted(raw)}")
-    return Account(raw["handle"].lstrip("@"), raw["display_name"], raw["bio"], tuple(raw.get("past_replies") or ()))
+    return Account(raw["handle"].strip().lstrip("@"))
 
 
-def build_page(author: str, post_text: str, replies: list[str], account: Account | None = None) -> str:
-    """The thread as a saved page. With `account`, the page is saved while signed in as it, so the
-    next reply comes from its side. Iterate's retest found that continuing a rival's thread without
-    this made the model write as that team's fans (12 of 20 vetoes)."""
+def build_page(author: str, post_text: str, replies: list[str]) -> str:
     lines = "\n".join(f"@user{i + 1:02d}: {r}" for i, r in enumerate(replies))
-    signed_in = ""
-    if account:
-        signed_in = f"\nSigned in as {account.display_name} (@{account.handle}). Bio: {account.bio}\n"
-        if account.past_replies:
-            signed_in += f"Recent replies by @{account.handle}:\n" + "\n".join(f"@{account.handle}: {r}" for r in account.past_replies) + "\n"
-    return (f'x.com: {author} on X: "{post_text}"\n{signed_in}\n{author} @{author}\n{post_text}\n\n'
+    return (f'x.com: {author} on X: "{post_text}"\n\n{author} @{author}\n{post_text}\n\n'
             f"Replies (sorted by relevance):\n\n{lines}")
 
 
@@ -111,8 +99,10 @@ def continue_page(llm: LLM, page: str, handle: str, cfg: ActionConfig, i: int = 
 
 def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg: ActionConfig, seed: str,
                   account: Account | None = None) -> list[str]:
-    """cfg.reply_samples continuations of the page: as `account` when given, else one neutral handle each."""
-    page = build_page(author, post_text, replies[: cfg.page_replies], account)
+    """cfg.reply_samples continuations of the page: replying as `account` when given, else one
+    neutral handle each. Replying as the account's handle is what puts the draft on the account's
+    side; Iterate's retest found neutral handles on a rival's thread wrote as the rival's fans."""
+    page = build_page(author, post_text, replies[: cfg.page_replies])
     if account:
         handles = [account.handle] * cfg.reply_samples
     else:

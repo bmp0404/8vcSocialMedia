@@ -5,8 +5,9 @@ judges but wrote as the other team's fans, so the mission-fit veto passed only 0
 against 0.556 for the persona prompt. This script measures three writers under one frozen veto
 (the current harness.minds.veto prompt, Opus 5.5, two orders):
 
-  pipeline_v2  the current reply lane: planning call (side), page signed in as the account,
-               rival threads banter, gate, veto, random pick
+  pipeline_v2  the current reply lane: planning call (side), continuation replying as the
+               account's handle, rival threads banter (styled prompt), gate, veto, random pick
+  pipeline_v2_rival_cont  the same, but rival threads continue the page as the account instead
   pipeline_v1  the drafts the earlier lane wrote (cached in reply_experiment_raw.json), re-vetoed
   naive        the persona prompt's drafts (cached), re-vetoed
 
@@ -47,14 +48,18 @@ def veto_context(t: dict) -> str:
             + f"\n\nFACTS:\n{config.mission()}\n\n{CONTEXT}")
 
 
-def run_v2(t: dict) -> dict:
-    llm, cfg, mission = AnthropicLLM(GEN_MODEL), ActionConfig(), config.mission()
-    tgt = target_for(t)
-    plans, err = lanes.plan_targets(llm, mission, config.lessons(), [tgt])
-    plan = plans.get(t["url"])
+def plan_for(t: dict) -> dict:
+    plans, err = lanes.plan_targets(AnthropicLLM(GEN_MODEL), config.mission(), config.lessons(), [target_for(t)])
+    return {"plan": plans.get(t["url"]), "error": err}
+
+
+def run_v2(t: dict, planned: dict, rival_mode: str) -> dict:
+    llm, cfg, mission = AnthropicLLM(GEN_MODEL), ActionConfig(rival_thread_mode=rival_mode), config.mission()
+    plan = planned["plan"]
     if plan is None or plan["tool"] == "abstain":
-        return {"planned": plan, "plan_error": err, "abstained": (plan or {}).get("reason", "no_angle"), "candidates": []}
-    d, a = lanes.answer_target(llm, mission, f"{mission}\n\n{CONTEXT}", tgt, cfg, fetch=lambda u: [],
+        return {"planned": plan, "plan_error": planned["error"], "abstained": (plan or {}).get("reason", "no_angle"),
+                "candidates": []}
+    d, a = lanes.answer_target(llm, mission, f"{mission}\n\n{CONTEXT}", target_for(t), cfg, fetch=lambda u: [],
                                intent=plan.get("intent", ""), side=plan.get("side", "neutral"),
                                account=writer.load_account())
     out = {"planned": plan, "candidates": d.candidates, "detail": d.detail}
@@ -92,7 +97,17 @@ def main() -> None:
     cache = Cache(RAW)
     old = json.loads(REPLY_RAW.read_text(encoding="utf-8"))
     with ThreadPoolExecutor(4) as pool:
-        v2 = dict(zip([t["id"] for t in test], pool.map(lambda t: cache.get_or(f"v2|{t['id']}", lambda: run_v2(t)), test)))
+        plans = dict(zip([t["id"] for t in test], pool.map(lambda t: cache.get_or(f"plan|{t['id']}", lambda: plan_for(t)), test)))
+        v2 = dict(zip([t["id"] for t in test], pool.map(
+            lambda t: cache.get_or(f"v2|{t['id']}", lambda: run_v2(t, plans[t["id"]], "banter")), test)))
+
+        def rival_cont(t):
+            plan = plans[t["id"]]["plan"] or {}
+            if plan.get("side") != "rival" or plan.get("tool") != "reply":
+                return v2[t["id"]]  # identical to v2 off rival threads
+            return cache.get_or(f"v2c|{t['id']}", lambda: run_v2(t, plans[t["id"]], "continuation"))
+
+        v2c = dict(zip([t["id"] for t in test], pool.map(rival_cont, test)))
 
         def old_texts(t, arm):
             g = old.get(f"gen|{t['id']}|{arm}", {})
@@ -110,6 +125,8 @@ def main() -> None:
             return random.Random(t["url"]).choice(ok) if ok else None
 
         picks = {("v2", t["id"]): v2[t["id"]].get("text") for t in test}
+        picks |= {("v2c", t["id"]): v2c[t["id"]].get("text") for t in test
+                  if (plans[t["id"]]["plan"] or {}).get("side") == "rival"}
         picks |= {("pipeline_v1", t["id"]): shipped(t, rv1[t["id"]]) for t in test}
         picks |= {("naive", t["id"]): shipped(t, rnaive[t["id"]]) for t in test}
         futures = {}
@@ -141,6 +158,8 @@ def main() -> None:
                                       for s in ("own", "rival", "neutral")},
                             "methods": {m: sum(1 for t in test if v2[t["id"]].get("method") == m)
                                         for m in ("continuation", "banter", "styled")}},
+            "pipeline_v2_rival_cont": {**summarize_arm([v2c[t["id"]].get("candidates", []) for t in test]),
+                                       "shipped": sum(1 for t in test if v2c[t["id"]].get("text"))},
             "pipeline_v1_reveto": {**summarize_arm([rv1[t["id"]] for t in test]),
                                    "shipped": sum(1 for t in test if picks[("pipeline_v1", t["id"])])},
             "naive_reveto": {**summarize_arm([rnaive[t["id"]] for t in test]),
@@ -149,6 +168,10 @@ def main() -> None:
     }
     for arm, key in (("pipeline_v2", "v2"), ("pipeline_v1_reveto", "pipeline_v1"), ("naive_reveto", "naive")):
         summary["arms"][arm]["detection_on_shipped"] = {j: detection(key, j) for j in ("opus", "artsa", "los")}
+    summary["rival_threads"] = [{"thread": t["url"], "banter": v2[t["id"]].get("text"), "continuation": v2c[t["id"]].get("text"),
+                                 "banter_veto_passed": summarize_arm([v2[t["id"]].get("candidates", [])])["veto_passed"],
+                                 "continuation_veto_passed": summarize_arm([v2c[t["id"]].get("candidates", [])])["veto_passed"]}
+                                for t in test if (plans[t["id"]]["plan"] or {}).get("side") == "rival"]
     summary["shipped_v2"] = [{"thread": t["url"], "side": (v2[t["id"]].get("planned") or {}).get("side"),
                               "method": v2[t["id"]].get("method"), "text": v2[t["id"]].get("text"),
                               "abstained": v2[t["id"]].get("abstained")} for t in test]

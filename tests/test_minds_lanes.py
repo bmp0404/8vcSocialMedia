@@ -441,7 +441,7 @@ def test_rival_thread_can_abstain():
 
 def test_own_side_thread_continues_as_the_account(monkeypatch, tmp_path):
     path = tmp_path / "account.json"
-    path.write_text(json.dumps({"handle": "me", "display_name": "Me", "bio": "Fever fan"}), encoding="utf-8")
+    path.write_text(json.dumps({"handle": "me"}), encoding="utf-8")
     monkeypatch.setenv("HARNESS_ACCOUNT", str(path))
     actions, _ = run(MockLLM(), [narrative([target()])])
     (a,) = [a for a in actions if a.type == "reply"]
