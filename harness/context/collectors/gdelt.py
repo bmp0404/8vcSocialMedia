@@ -19,7 +19,8 @@ from harness.context.http import FetchError, PoliteClient
 from harness.context.settings import DEFAULT
 
 DOC = "https://api.gdeltproject.org/api/v2/doc/doc"
-_client = PoliteClient(min_interval_s=DEFAULT.fetch.gdelt_interval_s, timeout_s=40.0, max_retries=3)
+# One retry: a 429 here takes 9-17 s to arrive and rarely clears within minutes.
+_client = PoliteClient(min_interval_s=DEFAULT.fetch.gdelt_interval_s, timeout_s=40.0, max_retries=1)
 
 
 def _resolution(start: datetime, end: datetime) -> str:
