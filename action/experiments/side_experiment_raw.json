@@ -570,11 +570,11 @@
     }
    },
    {
-    "text": "USC does not need to make the tournament. If they do,good luck. But they definitely don't need to be there. Not for all us @user 11",
+    "text": "USC does not need to make the tournament. If they do,good luck. But they definitely don't need to be there. Not for all us @person37 11",
     "gate": [
      {
       "rule": "unknown_handle",
-      "detail": "@user isn't in the post or thread",
+      "detail": "@person37 isn't in the post or thread",
       "start": 123,
       "end": 128
      }
@@ -1476,7 +1476,7 @@
    }
   },
   {
-   "text": "It's the WNBA social media person's personal account... He's 6'5. @WNBABarstool",
+   "text": "It's the WNBA social media person's personal account... He's 6'5. @person27",
    "gate_passed": false,
    "veto": null
   },
@@ -1628,12 +1628,12 @@
  ],
  "reveto|2105879899399668010|pipeline": [
   {
-   "text": "love this season! so many awesome moments to see @CaitlinClark22 and @NaLyssa Smiith in person! just hoping for more W's next season and more autograph time after games!",
+   "text": "love this season! so many awesome moments to see @CaitlinClark22 and @person28 Smiith in person! just hoping for more W's next season and more autograph time after games!",
    "gate_passed": false,
    "veto": null
   },
   {
-   "text": "Season ticket holder here - 9 home games this season. To say I'll be less supportive of the organization if they continue to stand behind Stephanie White is an understatement. Evaluating my options with @ChicagoSky and @NYLiberty",
+   "text": "Season ticket holder here - 9 home games this season. To say I'll be less supportive of the organization if they continue to stand behind Stephanie White is an understatement. Evaluating my options with @person29 and @NYLiberty",
    "gate_passed": false,
    "veto": null
   },
@@ -2345,7 +2345,7 @@
    }
   },
   {
-   "text": "girl you are meant for TV!! hope you enjoy that football season!! / @ChrisMarler @DannyParkins gotta get her on next year!",
+   "text": "girl you are meant for TV!! hope you enjoy that football season!! / @person31 @person32 gotta get her on next year!",
    "gate_passed": false,
    "veto": null
   }
@@ -2385,7 +2385,7 @@
    "veto": null
   },
   {
-   "text": "@WNBA @WashMystics @AtlantaDream @valkyries @LVAces So well deserved by all ladies 💕",
+   "text": "@WNBA @person05 @AtlantaDream @valkyries @LVAces So well deserved by all ladies 💕",
    "gate_passed": true,
    "veto": {
     "passed": false,
@@ -2408,7 +2408,7 @@
    }
   },
   {
-   "text": "Excuse me @WashMystics but please hold on to Shakira Austin. We need her and she is D1 Defensive player that helped the @AtlantaDream in 2024. She looks good in Red but she looks better in our uniforms. @nikiebrown please get this done.",
+   "text": "Excuse me @person05 but please hold on to Shakira Austin. We need her and she is D1 Defensive player that helped the @AtlantaDream in 2024. She looks good in Red but she looks better in our uniforms. @person30 please get this done.",
    "gate_passed": false,
    "veto": null
   },
@@ -3014,7 +3014,7 @@
    }
   },
   {
-   "text": "@dreamseasontkts",
+   "text": "@person33",
    "gate_passed": false,
    "veto": null
   },
@@ -3026,7 +3026,7 @@
  ],
  "reveto|2110824046833348936|pipeline": [
   {
-   "text": "THE GOAT @DeWannaBonner the dream isn't over yet #YourDream #GoSkyeee",
+   "text": "THE GOAT @person36 the dream isn't over yet #YourDream #GoSkyeee",
    "gate_passed": false,
    "veto": null
   },
@@ -3153,7 +3153,7 @@
    "veto": null
   },
   {
-   "text": "@loganlee Doesn't list a reporter, but looks like it wasn't rigged",
+   "text": "@person34 Doesn't list a reporter, but looks like it wasn't rigged",
    "gate_passed": false,
    "veto": null
   },
@@ -3181,7 +3181,7 @@
    }
   },
   {
-   "text": "@ThatWasntItSis It ain't supposed to be announced like this obviously, it's still gonna be announced live on Countdown",
+   "text": "@person35 It ain't supposed to be announced like this obviously, it's still gonna be announced live on Countdown",
    "gate_passed": false,
    "veto": null
   },
