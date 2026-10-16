@@ -141,3 +141,14 @@ def test_hold_reasons():
     caught["lineup"]["caught_in"] = 2
     assert handoff.hold_reasons(reply, caught, ok_target) == ["AI-register lineup picked it in both orders"]
     assert handoff.hold_reasons({"type": "follow", "vetoed": False}, None, None) == []
+
+
+def test_screen_holds_unscreened_and_drops_failures():
+    h = {"ready": [{"action_id": "a"}, {"action_id": "b"}, {"action_id": "c"}], "held": [{"action_id": "d", "held_because": ["x"]}]}
+    out = handoff.apply_screen(h, {"a": {"pass": True, "reason": "on Clark's side"},
+                                   "b": {"pass": False, "reason": "cheers the rival"},
+                                   "d": {"pass": False, "reason": "thin"}})
+    assert [r["action_id"] for r in out["ready"]] == ["a"] and out["ready"][0]["screened"] == "on Clark's side"
+    assert [r["action_id"] for r in out["dropped"]] == ["b", "d"]  # a held item that fails the screen is dropped too
+    assert [r["action_id"] for r in out["held"]] == ["c"]
+    assert out["held"][0]["held_because"][0].startswith("not screened")

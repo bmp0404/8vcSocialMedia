@@ -138,6 +138,7 @@ def render(h: dict) -> str:
         "",
         f"Generated {h['generated_at']}. {h['note']} Full evidence is in the JSON file next to this one.",
         "",
+        *([h["preamble"].rstrip(), ""] if h.get("preamble") else []),
         f"## Ready ({len(h['ready'])})",
         "",
     ]
@@ -145,7 +146,12 @@ def render(h: dict) -> str:
         out += ["None passed every check this round.", ""]
     for i, r in enumerate(h["ready"], 1):
         out += _item(i, r)
-    out += [f"## Held ({len(h['held'])})", ""]
+    if h.get("dropped"):
+        out += [f"## Dropped by the hand screen ({len(h['dropped'])})", ""]
+        for i, r in enumerate(h["dropped"], 1):
+            out += _item(i, r)[:-1] + [f"   - Dropped because: {r['dropped_because']}", ""]
+    if h["held"]:
+        out += [f"## Held ({len(h['held'])})", ""]
     for i, r in enumerate(h["held"], 1):
         out += _item(i, r)[:-1] + [f"   - Held because: {'; '.join(r['held_because'])}", ""]
     if h["questions_for_a_person"]:
@@ -185,16 +191,47 @@ def _item(i: int, r: dict) -> list[str]:
         ok = sum(c.get("status") == "supported" for c in claims)
         lines.append(f"   - Facts: {ok}/{len(claims)} claims supported by tonight's sources" if claims
                      else "   - Facts: no factual claims")
+    if r.get("screened"):
+        lines.append(f"   - Screened against the mission: {r['screened']}")
+    elif r.get("screen_note"):
+        lines.append(f"   - Screen note: {r['screen_note']}")
     lines.append("")
     return lines
 
 
-def approve_ready(h: dict) -> Path:
+def apply_screen(h: dict, screen: dict) -> dict:
+    """Apply a person's screen against mission/mission.md: {action_id: {"pass": bool, "reason": str}}.
+
+    The veto has no mission-fit check yet, and the reply lane copies a thread's register even when
+    it cheers the rival, so nothing counts as ready until someone has read it against the mission.
+    A ready item with no screen entry is held; a failed one is dropped with the reason."""
+    ready, held, dropped = [], list(h["held"]), list(h.get("dropped", []))
+    for r in h["ready"]:
+        entry = screen.get(r["action_id"])
+        if entry is None:
+            held.append({**r, "held_because": ["not screened by hand against mission/mission.md"]})
+        elif entry.get("pass"):
+            ready.append({**r, "screened": entry["reason"]})
+        else:
+            dropped.append({**r, "dropped_because": entry["reason"]})
+    kept = []
+    for r in held:
+        entry = screen.get(r["action_id"])
+        if entry is not None and not entry.get("pass"):
+            dropped.append({**r, "dropped_because": entry["reason"]})
+        else:
+            kept.append({**r, "screen_note": entry["reason"]} if entry else r)
+    return {**h, "ready": ready, "held": kept, "dropped": dropped}
+
+
+def approve_ready(h: dict) -> list[Path]:
+    """Approve every ready item in the review table and export each run's approved-run<id>.json."""
     from harness.review import export_approved
 
+    runs = set()
     for r in h["ready"]:
-        memory.set_review(r["action_id"], "approved", None, APPROVAL_NOTE)
-    return export_approved(h["run_id"])
+        runs.add(memory.set_review(r["action_id"], "approved", None, APPROVAL_NOTE))
+    return [export_approved(run) for run in sorted(runs)]
 
 
 def combine(handoffs: list[dict]) -> dict:
@@ -216,7 +253,8 @@ def combine(handoffs: list[dict]) -> dict:
         "ready": ready,
         "held": [x for h in ordered for x in tag(h, "held")],
         "abstentions": [x for h in ordered for x in tag(h, "abstentions")],
-        "questions_for_a_person": list(dict.fromkeys(q for h in ordered for q in h["questions_for_a_person"])),
+        # The newest round's questions replace older ones, which ask about the same story in other words.
+        "questions_for_a_person": next((h["questions_for_a_person"] for h in ordered if h["questions_for_a_person"]), []),
     }
 
 
@@ -225,10 +263,16 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--run", type=int, nargs="+", required=True, help="one or more measured run ids")
     ap.add_argument("--name", help="file stem for a combined hand-off, e.g. tonight -> out/grok-handoff-tonight.json")
     ap.add_argument("--copy-to", help="also write the markdown list here")
+    ap.add_argument("--preamble", help="markdown inserted under the title: which rounds, which overrides")
+    ap.add_argument("--screen", help='JSON {action_id: {"pass": bool, "reason": str}} from a person reading each item against the mission')
     ap.add_argument("--no-approve", action="store_true", help="don't mark ready actions approved or export approved-run<id>.json")
     args = ap.parse_args(argv)
     built = [build(r) for r in args.run]
     h = built[0] if len(built) == 1 and not args.name else combine(built)
+    if args.screen:
+        h = apply_screen(h, json.loads(Path(args.screen).read_text(encoding="utf-8")))
+    if args.preamble:
+        h["preamble"] = Path(args.preamble).read_text(encoding="utf-8")
     stem = args.name or str(args.run[0])
     config.OUT_DIR.mkdir(exist_ok=True)
     j = config.OUT_DIR / f"grok-handoff-{'run' if not args.name else ''}{stem}.json"
@@ -237,8 +281,8 @@ def main(argv: list[str] | None = None) -> None:
     md.write_text(render(h), encoding="utf-8")
     print(f"[handoff] {len(h['ready'])} ready, {len(h['held'])} held -> {j.name}, {md.name}")
     if not args.no_approve:
-        for one in built:
-            print(f"[handoff] approved export -> {approve_ready(one)}")
+        for path in approve_ready(h):
+            print(f"[handoff] approved export -> {path}")
     if args.copy_to:
         shutil.copyfile(md, args.copy_to)
         print(f"[handoff] copied to {args.copy_to}")
