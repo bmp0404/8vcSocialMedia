@@ -12,6 +12,7 @@ Don't write code that posts, replies, likes, follows or otherwise writes to X, a
 
 ```sh
 uv sync
+uv run pre-commit install    # once per clone; installs the commitlint commit-msg hook
 uv run python -m harness run --provider mock
 ```
 
@@ -22,6 +23,7 @@ Real runs spend the team's LLM credits. Test with `--narratives 2 --per-mind 1` 
 ## Work alongside other agents
 
 - Pull `main` before you start and again before you push. Teammates push often.
+- Write commit messages and PR titles as Conventional Commits, such as `feat(observe): add ESPN source` or `fix(memory): keep review notes`. Use the loop stage as the scope. The commit-msg hook and the `commitlint` PR check reject anything else.
 - Work on a branch named `<name>/<topic>` and open a pull request. Push to `main` only when the person you work for asks.
 - Register with coordigent at session start, and read your inbox before each new task. Messages are how five people's agents learn what changed without reading every commit.
 - Before you start work that could collide with someone else's, message the person who owns that area and say what you plan to touch. Collisions include editing a file another session is working in, changing a shared contract (`harness/models.py`, the schema in `harness/memory.py`, `harness/llm.py`, `harness/cli.py`), or building something another team already claimed. Use `coordigent_session_list` to find their session, and ask the project if you can't tell who owns it.
@@ -36,3 +38,13 @@ Real runs spend the team's LLM credits. Test with `--narratives 2 --per-mind 1` 
 - Open files with `encoding="utf-8"` and use `pathlib`. Teammates run Windows and macOS.
 - Keep keys in `.env`. Never print a key or commit one.
 - Add a dependency with `uv add <package>` and commit `pyproject.toml` and `uv.lock` together. Don't use `pip install` or bring back `requirements.txt`.
+
+## Skills
+
+The repo ships these skills in `.claude/skills/`. Read the matching `SKILL.md` before the task.
+
+- `unslop`: any prose, and every draft post or reply the harness produces. AI tells kill engagement on a fan account faster than anything else.
+- `prompt-writing`: editing a mind in `harness/minds/prompts/` or any prompt string in `harness/`.
+- `technical-writing`: docs, including each stage's `DESIGN.md`.
+- `pr-writing`: pull request titles and descriptions.
+- `deslop`: reviewing a diff before you commit it.

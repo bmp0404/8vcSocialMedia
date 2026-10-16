@@ -1,1 +1,1 @@
-Read `CLAUDE.md`. Its instructions apply to every coding agent in this repo, including Codex.
+Read `CLAUDE.md`. Its instructions apply to every coding agent in this repo, including Codex. The skills it lists live in `.claude/skills/<name>/SKILL.md`; read the matching file before that kind of task.

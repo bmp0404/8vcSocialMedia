@@ -8,3 +8,8 @@ dependencies = [
     "openai>=1.50",
     "python-dotenv>=1.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.7.0",
+]

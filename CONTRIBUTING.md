@@ -65,10 +65,11 @@ Adding an optional field with a default is safe. Renaming or removing a field br
 
 ## Workflow
 
-1. Pull `main` and run `uv sync`. It installs Python 3.12 and the dependencies from `uv.lock`.
+1. Pull `main` and run `uv sync`. It installs Python 3.12 and the dependencies from `uv.lock`. On a fresh clone, also run `uv run pre-commit install` to add the commitlint hook.
 2. Create a branch named `<your-name>/<topic>`.
 3. Build your piece. If the stage before yours isn't ready, use fake inputs and put the fixtures in that stage's directory.
 4. Run `uv run python -m harness run --provider mock`, then a real run if you have a key.
-5. Open a pull request and fill in the template. Paste the output your branch produced, because that output is how we pick what to merge.
+5. Write commits and the PR title as [Conventional Commits](https://www.conventionalcommits.org/), with the stage as the scope: `feat(eval): backtest panel against real engagement`. The hook checks commits locally and the `commitlint` job checks every PR.
+6. Open a pull request and fill in the template. Paste the output your branch produced, because that output is how we pick what to merge.
 
 If you work with a coding agent, read [CLAUDE.md](CLAUDE.md). It covers how agents coordinate through coordigent.
