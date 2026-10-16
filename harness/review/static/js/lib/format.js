@@ -11,11 +11,6 @@ export function compact(n) {
   return compactFmt.format(n);
 }
 
-export function pct(x, digits = 0) {
-  if (x == null || Number.isNaN(+x)) return "–";
-  return `${(x * 100).toFixed(digits)}%`;
-}
-
 /** A signed number for effect sizes: +0.035, −0.012. */
 export function signed(x, digits = 3) {
   if (x == null || Number.isNaN(+x)) return "–";
@@ -67,26 +62,38 @@ export function stampTime(iso) {
   return `${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
+/** "640 ms", "4.2 s", "38 s", "2 min 5 s". Rounds once, so 119.6 s reads "2 min 0 s", not "1 min 60 s". */
 export function duration(ms) {
   if (ms == null) return "–";
-  if (ms < 1000) return `${Math.round(ms)} ms`;
+  if (ms < 999.5) return `${Math.round(ms)} ms`;
   const s = ms / 1000;
-  if (s < 60) return `${s.toFixed(s < 10 ? 1 : 0)} s`;
-  return `${Math.floor(s / 60)} min ${Math.round(s % 60)} s`;
+  if (s < 9.95) return `${s.toFixed(1)} s`;
+  const t = Math.round(s);
+  return t < 60 ? `${t} s` : `${Math.floor(t / 60)} min ${t % 60} s`;
 }
 
 export const human = (s) => String(s ?? "").replaceAll("_", " ");
 
 // X counts characters by weight, not code points (twitter-text v3): most Latin, punctuation
-// and symbols weigh 1, CJK and other scripts weigh 2, every emoji weighs 2, and any URL counts
+// and symbols weigh 1, CJK and other scripts weigh 2, every emoji weighs 2, and a link counts
 // as 23 however long it is. The limit is 280 weighted characters.
+//
+// Links are http(s) URLs and bare domains such as espn.com/wnba. twitter-text recognises bare
+// domains against the full TLD list; this list has only the common ones, so a bare domain on a
+// rare TLD counts as its own length here and up to 23 on X. Trailing punctuation isn't part of
+// the link, as on X.
 const LIGHT = [
   [0, 4351],
   [8192, 8205],
   [8208, 8223],
   [8242, 8247],
 ];
-const URL_RE = /https?:\/\/[^\s]+/g;
+const TLDS = "com|org|net|edu|gov|io|co|ai|app|dev|gg|tv|ly|me|news|info|us|uk|ca|au|de|fr";
+const LINK_RE = new RegExp(
+  String.raw`(?:https?:\/\/\S+?|(?<![\w@#$.\/-])(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:${TLDS})\b(?:\/\S*?)?)` +
+    String.raw`(?=[.,:;!?)\]"']*(?:\s|$))`,
+  "gi",
+);
 const EMOJI_RE = /\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20E3/u;
 const segmenter = typeof Intl.Segmenter === "function" ? new Intl.Segmenter("en", { granularity: "grapheme" }) : null;
 
@@ -94,7 +101,7 @@ export const X_LIMIT = 280;
 
 export function xLength(text) {
   let n = 0;
-  const withoutUrls = String(text ?? "").replace(URL_RE, () => {
+  const withoutUrls = String(text ?? "").replace(LINK_RE, () => {
     n += 23;
     return "";
   });
