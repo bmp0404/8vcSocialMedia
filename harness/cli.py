@@ -71,7 +71,7 @@ def main() -> None:
     p.add_argument("file")
     p.set_defaults(func=record)
 
-    p = sub.add_parser("learn", help="rewrite memory/lessons.md from predicted vs. actual")
+    p = sub.add_parser("learn", help="turn reviews, edits and outcomes into tested lessons; rewrite memory/lessons.md")
     p.add_argument("--provider")
     p.set_defaults(func=lambda a: learn(get_llm(a.provider)))
 
@@ -79,6 +79,11 @@ def main() -> None:
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--no-browser", action="store_true")
     p.set_defaults(func=lambda a: serve(a.port, not a.no_browser))
+
+    # Memory: ingest, reflect, revalidate, exemplar-check (sam/memory).
+    from harness.learning.commands import add_commands
+
+    add_commands(sub)
 
     args = parser.parse_args()
     args.func(args)
