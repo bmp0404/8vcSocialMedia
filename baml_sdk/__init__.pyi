@@ -220,6 +220,14 @@ async def harness_api_client_async(provider: str, model: str, max_tokens: int, *
         InvalidArgument, Io, ParseError"""
 
 
+def harness_env_url(name: str, *, _baml: _BamlOptions | None = None) -> typing.Optional[str]:
+    """Raises:
+        Io, ParseError"""
+async def harness_env_url_async(name: str, *, _baml: _BamlOptions | None = None) -> typing.Optional[str]:
+    """Raises:
+        Io, ParseError"""
+
+
 def OrientSignals(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> Orientation:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
@@ -332,6 +340,8 @@ __all__ = [
     "harness_client_async",
     "harness_api_client",
     "harness_api_client_async",
+    "harness_env_url",
+    "harness_env_url_async",
     "OrientSignals",
     "OrientSignals_async",
     "OrientSignals_spec",

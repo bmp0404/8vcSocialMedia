@@ -24,31 +24,41 @@ function harness_client(provider: string, model: string, max_tokens: int) -> ai.
 }
 
 // max_tokens reaches only Anthropic, as in harness/llm.py: its OpenAI-compatible calls set no cap.
+// The timeout is the SDKs' 10 minutes; BAML's default is 5.
 function harness_api_client(provider: string, model: string, max_tokens: int) -> ai.Client {
+    let timeout = baml.time.Duration.from_seconds(600);
     if (provider == "anthropic") {
-        // anthropic.Anthropic() in harness/llm.py reads the same variables. The gateway takes a
-        // bearer token from ANTHROPIC_AUTH_TOKEN.
-        let base_url = baml.env.get("ANTHROPIC_BASE_URL");
-        if let token: string = baml.env.get("ANTHROPIC_AUTH_TOKEN") {
-            return anthropic.Client.new(
-                model = model, api_key = env.ANTHROPIC_AUTH_TOKEN, base_url = base_url,
-                headers = {"Authorization": `Bearer ${token}`}, max_tokens = max_tokens,
-            );
-        }
-        return anthropic.Client.new(model = model, api_key = env.ANTHROPIC_API_KEY, base_url = base_url,
-                                    max_tokens = max_tokens);
+        // As anthropic.Anthropic() in harness/llm.py: an empty variable counts as unset,
+        // ANTHROPIC_API_KEY goes in x-api-key when set, and ANTHROPIC_AUTH_TOKEN adds a bearer header.
+        let token = baml.env.get("ANTHROPIC_AUTH_TOKEN") ?? "";
+        let has_key = (baml.env.get("ANTHROPIC_API_KEY") ?? "") != "";
+        let key = if (!has_key && token != "") { env.ANTHROPIC_AUTH_TOKEN } else { env.ANTHROPIC_API_KEY };
+        let headers: map<string, string>? = if (token != "") { {"Authorization": `Bearer ${token}`} } else { null };
+        return anthropic.Client.new(model = model, api_key = key, base_url = harness_env_url("ANTHROPIC_BASE_URL"),
+                                    headers = headers, max_tokens = max_tokens, timeout = timeout);
     }
     if (provider == "xai") {
-        return openai.GenericClient.new(model = model, base_url = "https://api.x.ai/v1", api_key = env.XAI_API_KEY);
+        return openai.GenericClient.new(model = model, base_url = "https://api.x.ai/v1", api_key = env.XAI_API_KEY,
+                                        timeout = timeout);
     }
     if (provider == "openai") {
         // OPENAI_BASE_URL names a compatible gateway, which may not serve OpenAI's own content format.
-        if let base_url: string = baml.env.get("OPENAI_BASE_URL") {
-            return openai.GenericClient.new(model = model, base_url = base_url, api_key = env.OPENAI_API_KEY);
+        if let base_url: string = harness_env_url("OPENAI_BASE_URL") {
+            return openai.GenericClient.new(model = model, base_url = base_url, api_key = env.OPENAI_API_KEY,
+                                            timeout = timeout);
         }
-        return openai.ChatClient.new(model = model, api_key = env.OPENAI_API_KEY);
+        return openai.ChatClient.new(model = model, api_key = env.OPENAI_API_KEY, timeout = timeout);
     }
     throw baml.errors.InvalidArgument { message: `harness_client has no client for provider "${provider}"` }
+}
+
+// A base URL from the environment, null when unset or empty. The SDKs drop a trailing slash.
+function harness_env_url(name: string) -> string? {
+    let url = baml.env.get(name) ?? "";
+    while (url.ends_with("/")) {
+        url = url.slice(0, url.length() - 1);
+    }
+    if (url == "") { null } else { url }
 }
 
 function OrientSignals(mission: string, signals: string, limit: int,
@@ -177,7 +187,8 @@ testset "OrientSignals request" {
 
     test "xAI client points at xAI" {
         if let api: openai.GenericClient = harness_api_client("xai", "grok-fixture", 16000) {
-            assert.equal(api.model, "grok-fixture")
+            assert.equal(api.model, "grok-fixture");
+            assert.equal(api.base_url, "https://api.x.ai/v1")
         } else {
             assert.is_true(false)
         }

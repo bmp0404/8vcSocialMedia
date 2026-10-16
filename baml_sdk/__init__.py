@@ -287,6 +287,14 @@ harness_api_client_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError"""
 
 
+harness_env_url       = _define_function("user.harness_env_url", "sync",  ["name"], binding_name="harness_env_url", binding_qualname="harness_env_url", binding_module=__name__)
+harness_env_url.__doc__ = """Raises:
+    Io, ParseError"""
+harness_env_url_async = _define_function("user.harness_env_url", "async", ["name"], binding_name="harness_env_url_async", binding_qualname="harness_env_url_async", binding_module=__name__)
+harness_env_url_async.__doc__ = """Raises:
+    Io, ParseError"""
+
+
 OrientSignals       = _define_function("user.OrientSignals", "sync",  ["mission", "signals", "limit", "provider", "model", "max_tokens"], ["on_event"], binding_name="OrientSignals", binding_qualname="OrientSignals", binding_module=__name__)
 OrientSignals.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
@@ -399,6 +407,8 @@ __all__ = [
     "harness_client_async",
     "harness_api_client",
     "harness_api_client_async",
+    "harness_env_url",
+    "harness_env_url_async",
     "OrientSignals",
     "OrientSignals_async",
     "OrientSignals_spec",
