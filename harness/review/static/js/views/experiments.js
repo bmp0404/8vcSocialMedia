@@ -49,7 +49,11 @@ const bucketOf = (x) => (statusOf(x) === "promoted" || statusOf(x) === "rejected
 const metricsOf = (x) => (Array.isArray(x.eval?.metrics) ? x.eval.metrics.filter((m) => m && typeof m === "object") : []);
 const primaryOf = (x) => metricsOf(x).find((m) => m.primary) || metricsOf(x)[0] || null;
 const paramsOf = (x) => Object.entries(x.change?.params && typeof x.change.params === "object" ? x.change.params : {});
-const short = (ref) => (typeof ref === "string" ? ref : "–");
+const refText = (ref) => (typeof ref === "string" ? ref : "–");
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+// A field the record left out reads the same wherever it shows.
+const stageText = (x) => x.stage || "Stage not recorded";
+const proposerText = (x) => x.proposer?.kind || "Proposer not recorded";
 
 /** Zero tiny float noise so -1e-17 doesn't print as −0.000. */
 const clean = (v, d) => (Math.abs(v) < 0.5 * 10 ** -d ? 0 : v);
@@ -103,7 +107,7 @@ function tally() {
   for (const x of S.list) by[statusOf(x)] = (by[statusOf(x)] || 0) + 1;
   const extra = Object.keys(by).filter((k) => !TALLY.includes(k));
   const parts = [...TALLY, ...extra].filter((k) => by[k] || k === "promoted" || k === "rejected").map((k) => `${by[k] || 0} ${k === "unknown" ? "without a decision" : human(k)}`);
-  return `${S.list.length} experiment${S.list.length === 1 ? "" : "s"}: ${parts.join(", ")}.`;
+  return `${plural(S.list.length, "experiment")}: ${parts.join(", ")}.`;
 }
 
 function changeLine(x) {
@@ -199,7 +203,6 @@ function championBlock() {
   const restored = new Set([...lastSet.keys()].filter((k) => k in config && same(config[k], startedAt.get(k))));
   const nRev = history.filter((id) => isRevert(S.byId.get(id) || {})).length;
   const nProm = history.length - nRev;
-  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   const groups = new Map();
   for (const [k, v] of knobs) {
     const g = k.includes(".") ? k.slice(0, k.indexOf(".")) : "other";
@@ -219,7 +222,7 @@ function championBlock() {
   return html`<section class="panel xp-champ" aria-labelledby="xp-champ-h">
     <h2 id="xp-champ-h" class="sr-only">Config in force</h2>
     <div class="fields xp-fields">
-      <div class="field"><span class="label">Config in force</span><span class="v mono" title="${champ.config_hash || ""}">${short(champ.ref)}</span></div>
+      <div class="field"><span class="label">Config in force</span><span class="v mono" title="${champ.config_hash || ""}">${refText(champ.ref)}</span></div>
       <div class="field"><span class="label">Since</span>${since}</div>
       <div class="field"><span class="label">Applied</span><span class="v ui">${history.length ? `${plural(nProm, "promotion")}${nRev ? `, ${plural(nRev, "revert")}` : ""}` : "None"}</span></div>
       <div class="field"><span class="label">Knobs</span><span class="v">${knobs.length}</span></div>
@@ -268,7 +271,7 @@ function counts() {
 function bays() {
   const c = counts();
   return html`<div class="bays xp-bays" role="tablist" aria-label="Filter by decision">
-    ${BAYS.map(([k, label]) => html`<button class="bay" type="button" role="tab" data-bay="${k}" aria-selected="${S.bay === k ? "true" : "false"}" aria-controls="xp-list" tabindex="${S.bay === k ? 0 : -1}">
+    ${BAYS.map(([k, label]) => html`<button class="bay" type="button" role="tab" id="xp-tab-${k}" data-bay="${k}" aria-selected="${S.bay === k ? "true" : "false"}" aria-controls="xp-panel" tabindex="${S.bay === k ? 0 : -1}">
       <span>${label}</span><span class="n">${c[k] || 0}</span></button>`)}
   </div>`;
 }
@@ -292,21 +295,21 @@ function miniGauge(x) {
   </div>`;
 }
 
-function strip(x, selected, i = 10) {
+function strip(x, selected, i) {
   const s = statusOf(x);
   const m = primaryOf(x);
   const held = s === "pending" || s === "superseded";
-  return html`<div class="strip xp-strip" role="option" id="xp-opt-${x.id}" data-exp="${x.id}" aria-selected="${selected ? "true" : "false"}" tabindex="${selected ? 0 : -1}" style="--i:${Math.min(i, 10)}"
+  return html`<div class="strip xp-strip" role="option" id="xp-opt-${x.id}" data-exp="${x.id}" aria-selected="${selected ? "true" : "false"}" tabindex="${selected ? 0 : -1}" style="--i:${i}"
       ${held ? html`data-held` : ""} ${s === "rejected" ? html`data-status="killed"` : ""}>
     <div class="strip-top">
-      <span class="label">${x.stage || "stage?"}</span>
+      <span class="label">${stageText(x)}</span>
       <span class="where mono">${x.id}</span>
       ${stamp(x)}
     </div>
     <div class="strip-text">${changeLine(x)}</div>
     ${m ? miniGauge(x) : html`<p class="xp-strip-why">${x.decision?.reason || "No evaluation recorded."}</p>`}
     <div class="strip-foot">
-      <span>${x.proposer?.kind || "proposer?"}</span>
+      <span>${proposerText(x)}</span>
       ${S.revertedBy.has(x.id) ? html`<span>reverted</span>` : ""}
       <span>${clock(x.decision?.at || x.created_at, true)}</span>
       ${itemsLine(x.eval) ? html`<span>${itemsLine(x.eval)}</span>` : ""}
@@ -351,7 +354,7 @@ function detailHead(x) {
   const revertOf = x.proposer?.kind === "revert" ? x.proposer.source : null;
   return html`<header class="section xp-dhead">
     <div class="xp-dtitle">
-      <span class="label">${x.stage || "stage?"}</span>
+      <span class="label">${stageText(x)}</span>
       <h2 class="xp-dname mono">${x.id}</h2>
       ${stamp(x)}
     </div>
@@ -368,7 +371,7 @@ function detailHead(x) {
       ${S.revertedBy.has(x.id) ? html` · reverted by ${goLink(S.revertedBy.get(x.id))}` : ""}
     </p>
     ${x.hypothesis ? html`<div class="xp-hyp"><span class="label">Hypothesis</span><p class="prose">${x.hypothesis}</p></div>` : ""}
-    <p class="xp-meta">Proposed by ${x.proposer?.kind || "unknown"}${x.proposer?.source ? html` · <span class="xp-src">${x.proposer.source}</span>` : ""}</p>
+    <p class="xp-meta">${x.proposer?.kind ? `Proposed by ${x.proposer.kind}` : proposerText(x)}${x.proposer?.source ? html` · <span class="xp-src">${x.proposer.source}</span>` : ""}</p>
   </header>`;
 }
 
@@ -390,9 +393,9 @@ function changeSection(x) {
   return html`<section class="section" aria-labelledby="xp-h-change">
     <div class="section-head"><h2 id="xp-h-change">What changed</h2>${x.change?.summary ? html`<span class="aside">${x.change.summary}</span>` : ""}</div>
     <p class="xp-refs">
-      <span class="mono" title="${x.champion?.config_hash || ""}">${short(champRef)}</span> <span class="muted">${x.champion?.label || "champion"}</span>
+      <span class="mono" title="${x.champion?.config_hash || ""}">${refText(champRef)}</span> <span class="muted">${x.champion?.label || "champion"}</span>
       <span aria-hidden="true">→</span><span class="sr-only">to</span>
-      <span class="mono" title="${x.challenger?.config_hash || ""}">${short(x.challenger?.ref)}</span> <span class="muted">${x.challenger?.label || "challenger"}</span>
+      <span class="mono" title="${x.challenger?.config_hash || ""}">${refText(x.challenger?.ref)}</span> <span class="muted">${x.challenger?.label || "challenger"}</span>
     </p>
     ${now && champRef && now !== champRef && now !== x.challenger?.ref ? html`<p class="xp-note">Neither config is in force now: this ran against <span class="mono">${champRef}</span>, an earlier champion, and the config in force is <span class="mono">${now}</span>.</p>` : ""}
     ${params.length
@@ -406,14 +409,15 @@ function changeSection(x) {
   </section>`;
 }
 
-function primaryVerdict(imp, nf) {
+/** `nf` is null when the record has no noise floor, which is not the same as a floor of zero. */
+function primaryVerdict(imp, nf, d) {
   if (!imp?.ci) return "No interval recorded, so the effect can't be compared with the noise floor.";
   const [lo, hi] = imp.ci;
-  const floor = nf ?? 0;
-  if (lo > floor) return html`<b>Clears the noise floor.</b> The interval's lower end, ${sgn(lo)}, is above the floor of ${num(floor)}.`;
-  if (hi < 0) return html`<b>Worse.</b> The whole interval is below zero; it ends at ${sgn(hi)}.`;
-  if (lo > 0) return html`<b>Above zero, inside the noise floor.</b> The lower end, ${sgn(lo)}, doesn't clear the floor of ${num(floor)}.`;
-  return html`<b>No clear change.</b> The interval runs from ${sgn(lo)} to ${sgn(hi)}, across zero.`;
+  if (nf != null && lo > nf) return html`<b>Clears the noise floor.</b> The interval's lower end, ${sgn(lo, d)}, is above the floor of ${num(nf, d)}.`;
+  if (hi < 0) return html`<b>Worse.</b> The whole interval is below zero; it ends at ${sgn(hi, d)}.`;
+  if (lo > 0 && nf == null) return html`<b>Above zero.</b> The interval's lower end, ${sgn(lo, d)}, is above zero. No noise floor was recorded to compare it with.`;
+  if (lo > 0) return html`<b>Above zero, inside the noise floor.</b> The lower end, ${sgn(lo, d)}, doesn't clear the floor of ${num(nf, d)}.`;
+  return html`<b>No clear change.</b> The interval runs from ${sgn(lo, d)} to ${sgn(hi, d)}, across zero.`;
 }
 
 function direction(m) {
@@ -450,12 +454,12 @@ function primaryBlock(x, m) {
       ${rep ? row("Champion against a rerun of itself", "the noise floor", rep, "muted", `Champion rerun moved ${sgn(rep.value, d)}${rep.ci ? `, 95% interval ${sgn(rep.ci[0], d)} to ${sgn(rep.ci[1], d)}` : ""}`) : ""}
       <div class="xp-frow xp-faxis"><span></span>${ciAxis({ domain, ticks: grid, format: (v) => sgn(v, tickDigits(grid)), low: "worse", high: "better", max: 5 })}<span></span></div>
     </div>
-    <p class="xp-verdict">${primaryVerdict(imp, nf)}</p>
+    <p class="xp-verdict">${primaryVerdict(imp, nf, d)}</p>
     <p class="xp-legend">${nf != null ? html`Shaded: the noise floor, ±${num(nf, d)}, how far the champion moved against a rerun of itself with new lineups or seeds. ` : html`No noise floor recorded for this experiment. `}Filled point: the interval clears ${nf != null ? "the floor" : "zero"}; hollow: it doesn't.</p>
   </div>`;
 }
 
-function secondaryRows(x, ms) {
+function secondaryRows(ms) {
   if (!ms.length) return "";
   return html`<div class="xp-tablewrap" tabindex="0" role="region" aria-label="Metrics, scrolls sideways"><table class="xp-table xp-mtable">
     <caption class="sr-only">Other metrics, champion against challenger</caption>
@@ -477,7 +481,7 @@ function secondaryRows(x, ms) {
           domain, value: imp?.value ?? null, ci: imp?.ci, size: "mini",
           refs: margin != null ? [0, { at: -margin, kind: "threshold" }] : 0,
           filled: margin != null ? !!nonInferior : undefined,
-          label: imp ? `${m.name} improvement ${sgn(imp.value, d)}${imp.ci ? `, 95% interval ${sgn(imp.ci[0], d)} to ${sgn(imp.ci[1], d)}` : ""}${margin != null ? `; margin −${num(margin, d)}` : ""}` : "",
+          label: imp ? `${m.name || "metric"} improvement ${sgn(imp.value, d)}${imp.ci ? `, 95% interval ${sgn(imp.ci[0], d)} to ${sgn(imp.ci[1], d)}` : ""}${margin != null ? `; margin −${num(margin, d)}` : ""}` : "",
         })}</td>
         <td class="r num">${imp ? sgn(imp.value, d) : "–"}<small>${interval(imp?.ci, d, sgn)}</small></td>
       </tr>`;
@@ -499,7 +503,7 @@ function metricsSection(x) {
     body = html`<p class="xp-note">${why}</p>`;
   } else {
     const p = primaryOf(x);
-    body = html`${primaryBlock(x, p)}${secondaryRows(x, ms.filter((m) => m !== p))}`;
+    body = html`${primaryBlock(x, p)}${secondaryRows(ms.filter((m) => m !== p))}`;
   }
   return html`<section class="section" aria-labelledby="xp-h-metrics">
     <div class="section-head"><h2 id="xp-h-metrics">Champion against challenger</h2>${aside ? html`<span class="aside">${aside}</span>` : ""}</div>
@@ -516,12 +520,13 @@ function correctionSection(x) {
     return html`<section class="section" aria-labelledby="xp-h-corr"><div class="section-head"><h2 id="xp-h-corr">Multiple-comparison correction</h2></div>
       <p class="xp-note">No correction recorded for this experiment.</p>${familyList(x, family)}</section>`;
   }
-  const method = c.method === "benjamini-hochberg" ? "Benjamini–Hochberg" : human(c.method || "unknown method");
+  const method = c.method === "benjamini-hochberg" ? "Benjamini–Hochberg" : c.method ? human(c.method) : null;
+  const scope = [finite(c.q) ? `at q = ${c.q}` : "", finite(c.family_size) ? `across ${plural(c.family_size, "comparison")} in this run` : ""].filter(Boolean).join(" ");
   const sig = c.rejected === true ? "Significant after correction." : c.rejected === false ? "Not significant after correction." : "";
   return html`<section class="section" aria-labelledby="xp-h-corr">
     <div class="section-head"><h2 id="xp-h-corr">Multiple-comparison correction</h2>${run?.note ? html`<span class="aside">${run.note}</span>` : ""}</div>
     <div class="fields">
-      <div class="field"><span class="label">Method</span><span class="v ui">${method}</span></div>
+      <div class="field"><span class="label">Method</span><span class="v ui">${method || "–"}</span></div>
       <div class="field"><span class="label">q</span><span class="v">${finite(c.q) ? c.q : "–"}</span></div>
       <div class="field"><span class="label">Family</span><span class="v">${finite(c.family_size) ? c.family_size : "–"}</span></div>
       <div class="field"><span class="label">p</span><span class="v">${pval(c.p)}</span></div>
@@ -529,7 +534,7 @@ function correctionSection(x) {
       <div class="field"><span class="label">Significant</span><span class="v">${c.rejected === true ? "Yes" : c.rejected === false ? "No" : "–"}</span></div>
       <div class="field"><span class="label">Gate bound</span><span class="v">${finite(c.interval_level) ? `${+(c.interval_level * 100).toFixed(2)}%` : "–"}</span></div>
     </div>
-    <p class="xp-note">${sig} ${method} at q = ${finite(c.q) ? c.q : "?"} across ${finite(c.family_size) ? c.family_size : "?"} comparison${c.family_size === 1 ? "" : "s"} in this run: p ${pval(c.p)}, adjusted ${pval(c.p_adjusted)}.${finite(c.interval_level) ? ` The gate compared a ${+(c.interval_level * 100).toFixed(2)}% one-sided lower bound with the noise floor.` : ""}</p>
+    <p class="xp-note">${sig} ${method || "The correction"}${scope ? ` ${scope}` : ""}: p ${pval(c.p)}, adjusted ${pval(c.p_adjusted)}.${finite(c.interval_level) ? ` The gate compared a ${+(c.interval_level * 100).toFixed(2)}% one-sided lower bound with the noise floor.` : ""}</p>
     ${familyList(x, family)}
   </section>`;
 }
@@ -545,7 +550,7 @@ function familyList(x, family) {
       return html`<li ${o.id === x.id ? html`aria-current="true"` : ""}>
         ${o.id === x.id ? html`<span class="mono xp-self">${o.id}</span>` : html`<button class="xp-link mono" type="button" data-goto="${o.id}">${o.id}</button>`}
         <span class="xp-fam-change">${changeLine(o)}</span>
-        <span class="num xp-fam-num">${imp ? sgn(imp.value, m ? digitsFor(m) : 3) : "–"}${finite(adj) ? ` · adj p ${pval(adj)}` : ""}</span>
+        <span class="num xp-fam-num">${imp ? sgn(imp.value, digitsFor(m)) : "–"}${finite(adj) ? ` · adj p ${pval(adj)}` : ""}</span>
         ${stamp(o)}
       </li>`;
     })}</ul>
@@ -558,7 +563,7 @@ function costSection(x) {
     return html`<section class="section" aria-labelledby="xp-h-cost"><div class="section-head"><h2 id="xp-h-cost">Cost</h2></div><p class="xp-note">No cost recorded.</p></section>`;
   }
   const arms = Object.entries(c.by_arm && typeof c.by_arm === "object" ? c.by_arm : {});
-  const usd = c.usd === null || c.usd === undefined ? html`<span class="v ui">No trusted pricing</span>` : html`<span class="v">$${finite(c.usd) ? c.usd.toFixed(2) : c.usd}</span>`;
+  const usd = c.usd == null ? html`<span class="v ui">No trusted pricing</span>` : html`<span class="v">$${finite(c.usd) ? c.usd.toFixed(2) : c.usd}</span>`;
   return html`<section class="section" aria-labelledby="xp-h-cost">
     <div class="section-head"><h2 id="xp-h-cost">Cost</h2><span class="aside">The challenger's own arm; champion arms are shared by every challenger in the run</span></div>
     <div class="fields">
@@ -623,10 +628,10 @@ function detailMarkup() {
 // --- Render and interaction -------------------------------------------------------------------
 
 function problemsNotice() {
-  const p = Array.isArray(S.data.problems) ? S.data.problems : [];
+  const p = S.data.problems;
   if (!p.length) return "";
   return html`<div class="notice warn xp-problems" role="status">
-    <b>${p.length} file${p.length === 1 ? "" : "s"} in eval/experiments/ couldn't be read.</b>
+    <b>${plural(p.length, "file")} in eval/experiments/ couldn't be read.</b>
     <ul>${p.slice(0, 5).map((e) => html`<li><span class="mono">${e.file}</span>: ${e.error}</li>`)}${p.length > 5 ? html`<li>and ${p.length - 5} more</li>` : ""}</ul>
   </div>`;
 }
@@ -644,7 +649,9 @@ function render() {
         ? html`<div class="xp-body">
             <div class="xp-side">
               ${bays()}
-              <div class="xp-list ${S.first ? "entering" : ""}" id="xp-list" role="listbox" aria-label="Experiments, newest first">${listMarkup()}</div>
+              <div class="xp-panel" id="xp-panel" role="tabpanel" aria-labelledby="xp-tab-${S.bay}">
+                <div class="xp-list ${S.first ? "entering" : ""}" id="xp-list" role="listbox" aria-label="Experiments, newest first">${listMarkup()}</div>
+              </div>
             </div>
             <article class="panel xp-detail" id="xp-detail" aria-label="Selected experiment">${detailMarkup()}</article>
           </div>`
@@ -669,6 +676,7 @@ function renderList() {
   setHTML(list, listMarkup());
   const bayEl = $(".xp-bays", S.el);
   if (bayEl) bayEl.outerHTML = String(bays());
+  $("#xp-panel", S.el).setAttribute("aria-labelledby", `xp-tab-${S.bay}`);
 }
 
 function renderDetail() {
@@ -731,7 +739,7 @@ function move(step) {
   const vis = visible();
   if (!vis.length) return false;
   const i = vis.findIndex((x) => x.id === S.sel);
-  const next = vis[Math.min(vis.length - 1, Math.max(0, (i < 0 ? -step : i) + step))];
+  const next = vis[Math.min(vis.length - 1, Math.max(0, i < 0 ? 0 : i + step))];
   if (next && next.id !== S.sel) select(next.id, { focus: S.el.contains(document.activeElement) && !!document.activeElement.closest?.("#xp-list") });
   return true;
 }
@@ -749,12 +757,12 @@ registerView({
     setHTML(el, skeleton());
     const data = await ctx.api.get("/api/experiments");
     if (S?.token !== token) return;
-    if (!data || data.available === false) {
-      setHTML(el, unavailable(data || {}));
+    if (data.available === false) {
+      setHTML(el, unavailable(data));
       return;
     }
     S.data = data;
-    S.list = (Array.isArray(data.experiments) ? data.experiments : []).filter((x) => x && typeof x === "object" && x.id);
+    S.list = data.experiments.filter((x) => x.id);
     S.byId = new Map(S.list.map((x) => [x.id, x]));
     for (const x of S.list) if (isRevert(x) && statusOf(x) === "promoted" && x.proposer?.source) S.revertedBy.set(x.proposer.source, x.id);
     S.bay = BAYS.some(([k]) => k === params.bay) ? params.bay : "all";
@@ -767,11 +775,12 @@ registerView({
       on(el, "click", "[data-bay]", (e, b) => setBay(b.dataset.bay)),
       on(el, "click", "[data-goto]", (e, b) => goTo(b.dataset.goto)),
       on(el, "keydown", "[role=tab]", (e, b) => {
-        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
         const tabs = $$("[role=tab]", b.parentElement);
-        const next = tabs[(tabs.indexOf(b) + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+        const i = tabs.indexOf(b);
+        const to = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+        if (to == null) return;
         e.preventDefault();
-        setBay(next.dataset.bay);
+        setBay(tabs[(to + tabs.length) % tabs.length].dataset.bay);
       }),
     );
   },

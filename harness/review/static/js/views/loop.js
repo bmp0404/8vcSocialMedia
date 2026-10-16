@@ -10,12 +10,14 @@
 // What the log says and which run the bays show come from lib/rounds.js; this file is the markup.
 
 import { registerView } from "../shell.js";
-import { $, $$, esc, html, on } from "../lib/dom.js";
+import { $, $$, esc, html, on, setHTML } from "../lib/dom.js";
 import { ago, clock, compact, duration, fixed } from "../lib/format.js";
 import { boardOf, coreState, lineDone, lineCount, ROUND, sourceRows, STAGES, stageCount, stageMs, stageSince, TAG, ts } from "../lib/rounds.js";
 
 const FAST_MS = 700;
 const SLOW_MS = 5000;
+// Poll fast for this long after a start, before the board can show the new round running.
+const KICK_FAST_MS = 4000;
 // Clicks this soon after the run button changes between Start and Stop are ignored, so a second
 // click meant for the old button can't stop a round it just started or start a paid one.
 const FLIP_GUARD_MS = 1000;
@@ -44,9 +46,9 @@ const DOING = {
   qualify: "The panel and the critic are scoring drafts",
 };
 const GROUPS = [
-  { id: "round", label: "Round", cmd: "python -m harness run", stages: ROUND, start: 1 },
-  { id: "checkpoint", label: "Checkpoint", aside: "You, in the Queue", stages: ["review"], start: 5 },
-  { id: "memory", label: "Memory", cmd: "python -m harness learn", stages: ["learn"], start: 6 },
+  { id: "round", label: "Round", cmd: "python -m harness run", stages: ROUND },
+  { id: "checkpoint", label: "Checkpoint", aside: "You, in the Queue", stages: ["review"] },
+  { id: "memory", label: "Memory", cmd: "python -m harness learn", stages: ["learn"] },
 ];
 const LAMP = { done: "on", running: "busy", yours: "busy", failed: "bad" };
 const SAY = { done: "done", running: "running", waiting: "waiting", failed: "failed", stopped: "stopped", yours: "waiting for you" };
@@ -65,11 +67,11 @@ const untag = (text) => {
   const t = TAG.exec(text || "")?.[2] ?? text ?? "";
   return t.charAt(0).toUpperCase() + t.slice(1);
 };
-const agoSpan = (iso) => html`<span data-ago="${iso}">${ago(iso)}</span>`;
+const agoSpan = (iso) => html`<span data-ago="${iso}"></span>`;
 
 function lastLine(r) {
-  const lines = r?.lines || [];
-  for (let i = lines.length - 1; i >= 0; i--) if (lines[i].text?.trim()) return lines[i].text.trim();
+  const lines = r.lines;
+  for (let i = lines.length - 1; i >= 0; i--) if (lines[i].text.trim()) return lines[i].text.trim();
   return "";
 }
 
@@ -89,11 +91,11 @@ function observeDetail(b, running) {
       )}
     </ul>
     ${all.length > shown.length ? html`<p class="loop-more">and ${all.length - shown.length} more</p>` : ""}
-    ${first ? html`<p class="loop-why" title="${first.name}: ${first.error}"><span class="mono">${first.name}</span> ${first.error || "failed without a reason"}</p>` : ""}`;
+    ${first ? html`<p class="loop-why" title="${first.name}: ${first.error}"><span class="mono">${first.name}</span> ${first.error}</p>` : ""}`;
 }
 
 function typesText(byType) {
-  return Object.entries(byType || {})
+  return Object.entries(byType)
     .sort((a, b) => b[1] - a[1])
     .map(([t, n]) => `${n} ${words(n, TYPES[t] || [t, `${t}s`])}`)
     .join(", ");
@@ -111,7 +113,7 @@ function doneDetail(b, s, n) {
   if (s === "decide") {
     const calls = b.trace?.calls_by_stage?.decide?.n;
     const parts = [
-      f.minds ? `${f.minds} minds` : calls ? `${calls} model calls` : null,
+      f.minds ? `${f.minds} ${words(f.minds, ["mind", "minds"])}` : calls ? `${calls} ${words(calls, ["model call", "model calls"])}` : null,
       b.latest ? typesText(b.latest.by_type) : null,
       f.decides > 1 ? "revised after a full veto" : null,
       f.mindsFailed ? `${f.mindsFailed} ${words(f.mindsFailed, ["mind", "minds"])} failed` : null,
@@ -138,9 +140,9 @@ function coreBay(b, s, now) {
         : html`<p>${retrying ? "Revising after the critic vetoed every draft" : f.last[s] && !lineDone(f, s) ? untag(f.last[s]) : DOING[s]}</p>`;
     return { state, n, time: since == null ? "Running" : `Running ${elapsed(now - since)}`, detail };
   }
-  if (state === "failed" || state === "stopped") {
-    if (state === "stopped") return { state, n, time: "Stopped", detail: html`<p>Stopped from this page.</p>` };
-    const why = lastLine(b.round) || `Exited with code ${b.round?.exit_code}`;
+  if (state === "stopped") return { state, n, time: "Stopped", detail: html`<p>Stopped from this page.</p>` };
+  if (state === "failed") {
+    const why = lastLine(b.round) || `Exited with code ${b.round.exit_code}`;
     return { state, n, time: "Failed", detail: html`<p class="loop-fail" title="${why}">${why}</p>` };
   }
   const ms = stageMs(b, s);
@@ -153,7 +155,7 @@ function reviewBay(b, d) {
   if (settled && b.runId != null) {
     const lt = b.latest;
     // Without the store's counts (fixture rounds), every draft qualify kept is still unreviewed.
-    const n = lt ? (lt.to_review ?? lt.pending) : b.f.runId === b.runId ? lineCount(b.f, "qualify") : null;
+    const n = lt ? lt.to_review : b.f.runId === b.runId ? lineCount(b.f, "qualify") : null;
     const held = lt ? lt.pending - n : 0;
     const counts = lt ? [`${lt.approved} cleared`, `${lt.killed} struck`, held > 0 ? `${held} vetoed` : null].filter(Boolean) : [];
     const href = `#/queue?run=${b.runId}`;
@@ -168,7 +170,7 @@ function reviewBay(b, d) {
           : html`<a class="btn btn-quiet btn-small" href="${href}" data-fk="review">Open in Queue</a>`,
     };
   }
-  const other = d.latest && d.latest.run_id !== b.runId && (d.latest.to_review ?? d.latest.pending) > 0 ? d.latest : null;
+  const other = d.latest && d.latest.run_id !== b.runId && d.latest.to_review > 0 ? d.latest : null;
   const broke = b.kind === "round" && !b.inFlight && b.current === "review";
   const text = b.inFlight ? "Drafts land here when qualify finishes." : b.kind === "round" ? "This round saved no drafts." : ABOUT.review;
   return {
@@ -177,17 +179,17 @@ function reviewBay(b, d) {
     time: broke ? (b.status === "failed" ? "Failed" : "Stopped") : "Waiting",
     detail: html`<p>${text}</p>`,
     link: other
-      ? html`<a class="btn btn-quiet btn-small" href="#/queue?run=${other.run_id}" data-fk="review-other">Run ${other.run_id}: ${other.to_review ?? other.pending} waiting</a>`
+      ? html`<a class="btn btn-quiet btn-small" href="#/queue?run=${other.run_id}" data-fk="review-other">Run ${other.run_id}: ${other.to_review} waiting</a>`
       : "",
   };
 }
 
 function learnBay(b, d) {
-  const L = d.learn || {};
-  const n = L.lessons_file ? (L.bullets ?? 0) : null;
+  const L = d.learn;
+  const n = L.lessons_file ? L.bullets : null;
   const updated = ts(L.updated_at);
   const end = ts(b.finishedIso);
-  const done = Boolean(b.kind && !b.inFlight && b.status === "done" && updated > end);
+  const done = b.status === "done" && updated > end;
   let text;
   if (!L.lessons_file) text = html`<p>No <code>memory/lessons.md</code> yet. Learn writes it once outcomes are recorded.</p>`;
   else if (!n) text = html`<p>No lessons yet. Learn writes them once outcomes are recorded.</p>`;
@@ -209,13 +211,13 @@ function bayOf(stage, b, d, now) {
 
 function statusLine(b, now) {
   if (!b.kind) return html`No rounds yet. Start one below, or run <code>python -m harness run</code> in a terminal.`;
-  const at = NAMES[b.current]?.toLowerCase();
+  const at = b.current;
   if (b.kind === "terminal") return html`A run started from a terminal is in ${at}, ${elapsed(now - ts(b.startedIso))} in.`;
   if (b.inFlight) return html`Round running for ${elapsed(now - ts(b.startedIso))}, now in ${at}.`;
   const when = b.finishedIso ? html` ${agoSpan(b.finishedIso)}` : "";
   if (b.status === "failed") return html`Round failed at ${at}${when}${b.round?.exit_code != null ? `, exit code ${b.round.exit_code}` : ""}.`;
   if (b.status === "stopped") return html`Round stopped at ${at}${when}.`;
-  const took = b.totalMs != null && Number.isFinite(b.totalMs) ? ` in ${duration(b.totalMs)}` : "";
+  const took = Number.isFinite(b.totalMs) ? ` in ${duration(b.totalMs)}` : "";
   return html`Run ${b.runId ?? "with no id"} finished${when}${took}.`;
 }
 
@@ -256,7 +258,7 @@ function frame(loading) {
         ${GROUPS.map(
           (g) => html`<div class="loop-group" data-group="${g.id}">
             <p class="loop-grouphead"><span class="label">${g.label}</span><span class="loop-aside">${g.cmd ? html`<code>${g.cmd}</code>` : g.aside}</span></p>
-            <ol class="loop-bays" start="${g.start}">${g.stages.map((s) => bayFrame(s, i++, loading))}</ol>
+            <ol class="loop-bays" start="${STAGES.indexOf(g.stages[0]) + 1}">${g.stages.map((s) => bayFrame(s, i++, loading))}</ol>
           </div>`,
         )}
         <p class="loop-track"><span>Decide reads these lessons in the next round</span></p>
@@ -353,7 +355,7 @@ function narrativesHTML(d) {
 function runsHTML(d, b) {
   const runs = d.runs || [];
   if (!runs.length) return html`<p class="loop-empty">No runs in the store yet. Each round saves one.</p>`;
-  return html`<div class="panel loop-tablewrap" tabindex="0" role="region" aria-label="Recent runs, scrolls sideways">
+  return html`<div class="panel loop-tablewrap" tabindex="0" role="region" data-fk="runs-table" aria-label="Recent runs, scrolls sideways">
     <table class="loop-runs">
       <thead>
         <tr>
@@ -363,7 +365,7 @@ function runsHTML(d, b) {
       </thead>
       <tbody>
         ${runs.map((r) => {
-          const all = r.n_actions ?? 0;
+          const all = r.n_actions;
           const ok = r.n_approved ?? 0;
           const no = r.n_killed ?? 0;
           return html`<tr ${r.id === b.runId ? html`aria-current="true"` : ""}>
@@ -391,17 +393,18 @@ function costHTML(d) {
 
 const lastMarkup = new WeakMap();
 
-/** Replace a region's markup only when it changed, keeping focus on an element with the same data-fk.
+/** Replace a region's markup only when it changed. If focus was inside, it goes back to the element
+ *  with the same data-fk, else the region's first control, else the region itself.
  *  A plain string is text and gets escaped; markup comes from `html`. */
 function patch(node, markup) {
   const s = typeof markup === "string" ? esc(markup) : String(markup ?? "");
   if (!node || lastMarkup.get(node) === s) return;
-  const focused = node.contains(document.activeElement) ? document.activeElement.dataset.fk : null;
+  const had = node.contains(document.activeElement);
+  const fk = had ? document.activeElement.dataset.fk : null;
   node.innerHTML = s;
   lastMarkup.set(node, s);
-  if (focused) {
-    // Same element if it survived; otherwise the region's first control, otherwise the region.
-    const target = node.querySelector(`[data-fk="${CSS.escape(focused)}"]`) || node.querySelector("a, button") || node;
+  if (had) {
+    const target = (fk && node.querySelector(`[data-fk="${CSS.escape(fk)}"]`)) || node.querySelector("a, button") || node;
     if (target === node && !node.hasAttribute("tabindex")) node.tabIndex = -1;
     target.focus({ preventScroll: true });
   }
@@ -415,22 +418,20 @@ function refreshAgo(root) {
 }
 
 function renderBay(s, stage, v) {
-  const li = s.bays[stage];
-  if (li.dataset.state !== v.state) li.dataset.state = v.state;
-  li.r.lamp.className = `lamp ${LAMP[v.state] || ""}`;
-  li.r.state.textContent = `, ${SAY[v.state]}`;
-  if (li.r.time.textContent !== v.time) li.r.time.textContent = v.time;
+  const bay = s.bays[stage];
+  if (bay.li.dataset.state !== v.state) bay.li.dataset.state = v.state;
+  bay.lamp.className = `lamp ${LAMP[v.state] || ""}`;
+  bay.state.textContent = `, ${SAY[v.state]}`;
+  if (bay.time.textContent !== v.time) bay.time.textContent = v.time;
   patch(
-    li.r.body,
+    bay.body,
     html`<p class="loop-fig"><span class="loop-n num ${v.n == null ? "is-none" : ""}">${v.n == null ? "–" : compact(v.n)}</span><span class="loop-what">${words(v.n, WHAT[stage])}</span></p>
       ${v.detail ? html`<div class="loop-detail">${v.detail}</div>` : ""}${v.link || ""}`,
   );
 }
 
 function renderNotices(s) {
-  const d = s.data || {};
   const items = [];
-  if (d.available === false) items.push(html`<p class="notice"><span>${d.reason || "The loop's data isn't available on this branch."}</span></p>`);
   if (s.pollError) {
     items.push(html`<p class="notice warn" role="alert">
       <span><b>The last refresh failed.</b> ${s.pollError.message} The board shows the previous answer and keeps retrying.</span>
@@ -442,16 +443,16 @@ function renderNotices(s) {
 function renderRun(s, d, b, now) {
   const R = s.r;
   // One token per span, so the command wraps between arguments rather than inside "--per-mind".
-  patch(R.cmd, html`${String(d.command || "").split(" ").map((t, i) => html`${i ? " " : ""}<span class="loop-nowrap">${t}</span>`)}`);
+  patch(R.cmd, html`${d.command.split(" ").map((t, i) => html`${i ? " " : ""}<span class="loop-nowrap">${t}</span>`)}`);
   patch(R.provider, d.provider === "mock" ? html`mock <span class="muted">· free</span>` : d.provider || "–");
-  patch(R.sources, (d.sources || []).join(", ") || "none set");
+  patch(R.sources, d.sources.join(", ") || "none set");
   patch(R.cost, costHTML(d));
 
   const role = b.kind === "round" && b.inFlight ? "stop" : "start";
   const btn = R.btn;
   // The click's request has shown up once a new round appears (a fast round may finish between
   // polls, so the button never shows Stop) or the button flips.
-  if (s.posting && (d?.round?.id ?? null) !== s.postedRoundId) s.posting = null;
+  if (s.posting && (d.round?.id ?? null) !== s.postedRoundId) s.posting = null;
   if (btn.dataset.role !== role) {
     btn.dataset.role = role;
     s.flippedAt = Date.now();
@@ -533,7 +534,7 @@ function apply(s, d) {
   for (const stage of STAGES) renderBay(s, stage, bayOf(stage, b, d, now));
   renderRun(s, d, b, now);
   renderLog(s, d);
-  patch(s.r.narmeta, d.trace ? `Run ${d.trace.run_id} · ${d.trace.narratives?.length ?? 0} picked from ${compact(d.trace.signals)} signals` : "");
+  patch(s.r.narmeta, d.trace ? `Run ${d.trace.run_id} · ${d.trace.narratives.length} picked from ${compact(d.trace.signals)} signals` : "");
   patch(s.r.narratives, narrativesHTML(d));
   patch(s.r.runsmeta, d.runs?.length ? "Each run's drafts open in the Queue" : "");
   patch(s.r.runs, runsHTML(d, b));
@@ -546,7 +547,7 @@ function apply(s, d) {
 function schedule(s) {
   clearTimeout(s.timer);
   if (!s.alive || document.visibilityState !== "visible") return;
-  const fast = s.board?.inFlight || Date.now() - s.kickedAt < 4000;
+  const fast = s.board?.inFlight || Date.now() - s.kickedAt < KICK_FAST_MS;
   s.timer = setTimeout(() => poll(s), fast ? FAST_MS : SLOW_MS);
 }
 
@@ -616,10 +617,10 @@ registerView({
   css: "/static/css/views/loop.css",
   async mount(el, ctx) {
     const s = (S = { el, ctx, alive: true, timer: 0, kickedAt: 0, flippedAt: 0, logKey: undefined, logCount: 0, pinned: true, offs: [] });
-    el.innerHTML = String(frame(true));
+    setHTML(el, frame(true));
     const d = await ctx.api.get("/api/loop");
     if (!s.alive) return;
-    el.innerHTML = String(frame(false));
+    setHTML(el, frame(false));
     entered = true;
     const r = (name) => $(`[data-r="${name}"]`, el);
     s.r = Object.fromEntries(
@@ -629,8 +630,7 @@ registerView({
     s.r.jump = $('[data-act="jump"]', el);
     s.bays = {};
     for (const li of $$(".loop-bay", el)) {
-      li.r = { lamp: $('[data-r="lamp"]', li), state: $('[data-r="state"]', li), time: $('[data-r="time"]', li), body: $('[data-r="body"]', li) };
-      s.bays[li.dataset.stage] = li;
+      s.bays[li.dataset.stage] = { li, lamp: $('[data-r="lamp"]', li), state: $('[data-r="state"]', li), time: $('[data-r="time"]', li), body: $('[data-r="body"]', li) };
     }
     s.offs.push(
       on(el, "click", '[data-act="run"]', (e) => onRun(s, e)),

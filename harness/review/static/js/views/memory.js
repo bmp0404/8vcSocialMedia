@@ -4,7 +4,7 @@
 // the view says so. Evidence posts load on demand from GET /api/memory/notes.
 
 import { registerView } from "../shell.js";
-import { $, $$, html, isTyping, on, raw, setHTML } from "../lib/dom.js";
+import { $, $$, esc, html, isTyping, on, raw, safeUrl, setHTML } from "../lib/dom.js";
 import { clock, compact, fixed, human } from "../lib/format.js";
 
 let entered = false;
@@ -31,6 +31,7 @@ const METRICS = [
   ["Quotes", ["quote_count", "quotes"], "quote", "quotes"],
   ["Bookmarks", ["bookmark_count", "bookmarks"], "bookmark", "bookmarks"],
 ];
+const METRIC_KEYS = new Set(METRICS.flatMap(([, keys]) => keys));
 
 let view = null; // state for the mounted view
 let dueCount = 0; // lessons due for a retest; feeds the rail badge and outlives a mount
@@ -100,7 +101,7 @@ function makeState(token, el, ctx, data, params) {
     lessons,
     reflections,
     procedures: arr(data.procedures),
-    outcomes: arr(data.outcomes),
+    outcomes: data.outcomes,
     reflIds: new Set(reflections.map((r) => r.id)),
     lessonOf,
     bay: BAYS.some((b) => b.id === params.bay) ? params.bay : "lessons",
@@ -164,10 +165,8 @@ function untilText(l) {
 // --- Small formatters -----------------------------------------------------------------------
 
 const plural = (n, word) => `${compact(n)} ${n === 1 ? word : `${word}s`}`;
-const count = (n) => (n == null || Number.isNaN(+n) ? "–" : compact(n));
 const capFirst = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 const sentence = (s) => (/[.!?]$/.test(String(s).trim()) ? String(s).trim() : `${String(s).trim()}.`);
-const isHttp = (u) => typeof u === "string" && /^https?:\/\//i.test(u);
 
 function pValue(p) {
   if (p == null || Number.isNaN(+p)) return null;
@@ -199,13 +198,9 @@ function render(first = false) {
 
 function head(v) {
   const c = v.data.counts || {};
-  const bits = [
-    ["episode", "episode"],
-    ["reflection", "reflection"],
-    ["lesson", "lesson"],
-  ]
-    .filter(([k]) => c[k] != null)
-    .map(([k, word]) => html`<span><b>${compact(c[k])}</b> ${c[k] === 1 ? word : `${word}s`}</span>`);
+  const bits = ["episode", "reflection", "lesson"]
+    .filter((k) => c[k] != null)
+    .map((k) => html`<span><b>${compact(c[k])}</b> ${c[k] === 1 ? k : `${k}s`}</span>`);
   return html`<header class="viewhead">
     <div>
       <h1>Memory</h1>
@@ -240,7 +235,7 @@ function bays(v) {
         aria-controls="mem-tray"
         tabindex="${on ? "0" : "-1"}"
       >
-        <span>${b.label}</span><span class="n" ${attn ? raw(`title="${dueCount} due for a retest"`) : ""}>${compact(n[b.id])}</span>
+        <span>${b.label}</span><span class="n" ${attn ? html`title="${dueCount} due for a retest"` : ""}>${compact(n[b.id])}</span>
       </button>`;
     })}
   </div>`;
@@ -258,7 +253,7 @@ const bayHead = (title, aside, extra = "") =>
 
 const emptyState = (title, body) => html`<div class="state mem-empty"><h3>${title}</h3><p>${body}</p></div>`;
 
-const listAttrs = (v) => (v.entering ? raw("data-enter") : "");
+const listAttrs = (v) => (v.entering ? html`data-enter` : "");
 const LONG_EDIT = 560; // characters; longer pairs start clamped so one edit can't fill the screen
 
 // --- Lessons --------------------------------------------------------------------------------
@@ -326,9 +321,9 @@ function lessonStrip(v, l, i) {
       <div class="mem-box mem-tally">
         <dt class="label">Held-out tests</dt>
         <dd>
-          <span><b>${count(l.support)}</b>supporting</span>
-          <span ${+l.contradict > 0 ? "data-bad" : ""}><b>${count(l.contradict)}</b>contradicting</span>
-          <span><b>${count(l.inconclusive)}</b>inconclusive</span>
+          <span><b>${compact(l.support)}</b>supporting</span>
+          <span ${+l.contradict > 0 ? "data-bad" : ""}><b>${compact(l.contradict)}</b>contradicting</span>
+          <span><b>${compact(l.inconclusive)}</b>inconclusive</span>
         </dd>
       </div>
       <div class="mem-box">
@@ -341,7 +336,7 @@ function lessonStrip(v, l, i) {
       </div>
     </dl>
     <div class="mem-foot">
-      ${evidenceButton(open, `mem-ev-l${i}`, evidence.length ? `${plural(evidence.length, "evidence post")}` : "")}
+      ${evidenceButton(open, `mem-ev-l${i}`, evidence.length ? plural(evidence.length, "evidence post") : "")}
       ${refs.length
         ? html`<p class="mem-refs">
             <span class="label">Tested in</span>
@@ -563,7 +558,7 @@ function episodeRow(n) {
       <span class="mem-ep-who">${n.author_username ? `@${n.author_username}` : n.id}</span>
       ${when ? html`<span class="mem-ep-when">${fmtDay(when)}</span>` : ""}
       ${outcomes.filter((o) => o.label || o.raw).map(outcomeChip)}
-      ${isHttp(n.url) ? html`<a class="mem-ep-link" href="${n.url}" target="_blank" rel="noopener noreferrer">Open on X<span aria-hidden="true"> ↗</span></a>` : ""}
+      ${safeUrl(n.url) ? html`<a class="mem-ep-link" href="${safeUrl(n.url)}" target="_blank" rel="noopener noreferrer">Open on X<span aria-hidden="true"> ↗</span></a>` : ""}
     </div>
     <p class="mem-ep-text" dir="auto">${n.text || "(no text)"}</p>
     ${outcomes
@@ -582,12 +577,11 @@ function outcomeChip(o) {
 }
 
 function metricsLine(m) {
-  const known = new Set(METRICS.flatMap(([, keys]) => keys));
   const parts = METRICS.map(([, keys, one, many]) => {
     const val = metricValue(m, keys);
-    return val == null ? "" : `${count(val)} ${+val === 1 ? one : many}`;
+    return val == null ? "" : `${compact(val)} ${+val === 1 ? one : many}`;
   }).filter(Boolean);
-  for (const [k, val] of Object.entries(m)) if (!known.has(k)) parts.push(`${human(k)} ${count(val)}`);
+  for (const [k, val] of Object.entries(m)) if (!METRIC_KEYS.has(k)) parts.push(`${human(k)} ${compact(val)}`);
   return parts.join(" · ");
 }
 
@@ -623,8 +617,10 @@ function editsBay(v) {
 
 function editStrip(e) {
   const verdict = e.verdict === "approved" ? ["cleared", "Cleared"] : e.verdict === "killed" ? ["struck", "Struck"] : ["held", e.verdict ? human(e.verdict) : "No verdict"];
-  const d = wordDiff(String(e.original ?? ""), String(e.edited ?? ""));
-  const long = Math.max(String(e.original ?? "").length, String(e.edited ?? "").length) > LONG_EDIT;
+  const original = String(e.original ?? "");
+  const edited = String(e.edited ?? "");
+  const d = wordDiff(original, edited);
+  const long = Math.max(original.length, edited.length) > LONG_EDIT;
   return html`<article class="strip mem-strip mem-edit" tabindex="-1" ${long ? "data-long" : ""}>
     <div class="mem-top">
       <span class="stamp ${verdict[0]}">${verdict[1]}</span>
@@ -708,9 +704,8 @@ function outcomesBay(v) {
         a JSON list of <code>{action_id, metrics}</code>. Each action then shows its predicted score next to what happened.`,
     )}`;
   }
-  const known = new Set(METRICS.flatMap(([, keys]) => keys));
   const cols = METRICS.filter(([, keys]) => rows.some((r) => metricValue(r.actual, keys) != null));
-  const extra = [...new Set(rows.flatMap((r) => Object.keys(r.actual || {}).filter((k) => !known.has(k))))].sort();
+  const extra = [...new Set(rows.flatMap((r) => Object.keys(r.actual || {}).filter((k) => !METRIC_KEYS.has(k))))].sort();
   for (const k of extra) cols.push([capFirst(human(k)), [k]]);
   return html`${head}
     <div class="mem-tablewrap" role="region" aria-label="Predicted score against actual metrics" tabindex="0">
@@ -724,7 +719,7 @@ function outcomesBay(v) {
         </thead>
         <tbody>
           ${rows.map((r) => {
-            const a = r.action || {};
+            const a = r.action;
             return html`<tr>
               <th scope="row">
                 <div class="mem-act">
@@ -735,7 +730,7 @@ function outcomesBay(v) {
               <td class="mem-numcol">${a.predicted_score == null ? "–" : fixed(a.predicted_score, 2)}</td>
               ${cols.map(([, keys]) => {
                 const val = metricValue(r.actual, keys);
-                return html`<td class="mem-numcol">${val == null ? "–" : count(val)}</td>`;
+                return html`<td class="mem-numcol">${val == null ? "–" : compact(val)}</td>`;
               })}
             </tr>`;
           })}
@@ -764,7 +759,7 @@ function unavailable(v) {
 
 function inline(text) {
   const codes = [];
-  let s = html`${text}`.s.replace(/`([^`]+)`/g, (_, c) => {
+  let s = esc(text).replace(/`([^`]+)`/g, (_, c) => {
     codes.push(c);
     return `\u0000${codes.length - 1}\u0000`;
   });
@@ -773,6 +768,7 @@ function inline(text) {
     .replace(/(^|[^\w*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
     .replace(/(^|[^\w])_([^_\s][^_]*)_(?!\w)/g, "$1<em>$2</em>")
     .replace(/\[\[([^\]]+)\]\]/g, '<span class="mem-store">$1</span>')
+    // The url is already escaped text here, so only its scheme needs checking (see safeUrl in lib/dom.js).
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, url) =>
       /^https?:\/\//i.test(url) ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>` : label,
     );
@@ -833,7 +829,7 @@ function markdown(src) {
       flush();
     } else if (list && /^\s+\S/.test(line)) {
       const last = list.items.pop();
-      list.items.push(raw(last.s.replace(/<\/li>$/, ` ${inline(line.trim())}</li>`)));
+      list.items.push(raw(String(last).replace(/<\/li>$/, ` ${inline(line.trim())}</li>`)));
     } else {
       flushList();
       flushQuote();
@@ -909,11 +905,13 @@ function bind(v) {
 
 function switchBay(id, focusTab = false) {
   const v = view;
-  if (!v) return;
-  if (!v.available || v.bay === id) {
+  if (v.bay === id) {
     if (focusTab) $(`#mem-tab-${id}`, v.el)?.focus();
     return;
   }
+  // render() replaces whatever had focus in the view (a strip, a tab, the heading), so focus goes
+  // to the new bay's tab, the nearest control that survives.
+  const hadFocus = v.el.contains(document.activeElement);
   v.bay = id;
   v.ctx.setParams({ bay: id === "lessons" ? null : id });
   render();
@@ -921,17 +919,19 @@ function switchBay(id, focusTab = false) {
   const tabs = $(".mem-bays", v.el);
   // A new bay starts at its top, as a new view does; keep the bays in view if they were.
   if (main && tabs && main.scrollTop > tabs.offsetTop) main.scrollTop = tabs.offsetTop;
-  if (focusTab) $(`#mem-tab-${id}`, v.el)?.focus();
+  if (focusTab || hadFocus) $(`#mem-tab-${id}`, v.el)?.focus();
 }
 
 function renderTray() {
   const tray = $("#mem-tray", view.el);
-  if (tray) setHTML(tray, bayBody(view));
-  else render();
+  // The filter buttons live in the tray, so a focused one is replaced along with everything else.
+  const hadFocus = tray.contains(document.activeElement);
+  setHTML(tray, bayBody(view));
+  if (hadFocus) $(`[data-filter="${view.filter}"]`, tray)?.focus();
 }
 
 function strips() {
-  return $$(".mem-tray .mem-strip:not(.mem-skel)", view.el);
+  return $$(".mem-tray .mem-strip", view.el);
 }
 
 function select(strip, { scroll = "nearest" } = {}) {
@@ -980,8 +980,15 @@ function updateStrip(key) {
     btn.textContent = btn.textContent.trim().replace(/^(Show|Hide)/, open ? "Hide" : "Show");
   }
   if (region) {
+    // "Try again" and the "Open on X" links live in the region, and o can close it while one has
+    // focus. A link that survives the re-render (a load finishing) gets focus back; otherwise the
+    // toggle above takes it.
+    const a = document.activeElement;
+    const hadFocus = region.contains(a);
+    const href = hadFocus ? a.getAttribute("href") : null;
     region.hidden = !open;
     setHTML(region, open ? evidencePanel(view, key) : "");
+    if (hadFocus) ((href && $(`a[href="${CSS.escape(href)}"]`, region)) || btn || strip).focus();
   }
 }
 
