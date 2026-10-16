@@ -1,7 +1,7 @@
 import unittest
 
 from baml_sdk.ai import content, events
-from harness.baml_reply import ReplyRecorder, fractional_values, json_closes, raw_array_length
+from harness.baml_reply import ReplyRecorder, fractional_values, json_closes, raw_array_length, reply_json
 
 
 class RawArrayLengthTests(unittest.TestCase):
@@ -29,19 +29,47 @@ class RawArrayLengthTests(unittest.TestCase):
         self.assertEqual(raw_array_length(r'{"items": ["say \"hi\", then", "b"]}', "items"), 2)
 
 
+class RawShapeTests(unittest.TestCase):
+    """Both checks read the block SAP parses (probed: the first fenced block, else the first object)."""
+
+    def test_counts_elements_with_no_comma_between(self):
+        self.assertEqual(raw_array_length('{"items": [{"a": 1} {"a": 2}]}', "items"), 2)
+
+    def test_unquoted_key(self):
+        self.assertEqual(raw_array_length('{items: [{"a": 1}, {"a": 2}]}', "items"), 2)
+
+    def test_fenced_block_wins_over_an_earlier_draft(self):
+        text = '{"items": [1, 2]}\n```json\n{"items": [1, 2, {"bad": }]}\n```'
+        self.assertEqual(raw_array_length(text, "items"), 3)
+        self.assertEqual(reply_json(text).strip(), '{"items": [1, 2, {"bad": }]}')
+
+    def test_first_fenced_block_wins(self):
+        text = '```json\n{"items": [1]}\n```\n```json\n{"items": [1, 2]}\n```'
+        self.assertEqual(raw_array_length(text, "items"), 1)
+
+
 class JsonClosesTests(unittest.TestCase):
     def test_complete_values(self):
-        self.assertTrue(json_closes('{"a": [1, {"b": "}"}]}'))
-        self.assertTrue(json_closes('prose {"a": 1} more prose'))
-        self.assertTrue(json_closes('{a: 1, "b": [1,],}'))  # SAP's repairable noise still closes
-        self.assertTrue(json_closes('[1, 2]'))
+        self.assertTrue(json_closes('{"items": [1, {"b": "}"}]}', "items"))
+        self.assertTrue(json_closes('prose {"items": [1]} more prose', "items"))
+        self.assertTrue(json_closes('{a: 1, "items": [1,],}', "items"))  # SAP's repairable noise still closes
+        self.assertTrue(json_closes('Using {verdict, confidence}:\n{"items": [{"a": "x"}]}', "items"))
 
     def test_cut_off_values(self):
-        self.assertFalse(json_closes('{"a": [1, 2'))
-        self.assertFalse(json_closes('{"a": "unterminated'))
-        self.assertFalse(json_closes('{"a": "escaped quote \\"}'))
-        self.assertFalse(json_closes("no json"))
-        self.assertFalse(json_closes(""))
+        self.assertFalse(json_closes('{"items": [1, 2', "items"))
+        self.assertFalse(json_closes('{"items": ["unterminated', "items"))
+        self.assertFalse(json_closes('{"items": ["escaped quote \\"]}', "items"))
+        self.assertFalse(json_closes("no json", "items"))
+        self.assertFalse(json_closes("", "items"))
+
+    def test_brackets_in_prose_before_a_cut_off_object(self):
+        # A closed "[rubric v1]" ahead of the JSON must not make the cut-off object look closed.
+        self.assertFalse(json_closes('Evaluation [rubric v1]:\n{"items": [{"a": "cut', "items"))
+        self.assertFalse(json_closes('Using {verdict}:\n{"items": [{"a": "cut', "items"))
+
+    def test_cut_off_fenced_block(self):
+        self.assertFalse(json_closes('```json\n{"items": [{"a": 1}, {"a": "cu', "items"))
+        self.assertTrue(json_closes('```json\n{"items": [{"a": 1}]}\n```', "items"))
 
 
 class FractionalValuesTests(unittest.TestCase):
