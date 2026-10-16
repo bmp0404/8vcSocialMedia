@@ -26,6 +26,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import re
 import statistics
 from bisect import bisect_left
 from collections import defaultdict
@@ -140,6 +141,12 @@ def _histories(rows, xm, timelines, gap_urls) -> tuple[dict[str, History], dict[
     )
 
 
+def _names_brand(text: str | None, terms: list[str]) -> bool:
+    """Whole-word match, so "Zed" does not match "organized" and "Bun" does not match "Ubuntu"."""
+    low = (text or "").lower()
+    return any(re.search(rf"(?<![\w@]){re.escape(t.lower())}(?!\w)", low) for t in terms if t and len(t) >= 3)
+
+
 def _reply_block(sample: list[dict], created: datetime, terms: list[str], cfg: ContextConfig) -> dict:
     if not sample:
         return {}
@@ -155,8 +162,7 @@ def _reply_block(sample: list[dict], created: datetime, terms: list[str], cfg: C
     )
     covered = cov is not None and cov >= cfg.enrich.min_reply_coverage
     delays = sorted((datetime.fromisoformat(r["created_at"]) - created).total_seconds() / 60 for r in replies)
-    lower_terms = [t.lower() for t in terms if t and len(t) >= 3]
-    insiders = [r for r in replies if any(t in (r.get("author_description") or "").lower() for t in lower_terms)]
+    insiders = [r for r in replies if _names_brand(r.get("author_description"), terms)]
     out.update(
         outcome_reply_low_follower_share=sig.get("reply_low_follower_share"),
         outcome_reply_dup_share=sig.get("reply_dup_share"),
@@ -179,8 +185,7 @@ def _repost_block(users: list[dict], created: datetime, terms: list[str], cfg: C
         return {}
     total = users[0].get("reposts") or 0
     followers = sorted((u.get("followers") or 0 for u in users), reverse=True)
-    lower_terms = [t.lower() for t in terms if t and len(t) >= 3]
-    staff = [u for u in users if any(t in (u.get("description") or "").lower() for t in lower_terms)]
+    staff = [u for u in users if _names_brand(u.get("description"), terms)]
     complete = total > 0 and len(users) >= 0.9 * total
     new = [
         u for u in users
@@ -209,7 +214,8 @@ def _context_block(ctx: dict, acct: str, created: datetime) -> dict:
         before = [s for s in hn if 0 < ts - s["created_unix"] <= 86400]
         after = [s for s in hn if 0 <= s["created_unix"] - ts <= 86400]
         out["pre_hn_stories_prev24h"] = len(before)
-        out["pre_hn_max_points_prev24h"] = max((s["points"] for s in before), default=0)
+        # Points are read at fetch time, so a story posted a minute earlier carries points it earned later.
+        out["outcome_hn_max_points_prev24h"] = max((s["points"] for s in before), default=0)
         out["outcome_spillover_hn_stories_next24h"] = len(after)
         out["outcome_spillover_hn_max_points_next24h"] = max((s["points"] for s in after), default=0)
     wiki = (a or {}).get("wiki_daily") or {}
@@ -229,7 +235,8 @@ def _context_block(ctx: dict, acct: str, created: datetime) -> dict:
     two = [days.get(d.strftime("%Y-%m-%d"), {}) for d in (created - timedelta(days=1), created)]
     if days:
         big = [t for d in two for t in d.get("hn_500plus_unix") or []]
-        out["pre_hn_500plus_stories_prev24h"] = sum(1 for t in big if 0 < ts - t <= 86400)
+        # "500+ points" is judged at fetch time: outcome, not pre.
+        out["outcome_hn_500plus_stories_prev24h"] = sum(1 for t in big if 0 < ts - t <= 86400)
     trends = [
         name
         for d in two
@@ -263,7 +270,7 @@ def featurize(post: dict, acct: str, hist: History, own_times: list[datetime], c
         1 for t in prev if (c - t).total_seconds() <= ep.prev_window_h * 3600
     )
 
-    prior = hist.before(c)
+    prior = hist.before(c - timedelta(hours=ep.prior_gap_h))
     prior_eng = [p["eng"] for p in prior]
     prior_views = [p["views"] for p in prior if p.get("views")]
     enough = len(prior_eng) >= ep.prior_min_posts
@@ -279,9 +286,10 @@ def featurize(post: dict, acct: str, hist: History, own_times: list[datetime], c
         row["pre_is_self_reply"] = self_reply
         row["pre_is_reply_to_other"] = bool(x.get("replying_to")) and not self_reply
         row["pre_is_quote_post"] = bool(x.get("quoted_id"))
-        # Fetch-time value: overstates followers at post time for posts that gained followers.
-        row["pre_author_followers_at_fetch"] = x.get("author_followers")
-        row["pre_author_verified"] = x.get("author_verified")
+        # Fetch-time values. A post that went viral grew the follower count, so these are outcomes;
+        # use accounts.csv for an account-level join.
+        row["outcome_author_followers_at_fetch"] = x.get("author_followers")
+        row["outcome_author_verified"] = x.get("author_verified")
 
     eng = post["engagement"]
     w = ep.weights
@@ -408,8 +416,10 @@ def _add_boost(out_rows: list[dict], hists: dict[str, History], cfg: ContextConf
             "reply_low_follower_share": r.get("outcome_reply_low_follower_share"),
             "reply_dup_share": r.get("outcome_reply_dup_share"),
             "reply_burst_share": r.get("outcome_reply_burst_share"),
-            "staff_share": max(r.get("outcome_reposter_staff_share") or 0, r.get("outcome_reply_insider_share") or 0),
-            "staff_sample_n": max(r.get("outcome_reposters_sampled") or 0, r.get("outcome_reply_sample_n") or 0),
+            "reposter_staff_share": r.get("outcome_reposter_staff_share"),
+            "reposter_sample_n": r.get("outcome_reposters_sampled"),
+            "reply_insider_share": r.get("outcome_reply_insider_share"),
+            "reply_sample_n": r.get("outcome_reply_sample_n"),
             "reposter_new_account_share": r.get("outcome_reposter_new_account_share"),
         })
     cut = boost.ratio_cutoffs([i for i in inputs if i["likes"] is not None], cfg.boost)
@@ -456,8 +466,8 @@ def _accounts(out_rows, hists, window, ctx) -> list[dict]:
         a_ctx = ctx.get("accounts", {}).get(acct, {})
         accounts.append({
             "account": acct,
-            "author_followers": latest.get("pre_author_followers_at_fetch") if latest else None,
-            "author_verified": latest.get("pre_author_verified") if latest else None,
+            "author_followers": latest.get("outcome_author_followers_at_fetch") if latest else None,
+            "author_verified": latest.get("outcome_author_verified") if latest else None,
             "followers_fetched_at": latest["outcome_x_fetched_at"] if latest else None,
             "segment": rs[0]["Segment"],
             "name": a_ctx.get("name"),

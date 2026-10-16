@@ -64,6 +64,9 @@ class EnrichParams:
     # David's CSV was committed at this time (git log c9f8904); its counts are from just before.
     scrape_time_iso: str = "2026-10-16T01:07:58+00:00"
     prior_min_posts: int = 5  # pre_author_prior_median_eng needs this many earlier posts
+    # Earlier posts' counts are read at fetch time; a post made 30 minutes before the target still
+    # carries the engagement it gathered afterwards. Only posts this much older count toward the prior.
+    prior_gap_h: float = 48.0
     prev_window_h: float = 2.0  # pre_author_posts_prev{h}h: X decays repeat posts by one author in a batch
     min_reply_coverage: float = 0.8  # reply timing stats only when the sample covers this share of replies
     new_account_days: int = 90  # a reposter who joined this recently counts as a new account

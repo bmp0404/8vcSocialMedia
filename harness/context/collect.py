@@ -145,7 +145,7 @@ def _targets(seed: int = 7, mv_sample: int = 150, dw_sample: int = 100) -> list[
 
 def collect_replies(interval_s: float = DEFAULT.fetch.bulk_interval_s) -> int:
     reader = FxTwitterReader(PoliteClient(min_interval_s=interval_s), max_age_s=None)
-    done = {r["reply_to_post"] for r in read_jsonl(REPLY_SAMPLES)}
+    done = {r["reply_to_post"] for r in read_jsonl(REPLY_SAMPLES) if "error" not in r}  # failures are retried
     n = 0
     with REPLY_SAMPLES.open("a", encoding="utf-8") as f:
         for r in _targets():
@@ -172,7 +172,7 @@ def collect_replies(interval_s: float = DEFAULT.fetch.bulk_interval_s) -> int:
 def collect_reposters(max_pages: int = 3, interval_s: float = DEFAULT.fetch.bulk_interval_s) -> int:
     reader = FxTwitterReader(PoliteClient(min_interval_s=interval_s), max_age_s=None)
     xm = {r["id"]: r for r in read_jsonl(X_METRICS) if "error" not in r}
-    done = {r["post_id"] for r in read_jsonl(REPOSTERS)}
+    done = {r["post_id"] for r in read_jsonl(REPOSTERS) if "error" not in r}
     n = 0
     with REPOSTERS.open("a", encoding="utf-8") as f:
         for r in _targets():

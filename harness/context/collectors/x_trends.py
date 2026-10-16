@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from harness.context.collectors.base import client
 from harness.context.http import FetchError
@@ -54,7 +54,7 @@ def wayback_captures(country: str, start: datetime, end: datetime) -> list[str]:
         "http://web.archive.org/cdx/search/cdx?"
         f"url=trends24.in/{country}/&from={start:%Y%m%d}&to={end:%Y%m%d}&output=json&fl=timestamp,statuscode&limit=2000"
     )
-    rows = client().get_json(url, max_age_s=None if end < datetime.now(timezone.utc) else 3600)
+    rows = client().get_json(url, max_age_s=3600, settled_after=end + timedelta(days=1))
     return [r[0] for r in rows[1:] if len(r) > 1 and r[1] == "200"]
 
 

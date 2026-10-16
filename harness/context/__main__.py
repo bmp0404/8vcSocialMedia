@@ -34,6 +34,8 @@ def main() -> None:
     p.add_argument("--interval", type=float, default=60.0, help="loop: seconds between passes")
     p.add_argument("--replies", action="store_true", help="also sample replies, for amplifier attribution")
     p.add_argument("--max-passes", type=int, help="loop: stop after this many passes")
+    p.add_argument("--reposters", action="store_true", help="also snapshot the largest reposters, to time big reposts")
+    p.add_argument("--dense", action="store_true", help="poll every 5-15 min for the first day (needed to see step jumps)")
     p.add_argument("--metric", default="engagement")
 
     args = parser.parse_args()
@@ -76,7 +78,9 @@ def _track(args) -> None:
     from harness.context.tracker import Tracker
     from harness.context.xreader import FxTwitterReader
 
-    tr = Tracker(FxTwitterReader())
+    from harness.context.settings import TrackerParams
+
+    tr = Tracker(FxTwitterReader(), params=TrackerParams(dense=args.dense))
     if args.action == "add":
         for t in args.targets:
             print(f"[tracker] tracking {tr.add(t)}")
@@ -84,9 +88,9 @@ def _track(args) -> None:
         tr.add_watch(args.targets, args.every_min)
         print(f"[tracker] watching {tr.watch()['handles']}")
     elif args.action == "poll":
-        print(f"[tracker] {tr.poll_once(with_replies=args.replies)}")
+        print(f"[tracker] {tr.poll_once(with_replies=args.replies, with_reposters=args.reposters)}")
     elif args.action == "loop":
-        tr.loop(args.interval, with_replies=args.replies, max_passes=args.max_passes)
+        tr.loop(args.interval, with_replies=args.replies, max_passes=args.max_passes, with_reposters=args.reposters)
     elif args.action == "list":
         snaps = tr.snapshots()
         for pid, meta in tr.tracked().items():
