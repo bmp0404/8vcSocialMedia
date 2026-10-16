@@ -41,7 +41,7 @@ def reply(*items, spaced=True):
 
 
 @pytest.fixture
-def scripted(monkeypatch):
+def scripted(monkeypatch, tmp_path):
     """Queue raw replies; each orient call to the model parses the next one."""
     queue: list[str] = []
     calls: list[str] = []
@@ -54,6 +54,7 @@ def scripted(monkeypatch):
 
     monkeypatch.setattr(o.baml_adapter, "call", call)
     monkeypatch.setenv("HARNESS_ORIENT", "baml")
+    monkeypatch.setattr(o, "REPLY_LOG_DIR", tmp_path / "orient-replies")
     return queue, calls
 
 
@@ -77,9 +78,21 @@ def test_prose_around_the_json(scripted):
 
 def test_missing_field_drops_that_narrative_and_logs_it(scripted, capsys):
     queue, _ = scripted
-    queue.append(reply(narrative("a"), narrative("b", drop=("relevance",))))
+    raw = reply(narrative("a"), narrative("b", drop=("relevance",)))
+    queue.append(raw)
     assert [n.id for n in run()] == ["a"]
-    assert "reply had 2 narratives; the parser kept 1" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "reply had 2 narratives; the parser kept 1" in out
+    [saved] = o.REPLY_LOG_DIR.iterdir()
+    assert saved.read_text(encoding="utf-8") == raw
+    assert f"raw reply saved to {saved}" in out
+
+
+def test_clean_reply_is_not_saved(scripted):
+    queue, _ = scripted
+    queue.append(reply(narrative("a"), narrative("b")))
+    run()
+    assert not o.REPLY_LOG_DIR.exists()
 
 
 def test_out_of_range_relevance_is_dropped(scripted, capsys):

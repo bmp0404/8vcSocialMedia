@@ -22,9 +22,10 @@ import os
 import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+from pathlib import Path
 from urllib.parse import urlsplit
 
-from harness import baml_adapter
+from harness import baml_adapter, config
 from harness.baml_reply import json_closes, raw_array_length
 from harness.llm import LLM
 from harness.models import Narrative, Signal
@@ -57,6 +58,11 @@ Return JSON: {{"narratives": [{{"id": "kebab-slug", "title": "...", "summary": "
 # split, retries and count checks; never surfacing the nemotron story (0/5 against 3/5) is its known miss.
 DEFAULT_BACKEND = "baml"
 BACKENDS = ("baml", "json")
+
+
+# Where a reply the checks below flagged is saved. A live json-path reply on 2026-10-16 parsed one
+# narrative out of 2,578 output tokens, and nobody could say why because the reply was gone.
+REPLY_LOG_DIR = config.OUT_DIR / "orient-replies"
 
 
 class OrientReplyError(ValueError):
@@ -272,19 +278,32 @@ def checked_narratives(value, raw: str) -> dict:
     a quiet news day. The scores are floats because BAML rounds a fraction into an int literal (0.8
     becomes 1 in 0..10), which would be worse than an out-of-range float caught here.
     """
+    problems = []
     sent, parsed = raw_array_length(raw, "narratives"), len(value.narratives)
     if sent != parsed:
-        print(f"[orient] reply had {sent if sent is not None else 'no'} narratives; the parser kept {parsed}")
+        problems.append(f"reply had {sent if sent is not None else 'no'} narratives; the parser kept {parsed}")
     if not json_closes(raw):
-        print("[orient] reply was cut off before its JSON closed")
+        problems.append("reply was cut off before its JSON closed")
     kept = []
     for n in value.narratives:
         bad = {f: getattr(n, f) for f in ("relevance", "velocity") if not 0 <= getattr(n, f) <= 1}
         if bad:
-            print(f"[orient] dropped {n.id}: {bad} outside 0..1")
+            problems.append(f"dropped {n.id}: {bad} outside 0..1")
             continue
         kept.append(n.model_dump(mode="json"))
+    if problems:
+        saved = save_reply(raw)
+        for problem in problems:
+            print(f"[orient] {problem}")
+        print(f"[orient] raw reply saved to {saved}")
     return {"narratives": kept}
+
+
+def save_reply(raw: str) -> Path:
+    REPLY_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    path = REPLY_LOG_DIR / f"{datetime.now(timezone.utc):%Y%m%dT%H%M%S%fZ}.txt"
+    path.write_text(raw, encoding="utf-8")
+    return path
 
 
 def ask_baml(llm: LLM, mission: str, payload: str, limit: int, mock) -> dict:
