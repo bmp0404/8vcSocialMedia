@@ -313,23 +313,20 @@ def _mock_hypotheses(batch: Batch) -> dict:
 
 def propose(llm, batch: Batch, definition: str, lessons: list[Lesson], n: int = 5,
             extra: dict[str, str] | None = None) -> dict:
-    """The model's hypotheses for one batch. Malformed JSON is retried once; a second failure yields none
-    for this batch, with `error` set so the run reports it."""
+    """The model's hypotheses for one batch. `complete_json` already asks again once on malformed JSON; if that
+    fails too, this batch yields no hypotheses and `error` says why, so the run reports it instead of dying."""
     lesson_lines = "\n".join(f"- [{l.id}] {l.text}" for l in lessons) or "(none)"
     extra_text = ("\nMORE RULE FEATURES (computed per post; bool takes op eq, number takes lt or gt):\n"
                   + ", ".join(f"{k} ({t})" for k, t in sorted((extra or {}).items())) + "\n") if extra else ""
     prompt = PROPOSE_PROMPT.format(definition=definition, extra=extra_text, lessons=lesson_lines,
                                    groups=render_batch(batch), n=n)
-    for attempt in (1, 2):
-        try:
-            data = llm.complete_json(PROPOSE_SYSTEM, prompt, mock=lambda: _mock_hypotheses(batch))
-            return {"no_shared_trait": str(data.get("no_shared_trait") or ""),
-                    "hypotheses": list(data.get("hypotheses") or []), "error": ""}
-        except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
-            print(f"[reflect] proposal for {batch.group} attempt {attempt} failed: {str(e)[:160]}")
-            error = str(e)[:300]
-            prompt += "\n\nYour previous reply was not valid JSON. Escape any double quotes inside strings."
-    return {"no_shared_trait": "", "hypotheses": [], "error": error}
+    try:
+        data = llm.complete_json(PROPOSE_SYSTEM, prompt, mock=lambda: _mock_hypotheses(batch))
+    except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
+        print(f"[reflect] proposal for {batch.group} failed: {str(e)[:160]}")
+        return {"no_shared_trait": "", "hypotheses": [], "error": str(e)[:300]}
+    return {"no_shared_trait": str(data.get("no_shared_trait") or ""),
+            "hypotheses": list(data.get("hypotheses") or []), "error": ""}
 
 
 def parse_labels(data, qids: list[str]) -> dict[str, dict[str, bool]]:
@@ -345,7 +342,7 @@ def parse_labels(data, qids: list[str]) -> dict[str, dict[str, bool]]:
 
 def label_predicates(labeler, predicates: dict[str, str], posts: list[Episode], rng: random.Random,
                      chunk: int = 25) -> tuple[dict[str, dict[str, bool]], int]:
-    """({post id: {predicate id: bool}}, chunks that failed twice). Posts are shuffled and shown without outcomes."""
+    """({post id: {predicate id: bool}}, chunks that failed). Posts are shuffled and shown without outcomes."""
     qids = list(predicates)
     if not qids:
         return {}, 0
@@ -363,13 +360,11 @@ def label_predicates(labeler, predicates: dict[str, str], posts: list[Episode], 
             return {"labels": {ep.id: "".join("T" if ep.features.get("media", "none") == "none" else "F"
                                               for _ in qids) for ep in part}}
 
-        for attempt in (1, 2):
-            try:
-                labels.update(parse_labels(labeler.complete_json(LABEL_SYSTEM, prompt, mock=mock), qids))
-                break
-            except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
-                print(f"[reflect] labeling chunk {start // chunk + 1} attempt {attempt} failed: {str(e)[:160]}")
-                failed += attempt == 2
+        try:  # complete_json already asks again once on malformed JSON
+            labels.update(parse_labels(labeler.complete_json(LABEL_SYSTEM, prompt, mock=mock), qids))
+        except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
+            print(f"[reflect] labeling chunk {start // chunk + 1} failed: {str(e)[:160]}")
+            failed += 1
     return labels, failed
 
 

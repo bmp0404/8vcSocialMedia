@@ -5,7 +5,7 @@ from pathlib import Path
 
 from harness.learning.settings import load_settings
 from harness.learning.store import flush, get_store
-from harness.llm import DEFAULT_MODELS, AnthropicLLM, get_llm
+from harness.llm import get_llm
 
 
 def _ingest_dataset(args) -> None:
@@ -27,30 +27,14 @@ def _ingest_brand(args) -> None:
 
 
 
-class RoomyAnthropicLLM(AnthropicLLM):
-    """AnthropicLLM with room for thinking. harness/llm.py caps replies at 4096 tokens, and on the gateway's
-    claude-sonnet-5-5 thinking alone can use that up: the brand ingest's answer call came back empty at 4096
-    and used 8,248 output tokens at 16,000. Remove once llm.py raises its cap."""
-
-    max_tokens = 16000
-
-    def complete(self, system: str, prompt: str) -> str:
-        resp = self.client.messages.create(model=self.model, max_tokens=self.max_tokens, system=system,
-                                           messages=[{"role": "user", "content": prompt}])
-        return "".join(b.text for b in resp.content if b.type == "text")
-
-
 def llm_for(provider: str | None, model: str = ""):
-    """get_llm with an optional model override, and more output room for Anthropic."""
-    from harness import config
-
-    name = (provider or config.PROVIDER).lower()
-    if name == "anthropic":
-        return RoomyAnthropicLLM(model or config.MODEL or DEFAULT_MODELS["anthropic"])
+    """get_llm with an optional model override. harness/llm.py reads config.MODEL, so set it for the one call."""
     if not model:
         return get_llm(provider)
+    from harness import config
+
     saved = config.MODEL
-    config.MODEL = model  # harness/llm.py reads config.MODEL; set it for this one call
+    config.MODEL = model
     try:
         return get_llm(provider)
     finally:
