@@ -1,0 +1,14 @@
+# Install the hook once per clone: uv run pre-commit install
+# pre-commit downloads Node for commitlint if the machine has none.
+# A local hook, because the upstream one reads .git/COMMIT_EDITMSG directly,
+# and in a git worktree .git is a file, not a directory.
+default_install_hook_types: [commit-msg]
+repos:
+  - repo: local
+    hooks:
+      - id: commitlint
+        name: commitlint
+        language: node
+        entry: commitlint --edit
+        stages: [commit-msg]
+        additional_dependencies: ['@commitlint/cli@21.2.3', '@commitlint/config-conventional@21.2.3']
