@@ -115,7 +115,7 @@ On posts the labels do carry signal. A pairwise logistic on Claude's labels, fit
 
 ## Scale
 
-The surviving schema went to every corpus item outside the pilot, ordered so the benchmark items came first: 3,080 reply-benchmark items, 1,055 post-benchmark items, then 9,327 others (`python -m harness.label run --set <ids> --models claude-sonnet-5-5,gpt-6.1-sol --run-prefix scale-v2`, prompt `eb8acc6a017cdcc1`).
+The surviving schema went to every corpus item outside the pilot, ordered so the benchmark items came first: 3,080 reply-benchmark items, 1,055 post-benchmark items, then 9,327 others, listed in `data/labels/scale-order.txt` (`python -m harness.label run --set data/labels/scale-order.txt --models claude-sonnet-5-5,gpt-6.1-sol --run-prefix scale-v2`, prompt `eb8acc6a017cdcc1`).
 
 | | Claude Sonnet 5.5 | GPT-6.1 Sol | Both |
 | --- | --- | --- | --- |
@@ -124,7 +124,7 @@ The surviving schema went to every corpus item outside the pilot, ordered so the
 Sol ran at about 60 calls a minute from 08:14 UTC, slowed to under 10 by 08:40, and by 09:37 had failed 85 of its last 200 calls with 502 ("servers are currently overloaded") and 503 ("auth_unavailable: no auth available ... model=gpt-6.1-sol"). The failure-rate stop now works per model (`Guard` in `annotate.py`), so Sol stopped while Sonnet finished. At 10:05 Sol still returned 503 on every call; GPT-6 Luna answered. To finish the GPT side when Sol answers again:
 
 ```sh
-uv run python -m harness.label run --set <scale-order file> --models gpt-6.1-sol --run-prefix scale-v2 --concurrency gpt-6.1-sol=3 --fresh-window
+uv run python -m harness.label run --set data/labels/scale-order.txt --models gpt-6.1-sol --run-prefix scale-v2 --concurrency gpt-6.1-sol=3 --fresh-window
 ```
 
 It skips the items Sol already labeled. During the pilot, three requests per GPT model ran with under 1% failures and eleven drew 40 to 56%; in the scale run, six ran cleanly for 20 minutes before the pool degraded. Switching the remaining items to Luna would be faster to start but would put `engagement_guess` below the agreement gate (0.32 with Sonnet), so I left that choice to the lead.
