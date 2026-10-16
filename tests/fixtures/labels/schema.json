@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "fields": [
+    {
+      "name": "format",
+      "kind": "enum",
+      "values": [
+        "announcement",
+        "joke_or_meme",
+        "other"
+      ],
+      "question": "What is this item mainly doing?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "humor",
+      "kind": "ordinal",
+      "values": [
+        "none",
+        "some",
+        "main_point"
+      ],
+      "question": "How much does it rely on humor?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    }
+  ]
+}
