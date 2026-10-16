@@ -193,3 +193,68 @@ def test_attention_without_data_is_none():
 def test_devtools_profile_loads_and_differs():
     devtools = load_watch(DEFAULT_PATH.with_name("observe.devtools.toml"))
     assert devtools.espn.leagues == [] and "coderabbitai" in devtools.reply_targets.accounts
+
+
+# --- Google News link resolution, all offline -------------------------------------------------
+
+PUBLISHER = "https://athlonsports.com/wnba/caitlin-clark-sends-clear-message-after-aliyah-boston-announcement"
+
+
+def test_google_news_decode_params_and_batch_reply_from_saved_pages():
+    from harness.sources.google_news import batch_form, decode_params, parse_batch
+
+    aid, ts, sg = decode_params(_fixture("google_news_article_page.html"))
+    assert aid.startswith("CBMinAFBVV95cUxO") and ts == 1792117825 and sg == "AbIaSL8rpWY92e6O0xod331nZUh8"
+    inner = json.loads(json.loads(batch_form(aid, ts, sg)["f.req"])[0][0][1])
+    assert inner[0] == "garturlreq" and inner[2:] == [aid, ts, sg]
+    assert parse_batch(_fixture("google_news_batchexecute.txt")) == PUBLISHER
+
+
+@pytest.mark.parametrize("text", ["", ")]}'\n\nnot json", ')]}\'\n\n[["wrb.fr","Fbv4je",null]]', "<html>"])
+def test_google_news_parse_batch_returns_none_on_junk(text):
+    from harness.sources.google_news import decode_params, parse_batch
+
+    assert parse_batch(text) is None
+    assert decode_params(text) is None
+
+
+def _items():
+    return rss_signals(_fixture("google_news_rss.xml"), '"Caitlin Clark"')
+
+
+def test_google_news_resolver_swaps_links_caches_and_keeps_publisher(tmp_path):
+    from harness.sources.google_news import Resolver, article_id, resolve_links
+
+    calls = []
+    page = _fixture("google_news_article_page.html")
+    reply = _fixture("google_news_batchexecute.txt")
+    resolver = Resolver(tmp_path / "cache.json", budget=1, fetch=lambda u: calls.append(u) or page, post=lambda u, f: reply)
+    signals = _items()
+    first_link = signals[0].url
+    resolve_links(signals, resolver)
+    resolver.save()
+    assert signals[0].url == PUBLISHER and signals[0].metrics["url_resolved"] is True
+    assert signals[0].author == "Athlon Sports"
+    # budget of 1: the other two keep their Google links and say so
+    assert [s.metrics["url_resolved"] for s in signals[1:]] == [False, False]
+    assert signals[1].url.startswith("https://news.google.com/rss/articles/")
+    assert len(calls) == 1
+    cached = json.loads((tmp_path / "cache.json").read_text(encoding="utf-8"))
+    assert cached == {article_id(first_link): PUBLISHER}
+    # a later run reads the cache with no requests, even with no budget left
+    again = Resolver(tmp_path / "cache.json", budget=0, fetch=lambda u: pytest.fail("should use cache"))
+    assert again.resolve(first_link) == PUBLISHER
+
+
+def test_google_news_resolver_stops_after_first_failure(tmp_path):
+    from harness.sources.common import SourceError
+    from harness.sources.google_news import Resolver, resolve_links
+
+    def rate_limited(url):
+        raise SourceError("google_news: news.google.com returned HTTP 429 Too Many Requests")
+
+    resolver = Resolver(tmp_path / "c.json", budget=5, fetch=rate_limited)
+    signals = _items()
+    resolve_links(signals, resolver)
+    assert all(s.metrics["url_resolved"] is False for s in signals)
+    assert "HTTP 429" in resolver.failed and resolver.budget == 4  # tried once, then stopped
