@@ -36,10 +36,12 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
   const [origin, setOrigin] = useState<Origin>('take')
   const [killing, setKilling] = useState(false)
   const [picked, setPicked] = useState<string[]>([])
-  const [note, setNote] = useState('')
+  const [killNote, setKillNote] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const box = useRef<HTMLTextAreaElement>(null)
+  const killButton = useRef<HTMLButtonElement>(null)
+  const firstChip = useRef<HTMLButtonElement>(null)
   const id = useId()
   const target = usePost(card.target?.status_id)
   const noun = card.type === 'reply' ? 'reply' : card.type === 'quote' ? 'quote' : 'post'
@@ -82,6 +84,10 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
   }
 
   const approve = () => send({ kind: 'approve', draft: card.draft, composer, origin })
+  const openKill = () => {
+    setKilling(true)
+    requestAnimationFrame(() => firstChip.current?.focus())
+  }
   const edit = () => {
     setOrigin('edit')
     setComposer(card.draft ?? '')
@@ -99,7 +105,7 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
     handled.current = command.seq
     if (command.name === 'approve' && !killing) (unchecked ? edit : approve)()
     else if (command.name === 'edit' && card.draft && !words) edit()
-    else if (command.name === 'kill') setKilling(true)
+    else if (command.name === 'kill') openKill()
     else if (command.name === 'reply') box.current?.focus()
     // Only a new command should act, not a re-render with the same one.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,11 +115,25 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
 
   const fresh = card.source === 'hot' ? freshness(target.tweet?.created_at ?? card.at) : null
   const replies = target.tweet?.conversation_count
+  const note = missingNote(target.missing)
+  const footer = useMemo(
+    () =>
+      target.tweet ? (
+        <>
+          <a className="age" data-fresh={fresh ?? undefined} href={card.target?.url ?? undefined} target="_blank" rel="noreferrer">
+            {ago(target.tweet.created_at || card.at)}
+          </a>
+          {card.type === 'reply' && typeof replies === 'number' ? <span>{replies === 1 ? '1 reply' : `${replies.toLocaleString()} replies`}</span> : null}
+          {note ? <span className="missing">{note}</span> : null}
+        </>
+      ) : null,
+    [target.tweet, fresh, card.target?.url, card.at, card.type, replies, note],
+  )
   const killReasons = card.draft ? Object.keys(reasons) : SKIP_REASONS
   const over = weight > MAX_WEIGHTED_CHARS
 
   return (
-    <article className="card" tabIndex={-1} aria-labelledby={`${id}-title`} data-hot={card.source === 'hot' ? '' : undefined}>
+    <article className="card" tabIndex={-1} data-card={card.id} aria-labelledby={`${id}-title`} data-hot={card.source === 'hot' ? '' : undefined}>
       <h2 id={`${id}-title`} className="sr-only">
         {card.target ? `${noun} to @${card.target.author ?? 'a post'}` : `A ${noun}`}
       </h2>
@@ -121,20 +141,7 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
       {card.target ? (
         <div className="node node-target" data-down="">
           {target.tweet ? (
-            <Post
-              tweet={target.tweet}
-              footer={
-                <>
-                  <a className="age" data-fresh={fresh ?? undefined} href={card.target.url ?? undefined} target="_blank" rel="noreferrer">
-                    {ago(target.tweet.created_at || card.at)}
-                  </a>
-                  {card.type === 'reply' && typeof replies === 'number' ? (
-                    <span>{replies === 1 ? '1 reply' : `${replies.toLocaleString()} replies`}</span>
-                  ) : null}
-                  {missingNote(target.missing) ? <span className="missing">{missingNote(target.missing)}</span> : null}
-                </>
-              }
-            />
+            <Post tweet={target.tweet} footer={footer} />
           ) : target.error ? (
             <p className="problem">{target.error}</p>
           ) : (
@@ -193,9 +200,10 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
         <fieldset className="kill" disabled={busy}>
           <legend>{card.draft ? 'Why kill it?' : 'Why skip it?'}</legend>
           <div className="chips">
-            {killReasons.map((code) => (
+            {killReasons.map((code, i) => (
               <button
                 key={code}
+                ref={i === 0 ? firstChip : undefined}
                 type="button"
                 className="chip"
                 aria-pressed={picked.includes(code)}
@@ -208,12 +216,12 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
           <label className="sr-only" htmlFor={`${id}-note`}>
             Note
           </label>
-          <input id={`${id}-note`} className="note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" />
+          <input id={`${id}-note`} className="note" value={killNote} onChange={(e) => setKillNote(e.target.value)} placeholder="Note (optional)" />
           <div className="actions">
-            <button type="button" className="button danger" onClick={() => send({ kind: 'kill', reasons: picked, note })}>
+            <button type="button" className="button danger" onClick={() => send({ kind: 'kill', reasons: picked, note: killNote })}>
               {card.draft ? 'Kill draft' : `Skip ${noun}`}
             </button>
-            <button type="button" className="button quiet" onClick={() => (setKilling(false), setError(null))}>
+            <button type="button" className="button quiet" onClick={() => (setKilling(false), setError(null), requestAnimationFrame(() => killButton.current?.focus()))}>
               Cancel
             </button>
           </div>
@@ -234,7 +242,7 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
               Edit draft
             </button>
           ) : null}
-          <button type="button" className="button quiet" onClick={() => setKilling(true)}>
+          <button type="button" ref={killButton} className="button quiet" onClick={openKill}>
             {card.draft ? 'Kill' : 'Skip'}
           </button>
         </div>

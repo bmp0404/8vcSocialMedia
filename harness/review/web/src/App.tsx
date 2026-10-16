@@ -25,6 +25,7 @@ export function App() {
   const [status, setStatus] = useState<Status | null>(null)
   const queue = useQueue()
   const sheet = useRef<HTMLDialogElement>(null)
+  const heading = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
     const back = () => setPath(pathOf())
@@ -35,7 +36,7 @@ export function App() {
   useEffect(() => {
     const load = () => api.status().then(setStatus, () => setStatus(null))
     load()
-    const t = setInterval(load, POLL_MS)
+    const t = setInterval(() => document.visibilityState === 'visible' && load(), POLL_MS)
     return () => clearInterval(t)
   }, [])
 
@@ -44,8 +45,12 @@ export function App() {
       const el = e.target as HTMLElement
       if (e.key !== '?' || el.closest('input, textarea, [contenteditable]')) return
       e.preventDefault()
-      if (sheet.current?.open) sheet.current.close()
-      else sheet.current?.showModal()
+      const d = sheet.current
+      if (!d) return
+      // Opened by its key it appears at once, like any keyboard command; the ? button fades it in.
+      d.toggleAttribute('data-instant', true)
+      if (d.open) d.close()
+      else d.showModal()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -56,9 +61,15 @@ export function App() {
     history.pushState(null, '', to)
     setPath(to)
     window.scrollTo({ top: 0 })
+    // A screen reader hears the new view's name, and Tab starts from the top of it.
+    requestAnimationFrame(() => heading.current?.focus({ preventScroll: true }))
   }
 
   const waiting = queue.shown.filter((c) => !queue.decided.has(c.id)).length
+  const view = VIEWS.find((v) => v.path === path)!.name
+  useEffect(() => {
+    document.title = path === '/' && waiting ? `Queue, ${waiting} waiting` : view
+  }, [path, view, waiting])
   return (
     <>
       <header className="top">
@@ -75,18 +86,26 @@ export function App() {
               }}
             >
               {v.name}
-              {v.path === '/' && waiting ? <span className="tab-count">{waiting}</span> : null}
+              {v.path === '/' && waiting ? (
+                <span className="tab-count">
+                  {waiting}
+                  <span className="sr-only"> waiting</span>
+                </span>
+              ) : null}
             </a>
           ))}
         </nav>
         <p className="status">
           <StatusLine status={status} />
-          <button type="button" className="keys" aria-label="Keyboard shortcuts" onClick={() => sheet.current?.showModal()}>
+          <button type="button" className="keys" aria-label="Keyboard shortcuts" onClick={() => (sheet.current?.removeAttribute('data-instant'), sheet.current?.showModal())}>
             ?
           </button>
         </p>
       </header>
       <main className="column">
+        <h1 ref={heading} tabIndex={-1} className="sr-only">
+          {view}
+        </h1>
         {path === '/' ? (
           <Queue
             queue={queue.data}

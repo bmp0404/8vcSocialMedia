@@ -1,5 +1,6 @@
 /* The page is quiet so the posts can be read as X shows them. Color means one of two things: how fresh a
-   hot target is, and the one action that matters on a card. Contrast pairs are noted where they're set. */
+   hot target is, and the one action that matters on a card. Contrast pairs are noted where they're set,
+   computed with the WCAG 2.1 luminance formula. */
 
 @font-face {
   font-family: 'Atkinson Hyperlegible Next';
@@ -29,12 +30,12 @@
   /* Light. X's own neutrals, so an embedded post looks at home. */
   --page: #f7f9f9;
   --card: #ffffff;
-  --ink: #0f1419; /* 18.6:1 on card */
-  --muted: #536471; /* 7.0:1 on card */
+  --ink: #0f1419; /* 18.5:1 on card */
+  --muted: #536471; /* 6.1:1 on card, 5.8:1 on page */
   --line: #eff3f4;
   --border: #cfd9de;
   --fresh: #c2410c; /* 5.2:1 on card: a hot target under 10 minutes old */
-  --closing: #92400e; /* 7.2:1 on card: 10 to 30 minutes */
+  --closing: #92400e; /* 7.1:1 on card: 10 to 30 minutes */
   --primary-bg: #0f1419;
   --primary-ink: #ffffff;
   --danger-bg: #b42318; /* white on it is 6.5:1 */
@@ -47,15 +48,15 @@
   :root {
     --page: #000000;
     --card: #101214;
-    --ink: #e7e9ea; /* 15.6:1 on card */
+    --ink: #e7e9ea; /* 15.4:1 on card */
     --muted: #8b98a5; /* 6.4:1 on card */
     --line: #202327;
     --border: #2f3336;
-    --fresh: #fb923c; /* 8.4:1 on card */
-    --closing: #fbbf24; /* 11:1 on card */
+    --fresh: #fb923c; /* 8.3:1 on card */
+    --closing: #fbbf24; /* 11.3:1 on card */
     --primary-bg: #eff3f4;
     --primary-ink: #0f1419;
-    --danger-bg: #d92d20; /* white on it is 4.6:1 */
+    --danger-bg: #d92d20; /* white on it is 4.8:1 */
     --hover: rgb(231 233 234 / 0.08);
     --highlight: rgb(234 179 8 / 0.3);
   }
@@ -68,6 +69,14 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* The sticky header must not cover the card j and k, or Tab, brings into view. */
+  scroll-padding-top: calc(96px + env(safe-area-inset-top));
+}
+
+/* Pull-to-refresh would reload the page and lose a half-written reply. */
+html,
+body {
+  overscroll-behavior-y: contain;
 }
 
 body {
@@ -107,6 +116,7 @@ code {
 /* ---------------------------------------------------------------- header */
 
 .top {
+  view-transition-name: top-bar; /* keeps the header above the cards while the queue closes up */
   position: sticky;
   top: 0;
   z-index: 2;
@@ -141,6 +151,8 @@ code {
   font-weight: 600;
   text-decoration: none;
   touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .tab[aria-current='page'] {
@@ -184,6 +196,7 @@ code {
   color: var(--muted);
   font: inherit;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -396,9 +409,10 @@ code {
   line-height: 18px;
 }
 
-/* The draft stays in place while the box has words, so nothing moves while typing; it dims instead. */
+/* The draft stays in place while the box has words, so nothing moves while typing; it dims instead.
+   At 0.6 its text stays readable as a reference: dimmed ink works out to 4.8:1 on the light card and 6.1:1 on the dark one. */
 .node-draft[data-unused] {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 .story {
@@ -449,7 +463,7 @@ code {
    40% of the viewport, so on a phone the reply box starts on the first screen. A single item is letterboxed rather than
    cropped, so text inside an image stays readable. */
 .post .rt-tweet-media-mediaContainer {
-  max-height: min(440px, 40vh);
+  max-height: min(440px, 40svh); /* svh: the viewport with the browser's bars showing */
   overflow: hidden;
 }
 
@@ -457,6 +471,30 @@ code {
 .post .rt-tweet-media-mediaWrapper:not([class*='grid']) video {
   object-fit: contain;
   background: #000;
+}
+
+/* react-tweet removes the outline from media links, and the media box would clip one drawn outside. */
+.post .rt-tweet-media-mediaLink:focus-visible,
+.post .rt-tweet-media-video-anchor:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* On a touch screen a tap leaves react-tweet's hover styles stuck on. */
+@media (hover: none) {
+  .post .rt-tweet-header-avatarShadow:hover {
+    background-color: transparent;
+  }
+
+  .post .rt-tweet-header-authorLink:hover,
+  .post .rt-tweet-in-reply-to-root:hover,
+  .post .rt-tweet-link-root:hover {
+    text-decoration-line: none;
+  }
+
+  .post .rt-quoted-tweet-container-root:hover {
+    background-color: transparent;
+  }
 }
 
 /* Names and handles wrap instead of ending in an ellipsis. */
@@ -561,6 +599,7 @@ code {
   text-decoration: none;
   cursor: pointer;
   touch-action: manipulation;
+  -webkit-user-select: none;
   user-select: none;
   transition: transform 120ms var(--ease-out), background-color 150ms ease;
 }
@@ -608,6 +647,13 @@ code {
   font-size: 14px;
 }
 
+@media (pointer: coarse) {
+  .small,
+  .arrivals {
+    min-height: 44px;
+  }
+}
+
 /* ---------------------------------------------------------------- kill and skip */
 
 .kill {
@@ -648,6 +694,8 @@ code {
   font-size: 15px;
   cursor: pointer;
   touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
   transition: transform 120ms var(--ease-out);
 }
 
@@ -714,6 +762,9 @@ code {
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
   transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
 
   @starting-style {
@@ -867,6 +918,9 @@ code {
 
 .option {
   position: relative;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .option input {
@@ -1009,8 +1063,25 @@ code {
   transition-duration: 150ms;
 }
 
+/* Opened with its key, the sheet appears at once. */
+.sheet[data-instant],
+.sheet[data-instant]::backdrop {
+  transition: none;
+}
+
 .sheet::backdrop {
   background: rgb(0 0 0 / 0.4);
+  opacity: 1;
+  transition: opacity 200ms ease, overlay 200ms allow-discrete, display 200ms allow-discrete;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.sheet:not([open])::backdrop {
+  opacity: 0;
+  transition-duration: 150ms;
 }
 
 .sheet h2 {
@@ -1047,9 +1118,15 @@ kbd {
 
 /* ---------------------------------------------------------------- motion: the queue closing up */
 
+/* The cards below a decided one move up on screen, so the curve is ease-in-out. */
 ::view-transition-group(*) {
   animation-duration: 200ms;
-  animation-timing-function: var(--ease-out);
+  animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* A tall card's old snapshot would otherwise show past its shrinking box. */
+::view-transition-image-pair(*) {
+  overflow: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
