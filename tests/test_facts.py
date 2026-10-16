@@ -308,3 +308,7 @@ def test_planner_prompt_is_unchanged_without_facts():
     spy = PlanSpy()
     lanes.plan_targets(spy, "mission", "lessons", [{"url": X_URL, "author": "IndianaFever", "text": POST}])
     assert "fact" not in spy.prompts[0]
+
+
+def test_fact_numbers_are_found_the_way_the_gate_finds_them():
+    assert ground.NUMBER.pattern == gate.NUMBER.pattern
