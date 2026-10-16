@@ -33,6 +33,7 @@ def lesson_rows(store, today: date | None = None) -> list[dict]:
             "valid_until": lesson.valid_until,
             "evidence": lesson.evidence,
             "reflections": lesson.reflections,
+            "caveats": lesson.caveats,
             "updated": lesson.updated,
         })
     rows.sort(key=lambda r: (r["status"] != "active", -r["effect"], r["id"]))
@@ -57,6 +58,7 @@ def reflection_rows(store) -> list[dict]:
             "p_value": r.heldout.get("p_value"),
             "group": r.group,
             "domain": r.domain,
+            "caveats": r.caveats,
             "created": r.created,
         })
     rows.sort(key=lambda r: (r["created"], r["id"]), reverse=True)

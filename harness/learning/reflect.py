@@ -55,7 +55,8 @@ def usable(episodes: list[Episode], *, require_boost_flags: bool = True,
             "no episode has a boost_suspect flag, so boosted successes can't be excluded; attach "
             "data/context/devtools_enriched.csv from the context worker, or pass --allow-unfiltered"
         )
-    dropped = {"unlabeled": 0, "thread_continuation": 0, "label_too_young": 0, "boosted_success": 0}
+    dropped = {"unlabeled": 0, "thread_continuation": 0, "label_too_young": 0, "not_label_eligible": 0,
+               "boosted_success": 0}
     kept = []
     for ep in episodes:
         label = ep.label()
@@ -66,6 +67,8 @@ def usable(episodes: list[Episode], *, require_boost_flags: bool = True,
             dropped["thread_continuation"] += 1
         elif isinstance(age, (int, float)) and age < min_label_age_hours:
             dropped["label_too_young"] += 1
+        elif ep.features.get("label_eligible") is False:  # context worker: immature or a thread continuation
+            dropped["not_label_eligible"] += 1
         elif label == SUCCESS and ep.features.get("boost_suspect") is True:
             dropped["boosted_success"] += 1
         else:
@@ -167,11 +170,17 @@ RULE_OPS = {
 BOOL_FEATURES = {"has_link", "starts_with_mention", "is_launch"}
 
 
-def rule_error(rule) -> str | None:
-    """Why a rule can't be checked, or None when it can."""
+def rule_error(rule, extra: dict[str, str] | None = None) -> str | None:
+    """Why a rule can't be checked, or None when it can. `extra` maps context features to "bool" or "number"."""
     if not isinstance(rule, dict):
         return "rule is not an object"
     feat, op, value = rule.get("feature"), rule.get("op"), rule.get("value")
+    extra = extra or {}
+    if feat in extra:
+        if extra[feat] == "bool":
+            return None if op == "eq" and isinstance(value, bool) else f"{feat} needs op eq with true or false"
+        ok = op in ("lt", "gt") and isinstance(value, (int, float)) and not isinstance(value, bool)
+        return None if ok else f"{feat} needs op lt or gt with a number"
     if feat not in RULE_OPS:
         return f"unknown feature {feat!r}"
     if op not in RULE_OPS[feat]:
@@ -186,6 +195,20 @@ def rule_error(rule) -> str | None:
     if op == "eq" and feat == "media" and not isinstance(value, str):
         return "media eq needs a string"
     return None
+
+
+def extra_features(episodes: list[Episode]) -> dict[str, str]:
+    """Context features (`pre_*`) present on every episode, typed "bool" or "number", usable in rules."""
+    if not episodes:
+        return {}
+    out = {}
+    for name in sorted(k for k in episodes[0].features if k.startswith("pre_")):
+        values = [ep.features.get(name) for ep in episodes]
+        if all(isinstance(v, bool) for v in values):
+            out[name] = "bool"
+        elif all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in values):
+            out[name] = "number"
+    return out
 
 
 def apply_rule(rule: dict, ep: Episode) -> bool:
@@ -226,6 +249,7 @@ Use null for `rule` otherwise. Write `lesson` as one imperative sentence a write
 a hypothesis repeats an existing lesson, put that lesson's id in `restates`."""
 
 PROPOSE_PROMPT = """OUTCOMES: {definition}
+{extra}
 
 EXISTING LESSONS:
 {lessons}
@@ -287,15 +311,25 @@ def _mock_hypotheses(batch: Batch) -> dict:
     }
 
 
-def propose(llm, batch: Batch, definition: str, lessons: list[Lesson], n: int = 5) -> dict:
+def propose(llm, batch: Batch, definition: str, lessons: list[Lesson], n: int = 5,
+            extra: dict[str, str] | None = None) -> dict:
+    """The model's hypotheses for one batch. Malformed JSON is retried once; a second failure yields none
+    for this batch, with `error` set so the run reports it."""
     lesson_lines = "\n".join(f"- [{l.id}] {l.text}" for l in lessons) or "(none)"
-    data = llm.complete_json(
-        PROPOSE_SYSTEM,
-        PROPOSE_PROMPT.format(definition=definition, lessons=lesson_lines, groups=render_batch(batch), n=n),
-        mock=lambda: _mock_hypotheses(batch),
-    )
-    return {"no_shared_trait": str(data.get("no_shared_trait") or ""),
-            "hypotheses": list(data.get("hypotheses") or [])}
+    extra_text = ("\nMORE RULE FEATURES (computed per post; bool takes op eq, number takes lt or gt):\n"
+                  + ", ".join(f"{k} ({t})" for k, t in sorted((extra or {}).items())) + "\n") if extra else ""
+    prompt = PROPOSE_PROMPT.format(definition=definition, extra=extra_text, lessons=lesson_lines,
+                                   groups=render_batch(batch), n=n)
+    for attempt in (1, 2):
+        try:
+            data = llm.complete_json(PROPOSE_SYSTEM, prompt, mock=lambda: _mock_hypotheses(batch))
+            return {"no_shared_trait": str(data.get("no_shared_trait") or ""),
+                    "hypotheses": list(data.get("hypotheses") or []), "error": ""}
+        except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
+            print(f"[reflect] proposal for {batch.group} attempt {attempt} failed: {str(e)[:160]}")
+            error = str(e)[:300]
+            prompt += "\n\nYour previous reply was not valid JSON. Escape any double quotes inside strings."
+    return {"no_shared_trait": "", "hypotheses": [], "error": error}
 
 
 def parse_labels(data, qids: list[str]) -> dict[str, dict[str, bool]]:
@@ -355,6 +389,22 @@ def answers_for(predicate_id: str, rule: dict | None, heldout: list[Episode],
     if rule:
         return {ep.id: apply_rule(rule, ep) for ep in heldout}
     return {pid: a[predicate_id] for pid, a in labels.items() if predicate_id in a}
+
+
+LAUNCH_WORDS = re.compile(r"\b(announc\w*|launch\w*|releas\w*|introduc\w*|ship\w*|new (?:product|feature|tool)\w*)",
+                          re.IGNORECASE)
+
+
+def caveats_for(hypothesis: dict, filters: dict) -> list[str]:
+    """Reasons to doubt a claim that the held-out test can't rule out."""
+    out = []
+    if filters.get("boost_filter") == "off":
+        out.append("boost flags were unavailable, so boosted successes were not excluded")
+    text = " ".join(str(hypothesis.get(k) or "") for k in ("claim", "predicate", "lesson"))
+    if hypothesis.get("outcome") == SUCCESS and LAUNCH_WORDS.search(text):
+        out.append("likely launch-confounded: it describes announcements, and launches get paid and bot boosts "
+                   "that the launch keyword rule doesn't fully catch")
+    return out
 
 
 def _until(today: str, days: int) -> str:
@@ -418,6 +468,7 @@ class ReflectionReport:
     heldout_posts: int = 0
     heldout_strata: int = 0
     no_shared_trait: list[str] = field(default_factory=list)
+    proposal_errors: list[str] = field(default_factory=list)
     label_chunks_failed: int = 0
     reflections: list[Reflection] = field(default_factory=list)
     lessons_new: list[str] = field(default_factory=list)
@@ -442,7 +493,11 @@ def reflect(
     today = (now or datetime.now(timezone.utc)).date().isoformat()
     pool, filters = usable(episodes, require_boost_flags=s.require_boost_flags,
                            min_label_age_hours=s.min_label_age_hours)
+    existing = {m.id: load(m) for m in store.list_memories("lesson")}
     proposal, held = split_heldout(pool, key, rng, min_per_side=s.heldout_min_per_side)
+    # A restated lesson is voted on with this run's test, so no existing lesson's own evidence may be in it.
+    cited = {eid for lesson in existing.values() for eid in lesson.evidence}
+    held = [ep for ep in held if ep.id not in cited]
     batches = contrast_batches(proposal, key, rng, n_batches=s.n_batches, groups_per_batch=s.groups_per_batch,
                                per_side=s.per_side)
     report = ReflectionReport(filters=filters, batches=len(batches), heldout_posts=len(held),
@@ -451,12 +506,14 @@ def reflect(
         print(f"[reflect] skipped: {len(held)} held-out posts and {len(batches)} batches; reflection needs "
               f"strata with at least 2 failures and 2 successes each (filters: {filters})")
         return report
-    existing = {m.id: load(m) for m in store.list_memories("lesson")}
     active = [l for l in existing.values() if l.status == "active"]
+    extra = extra_features(pool)
 
     candidates: list[Candidate] = []
     for batch in batches:
-        out = propose(llm, batch, definition, active, n=s.n_hypotheses)
+        out = propose(llm, batch, definition, active, n=s.n_hypotheses, extra=extra)
+        if out["error"]:
+            report.proposal_errors.append(f"{batch.group}: {out['error']}")
         if out["no_shared_trait"]:
             report.no_shared_trait.append(out["no_shared_trait"])
         report.proposed += len(out["hypotheses"])
@@ -465,25 +522,45 @@ def reflect(
             if not linked or not str(h.get("predicate", "")).strip():
                 continue
             rule = h.get("rule") or None
-            problem = rule_error(rule) if rule else None
+            problem = rule_error(rule, extra) if rule else None
             candidates.append(Candidate(h, batch, *linked, rule=None if problem else rule, rule_problem=problem))
     report.linked = len(candidates)
     if not candidates:
         print(f"[reflect] {report.proposed} hypotheses proposed, none survived evidence linking")
         return report
 
+    # Which existing lesson each candidate would vote on: the one it restates, if the outcomes match, else the
+    # lesson with the same predicate. A vote always tests the lesson's own predicate, not the new wording.
+    targets: list[Lesson | None] = []
+    for c in candidates:
+        h = c.hypothesis
+        named = existing.get(str(h.get("restates") or ""))
+        if named is not None and named.polarity != ("avoid" if h["outcome"] == FAILURE else "do"):
+            named = None
+        same = existing.get("lesson-" + short_hash(str(h["predicate"]).strip(), h["outcome"]))
+        target = named or same
+        targets.append(target if target is not None and target.status != "retired" else None)
+    voted = list(dict.fromkeys(t.id for t in targets if t is not None))
+
     to_label = {f"q{i}": str(c.hypothesis["predicate"]).strip() for i, c in enumerate(candidates) if not c.rule}
+    to_label.update({f"L{lid}": existing[lid].predicate for lid in voted if not existing[lid].rule})
     labels, report.label_chunks_failed = label_predicates(labeler or llm, to_label, held, rng, chunk=s.label_chunk)
 
-    results = [heldout_test(tables_for(held, key, answers_for(f"q{i}", c.rule, held, labels), c.hypothesis["outcome"]),
+    def test(qid: str, rule: dict | None, outcome: str) -> dict:
+        return heldout_test(tables_for(held, key, answers_for(qid, rule, held, labels), outcome),
                             min_posts_with_trait=s.min_posts_with_trait)
-               for i, c in enumerate(candidates)]
-    run_verdicts = verdicts(results, s.fdr_q)
+
+    results = [test(f"q{i}", c.rule, c.hypothesis["outcome"]) for i, c in enumerate(candidates)]
+    lesson_results = [test(f"L{lid}", existing[lid].rule or None,
+                           FAILURE if existing[lid].polarity == "avoid" else SUCCESS) for lid in voted]
+    # One Benjamini-Hochberg family for every test this run makes.
+    all_verdicts = verdicts(results + lesson_results, s.fdr_q)
+    run_verdicts, lesson_verdicts = all_verdicts[:len(results)], all_verdicts[len(results):]
+    n_tests = len(all_verdicts)
     labeled_count = len(pool)
 
     by_id = {ep.id: ep for ep in episodes}
-    touched: set[str] = set()
-    for c, result, verdict in zip(candidates, results, run_verdicts):
+    for c, result, verdict, target in zip(candidates, results, run_verdicts, targets):
         # Cited dataset posts become episode notes so [[links]] resolve and the store's lesson-evidence check
         # passes. Run episodes (ep-<action id>) are left alone: Krish's round_end writes those.
         for eid in c.evidence + c.contrast:
@@ -493,7 +570,7 @@ def reflect(
         h = c.hypothesis
         predicate = str(h["predicate"]).strip()
         result = {**result, "verdict": verdict, "checked_by": "rule" if c.rule else "labeler", "q": s.fdr_q,
-                  "hypotheses_in_run": len(candidates)}
+                  "tests_in_run": n_tests}
         refl = Reflection(
             id="refl-" + short_hash(str(h.get("claim", "")), ",".join(sorted(c.evidence))),
             claim=str(h.get("claim", "")).strip(),
@@ -506,31 +583,24 @@ def reflect(
             domain=domain,
             heldout=result,
             status={"supported": "supported", "contradicted": "rejected"}.get(verdict, "inconclusive"),
-            restates=str(h.get("restates") or ""),
+            restates=target.id if target is not None else "",
             dropped_citations=c.dropped,
             rule=c.rule or {},
             rule_problem=c.rule_problem or "",
             transfer_hint=str(h.get("transfer") or ""),
             filters=filters,
+            caveats=caveats_for(h, filters),
             created=today,
         )
         save(store, refl)
         report.reflections.append(refl)
-
-        lesson_id = "lesson-" + short_hash(predicate, refl.outcome)
-        target = existing.get(refl.restates) or existing.get(lesson_id)
-        if target is not None and target.id in touched:
-            # One test per lesson per run: a second hypothesis with the same predicate only adds provenance.
+        if target is not None:
             if refl.id not in target.reflections:
                 target.reflections.append(refl.id)
             save(store, target)
-        elif target is not None:
-            save(store, vote(target, verdict, result, refl.id, today, domain, labeled_count, s.valid_days))
-            touched.add(target.id)
-            report.lessons_voted.append(target.id)
         elif verdict == "supported":
             lesson = Lesson(
-                id=lesson_id,
+                id="lesson-" + short_hash(predicate, refl.outcome),
                 text=str(h.get("lesson") or refl.claim).strip(),
                 predicate=predicate,
                 rule=c.rule or {},
@@ -546,13 +616,24 @@ def reflect(
                 support=1,
                 last_test=result,
                 labeled_at_test=labeled_count,
+                caveats=refl.caveats,
                 created=today,
                 updated=today,
             )
-            save(store, lesson)
-            existing[lesson.id] = lesson
-            touched.add(lesson.id)
-            report.lessons_new.append(lesson.id)
+            if lesson.id in existing:  # an earlier candidate in this run created it
+                existing[lesson.id].reflections.append(refl.id)
+                save(store, existing[lesson.id])
+            else:
+                save(store, lesson)
+                existing[lesson.id] = lesson
+                report.lessons_new.append(lesson.id)
+
+    for lid, result, verdict in zip(voted, lesson_results, lesson_verdicts):
+        result = {**result, "verdict": verdict, "checked_by": "rule" if existing[lid].rule else "labeler",
+                  "q": s.fdr_q, "tests_in_run": n_tests}
+        save(store, vote(existing[lid], verdict, result, f"reflect-{today}-seed{seed}", today, domain,
+                         labeled_count, s.valid_days))
+        report.lessons_voted.append(lid)
 
     counts = {v: run_verdicts.count(v) for v in ("supported", "contradicted", "inconclusive")}
     print(f"[reflect] {report.batches} batches, {report.proposed} proposed, {report.linked} linked, "
@@ -563,7 +644,7 @@ def reflect(
 
 def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: ReflectSettings | None = None,
                labeler=None, key: GroupKey = by_account_and_launch, seed: int = 1,
-               now: datetime | None = None) -> list[tuple[str, str, dict]]:
+               now: datetime | None = None, force: bool = False) -> list[tuple[str, str, dict]]:
     """Retest due lessons of one domain and vote on them.
 
     Test posts exclude every episode a due lesson cites, so a lesson is never retested on its own evidence.
@@ -572,7 +653,8 @@ def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: Re
     today = (now or datetime.now(timezone.utc)).date().isoformat()
     pool, _ = usable(episodes, require_boost_flags=s.require_boost_flags, min_label_age_hours=s.min_label_age_hours)
     due = [l for l in (load(m) for m in store.list_memories("lesson"))
-           if l.domain == domain and due_for_retest(l, len(pool), today, s.min_new_labeled)]
+           if l.domain == domain and l.status != "retired"
+           and (force or due_for_retest(l, len(pool), today, s.min_new_labeled))]
     if not due:
         return []
     cited = {eid for l in due for eid in l.evidence}
@@ -600,6 +682,7 @@ def report_json(report: ReflectionReport) -> str:
             "heldout_posts": report.heldout_posts,
             "heldout_strata": report.heldout_strata,
             "no_shared_trait": report.no_shared_trait,
+            "proposal_errors": report.proposal_errors,
             "label_chunks_failed": report.label_chunks_failed,
             "lessons_new": report.lessons_new,
             "lessons_voted": report.lessons_voted,

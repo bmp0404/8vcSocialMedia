@@ -62,7 +62,7 @@ def is_stale(m: Memory, today: date) -> bool:
 def revalidation_queue(store, today: date) -> list[dict]:
     """Lessons and facts past `valid_until`. Observe should recheck these; action doesn't see them."""
     return [
-        {"id": m.id, "kind": m.kind, "text": m.body.splitlines()[0] if m.body else "",
+        {"id": m.id, "kind": m.kind, "text": m.meta.get("text") or m.meta.get("answer", ""),
          "valid_until": m.meta.get("valid_until", "")}
         for kind in ("lesson", "fact") for m in store.list_memories(kind)
         if m.meta.get("status") in ("active", "current", "stale") and is_stale(m, today)
@@ -109,10 +109,13 @@ def trust(m: Memory, today: date, s: RecallSettings) -> float | None:
     else:
         return None
     domain = domain_of(m)
-    if domain and domain not in s.home_domains and m.kind in ("lesson", "reflection"):
-        if meta.get("scope", "domain") != "general":
-            return None
-        base *= s.other_domain_factor
+    if domain and domain not in s.home_domains:
+        if m.kind == "episode":
+            return None  # another domain's posts are no example for this account
+        if m.kind in ("lesson", "reflection"):
+            if meta.get("scope", "domain") != "general":
+                return None
+            base *= s.other_domain_factor
     return base
 
 
@@ -130,16 +133,18 @@ def rank(candidates: list[Memory], today: date, s: RecallSettings) -> list[Pick]
     (an active lesson the query didn't match) gets 0. Episodes are capped at one success and one failure,
     so a mind sees a contrast rather than two of the same.
     """
-    scores = [m.score for m in candidates if m.score > 0]
-    lo, hi = (min(scores), max(scores)) if scores else (0.0, 0.0)
-    picks, seen = [], set()
+    kept, seen = [], set()
     for m in candidates:
-        if m.id in seen:
-            continue
-        seen.add(m.id)
-        t = trust(m, today, s)
-        if t is None:
-            continue
+        if m.id not in seen:
+            seen.add(m.id)
+            t = trust(m, today, s)
+            if t is not None:
+                kept.append((m, t))
+    # Scale relevance over the candidates that survive the trust filters, so an excluded hit can't set the top.
+    scores = [m.score for m, _ in kept if m.score > 0]
+    lo, hi = (min(scores), max(scores)) if scores else (0.0, 0.0)
+    picks = []
+    for m, t in kept:
         rel = 0.0 if m.score <= 0 else (1.0 if hi == lo else (m.score - lo) / (hi - lo))
         rec = recency(m, today, s)
         score = s.weight_relevance * rel + s.weight_trust * t + s.weight_recency * rec
@@ -172,13 +177,18 @@ SECTION_TITLES = {
 
 
 def _line(p: Pick, m: Memory | None) -> str:
+    meta = m.meta if m is not None else {}
     if p.kind == "lesson" and m is not None:
-        outcome = FAILURE if m.meta.get("polarity") == "avoid" else SUCCESS
-        first = p.text.splitlines()[0].split(": ", 1)[-1] if p.text else ""
-        return f"- {first} ({heldout_sentence(m.meta.get('last_test') or {}, outcome)}) [{p.id}]"
+        outcome = FAILURE if meta.get("polarity") == "avoid" else SUCCESS
+        caveat = " Caveat: " + "; ".join(meta["caveats"]) + "." if meta.get("caveats") else ""
+        return f"- {meta.get('text', '')} ({heldout_sentence(meta.get('last_test') or {}, outcome)}){caveat} [{p.id}]"
     if p.kind == "episode":
-        first = p.text.splitlines()[0].split(": ", 1)[-1] if p.text else ""
-        return f"- {p.why['label']}: {' '.join(first.split())[:240]} [{p.id}]"
+        text = " ".join(meta.get("text", "").split())[:240]
+        return f"- {p.why['label']}: @{meta.get('author_username', '')} {meta.get('action_type', 'post')}: {text} [{p.id}]"
+    if p.kind == "fact" and m is not None:
+        return f"- {meta.get('answer', '')} (\"{meta.get('quote', '')}\", {meta.get('source_url', '')}) [{p.id}]"
+    if p.kind == "entity" and m is not None:
+        return f"- {meta.get('name', '')}: {meta.get('summary', '')} [{p.id}]"
     return "\n".join(p.text.splitlines()[: 3 if p.kind == "procedure" else 1]) + f" [{p.id}]"
 
 
@@ -249,8 +259,9 @@ def render_lessons(store, today: date, s: RecallSettings, limit: int = 15) -> st
     for _, _, _, m in rows[:limit]:
         meta = m.meta
         outcome = FAILURE if meta.get("polarity") == "avoid" else SUCCESS
+        caveat = f"; caveat: {'; '.join(meta['caveats'])}" if meta.get("caveats") else ""
         lines.append(f"- {meta.get('text', m.body)} ({heldout_sentence(meta.get('last_test') or {}, outcome)}; "
-                     f"learned from {meta.get('domain') or HOME}; retest by {meta.get('valid_until', '?')}; {m.id})")
+                     f"learned from {meta.get('domain') or HOME}; retest by {meta.get('valid_until', '?')}{caveat}; {m.id})")
     return "\n".join(lines) + "\n"
 
 
@@ -316,3 +327,16 @@ def exemplar_check(episodes: list[Episode], k: int = 10, n_test: int = 300, seed
 
 def today_utc() -> date:
     return datetime.now(timezone.utc).date()
+
+
+def round_start(narratives, mode: str | None = None, today: date | None = None) -> dict:
+    """Entry point for engine/: the store, settings from memory/settings.json, and an optional mode override."""
+    from harness.learning.settings import load_settings
+    from harness.learning.store import get_store
+
+    s = load_settings().recall
+    if mode is not None:
+        if mode not in ("on", "off", "shuffled"):
+            raise ValueError(f"mode must be on, off or shuffled, got {mode!r}")
+        s.mode = mode
+    return round_memory(get_store(), narratives, s, today=today)
