@@ -117,3 +117,46 @@ def test_reasons_name_rule_and_detail():
     assert not res.passed
     assert "em_dash: dash at char 12" in res.reasons()
     assert any(r.startswith("ai_vocab: ") for r in res.reasons())
+
+
+CTX = "POST by @CaitlinClark22: I promise you I just went 10-0 on my picks\nTHREAD:\n- soft launching that gambling sponsorship"
+
+
+def grounded(text: str) -> set[str]:
+    return {f.rule for f in gate.check(text, "reply", context=CTX).findings}
+
+
+def test_grounding_rules_need_context():
+    assert grounded("went 0-10 since college") == {"ungrounded_number"}
+    assert grounded("10-0 is crazy") == set()
+    assert grounded("ask @CaitlinClark22") == set()
+    assert grounded("ask @alikidd33") == {"unknown_handle"}
+    assert grounded("tell Saban to pick better") == {"ungrounded_name"}
+    assert grounded("Saban never picks against bama") == set()  # sentence-initial words aren't treated as names
+    assert rules("went 0-10 since college") == set()  # no context, no grounding rules
+
+
+def test_links_and_media_placeholders():
+    assert "url" in rules("look https://t.co/abc")
+    assert "url" in rules("see espn.com/story")
+    assert "placeholder" in rules("[video] lol")
+    assert "placeholder" in rules("[Image: Clark]")
+
+
+def test_engagement_bait():
+    for bait in ("like if you agree", "RT if she's the goat", "who agrees?", "tag someone who needs this", "drop a 🔥"):
+        assert "engagement_bait" in rules(bait), bait
+    assert rules("i like it if they win") == set()
+
+
+def test_findings_carry_character_offsets():
+    text = "she has 27 tonight — wow"
+    by_rule = {f.rule: (f.start, f.end) for f in gate.check(text, "reply", context="").findings}
+    assert by_rule["em_dash"] == (19, 20)
+    assert text[slice(*by_rule["ungrounded_number"])] == "27"
+
+
+def test_check_signature_keeps_text_and_kind_positional():
+    assert gate.check("ok then", "reply").passed
+    with pytest.raises(TypeError):
+        gate.check("ok then", "reply", "context passed positionally")

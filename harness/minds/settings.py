@@ -44,6 +44,9 @@ class ActionConfig:
     # --- post lane
     caption_max_chars: int = 100  # research finding 8: House of Highlights-style captions
     caption_samples: int = 4
+    # X multiplies repeat posts by one author in a feed batch by 0.75*0.5^k + 0.25 (context
+    # research report), so posts are spaced out. The gap itself has no measurement.
+    post_spacing_minutes: int = 120
     # --- budgets, by action type. No measurement: they keep Grok's queue short and stay clear of
     # X's burst filters, which flag fast reply bursts and several replies under one root.
     run_caps: dict = field(default_factory=lambda: {"reply": 3, "quote": 2, "post": 1, "mention": 1, "follow": 3})

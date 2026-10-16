@@ -1,7 +1,9 @@
 """Real replies under a target post, which the continuation writer copies the register of.
 
-Observe's reply targets may carry them already (`reply_target["replies"]`). When they don't, this
-reads the conversation through api.fxtwitter.com: read-only, one request per 1.1 s, no login.
+Observe's reply targets carry them in `thread` ({author, text, likes, followers}, up to 15, most
+liked first; `replies` is the reply count). Only when `thread` is empty and the count says
+replies exist does this read the conversation through api.fxtwitter.com: read-only, one request
+per 1.1 s, no login.
 """
 
 import json
@@ -41,7 +43,7 @@ def usable(text: str) -> bool:
 
 
 def fetch_replies(url: str, timeout: float = 20) -> list[dict]:
-    """Direct replies to `url`, most-liked first: [{"text", "likes", "followers"}]."""
+    """Direct replies to `url`, most-liked first, in Observe's thread shape: [{"author", "text", "likes", "followers"}]."""
     sid = status_id(url)
     with _lock:
         wait = 1.1 - (time.monotonic() - _last[0])
@@ -60,14 +62,20 @@ def fetch_replies(url: str, timeout: float = 20) -> list[dict]:
             continue
         text = clean(r.get("text", ""))
         if usable(text):
-            out.append({"text": text, "likes": r.get("likes", 0), "followers": (r.get("author") or {}).get("followers")})
+            author = r.get("author") or {}
+            out.append({"text": text, "likes": r.get("likes", 0), "followers": author.get("followers"),
+                        "author": author.get("screen_name")})
     return sorted(out, key=lambda r: -r["likes"])
 
 
 def replies_for(target: dict, fetch=fetch_replies) -> list[dict]:
-    """Replies Observe attached to the target, else a live read. Raises ThreadUnavailable."""
-    given = target.get("replies")
+    """Replies Observe attached in `thread`, else a live read when the post has replies.
+    Raises ThreadUnavailable when the read fails."""
+    given = target.get("thread") or []
     if given:
-        return [{"text": clean(r["text"]), "likes": r.get("likes", 0), "followers": r.get("followers")}
-                for r in given if usable(clean(r.get("text", "")))]
+        return [{"text": clean(r["text"]), "likes": r.get("likes", 0), "followers": r.get("followers"),
+                 "author": r.get("author")} for r in given if usable(clean(r.get("text", "")))]
+    count = target.get("replies")
+    if isinstance(count, int) and count == 0:
+        return []
     return fetch(target["url"])

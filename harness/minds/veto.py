@@ -49,11 +49,11 @@ class VetoResult:
     fwd: Verdict | None
     rev: Verdict | None
     why: str = ""
+    orders_agree: bool = False
 
     def evidence(self) -> dict:
-        return {"passed": self.passed, "why": self.why, "fwd": asdict(self.fwd) if self.fwd else None,
-                "rev": asdict(self.rev) if self.rev else None,
-                "orders_agree": bool(self.fwd and self.rev and self.fwd.clears.__self__ is not None)}
+        return {"passed": self.passed, "why": self.why, "orders_agree": self.orders_agree,
+                "fwd": asdict(self.fwd) if self.fwd else None, "rev": asdict(self.rev) if self.rev else None}
 
 
 class VetoError(RuntimeError):
@@ -94,7 +94,7 @@ def veto(llm: LLM, cfg: ActionConfig, texts: list[str], *, lane: str, context: s
     for t, f, r in zip(texts, fwd, rev):
         a, b = f.clears(cfg), r.clears(cfg)
         if a and b:
-            results.append(VetoResult(t, True, f, r))
+            results.append(VetoResult(t, True, f, r, orders_agree=True))
             continue
         if a != b:
             why = "split verdict between orders"
@@ -103,7 +103,7 @@ def veto(llm: LLM, cfg: ActionConfig, texts: list[str], *, lane: str, context: s
                                      ("unsupported claim", f.unsupported or r.unsupported),
                                      ("mute/report risk", f.risk or r.risk)) if on]
             why = ", ".join(flags)
-        results.append(VetoResult(t, False, f, r, why))
+        results.append(VetoResult(t, False, f, r, why, orders_agree=a == b))
     return results
 
 

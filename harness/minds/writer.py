@@ -13,6 +13,7 @@ is the fallback (AUC 0.79). Captions for the post lane use the same styled promp
 
 import json
 import random
+from concurrent.futures import ThreadPoolExecutor
 
 from harness.llm import LLM, AnthropicLLM, MockLLM
 from harness.minds.settings import ActionConfig
@@ -68,7 +69,8 @@ def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg
     """cfg.reply_samples continuations of the page, one per prefill handle."""
     page = build_page(author, post_text, replies[: cfg.page_replies])
     handles = random.Random(seed).sample(PREFILL_HANDLES, min(cfg.reply_samples, len(PREFILL_HANDLES)))
-    return [continue_page(llm, page, h, cfg, i) for i, h in enumerate(handles)]
+    with ThreadPoolExecutor(len(handles) or 1) as pool:
+        return list(pool.map(lambda ih: continue_page(llm, page, ih[1], cfg, ih[0]), enumerate(handles)))
 
 
 def _styled_llm(llm: LLM, model: str) -> LLM:

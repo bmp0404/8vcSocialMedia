@@ -47,12 +47,17 @@ AI_VOCAB = [
     r"\belevat(?:e|es|ing) (?:the|her|his|their)\b", r"\bgame[- ]changer\b", r"\bin the (?:best|worst) way\b",
 ]
 
+# X's ranker removes engagement bait from non-followers' feeds (SpamHighRecall, per the context
+# research report on xai-org/x-algorithm).
+ENGAGEMENT_BAIT = re.compile(
+    r"\b(?:like|rt|retweet|repost|share)(?: this)? if\b|\bwho (?:agrees|else)\b|\btag (?:someone|a friend|your)\b"
+    r"|\b(?:drop|comment) (?:a|your|below)\b|\bfollow (?:me )?for\b|\bsmash (?:that|the) like\b", re.I)
 PLACEHOLDER = re.compile(
     r"\[(?:verify|insert|todo|tbd|link|name|stat|video|image|photo|gif|media|clip)\b[^\]]*\]|\{[a-z_]+\}|\bTODO\b|\bTBD\b", re.I)
 URL = re.compile(r"https?://|\bwww\.|\bt\.co/|\bpic\.(?:twitter|x)\.com|\b[\w-]+\.(?:com|net|org|ly|co|io|gg|tv)/", re.I)
 HANDLE = re.compile(r"(?<![\w@])@(\w{1,15})")
 HASHTAG = re.compile(r"(?<![\w&])#\w+")
-NUMBER = re.compile(r"\d+(?:[.,:/\-]\d+)*")
+NUMBER = re.compile(r"(?<![\w@#])\d+(?:[.,:/\-]\d+)*")  # not digits inside a handle or word (CC22, @kidd33)
 WORD = re.compile(r"[A-Za-z][A-Za-z'’]*")
 SENTENCE_END = re.compile(r"[.!?]+(?=\s|$)")
 # Capitalized words that aren't names. Sentence-initial words are skipped separately.
@@ -179,6 +184,10 @@ def _rule_url(text: str, c: _Ctx) -> list[str]:
     return [(f"link {m.group(0)!r}", m.start(), m.end()) for m in URL.finditer(text)]
 
 
+def _rule_engagement_bait(text: str, c: _Ctx) -> list:
+    return [(f"engagement bait {m.group(0)!r}", m.start(), m.end()) for m in ENGAGEMENT_BAIT.finditer(text)]
+
+
 def _rule_wrapped_in_quotes(text: str, c: _Ctx) -> list[str]:
     t = text.strip()
     quotes = {'"': '"', "“": "”", "'": "'"}
@@ -220,6 +229,7 @@ RULES = {
     "reply_sentences": _rule_reply_sentences,
     "placeholder": _rule_placeholder,
     "url": _rule_url,
+    "engagement_bait": _rule_engagement_bait,
     "wrapped_in_quotes": _rule_wrapped_in_quotes,
     "unknown_handle": _rule_unknown_handle,
     "ungrounded_number": _rule_ungrounded_number,

@@ -7,7 +7,7 @@ target it wasn't offered, or carries a field the tool doesn't have, is rejected.
 
 The lanes need different inputs. The reply lane answers one live X post (a reply target from
 Observe), so its tools all point at that post or its author. The post lane starts from a story,
-so its tools write something new, follow an account the story cites, or ask a person for the take.
+so its tools caption or quote a real source, follow an account the story cites, or ask a person for the take.
 """
 
 from dataclasses import dataclass, field
@@ -25,6 +25,8 @@ ABSTAIN_REASONS = {
     "budget_exhausted": "the run or daily action budget is spent",
     "unverifiable": "the draft needs a fact we can't check",
     "off_mission": "the story doesn't fit the mission",
+    "mute_risk": "answering could get the account muted or reported",
+    "no_source": "nothing real to quote or caption",
 }
 
 # field name -> (type, required)
@@ -38,6 +40,7 @@ TOOLS = {
     },
     POST_LANE: {
         "post": {**_TEXT},
+        "quote": {"target_url": (str, True), **_TEXT},
         "mention": {"target_handle": (str, True), **_TEXT},
         "follow": {"target_handle": (str, True), "rationale": (str, False)},
         "ask_human": {"question": (str, True), "format": (str, False), "rationale": (str, False)},
@@ -137,3 +140,26 @@ def parse_call(obj: object, lane: str, offer: Offer | None = None) -> ToolCall:
         if tool == "mention" and f"@{handle}" not in args["text"].lower():
             raise ActionSchemaError(f"mention.text must contain @{handle}")
     return ToolCall(tool=tool, lane=lane, args=args)
+
+
+def parse_plan(obj: object, offer: Offer) -> dict[str, dict]:
+    """Validate the reply lane's planning call: {"plans": [{"target_url", "tool": "reply"|"abstain",
+    "intent"?, "reason"?, "detail"?}]}. Returns {target_url: plan}. The plan picks targets; it writes no text."""
+    if not isinstance(obj, dict) or not isinstance(obj.get("plans"), list):
+        raise ActionSchemaError(f"plan must be an object with a 'plans' list, got {type(obj).__name__}")
+    out = {}
+    for i, p in enumerate(obj["plans"]):
+        if not isinstance(p, dict):
+            raise ActionSchemaError(f"plans[{i}] must be an object, got {type(p).__name__}")
+        extra = set(p) - {"target_url", "tool", "intent", "reason", "detail"}
+        if extra:
+            raise ActionSchemaError(f"plans[{i}]: unexpected field(s) {sorted(extra)}")
+        url, tool = p.get("target_url"), p.get("tool")
+        if url not in offer.target_urls:
+            raise ActionSchemaError(f"plans[{i}].target_url {url!r} was not offered; offered: {sorted(offer.target_urls) or 'none'}")
+        if tool not in ("reply", "abstain"):
+            raise ActionSchemaError(f"plans[{i}].tool must be 'reply' or 'abstain', got {tool!r}")
+        if tool == "abstain" and p.get("reason") not in ABSTAIN_REASONS:
+            raise ActionSchemaError(f"plans[{i}].reason {p.get('reason')!r} is not one of {sorted(ABSTAIN_REASONS)}")
+        out[url] = {k: v for k, v in p.items() if isinstance(v, str)}
+    return out

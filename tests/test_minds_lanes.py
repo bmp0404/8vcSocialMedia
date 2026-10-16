@@ -1,21 +1,29 @@
 import json
-from collections import Counter
+import re
+from datetime import datetime, timedelta
 
 import pytest
 
 from harness import config
 from harness.llm import LLM, MockLLM
-from harness.minds import decide, judge, lanes
+from harness.minds import decide, lanes, writer
+from harness.minds.settings import ActionConfig
 from harness.models import Action, Narrative
 
 ESPN = "https://www.espn.com/wnba/story/_/id/1/boston-surgery"
 X_URL = "https://x.com/AtlantaDream/status/2110808408366493714"
 X_URL2 = "https://x.com/WNBA/status/2110808211347456506"
+REPLIES = [{"text": t, "likes": 10} for t in (
+    "im buying several tickets and figuring out who comes later", "there you go hawks you did the thing",
+    "all the fans complaining better show up now", "good now the internet can stop whining",
+    "tell the benz to let us use it for two games", "state farm about to be loud for real",
+)]
 
 
 @pytest.fixture(autouse=True)
 def tmp_out(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "OUT_DIR", tmp_path)
+    lanes.PENDING.clear()
     return tmp_path
 
 
@@ -27,93 +35,119 @@ def narrative(targets=None, signal_urls=None, nid="finals") -> Narrative:
     return n
 
 
-def target(url=X_URL, author="AtlantaDream", age=20.0, eph=500.0, text="ATL, show up for Game 3"):
-    return {"url": url, "author": author, "text": text, "age_minutes": age, "engagement_per_hour": eph}
+def target(url=X_URL, author="AtlantaDream", age=10.0, eph=500.0, replies=REPLIES, text="ATL, show up for Game 3 at State Farm Arena"):
+    # Observe's shape: `thread` holds the replies, `replies` is the count.
+    return {"url": url, "author": author, "text": text, "age_minutes": age, "engagement_per_hour": eph,
+            "thread": replies, "replies": len(replies)}
 
 
-class ScriptedLLM(LLM):
-    """complete_json returns the next scripted object, whatever the prompt."""
+class Routed(LLM):
+    """Answers by which prompt it gets: plan, styled replies, captions or the veto judge."""
 
-    def __init__(self, replies):
-        self.replies = list(replies)
+    def __init__(self, plan=None, styled=None, captions=None, veto=None):
+        self.plan, self.styled, self.captions, self.veto = plan, styled, captions, veto
+        self.calls = []
 
     def complete_json(self, system, prompt, mock=None):
-        return self.replies.pop(0) if len(self.replies) > 1 else self.replies[0]
+        if "decide whether the account should reply" in system:
+            self.calls.append("plan")
+            return self.plan(prompt) if self.plan else mock()
+        if "screen candidate" in system:
+            self.calls.append("veto")
+            cands = re.findall(r"^\d+\. (.*)$", prompt.split("CANDIDATES:")[1], re.M)
+            return {"verdicts": [self.veto(c) for c in cands]} if self.veto else mock()
+        if "caption posts" in system:
+            self.calls.append("captions")
+            return {"captions": self.captions} if self.captions is not None else mock()
+        self.calls.append("styled")
+        return {"replies": self.styled} if self.styled is not None else mock()
 
 
-class FixedRanker:
-    name = "fixed"
-
-    def __init__(self, verdict="Strong", confidence="High", stable=True):
-        self.verdict, self.confidence, self.stable = verdict, confidence, stable
-
-    def rank(self, texts, **kw):
-        order = texts if not self.stable else sorted(texts)
-        return [judge.Ranked(t, 90 - i, self.verdict, self.confidence, "fixed") for i, t in enumerate(order)]
+def ok(_c):
+    return {"p_ai": 10, "unsupported": False, "risk": False, "reason": "fine"}
 
 
-def run(llm, narratives, ranker=None, chorus=(), budget=None, monkeypatch=None):
-    if ranker is not None:
-        monkeypatch.setattr(judge, "get_ranker", lambda _llm: ranker)
-    return lanes.run(llm, "mission", "lessons", narratives, list(chorus), budget=budget or lanes.Budget())
+def run(llm, narratives, chorus=(), takes=(), cfg=None, budget=None):
+    cfg = cfg or ActionConfig()
+    return lanes.run(llm, "mission", "lessons", narratives, list(chorus), cfg=cfg,
+                     budget=budget or lanes.Budget(cfg), takes=list(takes), fetch=lambda url: [])
 
 
-def last_log(tmp_out) -> list[dict]:
-    path = sorted(tmp_out.glob("decisions-*.json"))[-1]
-    return json.loads(path.read_text(encoding="utf-8"))["decisions"]
+def by_lane(decisions, lane):
+    return [d for d in decisions if d.lane == lane]
 
 
 # ---- the bug PR #6 left on main: replies aimed at news links
 
 
-def test_mock_decide_never_replies_to_signal_urls(tmp_out):
+def test_mock_decide_never_replies_to_signal_urls():
     actions = decide(MockLLM(), "mission", "lessons", [narrative(signal_urls=[ESPN, X_URL])], per_mind=1)
-    assert not [a for a in actions if a.type in ("reply", "quote")]
-    assert {"lane": "reply", "tool": "abstain", "reason": "no_target"}.items() <= last_log(tmp_out)[0].items()
+    assert not [a for a in actions if a.type == "reply"]
+    assert [a.target_url for a in actions if a.type == "quote"] == [X_URL]  # quoting a cited X post is fine
+    assert (lanes.PENDING[0].lane, lanes.PENDING[0].tool, lanes.PENDING[0].reason) == ("reply", "abstain", "no_target")
 
 
-def test_every_reply_targets_an_offered_url(tmp_out):
-    actions = run(MockLLM(), [narrative([target()], signal_urls=[ESPN])])
-    replies = [a for a in actions if a.type in ("reply", "quote")]
+def test_every_reply_targets_an_offered_url():
+    actions, _ = run(MockLLM(), [narrative([target()], signal_urls=[ESPN])])
+    replies = [a for a in actions if a.type == "reply"]
     assert replies and all(a.target_url == X_URL for a in replies)
 
 
-def test_reply_to_an_unoffered_url_is_rejected(tmp_out, monkeypatch):
-    llm = ScriptedLLM([{"tool": "reply", "target_url": ESPN, "text": "dream in 4"}])
-    actions = run(llm, [narrative([target()])], FixedRanker(), monkeypatch=monkeypatch)
-    assert actions == []
-    d = last_log(tmp_out)[0]
-    assert (d["tool"], d["reason"]) == ("abstain", "gate_rejected")
-    assert "was not offered" in d["candidates"][0]["schema_error"]
+def test_plan_naming_an_unoffered_url_skips_every_target():
+    llm = Routed(plan=lambda p: {"plans": [{"target_url": ESPN, "tool": "reply"}]})
+    actions, decisions = run(llm, [narrative([target()])])
+    assert not [a for a in actions if a.type == "reply"]
+    d = by_lane(decisions, "reply")[0]
+    assert d.reason == "no_angle" and "was not offered" in d.detail
 
 
 # ---- reply lane
 
 
-def test_reply_lane_ships_one_reply_with_lane_fields(tmp_out):
-    actions = run(MockLLM(), [narrative([target()])])
-    (a,) = actions
-    assert (a.type, a.lane, a.mind, a.target_url, a.target_handle) == ("reply", "reply", "reply_lane", X_URL, "AtlantaDream")
-    assert a.target_text == "ATL, show up for Game 3"
-    assert a.draft_meta["ranker"] == "mock" and a.draft_meta["samples"] == lanes.REPLY_SAMPLES
-    assert last_log(tmp_out)[0]["action_id"] == a.id
+def test_continuation_reply_carries_lane_fields_and_evidence():
+    actions, decisions = run(MockLLM(), [narrative([target()])])
+    (a,) = [a for a in actions if a.type == "reply"]
+    assert (a.lane, a.mind, a.target_url, a.target_handle) == ("reply", "reply_lane", X_URL, "AtlantaDream")
+    assert a.text.startswith("mock continuation")
+    m = a.draft_meta
+    assert m["method"] == "continuation" and m["writer_model"] == "claude-opus-4-5-20251101"
+    assert m["page_replies"] == len(REPLIES) and m["target"]["url"] == X_URL and m["target"]["thread_attached"] == len(REPLIES)
+    assert m["judge"]["orders_agree"] and m["judge"]["passed"] and m["judge"]["pick"] == "random among drafts that passed"
+    assert by_lane(decisions, "reply")[0].action_id == a.id
 
 
-def test_targets_from_every_narrative_are_considered(tmp_out):
-    # The chorus sees only the top narratives; the reply lane must still find targets elsewhere.
-    narratives = [narrative([], nid="top"), narrative([target()], nid="reply-lane")]
-    (a,) = run(MockLLM(), narratives)
-    assert a.narrative_id == "reply-lane"
+def test_thin_thread_falls_back_to_the_styled_writer():
+    actions, _ = run(MockLLM(), [narrative([target(replies=REPLIES[:2])])])
+    (a,) = [a for a in actions if a.type == "reply"]
+    assert a.draft_meta["method"] == "styled" and a.text.startswith("mock styled reply")
 
 
-def test_stale_target_abstains(tmp_out):
-    assert run(MockLLM(), [narrative([target(age=lanes.STALE_MINUTES + 1)])]) == []
-    assert last_log(tmp_out)[0]["reason"] == "stale_target"
+def test_provider_without_prefill_uses_styled():
+    llm = Routed(styled=["state farm about to be loud"], veto=ok)
+    actions, decisions = run(llm, [narrative([target()])])
+    assert [a.text for a in actions if a.type == "reply"] == ["state farm about to be loud"]
+    assert "can't prefill" in by_lane(decisions, "reply")[0].detail
 
 
-def test_one_reply_per_conversation_root(tmp_out):
-    n = narrative([target(), target(eph=900.0)])
-    assert len(lanes.reply_targets([n])) == 1
+def test_targets_from_every_narrative_are_considered():
+    actions, _ = run(MockLLM(), [narrative([], nid="top"), narrative([target()], nid="reply-lane")])
+    assert [a.narrative_id for a in actions if a.type == "reply"] == ["reply-lane"]
+
+
+@pytest.mark.parametrize("age", [31.0, None])
+def test_stale_or_undated_target_abstains(age):
+    actions, decisions = run(MockLLM(), [narrative([target(age=age)])])
+    assert not [a for a in actions if a.type == "reply"]
+    assert by_lane(decisions, "reply")[0].reason == "stale_target"
+
+
+def test_stale_cutoff_is_a_config_knob():
+    actions, _ = run(MockLLM(), [narrative([target(age=50.0)])], cfg=ActionConfig(reply_max_age_minutes=60))
+    assert [a.type for a in actions if a.lane == "reply"] == ["reply"]
+
+
+def test_one_reply_per_conversation_root():
+    assert len(lanes.reply_targets([narrative([target(), target(eph=900.0)])])) == 1
 
 
 def test_fastest_target_first():
@@ -121,74 +155,134 @@ def test_fastest_target_first():
     assert [t["url"] for t in lanes.reply_targets([n])] == [X_URL2, X_URL]
 
 
-def test_reply_budget_caps_the_run(tmp_out):
+def test_plan_can_abstain_with_a_reason():
+    llm = Routed(plan=lambda p: {"plans": [{"target_url": X_URL, "tool": "abstain", "reason": "mute_risk", "detail": "injury"}]})
+    actions, decisions = run(llm, [narrative([target()])])
+    assert by_lane(decisions, "reply")[0].reason == "mute_risk"
+
+
+def test_reply_budget_caps_the_run():
+    cfg = ActionConfig(run_caps={**ActionConfig().run_caps, "reply": 1})
     n = narrative([target(url=X_URL, eph=900.0), target(url=X_URL2, author="WNBA", eph=100.0)])
-    actions = run(MockLLM(), [n], budget=lanes.Budget(run_caps={"reply": 1}))
-    assert [a.target_url for a in actions] == [X_URL]
-    assert [d["reason"] for d in last_log(tmp_out)[:2]] == ["", "budget_exhausted"]
+    actions, decisions = run(MockLLM(), [n], cfg=cfg)
+    assert [a.target_url for a in actions if a.type == "reply"] == [X_URL]
+    assert [d.reason for d in by_lane(decisions, "reply")] == ["", "budget_exhausted"]
 
 
-def test_daily_budget_counts_earlier_logs(tmp_out):
-    (tmp_out / "decisions-20261015-100000.json").write_text(json.dumps({"decisions": [
-        {"tool": "reply", "action_id": "a1"}, {"tool": "reply", "action_id": "a2"}, {"tool": "abstain", "action_id": None},
-    ]}), encoding="utf-8")
-    b = lanes.Budget.from_logs(today="20261015")
-    assert b.used_today == Counter({"reply": 2})
-    assert b.left("reply") == min(lanes.RUN_CAPS["reply"], lanes.DAILY_CAPS["reply"] - 2)
+def test_gate_drops_continuations_that_invent_numbers_names_or_links(monkeypatch):
+    drafts = ["she drops 27 in game 1", "Stephanie said White is done", "watch www.espn.com/clip", "[video]",
+              "@somebody agreed", "state farm about to be loud"]
+    monkeypatch.setattr(writer, "continuations", lambda *a, **k: drafts)
+    actions, decisions = run(MockLLM(), [narrative([target()])])
+    assert [a.text for a in actions if a.type == "reply"] == ["state farm about to be loud"]
+    rules = {f["rule"] for c in by_lane(decisions, "reply")[0].candidates for f in c.get("gate", [])}
+    assert {"ungrounded_number", "ungrounded_name", "url", "placeholder", "unknown_handle"} <= rules
 
 
-def test_slop_drafts_abstain_with_gate_reasons(tmp_out, monkeypatch):
-    llm = ScriptedLLM([{"tool": "reply", "target_url": X_URL, "text": "Ten straight wins — a testament to the work"}])
-    assert run(llm, [narrative([target()])], FixedRanker(), monkeypatch=monkeypatch) == []
-    d = last_log(tmp_out)[0]
-    assert d["reason"] == "gate_rejected"
-    assert any(r.startswith("em_dash") for r in d["candidates"][0]["gate"])
+def test_all_drafts_failing_the_gate_abstains(monkeypatch):
+    monkeypatch.setattr(writer, "continuations", lambda *a, **k: ["Ten wins — a testament"])
+    actions, decisions = run(MockLLM(), [narrative([target()])])
+    assert by_lane(decisions, "reply")[0].reason == "gate_rejected"
 
 
-def test_model_abstaining_means_no_angle(tmp_out, monkeypatch):
-    llm = ScriptedLLM([{"tool": "abstain", "reason": "no_angle", "detail": "nothing to add"}])
-    assert run(llm, [narrative([target()])], FixedRanker(), monkeypatch=monkeypatch) == []
-    assert last_log(tmp_out)[0]["reason"] == "no_angle"
+def test_veto_rejecting_everything_abstains_and_keeps_evidence():
+    llm = Routed(styled=["state farm about to be loud", "ok fine"],
+                 veto=lambda c: {"p_ai": 80, "unsupported": False, "risk": False, "reason": "explains the joke"})
+    actions, decisions = run(llm, [narrative([target(replies=[])])])
+    d = by_lane(decisions, "reply")[0]
+    assert (d.reason, d.detail) == ("judge_rejected", "veto: 2x reads as AI")
+    assert all(c["veto"]["fwd"]["p_ai"] == 80 for c in d.candidates)
 
 
-def test_judge_below_strong_abstains_and_keeps_candidates(tmp_out, monkeypatch):
-    assert run(MockLLM(), [narrative([target()])], FixedRanker(verdict="Revise"), monkeypatch=monkeypatch) == []
-    d = last_log(tmp_out)[0]
-    assert d["reason"] == "judge_rejected" and "Revise" in d["detail"]
-    assert all("verdict" in c for c in d["candidates"])
-
-
-def test_judge_that_flips_with_order_abstains(tmp_out, monkeypatch):
-    assert run(MockLLM(), [narrative([target()])], FixedRanker(stable=False), monkeypatch=monkeypatch) == []
-    assert "reversed" in last_log(tmp_out)[0]["detail"]
+def test_pick_is_random_among_survivors_but_reproducible():
+    llm = Routed(styled=["a reply one", "a reply two", "a reply three"], veto=ok)
+    picks = {run(llm, [narrative([target(replies=[])])])[0][0].text for _ in range(3)}
+    assert len(picks) == 1
 
 
 # ---- post lane
 
 
-def chorus_action(type_, text="", handle=None, url=None, mind="meme_lord"):
-    return Action(type=type_, text=text, mind=mind, narrative_id="finals", target_handle=handle, target_url=url)
+def chorus_action(type_, text="", handle=None, mind="meme_lord"):
+    return Action(type=type_, text=text, mind=mind, narrative_id="finals", target_handle=handle)
 
 
-def test_post_lane_rejects_replies_and_unoffered_handles(tmp_out):
+def test_chorus_text_never_ships_but_becomes_angles():
+    chorus = [chorus_action("post", "the finals start saturday"), chorus_action("mention", "@IndianaFever hi", "IndianaFever")]
+    actions, decisions = run(MockLLM(), [narrative([])], chorus=chorus)
+    assert not [a for a in actions if a.mind in ("meme_lord",)]
+    ask = [d for d in decisions if d.tool == "ask_human"][0]
+    assert [c["text"] for c in ask.candidates] == ["the finals start saturday", "@IndianaFever hi"]
+
+
+def test_chorus_follows_ship_only_for_offered_handles():
     n = narrative([], signal_urls=["https://x.com/IndianaFever/status/1"])
-    chorus = [chorus_action("reply", "dream in 4", url=X_URL), chorus_action("follow", handle="randomfan"),
-              chorus_action("follow", handle="@IndianaFever")]
-    actions = run(MockLLM(), [n], chorus=chorus)
-    assert [(a.type, a.target_handle) for a in actions] == [("follow", "indianafever")]
-    rejected = next(d for d in last_log(tmp_out) if d["opportunity"] == "chorus")["candidates"]
-    assert "not allowed in the post lane" in rejected[0]["schema_error"]
-    assert "'randomfan' was not offered" in rejected[1]["schema_error"]
+    chorus = [chorus_action("follow", handle="randomfan"), chorus_action("follow", handle="@IndianaFever")]
+    actions, decisions = run(MockLLM(), [n], chorus=chorus)
+    assert [(a.type, a.target_handle) for a in actions if a.type == "follow"] == [("follow", "indianafever")]
+    assert any("'randomfan' was not offered" in d.detail for d in decisions)
 
 
-def test_post_lane_ships_at_most_one_post(tmp_out):
-    chorus = [chorus_action("post", "the finals start saturday"), chorus_action("post", "game 1 on nbc", mind="stat_nerd")]
-    actions = run(MockLLM(), [narrative([])], chorus=chorus)
-    assert [a.type for a in actions] == ["post"] and actions[0].lane == "post"
+def test_human_take_ships_verbatim_even_with_style_findings():
+    take = "this team owes AB a backup center — period"
+    actions, decisions = run(MockLLM(), [narrative([])], takes=[{"text": take}])
+    (a,) = [a for a in actions if a.mind == "human"]
+    assert a.text == take and a.type == "post"
+    assert [w["rule"] for w in a.draft_meta["gate_warnings"]] == ["em_dash"]
+    assert not [d for d in decisions if d.tool == "ask_human"]
 
 
-def test_no_post_means_a_question_for_a_person(tmp_out):
-    chorus = [chorus_action("post", "A testament to resilience — truly")]
-    assert run(MockLLM(), [narrative([])], chorus=chorus) == []
-    ask = [d for d in last_log(tmp_out) if d["tool"] == "ask_human"]
-    assert len(ask) == 1 and ask[0]["question"].startswith("Finals tip off Saturday.")
+def test_human_take_quote_needs_an_offered_url():
+    actions, decisions = run(MockLLM(), [narrative([])], takes=[{"text": "lol", "quote_url": X_URL}])
+    assert not [a for a in actions if a.mind == "human"]
+    assert any(d.reason == "no_source" and "was not offered" in d.detail for d in decisions)
+
+
+def test_human_take_already_shipped_is_skipped(tmp_out):
+    (tmp_out / "decisions-run1.json").write_text(json.dumps({"run_id": 1, "at": "2026-10-14T10:00:00", "decisions": [
+        {"tool": "post", "opportunity": "old take", "detail": "human take, verbatim", "action_id": "a1"}]}), encoding="utf-8")
+    actions, _ = run(MockLLM(), [narrative([])], takes=[{"text": "old take"}])
+    assert not [a for a in actions if a.mind == "human"]
+
+
+def test_caption_quotes_a_reply_target_and_credits_news_posts():
+    actions, _ = run(MockLLM(), [narrative([target(age=500.0)])])
+    (q,) = [a for a in actions if a.mind == "caption"]
+    assert (q.type, q.target_url) == ("quote", X_URL)
+    actions, _ = run(MockLLM(), [narrative(signal_urls=[ESPN])])
+    (p,) = [a for a in actions if a.mind == "caption"]
+    assert p.type == "post" and p.text.endswith(f"(via espn.com) {ESPN}")
+
+
+def test_caption_over_cap_or_invented_fact_is_rejected():
+    llm = Routed(captions=["x" * 101, "she scored 40 tonight"], veto=ok)
+    actions, decisions = run(llm, [narrative(signal_urls=[ESPN])])
+    assert not [a for a in actions if a.mind == "caption"]
+    rules = {f["rule"] for d in decisions for c in d.candidates for f in c.get("gate", [])}
+    assert {"length", "ungrounded_number"} <= rules
+
+
+# ---- budget and log
+
+
+def test_write_decision_log_uses_the_run_id_and_clears(tmp_out):
+    decide(MockLLM(), "mission", "lessons", [narrative([target()])], per_mind=1)
+    path = lanes.write_decision_log(7)
+    log = json.loads(path.read_text(encoding="utf-8"))
+    assert path.name == "decisions-run7.json" and log["run_id"] == 7 and log["decisions"] and log["provider"] == "mock"
+    assert lanes.PENDING == [] and lanes.write_decision_log(8) is None
+
+
+def test_daily_budget_and_post_spacing_come_from_todays_logs(tmp_out):
+    now = datetime(2026, 10, 15, 21, 0)
+    (tmp_out / "decisions-run1.json").write_text(json.dumps({"run_id": 1, "at": (now - timedelta(minutes=30)).isoformat(),
+        "decisions": [{"tool": "reply", "action_id": "a"}, {"tool": "post", "action_id": "b"}, {"tool": "abstain"}]}), encoding="utf-8")
+    (tmp_out / "decisions-run0.json").write_text(json.dumps({"run_id": 0, "at": "2026-10-14T21:00:00",
+        "decisions": [{"tool": "reply", "action_id": "old"}]}), encoding="utf-8")
+    (tmp_out / "decisions-run2.json").write_text(json.dumps({"run_id": 2, "at": now.isoformat(), "provider": "mock",
+        "decisions": [{"tool": "reply", "action_id": "mock"}]}), encoding="utf-8")
+    b = lanes.Budget.from_logs(ActionConfig(), now=now)
+    assert b.used_today == {"reply": 1, "post": 1}
+    assert b.left("post") == 0 and b.left("quote") == 0  # spaced: a post went out 30 minutes ago
+    assert b.left("reply") == min(ActionConfig().run_caps["reply"], ActionConfig().daily_caps["reply"] - 1)
+    assert lanes.Budget.from_logs(ActionConfig(), now=now + timedelta(hours=2)).left("post") == 1

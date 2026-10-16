@@ -105,3 +105,24 @@ def test_json_schema_lists_every_tool_and_forbids_extras():
     assert all(v["additionalProperties"] is False for v in schema["oneOf"])
     abstain = next(v for v in schema["oneOf"] if v["properties"]["tool"]["const"] == "abstain")
     assert abstain["properties"]["reason"]["enum"] == sorted(ABSTAIN_REASONS)
+
+
+def test_quote_is_allowed_in_the_post_lane_with_an_offered_url():
+    assert parse_call({"tool": "quote", "target_url": URL, "text": "lol"}, POST_LANE, OFFER).ships
+
+
+def test_plan_validates_targets_tools_and_reasons():
+    from harness.minds.schema import parse_plan
+
+    plans = parse_plan({"plans": [{"target_url": URL, "tool": "reply", "intent": "jab"}]}, OFFER)
+    assert plans == {URL: {"target_url": URL, "tool": "reply", "intent": "jab"}}
+    with pytest.raises(ActionSchemaError, match=r"plans\[0\].target_url 'x' was not offered"):
+        parse_plan({"plans": [{"target_url": "x", "tool": "reply"}]}, OFFER)
+    with pytest.raises(ActionSchemaError, match=r"plans\[0\].tool must be 'reply' or 'abstain', got 'post'"):
+        parse_plan({"plans": [{"target_url": URL, "tool": "post"}]}, OFFER)
+    with pytest.raises(ActionSchemaError, match=r"plans\[0\].reason 'meh' is not one of"):
+        parse_plan({"plans": [{"target_url": URL, "tool": "abstain", "reason": "meh"}]}, OFFER)
+    with pytest.raises(ActionSchemaError, match=r"plans\[0\]: unexpected field\(s\) \['text'\]"):
+        parse_plan({"plans": [{"target_url": URL, "tool": "reply", "text": "hi"}]}, OFFER)
+    with pytest.raises(ActionSchemaError, match="'plans' list"):
+        parse_plan({"plan": []}, OFFER)
