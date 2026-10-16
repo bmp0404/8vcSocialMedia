@@ -29,6 +29,7 @@ TEMPLATE_PROFILE = "devtools"
 # the action prompts insert, the reply framing and the post ranker, none of which a timeline or site decides.
 COPIED_FILES = ("panel.json", "reply_framing.json", "prompts.toml", "qualify.toml")
 MAX_POSTS = 800  # per tab; fxtwitter pages hold about 20, so up to 40 requests each
+TAB_FLOOR = 20  # one page: a tab that fails at this limit can't be read at all
 RECENT_POSTS = 40  # recent originals the mission call sees besides the exemplars
 MAX_ITEMS = {"what_it_is": 8, "who_for": 4, "subjects": 8, "tone": 6, "goals": 4}
 SECTION_OF = {"what_it_is": "What it is", "who_for": "Who it's for", "subjects": "Core subjects",
@@ -96,18 +97,38 @@ def check_free(profile: str, profiles_dir: Path) -> Path:
 # ---------------------------------------------------------------- reading
 
 
+def _read_tab(reader: XReader, handle: str, max_posts: int, with_replies: bool) -> tuple[list[XPost], dict]:
+    """One tab as far back as its pages can be read.
+
+    `profile_statuses` raises when any page fails and keeps none of the pages before it; fxtwitter 404s on deep
+    cursors (@supabase's Posts tab, 2026-10-16). So a failed read is retried with half the limit until one succeeds.
+    The live reader caches every page it got, so a retry fetches only the page that failed, and only while it is
+    still inside the limit. The log keeps each failure, so the report says how far the read got and why it stopped."""
+    limit, errors = max_posts, []
+    while True:
+        try:
+            posts = reader.profile_statuses(handle, limit=limit, with_replies=with_replies)
+            return posts, {"read": len(posts), "limit": limit, "errors": errors}
+        except FetchError as e:
+            errors.append(f"limit {limit}: {e}")
+            # A failed URL without a cursor is the first page, which no smaller limit avoids.
+            if limit <= TAB_FLOOR or "cursor=" not in str(e):
+                raise
+            limit //= 2
+
+
 def read_timeline(reader: XReader, handle: str, max_posts: int = MAX_POSTS) -> tuple[list[XPost], dict]:
     """Both tabs of the account, as far back as fxtwitter's pages go, up to `max_posts` each.
 
     The Posts tab has its originals, threads, quotes and reposts; the Posts and replies tab adds its replies to
-    other accounts. A failed Posts tab raises, since there is nothing to draft from. A failed replies tab is kept
-    in the log and the report says the watch list has no replies in it."""
+    other accounts. A Posts tab that can't be read at all raises, since there is nothing to draft from. A replies
+    tab that can't be read is kept in the log and the report says the watch list has no replies in it."""
     handle = handle.lstrip("@")
-    posts = reader.profile_statuses(handle, limit=max_posts)
-    log: dict = {"posts_tab": len(posts)}
+    posts, posts_log = _read_tab(reader, handle, max_posts, with_replies=False)
+    log: dict = {"posts_tab": len(posts), "posts_tab_log": posts_log}
     try:
-        replies = reader.profile_statuses(handle, limit=max_posts, with_replies=True)
-        log["replies_tab"] = len(replies)
+        replies, replies_log = _read_tab(reader, handle, max_posts, with_replies=True)
+        log |= {"replies_tab": len(replies), "replies_tab_log": replies_log}
     except FetchError as e:
         replies = []
         log["replies_tab_error"] = str(e)
@@ -347,6 +368,11 @@ def render_report(d: Draft) -> str:
     read = (f"{d.read_log.get('posts_tab', 0)} statuses from the Posts tab and "
             + (f"{d.read_log['replies_tab']} from the Posts and replies tab"
                if "replies_tab" in d.read_log else f"none from the Posts and replies tab ({d.read_log.get('replies_tab_error')})"))
+    for tab, label in (("posts_tab_log", "Posts"), ("replies_tab_log", "Posts and replies")):
+        tab_log = d.read_log.get(tab) or {}
+        if tab_log.get("errors"):
+            read += (f". The {label} tab failed {len(tab_log['errors'])} time(s) at deeper pages and was read up to "
+                     f"{tab_log['limit']} statuses; last failure: {tab_log['errors'][-1]}")
     out = [
         f"# Onboarding report: @{d.handle}, profile `{d.profile}`",
         "",

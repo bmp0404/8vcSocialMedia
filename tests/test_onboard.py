@@ -416,6 +416,32 @@ def test_write_refuses_a_profile_created_after_drafting(tmp_path):
     assert sorted(p.name for p in tmp_path.iterdir()) == ["late"]
 
 
+def test_a_tab_that_fails_deep_is_read_as_far_as_it_goes():
+    class Shallow(FakeReader):  # every read deeper than 15 statuses hits a page that 404s
+        def profile_statuses(self, handle, limit=20, with_replies=False):
+            self.calls.append((handle, limit, with_replies))
+            if limit > 15:
+                raise FetchError("HTTP 404 from api.fxtwitter.com for https://api.fxtwitter.com/2/profile/acme/statuses?cursor=x")
+            return list(self.posts_tab)[:limit]
+    posts = [post(f"post number {i}", days_ago=i + 1, n=i) for i in range(30)]
+    reader = Shallow(posts)
+    got, log = profile.read_timeline(reader, "acme", max_posts=800)
+    assert [limit for _, limit, replies in reader.calls if not replies] == [800, 400, 200, 100, 50, 25, 12]
+    assert log["posts_tab"] == 12 and log["posts_tab_log"]["limit"] == 12 and len(log["posts_tab_log"]["errors"]) == 6
+    assert len(got) == 24  # 12 from each tab
+
+
+def test_a_tab_whose_first_page_fails_raises_without_retrying():
+    class Down(FakeReader):
+        def profile_statuses(self, handle, limit=20, with_replies=False):
+            self.calls.append(limit)
+            raise FetchError("HTTP 404 from api.fxtwitter.com for https://api.fxtwitter.com/2/profile/acme/statuses")
+    reader = Down([])
+    with pytest.raises(FetchError):
+        profile.read_timeline(reader, "acme")
+    assert reader.calls == [800]
+
+
 def test_a_failed_replies_tab_is_reported_not_hidden(tmp_path):
     posts, _ = timeline()
     d = profile.draft("acme", "no-replies", reader=FakeReader(posts, fail_replies=True), llm=MockLLM(),

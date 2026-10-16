@@ -24,7 +24,9 @@ def _draft(args) -> None:
     d.models = calls
     target = profile.write(d)
     print(f"[onboard] wrote {target}")
-    print(f"[onboard] read {d.read_log}; {len(d.pages)} pages; watch list {len(d.watch)} accounts; "
+    tabs = {k: d.read_log.get(k, d.read_log.get("replies_tab_error", "failed")) for k in ("posts_tab", "replies_tab")}
+    print(f"[onboard] read {tabs['posts_tab']} posts-tab and {tabs['replies_tab']} replies-tab statuses; "
+          f"{len(d.pages)} pages; watch list {len(d.watch)} accounts; "
           f"{sum(len(v) for v in d.items.values())} cited mission lines, {len(d.left_out)} left out")
     if d.facts:
         with config.use_profile(args.profile):
