@@ -76,6 +76,25 @@ class ObserveKnobs:
     # Direct replies attached to each emitted target, most-liked first. Each target costs one
     # fxtwitter request, and that 1/s budget is shared with the context worker's tracker.
     thread_replies: int = 15
+    # A post with no replies despite this many likes, older than this, probably has replies
+    # restricted (fxtwitter has no field for it), so a reply would be wasted. Its score is
+    # multiplied by restricted_penalty. Uncalibrated: drawn from one @valkyries post with
+    # 263 likes, 37 reposts and 0 replies at 75 minutes on 2026-10-15.
+    restricted_min_likes: int = 50
+    restricted_min_age_min: float = 15.0
+    restricted_penalty: float = 0.1
+
+    # --- google_news ---
+    # New Google News links resolved to the publisher's URL per run. Each costs two requests to
+    # news.google.com; resolved links are cached, so later runs only pay for new articles.
+    gnews_resolve_max: int = 25
+
+    # --- observation agent ---
+    # Planning rounds (the second reads round one's results and may dig deeper), feed calls per
+    # round, and items per query or account list the agent may pass to one call.
+    agent_rounds: int = 2
+    agent_calls_per_round: int = 6
+    agent_list_items: int = 6
 
     @classmethod
     def from_dict(cls, overrides: dict) -> "ObserveKnobs":

@@ -49,7 +49,7 @@ TARGET_KINDS = {"post", "reply_target", "mention"}
 FIRST_KINDS = ("reply_target", "mention")
 X_HOSTS = {"x.com", "twitter.com", "www.x.com", "www.twitter.com", "mobile.twitter.com"}
 COUNT_KEYS = ("likes", "reposts", "replies", "quotes")
-TARGET_COUNTS = (*COUNT_KEYS, "views", "author_followers", "views_per_hour")
+TARGET_COUNTS = (*COUNT_KEYS, "views", "author_followers", "views_per_hour", "replies_possibly_restricted")
 
 
 def _when(s: Signal) -> datetime | None:

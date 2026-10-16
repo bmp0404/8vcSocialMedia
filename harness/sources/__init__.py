@@ -1,4 +1,5 @@
 from harness.models import Signal
+from harness.sources.agent import ObservationAgentSource
 from harness.sources.attention import AttentionSource
 from harness.sources.base import Source
 from harness.sources.bluesky import BlueskySource
@@ -23,14 +24,24 @@ REGISTRY: dict[str, type[Source]] = {
         BrandActivitySource,
         BlueskySource,
         AttentionSource,
+        ObservationAgentSource,
     )
 }
+
+
+# Sources whose output ages by the minute run last, so the ages they report are closest to the
+# moment orient reads them. attention can spend minutes in GDELT backoff.
+RUN_LAST = ("x_targets",)
+
+
+def run_order(names: list[str]) -> list[str]:
+    return [n for n in names if n not in RUN_LAST] + [n for n in names if n in RUN_LAST]
 
 
 def observe(names: list[str], mission: str) -> list[Signal]:
     """Run each enabled source; a failing source is skipped, not fatal."""
     signals: list[Signal] = []
-    for name in names:
+    for name in run_order(names):
         cls = REGISTRY.get(name)
         if not cls:
             print(f"[observe] unknown source '{name}', skipping")
