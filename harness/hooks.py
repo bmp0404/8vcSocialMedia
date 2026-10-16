@@ -17,7 +17,7 @@ from harness.qualify import critic
 from harness.tournament import judge
 
 HOOK_SYSTEM = """You punch up the opening line ("hook") of draft X posts for a company's account. For each
-draft, write 3 alternative hooks in clearly different styles (e.g. a timestamped scene, a character
+draft, write 3 alternative hooks in clearly different styles (e.g. a timestamped scene, an agent
 introducing themselves, a vivid metaphor, a hyper-specific detail). Each must flow into the unchanged rest
 of the post in the same voice and point of view as the rest, follow the creative brief, and add no product
 claims beyond the mission's fact sheet. No hashtags, no emoji openers."""

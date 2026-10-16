@@ -1,30 +1,22 @@
 # Coordigent X Playbook v1
 
-**Evidence caveat:** Our own "winners" are reviewer scores (1.0 and 0.7), not engagement data. They show which drafts the critics liked, so treat them as hypotheses. The outside evidence is stronger. 9 of 12 viral dev-tool posts had video and 3 had a photo. 4 of the 6 flops had no media, and all 6 were thin on context. The creative brief outranks this playbook: stories with a shape, a recurring cast, fresh small worlds, and a visual pitched for every post that could carry one.
+**Evidence caveat:** Our own "winners" are reviewer scores (1.0 and 0.7), not engagement data. They show which drafts the critics liked, so treat them as hypotheses. The outside evidence is stronger. 9 of 12 viral dev-tool posts had video and 3 had a photo. 4 of the 6 flops had no media, and all 6 were thin on context. The creative brief outranks this playbook: stories with a shape, no named characters, fresh small worlds, and a visual pitched for every post that could carry one.
 
 **Mix:** about 1 in 4 posts names Coordigent. Patterns marked **[Product]** do, and the rest build the audience of agent-wranglers. Patterns 1-5 and 12 should be the most frequent.
-
-## The cast (reuse so followers recognize them)
-- **The Eager One** opens every file first.
-- **The One Who Never Asks** is confidently wrong and quiet about it.
-- **The Helpful Rewriter** rewrote your migration "to help."
-- **The Waiter** has been stuck since 10:40, politely.
-- **The Last Gasp** hits its context limit at 90% done.
-- **You**, the tech lead, reviewing all of it.
 
 ## Patterns
 
 1. **The timestamp day** (our 0.7 winner, "9:50am... By noon:")
-   - Template: *A hopeful morning time, a turn at noon, three cast members in trouble, and a last line about the human's afternoon.*
-   - Example: "9:50am: you launch 4 agents and feel like a tech lead. By noon: the Rewriter redid a finished migration, the Eager One is in the same file, and the Waiter has been waiting since 10:40. 3pm: you are reviewing."
+   - Template: *A hopeful morning time, a turn at noon, three agents in trouble, each described by what it did, and a last line about the human's afternoon.*
+   - Example: "9:50am: you launch 4 agents and feel like a tech lead. By noon: one agent redid a finished migration, two are in the same file, and one has been waiting on you since 10:40. 3pm: you are reviewing."
    - Tag: audience-builder.
    - Craft note: the critic said to cut the "4x" framing so the afternoon of reviewing is the punchline. Add a visual: a calendar-style graphic with the agents as colored blocks overlapping.
 
-2. **Recurring cast vignette** (brief: give the agents personalities)
-   - Template: *One small scene, one character, one specific act of misplaced helpfulness.*
-   - Example: "The Rewriter looked at your finished migration and thought: I can make this more me."
+2. **One agent, one misplaced good deed**
+   - Template: *One small scene, one agent described by what it did, one specific act of misplaced helpfulness.*
+   - Example: "An agent looked at the migration you finished an hour ago and thought: I can make this more me."
    - Tag: audience-builder.
-   - Craft note: keep the same names across posts. A followable running bit works better than a one-off joke.
+   - Craft note: no invented names. A stranger has to get it with zero context.
 
 3. **Agent confession in its own voice** (Railway's raila-chan; our reply "agent 14... we have a lot of compute")
    - Template: *First person, specific minutes and filenames, ending on the funniest line.*
@@ -36,7 +28,7 @@
    - Template: *One metaphor, three concrete details, and a landing that points back at agents.*
    - Example: "Five chefs, one stove, no one calling orders. Everyone is cooking. Nobody is eating."
    - Tag: audience-builder.
-   - Visual to pitch: a simple illustration or a one-panel comic of the kitchen, with the stove labeled `auth.ts`. A tower with no radio and planes labeled with agent names would work the same way.
+   - Visual to pitch: a simple illustration or a one-panel comic of the kitchen, with the stove labeled `auth.ts`. A tower with no radio and planes labeled with file names would work the same way.
 
 5. **The thesis flip with a short runway** (our top-scored hook post)
    - Template: *One beat of setup, then the reframe as the final line.*
@@ -57,13 +49,13 @@
 
 8. **Short screen-capture clip as the whole post** (9 of 12 viral posts had video)
    - Template: *One line of caption plus a 10-20s recording of one moment, with no voiceover needed.*
-   - Example: "The Eager One reaches for `auth.ts`. Another agent is already in it. It gets a warning first. Nothing is blocked."
+   - Example: "An agent reaches for `auth.ts`. Another agent is already in it. It gets a warning first. Nothing is blocked."
    - Tag: **[Product]**.
    - Visual: a terminal recording of exactly that moment. Do not post this as text only.
 
 9. **The screenshot with a story** (fix for the "spikiness" screenshot flop)
-   - Template: *A view of our UI, captioned with a character, a timestamp, and a feeling.*
-   - Example: "10:40am: the Waiter stops and asks you a question. 1:15pm: you find out. Now it shows up in 'Needs you' instead."
+   - Template: *A view of our UI, captioned with what an agent did, a timestamp, and a feeling.*
+   - Example: "10:40am: an agent stops and asks you a question. 1:15pm: you find out. Now it shows up in 'Needs you' instead."
    - Tag: **[Product]**.
    - Visual: a "Needs you" view screenshot with one agent highlighted. A screenshot alone is a flop, so the story must come first.
 
@@ -90,7 +82,7 @@
 - **Bare CTAs with no hook**, like Modal's "Learn more and deploy..." (0) and Cline's "Try it with `npm i -g cline`" (4). Hook first, command last.
 - **Tag soup, RSVPs, and booth or giveaway replies** (3-5). Nobody outside the tagged circle cares.
 - **Logo-drop recruiting copy.** It is also a customer claim we can't make.
-- **Metric or UI screenshots with no human reason to care.** Pair them with a character and a time (pattern 9).
+- **Metric or UI screenshots with no human reason to care.** Pair them with what an agent did and a time (pattern 9).
 - **Text-only product announcements.** Most flops had no media.
 - **Emoji-led launch formatting** ("🚀 vX is out!"). It's off-voice. Those posts worked only because of the video and the credited user.
 - **Burying the punchline.** Our critics flagged this three times, so cut the runway and put the best line last.
