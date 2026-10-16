@@ -175,3 +175,29 @@ def test_sigterm_stops_the_loop_between_cycles(setup):
         timer.cancel()
     assert not (cfg.out_dir / "improve.pid").exists()
     assert sch.State(cfg.out_dir / "state.db").last_finished() is not None
+
+
+def test_a_phase_waits_while_a_model_it_needs_is_down(setup):
+    cfg, make, _, clock = setup
+    probed = []
+
+    def probe(models):
+        probed.append(set(models))
+        return {"gpt-x": "RateLimitError: usage limit reached"}
+
+    s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, q: "ok", catalog={"fake": FakeFit},
+                      build=lambda fitness, profile, threads=(): FakeFit(), probe=probe)
+    s.run_cycle()
+    assert _records(cfg) == [] and probed
+    report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
+    assert "waiting for gpt-x (RateLimitError: usage limit reached)" in report
+
+
+def test_a_change_the_ledger_already_decided_on_the_same_items_is_not_screened_again(setup):
+    from harness.iterate.runner import Proposal, run_batch
+
+    cfg, make, _, clock = setup
+    run_batch([Proposal("fake", {"qualify.panel": "single_reader"}, "decided by hand", {"kind": "manual"})],
+              {"fake": FakeFit()}, provider="mock", max_calls=1000, directory=cfg.ledger_dir, mode="screen")
+    make().run_cycle()
+    assert [r["proposer"]["kind"] for r in _records(cfg)] == ["manual"]

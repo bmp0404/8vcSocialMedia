@@ -199,9 +199,10 @@ def default_catalog() -> dict[str, type]:
 class Scheduler:
     def __init__(self, cfg: ImproveConfig, *, clock: Callable[[], datetime] = utcnow, echo: bool = True,
                  facts_runner: Callable[[str, str], str] | None = None, catalog: dict[str, type] | None = None,
-                 build: Callable | None = None):
+                 build: Callable | None = None, probe: Callable[[set[str]], dict[str, str]] | None = None):
         self.cfg, self.clock, self.echo = cfg, clock, echo
         self.facts_runner = facts_runner
+        self.probe = probe or self.probe_models
         self.catalog = catalog if catalog is not None else default_catalog()
         self._build = build or self.build
         cfg.out_dir.mkdir(parents=True, exist_ok=True)
@@ -384,6 +385,34 @@ class Scheduler:
         calls = json.loads(run_file.read_text(encoding="utf-8"))["llm_calls"] if run_file.is_file() else 0
         return recs, calls
 
+    def probe_models(self, models: set[str]) -> dict[str, str]:
+        """{model: error} for each model that doesn't answer a five-token request now. A run whose detector or
+        guardrail model is out of quota would spend its budget on retries and decide nothing, so the phase waits."""
+        if self.cfg.provider == "mock" or not models:
+            return {}
+        import anthropic
+
+        client, bad = anthropic.Anthropic(timeout=60, max_retries=0), {}
+        for model in sorted(models):
+            try:
+                client.messages.create(model=model, max_tokens=5, messages=[{"role": "user", "content": "Say ok."}])
+            except Exception as e:  # noqa: BLE001 - any failure means the phase can't run on this model now
+                bad[model] = f"{type(e).__name__}: {str(e)[:160]}"
+        return bad
+
+    def _preflight(self, fit, configs) -> tuple[str | None, int]:
+        """(why the phase must wait, or None; probe calls spent)."""
+        needed = self.needed_models(fit, configs)
+        down = self.probe(needed)
+        spent = len(needed) if self.cfg.provider != "mock" else 0
+        return ("waiting for " + "; ".join(f"{m} ({e})" for m, e in sorted(down.items())) if down else None), spent
+
+    @staticmethod
+    def needed_models(fit, configs) -> set[str]:
+        """The judge models an instrument names and the model knobs it reads in the configs it will run."""
+        named = {v for k, v in fit.instrument().items() if k.endswith("_model") and isinstance(v, str)}
+        return named | {c.get(k) for c in configs for k in fit.knobs if k.endswith(".model")}
+
     @staticmethod
     def _estimate(fit, champion, changes: dict, n: int) -> int:
         return (2 * fit.estimate_calls(champion, n) + fit.estimate_calls(champion.with_changes(changes), n))
@@ -403,10 +432,12 @@ class Scheduler:
                 fit = self._build(s.fitness, profile)
                 changes = _diff(s.baseline, s.champion)
                 est = self._estimate(fit, s.baseline, changes, len(fit.items()))
-                if est > left:
+                waiting, probes = (f"needs about {est} calls, {left} left this cycle", 0) if est > left else \
+                    self._preflight(fit, [s.baseline, s.champion])
+                left, out["llm_calls"] = left - probes, out["llm_calls"] + probes
+                if waiting:
                     blocked.add(s.fitness)
-                    out["stacks"].append({"fitness": s.fitness, "latest": s.latest, "action": "deferred",
-                                          "note": f"needs about {est} calls, {left} left this cycle"})
+                    out["stacks"].append({"fitness": s.fitness, "latest": s.latest, "action": "deferred", "note": waiting})
                     continue
                 prop = Proposal(s.fitness, changes, f"The promotions in force, measured together on {s.fitness}.",
                                 {"kind": "stack", "source": s.latest, "profile": profile}, "stack check")
@@ -447,6 +478,8 @@ class Scheduler:
             if champion.with_changes(spec.knobs).hash == champion.hash:
                 entry.update(state="done", note="the champion already has these values")
                 continue
+            prop = Proposal(spec.fitness, spec.knobs, spec.hypothesis,
+                            {**spec.proposer(ph.next, cutoff), "profile": spec.profile}, spec.label)
             with profile_env(spec.profile):
                 base = self._build(spec.fitness, spec.profile, spec.threads)
                 restricted = campaign.Restricted(base, **({"by": cutoff} if ph.next == "screen" else {"after": cutoff}),
@@ -465,15 +498,28 @@ class Scheduler:
                         entry.update(state="held", note=f"confirmation waits for the weekly cap ({cap.holder}) to "
                                                         f"reopen at {cap.opens_at.isoformat(timespec='minutes')}")
                         continue
+                else:
+                    from harness.iterate.propose import is_settled
+
+                    sha = {spec.fitness: restricted.instrument().get("dataset_sha256")}
+                    if is_settled(prop, champion, ledger.records(directory), {spec.fitness: restricted.knobs},
+                                  ledger.configs(directory), sha):
+                        entry.update(state="done", note="the ledger already decided this change against an "
+                                                        "equivalent champion on the same items; screening it again "
+                                                        "would test the same items twice")
+                        continue
                 budget = min(spec.screen_calls if ph.next == "screen" else spec.confirm_calls, left)
                 est = self._estimate(restricted, champion, spec.knobs, len(items))
                 if est > budget:
                     entry.update(state="deferred", note=f"needs about {est} calls; {budget} available this cycle")
                     continue
-                prop = Proposal(spec.fitness, spec.knobs, spec.hypothesis,
-                                {**spec.proposer(ph.next, cutoff), "profile": spec.profile}, spec.label)
+                waiting, probes = self._preflight(restricted, [champion, champion.with_changes(spec.knobs)])
+                left, out["llm_calls"] = left - probes, out["llm_calls"] + probes
+                if waiting:
+                    entry.update(state="deferred", note=waiting)
+                    continue
                 recs, calls = self._run([prop], restricted, mode="screen" if ph.next == "screen" else "promote",
-                                        max_calls=budget)
+                                        max_calls=budget - probes)
             left -= calls
             out["llm_calls"] += calls
             entry.update(state="ran", phase=ph.next, record=recs[0]["id"], decision=recs[0]["decision"]["status"],
