@@ -78,6 +78,16 @@ def keywords(text: str, limit: int = 6) -> list[str]:
     return out[:limit]
 
 
+# Labels that compare a post only with the same account's other posts. The dataset's Category cutoffs don't:
+# at the two tails the account explains nearly everything (context worker's leakage check, research report).
+WITHIN_ACCOUNT_LABELS = {"author_prior", "review", "metrics"}
+CONFOUNDED_NOTE = "passed only on the dataset's Category label, which mostly tracks account size"
+
+
+def within_account(labels_passed: list[str]) -> bool:
+    return bool(WITHIN_ACCOUNT_LABELS & set(labels_passed or []))
+
+
 def rule_text(rule: dict) -> str:
     """'media is one of photo, video' style rendering of a reflect.RULE_OPS rule, or '' with none."""
     if not rule:
@@ -278,6 +288,7 @@ class Lesson(_Kind):
     last_test: dict = field(default_factory=dict)  # the latest supporting stats.heldout_test result
     labeled_at_test: int = 0  # labeled episodes in its domain when last tested, for the retest trigger
     caveats: list[str] = field(default_factory=list)  # known reasons to doubt it, shown wherever it is shown
+    labels_passed: list[str] = field(default_factory=list)  # label sources of its supporting tests
     created: str = ""
     updated: str = ""
 

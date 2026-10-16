@@ -537,7 +537,10 @@ def _read_answers(result) -> list[dict]:
         if not isinstance(item, dict) or not str(item.get("question") or "").strip():
             print(f"[brand] ignored an answer without a question: {str(item)[:100]}")
             continue
-        answers.append({k: str(item.get(k) or "").strip() for k in ANSWER_KEYS})
+        answer = {k: str(item.get(k) or "").strip() for k in ANSWER_KEYS}
+        # The prompt numbers its questions; the model sometimes copies the number into the field.
+        answer["question"] = re.sub(r"^\d+[.)]\s*", "", answer["question"])
+        answers.append(answer)
     return answers
 
 

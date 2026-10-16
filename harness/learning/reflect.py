@@ -313,23 +313,20 @@ def _mock_hypotheses(batch: Batch) -> dict:
 
 def propose(llm, batch: Batch, definition: str, lessons: list[Lesson], n: int = 5,
             extra: dict[str, str] | None = None) -> dict:
-    """The model's hypotheses for one batch. Malformed JSON is retried once; a second failure yields none
-    for this batch, with `error` set so the run reports it."""
+    """The model's hypotheses for one batch. `complete_json` already asks again once on malformed JSON; if that
+    fails too, this batch yields no hypotheses and `error` says why, so the run reports it instead of dying."""
     lesson_lines = "\n".join(f"- [{l.id}] {l.text}" for l in lessons) or "(none)"
     extra_text = ("\nMORE RULE FEATURES (computed per post; bool takes op eq, number takes lt or gt):\n"
                   + ", ".join(f"{k} ({t})" for k, t in sorted((extra or {}).items())) + "\n") if extra else ""
     prompt = PROPOSE_PROMPT.format(definition=definition, extra=extra_text, lessons=lesson_lines,
                                    groups=render_batch(batch), n=n)
-    for attempt in (1, 2):
-        try:
-            data = llm.complete_json(PROPOSE_SYSTEM, prompt, mock=lambda: _mock_hypotheses(batch))
-            return {"no_shared_trait": str(data.get("no_shared_trait") or ""),
-                    "hypotheses": list(data.get("hypotheses") or []), "error": ""}
-        except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
-            print(f"[reflect] proposal for {batch.group} attempt {attempt} failed: {str(e)[:160]}")
-            error = str(e)[:300]
-            prompt += "\n\nYour previous reply was not valid JSON. Escape any double quotes inside strings."
-    return {"no_shared_trait": "", "hypotheses": [], "error": error}
+    try:
+        data = llm.complete_json(PROPOSE_SYSTEM, prompt, mock=lambda: _mock_hypotheses(batch))
+    except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
+        print(f"[reflect] proposal for {batch.group} failed: {str(e)[:160]}")
+        return {"no_shared_trait": "", "hypotheses": [], "error": str(e)[:300]}
+    return {"no_shared_trait": str(data.get("no_shared_trait") or ""),
+            "hypotheses": list(data.get("hypotheses") or []), "error": ""}
 
 
 def parse_labels(data, qids: list[str]) -> dict[str, dict[str, bool]]:
@@ -345,7 +342,7 @@ def parse_labels(data, qids: list[str]) -> dict[str, dict[str, bool]]:
 
 def label_predicates(labeler, predicates: dict[str, str], posts: list[Episode], rng: random.Random,
                      chunk: int = 25) -> tuple[dict[str, dict[str, bool]], int]:
-    """({post id: {predicate id: bool}}, chunks that failed twice). Posts are shuffled and shown without outcomes."""
+    """({post id: {predicate id: bool}}, chunks that failed). Posts are shuffled and shown without outcomes."""
     qids = list(predicates)
     if not qids:
         return {}, 0
@@ -363,13 +360,11 @@ def label_predicates(labeler, predicates: dict[str, str], posts: list[Episode], 
             return {"labels": {ep.id: "".join("T" if ep.features.get("media", "none") == "none" else "F"
                                               for _ in qids) for ep in part}}
 
-        for attempt in (1, 2):
-            try:
-                labels.update(parse_labels(labeler.complete_json(LABEL_SYSTEM, prompt, mock=mock), qids))
-                break
-            except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
-                print(f"[reflect] labeling chunk {start // chunk + 1} attempt {attempt} failed: {str(e)[:160]}")
-                failed += attempt == 2
+        try:  # complete_json already asks again once on malformed JSON
+            labels.update(parse_labels(labeler.complete_json(LABEL_SYSTEM, prompt, mock=mock), qids))
+        except ValueError as e:  # llm.parse_json raises ValueError; JSONDecodeError is a subclass
+            print(f"[reflect] labeling chunk {start // chunk + 1} failed: {str(e)[:160]}")
+            failed += 1
     return labels, failed
 
 
@@ -422,6 +417,10 @@ def vote(lesson: Lesson, verdict: str, result: dict, test_id: str, today: str, d
     if verdict == "supported":
         lesson.support += 1
         lesson.status = "active"
+        if result.get("label_source") and result["label_source"] not in lesson.labels_passed:
+            lesson.labels_passed.append(result["label_source"])
+        if result.get("boost_filter") == "on":  # passed with boosted successes removed
+            lesson.caveats = [c for c in lesson.caveats if not c.startswith("boost flags were unavailable")]
         lesson.confidence = result["effect"]
         lesson.last_test = result
         lesson.valid_until = _until(today, valid_days)
@@ -570,7 +569,7 @@ def reflect(
         h = c.hypothesis
         predicate = str(h["predicate"]).strip()
         result = {**result, "verdict": verdict, "checked_by": "rule" if c.rule else "labeler", "q": s.fdr_q,
-                  "tests_in_run": n_tests}
+                  "tests_in_run": n_tests, "boost_filter": filters["boost_filter"], "label_source": s.label_source}
         refl = Reflection(
             id="refl-" + short_hash(str(h.get("claim", "")), ",".join(sorted(c.evidence))),
             claim=str(h.get("claim", "")).strip(),
@@ -617,6 +616,7 @@ def reflect(
                 last_test=result,
                 labeled_at_test=labeled_count,
                 caveats=refl.caveats,
+                labels_passed=[s.label_source],
                 created=today,
                 updated=today,
             )
@@ -630,7 +630,8 @@ def reflect(
 
     for lid, result, verdict in zip(voted, lesson_results, lesson_verdicts):
         result = {**result, "verdict": verdict, "checked_by": "rule" if existing[lid].rule else "labeler",
-                  "q": s.fdr_q, "tests_in_run": n_tests}
+                  "q": s.fdr_q, "tests_in_run": n_tests, "boost_filter": filters["boost_filter"],
+                  "label_source": s.label_source}
         save(store, vote(existing[lid], verdict, result, f"reflect-{today}-seed{seed}", today, domain,
                          labeled_count, s.valid_days))
         report.lessons_voted.append(lid)
@@ -651,7 +652,8 @@ def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: Re
     """
     s = settings or ReflectSettings()
     today = (now or datetime.now(timezone.utc)).date().isoformat()
-    pool, _ = usable(episodes, require_boost_flags=s.require_boost_flags, min_label_age_hours=s.min_label_age_hours)
+    pool, filters = usable(episodes, require_boost_flags=s.require_boost_flags,
+                           min_label_age_hours=s.min_label_age_hours)
     due = [l for l in (load(m) for m in store.list_memories("lesson"))
            if l.domain == domain and l.status != "retired"
            and (force or due_for_retest(l, len(pool), today, s.min_new_labeled))]
@@ -667,6 +669,7 @@ def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: Re
                             min_posts_with_trait=s.min_posts_with_trait) for l in due]
     out = []
     for lesson, result, verdict in zip(due, results, verdicts(results, s.fdr_q)):
+        result = {**result, "verdict": verdict, "boost_filter": filters["boost_filter"], "label_source": s.label_source}
         save(store, vote(lesson, verdict, result, f"revalidation-{today}", today, domain, len(pool), s.valid_days))
         out.append((lesson.id, verdict, result))
     return out

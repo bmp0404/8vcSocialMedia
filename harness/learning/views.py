@@ -6,7 +6,9 @@ store evolves; these functions keep their output keys stable, so the UI reads th
 
 from datetime import date
 
-from harness.learning.kinds import FAILURE, SUCCESS, Lesson, Procedure, Reflection, heldout_sentence, load, rule_text
+from harness.learning.kinds import (
+    FAILURE, SUCCESS, Lesson, Procedure, Reflection, heldout_sentence, load, rule_text, within_account,
+)
 from harness.learning.ranking import is_stale, today_utc
 
 
@@ -34,6 +36,8 @@ def lesson_rows(store, today: date | None = None) -> list[dict]:
             "evidence": lesson.evidence,
             "reflections": lesson.reflections,
             "caveats": lesson.caveats,
+            "labels_passed": lesson.labels_passed,
+            "confounded_by_account_size": not within_account(lesson.labels_passed),
             "updated": lesson.updated,
         })
     rows.sort(key=lambda r: (r["status"] != "active", -r["effect"], r["id"]))
