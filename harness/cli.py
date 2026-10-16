@@ -72,7 +72,7 @@ def main() -> None:
     p.add_argument("file")
     p.set_defaults(func=record)
 
-    p = sub.add_parser("learn", help="rewrite memory/lessons.md from predicted vs. actual")
+    p = sub.add_parser("learn", help="turn reviews, edits and outcomes into tested lessons; rewrite memory/lessons.md")
     p.add_argument("--provider")
     p.set_defaults(func=lambda a: learn(get_llm(a.provider)))
 
@@ -85,6 +85,11 @@ def main() -> None:
     from harness.evals.cli import register as register_evals
 
     register_evals(sub)
+
+    # Memory: ingest, reflect, revalidate, exemplar-check (sam/memory).
+    from harness.learning.commands import add_commands
+
+    add_commands(sub)
 
     args = parser.parse_args()
     args.func(args)
