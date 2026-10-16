@@ -1,0 +1,234 @@
+{
+ "source": "data/context/reply_samples.jsonl (local) via harness.rank.target build",
+ "small_followers": 1000,
+ "top": 3,
+ "roots_from": "2026-09-15",
+ "roots_to": "2026-10-15",
+ "accounts": {
+  "ampcode": {
+   "share_small_top3": 0.333,
+   "median_top3_minutes": 80.8,
+   "n": 1
+  },
+  "boltdotnew": {
+   "share_small_top3": 0.222,
+   "median_top3_minutes": 15.6,
+   "n": 3
+  },
+  "browserbase": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 15.8,
+   "n": 1
+  },
+  "bunjavascript": {
+   "share_small_top3": 0.722,
+   "median_top3_minutes": 20.6,
+   "n": 12
+  },
+  "charmcli": {
+   "share_small_top3": 0.833,
+   "median_top3_minutes": 37.7,
+   "n": 2
+  },
+  "cline": {
+   "share_small_top3": 0.625,
+   "median_top3_minutes": 41.5,
+   "n": 16
+  },
+  "cloudflaredev": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 53.8,
+   "n": 7
+  },
+  "cognition": {
+   "share_small_top3": 0.421,
+   "median_top3_minutes": 14.2,
+   "n": 19
+  },
+  "cursor_ai": {
+   "share_small_top3": 0.771,
+   "median_top3_minutes": 25.9,
+   "n": 16
+  },
+  "daytonaio": {
+   "share_small_top3": 1.0,
+   "median_top3_minutes": 1.5,
+   "n": 1
+  },
+  "deno_land": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 48.5,
+   "n": 1
+  },
+  "depotdev": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 343.8,
+   "n": 1
+  },
+  "e2b": {
+   "share_small_top3": 0.333,
+   "median_top3_minutes": 136.8,
+   "n": 1
+  },
+  "expo": {
+   "share_small_top3": 0.694,
+   "median_top3_minutes": 119.1,
+   "n": 12
+  },
+  "factoryai": {
+   "share_small_top3": 0.533,
+   "median_top3_minutes": 35.3,
+   "n": 10
+  },
+  "greptile": {
+   "share_small_top3": 0.167,
+   "median_top3_minutes": 245.0,
+   "n": 2
+  },
+  "kilocode": {
+   "share_small_top3": 0.333,
+   "median_top3_minutes": 32.3,
+   "n": 1
+  },
+  "kirodotdev": {
+   "share_small_top3": 0.833,
+   "median_top3_minutes": 21.6,
+   "n": 2
+  },
+  "linear": {
+   "share_small_top3": 0.476,
+   "median_top3_minutes": 76.9,
+   "n": 7
+  },
+  "llama_index": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 30.3,
+   "n": 2
+  },
+  "lovable": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 22.3,
+   "n": 12
+  },
+  "modal": {
+   "share_small_top3": 0.458,
+   "median_top3_minutes": 119.6,
+   "n": 8
+  },
+  "neondatabase": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 86.3,
+   "n": 1
+  },
+  "netlify": {
+   "share_small_top3": 1.0,
+   "median_top3_minutes": 243.1,
+   "n": 1
+  },
+  "ollama": {
+   "share_small_top3": 0.5,
+   "median_top3_minutes": 23.7,
+   "n": 6
+  },
+  "planetscale": {
+   "share_small_top3": 0.4,
+   "median_top3_minutes": 48.6,
+   "n": 5
+  },
+  "pnpmjs": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 24.2,
+   "n": 1
+  },
+  "polar_sh": {
+   "share_small_top3": 0.444,
+   "median_top3_minutes": 40.2,
+   "n": 3
+  },
+  "posthog": {
+   "share_small_top3": 0.778,
+   "median_top3_minutes": 606.3,
+   "n": 3
+  },
+  "prisma": {
+   "share_small_top3": 1.0,
+   "median_top3_minutes": 157.6,
+   "n": 1
+  },
+  "railway": {
+   "share_small_top3": 0.278,
+   "median_top3_minutes": 85.4,
+   "n": 6
+  },
+  "replit": {
+   "share_small_top3": 0.5,
+   "median_top3_minutes": 24.2,
+   "n": 4
+  },
+  "resend": {
+   "share_small_top3": 0.833,
+   "median_top3_minutes": 191.8,
+   "n": 2
+  },
+  "supabase": {
+   "share_small_top3": 0.636,
+   "median_top3_minutes": 86.2,
+   "n": 22
+  },
+  "temporalio": {
+   "share_small_top3": 1.0,
+   "median_top3_minutes": 1274.2,
+   "n": 1
+  },
+  "tldraw": {
+   "share_small_top3": 0.381,
+   "median_top3_minutes": 43.3,
+   "n": 7
+  },
+  "turborepo": {
+   "share_small_top3": 0.333,
+   "median_top3_minutes": 25.5,
+   "n": 1
+  },
+  "tursodatabase": {
+   "share_small_top3": 0.5,
+   "median_top3_minutes": 63.2,
+   "n": 2
+  },
+  "upstash": {
+   "share_small_top3": 0.333,
+   "median_top3_minutes": 35.3,
+   "n": 1
+  },
+  "v0": {
+   "share_small_top3": 0.333,
+   "median_top3_minutes": 15.4,
+   "n": 2
+  },
+  "vercel": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 39.2,
+   "n": 7
+  },
+  "vllm_project": {
+   "share_small_top3": 0.63,
+   "median_top3_minutes": 65.4,
+   "n": 9
+  },
+  "warpdotdev": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 229.3,
+   "n": 1
+  },
+  "workos": {
+   "share_small_top3": 0.667,
+   "median_top3_minutes": 1135.8,
+   "n": 1
+  },
+  "zeddotdev": {
+   "share_small_top3": 0.685,
+   "median_top3_minutes": 55.5,
+   "n": 18
+  }
+ }
+}
