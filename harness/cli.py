@@ -80,6 +80,11 @@ def main() -> None:
     p.add_argument("--no-browser", action="store_true")
     p.set_defaults(func=lambda a: serve(a.port, not a.no_browser))
 
+    # Eval subcommands (sam/eval). Kept in their own block so merges stay simple.
+    from harness.evals.cli import register as register_evals
+
+    register_evals(sub)
+
     # Self-iteration (sam/iterate): `python -m harness iterate ...`
     from harness.iterate.cli import register as register_iterate
 
