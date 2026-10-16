@@ -43,7 +43,7 @@ def account_names() -> dict[str, str]:
     return names
 
 
-def collect_context(gdelt_budget: int = 30) -> dict:
+def collect_context(gdelt_budget: int = 0) -> dict:
     from harness.context.collectors import gdelt, hackernews, wikipedia, x_trends
 
     rows = load_dataset()
