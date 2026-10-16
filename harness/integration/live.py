@@ -80,14 +80,16 @@ def main(argv: list[str] | None = None) -> int:
             setattr(cli, name, fn)
         memory.save_run = orig_save
 
-    new = sorted(
-        p for p in config.OUT_DIR.glob("*.json") if p.name not in before or p.stat().st_mtime >= started
-    )
-    rec["decision_logs"] = [p.name for p in new if p.name.startswith("decisions-")]
-    recs = [p.name for p in new if p.name.startswith("recommendations-")]
-    rec["recommendations_file"] = recs[-1] if recs else None
     if rec["run_id"] is None:
         raise SystemExit("[live] the run never reached memory.save_run, so there is nothing to record")
+    # Other runs (mock checks, pytest's smoke test) can write to out/ while this one runs, so pick
+    # files by run id, not by time: Action writes decisions-run<id>.json, and the recommendations
+    # file carries its run_id.
+    new = [p for p in config.OUT_DIR.glob("*.json") if p.name not in before or p.stat().st_mtime >= started]
+    rec["decision_logs"] = [p.name for p in new if p.name == f"decisions-run{rec['run_id']}.json"]
+    recs = [p for p in new if p.name.startswith("recommendations-")
+            and json.loads(p.read_text(encoding="utf-8")).get("run_id") == rec["run_id"]]
+    rec["recommendations_file"] = recs[0].name if recs else None
     RECORD_DIR.mkdir(parents=True, exist_ok=True)
     path = record_path(rec["run_id"])
     path.write_text(json.dumps(rec, indent=1, ensure_ascii=False, default=str), encoding="utf-8")

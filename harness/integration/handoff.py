@@ -110,7 +110,7 @@ def build(run_id: int) -> dict:
             },
             "pipeline_rank": rank,
         }
-        if a["type"] in ("reply", "quote") and t and t.get("resolves") and measured_at:
+        if a["type"] == "reply" and t and t.get("resolves") and measured_at:
             created = measured_at - timedelta(minutes=t["age_minutes"])
             item["send_before"] = (created + timedelta(minutes=REPLY_WINDOW_MIN)).isoformat(timespec="minutes")
         why = hold_reasons(a, d, t)
@@ -133,9 +133,10 @@ def _one_line(s: str) -> str:
 
 def render(h: dict) -> str:
     out = [
-        f"# Recommendations for 8VC's Grok bot, run {h['run_id']}",
+        f"# Recommendations for 8VC's Grok bot, run {h['run_id']}" if "," not in str(h["run_id"])
+        else f"# Recommendations for 8VC's Grok bot, runs {h['run_id']}",
         "",
-        f"Generated {h['generated_at']}. {h['note']} Full evidence: `out/grok-handoff-run{h['run_id']}.json`.",
+        f"Generated {h['generated_at']}. {h['note']} Full evidence is in the JSON file next to this one.",
         "",
         f"## Ready ({len(h['ready'])})",
         "",
@@ -159,7 +160,8 @@ def render(h: dict) -> str:
 def _item(i: int, r: dict) -> list[str]:
     e = r["evidence"]
     target = r["target_url"] or (f"@{r['target_handle']}" if r["target_handle"] else "new post")
-    lines = [f"{i}. **{r['type']}** → {target}"]
+    run = f" (run {r['run_id']})" if "run_id" in r else ""
+    lines = [f"{i}. **{r['type']}** → {target}{run}"]
     if r.get("text"):
         lines.append(f"   - Text: \"{_one_line(r['text'])}\"")
     if r.get("target_text"):
@@ -181,7 +183,8 @@ def _item(i: int, r: dict) -> list[str]:
     if e.get("grounding"):
         claims = e["grounding"]["claims"]
         ok = sum(c.get("status") == "supported" for c in claims)
-        lines.append(f"   - Facts: {ok}/{len(claims)} claims supported by tonight's sources")
+        lines.append(f"   - Facts: {ok}/{len(claims)} claims supported by tonight's sources" if claims
+                     else "   - Facts: no factual claims")
     lines.append("")
     return lines
 
@@ -194,21 +197,48 @@ def approve_ready(h: dict) -> Path:
     return export_approved(h["run_id"])
 
 
+def combine(handoffs: list[dict]) -> dict:
+    """Several measured rounds as one hand-off, newest round first, each item tagged with its run."""
+    tag = lambda h, key: [{**x, "run_id": h["run_id"]} for x in h[key]]  # noqa: E731
+    ordered = sorted(handoffs, key=lambda h: -h["run_id"])
+    seen, ready = set(), []
+    for h in ordered:
+        for x in tag(h, "ready"):
+            key = (x["type"], x.get("target_url"), x.get("target_handle"), x["text"])
+            if key not in seen:
+                seen.add(key)
+                ready.append(x)
+    return {
+        "format": handoffs[0]["format"],
+        "run_id": ",".join(str(h["run_id"]) for h in ordered),
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "note": handoffs[0]["note"],
+        "ready": ready,
+        "held": [x for h in ordered for x in tag(h, "held")],
+        "abstentions": [x for h in ordered for x in tag(h, "abstentions")],
+        "questions_for_a_person": list(dict.fromkeys(q for h in ordered for q in h["questions_for_a_person"])),
+    }
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="harness.integration.handoff")
-    ap.add_argument("--run", type=int, required=True)
+    ap.add_argument("--run", type=int, nargs="+", required=True, help="one or more measured run ids")
+    ap.add_argument("--name", help="file stem for a combined hand-off, e.g. tonight -> out/grok-handoff-tonight.json")
     ap.add_argument("--copy-to", help="also write the markdown list here")
     ap.add_argument("--no-approve", action="store_true", help="don't mark ready actions approved or export approved-run<id>.json")
     args = ap.parse_args(argv)
-    h = build(args.run)
+    built = [build(r) for r in args.run]
+    h = built[0] if len(built) == 1 and not args.name else combine(built)
+    stem = args.name or str(args.run[0])
     config.OUT_DIR.mkdir(exist_ok=True)
-    j = config.OUT_DIR / f"grok-handoff-run{args.run}.json"
+    j = config.OUT_DIR / f"grok-handoff-{'run' if not args.name else ''}{stem}.json"
     j.write_text(json.dumps(h, indent=1, ensure_ascii=False), encoding="utf-8")
-    md = config.OUT_DIR / f"grok-handoff-run{args.run}.md"
+    md = j.with_suffix(".md")
     md.write_text(render(h), encoding="utf-8")
     print(f"[handoff] {len(h['ready'])} ready, {len(h['held'])} held -> {j.name}, {md.name}")
     if not args.no_approve:
-        print(f"[handoff] approved export -> {approve_ready(h)}")
+        for one in built:
+            print(f"[handoff] approved export -> {approve_ready(one)}")
     if args.copy_to:
         shutil.copyfile(md, args.copy_to)
         print(f"[handoff] copied to {args.copy_to}")
