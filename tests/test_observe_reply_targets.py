@@ -406,8 +406,28 @@ def test_thread_replies_keep_direct_replies_most_liked_first():
 def test_thread_replies_raise_source_error():
     from harness.sources.x_fx import thread_replies
 
-    with pytest.raises(SourceError, match="fxtwitter conversation for 100: HTTP 404"):
+    with pytest.raises(SourceError, match="fxtwitter conversation for 100: RuntimeError: HTTP 404"):
         thread_replies(ConversationReader(error=RuntimeError("HTTP 404")), "100", 5)
+
+
+def test_thread_replies_turn_unexpected_errors_into_source_errors():
+    from harness.sources.x_fx import thread_replies
+
+    with pytest.raises(SourceError, match="fxtwitter conversation for 100: KeyError: 'replies'"):
+        thread_replies(ConversationReader(error=KeyError("replies")), "100", 5)
+
+
+def test_reply_target_source_returns_empty_when_reads_work_but_nothing_is_fresh(monkeypatch, tmp_path):
+    stale = post("old", minutes_old=500)
+    backend = FakeBackend(timelines={"WNBA": [stale], "SportsCenter": []}, search_results=[])
+    _source_env(monkeypatch, tmp_path, backend, TOML)
+    assert rt.ReplyTargetSource().fetch("") == []
+
+
+def test_reply_target_source_returns_empty_when_one_read_fails_and_the_rest_are_quiet(monkeypatch, tmp_path):
+    backend = FakeBackend(timelines={"WNBA": []}, fail={"SportsCenter"})
+    _source_env(monkeypatch, tmp_path, backend, TOML)
+    assert rt.ReplyTargetSource().fetch("") == []
 
 
 class ThreadReader:
