@@ -121,3 +121,35 @@ def test_openness_counts_small_accounts_among_top_replies():
     table = openness_table(c)
     # Top 3 by likes among fan_a (6), fan_e (4), fan_b (2): two of three under 1,000 followers.
     assert table["acme"] == {"share_small_top3": 0.667, "median_top3_minutes": 5.0, "n": 1}
+
+
+def test_char_wb_and_word_grams_match_scikit_learn_conventions():
+    from harness.rank.post import _char_wb, _word_grams
+    # TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 3)) on "ab cd" gives " ab", "ab ", " cd", "cd ".
+    assert _char_wb("ab cd", 3, 3) == [" ab", "ab ", " cd", "cd "]
+    assert _char_wb("a", 3, 5) == [" a "]
+    # The default token pattern drops one-letter tokens.
+    assert _word_grams("I ship a Fast API") == ["ship", "fast", "api", "ship fast", "fast api"]
+
+
+def test_tfidf_uses_smoothed_idf_sublinear_tf_and_unit_rows():
+    import math as m
+    from harness.rank.post import Tfidf
+    t = Tfidf(lambda s: s.split(), min_df=1, max_features=10, prefix="w:").fit(["a a b", "b c"])
+    assert t.idf["a"] == pytest.approx(m.log(3 / 2) + 1) and t.idf["b"] == pytest.approx(1.0)
+    row = t.transform("a a b")
+    raw_a, raw_b = (1 + m.log(2)) * t.idf["a"], 1.0
+    norm = m.sqrt(raw_a ** 2 + raw_b ** 2)
+    assert row == pytest.approx({"w:a": raw_a / norm, "w:b": raw_b / norm})
+    assert Tfidf(lambda s: s.split(), min_df=2, max_features=10, prefix="w:").fit(["a b", "b c"]).idf.keys() == {"b"}
+
+
+def test_ridge_matches_the_closed_form_on_a_tiny_problem(monkeypatch):
+    import harness.rank.post as post
+    # Two one-word documents, characters and shape switched off: X = I (unit rows),
+    # so (X'X + alpha I) w = X'(y - mean) gives w_i = (y_i - mean) / (1 + alpha).
+    monkeypatch.setattr(post, "_shape", lambda text: [0.0])
+    model = post.ridge_fit(["alpha", "beta"], [3.0, 1.0], alpha=1.0, word_min_df=1, char_min_df=10**9)
+    assert model.intercept == 2.0
+    assert model.weights["w:alpha"] == pytest.approx(0.5) and model.weights["w:beta"] == pytest.approx(-0.5)
+    assert model.predict("alpha") == pytest.approx(2.5) and model.predict("gamma") == pytest.approx(2.0)

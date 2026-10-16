@@ -106,6 +106,36 @@ def format_baseline(pairs: list[Pair], corpus: Corpus) -> dict:
             "test": accuracy(cr, [p.group for p in test]).to_dict(), "single_features_test": single}
 
 
+def label_baseline(pairs: list[Pair], votes: dict, schema: dict) -> dict:
+    """Pairwise logistic on LLM label features (harness/rank/reply.label_features), dev authors -> test authors.
+    Only pairs whose two posts both have labels count, so the number is on a subset of the test pairs."""
+    from harness.rank.reply import label_features
+    feats = {}
+    for p in pairs:
+        for sid in (p.winner, p.loser):
+            if f"x:{sid}" in votes:
+                feats[sid] = label_features(votes[f"x:{sid}"], schema)
+    usable = [p for p in pairs if p.winner in feats and p.loser in feats]
+    dev = [p for p in usable if p.split == "dev"]
+    test = [p for p in usable if p.split == "test"]
+    if not dev or not test:
+        raise ValueError("no labeled post pairs in one of the splits")
+    keys = sorted({k for f in feats.values() for k in f})
+    vals = {k: [feats[s].get(k, 0.0) for p in dev for s in (p.winner, p.loser)] for k in keys}
+    mean = {k: sum(v) / len(v) for k, v in vals.items()}
+    std = {k: (math.sqrt(sum((x - mean[k]) ** 2 for x in v) / len(v)) or 1.0) for k, v in vals.items()}
+
+    def z(sid):
+        return {k: (feats[sid].get(k, 0.0) - mean[k]) / std[k] for k in keys}
+    diffs = [pairwise.diff(z(p.winner), z(p.loser)) for p in dev]
+    l2, _ = pairwise.choose_l2(diffs, [p.group for p in dev])
+    w = pairwise.fit(diffs, l2)
+    cr = [pair_credit(pairwise.dot(w, z(p.winner)), pairwise.dot(w, z(p.loser))) for p in test]
+    return {"l2": l2, "test": accuracy(cr, [p.group for p in test]).to_dict(),
+            "test_pairs_labeled": len(test), "test_pairs_total": sum(p.split == "test" for p in pairs),
+            "weights": {k: round(v, 4) for k, v in sorted(w.items(), key=lambda kv: -abs(kv[1]))[:12]}}
+
+
 # ---- TF-IDF ridge ------------------------------------------------------------------------------
 
 def _char_wb(text: str, lo: int = 3, hi: int = 5) -> list[str]:
@@ -182,10 +212,12 @@ def _row(text, word, char, mean, std) -> dict[str, float]:
     return r
 
 
-def ridge_fit(texts: list[str], y: list[float], alpha: float, iters: int = 60) -> RidgeModel:
-    """Solve (X'X + alpha I) w = X'(y - mean y) by conjugate gradient; the intercept is mean y."""
-    word = Tfidf(_word_grams, 3, 20000, "w:").fit(texts)
-    char = Tfidf(_char_wb, 5, 30000, "c:").fit(texts)
+def ridge_fit(texts: list[str], y: list[float], alpha: float, iters: int = 60, word_min_df: int = 3,
+              char_min_df: int = 5) -> RidgeModel:
+    """Solve (X'X + alpha I) w = X'(y - mean y) by conjugate gradient; the intercept is mean y.
+    Vocabulary limits follow harness/virality.py: words min_df 3 (20,000 max), characters min_df 5 (30,000 max)."""
+    word = Tfidf(_word_grams, word_min_df, 20000, "w:").fit(texts)
+    char = Tfidf(_char_wb, char_min_df, 30000, "c:").fit(texts)
     shapes = [_shape(t) for t in texts]
     mean = [sum(s[i] for s in shapes) / len(shapes) for i in range(len(shapes[0]))]
     std = [math.sqrt(sum((s[i] - mean[i]) ** 2 for s in shapes) / len(shapes)) + 1e-9 for i in range(len(mean))]

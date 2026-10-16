@@ -143,13 +143,17 @@ def _pair_set(posts_by_acct: dict, min_hi: int = 100, max_lo: int = 10) -> list:
     return out
 
 
-def run_posts(alpha: float = 10.0, folds: int = 5) -> dict:
+def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False) -> dict:
     corpus = load()
     pairs = load_pairs("posts")
     test = [p for p in pairs if p.split == "test"]
     res = {"pairs": {"dev": len(pairs) - len(test), "test": len(test)},
            "authors": {"dev": len({p.group for p in pairs if p.split == "dev"}), "test": len({p.group for p in test})}}
     res["format_logistic"] = post.format_baseline(pairs, corpus)
+    if with_labels:
+        from harness.label.features import reply_label_votes
+        votes, schema = reply_label_votes()
+        res["label_logistic"] = post.label_baseline(pairs, votes, schema)
 
     targets = post.within_account_targets(corpus)
     accounts = sorted({a for a, _ in targets.values()})
@@ -209,12 +213,13 @@ def main() -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("replies")
     r.add_argument("--labels", action="store_true", help="add the LLM label ablation")
-    sub.add_parser("posts")
+    ps = sub.add_parser("posts")
+    ps.add_argument("--labels", action="store_true", help="add a logistic model on the LLM label fields")
     args = p.parse_args()
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     if args.cmd == "posts":
-        res = run_posts()
-        out = RESULTS_DIR / "posts.json"
+        res = run_posts(with_labels=args.labels)
+        out = RESULTS_DIR / ("posts-labels.json" if args.labels else "posts.json")
         out.write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
         print(json.dumps(res, indent=1))
         return
