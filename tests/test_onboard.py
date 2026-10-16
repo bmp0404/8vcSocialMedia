@@ -488,6 +488,16 @@ def test_mission_items_without_a_usable_source_are_left_out():
     assert len(left_out) == 3
 
 
+def test_keywords_must_be_strings_found_in_posts_or_pages():
+    own = [post("we love postgres", n=1), post("postgres again", n=2), post("edge functions once", n=3)]
+    pages = [site.Page("https://acme.dev", "Acme", "Row Level Security for all", "2026-10-16")]
+    answer = {"keywords": ["Postgres", "edge functions", "row level security", {"text": "mcp", "sources": ["P1"]},
+                           "postgres", "quantum"]}
+    kept, dropped = profile.pick_keywords(answer, own, pages)
+    assert kept == ["postgres", "row level security"]
+    assert len(dropped) == 3 and "isn't a plain string" in dropped[1]
+
+
 def test_memory_fact_carries_its_source_and_validity():
     f = claims.SiteFact("product", "Acme runs background jobs", "Acme runs background jobs for web apps.",
                         "https://acme.dev")

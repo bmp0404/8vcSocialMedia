@@ -152,11 +152,11 @@ Write these lists:
 - subjects: the four to eight subjects the account posts about, each a short phrase and what the posts say about it, citing the P, E or F ids that show it.
 - tone: three to six lines on how the posts are written: length, register, humor, emoji, how they open and what they ask readers to do. Cite the E and P ids that show it. Describe the posts instead of quoting them.
 - goals: two to four things the posts try to get readers to do, such as sign up, try a feature, read the docs or come to an event, citing the ids that show it.
-- keywords: three to eight short lowercase phrases that appear in the posts or pages, used to match other accounts' posts to this account's subjects.
+- keywords: three to eight short lowercase phrases that appear in the posts or pages, used to match other accounts' posts to this account's subjects. Give them as plain strings, without sources.
 
-Every item cites at least one id from the lists. Any name or number in an item must appear in what it cites.
+Every item in the first five lists cites at least one id from the sources. Any name or number in an item must appear in what it cites.
 
-Return JSON {{"what_it_is": [{{"text": "...", "sources": ["F1"]}}], "who_for": [], "subjects": [], "tone": [], "goals": [], "keywords": []}}."""
+Return JSON {{"what_it_is": [{{"text": "...", "sources": ["F1"]}}], "who_for": [], "subjects": [], "tone": [], "goals": [], "keywords": ["..."]}}."""
 
 
 def _one_line(text: str, limit: int = 400) -> str:
@@ -228,17 +228,24 @@ def validate_items(answer: object, sources: dict[str, dict]) -> tuple[dict[str, 
     return kept, left_out
 
 
-def pick_keywords(answer: object, own: list[XPost], pages: list[Page]) -> list[str]:
-    """The model's keywords that occur in at least two of the account's posts or in a fetched page."""
+def pick_keywords(answer: object, own: list[XPost], pages: list[Page]) -> tuple[list[str], list[str]]:
+    """The model's keywords that occur in at least two of the account's posts or in a fetched page, and a reason for
+    each one dropped. The first live drafts got keywords back as {"text", "sources"} objects, copying the other lists'
+    shape, and lost all of them silently; a keyword that isn't a string is now named in the report."""
     raw = answer.get("keywords") if isinstance(answer, dict) else None
     texts = [claims.normalize(p.text) for p in own]
     page_text = claims.normalize(" ".join(p.text for p in pages))
-    out = []
+    out, dropped = [], []
     for k in raw if isinstance(raw, list) else []:
-        k = claims.normalize(str(k))
-        if 2 <= len(k) <= 40 and k not in out and (sum(k in t for t in texts) >= 2 or k in page_text):
+        if not isinstance(k, str):
+            dropped.append(f"Keywords: {k!r} isn't a plain string")
+            continue
+        k = claims.normalize(k)
+        if not 2 <= len(k) <= 40 or not (sum(k in t for t in texts) >= 2 or k in page_text):
+            dropped.append(f"Keywords: {k!r} is in fewer than two of the account's posts and in no page")
+        elif k not in out:
             out.append(k)
-    return out[:MAX_KEYWORDS]
+    return out[:MAX_KEYWORDS], dropped
 
 
 # ---------------------------------------------------------------- drafting
@@ -270,7 +277,8 @@ def draft(handle: str, profile: str, *, reader: XReader, llm: LLM, site: str | N
     user = f"SOURCES\n{listing}" if listing else "SOURCES\n(none)"
     answer = llm.complete_json(MISSION_SYSTEM.format(handle=handle), user, mock=lambda: _mock_mission(d.sources))
     d.items, d.left_out = validate_items(answer, d.sources)
-    d.keywords = pick_keywords(answer, tl.own, d.pages)
+    d.keywords, dropped_keywords = pick_keywords(answer, tl.own, d.pages)
+    d.left_out += dropped_keywords
     return d
 
 

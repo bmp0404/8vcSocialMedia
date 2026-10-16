@@ -28,7 +28,8 @@ def test_use_profile_switches_for_a_block_only():
 
 def test_a_missing_profile_or_file_names_the_path(monkeypatch, tmp_path):
     monkeypatch.setenv("HARNESS_PROFILE", "nosuchbrand")
-    with pytest.raises(config.ProfileError, match=r"no mission profile at .*nosuchbrand.*\['devtools', 'wnba'\]"):
+    # `harness onboard` adds local profiles, so the list may hold more than the committed two.
+    with pytest.raises(config.ProfileError, match=r"no mission profile at .*nosuchbrand.*\['devtools', .*'wnba'\]"):
         config.mission()
     with pytest.raises(config.ProfileError, match="no mission profile"):
         with config.use_profile("nosuchbrand"):
