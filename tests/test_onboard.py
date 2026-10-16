@@ -266,6 +266,18 @@ def test_read_site_refuses_a_disallowed_or_missing_homepage():
         site.read_site("https://acme.dev", FakeWeb({}))
 
 
+def test_a_linked_subdomain_whose_robots_is_down_is_skipped():
+    class SubDown(FakeWeb):
+        def __call__(self, url):
+            if url.startswith("https://docs.acme.dev"):
+                self.urls.append(url)
+                raise FetchError(f"HTTP 522 from docs.acme.dev for {url}")
+            return super().__call__(url)
+    pages, log = site.read_site("https://acme.dev", SubDown({"https://acme.dev": HOME, "https://acme.dev/features": FEATURES}))
+    assert "https://acme.dev/features" in [p.url for p in pages]
+    assert "522" in log["skipped"]["https://docs.acme.dev/"]
+
+
 def test_robots_that_cannot_be_read_stop_the_site():
     class Down(FakeWeb):
         def __call__(self, url):
@@ -605,3 +617,18 @@ def test_judge_uses_the_planner_and_survives_a_failed_call():
         def complete_json(self, system, prompt, mock=None):
             raise RuntimeError("gateway 502")
     assert validate.judge(Down(), "MISSION", p) == {"tool": "error", "reason": "", "detail": "RuntimeError: gateway 502"}
+
+
+def test_run_brand_resumes_from_its_draft_and_verdicts_without_llm_calls(tmp_path, monkeypatch):
+    monkeypatch.setattr(validate, "timeline_accounts", lambda: (BRAND, "zed", "bob"))
+    web = FakeWeb({"https://acme.dev": HOME, "https://acme.dev/features": FEATURES})
+    first, rows = validate.run_brand(corpus_fixture(), BRAND, "https://acme.dev", MockLLM(), tmp_path, CUT, get=web)
+    assert (tmp_path / f"verdicts-{BRAND}.jsonl").exists() and len(rows) == 6
+    assert first.fit["onboarded"]["brand_engaged"]["judged"] == 5
+
+    class NoCalls(MockLLM):
+        def complete_json(self, system, prompt, mock=None):
+            raise AssertionError("a resumed run made an LLM call")
+    again, _ = validate.run_brand(corpus_fixture(), BRAND, "https://acme.dev", NoCalls(), tmp_path, CUT, get=web)
+    assert again == first
+    assert validate.planned_calls(corpus_fixture(), {BRAND: ""}, CUT, tmp_path) == 0

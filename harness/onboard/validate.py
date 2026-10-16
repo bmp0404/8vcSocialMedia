@@ -227,25 +227,44 @@ class BrandResult:
     fit: dict = field(default_factory=dict)
 
 
+def _names(brand: str, cutoff: datetime, out: Path) -> tuple[str, Path, Path, Path]:
+    name = f"{brand.lower().replace('_', '-')}-cut-{cutoff:%Y%m%d}"
+    return name, out / "profiles", out / "onboard", out / f"verdicts-{brand}.jsonl"
+
+
 def run_brand(corpus: Corpus, brand: str, site: str, llm: LLM, out: Path, cutoff: datetime = CUTOFF,
               get: Getter | None = None, workers: int = 4) -> tuple[BrandResult, list[dict]]:
-    name = f"{brand.lower().replace('_', '-')}-cut-{cutoff:%Y%m%d}"
-    profiles_dir, record_dir = out / "profiles", out / "onboard"
-    d = profile.draft(brand, name, reader=CorpusReader(corpus, end=cutoff), llm=llm, site=site, get=get,
-                      today=cutoff.date(), profiles_dir=profiles_dir)
-    target = profile.write(d, profiles_dir=profiles_dir, out_dir=record_dir)
-    res = BrandResult(brand, site, str(target))
-    res.draft = {"pages": len(d.pages), "facts": len(d.facts), "dropped_facts": len(d.dropped_facts),
-                 "mission_lines": {k: len(v) for k, v in d.items.items()}, "left_out": len(d.left_out),
-                 "exemplars": len(d.exemplars), "watch": len(d.watch), "originals_read": d.baselines.originals}
+    """Draft, judge and score one brand.
 
+    A rerun picks up where a crash left off: a drafted profile already in `out` is reused, since onboarding never
+    overwrites one, and so is the brand's verdicts file, so LLM calls go only to what's missing. Recall is recomputed
+    from the corpus every time; the ranking is deterministic, and a drafted watch list that doesn't match it fails."""
+    name, profiles_dir, record_dir, verdict_file = _names(brand, cutoff, out)
+    target = profiles_dir / name
+    reader = CorpusReader(corpus, end=cutoff)
+    if not target.exists():
+        d = profile.draft(brand, name, reader=reader, llm=llm, site=site, get=get, today=cutoff.date(),
+                          profiles_dir=profiles_dir)
+        profile.write(d, profiles_dir=profiles_dir, out_dir=record_dir)
+    summary = json.loads((record_dir / name / "draft.json").read_text(encoding="utf-8"))
+    sources = json.loads((record_dir / name / "sources.json").read_text(encoding="utf-8"))
+    res = BrandResult(brand, site, str(target))
+    res.draft = {"pages": len(sources["pages"]), "facts": len(summary["facts"]), "dropped_facts": len(summary["dropped_facts"]),
+                 "mission_lines": {k: len(v) for k, v in summary["items"].items()}, "left_out": len(summary["left_out"]),
+                 "exemplars": len(summary["exemplars"]), "watch": len(summary["watch"]),
+                 "originals_read": summary["baselines"]["originals"]}
+
+    tl = history.split(brand, reader.profile_statuses(brand, limit=10**6, with_replies=True))
+    ranked = history.rank_accounts(history.engagements(tl), exclude=(brand,))
+    watch = [c.handle for c in history.watchlist(ranked)]
+    if watch != summary["watch"]:
+        raise RuntimeError(f"{name}: the drafted watch list {summary['watch']} isn't the one the corpus gives now {watch}")
     engaged_after = engaged_accounts(corpus, brand, cutoff, None)
     engaged_before = engaged_accounts(corpus, brand, None, cutoff)
     accounts = timeline_accounts()
-    lists = {"onboarded": [c.handle for c in d.watch], "devtools": devtools_list(),
-             "popular": popular_list(corpus, brand, cutoff, accounts),
+    lists = {"onboarded": watch, "devtools": devtools_list(), "popular": popular_list(corpus, brand, cutoff, accounts),
              # Not the drafted rule: the same ranking filled to the devtools list's 24 without the 2-post floor.
-             "onboarded_top24": [c.handle for c in d.ranked[:history.WATCH_MAX]]}
+             "onboarded_top24": [c.handle for c in ranked[:history.WATCH_MAX]]}
     res.recall = {arm: recall(w, engaged_after) for arm, w in lists.items()}
     res.recall["ceiling"] = recall(list(engaged_before), engaged_after)  # every account seen before the cutoff
 
@@ -257,6 +276,20 @@ def run_brand(corpus: Corpus, brand: str, site: str, llm: LLM, out: Path, cutoff
     posts = fit_posts(corpus, brand, cutoff, random.Random(f"{SEED}:{brand}"), accounts)
     missions = {"onboarded": (target / "mission.md").read_text(encoding="utf-8"),
                 "devtools": (config.PROFILES_DIR / "devtools" / "mission.md").read_text(encoding="utf-8")}
+    if verdict_file.exists():
+        rows = [json.loads(line) for line in verdict_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+        if [r["url"] for r in rows] != [p.url for p in posts]:
+            raise RuntimeError(f"{verdict_file} holds verdicts on other posts than this run samples; move it away")
+    else:
+        rows = judge_all(llm, missions, posts, workers)
+        verdict_file.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+    res.fit = {"posts": {g: sum(p.group == g for p in posts) for g in ("own", "engaged", "peer")},
+               "onboarded": off_mission_rates(rows, "onboarded"), "devtools": off_mission_rates(rows, "devtools"),
+               "paired_brand_engaged": paired(rows, ("own", "engaged")), "paired_peer": paired(rows, ("peer",))}
+    return res, rows
+
+
+def judge_all(llm: LLM, missions: dict[str, str], posts: list[FitPost], workers: int) -> list[dict]:
     jobs = [(i, arm) for i in range(len(posts)) for arm in missions]
     verdicts: dict[tuple[int, str], dict] = {}
     lock = threading.Lock()
@@ -269,13 +302,16 @@ def run_brand(corpus: Corpus, brand: str, site: str, llm: LLM, out: Path, cutoff
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         list(pool.map(work, jobs))
-    rows = [asdict(p) | {arm: verdicts[(i, arm)] for arm in missions} for i, p in enumerate(posts)]
-    res.fit = {"posts": {g: sum(p.group == g for p in posts) for g in ("own", "engaged", "peer")},
-               "onboarded": off_mission_rates(rows, "onboarded"), "devtools": off_mission_rates(rows, "devtools"),
-               "paired_brand_engaged": paired(rows, ("own", "engaged")), "paired_peer": paired(rows, ("peer",))}
-    return res, rows
+    return [asdict(p) | {arm: verdicts[(i, arm)] for arm in missions} for i, p in enumerate(posts)]
 
 
-def planned_calls(corpus: Corpus, brands: dict[str, str], cutoff: datetime) -> int:
-    fit = sum(len(fit_posts(corpus, b, cutoff, random.Random(f"{SEED}:{b}"), timeline_accounts())) for b in brands)
-    return 2 * fit + DRAFT_CALLS_PER_BRAND * len(brands)
+def planned_calls(corpus: Corpus, brands: dict[str, str], cutoff: datetime, out: Path) -> int:
+    """The most LLM calls a run can still make: the drafts and verdict files `out` doesn't hold yet."""
+    total = 0
+    for b in brands:
+        name, profiles_dir, _, verdict_file = _names(b, cutoff, out)
+        if not (profiles_dir / name).exists():
+            total += DRAFT_CALLS_PER_BRAND
+        if not verdict_file.exists():
+            total += 2 * len(fit_posts(corpus, b, cutoff, random.Random(f"{SEED}:{b}"), timeline_accounts()))
+    return total

@@ -27,25 +27,24 @@ def main() -> None:
     brands = {b: validate.BRANDS[b] for b in args.brands.split(",")}
     cutoff = datetime.fromisoformat(args.cutoff).replace(tzinfo=timezone.utc)
     corpus = load()
-    planned = validate.planned_calls(corpus, brands, cutoff)
+    planned = validate.planned_calls(corpus, brands, cutoff, args.out)
     if planned > validate.LLM_BUDGET:
         raise SystemExit(f"[validate] would make up to {planned} LLM calls, over the budget of {validate.LLM_BUDGET}")
-    print(f"[validate] {len(brands)} brands, cutoff {cutoff.date()}, up to {planned} LLM calls")
+    print(f"[validate] {len(brands)} brands, cutoff {cutoff.date()}, up to {planned} more LLM calls", flush=True)
     args.out.mkdir(parents=True, exist_ok=True)
     llm = get_llm(args.provider)
     modelrec.install()
     results = []
     with modelrec.recording() as calls:
         for brand, site in brands.items():
-            res, rows = validate.run_brand(corpus, brand, site, llm, args.out, cutoff, workers=args.workers)
+            res, _ = validate.run_brand(corpus, brand, site, llm, args.out, cutoff, workers=args.workers)
             results.append(res)
-            (args.out / f"verdicts-{brand}.jsonl").write_text(
-                "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
             print(json.dumps({"brand": brand, "recall": res.recall, "claims": {k: v for k, v in res.claims.items()
                                                                                  if k != "failures"},
-                              "fit": res.fit}, indent=1))
+                              "fit": res.fit}, indent=1), flush=True)
     models = Counter((c.get("requested"), c.get("reported")) for c in calls)
-    summary = {"cutoff": cutoff.isoformat(), "llm_calls": len(calls),
+    # Calls made by this invocation only; a resumed run reuses drafts and verdicts an earlier one paid for.
+    summary = {"cutoff": cutoff.isoformat(), "llm_calls_this_run": len(calls),
                "models": [{"requested": r, "reported": m, "calls": n} for (r, m), n in models.items()],
                "brands": [vars(r) for r in results]}
     (args.out / "results.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding="utf-8")

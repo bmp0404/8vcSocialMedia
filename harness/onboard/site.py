@@ -230,8 +230,8 @@ class _Robots:
 def read_site(url: str, get: Getter | None = None, max_linked: int = MAX_LINKED_PAGES) -> tuple[list[Page], dict]:
     """The homepage and up to `max_linked` linked pages as text, and a log of what was skipped and why.
 
-    A homepage that can't be fetched, or that robots.txt disallows, raises SiteError. A linked page that fails is
-    logged and skipped."""
+    A homepage that can't be fetched, or whose robots.txt disallows it or can't be read, raises SiteError. A linked
+    page that fails, or whose host's robots.txt can't be read, is logged and skipped."""
     get = get or polite_getter()
     home = url if urllib.parse.urlsplit(url).scheme else "https://" + url
     robots = _Robots(get)
@@ -245,7 +245,12 @@ def read_site(url: str, get: Getter | None = None, max_linked: int = MAX_LINKED_
     title, text, links = extract(body, home)
     pages = [Page(home, title, text, fetched_at)]
     for link in pick_links(links, home, max_linked):
-        if not robots.allowed(link):
+        try:
+            allowed = robots.allowed(link)
+        except SiteError as e:  # a subdomain whose robots.txt is down (perf.vllm.ai answered 522) costs only its pages
+            log["skipped"][link] = str(e)
+            continue
+        if not allowed:
             log["skipped"][link] = "robots.txt disallows it"
             continue
         try:
