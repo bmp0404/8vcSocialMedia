@@ -11,8 +11,8 @@ Don't write code that posts, replies, likes, follows or otherwise writes to X, a
 ## Check your work
 
 ```sh
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m harness run --provider mock
+uv sync
+uv run python -m harness run --provider mock
 ```
 
 The mock run is the only check that needs no API key, so run it before you report a change as done. Keep it passing. When you add an `llm.complete_json` call, pass a `mock=` that returns the shape your caller reads.
@@ -33,3 +33,4 @@ Real runs spend the team's LLM credits. Test with `--narratives 2 --per-mind 1` 
 - Drafts must not invent facts or stats. Prompts tell the model to write `[VERIFY: ...]` instead.
 - Open files with `encoding="utf-8"` and use `pathlib`. Teammates run Windows and macOS.
 - Keep keys in `.env`. Never print a key or commit one.
+- Add a dependency with `uv add <package>` and commit `pyproject.toml` and `uv.lock` together. Don't use `pip install` or bring back `requirements.txt`.

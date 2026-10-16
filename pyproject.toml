@@ -1,0 +1,10 @@
+[project]
+name = "media-harness"
+version = "0.1.0"
+description = "Recommends X actions for a brand account; 8VC's Grok bot decides what gets posted."
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.40",
+    "openai>=1.50",
+    "python-dotenv>=1.0",
+]

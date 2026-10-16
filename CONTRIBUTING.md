@@ -56,7 +56,7 @@ Adding an optional field with a default is safe. Renaming or removing a field br
 ## Rules
 
 - The harness recommends and never posts. 8VC's Grok bot decides what goes out on the account. Don't add code that writes to X, even behind a flag.
-- Keep the mock provider working. Every `complete_json` call takes a `mock=` that returns the shape its caller reads. `python -m harness run --provider mock` is the only check that runs without an API key, so it has to pass on main.
+- Keep the mock provider working. Every `complete_json` call takes a `mock=` that returns the shape its caller reads. `uv run python -m harness run --provider mock` is the only check that runs without an API key, so it has to pass on main.
 - Never let a draft invent a fact or a stat. The minds write `[VERIFY: ...]` when they can't check a number. One wrong stat costs a two-follower account more than a missed post.
 - Keep keys in `.env`, which git ignores. Don't commit keys, cookies or session tokens.
 - Flag engagement you suspect bots or paid boosts pushed. Product launches often get boosted, so a high count doesn't prove the post worked. Mark those rows instead of dropping them, so eval can compare results with and without them.
@@ -65,10 +65,10 @@ Adding an optional field with a default is safe. Renaming or removing a field br
 
 ## Workflow
 
-1. Pull `main`.
+1. Pull `main` and run `uv sync`. It installs Python 3.12 and the dependencies from `uv.lock`.
 2. Create a branch named `<your-name>/<topic>`.
 3. Build your piece. If the stage before yours isn't ready, use fake inputs and put the fixtures in that stage's directory.
-4. Run `python -m harness run --provider mock`, then a real run if you have a key.
+4. Run `uv run python -m harness run --provider mock`, then a real run if you have a key.
 5. Open a pull request and fill in the template. Paste the output your branch produced, because that output is how we pick what to merge.
 
 If you work with a coding agent, read [CLAUDE.md](CLAUDE.md). It covers how agents coordinate through coordigent.

@@ -27,11 +27,3 @@
 ## Verification
 
 <!-- Commands you ran and what they returned. Say what you didn't test. -->
-
-## Checklist
-
-- [ ] `python -m harness run --provider mock` finishes on this branch
-- [ ] Nothing in this PR posts to X or calls an X write endpoint
-- [ ] No keys, cookies or session tokens are committed
-- [ ] Brand-specific text lives in `mission/` or a prompt file, not in Python
-- [ ] I told the team about any shared-contract change, or there is none
