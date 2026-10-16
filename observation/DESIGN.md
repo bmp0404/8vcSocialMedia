@@ -15,12 +15,15 @@ Every source reads its brand-specific settings from a TOML file, `mission/observ
 | `espn_news` | ESPN site API league and team news | none | `news` | none |
 | `espn_scores` | ESPN scoreboard, plus odds from `summary?event=` for games within 48 h | none | `schedule` | scores, live and final flags, `starts_at_unix` |
 | `espn_injuries` | ESPN league injury report | none | `news` | none |
-| `google_news` | Google News RSS search, sorted by date before the per-query cut | none | `news` | none |
+| `google_news` | Google News RSS search, sorted by date before the per-query cut, links resolved to the publisher | none | `news` | `url_resolved` |
 | `bluesky` | Bluesky public AppView search, top posts of the last 24 h | none | `social` | likes, reposts, replies, quotes |
 | `x_targets` | fresh posts from watched X accounts, plus X search when a key exists | none for timelines | `reply_target` | likes, reposts, replies, quotes, views, followers |
 | `x` | X search for the `[x]` queries | X or xAI key | `post` | as the backend reports |
 | `x_brand` | the brand's own posts and posts that mention it | handle, plus a key for mentions | `own_post`, `mention` | as above |
 | `attention` | the context worker's attention series, as a spike ratio | none | `attention` | `spike_ratio`, `level`, `baseline` |
+| `agent` | whichever of the above an LLM picks for this round, with its own queries | as the feeds need | as the feeds give | as the feeds give |
+
+Google News links are `news.google.com/rss/articles/<id>` redirects, and qualify's critic vetoed captions that used them. Following the redirect doesn't reach the publisher: it 302s to itself and serves a page whose script looks the URL up. `Resolver` in `harness/sources/google_news.py` makes the same two requests the page does (the page, for an id, timestamp and signature, then Google's `batchexecute` endpoint), caches each answer in `out/gnews_urls.json`, and resolves at most 25 new links a run (`gnews_resolve_max`), newest first. That took 29 s for 25 links on 2026-10-15. A link left unresolved keeps the Google URL with `url_resolved: False`, and the resolver stops for the run after its first failure, since Google rate-limits in bursts. The endpoint is undocumented and can change without notice; when it does, links come back unresolved rather than wrong.
 
 All five keyless sources answered live on 2026-10-15: 52 ESPN articles, 1 game with odds, 49 injury entries, 52 Google News items and 66 Bluesky posts in one run.
 
@@ -43,7 +46,9 @@ A reply from an account the viewer doesn't follow never reaches For You. X's hom
 - **Crowding.** `(1 + replies) ** -0.5`, because each reply already there pushes ours down and the first few cost the most.
 - **Author size.** 1.0 for 10k to 250k followers, 0.5 for 5k to 10k, and 0 otherwise, except a post from an account above 250k still scores 0.3 inside its first 10 minutes with fewer than 50 replies. X runs an LLM reply-quality check on replies under 250k+ accounts and can label a low-credibility reply `RiskyHighVizReply` (`grox/flows/reply_spam` in the same repo). A new account has near-zero credibility.
 
-`rank_targets` drops replies, so every target is the root of its own conversation, and keeps at most two targets per author because several fast replies to one account look like reply spam. Broad outlets such as SportsCenter count only when a post matches a keyword, since most of what they post is other sports.
+A post with 0 replies despite more than 50 likes after 15 minutes probably has replies restricted, which fxtwitter can't confirm, so its score is multiplied by 0.1 and it carries `replies_possibly_restricted`. Tonight's only target, a @valkyries post with 263 likes and no replies at 75 minutes, prompted the rule; the cutoffs are uncalibrated.
+
+`rank_targets` drops replies, so every target is the root of its own conversation, and keeps at most two targets per author because several fast replies to one account look like reply spam. Each emitted target also carries `thread`, its 15 most-liked direct replies, so the reply minds see the thread they would join. `observe()` reads `x_targets` after every other source, since `attention` can spend minutes in GDELT backoff and the targets would age while it waits. Broad outlets such as SportsCenter count only when a post matches a keyword, since most of what they post is other sports.
 
 ### Orient
 
@@ -56,6 +61,8 @@ Velocity is measured, not guessed, whenever signals have timestamps:
 3. `narrative_velocity` is `log1p(total heat) / log1p(5)`, capped at 1, so one hot item counts and many lukewarm ones count more.
 
 `velocity_basis` says `data` when this happened and `llm` when no member had a timestamp, as with the sample fixtures. Measured velocity is absolute. A single run has no history of the same narrative to compare against.
+
+Every age, the 72-hour staleness cut and velocity are measured from `orient(..., now=)`. A live run leaves it out. A replay or backtest passes the replay cutoff, or orient would measure from today and drop every historical signal as stale. If `now` is left out and every timestamped signal is past the cut, `replay_now` measures from the newest signal instead and logs that it did, so a forgotten `now=` costs accuracy, not the whole input.
 
 `Narrative.reply_targets` holds only X status URLs, fastest first, with `created_at` and the raw counts so a UI can draw the post. X URLs also lead `signal_urls`, because main's mock `decide` replies to `signal_urls[0]`. Reply targets no narrative cited become a `reply-lane` narrative, ranked like the rest so a hot lane can win one of the two slots `decide` drafts for.
 
@@ -89,15 +96,15 @@ Every tunable number lives in `ObserveKnobs` (`harness/sources/knobs.py`), with 
 
 ## The observation agent
 
-The second whiteboard row has one agent reading several feeds for a goal. Today the feeds are fixed by the TOML. The agent would choose them per round:
+The second whiteboard row has one agent reading several feeds for a goal. `harness/sources/agent.py` builds it as the `agent` source, so `HARNESS_SOURCES=agent` turns it on:
 
-1. Its tools are the sources, each with a typed argument schema taken from its TOML section: `google_news(queries, window)`, `x_targets(accounts)`, `espn_scores(leagues)`, and so on.
-2. It starts from the mission, the lessons memory hands it, and last round's narratives, and asks which feeds would change the next decision.
-3. After each call it reads a summary, such as counts by kind, the hottest items and the errors, and decides whether to go deeper. Examples: a hot narrative leads to a conversation fetch, and a game inside 48 hours leads to odds and injuries.
-4. It stops on a budget of requests, dollars (X reads cost money) and seconds.
-5. It writes a trace of which feeds it read and why. When eval decides observe was at fault for a bad action, the trace shows whether the agent skipped the feed that had the story.
+1. Its tools are the other sources. Each tool entry has the source's docstring line and, for `google_news`, `bluesky`, `x`, `x_targets` and `attention`, the list the agent may replace for one call, with its default from the TOML.
+2. Feeds that would only raise this round, such as `x` without a key or `x_brand` without a handle, are left off the tool list, and the trace notes why.
+3. Round one plans from the mission and the lessons. Round two gets a summary of each call (count, error, three hottest items) and may add calls that dig into what round one found, or stop. Exact repeats are dropped.
+4. With the mock provider, or when planning fails, it runs the default plan: `[agent] default_sources` from the TOML, or else every configured feed.
+5. It writes `out/observe-agent-trace.json` with every call, its parameter, its reason, its count and its error. When eval decides observe was at fault for a bad action, the trace shows whether the agent skipped the feed that had the story.
 
-The static TOML stays as the agent's starting plan and its fallback when the LLM call fails. It isn't built yet.
+In a real run on 2026-10-15 (Sonnet 5.5), round one picked six of the seven available feeds and skipped Bluesky. Round two noticed the Sophie Cunningham and Angel Reese story in the results, searched Google News, Bluesky and attention for it by name, and re-read `x_targets` with six accounts of its own choosing because round one had found only one target. The agent plans with `HARNESS_PROVIDER`, not the CLI's `--provider` flag, because a source plugin doesn't see CLI arguments. Its budget is in `ObserveKnobs`: two rounds, six calls per round, six items per list.
 
 ## Open questions
 
@@ -113,4 +120,5 @@ The static TOML stays as the agent's starting plan and its fallback when the LLM
 - One read-only X interface with three backends, and the `x`, `x_targets` and `x_brand` sources on top of it.
 - Reply-target discovery with snapshot velocity, size bands, crowding and per-author caps.
 - Data-driven orient velocity, a budgeted prompt, and X-only reply targets on each narrative.
-- `ObserveKnobs`, the brand TOMLs, and 134 offline tests under `tests/test_observe_*.py`, with fixtures in `observation/fixtures/`.
+- `ObserveKnobs`, the brand TOMLs, and offline tests under `tests/test_observe_*.py`, with fixtures in `observation/fixtures/`. `tests/conftest.py` fails any unit test that opens a socket.
+- The observation agent.

@@ -43,6 +43,27 @@ def get_text(
         raise SourceError(f"{source}: {host} timed out after {timeout}s") from e
 
 
+def post_form(url: str, data: dict, *, source: str, headers: dict | None = None, timeout: float = 15) -> str:
+    """POST a urlencoded form and return the body text. Errors raise SourceError like get_text."""
+    body = urllib.parse.urlencode(data).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=body,
+        method="POST",
+        headers={"User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", **(headers or {})},
+    )
+    host = urllib.parse.urlsplit(url).netloc
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        raise SourceError(f"{source}: {host} returned HTTP {e.code} {e.reason}") from e
+    except urllib.error.URLError as e:
+        raise SourceError(f"{source}: could not reach {host}: {e.reason}") from e
+    except TimeoutError as e:
+        raise SourceError(f"{source}: {host} timed out after {timeout}s") from e
+
+
 def get_json(url: str, *, source: str, **kwargs) -> Any:
     text = get_text(url, source=source, **kwargs)
     try:

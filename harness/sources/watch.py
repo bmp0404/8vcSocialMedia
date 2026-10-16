@@ -6,6 +6,8 @@ dev-tool brand writes its own file and sets HARNESS_OBSERVE_CONFIG.
 
 import os
 import tomllib
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -51,6 +53,12 @@ class AttentionWatch:
 
 
 @dataclass
+class AgentWatch:
+    # Feeds the observation agent reads when the LLM is unavailable, and its starting plan.
+    default_sources: list[str] = field(default_factory=list)
+
+
+@dataclass
 class ReplyTargetWatch:
     accounts: list[str] = field(default_factory=list)
     broad_accounts: list[str] = field(default_factory=list)
@@ -68,6 +76,7 @@ class Watch:
     x: XWatch = field(default_factory=XWatch)
     bluesky: BlueskyWatch = field(default_factory=BlueskyWatch)
     attention: AttentionWatch = field(default_factory=AttentionWatch)
+    agent: AgentWatch = field(default_factory=AgentWatch)
     reply_targets: ReplyTargetWatch = field(default_factory=ReplyTargetWatch)
 
 
@@ -81,7 +90,7 @@ def _section(cls, raw: dict, name: str):
 
 def parse_watch(raw: dict) -> Watch:
     """Build a Watch from parsed TOML, rejecting keys it doesn't know so typos fail loudly."""
-    sections = {"brand", "espn", "google_news", "x", "bluesky", "attention", "reply_targets"}
+    sections = {"brand", "espn", "google_news", "x", "bluesky", "attention", "agent", "reply_targets"}
     unknown = set(raw) - sections
     if unknown:
         raise SourceError(f"observe config: unknown sections {sorted(unknown)}; expected {sorted(sections)}")
@@ -95,11 +104,28 @@ def parse_watch(raw: dict) -> Watch:
         x=_section(XWatch, raw.get("x", {}), "x"),
         bluesky=_section(BlueskyWatch, raw.get("bluesky", {}), "bluesky"),
         attention=_section(AttentionWatch, raw.get("attention", {}), "attention"),
+        agent=_section(AgentWatch, raw.get("agent", {}), "agent"),
         reply_targets=_section(ReplyTargetWatch, raw.get("reply_targets", {}), "reply_targets"),
     )
 
 
+# Set by the observation agent so a source it calls reads the agent's queries for that one call.
+_ACTIVE: ContextVar[Watch | None] = ContextVar("observe_watch", default=None)
+
+
+@contextmanager
+def use(watch: Watch):
+    """Make load_watch() return `watch` inside the block."""
+    token = _ACTIVE.set(watch)
+    try:
+        yield
+    finally:
+        _ACTIVE.reset(token)
+
+
 def load_watch(path: Path | None = None) -> Watch:
+    if path is None and (active := _ACTIVE.get()) is not None:
+        return active
     path = path or Path(os.getenv("HARNESS_OBSERVE_CONFIG") or DEFAULT_PATH)
     if not path.exists():
         raise SourceError(f"observe config not found at {path}; copy mission/observe.toml or set HARNESS_OBSERVE_CONFIG")
