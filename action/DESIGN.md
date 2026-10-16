@@ -133,6 +133,43 @@ Rejected, with the reason:
 
 Best-of-N only works if the judge can tell a good reply from a slightly better one. On the easy question, most-liked against least-liked real reply in a thread, the los alias picked the more-liked one 31 times in 40, with no position bias (picked A 19 times in 40). On the question best-of-N actually faces, adjacent ranks among the top 5 asked in both orders, Opus picked the more-liked reply 78 times in 138 (57%) and the los alias (`claude-fable-5-dd-los-6.5-tpg`, gateway reports gpt-5.6-sol) 76 times in 138 (55%). Each gave the same answer in both orders on only about half the pairs (34 of 69 and 32 of 69). That is under the 60% the research report set as the bar, so a best-of-N ranker would be choosing close to at random among plausible drafts. The lane picks at random on purpose and spends the judge on vetoes. The research run found Spearman 0.15 (Opus) and about 0 (the los alias) between judge score and real likes among the top 6 replies, with the sign flipping when only the rest of the lineup changed.
 
+## Live facts let the gate accept names people bring from outside the thread
+
+The gate's grounding rules reject a name, number or handle that the post, the thread and the facts block don't contain. Real fans bring names and numbers from outside, so these rules alone reject 18.7% of the 670 real replies in `action/fixtures/x_threads.json`. The gate as a whole now rejects 35.7% of them. The 29% this page used to quote came from the gate before the content-free rule, and `action/experiments/gate_calibration.json` still holds that run.
+
+`harness/facts/` keeps dated facts in memory's `Fact` kind, each with `as_of` and `valid_until`. A fact is live from `as_of` up to, but not including, `valid_until`. `python -m harness.facts refresh` writes them to the profile's memory store:
+
+- **wnba:** ESPN's keyless site API (`harness/facts/espn.py`). It writes each team's roster, its most recent game (the result and one line per player who played), its next game, and the league's injury list. A newer game replaces the older game's facts.
+- **devtools:** the recent posts of each account in `[reply_targets]` (`harness/facts/posts.py`). The thread under a target becomes a fact at draft time, covering replies past the page's dozen.
+
+The reply lane loads the live facts once per run. The gate then counts a capitalized name as grounded when it appears as a whole word in a live fact. A number has to pass a stricter test. A live fact about something the draft, the post or the target's handle names must hold the same number with the same unit, meaning the word after it with stat synonyms folded together. A hyphenated pair such as a score or a record matches without a unit, but only as written; game facts write the score both ways round. The planning call sees up to five facts about each post's author or the names in it. The writer's page never sees them, because a page header with counts made the model write hype and invent stats (see above).
+
+Measured with `uv run python -m harness.minds.lab.fact_grounding --invent` (report in `action/experiments/fact_grounding.json`). Facts for each thread are what daily refreshes would have left in the store when its post went out: each team's and player's most recent game from the month before, and nothing that ended later. One game's box score (an ESPN 404) was skipped. Intervals resample threads, 2,000 draws.
+
+| Set | Gate rejects, without facts | With facts | Change, 95% CI |
+| --- | --- | --- | --- |
+| wnba real replies (670, 24 threads) | 35.7% | 32.4% | −3.3 points [−4.8, −1.8] |
+| the same, last 7 days only (392, 16 threads) | 35.5% | 31.6% | −3.8 [−6.1, −1.6] |
+| the same, plus today's rosters | 35.5% | 31.1% | −4.3 [−6.8, −2.0] |
+| devtools real replies (6,663, 315 threads) | 28.2% | 27.1% | −1.1 [−1.4, −0.8] |
+
+| Invented-stat drafts (claude-sonnet-5-5, from the post alone, told to make a number up) | Caught without facts | With facts | Let through by facts |
+| --- | --- | --- | --- |
+| wnba, design batch (143) | 87.4% | 86.0% | 2: Clark's 14 assists the day before (true), "6 threes in the gold medal game" (true for a WNBA game, not that one) |
+| wnba, held-out batch (144) | 84.0% | 82.6% | 2: the Dream's 30-14 regular season (true), Canada's 11 assists "in game one" (she had 11 in two recent games, neither of them a game one) |
+| devtools, design batch (235) | 88.5% | 88.5% | 0 |
+| devtools, held-out batch (239) | 87.0% | 86.2% | 2, both coincidences: "40%" of a quota matched "30–40% cheaper", and a 256k context window matched another model's |
+
+Readings:
+
+- **Almost all of the gain is names.** On the WNBA set, facts ground no number the gate used to reject, because fans write "6-for-18" and "27 and 10", not "27 points". On the dev-tool set, number findings fell by 28 of 592 and name findings by 160 of 890. A first version matched a number by value alone. It let 9 of 143 invented WNBA stats through ("dropping 31 tonight" matched 31 minutes, "27-17" matched the opponent's record) and 15 of 235 dev-tool numbers, so the unit rule replaced it. Its numbers are in the report under `first_rule_number_without_unit`.
+- **Only the most recent game counts.** Keeping every game of the last month as its own fact held each player's whole range of stat lines, and let 12 of 287 invented WNBA stats through ("13 boards a night", "34 minutes a game") for no gain on real replies (the same −3.3 points). The report keeps it under `month_of_games_variant`.
+- **About 4 in 761 invented numbers now pass that a person would call wrong.** The held-out batches were drawn after the unit rule was fixed. The changes since came from a code review, not from those drafts.
+- **Many remaining name rejections aren't names.** They include weekdays and months (Saturday, January), ordinary words capitalized for emphasis (Kidding, Queen, Phenomenal) and misspellings (Caitlyn, Valkeries). A list of weekday and month names would clear a few; nothing here measures that.
+- **Rosters were measured only on recent threads.** ESPN serves today's roster only, so the main row leaves rosters out. The roster row dates today's rosters back to threads from the last week, which assumes no roster moved during the playoffs.
+- **The veto doesn't see the facts.** A draft the facts ground can still be vetoed as "unsupported". Giving the veto the same facts is the obvious next step, and it is unmeasured.
+- **The watcher's hot path doesn't pass facts yet.** `lanes.answer_target` takes them as `live_facts=`; without it the gate grounds on context alone, as before.
+
 ## The typed actions
 
 Each opportunity resolves to one JSON tool call, checked by `schema.parse_call` against its lane and against what was offered. Errors name the tool, the field and the reason. For example: `reply.target_url 'https://www.espn.com/x' was not offered; offered: [...]` or `tool 'post' is not allowed in the reply lane`. Unknown fields are rejected, never dropped.
@@ -163,8 +200,8 @@ Every number the stage uses sits in `settings.ActionConfig`, with a comment sayi
 - **Fresh targets are rare.** Tonight's live targets were 90 minutes to 2 days old, so the 30-minute cutoff abstains on nearly everything. The lane needs Observe polling big accounts every few minutes, or a looser cutoff. Sam's call.
 - **Continuation copies the thread.** In a hostile thread, the drafts are hostile, and the veto's risk check is the only guard.
 - **Real engagement is unmeasured.** Every number here is a judge's prediction or a correlation. Grok's own bar is unknown, and people detect AI on short posts at close to chance, so "Opus can't tell" is a stricter bar than a fan applies.
-- **The facts block is soft.** It is the mission plus orient's summaries, which are LLM text. A name that appears only in a wrong summary passes the grounding rule.
-- **Grounding rules cost real replies.** With only the post and thread as context, they reject 29% of real replies (`action/experiments/gate_calibration.json`), mostly names and numbers people bring from outside. That's the price of never shipping an unverifiable fact.
+- **The facts block is soft.** It is the mission plus orient's summaries, which are LLM text. A name that appears only in a wrong summary passes the grounding rule. Live facts (above) are a separate, sourced input to the gate.
+- **Grounding rules cost real replies.** With only the post and thread as context, the grounding rules reject 18.7% of real replies, mostly names and numbers people bring from outside. Live facts bring that to 15.4% (see "Live facts let the gate accept names"). That's the price of never shipping an unverifiable fact.
 - **One model holds up the writer.** If `claude-opus-4-5-20251101` leaves the gateway, every reply falls back to the styled prompt, which scored AUC 0.79 in the research run, where 0.5 means a judge can't tell it from people.
 - **The account isn't verified.** Verified replies rank higher: mean rank 32.8 against 59.8 (arXiv 2602.03090, correlational).
 - **The `pipeline` arm ran before the page bot filter existed.** Its numbers measure the lane without it.
@@ -175,6 +212,8 @@ Every number the stage uses sits in `settings.ActionConfig`, with a comment sayi
 uv run python -m harness.minds.lab.fetch_x_threads IndianaFever WNBA CaitlinClark22 espnW AtlantaDream valkyries --per-account 4
 uv run python -m harness.minds.lab.reply_dynamics
 uv run python -m harness.minds.lab.gate_calibration
+uv run python -m harness.minds.lab.fact_grounding          # add --invent for the invented-stat drafts (LLM calls)
+HARNESS_PROVIDER=anthropic uv run python -m harness.facts refresh   # live facts for the active profile
 HARNESS_PROVIDER=anthropic uv run python -m harness.minds.lab.reply_experiment --threads 19
 HARNESS_PROVIDER=anthropic uv run python -m harness.minds.lab.live_decide CaitlinClark22 IndianaFever espnW --max-age 30
 uv run python -m pytest tests

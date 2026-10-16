@@ -15,6 +15,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
+from harness.facts.ground import FactIndex, grounded_numbers
 from harness.minds.settings import GateLimits
 from harness.xtext import MAX_WEIGHTED_CHARS, overflow_index, weighted_length
 
@@ -91,6 +92,7 @@ class _Ctx:
     limits: GateLimits
     context: str | None  # lowercased, or None when the caller has no context to ground against
     post: str | None = None  # lowercased text of the post being answered, when the caller has it
+    facts: FactIndex | None = None  # live facts; a name or number they back up counts as grounded
 
 
 def _is_emoji(ch: str) -> bool:
@@ -245,15 +247,17 @@ def _rule_unknown_handle(text: str, c: _Ctx) -> list[str]:
 def _rule_ungrounded_number(text: str, c: _Ctx) -> list[str]:
     if c.context is None:
         return []
+    unmarked = _unmarked(text)
+    backed = grounded_numbers(c.facts, unmarked, c.post or "") if c.facts else set()
     return [(f"number {m.group(0)!r} isn't in the context", m.start(), m.end())
-            for m in NUMBER.finditer(_unmarked(text)) if m.group(0) not in c.context]
+            for m in NUMBER.finditer(unmarked) if m.group(0) not in c.context and m.start() not in backed]
 
 
 def _rule_ungrounded_name(text: str, c: _Ctx) -> list[str]:
     if c.context is None:
         return []
     return [(f"name {w!r} isn't in the context", a, b) for w, a, b in capitalized_names(_unmarked(text))
-            if w.lower() not in c.context]
+            if w.lower() not in c.context and not (c.facts and c.facts.grounds_name(w))]
 
 
 RULES = {
@@ -279,14 +283,16 @@ GROUNDING_RULES = ("unknown_handle", "ungrounded_number", "ungrounded_name")
 
 
 def check(text: str, kind: str = "reply", *, context: str | None = None, limits: GateLimits | None = None,
-          rules: dict | None = None, post: str | None = None) -> GateResult:
+          rules: dict | None = None, post: str | None = None, facts: FactIndex | None = None) -> GateResult:
     """Run every rule on `text`. `kind` is the action type. `context` is everything the writer
     saw (post, thread, facts); without it the grounding rules are skipped. `post` is the text being
-    answered; the content-free rule checks short drafts against it (falling back to `context`)."""
+    answered; the content-free rule checks short drafts against it (falling back to `context`).
+    `facts` indexes live facts (harness/facts/ground.py): a name or number they back up passes the
+    grounding rules even when the context lacks it."""
     if kind not in KINDS:
         raise ValueError(f"gate.check: unknown kind {kind!r}; expected one of {list(KINDS)}")
     text = unicodedata.normalize("NFC", text)
     norm = lambda x: unicodedata.normalize("NFC", x).lower() if x is not None else None  # noqa: E731
-    ctx = _Ctx(kind, limits or GateLimits(), norm(context), norm(post))
+    ctx = _Ctx(kind, limits or GateLimits(), norm(context), norm(post), facts)
     findings = [Finding(name, d, a, b) for name, rule in (rules or RULES).items() for d, a, b in rule(text, ctx)]
     return GateResult(passed=not findings, findings=findings)

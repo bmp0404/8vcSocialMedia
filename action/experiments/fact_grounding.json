@@ -1,0 +1,385 @@
+{
+ "wnba_real_replies": {
+  "threads": 24,
+  "replies": 670,
+  "facts_live_per_thread_median": 207,
+  "before": {
+   "rejected": 239,
+   "rejected_rate": 0.357,
+   "rejected_by_grounding_only": 125,
+   "rejected_by_grounding_only_rate": 0.187,
+   "grounding_rule_hits": {
+    "ungrounded_name": 217,
+    "ungrounded_number": 77,
+    "unknown_handle": 22
+   }
+  },
+  "after": {
+   "rejected": 217,
+   "rejected_rate": 0.324,
+   "rejected_by_grounding_only": 103,
+   "rejected_by_grounding_only_rate": 0.154,
+   "grounding_rule_hits": {
+    "ungrounded_name": 147,
+    "ungrounded_number": 77,
+    "unknown_handle": 22
+   }
+  },
+  "passed_only_with_facts": 22,
+  "change_in_rejected_rate": {
+   "change": -0.033,
+   "ci95": [
+    -0.048,
+    -0.018
+   ],
+   "clusters": 24
+  },
+  "change_in_grounding_only_rate": {
+   "change": -0.033,
+   "ci95": [
+    -0.048,
+    -0.018
+   ],
+   "clusters": 24
+  },
+  "passed_only_with_facts_examples": [
+   "Now it’s time to fire Stephanie White and let her be “humbled.”\n\nFind someone who can coach without the politics.",
+   "Thank you for spitting on the fans again by continuing to put out an absolutely garbage roster and filling your pockets using Caitlin's fame. Such a trash ass organization.",
+   "Never compare Clark to Reese ever again. AR5 clears her",
+   "wtf does Kelsey Mitchell and Aliyah Boston thinks so funny? They just got eliminated and they’re laughing.",
+   "Question: What would you like to get in FA. \nA defender that can play the wing & pressure full court like Raven 🤣🤣🤣🤣🤣 GTFOH \nONLY THING WE NEED IS A BETTER COACH WE DROPPED FROM THE 3 SEED TO THE 6 IN A WEEK. She said she wants Caitlin to help her coach 🤣🤣🤣🤣🤣🤣SHIT SHOW",
+   "Yeah A’ja, Angel and Gabby !!!!!",
+   "DeQuitter probably gonna request a trade to Valkyries next",
+   "Lost to Portland lol 😂",
+   "DB effect? How come Mercury didn't even make the playoff with Bonner....",
+   "No one gives a crap about sneakers from a fucking weakling who doesn't defend her teammates.  You think Jordan would just sit there with his mouth shut after his teammate almost had his head taken off.  Weak  No one wants weak.",
+   "I been enjoying smokin on the Caitlin Clark pack thanks to the legend A'Ja Wilson.",
+   "Great job everybody- This team has a generational player like AR5 who is paired with two top ten guards in the world with LLISH n Rhyne and thee best pg in bball in JC\n\nThe best glue person in the world of basketball in Naz with one of the games greatest ever in DB \n\ntyou"
+  ]
+ },
+ "devtools_real_replies": {
+  "threads": 315,
+  "replies": 6663,
+  "facts_live_per_thread_median": 33,
+  "before": {
+   "rejected": 1877,
+   "rejected_rate": 0.282,
+   "rejected_by_grounding_only": 744,
+   "rejected_by_grounding_only_rate": 0.112,
+   "grounding_rule_hits": {
+    "ungrounded_name": 890,
+    "unknown_handle": 169,
+    "ungrounded_number": 592
+   }
+  },
+  "after": {
+   "rejected": 1805,
+   "rejected_rate": 0.271,
+   "rejected_by_grounding_only": 672,
+   "rejected_by_grounding_only_rate": 0.101,
+   "grounding_rule_hits": {
+    "ungrounded_name": 730,
+    "unknown_handle": 169,
+    "ungrounded_number": 564
+   }
+  },
+  "passed_only_with_facts": 72,
+  "change_in_rejected_rate": {
+   "change": -0.011,
+   "ci95": [
+    -0.014,
+    -0.008
+   ],
+   "clusters": 315
+  },
+  "change_in_grounding_only_rate": {
+   "change": -0.011,
+   "ci95": [
+    -0.014,
+    -0.008
+   ],
+   "clusters": 315
+  }
+ },
+ "wnba_invented_stats": {
+  "drafts_with_a_number": 143,
+  "caught_before": 125,
+  "caught_after": 123,
+  "caught_before_rate": 0.874,
+  "caught_after_rate": 0.86,
+  "number_flagged_before": 125,
+  "number_flagged_after": 123,
+  "let_through_by_facts": 2,
+  "change_in_caught_rate": {
+   "change": -0.014,
+   "ci95": [
+    -0.035,
+    0.0
+   ],
+   "clusters": 24
+  },
+  "models": [
+   "claude-sonnet-5-5"
+  ],
+  "let_through_examples": [
+   "caitlin hit 6 threes in the gold medal game, logo range apparently works internationally too",
+   "the 14 assists in one game still lives rent free in my head. details later pls"
+  ]
+ },
+ "devtools_invented_stats": {
+  "drafts_with_a_number": 235,
+  "caught_before": 208,
+  "caught_after": 208,
+  "caught_before_rate": 0.885,
+  "caught_after_rate": 0.885,
+  "number_flagged_before": 208,
+  "number_flagged_after": 208,
+  "let_through_by_facts": 0,
+  "change_in_caught_rate": {
+   "change": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "clusters": 40
+  },
+  "models": [
+   "claude-sonnet-5-5"
+  ]
+ },
+ "wnba_real_replies_last_7_days_with_rosters": {
+  "threads": 16,
+  "replies": 392,
+  "facts_live_per_thread_median": 221,
+  "before": {
+   "rejected": 139,
+   "rejected_rate": 0.355,
+   "rejected_by_grounding_only": 61,
+   "rejected_by_grounding_only_rate": 0.156,
+   "grounding_rule_hits": {
+    "ungrounded_number": 48,
+    "unknown_handle": 16,
+    "ungrounded_name": 94
+   }
+  },
+  "after": {
+   "rejected": 122,
+   "rejected_rate": 0.311,
+   "rejected_by_grounding_only": 44,
+   "rejected_by_grounding_only_rate": 0.112,
+   "grounding_rule_hits": {
+    "ungrounded_number": 48,
+    "unknown_handle": 16,
+    "ungrounded_name": 55
+   }
+  },
+  "passed_only_with_facts": 17,
+  "change_in_rejected_rate": {
+   "change": -0.043,
+   "ci95": [
+    -0.068,
+    -0.02
+   ],
+   "clusters": 16
+  },
+  "change_in_grounding_only_rate": {
+   "change": -0.043,
+   "ci95": [
+    -0.068,
+    -0.02
+   ],
+   "clusters": 16
+  }
+ },
+ "wnba_invented_stats_heldout": {
+  "drafts_with_a_number": 144,
+  "caught_before": 121,
+  "caught_after": 119,
+  "caught_before_rate": 0.84,
+  "caught_after_rate": 0.826,
+  "number_flagged_before": 120,
+  "number_flagged_after": 118,
+  "let_through_by_facts": 2,
+  "change_in_caught_rate": {
+   "change": -0.014,
+   "ci95": [
+    -0.035,
+    0.0
+   ],
+   "clusters": 24
+  },
+  "models": [
+   "claude-sonnet-5-5"
+  ],
+  "let_through_examples": [
+   "the dream were 30-14 in the regular season and i still don't think people understand how good this team is. see you at state farm",
+   "jordin canada with 11 assists in game one?? the pace she sets is everything"
+  ]
+ },
+ "devtools_invented_stats_heldout": {
+  "drafts_with_a_number": 239,
+  "caught_before": 208,
+  "caught_after": 206,
+  "caught_before_rate": 0.87,
+  "caught_after_rate": 0.862,
+  "number_flagged_before": 208,
+  "number_flagged_after": 206,
+  "let_through_by_facts": 2,
+  "change_in_caught_rate": {
+   "change": -0.008,
+   "ci95": [
+    -0.021,
+    0.0
+   ],
+   "clusters": 40
+  },
+  "models": [
+   "claude-sonnet-5-5"
+  ]
+ },
+ "wnba_real_replies_last_7_days": {
+  "threads": 16,
+  "replies": 392,
+  "facts_live_per_thread_median": 206,
+  "before": {
+   "rejected": 139,
+   "rejected_rate": 0.355,
+   "rejected_by_grounding_only": 61,
+   "rejected_by_grounding_only_rate": 0.156,
+   "grounding_rule_hits": {
+    "ungrounded_number": 48,
+    "unknown_handle": 16,
+    "ungrounded_name": 94
+   }
+  },
+  "after": {
+   "rejected": 124,
+   "rejected_rate": 0.316,
+   "rejected_by_grounding_only": 46,
+   "rejected_by_grounding_only_rate": 0.117,
+   "grounding_rule_hits": {
+    "ungrounded_number": 48,
+    "unknown_handle": 16,
+    "ungrounded_name": 62
+   }
+  },
+  "passed_only_with_facts": 15,
+  "change_in_rejected_rate": {
+   "change": -0.038,
+   "ci95": [
+    -0.061,
+    -0.016
+   ],
+   "clusters": 16
+  },
+  "change_in_grounding_only_rate": {
+   "change": -0.038,
+   "ci95": [
+    -0.061,
+    -0.016
+   ],
+   "clusters": 16
+  }
+ },
+ "first_rule_number_without_unit": {
+  "note": "The first version of harness/facts/ground.py matched a number by value alone (with a stat label only when the draft gave one), on the same threads and the design batch of invented drafts. Replaced by the unit rule because of the let-throughs below; that code is not kept.",
+  "wnba_real_replies": {
+   "before": 0.187,
+   "after": 0.152,
+   "passed_only_with_facts": 23
+  },
+  "devtools_real_replies": {
+   "before": 0.112,
+   "after": 0.095,
+   "passed_only_with_facts": 112
+  },
+  "wnba_invented_stats": {
+   "drafts_with_a_number": 143,
+   "caught_before": 125,
+   "caught_after": 116,
+   "let_through_by_facts": 9,
+   "let_through_examples": [
+    "caitlin clark dropping 31 tonight feels illegal honestly",
+    "kelsey mitchell dropping 31 in that game 2 loss and still no help, that one hurt",
+    "bonner putting up 14 a night off the bench in this run is nuts, and she's not even starting",
+    "sonia citron held opposing guards to 38% shooting this year. second team is disrespectful",
+    "caitlin hit 6 threes in the gold medal game, logo range apparently works internationally too",
+    "the 14 assists in one game still lives rent free in my head. details later pls",
+    "rhyne howard locking people up and still hitting 38% from three is the part that gets me",
+    "valkyries went 27-17 this year and i still think nobody saw this coming",
+    "kayla thornton averaging 14 a night in this run is wild"
+   ]
+  },
+  "devtools_invented_stats": {
+   "drafts_with_a_number": 235,
+   "caught_before": 208,
+   "caught_after": 193,
+   "let_through_by_facts": 15
+  }
+ },
+ "wnba_espn_games_skipped": [
+  "401856947"
+ ],
+ "month_of_games_variant": {
+  "note": "Every game from the 30 days before each post, each kept as its own fact, instead of each team's and player's most recent game. Same threads and drafts, run after the 3PT and pair fixes and before game facts were keyed by most recent game (harness/facts/espn.py), so it differs from the final rule only in that keying. Replaced because it let more invented WNBA stats through.",
+  "wnba_real_replies": {
+   "facts_live_per_thread_median": 1016,
+   "change_in_rejected_rate": {
+    "change": -0.033,
+    "ci95": [
+     -0.048,
+     -0.018
+    ],
+    "clusters": 24
+   }
+  },
+  "wnba_invented_stats": {
+   "drafts_with_a_number": 143,
+   "caught_before": 125,
+   "caught_after": 119,
+   "caught_before_rate": 0.874,
+   "caught_after_rate": 0.832,
+   "let_through_by_facts": 6,
+   "change_in_caught_rate": {
+    "change": -0.042,
+    "ci95": [
+     -0.077,
+     -0.007
+    ],
+    "clusters": 24
+   },
+   "let_through_examples": [
+    "rhyne howard guarding the other team's best wing for 34 minutes a game and finally getting the flowers",
+    "angel reese pulling down 13 boards a night and now first team defense?? the growth is real",
+    "caitlin hit 6 threes in the gold medal game, logo range apparently works internationally too",
+    "the 14 assists in one game still lives rent free in my head. details later pls",
+    "the Fever were 9 point favorites last night and i still managed to pick wrong. teach me your ways",
+    "gabby guarding the other team's best player for 34 minutes a night and still getting buckets. unreal"
+   ]
+  },
+  "wnba_invented_stats_heldout": {
+   "drafts_with_a_number": 144,
+   "caught_before": 121,
+   "caught_after": 115,
+   "caught_before_rate": 0.84,
+   "caught_after_rate": 0.799,
+   "let_through_by_facts": 6,
+   "change_in_caught_rate": {
+    "change": -0.042,
+    "ci95": [
+     -0.069,
+     -0.014
+    ],
+    "clusters": 24
+   },
+   "let_through_examples": [
+    "kelsey mitchell hit 7 threes against the wings and the whole building lost it",
+    "9 assists a night and still somehow underrated by half the internet",
+    "angel reese pulling down 13 boards a night and also making all-defensive first team? chicago really traded a monster",
+    "and i'm over here 2-8 on my picks, send help",
+    "the dream were 30-14 in the regular season and i still don't think people understand how good this team is. see you at state farm",
+    "jordin canada with 11 assists in game one?? the pace she sets is everything"
+   ]
+  }
+ }
+}

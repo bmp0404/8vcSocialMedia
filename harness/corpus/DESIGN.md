@@ -174,7 +174,7 @@ I did not score the judges on the reply benchmark. Its 967 test replies would co
 
 ## Openness
 
-`harness/rank/target.py` gives `openness(handle) -> {share_small_top3, median_top3_minutes, n}` for an account whose threads were sampled: across its threads, the share of the three most-liked replies written by accounts under 1,000 followers, and the median minutes after the root they arrived. Over 45 accounts the median share is 0.667. Cognition's top replies come from small accounts less often (0.42) and fast (median 14 minutes); Expo's arrive late (119 minutes). It has no validation yet.
+`harness/rank/target.py` gives `openness(handle) -> {share_small_top3, median_top3_minutes, n}` for an account whose threads were sampled: across its threads, the share of the three most-liked replies written by accounts under 1,000 followers, and the median minutes after the root they arrived. Over 45 accounts the median share is 0.667. Cognition's top replies come from small accounts less often (0.42) and fast (median 14 minutes); Expo's arrive late (119 minutes). Tested against later threads, it doesn't predict well enough to order reply targets; see "Ordering reply targets by an author's openness" in `eval/experiments/closed.md`.
 
 ## Scoring a new scorer
 

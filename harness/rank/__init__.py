@@ -1,1 +1,1 @@
-"""Rankers trained on the benchmarks the data labels itself. See harness/corpus/DESIGN.md."""
+"""Rankers and targeting signals fitted to what the data labels itself."""

@@ -1,0 +1,167 @@
+{
+ "question": "Does an author's openness on earlier threads predict whether a small account's reply reaches the top 3 of a later thread?",
+ "min_history_threads": 2,
+ "bootstrap": {
+  "draws": 2000,
+  "seed": 0,
+  "cluster": "author"
+ },
+ "threads_scored": 242,
+ "rolling_weekly": {
+  "cutoffs": [
+   "2026-09-22",
+   "2026-09-29",
+   "2026-10-06",
+   "2026-10-13",
+   "2026-10-20"
+  ],
+  "n_threads": 147,
+  "n_authors": 21,
+  "any_small_base_rate": 0.918,
+  "any_small_by_prior_share": {
+   "auc": 0.745,
+   "ci95": [
+    0.493,
+    0.871
+   ],
+   "positives": 135,
+   "negatives": 12,
+   "pairs": 1620
+  },
+  "any_small_by_smaller_author": {
+   "auc": 0.387,
+   "ci95": [
+    0.13,
+    0.634
+   ],
+   "positives": 135,
+   "negatives": 12,
+   "pairs": 1620
+  },
+  "share_small_by_prior_share": {
+   "rho": 0.091,
+   "ci95": [
+    -0.125,
+    0.248
+   ]
+  },
+  "share_small_by_smaller_author": {
+   "rho": -0.185,
+   "ci95": [
+    -0.375,
+    0.017
+   ]
+  },
+  "top3_minutes_by_prior_median": {
+   "rho": 0.35,
+   "ci95": [
+    0.151,
+    0.467
+   ]
+  }
+ },
+ "rolling_weekly_sensitivity": {
+  "min_history_1": {
+   "n_threads": 165,
+   "n_authors": 26,
+   "any_small_by_prior_share": {
+    "auc": 0.763,
+    "ci95": [
+     0.581,
+     0.866
+    ],
+    "positives": 151,
+    "negatives": 14,
+    "pairs": 2114
+   },
+   "share_small_by_prior_share": {
+    "rho": 0.117,
+    "ci95": [
+     -0.095,
+     0.277
+    ]
+   },
+   "top3_minutes_by_prior_median": {
+    "rho": 0.293,
+    "ci95": [
+     0.089,
+     0.426
+    ]
+   }
+  },
+  "min_history_3": {
+   "n_threads": 122,
+   "n_authors": 17,
+   "any_small_by_prior_share": {
+    "auc": 0.736,
+    "ci95": [
+     0.444,
+     0.893
+    ],
+    "positives": 112,
+    "negatives": 10,
+    "pairs": 1120
+   },
+   "share_small_by_prior_share": {
+    "rho": 0.041,
+    "ci95": [
+     -0.231,
+     0.221
+    ]
+   },
+   "top3_minutes_by_prior_median": {
+    "rho": 0.323,
+    "ci95": [
+     0.03,
+     0.471
+    ]
+   }
+  }
+ },
+ "single_split_2026_10_06": {
+  "n_threads": 69,
+  "n_authors": 17,
+  "any_small_base_rate": 0.928,
+  "any_small_by_prior_share": {
+   "auc": 0.706,
+   "ci95": [
+    0.367,
+    0.976
+   ],
+   "positives": 64,
+   "negatives": 5,
+   "pairs": 320
+  },
+  "any_small_by_smaller_author": {
+   "auc": 0.347,
+   "ci95": [
+    0.069,
+    0.691
+   ],
+   "positives": 64,
+   "negatives": 5,
+   "pairs": 320
+  },
+  "share_small_by_prior_share": {
+   "rho": -0.083,
+   "ci95": [
+    -0.417,
+    0.325
+   ]
+  },
+  "share_small_by_smaller_author": {
+   "rho": -0.293,
+   "ci95": [
+    -0.542,
+    0.069
+   ]
+  },
+  "top3_minutes_by_prior_median": {
+   "rho": 0.082,
+   "ci95": [
+    -0.135,
+    0.274
+   ]
+  }
+ }
+}

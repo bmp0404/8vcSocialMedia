@@ -16,11 +16,14 @@ import json
 import random
 from collections import Counter
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
 from harness import config
+from harness.facts import ground, posts
+from harness.facts.store import load_live
+from harness.learning.kinds import Fact
 from harness.llm import LLM
 from harness.minds import brand, corpus, gate, routing, thread, veto, writer
 from harness.minds.schema import POST_LANE, REPLY_LANE, ActionSchemaError, Offer, parse_call, parse_plan
@@ -141,12 +144,29 @@ def target_meta(t: dict) -> dict:
     return meta
 
 
-def plan_targets(llm: LLM, mission: str, lessons: str, targets: list[dict]) -> tuple[dict, str]:
+# Facts listed under each candidate post in the planning call. No measurement picked the number; five
+# keeps a box-score day (a result and a dozen player lines per team) from swamping the post.
+PLAN_FACTS = 5
+
+
+def _fact_lines(facts: list[Fact], t: dict) -> str:
+    about = ground.about(facts, ground.split_handle(t["author"]) + " " + t.get("text", ""), PLAN_FACTS)
+    return "".join(f"\n    fact, true as of {f.as_of}: {' '.join(f.answer.split())[:300]}" for f in about)
+
+
+def plan_targets(llm: LLM, mission: str, lessons: str, targets: list[dict],
+                 facts: list[Fact] | None = None) -> tuple[dict, str]:
     """One JSON call that picks which fresh targets to answer and with what intent. Returns
-    ({url: plan}, error). On a malformed answer every target is skipped and the error is kept."""
+    ({url: plan}, error). On a malformed answer every target is skipped and the error is kept.
+    `facts` are live facts (harness/facts/); the ones about a post's author or the names in it are
+    listed under the post, so the intent can use them. The writer never sees them: a page header with
+    counts made the model write hype and invent stats (action/DESIGN.md)."""
     offer = Offer(target_urls=frozenset(t["url"] for t in targets))
-    listing = "\n".join(f"- {t['url']} @{t['author']}: {t.get('text', '')}" for t in targets)
-    user = (f"LESSONS FROM PAST ROUNDS:\n{lessons}\n\nCANDIDATE POSTS:\n{listing}\n\n"
+    listing = "\n".join(f"- {t['url']} @{t['author']}: {t.get('text', '')}" + (_fact_lines(facts, t) if facts else "")
+                         for t in targets)
+    note = ("Lines marked \"fact\" come from live sources such as box scores and the account's own posts, with the "
+            "date they were true. Use them to judge the post and the intent.\n\n") if facts else ""
+    user = (f"LESSONS FROM PAST ROUNDS:\n{lessons}\n\nCANDIDATE POSTS:\n{listing}\n\n{note}"
             'Return JSON {"plans": [{"target_url": "...", "tool": "reply" or "abstain", "side": "own|rival|neutral", "intent": "...", '
             '"reason": "off_mission|mute_risk|no_angle (abstain only)", "detail": "..."}]} with one entry per post.')
     try:
@@ -159,7 +179,8 @@ def plan_targets(llm: LLM, mission: str, lessons: str, targets: list[dict]) -> t
 
 
 def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], cfg: ActionConfig,
-               budget: Budget, fetch=thread.fetch_replies, grounding=None) -> tuple[list[Action], list[Decision]]:
+               budget: Budget, fetch=thread.fetch_replies, grounding=None,
+               facts: list[Fact] | None = None) -> tuple[list[Action], list[Decision]]:
     targets = reply_targets(narratives)
     if not targets:
         return [], [Decision(REPLY_LANE, "", "abstain", "no_target", "no narrative carried reply_targets")]
@@ -174,8 +195,8 @@ def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative]
             fresh.append(t)
     if not fresh:
         return [], decisions
-    plans, plan_error = plan_targets(llm, mission, lessons, fresh)
-    facts = facts_block(mission, narratives)
+    plans, plan_error = plan_targets(llm, mission, lessons, fresh, facts)
+    block = facts_block(mission, narratives)
     actions = []
     for t in fresh:
         plan = plans.get(t["url"])
@@ -188,8 +209,8 @@ def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative]
         if budget.left("reply") <= 0:
             decisions.append(Decision(REPLY_LANE, t["url"], "abstain", "budget_exhausted", "reply cap reached"))
             continue
-        d, a = answer_target(llm, mission, facts, t, cfg, fetch, plan.get("intent", ""), grounding,
-                             side=plan.get("side", "neutral"), framing=writer.load_framing())
+        d, a = answer_target(llm, mission, block, t, cfg, fetch, plan.get("intent", ""), grounding,
+                             side=plan.get("side", "neutral"), framing=writer.load_framing(), live_facts=facts)
         if a and budget.take("reply"):
             d.action_id = a.id
             actions.append(a)
@@ -198,7 +219,8 @@ def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative]
 
 
 def _gate_candidates(texts: list[str], kind: str, context: str, limits: GateLimits, offer: Offer,
-                     lane: str, target_url: str | None, post: str | None = None) -> tuple[list[dict], list[str]]:
+                     lane: str, target_url: str | None, post: str | None = None,
+                     facts: ground.FactIndex | None = None) -> tuple[list[dict], list[str]]:
     cands, passing = [], []
     for text in dict.fromkeys(t for t in texts if t):
         call = {"tool": kind, "text": text} | ({"target_url": target_url} if target_url else {})
@@ -207,7 +229,7 @@ def _gate_candidates(texts: list[str], kind: str, context: str, limits: GateLimi
         except ActionSchemaError as e:
             cands.append({"text": text, "schema_error": str(e)})
             continue
-        res = gate.check(text, kind, context=context, limits=limits, post=post)
+        res = gate.check(text, kind, context=context, limits=limits, post=post, facts=facts)
         cands.append({"text": text, "gate": [asdict(f) for f in res.findings]})
         if res.passed:
             passing.append(text)
@@ -251,8 +273,20 @@ def judge_meta(cfg: ActionConfig, picked: veto.VetoResult, cands: list[dict], gr
             "pick": "random among drafts that passed", "grounding": grounding}
 
 
+def fact_index(live_facts: list[Fact], author: str, url: str, post: str, replies: list[dict],
+               now: datetime | None = None) -> ground.FactIndex:
+    """Live facts plus the whole thread under the target (the page shows at most `page_replies` of it).
+    The target's handle and post anchor numbers for every draft (harness/facts/ground.py)."""
+    now = now or datetime.now(timezone.utc)
+    thread_facts = posts.thread_facts(author, url, [r["text"] for r in replies], now)
+    return ground.FactIndex([*live_facts, *thread_facts], ground.anchor_words(ground.split_handle(author) + " " + post))
+
+
 def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig, fetch, intent: str = "",
-                  grounding=None, side: str = "neutral", framing: writer.ReplyFraming | None = None) -> tuple[Decision, Action | None]:
+                  grounding=None, side: str = "neutral", framing: writer.ReplyFraming | None = None,
+                  live_facts: list[Fact] | None = None) -> tuple[Decision, Action | None]:
+    """`facts` is the facts block the gate and veto read as context. `live_facts`, when given, are memory
+    Facts the gate also accepts names and numbers from; without them the gate grounds on context alone."""
     url, author, post = t["url"], t["author"], t.get("text", "")
     note = ""
     if side == "rival" and cfg.rival_thread_mode == "abstain":
@@ -287,12 +321,13 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     context = (f"POST by @{author}:\n{post}\n\nTHREAD:\n" + "\n".join(f"- {r}" for r in page)
                + f"\n\nHANDLES IN THREAD: {known}\n\nFACTS:\n{facts}")
     offer = Offer(target_urls=frozenset({url}), target_handles=frozenset({author}))
-    cands, passing = _gate_candidates(texts, "reply", context, cfg.gate, offer, REPLY_LANE, url, post=post)
+    index = None if live_facts is None else fact_index(live_facts, author, url, post, replies)
+    cands, passing = _gate_candidates(texts, "reply", context, cfg.gate, offer, REPLY_LANE, url, post=post, facts=index)
     detail = f"{method}: {len(passing)}/{len(cands)} drafts passed the gate" + (f" ({note})" if note else "")
     if not passing:
         return Decision(REPLY_LANE, url, "abstain", "gate_rejected", detail, candidates=cands), None
-    picked, ground, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane="reply", context=context,
-                                         seed=url, grounding=grounding)
+    picked, grounded, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane="reply", context=context,
+                                           seed=url, grounding=grounding)
     if picked is None:
         return Decision(REPLY_LANE, url, "abstain", "judge_rejected", why, candidates=cands), None
     n: Narrative = t["narrative"]
@@ -303,7 +338,8 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
                     "written_as": framing.framing_handle if framing and method == "continuation" else None,
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
-                    "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground),
+                    "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, grounded),
+                    "facts_live": None if live_facts is None else len(live_facts),
                     # What the veto judged the draft against; qualify's critic gets the same (Integration run 37).
                     "veto_context": context},
     )
@@ -424,8 +460,8 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     if not passing:
         return [], [Decision(POST_LANE, url, "abstain", "gate_rejected", f"caption: 0/{len(cands)} passed the gate",
                              candidates=cands)]
-    picked, ground, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane=kind, context=context,
-                                         seed=url or n.id, grounding=grounding)
+    picked, grounded, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane=kind, context=context,
+                                           seed=url or n.id, grounding=grounding)
     if picked is None:
         return [], [Decision(POST_LANE, url or n.id, "abstain", "judge_rejected", why, candidates=cands)]
     credit = credit_for(url, sources) if url else ""
@@ -441,7 +477,7 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
                rationale=f"caption of a real source ({credit})" if credit else "caption of hand-supplied material",
                draft_meta={"method": "caption" if url else "caption, no link", "writer_model": cfg.styled_model,
                            "source_url": url or None, "credit": credit or None,
-                           "judge": judge_meta(cfg, picked, cands, ground), "veto_context": context})
+                           "judge": judge_meta(cfg, picked, cands, grounded), "veto_context": context})
     return [a], [Decision(POST_LANE, url or n.id, kind, detail="caption of a real source" if url else "caption, no link",
                           action_id=a.id, candidates=cands)]
 
@@ -495,16 +531,20 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
 def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], chorus: list[Action], *,
         revising: bool = False, cfg: ActionConfig | None = None, budget: Budget | None = None,
         takes: list[dict] | None = None, fetch=thread.fetch_replies,
-        sources: dict[str, str] | None = None) -> tuple[list[Action], list[Decision]]:
-    """Both lanes for one decide() call. Returns the actions that ship and every decision."""
+        sources: dict[str, str] | None = None, facts: list[Fact] | None = None) -> tuple[list[Action], list[Decision]]:
+    """Both lanes for one decide() call. Returns the actions that ship and every decision. `facts` defaults
+    to the live facts in the profile's memory store (`python -m harness.facts refresh` writes them); a mock
+    run reads none."""
     cfg = cfg or ActionConfig()
     mock = routing.is_mock(llm)
     PENDING_PROVIDER["name"] = "mock" if mock else type(llm).__name__
     budget = budget or (Budget(cfg) if mock else Budget.from_approvals(cfg))
     grounding = None if mock else veto.grounding_checker(cfg)
+    if facts is None and not mock:
+        facts = load_live(datetime.now(timezone.utc))
     actions, decisions = [], []
     if not revising:  # a veto retry revises chorus drafts; replies aren't redrafted
-        a, d = reply_lane(llm, mission, lessons, narratives, cfg, budget, fetch, grounding)
+        a, d = reply_lane(llm, mission, lessons, narratives, cfg, budget, fetch, grounding, facts)
         actions += a
         decisions += d
     a, d = post_lane(llm, mission, narratives, chorus, cfg, budget, load_takes() if takes is None else takes, grounding,

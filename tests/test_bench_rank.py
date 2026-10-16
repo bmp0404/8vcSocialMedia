@@ -1,4 +1,4 @@
-"""Benchmark pair rules, bootstrap statistics, the pairwise ranker and the openness signal, on synthetic data."""
+"""Benchmark pair rules, bootstrap statistics, and the pairwise ranker, on synthetic data."""
 
 import random
 from collections import Counter
@@ -10,7 +10,6 @@ from harness.corpus import Corpus, Item
 from harness.corpus import bench
 from harness.corpus.stats import accuracy, pair_credit, paired_difference
 from harness.rank import pairwise, reply
-from harness.rank.target import openness_table
 
 T0 = datetime(2026, 9, 20, 12, tzinfo=timezone.utc)
 FETCH = "2026-10-16T02:00:00+00:00"
@@ -114,13 +113,6 @@ def test_ranker_score_matches_its_weights():
     late = model.score("root", "hi there", minutes_after=600, followers=100)
     assert early > late
 
-
-def test_openness_counts_small_accounts_among_top_replies():
-    c = thread_corpus()
-    c.get("3").author_followers = 5000
-    table = openness_table(c)
-    # Top 3 by likes among fan_a (6), fan_e (4), fan_b (2): two of three under 1,000 followers.
-    assert table["acme"] == {"share_small_top3": 0.667, "median_top3_minutes": 5.0, "n": 1}
 
 
 def test_char_wb_and_word_grams_match_scikit_learn_conventions():
