@@ -18,6 +18,8 @@ Eligible posts: 848 (dropped: {'unscorable_text_or_reply': 388, 'thread_continua
 | panel@mean | 0.836 [0.75, 0.93] | 0.820 [0.70, 0.93] | 0.791 [0.68, 0.93] | 0.530 [0.39, 0.67] | 0.471 [0.31, 0.63] | 0.796 |
 | reader@mean | 0.828 [0.75, 0.92] | 0.820 [0.72, 0.92] | 0.807 [0.70, 0.92] | 0.549 [0.40, 0.69] | 0.621 [0.46, 0.76] | 0.843 |
 
+Without the 9 boost-suspect posts (135 posts, 170 pairs), headline: `random` 0.494 [0.39, 0.61]; `account` 0.500 [0.50, 0.50]; `media` 0.732 [0.61, 0.84]; `length` 0.715 [0.58, 0.83]; `tfidf` 0.629 [0.49, 0.76]; `panel@claude-sonnet-5-5` 0.788 [0.71, 0.89]; `panel@gpt-6.1-sol` 0.865 [0.78, 0.95]; `reader@claude-sonnet-5-5` 0.694 [0.61, 0.79]; `reader@gpt-6.1-sol` 0.812 [0.73, 0.90]; `panel@mean` 0.841 [0.76, 0.93]; `reader@mean` 0.818 [0.73, 0.92]
+
 Paired differences in the headline AUC (positive means the row predictor wins):
 
 - `panel@claude-sonnet-5-5`: minus media 0.060 [-0.05, 0.18]; minus length 0.117 [-0.01, 0.26]; minus tfidf 0.125 [-0.01, 0.25]; minus reader@claude-sonnet-5-5 0.078 [0.02, 0.13]; minus reader@gpt-6.1-sol -0.026 [-0.10, 0.04]; minus reader@mean -0.031 [-0.09, 0.03]
