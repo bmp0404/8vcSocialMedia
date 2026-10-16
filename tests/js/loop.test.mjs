@@ -160,3 +160,12 @@ test("a run with no trace still shows drafts written and kept from the store", (
   const b = boardOf({ round: null, live: null, runs: [{ id: 2, started_at: run6.started_at }], latest: { run_id: 2, actions: 5, vetoed: 1, pending: 1 }, trace: null }, NOW);
   assert.deepEqual(ROUND_COUNTS(b), [null, null, 5, 4]);
 });
+
+test("decide counts the drafts the minds wrote, not the fewer the lanes shipped", () => {
+  // sam/action's lanes return only shipped drafts, so the trace says 0 while the minds wrote 3.
+  const d = round([L.observe, L.picked, ["decide", "[decide] 4 minds proposed 3 actions"], ["decide", "[decide] shipped nothing; abstained {'no_target': 1}"]], "done", { run_id: 7 });
+  d.runs = [{ id: 7, started_at: "2026-10-16T02:29:00+00:00" }];
+  d.trace = { run_id: 7, signals: 4, narratives: [{}, {}], n_drafts: 0, kept: 0, stages: [] };
+  const b = boardOf(d, NOW);
+  assert.equal(stageCount(b, "decide", coreState(b, "decide")), 3);
+});

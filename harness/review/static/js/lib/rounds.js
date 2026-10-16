@@ -207,6 +207,9 @@ export function lineCount(f, s) {
 
 /** A stage's headline number: the trace when the run has one, else trace-live, the log, the store. */
 export function stageCount(b, s, state) {
+  // With sam/action's lanes, decide returns only the drafts it ships, so the trace's count is
+  // shipped drafts. "Drafts written" is what the minds proposed, which only the log says.
+  if (s === "decide" && b.f?.decides) return lineCount(b.f, s);
   if (b.trace) return traceCount(b.trace, s);
   return liveCount(b.live?.done, s) ?? lineCount(b.f, s) ?? (state === "done" ? storeCount(b.latest, s) : null);
 }
