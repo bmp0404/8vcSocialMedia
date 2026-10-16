@@ -76,12 +76,21 @@ def check(paths: list[Path], cfg: sch.ImproveConfig, catalog: dict[str, type] | 
 
 
 def _by_source(s: sch.Scheduler, spec: queue.Spec, plan: sch.Plan) -> dict[str, int]:
-    """How many of the phase's items each source supplied. Items a fixture file also holds count as fixture."""
+    """How many of the phase's items each source supplied. A thread two sources hold counts once, under the source
+    whose copy the instrument keeps: fixture files, then the watcher, then the corpus (Scheduler.build's order)."""
     fixture = {it.id for it in s.catalog[spec.fitness](list(spec.threads)).items()} if spec.threads else set()
+    watcher = set()
+    if "watcher" in (spec.sources or ("watcher",)):
+        watch, profiles = s._watch()
+        watcher = {t["id"] for t in fold.lineup_threads(watch, profiles, spec.profile)} if watch is not None else set()
     corpus = {t["id"] for t in s.corpus_threads(spec.profile)} if "corpus" in spec.sources else set()
     out = {"fixture files": 0, "watcher": 0, "corpus": 0}
     for it in plan.fit.items():
-        out["fixture files" if it.id in fixture else "corpus" if it.id in corpus else "watcher"] += 1
+        source = next((n for n, ids in (("fixture files", fixture), ("watcher", watcher), ("corpus", corpus))
+                       if it.id in ids), None)
+        if source is None:
+            raise AssertionError(f"item {it.id} came from no source the spec names")
+        out[source] += 1
     return out
 
 

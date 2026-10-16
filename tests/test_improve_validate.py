@@ -147,6 +147,19 @@ def _corpus(tmp_path):
     return threads.write()
 
 
+def test_a_thread_both_sources_hold_counts_once_under_the_watcher(live):
+    tmp_path, cfg = live
+    corpus = Threads(tmp_path / "corpus")
+    texts = [f"reply number {i} with words" for i in range(13)]
+    for n in range(2):  # the same roots the watcher read in the `live` fixture, as the context worker read them
+        corpus.thread(NOW - timedelta(days=1, hours=n), timedelta(days=3), list(range(13, 0, -1)), author="supabase",
+                      texts=texts, root_text=f"a long enough root post number {n}")
+    cfg.corpus_dir = corpus.write()
+    (v,) = validate.check([_write(tmp_path, "thin", THIN.replace("min_clusters = 30", "min_clusters = 6"))], cfg,
+                          now=NOW)
+    assert v.items_by_source == {"fixture files": 0, "watcher": 6, "corpus": 0} and len(v.plan.fit.items()) == 6
+
+
 def test_a_corpus_source_adds_the_watched_threads_and_counts_them_apart(live):
     tmp_path, cfg = live
     cfg.corpus_dir = _corpus(tmp_path)
