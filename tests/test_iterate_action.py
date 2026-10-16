@@ -85,3 +85,133 @@ def test_the_pipeline_arm_charges_every_model_call_to_its_meter(monkeypatch):
     # The page filter, six continuations and the veto in two orders, each one charged to the arm.
     assert len(sent) == 9 and meter.calls == 9
     assert routing.AnthropicLLM.__name__ == "AnthropicLLM"  # the swap is undone
+
+
+THREAD = {"id": "2", "author": "IndianaFever", "url": "https://x.com/IndianaFever/status/2", "text": "fever win in overtime",
+          "pool": [{"text": f"top reply number {i}", "likes": 50 - i} for i in range(6)],
+          "context": [{"text": f"page reply number {i}", "likes": 3} for i in range(12)]}
+
+
+class Recording:
+    """A config that notes every knob an arm asks it for."""
+
+    def __init__(self, cfg):
+        self.cfg, self.seen = cfg, set()
+
+    def get(self, path):
+        self.seen.add(path)
+        return self.cfg.get(path)
+
+
+def _mock_llm_for(meter, respond=action.ActionLineup.mock_respond):
+    cache = {}
+    return lambda model: cache.setdefault(model, MockMeteredLLM(meter, "arm", respond, model))
+
+
+@pytest.mark.parametrize("changes", [
+    {"action.reply.generation": "persona_json"},
+    {"action.reply.generation": "styled"},
+    {"action.reply.generation": "continuation"},
+    {"action.reply.generation": "continuation", "action.continuation.page_filter": True},
+    {"action.reply.generation": "continuation", "action.continuation.framing": "profile"},
+    {"action.reply.generation": "pipeline", "action.continuation.framing": "profile"},
+])
+def test_reads_names_exactly_the_knobs_an_arm_asks_for(changes):
+    from harness import config
+    from harness.iterate.knobs import DEFAULT
+
+    cfg = DEFAULT.with_changes(changes)
+    rec = Recording(cfg)
+    with config.use_profile("wnba"):
+        _, row = action.ActionLineup()._one(rec, THREAD, _mock_llm_for(Meter(100)), seed=0, lineup_seed=0)
+    assert row["shipped"], row
+    assert rec.seen == set(action.ActionLineup.reads(cfg))
+    assert set(action.ActionLineup.reads(cfg)) <= set(action.ActionLineup.knobs)
+
+
+class Scripted(MockMeteredLLM):
+    """A metered mock whose JSON answers come from `respond` even when the caller passes a `mock=`."""
+
+    def complete_json(self, system, prompt, mock=None):
+        self.meter.reserve(self.arm)
+        return self.respond(system, prompt)
+
+
+def _prefill(cfg, profile="wnba", judge=None):
+    """The page raw continuation sends, and the calls it made. `judge(n)` gives the P(AI) verdicts."""
+    from harness import config
+
+    sent, meter = [], Meter(100)
+
+    def answer(system, prompt):
+        if system.startswith("You screen candidate"):
+            return judge(prompt.split("CANDIDATES:\n")[-1].count("\n") + 1)
+        sent.append(prompt)
+        return "a reply"
+
+    cache = {}
+    with config.use_profile(profile):
+        action.gen_continuation(cfg, THREAD, lambda m: cache.setdefault(m, Scripted(meter, "arm", answer, m)), seed=0)
+    return sent[-1], meter.calls
+
+
+def test_framing_profile_writes_under_the_profile_handle_and_neutral_under_the_next_user():
+    from harness.iterate.knobs import DEFAULT
+
+    neutral, _ = _prefill(DEFAULT)
+    assert neutral.endswith("\n@user13:") and neutral.count("\n@user") == 13
+    framed, _ = _prefill(DEFAULT.with_changes({"action.continuation.framing": "profile"}))
+    assert framed.endswith("\n@clarkfanaccount:") and framed[: -len("clarkfanaccount:")] == neutral[: -len("user13:")]
+    # devtools' reply_framing.json has a null handle, which means neutral handles.
+    devtools, _ = _prefill(DEFAULT.with_changes({"action.continuation.framing": "profile"}), profile="devtools")
+    assert devtools.endswith("\n@user13:")
+
+
+def test_page_replies_cuts_the_page_and_renumbers_the_writer():
+    from harness.iterate.knobs import DEFAULT
+
+    page, calls = _prefill(DEFAULT.with_changes({"action.page_replies": 2}))
+    assert page.count("\n@user") == 3 and page.endswith("page reply number 1\n@user03:") and calls == 1
+
+
+def test_the_page_filter_drops_replies_the_judge_reads_as_bots():
+    from harness.iterate.knobs import DEFAULT
+
+    def first_is_a_bot(n):
+        return {"verdicts": [{"p_ai": 90 if i == 0 else 10, "unsupported": False, "off_mission": False,
+                              "risk": False, "reason": "x"} for i in range(n)]}
+
+    cfg = DEFAULT.with_changes({"action.continuation.page_filter": True})
+    page, calls = _prefill(cfg, judge=first_is_a_bot)
+    assert "page reply number 0" not in page and page.count("\n@user") == 12 and page.endswith("\n@user12:")
+    assert calls == 2  # the judge, then the writer
+    whole, _ = _prefill(cfg, judge=lambda n: {"verdicts": []})
+    assert "page reply number 0" in whole  # as in the live lane, a malformed answer leaves the page whole
+    unfiltered, calls = _prefill(DEFAULT, judge=first_is_a_bot)
+    assert "page reply number 0" in unfiltered and calls == 1
+
+
+def test_the_estimate_counts_every_call_an_arm_can_make():
+    from harness.iterate.knobs import DEFAULT
+
+    fit = action.ActionLineup()
+    assert fit.estimate_calls(DEFAULT, 10) == 40
+    assert fit.estimate_calls(DEFAULT.with_changes({"action.reply.generation": "continuation"}), 10) == 40
+    assert fit.estimate_calls(DEFAULT.with_changes({"action.reply.generation": "continuation",
+                                                    "action.continuation.page_filter": True}), 10) == 50
+    # Pipeline: two detectors, the instrument's veto, its page filter, six samples, its veto in two orders.
+    assert fit.estimate_calls(DEFAULT.with_changes({"action.reply.generation": "pipeline", "action.samples": 6}), 10) == 120
+
+
+def test_a_profile_framing_without_a_handle_is_refused_before_it_costs_anything():
+    from harness import config
+    from harness.iterate.knobs import DEFAULT
+
+    fit = action.ActionLineup()
+    framed = DEFAULT.with_changes({"action.reply.generation": "continuation", "action.continuation.framing": "profile"})
+    with config.use_profile("wnba"):
+        assert fit.check_config(framed) is None
+    with config.use_profile("devtools"):
+        assert "has no handle" in fit.check_config(framed)
+        # persona_json doesn't read the framing knob, so the knob can't mislead it
+        assert fit.check_config(DEFAULT.with_changes({"action.continuation.framing": "profile"})) is None
