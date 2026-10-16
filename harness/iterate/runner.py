@@ -118,10 +118,10 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
         try:
             if fit is None:
                 raise KnobError(f"no fitness {prop.fitness!r}; choose from {sorted(fitnesses)}")
+            challenger = champion.with_changes(prop.changes)  # unknown knobs and bad values raise first
             unmeasured = set(prop.changes) - set(fit.knobs)
             if unmeasured:
                 raise KnobError(f"{prop.fitness} can't measure {sorted(unmeasured)}; it reads {list(fit.knobs)}")
-            challenger = champion.with_changes(prop.changes)
         except KnobError as e:
             pending.append((prop, None, f"invalid proposal: {e}"))
             continue
@@ -172,14 +172,18 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
             continue
         primary, paired = _metric_block(fit, items, champ.result, chall.result, fit.primary, seed)
         repeat_block, _ = _metric_block(fit, items, champ.result, rep.result, fit.primary, seed + 1)
-        secondary = []
+        secondary, broken = [], []
         for m in fit.secondaries:
             try:
                 secondary.append(_metric_block(fit, items, champ.result, chall.result, m, seed))
             except ValueError as e:
                 print(f"[iterate] secondary {m.name} skipped: {e}")
+                if m.guardrail:
+                    broken.append(m.name)  # a guardrail that can't be computed blocks, below
+        failures = {k: len(a.result.failures) for k, a in (("champion", champ), ("champion_repeat", rep),
+                                                            ("challenger", chall))}
         results.append((prop, cfg, {"items": items, "primary": primary, "paired": paired, "repeat": repeat_block,
-                                    "secondary": secondary}, ""))
+                                    "secondary": secondary, "broken_guardrails": broken, "failures": failures}, ""))
 
     # One BH family for the whole run.
     tested = [r for r in results if r[2] is not None]
@@ -193,20 +197,43 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
         status, reason = dec.status, dec.reason
         unproven = [f"{blk['name']} (95% lower bound {pr.interval(0.95)[0]:+.3f}, margin -{blk['margin']})"
                     for blk, pr in res["secondary"] if blk["guardrail"] and not stats.non_inferior(pr, blk["margin"])]
+        unproven += [f"{name} (could not be computed)" for name in res["broken_guardrails"]]
         if status == "promoted" and unproven:
             status, reason = "inconclusive", f"{reason}; blocked: not shown non-inferior on {', '.join(unproven)}"
+        # Items an arm failed on drop out of the comparison, so a challenger that fails on the hard items
+        # would be graded on an easier set. Allow a little slack, then block.
+        extra = res["failures"]["challenger"] - res["failures"]["champion"]
+        if status == "promoted" and extra > max(2, 0.1 * len(items_by_fit[prop.fitness])):
+            status, reason = "inconclusive", f"{reason}; blocked: the challenger failed on {extra} more items"
         decisions[id(prop)] = (status, reason, dec, p_adj, rej, noise)
 
-    # Two promotions that set the same knob differently can't both stand; keep the stronger bound.
-    promoted = [(prop, cfg) for prop, cfg, res, _ in tested if decisions[id(prop)][0] == "promoted"]
-    for prop, cfg in promoted:
-        for other, ocfg in promoted:
-            clash = {k for k in prop.changes if k in other.changes and prop.changes[k] != other.changes[k]}
-            if other is not prop and clash and decisions[id(other)][2].bound > decisions[id(prop)][2].bound:
-                s, r, d, pa, rj, nf = decisions[id(prop)]
-                decisions[id(prop)] = ("inconclusive", f"cleared the gate, but {other.label or 'another challenger'} "
-                                       f"cleared it with a higher bound and sets {sorted(clash)} differently ({r})",
-                                       d, pa, rj, nf)
+    # At most one promotion per fitness per run: two winners were never measured together, so applying
+    # both would crown a config no arm scored. The strongest bound wins; ties go to the smaller p-value,
+    # then the config hash, so the outcome doesn't depend on proposal order.
+    def demote(prop, why):
+        s_, r_, d_, pa_, rj_, nf_ = decisions[id(prop)]
+        decisions[id(prop)] = ("inconclusive", f"cleared the gate, but {why}; retest it against the new champion "
+                               f"({r_})", d_, pa_, rj_, nf_)
+
+    winners = {}
+    for prop, cfg, res, _ in tested:
+        if decisions[id(prop)][0] != "promoted":
+            continue
+        rank = (-decisions[id(prop)][2].bound, res["paired"].p_one_sided, cfg.hash)
+        best = winners.get(prop.fitness)
+        if best is None or rank < best[0]:
+            if best is not None:
+                demote(best[1], f"{prop.label or 'another challenger'} on the same fitness cleared it more strongly")
+            winners[prop.fitness] = (rank, prop)
+        else:
+            demote(prop, f"{best[1].label or 'another challenger'} on the same fitness cleared it more strongly")
+    # Bounds on different fitnesses are in different units, so a knob two fitnesses both want to set
+    # is left for a run of its own.
+    kept_props = [w[1] for w in winners.values()]
+    for prop in kept_props:
+        for other in kept_props:
+            if other is not prop and set(prop.changes) & set(other.changes):
+                demote(prop, f"{other.fitness} also promoted a change to {sorted(set(prop.changes) & set(other.changes))}")
 
     recs = []
     report_paths = _write_reports(directory, run_id, arms, provider)
@@ -221,6 +248,8 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
            "champion": champion.ref, "max_calls": max_calls, "estimated_calls": spent, "llm_calls": meter.calls,
            "by_arm": dict(meter.by_arm), "bh": {"q": Q, "family_size": len(tested), "rejected": n_rej},
            "experiments": [r["id"] for r in recs], "note": run_note}
+    for cfg in {champion.ref: champion, **{c.ref: c for _, c in kept}}.values():
+        ledger.save_config(directory, cfg)
     ledger.write(directory, recs, run)
     print(f"[iterate] {run_id}: {meter.calls} calls; wrote {len(recs)} record(s) to {directory}")
     return recs
@@ -263,6 +292,7 @@ def _record(prop: Proposal, champion: Config, cfg: Config | None, fit: Fitness |
                    "metrics": [res["primary"]] + [blk for blk, _ in res["secondary"]],
                    "noise_floor": {"value": noise, "champion_repeat": res["repeat"]["challenger"],
                                    "delta": res["repeat"]["delta"]},
+                   "failures": res["failures"],
                    "correction": {"method": "benjamini-hochberg", "q": Q, "family_size": family,
                                   "p": res["paired"].p_one_sided, "p_adjusted": p_adj, "rejected": rej,
                                   "interval_level": dec.interval_level},

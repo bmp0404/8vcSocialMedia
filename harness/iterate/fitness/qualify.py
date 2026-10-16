@@ -98,7 +98,11 @@ class QualifyAUC:
     unit = "post"
     cluster_unit = "account"
     primary = Metric("within_account_auc", higher_is_better=True)
-    secondaries: tuple[Metric, ...] = ()
+    # Super Viral against Medium Viral inside one account: the content question once the account prior
+    # is gone (research/context.md puts the author floor at 0.763 there, against 0.999 for the tails).
+    # Reported, not a guardrail: the champion scores near chance on it and there are too few Super
+    # Viral posts per account to show non-inferiority, so as a guardrail it would block every change.
+    secondaries: tuple[Metric, ...] = (Metric("viral_vs_viral_auc", higher_is_better=True),)
     knobs = ("qualify.panel", "qualify.model", "qualify.batch", "qualify.memory", "memory.retrieval_k")
 
     def __init__(self, per_tier: int = 4, seed: int = 0, cache_report: Path | None = CACHE_REPORT):
@@ -156,7 +160,8 @@ class QualifyAUC:
         posts = [it.payload for it in items]
         if not repeat and key in self.cache:
             scores = self.cache[key]
-            return ArmResult(values={p.id: scores[p.id] for p in posts if p.id in scores},
+            values = {p.id: scores[p.id] for p in posts if p.id in scores}
+            return ArmResult(values=values, secondary={"viral_vs_viral_auc": dict(values)},
                              detail={p.id: {"score": scores.get(p.id), "source": self.cache_source} for p in posts})
         panel = load_panel(PANEL_PATH) if config.get("qualify.panel") == "personas" else READER_PANEL
         batch = 1 if config.get("qualify.batch") == 1 else BATCH_ALL
@@ -172,6 +177,7 @@ class QualifyAUC:
                                         history=self.posts, k=config.get("memory.retrieval_k"), mode=mode)
         preds = pred.predict(posts)
         res = ArmResult(values={pid: pr.score for pid, pr in preds.items()})
+        res.secondary["viral_vs_viral_auc"] = dict(res.values)
         for p in posts:
             res.detail[p.id] = {"score": preds[p.id].score if p.id in preds else None, "viral": p.viral,
                                 "account": p.account, **({"panelists": preds[p.id].detail.get("panelists")}
@@ -182,7 +188,16 @@ class QualifyAUC:
         return res
 
     def stat(self, items: list[Item], values: dict[str, float], metric: Metric) -> Stat:
-        return within_cluster_auc_stat([values[it.id] for it in items], [it.payload.viral for it in items])
+        scores = [values[it.id] for it in items]
+        if metric.name == "viral_vs_viral_auc":
+            inner = within_cluster_auc_stat(scores, [it.payload.category == "Super Viral" for it in items])
+            viral = [it.payload.viral for it in items]
+
+            def viral_only(idx: list[int], ids: list[int]) -> float | None:
+                kept = [(i, d) for i, d in zip(idx, ids) if viral[i]]
+                return inner([i for i, _ in kept], [d for _, d in kept])
+            return viral_only
+        return within_cluster_auc_stat(scores, [it.payload.viral for it in items])
 
     @staticmethod
     def mock_respond(system: str, prompt: str):

@@ -1,0 +1,54 @@
+{
+ "run_id": "run-20261016T022531",
+ "started_at": "2026-10-16T02:25:31+00:00",
+ "finished_at": "2026-10-16T02:26:07+00:00",
+ "provider": "anthropic",
+ "champion": "cfg-35c9ee1e8e13",
+ "max_calls": 285,
+ "estimated_calls": 270,
+ "llm_calls": 270,
+ "by_arm": {
+  "qualify_auc:champion_repeat": {
+   "llm_calls": 54,
+   "input_tokens": 216,
+   "output_tokens": 14786,
+   "errors": 0
+  },
+  "qualify_auc:cfg-f4f77be3d7bd": {
+   "llm_calls": 54,
+   "input_tokens": 216,
+   "output_tokens": 14681,
+   "errors": 0
+  },
+  "qualify_auc:cfg-f3269e8351cf": {
+   "llm_calls": 54,
+   "input_tokens": 216,
+   "output_tokens": 14699,
+   "errors": 0
+  },
+  "qualify_auc:champion": {
+   "llm_calls": 54,
+   "input_tokens": 216,
+   "output_tokens": 14772,
+   "errors": 0
+  },
+  "qualify_auc:cfg-698f184801fd": {
+   "llm_calls": 54,
+   "input_tokens": 2522,
+   "output_tokens": 5151,
+   "errors": 0
+  }
+ },
+ "bh": {
+  "q": 0.1,
+  "family_size": 4,
+  "rejected": 2
+ },
+ "experiments": [
+  "exp-20261016-qualify-f89252",
+  "exp-20261016-qualify-752ef2",
+  "exp-20261016-qualify-2d1cf7",
+  "exp-20261016-qualify-f178ed"
+ ],
+ "note": "qualify panel knobs on eval's protocol v2 sample"
+}

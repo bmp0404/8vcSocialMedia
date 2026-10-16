@@ -119,9 +119,29 @@ def test_within_cluster_auc_ignores_cross_cluster_pairs_and_halves_ties():
 
 
 def test_within_cluster_auc_treats_a_repeated_cluster_as_two():
-    # One cluster drawn twice: draw ids 0 and 1. Pairs form only inside each copy (2 pairs), never across.
-    stat = stats.within_cluster_auc_stat([1.0, 0.0], [True, False])
-    assert stat([0, 1, 0, 1], [0, 0, 1, 1]) == 1.0
+    # Cluster A (items 0, 1) drawn twice, cluster B (items 2, 3) once. Split by draw id: two correct A pairs
+    # and one wrong B pair, 2/3. Pooling A's copies gives 4/5 = 0.8; ignoring groups gives 8/9.
+    stat = stats.within_cluster_auc_stat([0.9, 0.1, 0.2, 0.8], [True, False, True, False])
+    assert stat([0, 1, 0, 1, 2, 3], [0, 0, 1, 1, 2, 2]) == pytest.approx(2 / 3)
+
+
+def test_cluster_draws_resample_with_replacement():
+    draws = stats.cluster_draws([f"c{i}" for i in range(10)], n_boot=50, seed=0)
+    assert any(len(set(idx)) < len(idx) for idx, _ in draws)  # some draw repeats a cluster
+
+
+def test_paired_bootstrap_raises_when_the_metric_is_mostly_undefined():
+    # Defined only on draws with no repeated item: 5!/5^5, about 4% of draws.
+    def picky(idx, ids):
+        return 1.0 if len(set(idx)) == len(idx) else None
+    with pytest.raises(ValueError, match="undefined on"):
+        stats.paired_bootstrap(picky, picky, list(range(5)), higher_is_better=True, n_boot=200)
+
+
+def test_benjamini_hochberg_rejects_at_an_exact_float_boundary():
+    # Rank 3 of 6: 0.05 * 6 / 3 is 0.10000000000000002 in floats; it must still reject at q = 0.1.
+    _, rejected = stats.benjamini_hochberg([0.01, 0.02, 0.05, 0.5, 0.6, 0.7], q=0.1)
+    assert rejected == [True, True, True, False, False, False]
 
 
 def _paired_from(draws, champion=0.5, challenger=0.4, higher=False):
@@ -170,6 +190,12 @@ def test_decide_rejects_a_clearly_worse_challenger_and_keeps_the_rest_inconclusi
     mixed = _paired_from([-0.1 + i / 500 for i in range(100)])
     assert stats.decide(mixed, rejected_by_bh=False, n_rejected=0, family_size=3, q=0.1,
                         noise_floor=0.0).status == "inconclusive"
+
+
+def test_decide_never_promotes_without_a_bh_rejection():
+    certain = _paired_from([0.5] * 100)  # every draw improves by 0.5
+    dec = stats.decide(certain, rejected_by_bh=False, n_rejected=0, family_size=3, q=0.1, noise_floor=0.0)
+    assert dec.status == "inconclusive"
 
 
 def test_decide_validates_inputs():

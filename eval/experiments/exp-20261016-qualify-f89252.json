@@ -1,0 +1,162 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016-qualify-f89252",
+ "run_id": "run-20261016T022531",
+ "created_at": "2026-10-16T02:26:07+00:00",
+ "stage": "qualify",
+ "hypothesis": "Scoring each post in its own call separates viral from Deadweight better than scoring an account's posts together, because batched scores assimilate toward their neighbours (research: 0.12 AUC from order alone).",
+ "proposer": {
+  "kind": "manual",
+  "source": "research/eval.md, finding 1"
+ },
+ "change": {
+  "summary": "one post per call",
+  "files": [
+   "harness/qualify.py:qualify"
+  ],
+  "diff": "--- cfg-35c9ee1e8e13\n+++ cfg-b70bcab050db\n@@ -48 +48 @@\n- \"qualify.batch\": 0,\n+ \"qualify.batch\": 1,",
+  "params": {
+   "qualify.batch": {
+    "from": 0,
+    "to": 1
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-35c9ee1e8e13",
+  "label": "champion",
+  "config_hash": "35c9ee1e8e13324df08c783aa88dd571197ebb131c249e6f2985b06097519d05"
+ },
+ "challenger": {
+  "ref": "cfg-b70bcab050db",
+  "label": "one post per call",
+  "config_hash": "b70bcab050dbd14d42ff5635ca4c047717908e3d05555483d8f6a4e481df4642"
+ },
+ "eval": {
+  "dataset": "data/devtools_virality_30d.csv",
+  "dataset_sha256": "e82e6368974638a82d979d0783256bc20c2772831a9e216ec0016d1cb89ba955",
+  "n": 144,
+  "unit": "post",
+  "clusters": 27,
+  "cluster_unit": "account",
+  "seed": 0,
+  "report": "eval/experiments/reports/run-20261016T022531-qualify_auc.json",
+  "fitness": "qualify_auc",
+  "metrics": [
+   {
+    "name": "within_account_auc",
+    "higher_is_better": true,
+    "primary": true,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.7942708333333334,
+     "ci95": [
+      0.7130736773774748,
+      0.8913043478260869
+     ]
+    },
+    "challenger": {
+     "value": 0.796875,
+     "ci95": [
+      0.7270775462962963,
+      0.8820588235294117
+     ]
+    },
+    "delta": {
+     "value": 0.0026041666666666297,
+     "ci95": [
+      -0.06500852272727266,
+      0.05911396260395151
+     ]
+    }
+   }
+  ],
+  "instrument": {
+   "dataset": "data/devtools_virality_30d.csv",
+   "dataset_sha256": "e82e6368974638a82d979d0783256bc20c2772831a9e216ec0016d1cb89ba955",
+   "protocol": "within-account viral vs Deadweight AUC (harness/evals/backtest.py, protocol v2)",
+   "backtest_config": {
+    "per_tier": 4,
+    "seed": 0,
+    "min_age_hours": 48.0,
+    "thread_gap_minutes": 3.0,
+    "min_chars": 40
+   },
+   "panel_path": "eval/panels/devtools.json",
+   "dropped": {
+    "unscorable_text_or_reply": 388,
+    "thread_continuation": 316,
+    "younger_than_48h": 113
+   },
+   "cache": "eval/reports/backtest-20261015T205419-anthropic.json"
+  },
+  "noise_floor": {
+   "value": 0.01822916666666663,
+   "champion_repeat": {
+    "value": 0.8125,
+    "ci95": [
+     0.7213729148375769,
+     0.9107204011741682
+    ]
+   },
+   "delta": {
+    "value": 0.01822916666666663,
+    "ci95": [
+     -0.015789473684210468,
+     0.0569702663502109
+    ]
+   }
+  },
+  "correction": {
+   "method": "benjamini-hochberg",
+   "q": 0.1,
+   "family_size": 4,
+   "p": 0.4497751124437781,
+   "p_adjusted": 0.4497751124437781,
+   "rejected": false,
+   "interval_level": 0.95
+  },
+  "item_ids_sha256": "56f9addfbdb9244febce660d62b0f37aade69b07c48c5f124e0ff80b283da70f"
+ },
+ "decision": {
+  "status": "inconclusive",
+  "by": "auto",
+  "at": "2026-10-16T02:26:07+00:00",
+  "reason": "not significant after BH; 95% interval on the improvement [-0.065, +0.059]"
+ },
+ "cost": {
+  "llm_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "seconds": 0.0,
+  "usd": null,
+  "shared_llm_calls": 108,
+  "by_arm": {
+   "champion": {
+    "llm_calls": 54,
+    "input_tokens": 216,
+    "output_tokens": 14772,
+    "errors": 0,
+    "seconds": 34.6,
+    "shared": true
+   },
+   "champion_repeat": {
+    "llm_calls": 54,
+    "input_tokens": 216,
+    "output_tokens": 14786,
+    "errors": 0,
+    "seconds": 26.3,
+    "shared": true
+   },
+   "cfg-b70bcab050db": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "errors": 0,
+    "seconds": 0.0,
+    "shared": false
+   }
+  }
+ }
+}

@@ -56,6 +56,18 @@ def champion(directory: Path) -> tuple[Config, list[str]]:
     return cfg, history
 
 
+def configs(directory: Path) -> dict[str, Config]:
+    """Every config the ledger saved, by ref. A config that no longer fits the registry is skipped."""
+    out = {}
+    for path in sorted((directory / "configs").glob("cfg-*.json")):
+        try:
+            cfg = Config.from_json(json.loads(path.read_text(encoding="utf-8")))
+        except KnobError:
+            continue
+        out[path.stem] = cfg
+    return out
+
+
 def save_config(directory: Path, cfg: Config) -> Path:
     path = directory / "configs" / f"{cfg.ref}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
