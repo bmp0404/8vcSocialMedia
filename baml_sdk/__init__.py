@@ -247,6 +247,94 @@ RankCandidates_stream_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
 
 
+class Narrative(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(
+        arbitrary_types_allowed=True,
+        extra="ignore",
+        populate_by_name=True,
+    )
+    id: str
+    title: str
+    summary: str
+    relevance: float
+    velocity: float
+    angle: str
+    signal_ids: typing.List[int]
+
+
+class Orientation(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(
+        arbitrary_types_allowed=True,
+        extra="ignore",
+        populate_by_name=True,
+    )
+    narratives: typing.List[Narrative]
+
+
+harness_client       = _define_function("user.harness_client", "sync",  ["provider", "model", "max_tokens"], binding_name="harness_client", binding_qualname="harness_client", binding_module=__name__)
+harness_client.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError"""
+harness_client_async = _define_function("user.harness_client", "async", ["provider", "model", "max_tokens"], binding_name="harness_client_async", binding_qualname="harness_client_async", binding_module=__name__)
+harness_client_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError"""
+
+
+harness_api_client       = _define_function("user.harness_api_client", "sync",  ["provider", "model", "max_tokens"], binding_name="harness_api_client", binding_qualname="harness_api_client", binding_module=__name__)
+harness_api_client.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError"""
+harness_api_client_async = _define_function("user.harness_api_client", "async", ["provider", "model", "max_tokens"], binding_name="harness_api_client_async", binding_qualname="harness_api_client_async", binding_module=__name__)
+harness_api_client_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError"""
+
+
+harness_env_url       = _define_function("user.harness_env_url", "sync",  ["name"], binding_name="harness_env_url", binding_qualname="harness_env_url", binding_module=__name__)
+harness_env_url.__doc__ = """Raises:
+    Io, ParseError"""
+harness_env_url_async = _define_function("user.harness_env_url", "async", ["name"], binding_name="harness_env_url_async", binding_qualname="harness_env_url_async", binding_module=__name__)
+harness_env_url_async.__doc__ = """Raises:
+    Io, ParseError"""
+
+
+OrientSignals       = _define_function("user.OrientSignals", "sync",  ["mission", "signals", "limit", "provider", "model", "max_tokens"], ["on_event"], binding_name="OrientSignals", binding_qualname="OrientSignals", binding_module=__name__)
+OrientSignals.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+OrientSignals_async = _define_function("user.OrientSignals", "async", ["mission", "signals", "limit", "provider", "model", "max_tokens"], ["on_event"], binding_name="OrientSignals_async", binding_qualname="OrientSignals_async", binding_module=__name__)
+OrientSignals_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+OrientSignals_spec       = _define_function("user.OrientSignals@spec", "sync",  ["mission", "signals", "limit", "provider", "model", "max_tokens"], binding_name="OrientSignals_spec", binding_qualname="OrientSignals_spec", binding_module=__name__)
+OrientSignals_spec.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+OrientSignals_spec_async = _define_function("user.OrientSignals@spec", "async", ["mission", "signals", "limit", "provider", "model", "max_tokens"], binding_name="OrientSignals_spec_async", binding_qualname="OrientSignals_spec_async", binding_module=__name__)
+OrientSignals_spec_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+OrientSignals_stream       = _define_function("user.OrientSignals@stream", "sync",  ["mission", "signals", "limit", "provider", "model", "max_tokens"], ["on_event"], binding_name="OrientSignals_stream", binding_qualname="OrientSignals_stream", binding_module=__name__)
+OrientSignals_stream.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+OrientSignals_stream_async = _define_function("user.OrientSignals@stream", "async", ["mission", "signals", "limit", "provider", "model", "max_tokens"], ["on_event"], binding_name="OrientSignals_stream_async", binding_qualname="OrientSignals_stream_async", binding_module=__name__)
+OrientSignals_stream_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+
+
+orient_spec       = _define_function("user.orient_spec", "sync",  [], binding_name="orient_spec", binding_qualname="orient_spec", binding_module=__name__)
+orient_spec.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+orient_spec_async = _define_function("user.orient_spec", "async", [], binding_name="orient_spec_async", binding_qualname="orient_spec_async", binding_module=__name__)
+orient_spec_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+
+
+narrative_json       = _define_function("user.narrative_json", "sync",  ["id", "relevance"], binding_name="narrative_json", binding_qualname="narrative_json", binding_module=__name__)
+narrative_json_async = _define_function("user.narrative_json", "async", ["id", "relevance"], binding_name="narrative_json_async", binding_qualname="narrative_json_async", binding_module=__name__)
+
+
+parse_orientation       = _define_function("user.parse_orientation", "sync",  ["reply"], binding_name="parse_orientation", binding_qualname="parse_orientation", binding_module=__name__)
+parse_orientation.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+parse_orientation_async = _define_function("user.parse_orientation", "async", ["reply"], binding_name="parse_orientation_async", binding_qualname="parse_orientation_async", binding_module=__name__)
+parse_orientation_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+
+
 fixture_candidate       = _define_function("user.fixture_candidate", "sync",  [], binding_name="fixture_candidate", binding_qualname="fixture_candidate", binding_module=__name__)
 fixture_candidate_async = _define_function("user.fixture_candidate", "async", [], binding_name="fixture_candidate_async", binding_qualname="fixture_candidate_async", binding_module=__name__)
 
@@ -313,6 +401,26 @@ __all__ = [
     "RankCandidates_spec_async",
     "RankCandidates_stream",
     "RankCandidates_stream_async",
+    "Narrative",
+    "Orientation",
+    "harness_client",
+    "harness_client_async",
+    "harness_api_client",
+    "harness_api_client_async",
+    "harness_env_url",
+    "harness_env_url_async",
+    "OrientSignals",
+    "OrientSignals_async",
+    "OrientSignals_spec",
+    "OrientSignals_spec_async",
+    "OrientSignals_stream",
+    "OrientSignals_stream_async",
+    "orient_spec",
+    "orient_spec_async",
+    "narrative_json",
+    "narrative_json_async",
+    "parse_orientation",
+    "parse_orientation_async",
     "fixture_candidate",
     "fixture_candidate_async",
     "fixture_references",

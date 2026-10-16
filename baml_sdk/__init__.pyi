@@ -190,6 +190,84 @@ async def RankCandidates_stream_async(candidates: typing.List[RankingCandidate],
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
 
 
+class Narrative(pydantic.BaseModel):
+    id: str
+    title: str
+    summary: str
+    relevance: float
+    velocity: float
+    angle: str
+    signal_ids: typing.List[int]
+
+
+class Orientation(pydantic.BaseModel):
+    narratives: typing.List[Narrative]
+
+
+def harness_client(provider: str, model: str, max_tokens: int, *, _baml: _BamlOptions | None = None) -> typing.Any:
+    """Raises:
+        InvalidArgument, Io, ParseError"""
+async def harness_client_async(provider: str, model: str, max_tokens: int, *, _baml: _BamlOptions | None = None) -> typing.Any:
+    """Raises:
+        InvalidArgument, Io, ParseError"""
+
+
+def harness_api_client(provider: str, model: str, max_tokens: int, *, _baml: _BamlOptions | None = None) -> typing.Any:
+    """Raises:
+        InvalidArgument, Io, ParseError"""
+async def harness_api_client_async(provider: str, model: str, max_tokens: int, *, _baml: _BamlOptions | None = None) -> typing.Any:
+    """Raises:
+        InvalidArgument, Io, ParseError"""
+
+
+def harness_env_url(name: str, *, _baml: _BamlOptions | None = None) -> typing.Optional[str]:
+    """Raises:
+        Io, ParseError"""
+async def harness_env_url_async(name: str, *, _baml: _BamlOptions | None = None) -> typing.Optional[str]:
+    """Raises:
+        Io, ParseError"""
+
+
+def OrientSignals(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> Orientation:
+    """Raises:
+        InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+async def OrientSignals_async(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> Orientation:
+    """Raises:
+        InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+def OrientSignals_spec(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[Orientation]:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+async def OrientSignals_spec_async(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[Orientation]:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+def OrientSignals_stream(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[Orientation, _BamlStreamDone], Orientation, Orientation]:
+    """Raises:
+        InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+async def OrientSignals_stream_async(mission: str, signals: str, limit: int, provider: str, model: str, max_tokens: int, *, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[Orientation, _BamlStreamDone], Orientation, Orientation]:
+    """Raises:
+        InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+
+
+def orient_spec(*, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[Orientation]:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+async def orient_spec_async(*, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[Orientation]:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+
+
+def narrative_json(id: str, relevance: str, *, _baml: _BamlOptions | None = None) -> str: ...
+async def narrative_json_async(id: str, relevance: str, *, _baml: _BamlOptions | None = None) -> str: ...
+
+
+def parse_orientation(reply: str, *, _baml: _BamlOptions | None = None) -> Orientation:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+async def parse_orientation_async(reply: str, *, _baml: _BamlOptions | None = None) -> Orientation:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+
+
 def fixture_candidate(*, _baml: _BamlOptions | None = None) -> CandidatePost: ...
 async def fixture_candidate_async(*, _baml: _BamlOptions | None = None) -> CandidatePost: ...
 
@@ -256,6 +334,26 @@ __all__ = [
     "RankCandidates_spec_async",
     "RankCandidates_stream",
     "RankCandidates_stream_async",
+    "Narrative",
+    "Orientation",
+    "harness_client",
+    "harness_client_async",
+    "harness_api_client",
+    "harness_api_client_async",
+    "harness_env_url",
+    "harness_env_url_async",
+    "OrientSignals",
+    "OrientSignals_async",
+    "OrientSignals_spec",
+    "OrientSignals_spec_async",
+    "OrientSignals_stream",
+    "OrientSignals_stream_async",
+    "orient_spec",
+    "orient_spec_async",
+    "narrative_json",
+    "narrative_json_async",
+    "parse_orientation",
+    "parse_orientation_async",
     "fixture_candidate",
     "fixture_candidate_async",
     "fixture_references",

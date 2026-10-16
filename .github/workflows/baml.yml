@@ -1,0 +1,40 @@
+name: baml
+
+# The BAML checks need the toolchain binary, which uv doesn't install, so they run in their own job.
+# eval/ is the repo's only BAML project: the bridge loads one BAML program per Python process.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  BAML_VERSION: "0.22.2"
+  # From the release's baml-language-0.22.2-x86_64-unknown-linux-gnu.tar.gz.sha256.
+  BAML_SHA256: 7637978fe6c2a652c2835afd0390aa09f0750dc23ce0bb1c5e3c42210fe3033f
+
+jobs:
+  baml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the BAML toolchain from the GitHub release
+        run: |
+          archive="baml-language-${BAML_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          curl -fsSL -o "$RUNNER_TEMP/$archive" \
+            "https://github.com/BoundaryML/baml/releases/download/baml-language-${BAML_VERSION}/${archive}"
+          echo "${BAML_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/baml"
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP/baml" ./bin/baml-cli
+          echo "$RUNNER_TEMP/baml/bin" >> "$GITHUB_PATH"
+      - run: baml-cli check --directory eval
+      - run: baml-cli test --directory eval
+      - name: baml_sdk matches eval/baml_src
+        run: |
+          baml-cli generate --directory eval --output-dir "$RUNNER_TEMP/baml_sdk"
+          # _inlinedbaml.py embeds the absolute path of the project that generated it, so it differs
+          # on every machine. The generator's own manifest files aren't committed.
+          diff -r --exclude=_inlinedbaml.py --exclude='.baml-generator-output*' --exclude=__pycache__ \
+            baml_sdk "$RUNNER_TEMP/baml_sdk"
