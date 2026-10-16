@@ -43,7 +43,7 @@ Real runs spend the team's LLM credits. Test with `--narratives 2 --per-mind 1` 
 
 The repo ships these skills in `.claude/skills/`. Read the matching `SKILL.md` before the task.
 
-- `unslop`: any prose, and every draft post or reply the harness produces. AI tells kill engagement on a fan account faster than anything else.
+- `unslop`: any prose, and every draft post or reply the harness produces.
 - `prompt-writing`: editing a mind in `harness/minds/prompts/` or any prompt string in `harness/`.
 - `technical-writing`: docs, including each stage's `DESIGN.md`.
 - `pr-writing`: pull request titles and descriptions.
