@@ -1,11 +1,10 @@
 name: codeowner-approval
 
-# Reruns on every review so an owner's approval clears the check without a new push.
+# Reviews don't trigger this workflow. codeowner-rerun.yml reruns it instead, because a separate run
+# started by a review leaves this run's failure blocking the merge.
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-  pull_request_review:
-    types: [submitted, dismissed]
 
 permissions:
   contents: read
