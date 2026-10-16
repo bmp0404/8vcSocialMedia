@@ -8,7 +8,7 @@ import argparse
 import json
 import math
 import zlib
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime
 
 from harness.corpus import load
@@ -171,17 +171,7 @@ def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False,
         if a in acct_set and (it.kind == "post" or it.is_thread_continuation) and not it.reposted_by \
                 and WEEK0 <= it.created_at and len(post.clean_text(it.text)) >= 10:
             window_posts[a].append(it)
-    oof = {}
-    fold_of = {a: i % folds for i, a in enumerate(sorted(accounts, key=lambda a: zlib.crc32(a.encode())))}
-    for f in range(folds):
-        train_ids = [sid for sid, (a, _) in targets.items() if fold_of[a] != f]
-        model = post.ridge_fit([post.clean_text(corpus.get(s).text) for s in train_ids],
-                               [targets[s][1] for s in train_ids], alpha)
-        for a in accounts:
-            if fold_of[a] == f:
-                for it in window_posts[a]:
-                    oof[it.status_id] = model.predict(post.clean_text(it.text))
-        print(f"[posts] tfidf fold {f + 1}/{folds} done")
+    oof = post.tfidf_oof(corpus, alpha, folds, extra=window_posts)
 
     def score_on(ps):
         ps = [p for p in ps if p.winner in oof and p.loser in oof]
@@ -220,6 +210,38 @@ def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False,
     return res
 
 
+def run_judges(budget: int = 3000, model: str = "claude-sonnet-5-5") -> dict:
+    """Phase D: the panel and the BAML judge against the learned post rankers, on test-author pairs."""
+    from harness.label.features import reply_label_votes
+    from harness.rank import judges
+    corpus = load()
+    pairs = load_pairs("posts")
+    test = [p for p in pairs if p.split == "test"]
+    items = sorted({s for p in test for s in (p.winner, p.loser)})
+    votes, schema = reply_label_votes(("claude-sonnet-5-5",))
+    scorers = {
+        "tfidf_ridge": post.tfidf_oof(corpus),
+        "claude_label_model": post.fit_dev_scores(pairs, post.label_features_for(pairs, votes, schema))[0],
+        "format_logistic": post.fit_dev_scores(pairs, post.format_features_for(pairs, corpus))[0],
+        "length": {s: float(len(post.clean_text(corpus.get(s).text))) for p in pairs for s in (p.winner, p.loser)},
+    }
+    counter = judges.CallCounter(budget)
+    panel = judges.score_panel(items, corpus, model, counter)
+    print(f"[judges] panel done, {counter.actual} calls so far")
+    baml = judges.score_baml_judge(items, corpus, model, counter)
+    print(f"[judges] BAML judge done, {counter.actual} calls so far")
+    scorers["panel"], scorers["baml_judge"] = panel.scores(), baml.scores()
+    res = {"model": model, "test_pairs": len(test), "test_items": len(items), "test_authors": len({p.group for p in test}),
+           "calls_this_run": counter.actual,
+           "scored_items": {"panel": len(scorers["panel"]), "baml_judge": len(scorers["baml_judge"])},
+           "failures": {"panel": sum(1 for r in panel.rows.values() if r.get("score") is None),
+                        "baml_judge": dict(Counter((r.get("error") or "")[:40] for r in baml.rows.values()
+                                                   if r.get("score") is None))}}
+    res |= judges.compare(test, scorers, ("panel", "baml_judge"),
+                          ("tfidf_ridge", "claude_label_model", "format_logistic", "length"))
+    return res
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="python -m harness.rank")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -229,8 +251,16 @@ def main() -> None:
     ps = sub.add_parser("posts")
     ps.add_argument("--labels", action="store_true", help="add a logistic model on the LLM label fields")
     ps.add_argument("--label-models", default="", help="comma-separated annotators to average (default: both reference models)")
+    jd = sub.add_parser("judges", help="phase D: score the panel and the BAML judge on test-author post pairs")
+    jd.add_argument("--budget", type=int, default=3000, help="hard cap on judge calls")
     args = p.parse_args()
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    if args.cmd == "judges":
+        res = run_judges(args.budget)
+        out = RESULTS_DIR / "judges-posts.json"
+        out.write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
+        print(json.dumps({k: v for k, v in res.items() if k in ("accuracy", "paired", "calls_this_run")}, indent=1))
+        return
     models = tuple(m for m in args.label_models.split(",") if m) or None
     if args.cmd == "posts":
         res = run_posts(with_labels=args.labels, label_models=models)

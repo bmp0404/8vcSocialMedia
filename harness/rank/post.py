@@ -57,26 +57,37 @@ def gaps(corpus: Corpus) -> dict[str, float | None]:
     return out
 
 
-def format_baseline(pairs: list[Pair], corpus: Corpus) -> dict:
-    g = gaps(corpus)
-    feats = {}
-    for p in pairs:
-        for sid in (p.winner, p.loser):
-            if sid not in feats:
-                feats[sid] = format_features(corpus.get(sid), g.get(sid))
-    dev = [p for p in pairs if p.split == "dev"]
-    test = [p for p in pairs if p.split == "test"]
-    keys = sorted({k for p in dev for sid in (p.winner, p.loser) for k in feats[sid]})
-    vals = {k: [feats[sid][k] for p in dev for sid in (p.winner, p.loser)] for k in keys}
+def fit_dev_scores(pairs: list[Pair], feats: dict[str, dict[str, float]]) -> tuple[dict[str, float], dict, float]:
+    """Pairwise logistic fitted on the dev pairs whose two items have features, z-scored on dev items.
+    Returns (status ID -> score for every item in `feats`, weights, L2 strength)."""
+    dev = [p for p in pairs if p.split == "dev" and p.winner in feats and p.loser in feats]
+    if not dev:
+        raise ValueError("no dev pairs with features")
+    keys = sorted({k for f in feats.values() for k in f})
+    vals = {k: [feats[sid].get(k, 0.0) for p in dev for sid in (p.winner, p.loser)] for k in keys}
     mean = {k: sum(v) / len(v) for k, v in vals.items()}
     std = {k: (math.sqrt(sum((x - mean[k]) ** 2 for x in v) / len(v)) or 1.0) for k, v in vals.items()}
 
     def z(sid):
-        return {k: (feats[sid][k] - mean[k]) / std[k] for k in keys}
+        return {k: (feats[sid].get(k, 0.0) - mean[k]) / std[k] for k in keys}
     diffs = [pairwise.diff(z(p.winner), z(p.loser)) for p in dev]
     l2, _ = pairwise.choose_l2(diffs, [p.group for p in dev])
     w = pairwise.fit(diffs, l2)
-    cr = [pair_credit(pairwise.dot(w, z(p.winner)), pairwise.dot(w, z(p.loser))) for p in test]
+    return {sid: pairwise.dot(w, z(sid)) for sid in feats}, w, l2
+
+
+def format_features_for(pairs: list[Pair], corpus: Corpus) -> dict[str, dict[str, float]]:
+    g = gaps(corpus)
+    return {sid: format_features(corpus.get(sid), g.get(sid)) for p in pairs for sid in (p.winner, p.loser)}
+
+
+def format_baseline(pairs: list[Pair], corpus: Corpus) -> dict:
+    feats = format_features_for(pairs, corpus)
+    dev = [p for p in pairs if p.split == "dev"]
+    test = [p for p in pairs if p.split == "test"]
+    keys = sorted({k for f in feats.values() for k in f})
+    scores, w, l2 = fit_dev_scores(pairs, feats)
+    cr = [pair_credit(scores[p.winner], scores[p.loser]) for p in test]
     single = {}
     for k in keys:
         if k == "f:gap_known":
@@ -106,31 +117,22 @@ def format_baseline(pairs: list[Pair], corpus: Corpus) -> dict:
             "test": accuracy(cr, [p.group for p in test]).to_dict(), "single_features_test": single}
 
 
+def label_features_for(pairs: list[Pair], votes: dict, schema: dict) -> dict[str, dict[str, float]]:
+    from harness.rank.reply import label_features
+    return {sid: label_features(votes[f"x:{sid}"], schema)
+            for p in pairs for sid in (p.winner, p.loser) if f"x:{sid}" in votes}
+
+
 def label_baseline(pairs: list[Pair], votes: dict, schema: dict, corpus: Corpus | None = None) -> dict:
     """Pairwise logistic on LLM label features (harness/rank/reply.label_features), dev authors -> test authors.
     Only pairs whose two posts both have labels count, so the number is on a subset of the test pairs."""
-    from harness.rank.reply import label_features
-    feats = {}
-    for p in pairs:
-        for sid in (p.winner, p.loser):
-            if f"x:{sid}" in votes:
-                feats[sid] = label_features(votes[f"x:{sid}"], schema)
+    feats = label_features_for(pairs, votes, schema)
     usable = [p for p in pairs if p.winner in feats and p.loser in feats]
-    dev = [p for p in usable if p.split == "dev"]
     test = [p for p in usable if p.split == "test"]
-    if not dev or not test:
-        raise ValueError("no labeled post pairs in one of the splits")
-    keys = sorted({k for f in feats.values() for k in f})
-    vals = {k: [feats[s].get(k, 0.0) for p in dev for s in (p.winner, p.loser)] for k in keys}
-    mean = {k: sum(v) / len(v) for k, v in vals.items()}
-    std = {k: (math.sqrt(sum((x - mean[k]) ** 2 for x in v) / len(v)) or 1.0) for k, v in vals.items()}
-
-    def z(sid):
-        return {k: (feats[sid].get(k, 0.0) - mean[k]) / std[k] for k in keys}
-    diffs = [pairwise.diff(z(p.winner), z(p.loser)) for p in dev]
-    l2, _ = pairwise.choose_l2(diffs, [p.group for p in dev])
-    w = pairwise.fit(diffs, l2)
-    cr = [pair_credit(pairwise.dot(w, z(p.winner)), pairwise.dot(w, z(p.loser))) for p in test]
+    if not test:
+        raise ValueError("no labeled post pairs in the test split")
+    scores, w, l2 = fit_dev_scores(pairs, feats)
+    cr = [pair_credit(scores[p.winner], scores[p.loser]) for p in test]
     vs_length = None
     if corpus is not None:
         from harness.corpus.stats import paired_difference
@@ -282,3 +284,30 @@ def within_account_targets(corpus: Corpus, min_posts: int = 5) -> dict[str, tupl
         for p, v in zip(posts, logs):
             out[p.status_id] = (acct, (v - m) / sd)
     return out
+
+
+def tfidf_oof(corpus: Corpus, alpha: float = 10.0, folds: int = 5, extra: dict | None = None) -> dict[str, float]:
+    """Out-of-fold ridge predictions: each account's posts are scored by a model fitted on the other folds.
+
+    Folds are accounts sorted by crc32 of the handle, dealt round-robin. `extra` maps an account to more
+    of its items to score with the same held-out model (the run_posts easy-pairs check uses it).
+    """
+    import zlib
+    targets = within_account_targets(corpus)
+    accounts = sorted({a for a, _ in targets.values()}, key=lambda a: zlib.crc32(a.encode()))
+    fold_of = {a: i % folds for i, a in enumerate(accounts)}
+    to_score = defaultdict(list)
+    for sid, (a, _) in targets.items():
+        to_score[a].append(sid)
+    for a, items in (extra or {}).items():
+        if a in fold_of:
+            to_score[a] += [i.status_id for i in items if i.status_id not in targets]
+    oof = {}
+    for f in range(folds):
+        train = [sid for sid, (a, _) in targets.items() if fold_of[a] != f]
+        model = ridge_fit([clean_text(corpus.get(s).text) for s in train], [targets[s][1] for s in train], alpha)
+        for a in accounts:
+            if fold_of[a] == f:
+                for sid in to_score[a]:
+                    oof[sid] = model.predict(clean_text(corpus.get(sid).text))
+    return oof

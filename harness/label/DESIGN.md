@@ -109,7 +109,7 @@ Labels alone beat the text block alone by 0.106 [0.001, 0.195] on the test weeks
 
 `engagement_guess` sees minutes after the parent and followers in its prompt, so its weight partly restates timing. A label set that hides those would answer "do the words matter" more cleanly; this one answers "does the LLM add to timing", and the answer is no.
 
-On posts the labels do carry signal. A pairwise logistic on Claude's labels, fitted on dev authors, ranks test-author pairs at 0.730 [0.667, 0.783], 0.128 [0.059, 0.203] above length and about level with the TF-IDF ridge (0.712 on the 885 pairs it could score). `engagement_guess` and `novelty` lift and `promo_or_event` sinks (`data/bench/results/posts-labels-claude-sonnet-5-5.json`).
+On posts the labels do carry signal. A pairwise logistic on Claude's labels, fitted on dev authors, ranks test-author pairs at 0.730 [0.667, 0.783], 0.128 [0.059, 0.203] above length and about level with the TF-IDF ridge (0.711 on the 932 pairs it can score). `engagement_guess` and `novelty` lift and `promo_or_event` sinks (`data/bench/results/posts-labels-claude-sonnet-5-5.json`).
 
 **Stability.** Sonnet relabeled the 1,000 pilot items under the version 2 prompt (`data/labels/screening/retest-v2-*`). Against its own version 1 answers, alpha is 0.90 to 0.95 per field and 0.75 for `engagement_guess`. Claude is consistent with itself, so most of the disagreement in the pilot table is between the families. I did not retest Sol.
 

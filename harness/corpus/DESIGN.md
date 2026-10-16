@@ -9,7 +9,7 @@ Code is in `harness/corpus/` (loader, benchmarks, statistics) and `harness/rank/
 - The corpus has 14,462 posts and replies from the dev-tool dataset's accounts and the people who reply to them.
 - Within a thread, how soon a reply came is most of the signal. Delay alone ranks the more-liked reply 0.755 of the time on test threads. A model on delay, followers and verified status reaches 0.769.
 - Adding the reply's text features to that model changes accuracy by +0.002 (95% interval -0.034 to +0.044) over both test weeks. Hashed word n-grams make it worse by 0.071, and LLM label fields add +0.007 (-0.036 to +0.040). On this data the words of a reply add nothing measurable to timing and reach.
-- Within an account, the words of a post do carry signal. A TF-IDF ridge model, scored only on accounts it never saw, ranks the better post 0.712 of the time on test authors, 0.120 above length alone. Most of it is purpose: launches beat event promos.
+- Within an account, the words of a post do carry signal. A TF-IDF ridge model, scored only on accounts it never saw, ranks the better post 0.711 of the time on test authors, 0.116 above length alone. Most of it is purpose: launches beat event promos.
 
 The reply result is a product decision, not just a number. If a reply's words don't move its likes, the harness earns its keep by choosing the thread and the moment and by vetoing bad drafts. The words can come from a person.
 
@@ -139,9 +139,9 @@ This side was meant to be a quick null check, because the repo's earlier work fo
 | --- | --- |
 | length | 0.602 [0.548, 0.661] |
 | format logistic (media, quote, link, all lowercase, length, gap since the previous status), fitted on dev authors | 0.592 [0.526, 0.654] |
-| TF-IDF ridge, cross-fitted by account | **0.712** [0.648, 0.779] |
+| TF-IDF ridge, cross-fitted by account (932 of the 1,016 pairs; the rest include one of 24 posts under 10 characters once links are removed, or one of 9 from an account with fewer than 5 such posts) | **0.711** [0.650, 0.772] |
 
-TF-IDF minus length on the same test pairs: +0.120 [0.040, 0.205]. A logistic model on Claude's LLM labels does about as well, 0.730 [0.667, 0.783] on all 1,016 test pairs (`harness/label/DESIGN.md`). The ridge model mirrors `harness/virality.py` on `origin/aarav/self-improving` in pure Python (word 1 to 2-grams, character 3 to 5-grams, shape features, target log engagement z-scored within account, alpha 10, 5 folds by account). Its heaviest words: "introducing", "is out", "is now", "free" and "love" lift; "join", "rsvp", "talk", "week" and "in sf" sink. That is launches beating event promos, which matches the context worker's within-account finding for announcements.
+TF-IDF minus length on the same test pairs: +0.116 [0.038, 0.200]. A logistic model on Claude's LLM labels does about as well, 0.730 [0.667, 0.783] on all 1,016 test pairs (`harness/label/DESIGN.md`). The ridge model mirrors `harness/virality.py` on `origin/aarav/self-improving` in pure Python (word 1 to 2-grams, character 3 to 5-grams, shape features, target log engagement z-scored within account, alpha 10, 5 folds by account). Its heaviest words: "introducing", "is out", "is now", "free" and "love" lift; "join", "rsvp", "talk", "week" and "in sf" sink. That is launches beating event promos, which matches the context worker's within-account finding for announcements.
 
 Aarav reports 0.756 on 844 viral-against-deadweight pairs. On clean pairs of that kind (100+ against 10 or fewer, same filters as above) only 129 pairs from 12 accounts remain, and the ridge scores 0.581 [0.495, 0.773]. With thread continuations and immature posts put back, 4,785 pairs from 38 accounts score 0.664 [0.545, 0.771]. So I could not reproduce 0.756 on these files, and the version with easy pairs scores higher than the clean one, but both intervals are wide. On the broader 3x pairs the content signal holds at about 0.71.
 
