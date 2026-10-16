@@ -11,11 +11,12 @@ import pytest
 
 from harness import config, memory
 from harness.outcomes import ledger
+from harness.outcomes.cli import _positive
 from harness.outcomes.handoff import ApprovedAction, HandleError, HandoffError, load_approved, resolve_handle
 from harness.outcomes.label import BASELINE_MIN, BaselinePoint, baseline, checkpoint_for, label
 from harness.outcomes.match import match, normalize
-from harness.outcomes.reader import Counts, FxOutcomeReader, OwnPost, ReaderMissing, Timeline, fx_reader
-from harness.outcomes.sync import status_rows, sync
+from harness.outcomes.reader import Counts, FxOutcomeReader, OwnPost, ReaderMissing, fx_reader, own_timeline
+from harness.outcomes.sync import TRACK_FOR, status_rows, sync
 
 T0 = datetime(2026, 10, 10, 12, tzinfo=timezone.utc)
 H = timedelta(hours=1)
@@ -29,25 +30,42 @@ def approved(aid, text, kind="post", at=T0, target=None, original=None):
     return ApprovedAction(aid, 1, kind, text, original, target, at, "approved-run1.json")
 
 
-class FakeReader:
-    """Serves posts created by `now`, with their counts stamped at `now`. Counts every request."""
+def pair(actions, posts):
+    return match(actions, posts, TRACK_FOR)
 
-    def __init__(self, posts=(), exhausted=True):
-        self.posts, self.exhausted, self.now = list(posts), exhausted, T0
-        self.timeline_calls, self.status_calls = 0, []
-        self.requests = 0
+
+def xpost(pid, created, text="", author="brand", reply_to=None, reply_status=None, quoted=None, repost=False,
+          context=False, eng=(1, 0, 0, 0), fetched_at=""):
+    """An XReader XPost (harness/context/xreader.py on PR #18), with the fields sync reads."""
+    return SimpleNamespace(id=pid, text=text, author_handle=author, created_at=created, fetched_at=fetched_at,
+                           likes=eng[0], reposts=eng[1], replies=eng[2], quotes=eng[3], views=100, author_followers=2,
+                           replying_to=reply_to, replying_to_status=reply_status, quoted_id=quoted, is_repost=repost,
+                           timeline_context=context)
+
+
+class FakeReader:
+    """Serves posts created by `now` as a with-replies feed, counts stamped at `now`. Counts its calls."""
+
+    def __init__(self, posts=()):
+        self.posts, self.now = list(posts), T0
+        self.timeline_reads, self.status_reads, self.status_calls = 0, 0, []
+        self.gone: set[str] = set()  # deleted posts: status raises like the reader's FetchError
 
     def timeline(self, handle, limit):
-        self.timeline_calls += 1
-        self.requests += 1
+        self.timeline_reads += 1
         stamp = self.now.isoformat()
         seen = sorted((p for p in self.posts if p.created_at <= self.now), key=lambda p: p.created_at, reverse=True)
-        return Timeline([replace(p, counts=replace(p.counts, fetched_at=stamp)) for p in seen[:limit]], stamp,
-                        self.exhausted, 1)
+        feed = [xpost(p.id, p.created_at, p.text, reply_to={"reply": "fan", "self_reply": "brand"}.get(p.kind),
+                      reply_status=p.replying_to_status, quoted=p.quoted_id, fetched_at=stamp,
+                      eng=(p.counts.likes, p.counts.reposts, p.counts.replies, p.counts.quotes))
+                for p in seen[:limit]]
+        return own_timeline(feed, handle, stamp)
 
     def status(self, status_id):
+        self.status_reads += 1
         self.status_calls.append(status_id)
-        self.requests += 1
+        if status_id in self.gone:
+            raise RuntimeError(f"fxtwitter /status/{status_id} returned code 404: not found")
         p = next(p for p in self.posts if p.id == status_id)
         return replace(p.counts, fetched_at=self.now.isoformat())
 
@@ -86,7 +104,8 @@ def history_posts(n, start, eng_of=lambda i: (i, 0, 0, 0)):
 
 def test_normalize_drops_links_verify_gaps_reply_prefix_and_case():
     raw = "@Fever @WNBA  Clark’s [VERIFY: 3-pt %] FIRE https://t.co/abc  "
-    assert normalize(raw) == "clark's fire"
+    assert normalize(raw, strip_mentions=True) == "clark's fire"
+    assert normalize(raw) == "@fever @wnba clark's fire"
 
 
 def test_reply_anchored_on_target_tolerates_a_rewrite_that_text_alone_would_reject():
@@ -94,14 +113,14 @@ def test_reply_anchored_on_target_tolerates_a_rewrite_that_text_alone_would_reje
     rewrite = "AB back stronger than ever, the fever need her"
     on_target = own("p1", T0 + H, rewrite, kind="reply", reply_to="111")
     off_target = own("p2", T0 + H, rewrite, kind="reply", reply_to="999")
-    assert [m.status_id for m in match([a], [off_target])] == []
-    [m] = match([a], [off_target, on_target])
+    assert [m.status_id for m in pair([a], [off_target])] == []
+    [m] = pair([a], [off_target, on_target])
     assert (m.status_id, m.anchored) == ("p1", True)
 
 
 def test_quote_anchors_on_quoted_status():
     a = approved("q1", "nice arena now add caitlin", kind="quote", target="222")
-    [m] = match([a], [own("p1", T0 + H, "nice arena, now add caitlin 👀", quoted="222")])
+    [m] = pair([a], [own("p1", T0 + H, "nice arena, now add caitlin 👀", quoted="222")])
     assert m.anchored and m.score >= 0.9
 
 
@@ -109,31 +128,50 @@ def test_post_matches_small_edit_but_not_a_different_post():
     a = approved("a1", "get well soon AB. fever need you healthy for next season")
     edited = own("p1", T0 + H, "get well soon AB! the fever need you healthy next season 💛 https://t.co/x")
     other = own("p2", T0 + H, "WNBA Finals start Friday, who you got")
-    [m] = match([a], [other, edited])
+    [m] = pair([a], [other, edited])
     assert (m.status_id, m.anchored) == ("p1", False)
-    assert match([a], [other]) == []
+    assert pair([a], [other]) == []
 
 
 def test_short_text_without_an_anchor_must_match_exactly():
     a = approved("a1", "This team 🫶")
-    assert match([a], [own("p1", T0 + H, "This team 💛")]) == []
-    assert [m.status_id for m in match([a], [own("p2", T0 + H, "this team 🫶")])] == ["p2"]
+    assert pair([a], [own("p1", T0 + H, "This team 💛")]) == []
+    assert [m.status_id for m in pair([a], [own("p2", T0 + H, "this team 🫶")])] == ["p2"]
 
 
 def test_post_made_before_approval_never_matches():
     a = approved("a1", "same words", at=T0)
-    assert match([a], [own("p1", T0 - H, "same words")]) == []
+    assert pair([a], [own("p1", T0 - H, "same words")]) == []
 
 
 def test_each_post_goes_to_one_action_best_match_first():
     a1 = approved("a1", "clark to the 2k cover, finally")
     a2 = approved("a2", "clark on the 2k cover, finally!!")
     posts = [own("p1", T0 + H, "clark on the 2k cover, finally!!"), own("p2", T0 + 2 * H, "clark to the 2k cover, finally")]
-    assert {(m.action_id, m.status_id) for m in match([a1, a2], posts)} == {("a1", "p2"), ("a2", "p1")}
+    assert {(m.action_id, m.status_id) for m in pair([a1, a2], posts)} == {("a1", "p2"), ("a2", "p1")}
+
+
+def test_mention_drafts_keep_their_handles():
+    to_fan = approved("aaaa", "@hoopsfan22 welcome to the fever fam, glad you're here", kind="mention")
+    to_beat = approved("ffff", "@iowabeat welcome to the fever fam, glad you're here", kind="mention")
+    post = own("p1", T0 + H, "@hoopsfan22 welcome to the fever fam, glad you're here")
+    assert [(m.action_id, m.status_id) for m in pair([to_fan, to_beat], [post])] == [("aaaa", "p1")]
+
+
+def test_short_draft_with_a_verify_gap_matches_once_the_bot_fills_it():
+    a = approved("a1", "[VERIFY: pts] pts for CC 🔥")
+    assert [m.status_id for m in pair([a], [own("p1", T0 + H, "38 pts for CC 🔥")])] == ["p1"]
+    assert pair([a], [own("p2", T0 + H, "38 pts for AB 🔥")]) == []
+
+
+def test_post_more_than_a_week_after_approval_is_not_the_actions():
+    a = approved("a1", "get well soon AB. fever need you healthy for next season")
+    late = own("p1", T0 + TRACK_FOR + H, "get well soon AB. fever need you healthy for next season")
+    assert pair([a], [late]) == []
 
 
 def test_follow_is_never_matched():
-    assert match([approved("f1", "follow them", kind="follow")], [own("p1", T0 + H, "follow them")]) == []
+    assert pair([approved("f1", "follow them", kind="follow")], [own("p1", T0 + H, "follow them")]) == []
 
 
 # ---------------------------------------------------------------------------------------- labels
@@ -184,6 +222,19 @@ def test_handle_refuses_placeholder_and_names_both_keys(tmp_path, monkeypatch):
         resolve_handle()
 
 
+def test_follow_needs_no_text_and_a_reapproval_keeps_the_first_time(tmp_path):
+    def write(name, run_id, approved_at, text):
+        (tmp_path / name).write_text(json.dumps({"run_id": run_id, "actions": [
+            {"id": "f1", "type": "follow", "text": "", "approved_at": T0.isoformat()},
+            {"id": "a1", "type": "post", "text": text, "approved_at": approved_at}]}), encoding="utf-8")
+
+    write("approved-run1.json", 1, (T0 + 3 * H).isoformat(), "edited later")
+    write("approved-run0.json", 0, "2026-10-10T07:00:00-05:00", "first draft")  # T0, in Central time
+    by_id = {a.id: a for a in load_approved(tmp_path)}
+    assert by_id["f1"].text == ""
+    assert (by_id["a1"].text, by_id["a1"].approved_at) == ("edited later", T0)
+
+
 def test_approved_file_without_approved_at_is_an_error(tmp_path):
     (tmp_path / "approved-run3.json").write_text(json.dumps({"run_id": 3, "actions": [
         {"id": "a1", "type": "post", "text": "hi"}]}), encoding="utf-8")
@@ -197,34 +248,45 @@ def test_missing_reader_names_pr_18(monkeypatch):
         fx_reader()
 
 
-def test_fx_timeline_keeps_own_posts_and_spots_replies_fxtwitter_left_unmarked():
-    def raw(pid, author, text, reply=None, start=0, reposted_by=None):
-        return {"id": pid, "author": author, "text": text, "reply": reply, "reposted_by": reposted_by,
-                "raw_text": {"display_text_range": [start, len(text)]}}
+def test_reader_older_than_with_replies_is_refused(monkeypatch):
+    old = SimpleNamespace(FxTwitterReader=type("R", (), {"profile_statuses": lambda self, handle, limit=20: []}))
+    monkeypatch.setitem(sys.modules, "harness.context", SimpleNamespace(xreader=old))
+    with pytest.raises(ReaderMissing, match="bf396e5"):
+        fx_reader()
 
-    page = {"code": 200, "results": [
-        raw("1", "brand", "plain post"),
-        raw("2", "brand", "@fan it is", start=5),  # a reply fxtwitter returned without replying_to
-        raw("3", "brand", "@CaitlinClark22 nice", reply=("CaitlinClark22", "7"), start=16),
-        raw("4", "brand", "more", reply=("brand", "1")),
-        raw("7", "CaitlinClark22", "the post brand replied to"),
-        raw("8", "brand", "a repost", reposted_by="brand"),
-    ], "cursor": {"bottom": None}}
 
-    def parse(r, fetched_at):
-        to, status = r["reply"] or (None, None)
-        return SimpleNamespace(id=r["id"], text=r["text"], author_handle=r["author"], created_at=T0, fetched_at=fetched_at,
-                               likes=0, reposts=0, replies=0, quotes=0, views=None, author_followers=None,
-                               replying_to=to, replying_to_status=status, quoted_id=None,
-                               is_repost=bool(r["reposted_by"]))
+def test_timeline_reads_the_replies_tab_and_keeps_only_the_accounts_own_posts():
+    calls = []
 
-    paths = []
-    fake_reader = SimpleNamespace(_get=lambda path, max_age: paths.append(path) or (page, T0.isoformat()))
-    xreader = SimpleNamespace(FxTwitterReader=None, _parse=parse)
-    tl = FxOutcomeReader(xreader, reader=fake_reader).timeline("brand", 20)
-    assert paths == ["/2/profile/brand/statuses?with_replies=1"]
-    assert {p.id: p.kind for p in tl.posts} == {"1": "original", "2": "reply", "3": "reply", "4": "self_reply"}
-    assert tl.exhausted
+    class Reader:
+        def profile_statuses(self, handle, limit=20, with_replies=False):
+            calls.append(with_replies)
+            return [
+                xpost("5", T0 + 5 * H, "@fan nice one", reply_to="fan", reply_status="9"),
+                xpost("9", T0 - 100 * H, "a fan's post we answered", author="fan", context=True),
+                xpost("4", T0 + 4 * H, "more on that", reply_to="brand", reply_status="1"),
+                xpost("1", T0 - 300 * H, "our old post the thread continues"),  # shown as the parent of 4
+                xpost("3", T0 + 3 * H, "reposted", author="other", repost=True),
+                xpost("2", T0 + 2 * H, "plain post"),
+                xpost("2", T0 + 2 * H, "plain post"),  # repeated on the next page
+            ]
+
+    tl = FxOutcomeReader(Reader()).timeline("brand", 20)
+    assert calls == [True]
+    assert [(p.id, p.kind) for p in tl.posts] == [("5", "reply"), ("4", "self_reply"), ("2", "original"),
+                                                  ("1", "original")]
+    # Post 1 is a thread parent from 300 hours back, so it says nothing about how far the feed reached.
+    assert tl.reach == T0 + 2 * H
+
+
+def test_empty_feed_reaches_nothing():
+    tl = own_timeline([], "brand", T0.isoformat())
+    assert (tl.reach, tl.fetched_at) == (None, T0.isoformat())
+
+
+def test_cli_limit_must_be_positive():
+    with pytest.raises(Exception, match="1 or more"):
+        _positive("0")
 
 
 # ---------------------------------------------------------------------------------------- sync
@@ -251,7 +313,7 @@ def test_rerun_fetches_only_what_is_due(env):
     reader = FakeReader([own("900", T0 + H, "clark headlines 2k27 season 2")])
 
     first = run(env, reader, T0 + 1.5 * H)  # ours is 0.5h old: found, no checkpoint yet
-    assert (reader.timeline_calls, reader.status_calls, first.recorded) == (1, [], 1)
+    assert (reader.timeline_reads, reader.status_calls, first.recorded) == (1, [], 1)
     assert stored_outcomes()["a1"] == {"outcome": "posted", "status_id": "900", "url": "https://x.com/brand/status/900",
                                        "posted_at": (T0 + H).isoformat(), "approved_at": T0.isoformat(),
                                        "history": []}
@@ -259,15 +321,15 @@ def test_rerun_fetches_only_what_is_due(env):
     assert (row["state"], row["latest"], row["next"]) == ("posted", None, "+1h in 0.5h")
 
     again = run(env, reader, T0 + 1.6 * H)
-    assert (reader.timeline_calls, reader.status_calls, again.recorded) == (1, [], 0)
+    assert (reader.timeline_reads, reader.status_calls, again.recorded) == (1, [], 0)
     assert again.timeline.startswith("not read: last read")
 
     run(env, reader, T0 + 2.2 * H)  # 1.2h old: +1h due, timeline due again after 30 min
-    assert (reader.timeline_calls, reader.status_calls) == (2, ["900"])
+    assert (reader.timeline_reads, reader.status_calls) == (2, ["900"])
     assert stored_outcomes()["a1"]["checkpoint"] == "+1h"
 
     repeat = run(env, reader, T0 + 2.3 * H)
-    assert (reader.timeline_calls, reader.status_calls, repeat.recorded) == (2, ["900"], 0)
+    assert (reader.timeline_reads, reader.status_calls, repeat.recorded) == (2, ["900"], 0)
 
     _, [row] = status_rows(env.ledger, now=T0 + 2.3 * H)
     assert row["state"] == "posted" and row["latest"]["checkpoint"] == "+1h"
@@ -281,7 +343,7 @@ def test_rerun_fetches_only_what_is_due(env):
 def test_not_posted_waits_24h_and_a_read_that_reaches_the_approval(env):
     write_approved(env.out, [approved("a1", "the dream in four, calling it now", at=T0)])
     recent = [own(f"new{i}", T0 + (24 + i) * H, f"unrelated post {i}") for i in range(1, 3)]
-    reader = FakeReader(recent + [own("old", T0 - H, "older unrelated post")], exhausted=False)
+    reader = FakeReader(recent + [own("old", T0 - H, "older unrelated post")])
 
     run(env, reader, T0 + 23 * H)
     assert "a1" not in stored_outcomes()
@@ -302,6 +364,44 @@ def test_not_posted_waits_24h_and_a_read_that_reaches_the_approval(env):
     run(env, reader, T0 + 29.5 * H)
     out = stored_outcomes()["a1"]
     assert (out["outcome"], out["status_id"], out["checkpoint"]) == ("insufficient_baseline", "late", "+1h")
+
+
+def test_first_sync_after_a_week_still_finds_the_post(env):
+    write_approved(env.out, [approved("a1", "clark headlines 2k27 season 2", at=T0)])
+    reader = FakeReader([own("900", T0 + H, "clark headlines 2k27 season 2")])
+    report = run(env, reader, T0 + 8 * 24 * H)
+    assert [m.status_id for m in report.matched] == ["900"] and report.not_posted == []
+    assert stored_outcomes()["a1"]["outcome"] == "posted"  # +48h's window closed with tracking
+
+
+def test_a_deleted_post_stops_being_fetched_when_tracking_ends(env):
+    write_approved(env.out, [approved("a1", "clark headlines 2k27 season 2", at=T0)])
+    reader = FakeReader([own("900", T0 + H, "clark headlines 2k27 season 2")])
+    run(env, reader, T0 + 2.5 * H)
+    reader.gone.add("900")
+    assert run(env, reader, T0 + 8 * H).errors  # +6h is due and the fetch fails, loudly
+    assert run(env, reader, T0 + 60 * H).errors  # +48h
+    calls = len(reader.status_calls)
+    assert run(env, reader, T0 + TRACK_FOR + 2 * H).errors == []
+    assert len(reader.status_calls) == calls
+    _, [row] = status_rows(env.ledger, now=T0 + TRACK_FOR + 2 * H)
+    assert row["missed"] == ["+6h", "+24h", "+48h"] and row["next"] == ""
+    assert "404" in row["error"]
+
+
+def test_an_empty_feed_never_marks_anything_not_posted(env):
+    write_approved(env.out, [approved("a1", "the dream in four, calling it now", at=T0)])
+    report = run(env, FakeReader(), T0 + 30 * H)
+    assert report.not_posted == []
+    assert status_rows(env.ledger, now=T0 + 30 * H)[1][0]["state"] == "unverified"
+
+
+def test_a_resaved_review_keeps_the_first_approval_time(env):
+    write_approved(env.out, [approved("a1", "clark headlines 2k27 season 2", at=T0)])
+    reader = FakeReader([own("900", T0 + H, "clark headlines 2k27 season 2")])
+    run(env, FakeReader(), T0 + 0.5 * H)
+    write_approved(env.out, [approved("a1", "clark headlines 2k27 season 2", at=T0 + 3 * H)])  # re-saved
+    assert [m.status_id for m in run(env, reader, T0 + 4 * H).matched] == ["900"]
 
 
 def test_deleted_outcomes_table_is_refilled_on_the_next_sync(env):

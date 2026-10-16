@@ -23,10 +23,10 @@ from harness.outcomes.reader import ReaderMissing, Timeline, fx_reader
 NOT_POSTED_AFTER = timedelta(hours=24)
 # Half the +1h window (1-2 hours old), so a sync run every half hour reads each new post inside it.
 TIMELINE_EVERY = timedelta(minutes=30)
-# How long to keep looking for an approved action's post, and to keep reading the timeline for a
-# matched post's checkpoints. Uncalibrated.
+# A post made this long after approval still counts as the action's post, and a matched post's
+# counts are read for this long after posting. Uncalibrated.
 TRACK_FOR = timedelta(days=7)
-DEFAULT_LIMIT = 60  # own posts per timeline read, about 3 fxtwitter pages
+DEFAULT_LIMIT = 60  # feed entries per timeline read, about 3 fxtwitter pages
 
 
 @dataclass
@@ -38,7 +38,8 @@ class SyncReport:
     matched: list[Match] = field(default_factory=list)
     not_posted: list[str] = field(default_factory=list)
     snapshots: list[str] = field(default_factory=list)  # "action_id +6h"
-    requests: int = 0
+    timeline_reads: int = 0
+    status_reads: int = 0
     recorded: int = 0
     errors: list[str] = field(default_factory=list)
 
@@ -48,7 +49,7 @@ def utc(value: str) -> datetime:
 
 
 def _open_actions(conn, now: datetime) -> list:
-    """Actions whose post may still appear, or whose post still has a checkpoint ahead."""
+    """Actions with no verdict yet, whose post may still appear, or whose post has a checkpoint ahead."""
     by_action = {m["action_id"]: m for m in ledger.matched(conn)}
     out = []
     for a in ledger.actions(conn):
@@ -56,7 +57,7 @@ def _open_actions(conn, now: datetime) -> list:
             continue
         m = by_action.get(a["action_id"])
         if m is None:
-            if now - utc(a["approved_at"]) < TRACK_FOR:
+            if not a["not_posted_at"] or now - utc(a["approved_at"]) < TRACK_FOR:
                 out.append(a)
         elif not ledger.has_snapshot(conn, m["status_id"], CHECKPOINTS[-1]) and now - utc(m["created_at"]) < TRACK_FOR:
             out.append(a)
@@ -86,15 +87,15 @@ def _save_timeline(conn, tl: Timeline) -> int:
 
 def _mark_not_posted(conn, tl: Timeline, report: SyncReport) -> None:
     """Unmatched after 24h, and this read reached back past the approval, so the post would be in it."""
+    if tl.reach is None:
+        return
     read_at = utc(tl.fetched_at)
-    oldest = min((p.created_at for p in tl.posts), default=None)
     done = {m["action_id"] for m in ledger.matched(conn)}
     for a in ledger.actions(conn):
         if a["action_id"] in done or a["type"] in UNMATCHABLE_TYPES or a["not_posted_at"]:
             continue
         approved = utc(a["approved_at"])
-        covered = tl.exhausted or (oldest is not None and oldest <= approved)
-        if read_at - approved >= NOT_POSTED_AFTER and covered:
+        if read_at - approved >= NOT_POSTED_AFTER and tl.reach <= approved:
             ledger.set_not_posted(conn, a["action_id"], tl.fetched_at)
             report.not_posted.append(a["action_id"])
 
@@ -193,15 +194,13 @@ def sync(handle: str, approved_dir: Path, ledger_path: Path = ledger.DEFAULT_PAT
             if tl is not None:
                 with conn:
                     report.new_posts = _save_timeline(conn, tl)
-                oldest = min((p.created_at for p in tl.posts), default=None)
-                reach = "the account's first post" if tl.exhausted else (ledger.iso(oldest) if oldest else "nothing")
-                report.timeline = f"read {len(tl.posts)} posts in {tl.requests} requests, back to {reach}"
+                reach = ledger.iso(tl.reach) if tl.reach else "nothing"
+                report.timeline = f"read {len(tl.posts)} of the account's posts, back to {reach}"
 
         with conn:
             done = {m["action_id"] for m in ledger.matched(conn)}
-            waiting = [ledger.to_action(a) for a in ledger.actions(conn)
-                       if a["action_id"] not in done and now - utc(a["approved_at"]) < TRACK_FOR]
-            report.matched = match(waiting, ledger.unmatched_posts(conn))
+            waiting = [ledger.to_action(a) for a in ledger.actions(conn) if a["action_id"] not in done]
+            report.matched = match(waiting, ledger.unmatched_posts(conn), TRACK_FOR)
             ledger.save_matches(conn, report.matched, now)
             if tl is not None:
                 _mark_not_posted(conn, tl, report)
@@ -209,7 +208,8 @@ def sync(handle: str, approved_dir: Path, ledger_path: Path = ledger.DEFAULT_PAT
         for m in ledger.matched(conn):
             created = utc(m["created_at"])
             cp = checkpoint_for(age_hours(created, now))
-            if cp is None or ledger.has_snapshot(conn, m["status_id"], cp):
+            # The age limit stops a deleted post from being refetched on every sync.
+            if cp is None or now - created >= TRACK_FOR or ledger.has_snapshot(conn, m["status_id"], cp):
                 continue
             try:
                 counts = get_reader().status(m["status_id"])
@@ -239,14 +239,20 @@ def sync(handle: str, approved_dir: Path, ledger_path: Path = ledger.DEFAULT_PAT
     if changed:
         memory.record_outcomes(changed)
     report.recorded = len(changed)
-    report.requests = reader.requests if reader is not None else 0
+    if reader is not None:
+        report.timeline_reads, report.status_reads = reader.timeline_reads, reader.status_reads
     return report
 
 
 def _missed_and_next(conn, status_id: str, age: float) -> tuple[list[str], str]:
     taken = {s["checkpoint"] for s in ledger.snapshots(conn, status_id)}
-    missed = [checkpoint_name(t) for t in CHECKPOINTS[:-1] if t not in taken and age >= t * WINDOW_FACTOR]
-    ahead = [t for t in CHECKPOINTS if t not in taken and (t == CHECKPOINTS[-1] or age < t * WINDOW_FACTOR)]
+    tracking = age < TRACK_FOR.total_seconds() / 3600
+
+    def closed(t: int) -> bool:
+        return not tracking or (t != CHECKPOINTS[-1] and age >= t * WINDOW_FACTOR)
+
+    missed = [checkpoint_name(t) for t in CHECKPOINTS if t not in taken and closed(t)]
+    ahead = [t for t in CHECKPOINTS if t not in taken and not closed(t)]
     if not ahead:
         return missed, ""
     t = ahead[0]
@@ -287,7 +293,7 @@ def status_rows(ledger_path: Path = ledger.DEFAULT_PATH, now: datetime | None = 
             elif now - approved < NOT_POSTED_AFTER:
                 row.update(state="waiting", detail=f"approved {age_hours(approved, now):.1f}h ago, not on the timeline yet")
             else:
-                reach = f"the last read reached back to {last['oldest']}" if last else "the timeline was never read"
+                reach = f"the last read reached back to {last['reach']}" if last else "the timeline was never read"
                 row.update(state="unverified", detail=f"approved {age_hours(approved, now):.1f}h ago and unmatched, "
                                                       f"but {reach}; run sync, with a larger --limit if needed")
             rows.append(row)

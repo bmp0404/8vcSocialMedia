@@ -1,5 +1,6 @@
 """`harness outcomes sync` and `harness outcomes status`."""
 
+import argparse
 import json
 from pathlib import Path
 
@@ -26,7 +27,8 @@ def _sync(args) -> None:
         print(f"[outcomes] NOT POSTED: {action_id} has no matching post 24h after approval")
     if r.snapshots:
         print(f"[outcomes] snapshots: {', '.join(r.snapshots)}")
-    print(f"[outcomes] {r.requests} fxtwitter requests; recorded {r.recorded} changed outcomes in {config.DB_PATH}")
+    print(f"[outcomes] {r.timeline_reads} timeline reads, {r.status_reads} status reads; "
+          f"recorded {r.recorded} changed outcomes in {config.DB_PATH}")
     for e in r.errors:
         print(f"[outcomes] ERROR {e}")
     if r.errors:
@@ -72,6 +74,13 @@ def _status(args) -> None:
         print(f"    {row['text'][:100]!r}")
 
 
+def _positive(value: str) -> int:
+    n = int(value)
+    if n < 1:
+        raise argparse.ArgumentTypeError("must be 1 or more")
+    return n
+
+
 def add_commands(sub) -> None:
     p = sub.add_parser("outcomes", help="find approved actions on the account's X timeline and record how they did")
     osub = p.add_subparsers(dest="outcomes_cmd", required=True)
@@ -80,7 +89,8 @@ def add_commands(sub) -> None:
     s.add_argument("--handle", help="read this X account instead of mission/observe.toml or action/account.json")
     s.add_argument("--approved-dir", type=Path, default=config.OUT_DIR, help="where approved-run<id>.json files are")
     s.add_argument("--ledger", type=Path, default=ledger.DEFAULT_PATH, help="the sync state, one file per account")
-    s.add_argument("--limit", type=int, default=DEFAULT_LIMIT, help="own posts to read from the timeline")
+    s.add_argument("--limit", type=_positive, default=DEFAULT_LIMIT,
+                   help="feed entries per timeline read; raise it when status says unverified")
     s.set_defaults(func=_sync)
 
     s = osub.add_parser("status", help="print each approved action: posted or not, latest metrics, label")

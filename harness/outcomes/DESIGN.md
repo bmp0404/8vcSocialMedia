@@ -26,23 +26,23 @@ This package answers two questions about every action we approve. Did 8VC's bot 
 
 ### Matching an action to its post
 
-`sync` reads the account's timeline with fxtwitter's `with_replies=1` flag. Without the flag, X's Posts tab leaves replies out. On @CClarkReport on 2026-10-16, its replies to other accounts appeared only with the flag. `XReader.profile_statuses` doesn't pass the flag yet, so `reader.py` builds the request through the reader's own `_get`, which keeps the throttle and the 404 retry.
+`sync` reads the account's timeline with `XReader.profile_statuses(handle, limit, with_replies=True)`. X's Posts tab, the default, leaves replies out: on @CClarkReport on 2026-10-16, its replies to other accounts appeared only with the flag. The replies feed also shows each post the account answered, by its own author, which the reader marks `timeline_context`. `reader.py` drops those posts, reposts, and posts repeated across pages.
 
-`match.py` normalizes both texts. It strips links, `[VERIFY: ...]` gaps, leading reply mentions, case and curly quotes, then compares them with `difflib.SequenceMatcher`. A post is a candidate only if it was created after the approval, allowing 5 minutes of clock skew. Thresholds:
+`match.py` normalizes both texts. It strips links and `[VERIFY: ...]` gaps, folds case and curly quotes, and for a reply action also strips the leading @mentions that X adds as the reply prefix. A mention keeps its @handle, because the handle is what tells two mention drafts apart. It then compares the texts with `difflib.SequenceMatcher`. A post is a candidate only if it was made between the approval, less 5 minutes of clock skew, and 7 days after it. Thresholds:
 
 | Case | Rule | Why |
 | --- | --- | --- |
 | Reply whose post replies to `target_url`, or quote whose post quotes it | similarity at least 0.5 | X itself ties the post to the target, so the text only has to tell two replies to one target apart |
 | Anything else | similarity at least 0.8 | the text is all there is |
-| Unanchored text under 20 normalized characters | exact | "this team 🫶" scores 0.91 against "this team 💛" |
+| Unanchored text under 20 normalized characters | exact, except that each `[VERIFY]` gap matches up to 40 characters | "this team 🫶" scores 0.91 against "this team 💛" |
 
-None of these numbers is calibrated, because the bot hasn't edited a real draft yet. Matches are one-to-one: anchored candidates go first, then by score, and each action and each post is used once.
+None of these numbers is calibrated, because the bot hasn't edited a real draft yet. Matches are one-to-one: anchored candidates go first, then higher scores, and on a tie the earlier approval takes the earlier post.
 
-`reader.py` sets a post's `kind` from fxtwitter's `replying_to`. On @CClarkReport post 2106410826999500938, fxtwitter dropped `replying_to` from a reply but kept X's `display_text_range`, whose start skips the reply's leading mentions. A post with a nonzero start that begins with `@` therefore counts as a reply.
+`reader.py` sets a post's `kind` from `replying_to`. On @CClarkReport post 2106410826999500938, fxtwitter dropped `replying_to` from a reply, so that post reads as an original. A reply action that lands on such a post loses its anchor and needs the 0.8 text match.
 
 ### Checkpoints
 
-A snapshot taken at age `a` belongs to checkpoint T when `T <= a < 2T`: +1h covers 1 to 2 hours, +6h 6 to 12, +24h 24 to 48, and +48h everything from 48 hours on. The +48h window has no end because the context worker treats a post as settled at 48 hours. A checkpoint is due when the post's age is inside its window and the ledger has no snapshot for it. `sync` then calls `XReader.status` once. A sync that runs after a window closes records that checkpoint as missed rather than filing a late count under it. The factor of 2 has no evidence behind it.
+A snapshot taken at age `a` belongs to checkpoint T when `T <= a < 2T`: +1h covers 1 to 2 hours, +6h 6 to 12, +24h 24 to 48, and +48h everything from 48 hours on. The +48h window has no end because the context worker treats a post as settled at 48 hours. A checkpoint is due when the post's age is inside its window and the ledger has no snapshot for it. `sync` then calls `XReader.status` once. A sync that runs after a window closes records that checkpoint as missed rather than filing a late count under it. Reads stop 7 days after posting, so a deleted post fails loudly for at most a week and then stops being fetched. The factor of 2 has no evidence behind it.
 
 ### Labels
 
@@ -61,18 +61,26 @@ The +48h baseline is biased toward older posts. A post read at 300 hours has had
 
 ### Not posted
 
-An unmatched action becomes `not_posted` when a timeline read happens 24 hours or more after approval and that read reaches back past the approval time, or reaches the account's first post. Without the second condition, a busy account could push the post past the read limit and sync would call a posted action skipped. When no read covers the approval, `status` says `unverified` and suggests a larger `--limit`. `sync` keeps matching for 7 days after approval, so a late post replaces `not_posted` with real numbers.
+An unmatched action becomes `not_posted` when a timeline read happens 24 hours or more after approval and that read reaches back past the approval time. Without the second condition, a busy account could push the post past the read limit and sync would call a posted action skipped. When no read covers the approval, `status` says `unverified` and suggests a larger `--limit`. An unverified action keeps the timeline due on every sync until a read covers it.
+
+How far a read reached is the oldest of the account's own posts in it, with two exceptions:
+
+- A post that something in the feed replies to doesn't count. The feed shows a reply's parent right above the reply, whatever the parent's age, so an old self-thread parent would make the read look weeks deep.
+- An empty feed reaches nothing. A feed that ends early doesn't count as reaching the account's first post either, because one empty page from fxtwitter looks the same. As a result, an account whose whole history is newer than an approval leaves that action `unverified`, never `not_posted`.
+
+The clock starts at an action's first approval. `memory.set_review` restamps `approved_at` whenever a reviewer re-saves, and the bot may have posted in between. A post made up to 7 days after approval still matches, so a late post replaces `not_posted` with real numbers.
 
 ### The ledger
 
 `ledger.py` keeps a separate SQLite file, `data/outcomes.db` by default, which `data/*.db` already gitignores. It isn't in `data/harness.db`, because Memory owns that schema and teammates delete the file after schema changes. Tables:
 
-- `actions`: every approved action seen, plus `not_posted_at`.
+- `actions`: every approved action seen, with its first approval time and `not_posted_at`.
 - `posts`: the account's own posts from timeline reads.
 - `matches`: action id to status id, one each way (`UNIQUE`).
 - `snapshots`: our matched posts, from `XReader.status`, one per checkpoint.
 - `baseline`: every own post, from the timeline, one per checkpoint.
-- `labels`, `reads`, and `meta`, which holds the handle the ledger belongs to.
+- `reads`: each timeline read and how far it reached.
+- `labels`, and `meta`, which holds the handle the ledger belongs to.
 
 Primary keys make a rerun harmless: a second insert of the same snapshot is ignored. A sync reads the timeline only when an action is still open and the last read is at least 30 minutes old. That gap is half of the +1h window, so syncing every half hour reads each new post inside that window. Before recording, `sync` compares each payload with what `outcomes` already holds and writes only the ones that changed. If someone deletes `data/harness.db`, the next sync writes the rows again. A ledger refuses a second handle, so a stand-in account can't leak into the brand's baseline.
 
@@ -101,7 +109,7 @@ A skipped action records `{"outcome": "not_posted", "approved_at": ..., "checked
 
 1. What is the brand's real handle? `sync` refuses to run until `[brand] x_handle` or `action/account.json` names it, or `--handle` does.
 2. Can 8VC's bot report the status id it posted for each action id? If it can, the ledger's `matches` table takes those ids directly, and text matching becomes a fallback.
-3. Could `XReader.profile_statuses` take `with_replies`? Then `reader.py` can drop its call to the private `_get` and `_parse`. Context worker's call.
+3. fxtwitter sometimes drops `replying_to` from a reply (see Matching). X's `display_text_range` still marks the reply prefix, and `XPost` could expose it. That would keep such a post's anchor and put it in the reply baseline.
 4. Follows aren't tracked. fxtwitter's `/2/profile/{handle}/following` could confirm them, but nothing here reads it yet.
 5. Who runs `sync` every 30 minutes? It belongs in Dhilan's engine loop next to `learn`.
 6. Memory's table holds one row per action, so per-checkpoint numbers live inside `history`. If reflection wants one episode outcome per checkpoint, memory has to read `history` or change the schema.
@@ -112,5 +120,5 @@ A skipped action records `{"outcome": "not_posted", "approved_at": ..., "checked
 
 - `harness/outcomes/`: `handoff.py` (approved files and handle), `reader.py` (fxtwitter adapter), `match.py`, `label.py`, `ledger.py`, `sync.py` and `cli.py`.
 - `harness/cli.py`: one additive block that registers `harness outcomes sync` and `harness outcomes status`.
-- `tests/test_outcomes.py`: 32 offline tests for matching, checkpoint windows, labels, `not_posted` timing, rerun idempotency, the handle check and the missing-reader error.
-- Two live stand-in runs on 2026-10-16 against public accounts, not the brand's. With @IowaWBB, 9 actions produced 7 matches, 1 `not_posted`, 1 waiting and 3 `failure` labels at +48h, using 10 requests. The rerun made 0 requests. With @greptile, 2 replies and 1 quote matched on their targets, one of them a rewrite at similarity 0.71 that text alone would have rejected. The PR description has the full output.
+- `tests/test_outcomes.py`: 43 offline tests for matching, checkpoint windows, labels, `not_posted` timing and coverage, the replies feed filter, rerun idempotency, the handle check and the missing or outdated reader.
+- Two live stand-in runs on 2026-10-16 against public accounts, not the brand's. With @IowaWBB, 9 actions produced 7 matches, 1 `not_posted`, 1 waiting and 3 `failure` labels at +48h, using 1 timeline read and 6 status reads. The rerun read nothing. With @greptile, 2 replies and 1 quote matched on their targets, one of them a rewrite at similarity 0.71 that text alone would have rejected. The PR description has the full output.

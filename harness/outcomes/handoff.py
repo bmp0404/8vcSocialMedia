@@ -4,8 +4,8 @@ import json
 import os
 import re
 import tomllib
-from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import dataclass, replace
+from datetime import datetime, timezone
 from pathlib import Path
 
 from harness import config
@@ -17,6 +17,7 @@ ACCOUNT_PATH = config.ROOT / "action" / "account.json"
 # It isn't the brand's account, so reading its timeline would label someone else's posts.
 PLACEHOLDER_HANDLES = {"clarkfanaccount"}
 REQUIRED_KEYS = ("id", "type", "text", "approved_at")
+TEXTLESS_TYPES = {"follow"}  # the review page shows no text box for a follow
 _STATUS_ID = re.compile(r"/status(?:es)?/(\d+)")
 
 
@@ -52,11 +53,16 @@ def _parse_time(value: str, where: str) -> datetime:
         raise HandoffError(f"{where}: approved_at {value!r} isn't an ISO 8601 timestamp") from e
     if t.tzinfo is None:
         raise HandoffError(f"{where}: approved_at {value!r} has no timezone; memory.now() writes UTC with +00:00")
-    return t
+    return t.astimezone(timezone.utc)
 
 
 def load_approved(directory: Path) -> list[ApprovedAction]:
-    """Every action in `directory/approved-run*.json`. An id in several files keeps its latest approval."""
+    """Every action in `directory/approved-run*.json`.
+
+    An id in several files keeps the text of its latest approval and the time of its first, because
+    the bot may have posted it any time after the first. memory.set_review restamps approved_at on
+    every re-save.
+    """
     if not directory.is_dir():
         raise HandoffError(f"{directory} isn't a directory; approved-run<id>.json files go in out/")
     found: dict[str, ApprovedAction] = {}
@@ -64,22 +70,25 @@ def load_approved(directory: Path) -> list[ApprovedAction]:
         data = json.loads(path.read_text(encoding="utf-8"))
         for i, a in enumerate(data.get("actions") or []):
             where = f"{path.name} action {a.get('id') or i}"
-            missing = [k for k in REQUIRED_KEYS if not a.get(k)]
+            required = [k for k in REQUIRED_KEYS if not (k == "text" and a.get("type") in TEXTLESS_TYPES)]
+            missing = [k for k in required if not a.get(k)]
             if missing:
                 raise HandoffError(f"{where} has no {', '.join(missing)}; harness/review export_approved writes them")
             action = ApprovedAction(
                 id=str(a["id"]),
                 run_id=data.get("run_id"),
                 type=a["type"],
-                text=a["text"],
+                text=a.get("text") or "",
                 original_text=a.get("original_text"),
                 target_status=status_id(a.get("target_url")),
                 approved_at=_parse_time(a["approved_at"], where),
                 source=path.name,
             )
             prev = found.get(action.id)
-            if prev is None or action.approved_at >= prev.approved_at:
-                found[action.id] = action
+            if prev is not None:
+                newer, older = sorted((prev, action), key=lambda x: x.approved_at, reverse=True)
+                action = replace(newer, approved_at=older.approved_at)
+            found[action.id] = action
     return sorted(found.values(), key=lambda a: (a.approved_at, a.id))
 
 

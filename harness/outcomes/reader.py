@@ -2,22 +2,17 @@
 
 `harness.context.xreader` lives on sam/context-dynamics (PR #18) and is imported only when sync
 needs the network, the same way `harness/sources/x_fx.py` does it, so everything else here works
-without it.
-
-`FxTwitterReader.profile_statuses` reads X's Posts tab, which leaves replies out, and a reply action
-can only be found among the account's replies. fxtwitter takes `with_replies=1` on the same endpoint
-(checked on @CClarkReport on 2026-10-16: its replies to other accounts appear only with the flag).
-Until the reader accepts that flag, `timeline` builds the request itself through the reader's
-`_get`, so the shared one-request-per-second limit, the 404 retry and the code check still apply.
+without it. The timeline is read with `with_replies=True`, because X's Posts tab leaves replies out
+and a reply action can only be found among the account's replies.
 """
 
-import urllib.parse
+import inspect
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class ReaderMissing(RuntimeError):
-    """The fxtwitter reader from PR #18 isn't importable in this checkout."""
+    """The fxtwitter reader from PR #18 isn't importable in this checkout, or is too old."""
 
 
 @dataclass(frozen=True)
@@ -53,10 +48,12 @@ class OwnPost:
 
 @dataclass(frozen=True)
 class Timeline:
-    posts: list[OwnPost]  # newest first, without reposts or other accounts' posts
+    posts: list[OwnPost]  # the account's own posts, newest first, without reposts
     fetched_at: str
-    exhausted: bool  # True when fxtwitter had no older page, so the read reaches the account's first post
-    requests: int
+    # The oldest creation time the feed provably reached, or None when it returned no usable post.
+    # A post older than this may be missing from the read. A feed that ends early doesn't prove it
+    # reached the account's first post: one empty page from fxtwitter looks the same.
+    reach: datetime | None
 
 
 def fx_reader() -> "FxOutcomeReader":
@@ -67,7 +64,10 @@ def fx_reader() -> "FxOutcomeReader":
             "harness outcomes reads X through harness/context/xreader.py from sam/context-dynamics (PR #18), "
             "which isn't in this checkout. Merge PR #18 first, or run from a branch that has it."
         ) from e
-    return FxOutcomeReader(xreader)
+    if "with_replies" not in inspect.signature(xreader.FxTwitterReader.profile_statuses).parameters:
+        raise ReaderMissing("harness/context/xreader.py predates profile_statuses(with_replies=...), which "
+                            "bf396e5 on sam/context-dynamics (PR #18) added; update that checkout")
+    return FxOutcomeReader(xreader.FxTwitterReader())
 
 
 def _counts(post) -> Counts:
@@ -75,53 +75,50 @@ def _counts(post) -> Counts:
                   post.author_followers)
 
 
-def _kind(post, raw: dict, handle: str) -> str:
-    if post.replying_to or post.replying_to_status:
-        return "self_reply" if (post.replying_to or "").lower() == handle.lower() else "reply"
-    # X marks a reply's leading @mentions with display_text_range. fxtwitter sometimes drops
-    # replying_to on a reply (@CClarkReport 2106410826999500938, 2026-10-16) but keeps the range.
-    start = ((raw.get("raw_text") or {}).get("display_text_range") or [0])[0]
-    return "reply" if start and post.text[:start].lstrip().startswith("@") else "original"
+def _kind(post, handle: str) -> str:
+    if not (post.replying_to or post.replying_to_status):
+        return "original"
+    return "self_reply" if (post.replying_to or "").lower() == handle.lower() else "reply"
+
+
+def own_timeline(feed: list, handle: str, read_at: str) -> Timeline:
+    """The account's own posts from a with-replies feed of XReader posts, in feed order.
+
+    `read_at` dates the read when the feed is empty; otherwise the latest fetch time in it does.
+    """
+    own = [p for p in feed if not p.timeline_context and not p.is_repost]
+    # The feed shows the post a reply answers right above the reply, whatever its age. When that
+    # parent is the account's own old post it isn't flagged as context, so no post that something in
+    # the feed replies to counts toward `reach`. Dropping a recent post that merely has a reply only
+    # makes `reach` later, which can delay a not_posted verdict but never invent one.
+    parents = {p.replying_to_status for p in feed if p.replying_to_status}
+    reached = [p.created_at for p in own if p.id not in parents]
+    posts, seen = [], set()
+    for p in own:
+        if p.id in seen:  # a post can come back on two pages (@greptile, 2026-10-16)
+            continue
+        seen.add(p.id)
+        posts.append(OwnPost(p.id, p.created_at, _kind(p, handle), p.text, p.replying_to_status, p.quoted_id,
+                             _counts(p)))
+    posts.sort(key=lambda p: p.created_at, reverse=True)
+    fetched_at = max((p.fetched_at for p in feed), default=read_at)
+    return Timeline(posts, fetched_at, min(reached, default=None))
 
 
 class FxOutcomeReader:
-    """`timeline` and `status` over api.fxtwitter.com. Counts how many requests it made."""
+    """`timeline` and `status` over an XReader, counting the calls it makes."""
 
-    def __init__(self, xreader, reader=None):
-        self._x = xreader
-        self.reader = reader or xreader.FxTwitterReader()
-        self.requests = 0
+    def __init__(self, reader):
+        self.reader = reader
+        self.timeline_reads = 0
+        self.status_reads = 0
 
     def timeline(self, handle: str, limit: int) -> Timeline:
-        """The account's newest `limit` posts and replies, one fxtwitter page (about 20) per request."""
-        posts: list[OwnPost] = []
-        seen: set[str] = set()
-        cursor, fetched_at, exhausted, requests = None, "", True, 0
-        while len(posts) < limit:
-            path = f"/2/profile/{urllib.parse.quote(handle)}/statuses?with_replies=1"
-            if cursor:
-                path += "&cursor=" + urllib.parse.quote(cursor)
-            data, fetched_at = self.reader._get(path, 0)
-            requests += 1
-            for raw in data.get("results") or []:
-                if raw.get("type", "status") != "status":
-                    continue
-                p = self._x._parse(raw, fetched_at)
-                # with_replies also returns the posts the account replied to, by their own authors, and
-                # a post can come back on two pages (@greptile, 2026-10-16).
-                if p.author_handle.lower() != handle.lower() or p.is_repost or p.id in seen:
-                    continue
-                seen.add(p.id)
-                posts.append(OwnPost(p.id, p.created_at, _kind(p, raw, handle), p.text, p.replying_to_status,
-                                     p.quoted_id, _counts(p)))
-            cursor = (data.get("cursor") or {}).get("bottom")
-            exhausted = not cursor or not data.get("results")
-            if exhausted:
-                break
-        self.requests += requests
-        posts.sort(key=lambda p: p.created_at, reverse=True)
-        return Timeline(posts[:limit], fetched_at, exhausted and len(posts) <= limit, requests)
+        """The newest `limit` entries of the account's posts-and-replies feed, about 20 per request."""
+        self.timeline_reads += 1
+        read_at = datetime.now(timezone.utc).isoformat()
+        return own_timeline(self.reader.profile_statuses(handle, limit=limit, with_replies=True), handle, read_at)
 
     def status(self, status_id: str) -> Counts:
-        self.requests += 1
+        self.status_reads += 1
         return _counts(self.reader.status(status_id))

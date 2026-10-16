@@ -45,9 +45,8 @@ CREATE TABLE IF NOT EXISTS labels (
     baseline_median REAL, baseline_p10 REAL, baseline_p90 REAL, labeled_at TEXT,
     PRIMARY KEY (action_id, checkpoint)
 );
-CREATE TABLE IF NOT EXISTS reads (
-    id INTEGER PRIMARY KEY, at TEXT, n_posts INTEGER, oldest TEXT, exhausted INTEGER, requests INTEGER
-);
+-- reach: the oldest creation time the read provably covered (see reader.own_timeline).
+CREATE TABLE IF NOT EXISTS reads (id INTEGER PRIMARY KEY, at TEXT, n_posts INTEGER, reach TEXT);
 """
 
 
@@ -82,13 +81,14 @@ def claim_handle(conn, value: str, path: Path) -> None:
 
 
 def save_actions(conn, actions: list[ApprovedAction]) -> None:
-    """Insert new actions; refresh text and approval time of known ones, keeping their sync state."""
+    """Insert new actions; refresh the text of known ones and keep their first approval time."""
     conn.executemany(
         """INSERT INTO actions (action_id, run_id, type, text, original_text, target_status, approved_at, source)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
            ON CONFLICT (action_id) DO UPDATE SET run_id = excluded.run_id, type = excluded.type,
                text = excluded.text, original_text = excluded.original_text,
-               target_status = excluded.target_status, approved_at = excluded.approved_at, source = excluded.source""",
+               target_status = excluded.target_status, source = excluded.source,
+               approved_at = MIN(approved_at, excluded.approved_at)""",
         [(a.id, a.run_id, a.type, a.text, a.original_text, a.target_status, iso(a.approved_at), a.source)
          for a in actions],
     )
@@ -119,9 +119,8 @@ def save_posts(conn, posts: list[OwnPost]) -> int:
 
 
 def save_read(conn, tl: Timeline) -> None:
-    oldest = min((p.created_at for p in tl.posts), default=None)
-    conn.execute("INSERT INTO reads (at, n_posts, oldest, exhausted, requests) VALUES (?, ?, ?, ?, ?)",
-                 (tl.fetched_at, len(tl.posts), iso(oldest) if oldest else None, int(tl.exhausted), tl.requests))
+    conn.execute("INSERT INTO reads (at, n_posts, reach) VALUES (?, ?, ?)",
+                 (tl.fetched_at, len(tl.posts), iso(tl.reach) if tl.reach else None))
 
 
 def _insert_counts(conn, table: str, status_id: str, cp: int, age: float, c: Counts) -> bool:
