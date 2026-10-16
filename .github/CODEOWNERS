@@ -1,0 +1,33 @@
+# Each loop stage's owners. The codeowner-approval check fails a pull request that changes
+# someone else's files until one of that file's other owners approves.
+# The last matching line wins. Files no line matches need no owner approval.
+
+# Observe
+/observation/          @SamGu-NRX
+/harness/sources/      @SamGu-NRX
+/harness/orient.py     @SamGu-NRX
+
+# Action
+/action/               @rushisy
+/harness/minds/        @rushisy
+
+# Eval
+/eval/                 @ATX24
+/harness/qualify.py    @ATX24
+/harness/post_judge/   @ATX24
+
+# Memory
+/memory/               @bmp0404 @davidgrossLE
+/harness/memory.py     @bmp0404 @davidgrossLE
+/harness/learn.py      @bmp0404 @davidgrossLE
+
+# Integration and review dashboard
+/engine/               @ATX24
+/harness/review/       @ATX24
+
+# Mission
+/mission/              @bmp0404 @ATX24
+
+# Repo
+/README.md             @ATX24
+/.github/              @rushisy
