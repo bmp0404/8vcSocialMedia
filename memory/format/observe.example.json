@@ -1,0 +1,229 @@
+{
+  "schema_version": "1",
+  "loop_id": "loop-20261015T2100Z",
+  "step": "observe",
+  "ts": "2026-10-15T21:00:05Z",
+  "source": {
+    "kind": "backfill_file",
+    "path": "memory/inbox/search-20261015T2100Z.jsonl"
+  },
+  "window": {
+    "start": "2026-10-15T19:00:00Z",
+    "end": "2026-10-15T21:00:00Z"
+  },
+  "data": [
+    {
+      "id": "1000000000000000001",
+      "text": "Placeholder text for example tweet 1. #CaitlinClark #WNBA",
+      "author_id": "2000000000000000001",
+      "created_at": "2026-10-15T19:12:00.000Z",
+      "conversation_id": "1000000000000000001",
+      "lang": "en",
+      "possibly_sensitive": false,
+      "entities": {
+        "hashtags": [
+          {"start": 38, "end": 51, "tag": "CaitlinClark"},
+          {"start": 52, "end": 57, "tag": "WNBA"}
+        ],
+        "mentions": [],
+        "urls": []
+      },
+      "context_annotations": [
+        {
+          "domain": {"id": "60", "name": "Athlete"},
+          "entity": {"id": "3000000000000000001", "name": "Caitlin Clark"}
+        }
+      ],
+      "public_metrics": {
+        "impression_count": 18400,
+        "like_count": 912,
+        "retweet_count": 88,
+        "reply_count": 64,
+        "quote_count": 21,
+        "bookmark_count": 37
+      }
+    },
+    {
+      "id": "1000000000000000002",
+      "text": "Placeholder text for example tweet 2. #IndianaFever",
+      "author_id": "2000000000000000002",
+      "created_at": "2026-10-15T19:40:00.000Z",
+      "conversation_id": "1000000000000000002",
+      "lang": "en",
+      "possibly_sensitive": false,
+      "referenced_tweets": [
+        {"type": "quoted", "id": "1000000000000000009"}
+      ],
+      "entities": {
+        "hashtags": [
+          {"start": 38, "end": 51, "tag": "IndianaFever"}
+        ],
+        "mentions": [],
+        "urls": []
+      },
+      "context_annotations": [
+        {
+          "domain": {"id": "12", "name": "Sports Team"},
+          "entity": {"id": "3000000000000000002", "name": "Indiana Fever"}
+        }
+      ],
+      "public_metrics": {
+        "impression_count": 52300,
+        "like_count": 2140,
+        "retweet_count": 260,
+        "reply_count": 190,
+        "quote_count": 75,
+        "bookmark_count": 120
+      }
+    },
+    {
+      "id": "1000000000000000003",
+      "text": "@example_fan_1 Placeholder text for example tweet 3. #CaitlinClark",
+      "author_id": "2000000000000000003",
+      "created_at": "2026-10-15T20:05:00.000Z",
+      "conversation_id": "1000000000000000001",
+      "lang": "en",
+      "possibly_sensitive": false,
+      "referenced_tweets": [
+        {"type": "replied_to", "id": "1000000000000000001"}
+      ],
+      "entities": {
+        "hashtags": [
+          {"start": 53, "end": 66, "tag": "CaitlinClark"}
+        ],
+        "mentions": [
+          {"start": 0, "end": 14, "username": "example_fan_1", "id": "2000000000000000001"}
+        ],
+        "urls": []
+      },
+      "public_metrics": {
+        "impression_count": 3100,
+        "like_count": 140,
+        "retweet_count": 9,
+        "reply_count": 12,
+        "quote_count": 2,
+        "bookmark_count": 4
+      }
+    },
+    {
+      "id": "1000000000000000004",
+      "text": "Placeholder text for example tweet 4. #Hawkeyes",
+      "author_id": "2000000000000000004",
+      "created_at": "2026-10-15T20:31:00.000Z",
+      "conversation_id": "1000000000000000004",
+      "lang": "en",
+      "possibly_sensitive": false,
+      "entities": {
+        "hashtags": [
+          {"start": 38, "end": 47, "tag": "Hawkeyes"}
+        ],
+        "mentions": [],
+        "urls": []
+      },
+      "public_metrics": {
+        "impression_count": 9800,
+        "like_count": 610,
+        "retweet_count": 55,
+        "reply_count": 31,
+        "quote_count": 8,
+        "bookmark_count": 22
+      }
+    }
+  ],
+  "includes": {
+    "users": [
+      {
+        "id": "2000000000000000001",
+        "username": "example_fan_1",
+        "name": "Example Fan 1",
+        "verified": false,
+        "public_metrics": {"followers_count": 1520, "following_count": 310, "tweet_count": 8400, "listed_count": 12}
+      },
+      {
+        "id": "2000000000000000002",
+        "username": "example_fan_2",
+        "name": "Example Fan 2",
+        "verified": true,
+        "public_metrics": {"followers_count": 48200, "following_count": 900, "tweet_count": 30100, "listed_count": 210}
+      },
+      {
+        "id": "2000000000000000003",
+        "username": "example_fan_3",
+        "name": "Example Fan 3",
+        "verified": false,
+        "public_metrics": {"followers_count": 85, "following_count": 140, "tweet_count": 600, "listed_count": 0}
+      },
+      {
+        "id": "2000000000000000004",
+        "username": "example_fan_4",
+        "name": "Example Fan 4",
+        "verified": false,
+        "public_metrics": {"followers_count": 40, "following_count": 95, "tweet_count": 320, "listed_count": 0}
+      },
+      {
+        "id": "2000000000000000005",
+        "username": "example_news_1",
+        "name": "Example News 1",
+        "verified": true,
+        "public_metrics": {"followers_count": 250000, "following_count": 1200, "tweet_count": 90000, "listed_count": 1500}
+      }
+    ],
+    "tweets": [
+      {
+        "id": "1000000000000000009",
+        "text": "Placeholder text for example tweet 9.",
+        "author_id": "2000000000000000005",
+        "created_at": "2026-10-15T18:50:00.000Z",
+        "conversation_id": "1000000000000000009",
+        "lang": "en",
+        "possibly_sensitive": false,
+        "public_metrics": {
+          "impression_count": 140000,
+          "like_count": 3900,
+          "retweet_count": 610,
+          "reply_count": 420,
+          "quote_count": 180,
+          "bookmark_count": 300
+        }
+      }
+    ]
+  },
+  "buckets": [
+    {
+      "bucket_id": "rivalry",
+      "hashtags": ["CaitlinClark", "WNBA"],
+      "tweet_ids": ["1000000000000000001", "1000000000000000003"],
+      "stats": {
+        "volume": 340,
+        "velocity_per_hr": 170.0,
+        "median_engagement_rate": 0.021,
+        "p80_engagement_rate": 0.048,
+        "small_account_breakout_rate": 0.06
+      }
+    },
+    {
+      "bucket_id": "fever",
+      "hashtags": ["IndianaFever"],
+      "tweet_ids": ["1000000000000000002"],
+      "stats": {
+        "volume": 120,
+        "velocity_per_hr": 60.0,
+        "median_engagement_rate": 0.018,
+        "p80_engagement_rate": 0.041,
+        "small_account_breakout_rate": 0.03
+      }
+    },
+    {
+      "bucket_id": "hawkeyes",
+      "hashtags": ["Hawkeyes"],
+      "tweet_ids": ["1000000000000000004"],
+      "stats": {
+        "volume": 45,
+        "velocity_per_hr": 22.5,
+        "median_engagement_rate": 0.034,
+        "p80_engagement_rate": 0.071,
+        "small_account_breakout_rate": 0.11
+      }
+    }
+  ]
+}

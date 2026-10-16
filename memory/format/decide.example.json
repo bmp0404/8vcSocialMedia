@@ -1,0 +1,71 @@
+{
+  "schema_version": "1",
+  "loop_id": "loop-20261015T2100Z",
+  "step": "decide",
+  "ts": "2026-10-15T21:01:00Z",
+  "attempt": 1,
+  "candidates": [
+    {
+      "candidate_id": "a1-c1",
+      "mind": "rivalry_banterer",
+      "bucket_id": "rivalry",
+      "action_type": "reply",
+      "request": {
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+          "text": "Placeholder rivalry_banterer reply draft. #CaitlinClark",
+          "reply": {"in_reply_to_tweet_id": "1000000000000000001"}
+        }
+      },
+      "source_tweet_ids": ["1000000000000000001"],
+      "rationale": "Placeholder rationale: the source tweet is the fastest-moving post in the rivalry bucket."
+    },
+    {
+      "candidate_id": "a1-c2",
+      "mind": "stat_nerd",
+      "bucket_id": "fever",
+      "action_type": "quote",
+      "request": {
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+          "text": "Placeholder stat_nerd quote draft. #IndianaFever",
+          "quote_tweet_id": "1000000000000000002"
+        }
+      },
+      "source_tweet_ids": ["1000000000000000002"],
+      "rationale": "Placeholder rationale: the source tweet has the highest volume in the fever bucket."
+    },
+    {
+      "candidate_id": "a1-c3",
+      "mind": "meme_lord",
+      "bucket_id": "hawkeyes",
+      "action_type": "post",
+      "request": {
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+          "text": "Placeholder meme_lord post draft. #Hawkeyes"
+        }
+      },
+      "source_tweet_ids": ["1000000000000000004"],
+      "rationale": "Placeholder rationale: the hawkeyes bucket has the highest small-account breakout rate."
+    },
+    {
+      "candidate_id": "a1-c4",
+      "mind": "community_builder",
+      "bucket_id": "hawkeyes",
+      "action_type": "mention",
+      "request": {
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+          "text": "@example_fan_4 Placeholder community_builder mention draft. #Hawkeyes"
+        }
+      },
+      "source_tweet_ids": ["1000000000000000004"],
+      "rationale": "Placeholder rationale: a small account broke out in this bucket and may engage back."
+    }
+  ]
+}
