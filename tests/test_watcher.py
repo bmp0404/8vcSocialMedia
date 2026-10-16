@@ -6,6 +6,7 @@ Every read goes through FakeReader; nothing touches the network.
 import gzip
 import json
 import os
+import shutil
 import signal
 import sqlite3
 import threading
@@ -16,6 +17,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from harness import config
 from harness.context import snowflake
 from harness.context.http import FetchError
 from harness.context.xreader import XPost
@@ -399,7 +401,7 @@ def test_a_drafting_arm_runs_plan_writer_gate_and_veto_and_writes_its_file(tmp_p
     assert saved == json.loads(json.dumps(record, default=str))
     assert saved["arm"] == arm and saved["offer"] == "draft" and saved["method"] == method
     assert saved["draft"].startswith(f"mock {'continuation' if arm == 'continuation' else 'styled reply'}")
-    assert saved["profile"] == "wnba" and saved["plan"]["tool"] == "reply"
+    assert saved["profile"] == "wnba" and saved["account"] == "_sgu_" and saved["plan"]["tool"] == "reply"
     assert saved["decision"]["tool"] == "reply" and saved["draft_meta"]["judge"]["passed"]
     assert set(saved["timings"]) == {"plan_s", "draft_s", "total_s", "detected_to_finished_s",
                                      "post_age_at_detection_s", "post_age_at_finish_s"}
@@ -412,6 +414,28 @@ def test_the_human_arm_asks_for_a_one_liner_and_shows_no_draft(tmp_path):
                          detected_at=T0 - M, clock=Clock())
     assert record["offer"] == "human_prompt" and record["draft"] is None and record["decision"] is None
     assert record["prompt"].startswith("Reply to @WNBA's post from @_sgu_ with a one-liner of your own")
+
+
+def test_each_profile_drafts_with_its_own_memory_under_one_memstore_path(tmp_path, monkeypatch):
+    """The watcher switches profiles in one process; a shared MEMSTORE_PATH must not mix their stores."""
+    monkeypatch.setenv("MEMSTORE_PATH", str(tmp_path / "stores"))
+    procedure = config.MEMORY_SEED_DIR / "devtools" / "procedures" / "dev-audience-voice.md"
+    (tmp_path / "stores" / "devtools" / "procedures").mkdir(parents=True)
+    shutil.copy(procedure, tmp_path / "stores" / "devtools" / "procedures" / procedure.name)
+    (tmp_path / "stores" / "wnba").mkdir()
+    seen = {}
+
+    def plan(llm, mission, lessons, targets):
+        seen[mission.splitlines()[0]] = lessons
+        return {}, "plan stubbed"
+
+    monkeypatch.setattr(hot.lanes, "plan_targets", plan)
+    for profile in ("devtools", "wnba", "devtools"):
+        hot.run_hot(MockLLM(), profile, post_with_arm("styled", T0 - 2 * M), reader=FakeReader(), out_dir=tmp_path,
+                    seed=arms.DEFAULT_SEED, detected_at=T0 - M, clock=Clock())
+    devtools, wnba = (v for k, v in sorted(seen.items(), key=lambda kv: "Provisional" not in kv[0]))
+    assert "Write for developers by naming the concrete thing" in devtools
+    assert "Write for developers" not in wnba
 
 
 def test_a_planned_abstention_is_written_with_its_reason(tmp_path, monkeypatch):

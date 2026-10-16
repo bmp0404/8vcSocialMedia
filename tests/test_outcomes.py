@@ -576,6 +576,15 @@ def test_a_reply_to_the_accounts_own_post_is_a_thread_continuation_even_without_
     assert {p.id: p.kind for p in tl.posts} == {"1": "original", "2": "self_reply", "3": "reply"}
 
 
+def test_a_hot_file_made_for_another_account_is_refused(env):
+    hot_dir = write_hot(env.out, PARENT)
+    path = hot_dir / f"{PARENT}.json"
+    path.write_text(json.dumps(json.loads(path.read_text(encoding="utf-8")) | {"account": "someone_else"}),
+                    encoding="utf-8")
+    with pytest.raises(HandoffError, match="is for @someone_else but sync reads @brand"):
+        hot_sync(env, FakeReader(), T0, hot_dir)
+
+
 def test_a_hot_file_missing_its_arm_fails_loudly(env):
     hot_dir = env.out / "hot"
     hot_dir.mkdir()

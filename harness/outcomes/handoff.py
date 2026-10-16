@@ -114,11 +114,12 @@ def hot_action_id(status_id: str) -> str:
     return f"hot-{status_id}"
 
 
-def load_hot(directory: Path) -> list[tuple[ApprovedAction, HotTarget]]:
+def load_hot(directory: Path, handle: str | None = None) -> list[tuple[ApprovedAction, HotTarget]]:
     """The hot targets in `directory` that offered the operator something: a draft or a prompt for a one-liner.
 
     A missing directory means the watcher hasn't run, so it gives nothing. A hot file that abstained
-    offered nothing to post and is skipped. The clock starts when the file was written.
+    offered nothing to post and is skipped. The clock starts when the file was written. With `handle`,
+    a file made for another account raises HandoffError, as load_approved does.
     """
     if not directory.is_dir():
         return []
@@ -128,6 +129,10 @@ def load_hot(directory: Path) -> list[tuple[ApprovedAction, HotTarget]]:
         missing = [k for k in HOT_REQUIRED_KEYS if not data.get(k)]
         if missing:
             raise HandoffError(f"{path} has no {', '.join(missing)}; harness/watcher/hot.py run_hot writes them")
+        account = str(data.get("account") or "").lstrip("@")
+        if handle and account and account.lower() != handle.lstrip("@").lower():
+            raise HandoffError(f"{path} is for @{account} but sync reads @{handle.lstrip('@')}; pass --handle "
+                               f"{account} or point --hot-dir at that account's hot targets")
         if data["offer"] == "abstain":
             continue
         sid = str(data["status_id"])

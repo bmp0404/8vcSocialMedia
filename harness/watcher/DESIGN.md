@@ -68,13 +68,13 @@ What the operator does: open the newest `out/hot/*.json`, post the draft (edited
 ## Commands
 
 ```sh
-uv run python -m harness watch --provider anthropic        # until stopped; --duration 1800 stops after 30 min
+HARNESS_PROVIDER=anthropic uv run python -m harness watch  # until stopped; --duration 1800 stops after 30 min
 uv run python -m harness watch status                      # running or not, and the counts in state.db
 uv run python -m harness watch stop                        # SIGTERM, then wait for the hot job in flight
 uv run python -m harness outcomes sync                     # match _sgu_'s replies, rank them; the watcher also runs it
 ```
 
-Without `--provider anthropic` (or `HARNESS_PROVIDER=anthropic` in `.env`) the hot path drafts with the mock provider.
+Without `HARNESS_PROVIDER=anthropic` (in the environment or `.env`) the hot path drafts with the mock provider. `--provider anthropic` also drafts for real, but the memory store reads `config.PROVIDER`, so under it each profile's lessons come from a throwaway store instead of `memory/store/<profile>/`. The three live runs below used `--provider anthropic`.
 
 ## First live runs
 

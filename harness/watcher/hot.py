@@ -102,6 +102,7 @@ def run_hot(llm: LLM, profile: str, post, *, reader, out_dir: Path, cfg: ActionC
     with config.use_profile(profile), modelrec.recording() as calls:
         mission, lessons, framing = config.mission(), config.lessons(), writer.load_framing()
         account, _ = account_handle()
+        record["account"] = account or None  # the account the operator answers from; outcomes sync checks it
         plans, plan_error = lanes.plan_targets(llm, mission, lessons, [target])
         t_plan = time.monotonic()
         plan = plans.get(post.url)
