@@ -16,7 +16,9 @@ from harness.context.curves import InflectionParams
 @dataclass(frozen=True)
 class FetchParams:
     default_interval_s: float = 1.0  # per host, shared across processes (http.THROTTLE_DIR)
-    bulk_interval_s: float = 2.0  # dataset backfill: Observe shares this IP's fxtwitter budget
+    # Dataset jobs. 2.0 s left room for Observe on the same IP before the throttle was shared across
+    # processes; with the shared timestamp file, every caller of this client together stays at 1 req/s.
+    bulk_interval_s: float = 2.0
     gdelt_interval_s: float = 6.0  # GDELT asks for >= 5 s
     trends_interval_s: float = 4.0  # Google Trends explore flow worked at 3-4 s
     timeout_s: float = 25.0
