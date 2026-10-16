@@ -1,13 +1,13 @@
 """The watcher's hot targets, read as review cards, and the memory records a verdict on one needs.
 
-The watcher (`harness/watcher/hot.py` on sam/watch) writes out/hot/<status_id>.json for each post it
+The watcher (`harness/watcher/hot.py`) writes out/hot/<status_id>.json for each post it
 caught under 10 minutes old. A file offers a draft (the continuation or styled arm), a prompt for the
 operator's own one-liner (the human arm), or an abstention, which offers nothing and is not a card.
 
 Hot targets have no row in memory until a person gives a verdict. The first verdict creates one run
 for the target, naming the account the watcher drafted for, and one action in it, so `learn`, which reads a profile's runs, and `export_approved`
 see it like any round's draft. The action's id is `hot-<status_id>`, the id the outcomes ledger gives
-the same target (`hot_action_id` in `harness/outcomes/handoff.py` on sam/watch). Both files then name
+the same target (`hot_action_id` in `harness/outcomes/handoff.py`). Both files then name
 one action, so `outcomes sync` keeps a single ledger row per target, with its arm.
 """
 
@@ -17,12 +17,13 @@ from pathlib import Path
 
 from harness import config, memory
 from harness.models import Action
+from harness.outcomes.handoff import hot_action_id
 from harness.sources.watch import account_handle
 
-# The keys `run_hot` always writes, as `load_hot` in harness/outcomes/handoff.py (sam/watch) requires them.
+# The keys `run_hot` always writes, as `load_hot` in harness/outcomes/handoff.py requires them.
 REQUIRED = ("status_id", "url", "offer", "arm", "profile", "finished_at")
 OFFERS = ("draft", "human_prompt")
-PREFIX = "hot-"
+PREFIX = hot_action_id("")
 
 
 class HotFileError(ValueError):
@@ -34,7 +35,8 @@ def hot_dir() -> Path:
 
 
 def action_id(status_id: str) -> str:
-    return f"{PREFIX}{status_id}"
+    """The outcomes ledger's id for this hot target, so memory, the hand-off and the ledger name one action."""
+    return hot_action_id(status_id)
 
 
 def status_id(action_id: str) -> str | None:

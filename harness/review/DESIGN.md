@@ -49,13 +49,13 @@ When the box has words, the draft below dims instead of disappearing, so nothing
 
 ### What a verdict on a hot target writes
 
-A hot target has no memory row until its first verdict. `hot.ensure_action` then writes one run (`sources = 'watch'`, the watcher's provider and start time, the file's profile and that profile's account) and one action, `hot-<status_id>`. The action id is the one the outcomes ledger gives the same target (`hot_action_id` in `harness/outcomes/handoff.py` on sam/watch). The hand-off file and the hot file then describe one action, and `outcomes sync` keeps one ledger row with its arm. The status line skips these runs when it names the last round.
+A hot target has no memory row until its first verdict. `hot.ensure_action` then writes one run (`sources = 'watch'`, the watcher's provider and start time, the file's profile and the account the watcher drafted for) and one action, `hot-<status_id>`. The action id comes from `hot_action_id` in `harness/outcomes/handoff.py`, the id the outcomes ledger gives the same target. The hand-off file and the hot file then describe one action, and `outcomes sync` keeps one ledger row with its arm. The status line skips these runs when it names the last round.
 
 ## History
 
 History lists every verdict, newest first. Beside an approved one it shows what the outcomes ledger knows (`status_rows` in `harness/outcomes/sync.py`):
 
-- A reply shows its rank among the replies to the same post ("3rd of 41 replies"), its likes, and when that was read. The rank comes from sam/watch's `rank_in_thread`; on a branch without it, the reply shows likes only.
+- A reply shows its rank among the replies to the same post ("3rd of 41 replies"), its likes, and when that was read. The rank comes from `rank_in_thread` (`harness/outcomes/rank.py`).
 - A post shows its likes and when they were read.
 - An approval that isn't on X yet says so: not posted, not on X yet, or not found yet.
 

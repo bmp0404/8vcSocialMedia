@@ -9,7 +9,7 @@ from harness.sources.watch import account_handle
 
 def watcher() -> str:
     """"running", "stopped", or "unknown" where `ps` isn't available. The pid file is the one
-    `harness watch` (sam/watch) writes, and the command-line check is the one its own status command uses."""
+    `harness watch` writes, and the command-line check is the one its own status command uses."""
     pid_file = config.OUT_DIR / "watch" / "watch.pid"
     try:
         pid = int(pid_file.read_text(encoding="utf-8").strip())

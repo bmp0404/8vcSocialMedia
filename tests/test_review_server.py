@@ -35,7 +35,7 @@ def store(tmp_path, monkeypatch):
 
 @pytest.fixture
 def hot_files(store):
-    """The three arms' hot files, written by the watcher's run_hot (sam/watch) with the mock provider."""
+    """The three arms' hot files, written by the watcher's run_hot with the mock provider."""
     d = config.OUT_DIR / "hot"
     d.mkdir(parents=True)
     for p in (FIXTURES / "hot").glob("*.json"):
@@ -351,15 +351,15 @@ def test_the_account_profile_falls_back_to_its_handle(store):
 # ---------------------------------------------------------------- history
 
 
-# One row per shape `status_rows` returns (harness/outcomes/sync.py): a reply ranked in its thread (sam/watch),
-# and a post with only counts (sam/platform, which has no rank key).
+# One row per shape `status_rows` returns (harness/outcomes/sync.py): a reply ranked in its thread,
+# and a post, which has counts and no rank.
 RANKED = {"action_id": "a1", "state": "posted", "url": "https://x.com/_sgu_/status/9", "posted_at": "2026-10-16T01:00:00+00:00",
           "latest": {"checkpoint": "+1h", "age_hours": 1.2, "likes": 4},
           "rank": {"checkpoint": "+1h", "age_hours": 1.3, "fetched_at": "2026-10-16T02:18:00+00:00", "rank": 3,
                    "likes_rank": 3, "page_replies": 35, "thread_replies": 41, "percentile": 0.95, "percentile_max": None,
                    "likes": 5, "followers": 2, "outcome": "success"}}
 COUNTED = {"action_id": "a2", "state": "posted", "url": "https://x.com/_sgu_/status/8", "posted_at": "2026-10-16T01:00:00+00:00",
-           "latest": {"checkpoint": "+6h", "age_hours": 6.5, "likes": 12}}
+           "latest": {"checkpoint": "+6h", "age_hours": 6.5, "likes": 12}, "rank": None}
 
 
 def test_an_outcome_reads_rank_likes_and_when_it_was_checked():
