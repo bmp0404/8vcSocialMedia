@@ -524,6 +524,16 @@ def test_status_names_the_last_round_and_ignores_hot_runs(hot_files):
     assert s["last_round"]["id"] == 1 and s["watcher"] == "stopped" and s["account"] == "_sgu_"
 
 
+def test_the_last_round_skips_mock_rounds_unless_the_harness_runs_on_mock(store, monkeypatch):
+    monkeypatch.setattr(config, "PROVIDER", "anthropic")
+    save_round(Action(type="post", text="live", mind="caption", narrative_id="n", id="l1"))
+    monkeypatch.setattr(config, "PROVIDER", "mock")
+    save_round(Action(type="post", text="mock", mind="caption", narrative_id="n", id="m1"))
+    assert status.last_round()["id"] == 2
+    monkeypatch.setattr(config, "PROVIDER", "anthropic")
+    assert status.last_round()["id"] == 1
+
+
 def test_the_watcher_counts_as_running_only_when_its_pid_is_a_harness_watch(store):
     pid_file = config.OUT_DIR / "watch" / "watch.pid"
     pid_file.parent.mkdir(parents=True)

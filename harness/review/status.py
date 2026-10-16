@@ -3,6 +3,7 @@
 import subprocess
 
 from harness import config, memory
+from harness.review.queue import MOCK
 from harness.review.routes import Request, route
 from harness.sources.watch import account_handle
 
@@ -24,10 +25,12 @@ def watcher() -> str:
 
 
 def last_round() -> dict | None:
-    """The newest run that was a round. Hot targets get runs of their own (hot.py), which aren't rounds."""
+    """The newest run that was a round. Hot targets get runs of their own (hot.py), which aren't rounds, and
+    a mock round counts only when the harness runs on mock, as in the queue (queue.MOCK)."""
     with memory.connect() as conn:
         row = conn.execute("SELECT id, started_at, provider FROM runs WHERE COALESCE(sources, '') != 'watch' "
-                           "ORDER BY id DESC LIMIT 1").fetchone()
+                           "AND (? OR provider != ?) ORDER BY id DESC LIMIT 1",
+                           (config.PROVIDER == MOCK, MOCK)).fetchone()
     return dict(row) if row else None
 
 

@@ -12,7 +12,7 @@ The page has three views because the person has three jobs:
 2. See what happened to past verdicts. That is History.
 3. Label the 200-item audit set. That is Audit.
 
-Run status takes one sentence in the header, such as "Last round 14 min ago. Watcher on." Experiments, memory and eval reports stay in files.
+Run status takes one sentence in the header, such as "Last round 14 min ago. Watcher on." Like the queue, it skips mock rounds unless the harness runs on mock. Experiments, memory and eval reports stay in files.
 
 ## The queue
 
@@ -46,6 +46,14 @@ The card has one primary action. Its label says what it will send:
 `web/src/lib/verdict.ts` builds these bodies, and `verdict.test.ts` pins them. A take is stored like an edit, with `TAKE_NOTE` in the note, so `learn` and the hand-off read it with no new field. A kill needs at least one reason from `memory.REVIEW_REASONS`. A one-liner with no draft can only be skipped for reasons about the post: off-message, stale story, wrong target or other.
 
 When the box has words, the draft below dims instead of disappearing, so nothing moves under the person's cursor. New cards that arrive while someone works wait behind a "Show 1 new hot target" button for the same reason. An empty queue takes them at once.
+
+After a verdict the card shrinks to a receipt with Undo, scrolled into view, and focus moves to the next card. One live region reads each verdict aloud.
+
+### Keys and motion
+
+`?` opens the shortcut sheet; nothing on the page lists keys otherwise. `j` and `k` move between cards from anywhere. `a`, `e`, `x`, `r` and `u` act only while focus is inside the queue, so a stray key elsewhere can't approve anything (WCAG 2.1.4).
+
+The page animates one thing: the queue closing up when a card is decided with the pointer, through the View Transitions API, 200 ms. A keyboard verdict, the `?` key and reduced motion change the page at once. Buttons scale to 0.97 on press. The kill panel, the models' votes and the shortcut sheet fade in.
 
 ### What a verdict on a hot target writes
 
