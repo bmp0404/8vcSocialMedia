@@ -26,6 +26,15 @@ that helps the next round make better decisions. `data/` supports all four subsy
 and persisted records; it is not a separate decision stage. The observe subsystem currently uses
 the directory name `observation/`.
 
+### Integration layer: `enginer/`
+
+`enginer/` is the integration layer for connecting observe, action, eval, and memory into one
+agent loop. Its responsibility is to coordinate stage order, pass outputs between subsystems,
+and feed evaluation results and remembered lessons into the next round.
+
+The folder is scaffolded for this work. Current CLI orchestration still lives in `harness/cli.py`;
+continuous orchestration in `enginer/` remains to be implemented.
+
 ### Run one round, then close the loop
 
 1. Set the account's mission in `mission/mission.md` and read existing lessons in `memory/lessons.md`.
@@ -46,7 +55,7 @@ the pipeline; they do not establish real engagement performance. The harness rec
 ## Quickstart
 
 ```powershell
-pip install -r requirements.txt
+uv sync
 copy .env.example .env          # then fill in a provider + key
 python -m harness run --provider mock   # offline smoke test, no key needed
 python -m harness run                    # real run with the provider in .env
@@ -73,9 +82,10 @@ Keyboard: `j`/`k` move, `a` approve, `x` kill, `u` reset, `e` edit.
 ## Layout
 
 Python code lives in `harness/`. The four subsystems keep non-code assets in the following
-directories, with `data/` shared across the loop:
+directories, with `data/` shared across the loop and `enginer/` reserved for integration:
 
 ```text
+enginer/      # Integration and orchestration connecting all four subsystems
 observation/  # Inputs and observations collected by the harness
 action/       # Actions and execution workflows
 eval/         # Evaluations, scoring, and validation
