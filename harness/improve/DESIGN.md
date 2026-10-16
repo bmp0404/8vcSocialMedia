@@ -72,7 +72,11 @@ An agent or a person writes `eval/experiments/queue/<id>.toml`. `queue.py`'s doc
 - a guardrail margin looser than the instrument's own;
 - a code change whose commit isn't in the checkout the loop runs from. A code change runs through the knob that switches it on, because the engine compares configs it can hash, diff and revert.
 
-The spec then goes through two phases, both recorded in the ledger with the spec's id and a digest of what it tests (fitness, profile, knobs, guardrails, commit, thread files):
+**Baselines.** The champion's own arm may not read the knob a question is about. The lineup's champion writes with the persona prompt, which reads no continuation knob, so a continuation question asked against it would run the same code twice. A spec can name a `[baseline]` of one to four knobs that both arms set, and the challenger adds the change on top. The record's knob diff runs from the baseline's arm to the challenger, so a promotion moves only the change into the champion. The runner accepts that arm only when it equals the ledger's champion with the baseline applied.
+
+Two more checks run before a phase spends a call, and refuse the spec as `refused`, listed under "Needs a person": a changed knob that neither arm reads (`ActionLineup.reads`), and a config the instrument says it can't run as written (`ActionLineup.check_config`, which refuses a profile framing under a profile with no framing handle). Both would compare identical code.
+
+The spec then goes through two phases, both recorded in the ledger with the spec's id and a digest of what it tests (fitness, profile, knobs, guardrails, commit, thread files, and the baseline when there is one):
 
 1. **Screen** on the fixture threads the spec names plus up to 40 more clusters rooted closest before the cutoff. A pass under the paired gate makes the record a `candidate`, which never touches the champion.
 2. **Confirm** on up to the first 30 clusters rooted after the cutoff, once there are at least 20 (threads or accounts). A pass here is a promotion, subject to the weekly cap.
@@ -83,7 +87,7 @@ The cutoff is the later of `proposed_at` and when the loop first saw this versio
 
 A candidate that waits more than 21 days, a phase that can't fit its budget for that long, or a phase that fails to run three times goes to "needs a person". So does every refused spec file.
 
-**Stack checks.** Before any queued phase, the loop measures any combination of promotions that no run scored together (`campaign.unmeasured`, in `eval/experiments/DESIGN.md`), on up to 30 of the newest clusters its budget covers. When a check fails, the loop reverts the later promotion only if the loop made it (a queue confirmation or an engine confirmation) and the champion still holds its values. A promotion from a run a person started, a revert, or a value that has changed since goes to "needs a person" in that day's report. A failed check whose revert a crash lost is finished at the start of the next cycle.
+**Stack checks.** Before any queued phase, the loop measures any combination of promotions that no run scored together (`campaign.unmeasured`, in `eval/experiments/DESIGN.md`), on up to 30 of the newest clusters its budget covers. It compares configs on the knobs each arm reads, so promoting a knob the champion's arm never reads, as a baseline spec does, doesn't trigger a check of two arms running the same code. On 30 threads such a check's 10-point veto guardrail would usually fail by sampling noise alone and revert a real result. When a check fails, the loop reverts the later promotion only if the loop made it (a queue confirmation or an engine confirmation) and the champion still holds its values. A promotion from a run a person started, a revert, or a value that has changed since goes to "needs a person" in that day's report. A failed check whose revert a crash lost is finished at the start of the next cycle.
 
 The action lineup instrument confirms on the watcher's threads, which `ActionLineup(extra_threads=...)` now accepts beside fixture files. The qualify instrument's items are the dataset's posts, all from before any proposal, so a qualify candidate can't be confirmed until fresh posts get tier labels. That gap is listed below.
 
@@ -107,7 +111,10 @@ HARNESS_PROVIDER=anthropic uv run python -m harness improve       # every 6 h un
 uv run python -m harness improve --once --report --provider anthropic  # one cycle now, with today's report
 uv run python -m harness improve status                           # running or not, the latest steps
 uv run python -m harness improve stop                             # SIGTERM, then wait for the step in flight
+uv run python -m harness improve validate [spec.toml ...]         # parser and admission only; no calls
 ```
+
+`validate` runs `queue.parse` and `Scheduler.admit`, the part of a phase that runs before any call, and prints the next phase, its items, the calls it would budget and the models it would probe. It never probes or runs an arm, and its state and its copy of the watcher's threads live in a temporary directory. To see what the live loop would decide, point it at that checkout's files with `--ledger-dir`, `--instruments` and `--threads-dir`. Its cutoff is now rather than when the loop first sees the file, and it gives each spec the whole cycle's allowance.
 
 `--threads-dir`, `--watch-dir`, `--hot-dir` and `--outcomes-db` point the loop at another checkout's watcher. `--instrument-calls` and `--experiment-calls` cap LLM calls per cycle (300 and 800 by default).
 
@@ -134,6 +141,22 @@ BH passed it (p = 0.044), but its lower bound, +0.000, didn't clear the noise fl
 
 Three defects came out of the live runs, each fixed with a test. The devtools facts refresh died on the first unreadable account (13:58 run). Every GPT model on the gateway answered 429 `usage_limit_reached` in probes at 13:50, 13:58 and 14:03, and answered again by 14:52, so the loop now probes a phase's models before spending its budget; it deferred the screen twice. And cycle 1's hang came from compounding retries: `MeteredLLM` retried four times and the SDK twice more inside each attempt, with backoff sleeps, against a GPT pool still answering some calls with 429. Cycle 2 ran on the fixed client and logged 40 such retries on the GPT detector without stalling.
 
+## Queued on 2026-10-16
+
+Three specs ask open questions about raw continuation, the reply lane's writer, each with a `continuation` baseline. Each file says why its question is open and what each outcome would mean.
+
+| Spec | Profile | Question | Calls a thread | Screen as validated on 2026-10-16 |
+| --- | --- | --- | --- | --- |
+| `continuation-framing` | wnba | Does writing under the profile's framing handle make the reply harder to spot? | 12 | 17 fixture and 3 watcher threads, 240 calls |
+| `continuation-page-filter` | devtools | Does the page bot filter, the hot path's slowest step, change the writer's output? | 13 | 10 watcher threads, 130 calls |
+| `continuation-thin-page` | devtools | Does a 2-reply page, a fresh post's size, make the reply easier to spot? | 12 | 10 watcher threads, 120 calls |
+
+Every phase fits the 800-call cycle: the largest screen, 17 fixture and 40 watcher threads, is 684 calls and 3 probes. A confirmation needs 20 threads rooted after the loop first sees the file. On 2026-10-16 the watcher's reads that day held 10 devtools threads and 3 wnba threads the lineup can use (12 or more replies), so devtools confirmations may come within days and wnba ones later.
+
+Raw continuation was found 6 times in 19 (action/DESIGN.md) and 0.35 of the time on 17 threads (`exp-20261016-action-f691d2`). By a binomial approximation, not a run, a paired difference on 20 threads has a standard error near 0.15, so these phases decide only effects of about 0.3 or more; smaller ones end inconclusive with their interval in the ledger.
+
+Two other open questions aren't queued. Banter against continuation on rival threads can't be measured yet. The planner labelled 1 of the watcher's first 20 hot targets rival, and abstained on all 3 rival threads among side_experiment.py's 19 (action/DESIGN.md), so a phase of 20 threads would hold one or two threads where the arms differ. The continuation sample count is a coverage question, because the lane picks at random among the drafts that survive the gate and veto: apart from the veto judging each batch of survivors together, the shipped draft's detectability doesn't depend on the count, only the chance that any draft survives does. That chance can be computed from the candidates and verdicts already logged in `out/hot/` and `out/decisions-run*.json`, without new calls. And the lineup's pipeline arm, which the count would need, costs 36 calls a thread, so a 20-thread confirmation would take 720 of the cycle's 800.
+
 ## Not verified
 
 - No `_sgu_` reply has been ranked yet, so every `_sgu_` scorer has run only on synthetic outcomes in the tests.
@@ -141,4 +164,7 @@ Three defects came out of the live runs, each fixed with a test. The devtools fa
 - The label model's live labeling call (`effort: low` through `extra_body`) has not run in this loop; only its fit on stored labels has.
 - The confirmation phase, the weekly cap, stack checks and instrument demotion have run only in tests: the one live screen was inconclusive, and no instrument has outcomes yet.
 - The long-running mode ran live for one wait and a SIGTERM; no scheduled six-hour cycle, and no morning report at 11:00 UTC, has run unattended.
-- The 24-hour reply window, the 20-outcome threshold, the 30 and 40 cluster caps, 21 days to stale and the 6-hour cycle are policy.
+- The 24-hour reply window, the 20-outcome threshold, the 30 and 40 cluster caps, 21 days to stale, the 6-hour cycle and the four-knob baseline limit are policy.
+- The three queued specs have run only on the mock provider: one mock cycle recorded each screen with its baseline, and spent exactly the estimated calls. No live arm has written under the framing handle, filtered its page or continued a 2-reply page.
+- A baseline promotion and the stack check that skips it have run only in tests.
+- Until a lineup pipeline arm runs live again, the metering fix (every pipeline call charged to its arm) has been checked only against a fake SDK client.
