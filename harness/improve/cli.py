@@ -121,5 +121,6 @@ def add_commands(sub) -> None:
     s.add_argument("--threads-dir", help="the watcher's thread reads the loop folds in (default data/threads)")
     s.add_argument("--ledger-dir", help="the experiment ledger the loop reads (default eval/experiments)")
     s.add_argument("--instruments", help="the instrument ledger (default eval/experiments/instruments.json)")
+    s.add_argument("--corpus-dir", help="the corpus a spec's corpus source reads (default data/corpus/raw)")
     s.add_argument("--experiment-calls", type=int, help="the loop's per-cycle experiment allowance (default 800)")
     s.set_defaults(func=_validate)

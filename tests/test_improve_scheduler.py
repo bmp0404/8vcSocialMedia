@@ -87,7 +87,7 @@ def setup(tmp_path):
 
     def make():
         return sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=facts, catalog={"fake": FakeFit},
-                             build=lambda fitness, profile, threads=(): FakeFit())
+                             build=lambda fitness, profile, threads=(), sources=(): FakeFit())
     return cfg, make, facts_calls, clock
 
 
@@ -142,7 +142,7 @@ def test_a_failed_step_is_recorded_and_retried_while_the_rest_runs(setup, tmp_pa
         return "ok"
 
     s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=facts, catalog={"fake": FakeFit},
-                      build=lambda fitness, profile, threads=(): FakeFit())
+                      build=lambda fitness, profile, threads=(), sources=(): FakeFit())
     s.run_cycle()
     assert facts_calls == ["wnba", "devtools"] and len(_records(cfg)) == 1
     report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
@@ -167,7 +167,7 @@ def test_a_second_loop_refuses_to_start_and_the_pid_file_is_released(setup):
 def test_sigterm_stops_the_loop_between_cycles(setup):
     cfg, make, _, _ = setup
     loop = sch.Scheduler(cfg, echo=False, facts_runner=lambda p, q: "ok", catalog={"fake": FakeFit},
-                         build=lambda fitness, profile, threads=(): FakeFit())
+                         build=lambda fitness, profile, threads=(), sources=(): FakeFit())
 
     def term_after_first_cycle():
         state = sch.State(cfg.out_dir / "state.db")
@@ -202,7 +202,7 @@ def test_a_phase_waits_while_a_model_it_needs_is_down(setup):
         return {"gpt-x": "RateLimitError: usage limit reached"}
 
     s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, q: "ok", catalog={"fake": FakeFit},
-                      build=lambda fitness, profile, threads=(): FakeFit(), probe=probe)
+                      build=lambda fitness, profile, threads=(), sources=(): FakeFit(), probe=probe)
     s.run_cycle()
     assert _records(cfg) == [] and probed
     report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
@@ -286,7 +286,7 @@ def test_a_phase_that_never_runs_goes_stale_after_three_tries(setup):
             return super().items()[38:41]
 
     s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, q: "ok", catalog={"fake": FakeFit},
-                      build=lambda fitness, profile, threads=(): Few())
+                      build=lambda fitness, profile, threads=(), sources=(): Few())
     for _ in range(4):
         s.experiments()
         clock.t += timedelta(hours=1)
@@ -363,7 +363,7 @@ def test_a_phase_uses_at_most_its_cluster_cap_and_shrinks_to_fit_its_budget(setu
 
     cfg, make, _, clock = setup
     s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok", catalog={"fake": FakeFit},
-                      build=lambda fitness, profile, threads=(): Many())
+                      build=lambda fitness, profile, threads=(), sources=(): Many())
     s.experiments()
     (screen,) = _records(cfg)
     assert screen["eval"]["clusters"] == q.SCREEN_CLUSTERS  # FakeFit costs 1 call per item, 2 items a cluster
@@ -405,7 +405,7 @@ def test_a_report_only_primary_also_holds_a_due_stack_check(setup, monkeypatch):
     run_batch([Proposal("other", {"qualify.panel": "single_reader"}, "moves a shared knob", {"kind": "queue"})],
               {"other": Other()}, provider="mock", max_calls=1000, directory=cfg.ledger_dir, now=clock.t)
     s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok",
-                      catalog={"fake": FakeFit, "other": Other}, build=lambda fitness, profile, threads=(): FakeFit())
+                      catalog={"fake": FakeFit, "other": Other}, build=lambda fitness, profile, threads=(), sources=(): FakeFit())
     out = s.experiments()
     assert [st["action"] for st in out["stacks"]] == ["deferred"] and "detector is report-only" in out["stacks"][0]["note"]
     assert [r["proposer"]["kind"] for r in _records(cfg)] == ["queue"]
@@ -478,7 +478,7 @@ BASELINE_SPEC = BATCH_SPEC.replace("[change]", '[baseline]\nknobs = { "qualify.p
 
 def _reads_scheduler(cfg, clock, fit=Reads):
     return sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, q: "ok", catalog={"fake": Reads},
-                         build=lambda fitness, profile, threads=(): fit())
+                         build=lambda fitness, profile, threads=(), sources=(): fit())
 
 
 def test_a_spec_with_a_baseline_screens_confirms_and_promotes_only_its_change(setup):
@@ -534,3 +534,75 @@ def test_needed_models_skip_model_knobs_no_arm_reads():
     assert sch.Scheduler.needed_models(ActionLineup(), [cont]) == named | {knobs.OPUS45}
     assert sch.Scheduler.needed_models(ActionLineup(), [cont, filtered]) == named | {knobs.OPUS45, knobs.OPUS55}
     assert knobs.SONNET not in sch.Scheduler.needed_models(ActionLineup(), [cont])  # persona's model, unread here
+
+
+def _sized_spec(cfg, n):
+    (cfg.queue_dir / "reader.toml").write_text(SPEC.replace("[change]", f"min_clusters = {n}\n\n[change]"),
+                                               encoding="utf-8")
+
+
+def test_min_clusters_lets_each_phase_use_more_than_its_cap(setup):
+    cfg, _, _, clock = setup
+    _sized_spec(cfg, 50)
+    s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok", catalog={"fake": FakeFit},
+                      build=lambda fitness, profile, threads=(), sources=(): Many())
+    s.experiments()
+    s.experiments()
+    by_phase = {r["proposer"]["phase"]: r for r in _records(cfg)}
+    assert by_phase["screen"]["decision"]["status"] == "candidate"
+    assert by_phase["screen"]["eval"]["clusters"] == 50  # past the screen's cap of 40
+    assert by_phase["confirm"]["eval"]["clusters"] == 50  # past the confirmation's cap of 30
+
+
+class Lopsided(FakeFit):
+    """36 accounts rooted by T0 + 1 minute and 25 after it."""
+
+    def items(self):
+        return [Item(f"l{n}", f"c{n // 2}", None, root_at=T0 + timedelta(hours=n - 70)) for n in range(120)]
+
+
+def test_a_confirmation_waits_for_min_clusters_rooted_after_the_cutoff(setup):
+    cfg, _, _, clock = setup
+    _sized_spec(cfg, 30)
+    s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok", catalog={"fake": FakeFit},
+                      build=lambda fitness, profile, threads=(), sources=(): Lopsided())
+    s.experiments()
+    assert [(r["proposer"]["phase"], r["eval"]["clusters"]) for r in _records(cfg)] == [("screen", 36)]  # all it has, under the cap of 40
+    (entry,) = s.experiments()["specs"]
+    assert entry["state"] == "waiting" and "a candidate waiting for 30 accounts rooted after" in entry["note"]
+    assert "it has 25" in entry["note"] and len(_records(cfg)) == 1  # the default floor of 20 would have run
+
+
+def test_a_screen_short_of_min_clusters_waits_instead_of_running_thin(setup):
+    cfg, make, _, _ = setup
+    _sized_spec(cfg, 30)  # FakeFit has 21 accounts rooted by the cutoff
+    (entry,) = make().experiments()["specs"]
+    assert entry["state"] == "waiting" and "a screen waiting for 30 accounts rooted by" in entry["note"]
+    assert "it has 21" in entry["note"] and _records(cfg) == []
+
+
+def test_a_corpus_the_checkout_lacks_blocks_the_spec_and_asks_a_person(setup, tmp_path):
+    cfg, _, _, clock = setup
+    (cfg.queue_dir / "reader.toml").write_text('''
+id = "reader"
+proposed_at = 2026-10-21T12:00:00Z
+proposed_by = "agent:test"
+profile = "devtools"
+fitness = "action_lineup"
+hypothesis = "A thin page reads no worse."
+sources = ["watcher", "corpus"]
+
+[baseline]
+knobs = { "action.reply.generation" = "continuation" }
+
+[change]
+kind = "knobs"
+knobs = { "action.page_replies" = 2 }
+''', encoding="utf-8")
+    cfg.corpus_dir = tmp_path / "no-corpus"
+    s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok")  # the real catalog and build
+    s.run_cycle()
+    (entry,) = s.experiments()["specs"]
+    assert entry["state"] == "blocked" and "the corpus source can't be read" in entry["note"]
+    report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
+    assert "Queue spec reader can't run in this checkout: the corpus source can't be read" in report

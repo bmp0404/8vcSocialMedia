@@ -117,3 +117,22 @@ def test_a_reply_from_the_roots_first_hours_counts_though_it_is_under_48h_old_at
     assert {p.group for p in fold.fold(corpus, FROZEN, []).pairs} == {root}
     from harness.corpus.bench import reply_pairs
     assert reply_pairs(corpus, settled=both_mature) == []
+
+
+def test_corpus_threads_keep_watched_roots_at_the_coverage_line_with_direct_replies_only(tmp_path):
+    from harness.watcher.watchlist import Watched, Watchlist
+
+    wl = Watchlist("devtools", (Watched("devtools", "supabase", False), Watched("devtools", "vercel", True)),
+                   ("agents",))
+    t = Threads(tmp_path / "corpus")
+    day = FROZEN_LAST - timedelta(days=5)
+    kept = t.thread(day, timedelta(days=3), [5, 3], author="supabase", coverage=0.8)
+    t.thread(day + timedelta(hours=1), timedelta(days=3), [5, 3], author="supabase", coverage=0.79)  # thin sample
+    t.thread(day + timedelta(hours=2), timedelta(days=3), [5, 3], author="someone")  # not watched
+    t.thread(day + timedelta(hours=3), timedelta(days=3), [5, 3], author="vercel", root_text="a launch post")
+    broad = t.thread(day + timedelta(hours=4), timedelta(days=3), [5, 3], author="vercel",
+                     root_text="coding agents in your repo")  # a broad account counts only with a keyword
+    threads = fold.corpus_threads(load(t.write()), wl.covers, 0.8)
+    assert [x["id"] for x in threads] == [kept, broad]
+    assert sorted(r["likes"] for r in threads[0]["direct_replies"]) == [3, 5]
+    assert set(threads[0]) == {"id", "author", "url", "text", "direct_replies"}

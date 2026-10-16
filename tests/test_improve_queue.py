@@ -13,6 +13,7 @@ class Lineup:
     knobs = ("action.reply.generation", "action.samples")
     llm_opinion = False
     accepts_threads = True
+    sources = ("watcher", "corpus")
     secondaries = (Metric("veto_pass_rate", True, guardrail=True, margin=0.10), Metric("reply_chars", False))
 
 
@@ -261,3 +262,53 @@ def test_the_live_queue_parses_and_specs_written_before_baselines_keep_their_dig
     assert records and {r["proposer"]["spec_digest"] for r in records} == {styled.digest}, json.dumps(
         [r["proposer"] for r in records])
     assert queue.phase(styled, records).next == "done"
+
+
+SIZED = GOOD.replace("[change]", 'sources = ["watcher", "corpus"]\nmin_clusters = 40\n\n[change]')
+
+
+def test_sources_and_min_clusters_parse_and_join_what_the_spec_tests(tmp_path):
+    spec = queue.parse(write(tmp_path, SIZED), CATALOG)
+    assert spec.sources == ("watcher", "corpus") and spec.min_clusters == 40
+    assert spec.digest != SPEC.digest
+    assert queue.parse(write(tmp_path, SIZED.replace("min_clusters = 40", "min_clusters = 41")), CATALOG).digest \
+        != spec.digest
+    assert queue.parse(write(tmp_path, SIZED.replace('"watcher", "corpus"', '"watcher"')), CATALOG).digest \
+        != spec.digest
+    prop = spec.proposer("screen", spec.proposed_at)
+    assert prop["sources"] == ["watcher", "corpus"] and prop["min_clusters"] == 40
+    assert "sources" not in SPEC.proposer("screen", SPEC.proposed_at)
+    assert "min_clusters" not in SPEC.proposer("screen", SPEC.proposed_at)
+
+
+def test_min_clusters_raises_each_phases_floor_and_cap_and_never_lowers_them(tmp_path):
+    assert SPEC.clusters("screen") == (1, queue.SCREEN_CLUSTERS)
+    assert SPEC.clusters("confirm") == (queue.MIN_CONFIRM_CLUSTERS, queue.CONFIRM_CLUSTERS)
+    big = queue.parse(write(tmp_path, SIZED), CATALOG)
+    assert big.clusters("screen") == (40, 40) and big.clusters("confirm") == (40, 40)
+    small = queue.parse(write(tmp_path, SIZED.replace("min_clusters = 40", "min_clusters = 10")), CATALOG)
+    assert small.clusters("screen") == (10, queue.SCREEN_CLUSTERS)
+    assert small.clusters("confirm") == (queue.MIN_CONFIRM_CLUSTERS, queue.CONFIRM_CLUSTERS)
+
+
+@pytest.mark.parametrize("edit, message", [
+    (lambda t: t.replace('["watcher", "corpus"]', '["watcher", "news"]'), "at most once"),
+    (lambda t: t.replace('["watcher", "corpus"]', '["corpus", "corpus"]'), "at most once"),
+    (lambda t: t.replace('["watcher", "corpus"]', "[]"), "non-empty list"),
+    (lambda t: t.replace('["watcher", "corpus"]', '"corpus"'), "non-empty list"),
+    (lambda t: t.replace("min_clusters = 40", "min_clusters = 0"), "min_clusters"),
+    (lambda t: t.replace("min_clusters = 40", "min_clusters = 101"), "min_clusters"),
+    (lambda t: t.replace("min_clusters = 40", "min_clusters = 40.0"), "min_clusters"),
+    (lambda t: t.replace("min_clusters = 40", "min_clusters = true"), "min_clusters"),
+])
+def test_bad_sources_and_sizes_are_refused_with_the_reason(tmp_path, edit, message):
+    with pytest.raises(queue.SpecError, match=message):
+        queue.parse(write(tmp_path, edit(SIZED)), CATALOG)
+
+
+def test_sources_are_refused_for_an_instrument_that_has_none(tmp_path):
+    class Fixed(Lineup):
+        sources = None
+
+    with pytest.raises(queue.SpecError, match="takes no sources"):
+        queue.parse(write(tmp_path, SIZED), {"action_lineup": Fixed})

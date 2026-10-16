@@ -332,6 +332,9 @@ class ActionLineup:
     cluster_unit = "thread"
     llm_opinion = False  # the detector picks one reply out of real ones; it never scores quality or likes
     accepts_threads = True  # an experiment spec may name fixture thread files (harness/improve/queue.py)
+    # Where a queue spec's extra threads may come from (harness/improve/scheduler.py:build): the watcher's thread
+    # reads, the default, and the corpus's reply threads, which all predate any proposal and so only screen.
+    sources = ("watcher", "corpus")
     primary = Metric("ai_detection_rate", higher_is_better=False)
     secondaries = (Metric("veto_pass_rate", higher_is_better=True, guardrail=True, margin=VETO_MARGIN),
                    Metric("ai_detection_rate_gpt", higher_is_better=False, guardrail=True, margin=GPT_DETECTION_MARGIN),

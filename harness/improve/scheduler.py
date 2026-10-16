@@ -69,6 +69,10 @@ class AlreadyRunning(RuntimeError):
     pass
 
 
+class SourceUnavailable(RuntimeError):
+    """A spec's item source can't be read in this checkout, such as a corpus that was never rebuilt."""
+
+
 class State:
     def __init__(self, path: Path):
         self.path = Path(path)
@@ -167,6 +171,7 @@ class ImproveConfig:
     watch_dir: Path = config.OUT_DIR / "watch"
     hot_dir: Path = config.OUT_DIR / "hot"
     outcomes_db: Path = config.ROOT / "data" / "outcomes.db"
+    corpus_dir: Path | None = None  # the corpus a spec's "corpus" source reads; default data/corpus/raw
     queue_dir: Path = queue.QUEUE_DIR
     rolling_dir: Path = fold.ROLLING_DIR
     ledger_dir: Path | None = None  # default: eval/experiments/, or <out_dir>/experiments/ on mock
@@ -414,17 +419,38 @@ class Scheduler:
         return {"llm_calls": meter.calls, "sgu_replies": len(ev.sgu), "rolling_pairs": len(ev.rolling),
                 "status": {n: e["status"] for n, e in led["instruments"].items()}, "events": events, "errors": errors}
 
-    def build(self, fitness: str, profile: str, threads: tuple[Path, ...] = ()):
-        """An instrument for one spec: the action lineup on its fixture files plus the profile's watcher threads."""
+    def build(self, fitness: str, profile: str, threads: tuple[Path, ...] = (), sources: tuple[str, ...] = ()):
+        """An instrument for one spec: the action lineup on its fixture files plus the profile's threads from each
+        source the spec names, the watcher's by default."""
         if fitness == "action_lineup":
-            watch, profiles = self._watch()
-            extra = fold.lineup_threads(watch, profiles, profile) if watch is not None else []
-            return self.catalog[fitness](list(threads), extra_threads=extra, extra_label="watcher threads")
+            by_source = {}
+            if "watcher" in (sources or ("watcher",)):
+                watch, profiles = self._watch()
+                by_source["watcher"] = fold.lineup_threads(watch, profiles, profile) if watch is not None else []
+            if "corpus" in sources:
+                by_source["corpus"] = self.corpus_threads(profile)
+            label = ("watcher threads" if list(by_source) == ["watcher"]
+                     else " and ".join(f"{name} threads ({len(t)})" for name, t in by_source.items()))
+            return self.catalog[fitness](list(threads), extra_threads=[t for ts in by_source.values() for t in ts],
+                                         extra_label=label)
         if fitness == "qualify_auc":
             from harness.iterate.fitness.qualify import CACHE_REPORT
 
             return self.catalog[fitness](cache_report=None if self.cfg.provider == "mock" else CACHE_REPORT)
         raise ValueError(f"the scheduler doesn't know how to build {fitness!r}")
+
+    def corpus_threads(self, profile: str) -> list[dict]:
+        """The corpus's reply threads that the profile's watch list covers, at the watcher's coverage line
+        (fold.corpus_threads says why both)."""
+        from harness.corpus import load
+        from harness.corpus.load import RAW_DIR
+        from harness.watcher import ingest, watchlist
+
+        try:
+            corpus = load(self.cfg.corpus_dir or RAW_DIR)
+        except FileNotFoundError as e:
+            raise SourceUnavailable(f"the corpus source can't be read: {e}") from e
+        return fold.corpus_threads(corpus, watchlist.load(profile).covers, ingest.MIN_COVERAGE)
 
     def _run(self, proposals, fit, *, mode: str, max_calls: int, champion=None) -> tuple[list[dict], int]:
         recs = run_batch(proposals, {fit.name: fit}, provider=self.cfg.provider, max_calls=max_calls,
@@ -625,7 +651,11 @@ class Scheduler:
                         {**spec.proposer(ph.next, cutoff), "profile": spec.profile}, spec.label)
         screen = ph.next == "screen"
         waited = now - (first_seen if screen else campaign.decided_at(ph.screen[-1]))
-        built = self._build(spec.fitness, spec.profile, spec.threads)
+        try:
+            built = self._build(spec.fitness, spec.profile, spec.threads, spec.sources)
+        except SourceUnavailable as e:
+            entry.update(state="blocked", note=str(e))
+            return None
         refused = self.refusal(built, spec, base, challenger)
         if refused:
             entry.update(state="refused", note=refused)
@@ -635,13 +665,15 @@ class Scheduler:
             if screen and spec.threads else frozenset()
         window = {"by": cutoff} if screen else {"after": cutoff}
         restricted = campaign.Restricted(built, **window, guardrails=spec.guardrails, untrusted=untrusted)
+        floor, most = spec.clusters(ph.next)
+        clusters = len({it.cluster for it in restricted.items()})
+        if clusters < floor:
+            what = "a screen" if screen else "a candidate"
+            entry.update(state="stale" if waited > STALE_AFTER else "waiting",
+                         note=f"{what} waiting for {floor} {restricted.cluster_unit}s rooted "
+                              f"{'by' if screen else 'after'} {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
+            return None
         if not screen:
-            clusters = len({it.cluster for it in restricted.items()})
-            if clusters < queue.MIN_CONFIRM_CLUSTERS:
-                entry.update(state="stale" if waited > STALE_AFTER else "waiting",
-                             note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {restricted.cluster_unit}s "
-                                  f"rooted after {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
-                return None
             cap = campaign.weekly_cap(ledger.records(directory), now)
             if not cap.open:
                 entry.update(state="held", note=f"confirmation waits for the weekly cap ({cap.holder}) to "
@@ -662,8 +694,7 @@ class Scheduler:
         probes = len(needed) if self.cfg.provider != "mock" else 0
         budget = min(spec.screen_calls if screen else spec.confirm_calls, left) - probes
         sized = self._sized(restricted, dict(**window, guardrails=spec.guardrails, untrusted=untrusted, keep=keep),
-                            queue.SCREEN_CLUSTERS if screen else queue.CONFIRM_CLUSTERS,
-                            1 if screen else queue.MIN_CONFIRM_CLUSTERS, budget, base, spec.knobs)
+                            most, floor, budget, base, spec.knobs)
         if sized is None:
             entry.update(state="stale" if waited > STALE_AFTER else "deferred",
                          note=f"even its smallest set of items needs more than the {budget} calls available "

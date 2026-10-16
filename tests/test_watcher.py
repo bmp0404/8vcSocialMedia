@@ -353,6 +353,13 @@ def test_only_the_accounts_own_root_posts_count_and_broad_accounts_need_a_keywor
         wl.counts("nobody", xpost(T0, author="nobody"))
 
 
+def test_covers_applies_the_same_rule_to_a_post_read_elsewhere():
+    wl = Watchlist("wnba", (Watched("wnba", "WNBA", False), Watched("wnba", "espnW", True)), ("Fever",))
+    assert wl.covers("wnba", "anything at all")  # handles match without case
+    assert wl.covers("espnW", "The fever win") and not wl.covers("espnW", "NFL Sunday")
+    assert not wl.covers("nobody", "The Fever win")  # an unwatched author is a plain no, not an error
+
+
 def test_both_profiles_have_a_watch_list_of_the_size_the_brief_asked_for():
     wnba, devtools = load_watchlist("wnba"), load_watchlist("devtools")
     assert len(wnba.handles) == 21 and sum(w.broad for w in wnba.handles) == 11  # ChantelJennings dropped: protected

@@ -18,7 +18,8 @@ than every fitted ranker's training cutoff (`horizon`). A thread rooted earlier 
 reason, never filed into a week a ranker trained on. A thread already in the frozen benchmark is refused.
 
 The same reads also give post pairs within an account (`post_pairs`) for the post rankers, and lineup
-threads for the action instrument (`lineup_threads`).
+threads for the action instrument (`lineup_threads`). `corpus_threads` gives the corpus's reply threads the
+same shape, for a queue spec that names the corpus as a source.
 """
 
 import gzip
@@ -26,6 +27,7 @@ import json
 import random
 import shutil
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -180,15 +182,37 @@ def post_pairs(corpus: Corpus, min_engagement: int = POST_MIN_ENGAGEMENT, ratio:
     return out
 
 
-def lineup_threads(corpus: Corpus, root_profiles: dict[str, str], profile: str) -> list[dict]:
-    """Watched posts of one profile in the action fixture's shape, with each direct reply's text and likes."""
+def _direct_replies(corpus: Corpus) -> dict[str, list[dict]]:
     replies = defaultdict(list)
     for it in corpus.items:
         if it.thread_root and it.parent_id == it.thread_root and reply_body(it.text):
             replies[it.thread_root].append({"text": it.text, "likes": it.metrics["likes"]})
-    out = []
-    for it in corpus.items:
-        if it.kind == "post" and root_profiles.get(it.status_id) == profile and replies.get(it.status_id):
-            out.append({"id": it.status_id, "author": it.author, "url": it.url, "text": it.text,
-                        "direct_replies": replies[it.status_id]})
-    return out
+    return replies
+
+
+def _lineup_shape(it, replies: list[dict]) -> dict:
+    return {"id": it.status_id, "author": it.author, "url": it.url, "text": it.text, "direct_replies": replies}
+
+
+def lineup_threads(corpus: Corpus, root_profiles: dict[str, str], profile: str) -> list[dict]:
+    """Watched posts of one profile in the action fixture's shape, with each direct reply's text and likes."""
+    replies = _direct_replies(corpus)
+    return [_lineup_shape(it, replies[it.status_id]) for it in corpus.items
+            if it.kind == "post" and root_profiles.get(it.status_id) == profile and replies.get(it.status_id)]
+
+
+def corpus_threads(corpus: Corpus, covers: Callable[[str, str], bool], min_coverage: float) -> list[dict]:
+    """The corpus's reply threads in the action fixture's shape: roots `covers(author, text)` admits (a profile's
+    watch list), sampled at `min_coverage` or more of their reply counter.
+
+    The context worker read these the way the watcher reads its threads, through `XReader.replies`: the first page
+    of X's likes order merged with the first page of its recency order. So a thread's top replies and the lineup's
+    page come from the same kind of sample as a watcher thread's. Two things differ. The context worker picked
+    roots by virality (harness/context/collect.py: every Super Viral post, then samples of the rest), where the
+    watcher takes every post. And it read each thread once, days to weeks after the post. The coverage line is the
+    watcher's own keep rule, so viral threads whose sample holds a small share of their replies stay out."""
+    replies = _direct_replies(corpus)
+    coverage = {it.thread_root: it.thread_coverage for it in corpus.items if it.thread_root}
+    return [_lineup_shape(it, replies[it.status_id]) for it in corpus.items
+            if it.kind == "post" and replies.get(it.status_id) and (coverage.get(it.status_id) or 0) >= min_coverage
+            and covers(it.author, it.text)]
