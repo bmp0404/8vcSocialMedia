@@ -1,0 +1,43 @@
+# Observe settings for a dev-tool brand. Switch with HARNESS_OBSERVE_CONFIG=mission/observe.devtools.toml.
+# Nobody has decided which dev-tool account the harness speaks for; brand.x_handle stays empty
+# until someone does. Watched accounts come from data/devtools_virality_30d.csv: the ten with the
+# most total engagement over 2026-09-15 to 2026-10-16, plus the review-bot companies the team named.
+# Enable with HARNESS_SOURCES=google_news,bluesky,x_targets,attention (ESPN has nothing for this brand).
+
+[brand]
+x_handle = ""
+
+[google_news]
+queries = ['"AI code review"', '"coding agent"', '"developer tools" launch', "Greptile OR CodeRabbit"]
+window = "2d"
+per_query = 15
+
+[x]
+queries = ["AI code review", "coding agent", "devtools launch"]
+lookback_hours = 24
+per_query = 25
+
+[bluesky]
+queries = ["AI code review", "coding agent", "devtools"]
+lookback_hours = 24
+per_query = 25
+
+[attention]
+# Hacker News story volume is the dev-tool counterpart of a sports Wikipedia page.
+terms = ["code review", "coding agent", "Cursor"]
+baseline_days = 14
+
+[reply_targets]
+# Everything these accounts post is about their own product, so all of it is on topic.
+accounts = [
+  "cursor_ai", "supabase", "zeddotdev", "cognition", "cline", "bunjavascript", "tldraw", "ollama",
+  "Lovable", "CloudflareDev", "coderabbitai", "greptile", "QodoAI", "Sourcegraph",
+]
+# Bigger platforms that post about many things; only keyword matches count.
+broad_accounts = ["vercel"]
+# Matched as case-insensitive substrings, so avoid short words like "PR" that hide inside others.
+keywords = ["code review", "coding agent", "devtools", "open source", "pull request", "launch"]
+include_search = true
+# Uncalibrated, as in observe.toml.
+max_age_minutes = 90
+limit = 10

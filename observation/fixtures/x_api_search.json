@@ -1,0 +1,80 @@
+{
+  "data": [
+    {
+      "id": "2110881577431994385",
+      "text": "@fever_film_room Watched the fourth quarter twice. The drop coverage never had an answer for it.",
+      "author_id": "1187430026552197120",
+      "created_at": "2026-10-15T23:52:41.000Z",
+      "edit_history_tweet_ids": ["2110881577431994385"],
+      "in_reply_to_user_id": "1452288739209347075",
+      "referenced_tweets": [{"type": "replied_to", "id": "2110878666585015194"}],
+      "public_metrics": {
+        "retweet_count": 12,
+        "reply_count": 3,
+        "like_count": 210,
+        "quote_count": 1,
+        "bookmark_count": 9,
+        "impression_count": 5400
+      }
+    },
+    {
+      "id": "2110878666585015194",
+      "text": "Clark's pull-up three off the high screen is the shot every defense is scheming for now. Film breakdown tomorrow.",
+      "author_id": "1452288739209347075",
+      "created_at": "2026-10-15T23:41:07.000Z",
+      "edit_history_tweet_ids": ["2110878666585015194"],
+      "public_metrics": {
+        "retweet_count": 312,
+        "reply_count": 45,
+        "like_count": 2875,
+        "quote_count": 19,
+        "bookmark_count": 140,
+        "impression_count": 98112
+      }
+    },
+    {
+      "id": "2110855874737078349",
+      "text": "This is the read that makes the Fever offense go. Quoting because the replay angle is perfect.",
+      "author_id": "918273645501239296",
+      "created_at": "2026-10-15T22:10:33.000Z",
+      "edit_history_tweet_ids": ["2110855874737078349"],
+      "referenced_tweets": [{"type": "quoted", "id": "2110479708582840873"}],
+      "public_metrics": {
+        "retweet_count": 40,
+        "reply_count": 8,
+        "like_count": 655,
+        "quote_count": 2,
+        "bookmark_count": 21,
+        "impression_count": 30120
+      }
+    }
+  ],
+  "includes": {
+    "users": [
+      {
+        "id": "1187430026552197120",
+        "name": "Hoops Data Gal",
+        "username": "hoopsdatagal",
+        "public_metrics": {"followers_count": 9120, "following_count": 640, "tweet_count": 22104, "listed_count": 88}
+      },
+      {
+        "id": "1452288739209347075",
+        "name": "Fever Film Room",
+        "username": "fever_film_room",
+        "public_metrics": {"followers_count": 48210, "following_count": 812, "tweet_count": 15230, "listed_count": 301}
+      },
+      {
+        "id": "918273645501239296",
+        "name": "WNBA Nerd",
+        "username": "wnbanerd",
+        "public_metrics": {"followers_count": 15877, "following_count": 1203, "tweet_count": 40122, "listed_count": 190}
+      }
+    ]
+  },
+  "meta": {
+    "newest_id": "2110881577431994385",
+    "oldest_id": "2110855874737078349",
+    "result_count": 3,
+    "next_token": "b26v89c19zqg8o3fpzbkk3yuatvbgfw8d9m1ufxl2ac8t"
+  }
+}
