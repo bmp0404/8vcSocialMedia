@@ -232,6 +232,7 @@ class Plan:
     challenger: Config
     fit: campaign.Restricted  # the instrument cut to the items this phase uses
     budget: int  # calls the phase may spend, after the probes
+    estimate: int  # what run_batch will budget for the three arms on `fit`'s items
     needed: set[str]  # models probed before the run
     probes: int
     cutoff: datetime
@@ -668,8 +669,9 @@ class Scheduler:
                          note=f"even its smallest set of items needs more than the {budget} calls available "
                               "to it this cycle")
             return None
-        return Plan(ph.next, "screen" if screen else "promote", prop, base, challenger, sized, budget, needed, probes,
-                    cutoff)
+        estimate = self._estimate(sized, base, spec.knobs, len(sized.items()))
+        return Plan(ph.next, "screen" if screen else "promote", prop, base, challenger, sized, budget, estimate, needed,
+                    probes, cutoff)
 
     @staticmethod
     def refusal(fit, spec: queue.Spec, base: Config, challenger: Config) -> str | None:
