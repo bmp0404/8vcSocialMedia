@@ -46,22 +46,29 @@ class ReplyRecorder:
             self.forward(event)
 
 
-def _first_value(text: str) -> int | None:
-    starts = [i for i in (text.find("{"), text.find("[")) if i >= 0]
-    return min(starts) if starts else None
+_FENCE = re.compile(r"```[A-Za-z]*[ \t]*\n?(.*?)(?:```|\Z)", re.S)
 
 
-def json_closes(text: str) -> bool:
-    """Whether the first JSON value in `text` closes: every bracket and string it opens is closed.
+def _array_key(key: str) -> re.Pattern:
+    """`key` opening an array, with the key quoted or bare (SAP repairs unquoted keys)."""
+    return re.compile(r'(?:"' + re.escape(key) + r'"|(?<![\w"])' + re.escape(key) + r")\s*:\s*\[")
 
-    Unquoted keys and trailing commas, which SAP repairs on purpose, don't matter here. A reply
-    that stops partway does: SAP would still parse it.
+
+def reply_json(text: str) -> str:
+    """The part of a reply SAP parses: the first fenced block when there is one, else the whole text.
+
+    Probed on 0.22.2 with OrientSignals: a bare object before a fenced one loses to the fenced one,
+    and of two fenced blocks the first wins. A fence cut off before it closes runs to the end.
     """
-    start = _first_value(text)
-    if start is None:
-        return False
-    stack, in_string, escaped = [], False, False
-    for ch in text[start:]:
+    match = _FENCE.search(text)
+    return match.group(1) if match else text
+
+
+def _scan(text: str, start: int):
+    """Yield (index, char, depth) for characters outside strings, from `start`."""
+    depth, in_string, escaped = 0, False, False
+    for i in range(start, len(text)):
+        ch = text[i]
         if in_string:
             if escaped:
                 escaped = False
@@ -69,9 +76,51 @@ def json_closes(text: str) -> bool:
                 escaped = True
             elif ch == '"':
                 in_string = False
-        elif ch == '"':
+            continue
+        if ch == '"':
             in_string = True
-        elif ch in _OPENERS:
+        yield i, ch, depth
+        if ch in _OPENERS:
+            depth += 1
+        elif ch in "]}":
+            depth = max(depth - 1, 0)
+
+
+def _object_start(text: str, key: str) -> int | None:
+    """Where the object holding the first `key` array starts: the outermost brace still open there.
+
+    Braces or brackets in prose before the JSON, such as "rubric [v1]" or "{verdict}", close before
+    the key and don't count. Falls back to the first brace when the key never appears.
+    """
+    match = _array_key(key).search(text)
+    if match is None:
+        brace = text.find("{")
+        return brace if brace >= 0 else None
+    stack = []
+    for i, ch, _ in _scan(text, 0):
+        if i >= match.start():
+            break
+        if ch in _OPENERS:
+            stack.append((ch, i))
+        elif ch in "]}" and stack:
+            stack.pop()
+    braces = [i for ch, i in stack if ch == "{"]
+    return braces[0] if braces else None
+
+
+def json_closes(text: str, key: str) -> bool:
+    """Whether the JSON object holding the `key` array, in the block SAP parses, closes.
+
+    Every bracket and string it opens has to close. Unquoted keys and trailing commas, which SAP
+    repairs on purpose, don't matter here. A reply that stops partway does: SAP would still parse it.
+    """
+    span = reply_json(text)
+    start = _object_start(span, key)
+    if start is None:
+        return False
+    stack = []
+    for _, ch, _ in _scan(span, start):
+        if ch in _OPENERS:
             stack.append(_OPENERS[ch])
         elif stack and ch == stack[-1]:
             stack.pop()
@@ -81,24 +130,19 @@ def json_closes(text: str) -> bool:
 
 
 def raw_array_length(text: str, key: str) -> int | None:
-    """How many elements the reply's first `"key": [...]` array holds, counting a partial one.
+    """How many elements the reply's `"key": [...]` array holds, counting a partial one.
 
-    Counts element starts, so a malformed element or one cut off at the end still counts. That is
-    the number to compare with the parsed length. None when the reply has no such array.
+    Reads the block SAP parses, inside the object that holds the key. Counts element starts, so a
+    malformed element or one cut off at the end still counts. That is the number to compare with
+    the parsed length. None when the reply has no such array.
     """
-    match = re.search(r'"' + re.escape(key) + r'"\s*:\s*\[', text)
+    span = reply_json(text)
+    start = _object_start(span, key) or 0
+    match = _array_key(key).search(span, start)
     if match is None:
         return None
-    count, depth, in_string, escaped, expecting = 0, 0, False, False, True
-    for ch in text[match.end():]:
-        if in_string:
-            if escaped:
-                escaped = False
-            elif ch == "\\":
-                escaped = True
-            elif ch == '"':
-                in_string = False
-            continue
+    count, expecting = 0, True
+    for _, ch, depth in _scan(span, match.end()):
         if ch.isspace():
             continue
         if depth == 0:
@@ -107,15 +151,11 @@ def raw_array_length(text: str, key: str) -> int | None:
             if ch == ",":
                 expecting = True
                 continue
-            if expecting:
+            if expecting and ch not in "]}":
                 count += 1
                 expecting = False
-        if ch == '"':
-            in_string = True
-        elif ch in _OPENERS:
-            depth += 1
-        elif ch in "]}":
-            depth -= 1
+        if ch in "]}" and depth == 1:
+            expecting = True  # an element just closed; SAP keeps the next one even without a comma
     return count
 
 

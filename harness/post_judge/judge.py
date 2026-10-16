@@ -56,7 +56,7 @@ def check_reply(grade: PostGrade, raw: str | None) -> None:
     """
     if raw is None:
         raise InvalidGradeError("Judge reply wasn't recorded, so its comparisons can't be counted")
-    if not json_closes(raw):
+    if not json_closes(raw, "comparisons"):
         raise InvalidGradeError("Judge reply was cut off before its JSON closed")
     sent = raw_array_length(raw, "comparisons")
     if sent is not None and sent != len(grade.comparisons):

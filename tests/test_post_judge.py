@@ -211,6 +211,15 @@ class GradeTests(unittest.TestCase):
         with patch("builtins.print") as printed:
             check_reply(full, full.model_dump_json().replace('"score":3', '"score":3.4', 1))
         self.assertIn("[3.4]", printed.call_args.args[0])
+        # Brackets in prose ahead of a reply cut inside a comparison must not hide the cut.
+        cut = full.model_dump_json().split('"observation":"Fixture comparison"')[0] + '"observation":"Fixt'
+        with self.assertRaisesRegex(InvalidGradeError, "cut off"):
+            check_reply(full, "Evaluation [rubric v1]:\n" + cut)
+        # A fenced block wins over an earlier draft, so its dropped comparison is counted.
+        fenced = full.model_dump_json().replace('"comparisons":[', '"comparisons":[{},')
+        drafted = f"{full.model_dump_json()}\n```json\n{fenced}\n```"
+        with self.assertRaisesRegex(InvalidGradeError, "had 3 comparisons"):
+            check_reply(full, drafted)
 
     def test_model_failure_propagates(self):
         with patch("harness.post_judge.judge.GradePost", side_effect=RuntimeError("provider unavailable")):

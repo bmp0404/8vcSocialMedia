@@ -165,6 +165,14 @@ judge_api_client_async.__doc__ = """Raises:
     Io, ParseError"""
 
 
+judge_env_url       = _define_function("user.judge_env_url", "sync",  ["name"], binding_name="judge_env_url", binding_qualname="judge_env_url", binding_module=__name__)
+judge_env_url.__doc__ = """Raises:
+    Io, ParseError"""
+judge_env_url_async = _define_function("user.judge_env_url", "async", ["name"], binding_name="judge_env_url_async", binding_qualname="judge_env_url_async", binding_module=__name__)
+judge_env_url_async.__doc__ = """Raises:
+    Io, ParseError"""
+
+
 GradePost       = _define_function("user.GradePost", "sync",  ["candidate", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="GradePost", binding_qualname="GradePost", binding_module=__name__)
 GradePost.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
@@ -368,6 +376,8 @@ __all__ = [
     "judge_client_async",
     "judge_api_client",
     "judge_api_client_async",
+    "judge_env_url",
+    "judge_env_url_async",
     "GradePost",
     "GradePost_async",
     "GradePost_spec",

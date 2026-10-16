@@ -282,7 +282,7 @@ def checked_narratives(value, raw: str) -> dict:
     sent, parsed = raw_array_length(raw, "narratives"), len(value.narratives)
     if sent != parsed:
         problems.append(f"reply had {sent if sent is not None else 'no'} narratives; the parser kept {parsed}")
-    if not json_closes(raw):
+    if not json_closes(raw, "narratives"):
         problems.append("reply was cut off before its JSON closed")
     kept = []
     for n in value.narratives:

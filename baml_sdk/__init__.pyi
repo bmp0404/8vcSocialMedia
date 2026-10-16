@@ -123,6 +123,14 @@ async def judge_api_client_async(provider: str, model: str, *, max_tokens: typin
         Io, ParseError"""
 
 
+def judge_env_url(name: str, *, _baml: _BamlOptions | None = None) -> typing.Optional[str]:
+    """Raises:
+        Io, ParseError"""
+async def judge_env_url_async(name: str, *, _baml: _BamlOptions | None = None) -> typing.Optional[str]:
+    """Raises:
+        Io, ParseError"""
+
+
 def GradePost(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> PostGrade:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
@@ -301,6 +309,8 @@ __all__ = [
     "judge_client_async",
     "judge_api_client",
     "judge_api_client_async",
+    "judge_env_url",
+    "judge_env_url_async",
     "GradePost",
     "GradePost_async",
     "GradePost_spec",
