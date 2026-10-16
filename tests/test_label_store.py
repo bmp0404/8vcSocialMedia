@@ -173,8 +173,10 @@ def test_queue_unlabeled_all_and_paging(store):
 def test_audit_set_is_frozen_stratified_and_shrinks_as_people_label(store, tmp_path):
     with pytest.raises(FileNotFoundError, match="audit"):
         store.queue("audit")
+    write_jsonl(tmp_path / "llm" / "run-solo.jsonl", [answer("x:4", "solo", {"format": "tip"}, "2026-10-16T05:00:00+00:00")])
+    store = Store(tmp_path)
     audit = store.build_audit(size=3)
-    assert audit["size"] == 3 and sorted(audit["items"]) == ["x:1", "x:2", "x:3"]  # x:4 has no LLM labels
+    assert audit["size"] == 3 and sorted(audit["items"]) == ["x:1", "x:2", "x:3"]  # x:4 has one model's vote
     assert audit["strata"] == {"post/0": 1, "post/1-2": 1, "reply/3+": 1}
     assert store.build_audit(size=3)["items"] == audit["items"]  # same seed, same set
     assert [e["item_id"] for e in store.queue("audit")] == audit["items"]

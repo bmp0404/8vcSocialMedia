@@ -206,15 +206,17 @@ class Store:
         return json.loads(path.read_text(encoding="utf-8"))["items"]
 
     def build_audit(self, size: int = AUDIT_SIZE, seed: int = AUDIT_SEED) -> dict:
-        """Freeze `size` LLM-labeled items, stratified by kind and by how many fields the LLMs disagree on.
+        """Freeze `size` items labeled by two or more models, stratified by kind and by how many fields
+        the models disagree on.
 
         Six strata (post or reply, times 0, 1 to 2, or 3 or more disagreeing fields) get equal shares, so
         one person's 200 labels estimate how often the LLM labels are right both where they agree and
-        where they don't. A stratum short of its share passes the rest to the others.
+        where they don't. A stratum short of its share passes the rest to the others. Items with a single
+        model's vote are left out, since "no disagreement" means nothing for them.
         """
         strata = defaultdict(list)
         for item in self.items():
-            if not self.votes(item["item_id"]):
+            if len(self.votes(item["item_id"])) < 2:
                 continue
             n = len(self.disagreements(item["item_id"]))
             band = "0" if n == 0 else "1-2" if n <= 2 else "3+"
