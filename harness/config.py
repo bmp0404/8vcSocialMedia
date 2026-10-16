@@ -22,4 +22,12 @@ def mission() -> str:
 
 
 def lessons() -> str:
-    return LESSONS_PATH.read_text(encoding="utf-8") if LESSONS_PATH.exists() else "(no lessons yet)"
+    text = LESSONS_PATH.read_text(encoding="utf-8") if LESSONS_PATH.exists() else "(no lessons yet)"
+    # Memory must never break a run, so any memstore failure falls back to lessons.md alone.
+    try:
+        from harness.memstore import prompt_block
+
+        block = prompt_block()
+    except Exception:
+        block = ""
+    return text + "\n\n" + block if block else text
