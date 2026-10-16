@@ -1,0 +1,71 @@
+# What observe watches for this brand. harness/sources/watch.py reads this file.
+# Brand-specific values live here so the same sources run for another brand with another file.
+# Point HARNESS_OBSERVE_CONFIG at a different TOML file to swap brands.
+
+[brand]
+# The account's own X handle, without "@". Unknown on 2026-10-15. The x_brand source
+# raises until this is set.
+x_handle = ""
+
+[espn]
+# ESPN site-API paths, <sport>/<league>. espn_news reads every league here.
+leagues = ["basketball/wnba", "basketball/womens-college-basketball"]
+# espn_scores and espn_injuries read these. Women's college basketball is left out until its
+# season starts in November: today its scoreboard returns two unrelated Nov 1 games.
+scoreboard_leagues = ["basketball/wnba"]
+articles_per_league = 15
+
+# Extra team-filtered news, keyed by league. ESPN team ids: Indiana Fever 5, Iowa 2294.
+[espn.teams]
+"basketball/wnba" = ["5"]
+"basketball/womens-college-basketball" = ["2294"]
+
+[google_news]
+# Google News RSS search queries. Quote a phrase to require it.
+queries = ['"Caitlin Clark"', '"Indiana Fever"', '"WNBA Finals"', "\"Iowa\" women's basketball"]
+# Google News "when:" window: 1h, 12h, 1d, 2d, 7d.
+window = "2d"
+per_query = 15
+
+[x]
+# Plain search terms. Each X backend adds its own filters (no reposts, English).
+queries = ["Caitlin Clark", "WNBA Finals", "Indiana Fever", "Aliyah Boston"]
+lookback_hours = 24
+per_query = 25
+
+[bluesky]
+# Public Bluesky search, the top posts of the last lookback_hours. Not X, so these show what fans
+# are saying and how hard, but they are never reply targets.
+queries = ["Caitlin Clark", "WNBA Finals", "Indiana Fever"]
+lookback_hours = 24
+per_query = 25
+
+[attention]
+# Terms for the context worker's attention collectors (Wikipedia, GDELT, Hacker News).
+terms = ["Caitlin Clark", "Indiana Fever", "WNBA Finals"]
+baseline_days = 14
+
+[reply_targets]
+# Accounts whose fresh posts draw enough traffic that an early reply gets seen. Everything these
+# accounts post is on topic. The Valkyries' real account is "valkyries" (57k); "GSValkyries" is a
+# squatter. CClarkReport (56k), a Clark news account, replied in two of today's Clark threads and sits in the
+# 10k-250k band that scores best (see harness/sources/reply_targets.py). Beat writers in that band
+# still need picking by someone who knows them; today's repliers were mostly fan accounts.
+accounts = [
+  "WNBA", "IndianaFever", "CaitlinClark22", "IowaWBB", "AtlantaDream", "valkyries", "HerHoopStats",
+  "CClarkReport",
+]
+# Big general outlets. Their posts count only when the text matches a keyword below, because
+# most of what they post (other sports) is no use to this account.
+broad_accounts = ["espnW", "SportsCenter", "BleacherReport", "NBA2K", "FOS"]
+# Case-insensitive substrings for broad accounts and search results.
+keywords = [
+  "Caitlin Clark", "Fever", "WNBA", "Hawkeyes", "Aliyah Boston", "Atlanta Dream", "Valkyries", "2K27",
+]
+# Also rank the top posts from the [x] searches as targets.
+include_search = true
+# Posts older than this are past the window where a new reply still lands near the top.
+# Uncalibrated: no study measures reply position against post age on X.
+max_age_minutes = 90
+# How many targets to emit per run.
+limit = 10

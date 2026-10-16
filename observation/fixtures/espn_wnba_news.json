@@ -1,0 +1,50 @@
+{
+ "articles": [
+  {
+   "headline": "Dream, Allisha Gray hopeful she'll be available for Game 1",
+   "description": "Allisha Gray, who has been out after injuring her left ring finger, said the final decision would be made by the medical staff.",
+   "published": "2026-10-16T01:12:45Z",
+   "byline": "Kareem Copeland",
+   "links": {
+    "web": {
+     "href": "https://www.espn.com/wnba/story/_/id/50192787/wnba-finals-game-1-dream-valkyries-allisha-gray-finger"
+    }
+   },
+   "type": "HeadlineNews"
+  },
+  {
+   "headline": "Who is Atlanta's X factor in the WNBA Finals?",
+   "description": "Who is Atlanta's X factor in the WNBA Finals?",
+   "published": "2026-10-15T19:44:18Z",
+   "links": {
+    "web": {
+     "href": "https://www.espn.com/video/clip/_/id/50191247/who-atlanta-x-factor-wnba-finals",
+     "self": {
+      "href": "https://www.espn.com/video/clip/_/id/50191247/who-atlanta-x-factor-wnba-finals",
+      "dsi": {
+       "href": "https://www.espn.com/video/clip?id=a9e46fa869deb"
+      }
+     }
+    }
+   },
+   "type": "Media"
+  },
+  {
+   "headline": "WNBA Finals 2026: Valkyries vs. Dream schedule, scores, more",
+   "description": "A new champion is guaranteed to be crowned this season as Golden State and Atlanta meet in the WNBA Finals.",
+   "published": "2026-10-15T17:13:00Z",
+   "byline": "ESPN",
+   "links": {
+    "web": {
+     "href": "https://www.espn.com/wnba/story/_/id/50176202/2026-wnba-finals-valkyries-dream-schedule-scores-news"
+    }
+   },
+   "type": "Story"
+  },
+  {
+   "headline": "",
+   "description": "no headline, dropped",
+   "published": "2026-10-15T00:00:00Z"
+  }
+ ]
+}

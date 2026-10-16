@@ -1,0 +1,98 @@
+{
+  "id": "6f1c2a8e-3b7d-4e0a-9c55-2d8b1e4f7a90",
+  "object": "response",
+  "created_at": 1792114500,
+  "completed_at": 1792114538,
+  "model": "grok-4.7",
+  "status": "completed",
+  "parallel_tool_calls": true,
+  "previous_response_id": null,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "x_search",
+      "from_date": "2026-10-15"
+    }
+  ],
+  "text": {
+    "format": {
+      "type": "json_schema",
+      "name": "x_posts",
+      "strict": true
+    }
+  },
+  "output": [
+    {
+      "id": "rs_6f1c2a8e",
+      "type": "reasoning",
+      "summary": [],
+      "encrypted_content": "gAAAAABfixture",
+      "status": "completed"
+    },
+    {
+      "id": "ctc_01",
+      "type": "custom_tool_call",
+      "call_id": "call_01",
+      "name": "x_keyword_search",
+      "input": "{\"query\": \"caitlin clark\", \"limit\": 20}",
+      "status": "completed"
+    },
+    {
+      "id": "ctc_02",
+      "type": "custom_tool_call",
+      "call_id": "call_02",
+      "name": "x_semantic_search",
+      "input": "{\"query\": \"Caitlin Clark pull-up three film\", \"limit\": 20}",
+      "status": "completed"
+    },
+    {
+      "id": "msg_6f1c2a8e",
+      "type": "message",
+      "role": "assistant",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "{\"posts\": [{\"url\": \"https://x.com/hoopsdatagal/status/2110881577431994385\", \"author\": \"hoopsdatagal\", \"text\": \"@fever_film_room Watched the fourth quarter twice. The drop coverage never had an answer for it.\", \"is_reply\": true, \"likes\": 210, \"reposts\": 12, \"replies\": 3, \"quotes\": 1, \"views\": null}, {\"url\": \"https://x.com/fever_film_room/status/2110878666585015194\", \"author\": \"fever_film_room\", \"text\": \"Clark's pull-up three off the high screen is the shot every defense is scheming for now. Film breakdown tomorrow.\", \"is_reply\": false, \"likes\": 2875, \"reposts\": 312, \"replies\": 45, \"quotes\": 19, \"views\": 98112}, {\"url\": \"https://x.com/courtside_takes/status/2110853240714168152\", \"author\": \"courtside_takes\", \"text\": \"Breaking: Clark signs a ten-year extension tonight.\", \"is_reply\": false, \"likes\": 15000, \"reposts\": 4000, \"replies\": 900, \"quotes\": 300, \"views\": 2000000}, {\"url\": \"https://x.com/i/status/2110664526394297323\", \"author\": \"@wnbanerd\", \"text\": \"Morning: the full replay of last night's game is up on the league app.\", \"is_reply\": false, \"likes\": 64, \"reposts\": 7, \"replies\": 2, \"quotes\": 0, \"views\": 4100}]}",
+          "logprobs": null,
+          "annotations": [
+            {
+              "type": "url_citation",
+              "url": "https://x.com/i/status/2110881577431994385",
+              "title": "1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "https://x.com/i/status/2110878666585015194",
+    "https://x.com/i/status/2110664526394297323",
+    "https://x.com/i/user/1912644073896206336"
+  ],
+  "usage": {
+    "input_tokens": 1830,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 412,
+    "output_tokens_details": {
+      "reasoning_tokens": 260
+    },
+    "total_tokens": 2242,
+    "num_sources_used": 3,
+    "num_server_side_tools_used": 2,
+    "server_side_tool_usage_details": {
+      "web_search_calls": 0,
+      "x_search_calls": 2,
+      "code_interpreter_calls": 0,
+      "file_search_calls": 0,
+      "mcp_calls": 0,
+      "document_search_calls": 0,
+      "image_generation_calls": 0,
+      "x_posts_fetched": 31,
+      "x_users_fetched": 0
+    }
+  }
+}
