@@ -131,8 +131,9 @@ def run_episodes(rows: list[dict], summaries: dict[str, ReviewSummary], brand: s
     episodes = []
     for r in rows:
         a = r["action"]
+        score = a.get("predicted_score")
         outcomes = [Outcome(label=FAILURE if a.get("vetoed") else "", source="eval",
-                            raw=str(a.get("predicted_score", "")), note=a.get("critique", ""))]
+                            raw="" if score is None else str(score), note=a.get("critique", ""))]
         s = summaries.get(a["id"])
         if s and s.final:
             raw = s.final + (" (edited)" if s.edits else "")

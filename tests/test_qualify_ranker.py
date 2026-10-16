@@ -77,7 +77,7 @@ def test_devtools_ranks_with_post_ridge_by_default_and_spends_one_critic_call_an
                         "percentile": model.percentile(model.score(text))}
         assert by_id[aid].predicted_score == meta["percentile"] and by_id[aid].panel == {}
     for aid in ("r1", "f1"):  # a reply with the highest-scoring text still gets no score
-        assert "ranker" not in by_id[aid].draft_meta and by_id[aid].predicted_score == 0.0 and by_id[aid].panel == {}
+        assert "ranker" not in by_id[aid].draft_meta and by_id[aid].predicted_score is None and by_id[aid].panel == {}
 
 
 def test_posts_reorder_among_their_own_places_and_everything_else_keeps_its_place():
@@ -158,13 +158,33 @@ def test_a_run_whose_model_fails_its_hash_check_stops_before_observe(monkeypatch
     assert q.ready() == "the audience panel"
 
 
-def test_the_review_list_keeps_unscored_replies_in_the_order_the_run_saved_them(tmp_path, monkeypatch):
-    from harness import config, memory
+def test_unscored_means_none_not_zero():
+    assert Action(type="reply", text="x", mind="m", narrative_id="n").predicted_score is None
+    stale = post(LOW, "p1")
+    stale.predicted_score = 0.4  # a panel score from before; a wnba round must clear it, not keep it
+    with config.use_profile("wnba"):
+        (kept,) = q.qualify(Recorder(), "MISSION", [stale])
+    assert kept.predicted_score is None
+
+
+def test_a_round_is_saved_in_qualifys_order_and_the_review_list_keeps_it(tmp_path, monkeypatch):
+    """The run log, the hand-off and the review queue read memory in saved order, so that order must be qualify's."""
+    from harness import cli, memory
     monkeypatch.setattr(config, "DB_PATH", tmp_path / "h.db")
-    actions = [reply("one", "zz"), reply("two", "aa"), post(LOW, "p1"), reply("three", "mm"), follow("f1")]
-    q.qualify(Recorder(), "MISSION", actions)
-    run_id = memory.save_run(actions)
-    assert [a["id"] for a in memory.run_actions(run_id)] == ["p1", "zz", "aa", "mm", "f1"]
+    monkeypatch.setattr(config, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setenv("MEMSTORE_PATH", str(tmp_path / "store"))
+    batch = [reply("one", "zz"), post(LOW, "p_low"), reply("two", "aa"), post(HIGH, "p_high"), reply("vetoed", "vv"),
+             follow("f1")]
+    monkeypatch.setattr(cli, "observe", lambda *a, **k: ["a signal"])
+    monkeypatch.setattr(cli, "orient", lambda *a, **k: [])
+    monkeypatch.setattr(cli, "decide", lambda *a, **k: batch)
+    monkeypatch.setattr(cli, "qualify", lambda llm, mission, actions, ranker=None: q.qualify(
+        Recorder(veto={"vv"}), mission, actions, ranker=ranker))
+    cli.run(RUN)
+    (run,) = memory.list_runs()
+    saved = [a["id"] for a in memory.run_actions(run["id"])]
+    assert saved == ["zz", "p_high", "aa", "p_low", "f1", "vv"]  # posts swapped places; replies and the follow stayed
+    assert [a["predicted_score"] is None for a in memory.run_actions(run["id"])] == [True, False, True, False, True, True]
 
 
 def test_each_profile_names_its_post_ranker_in_qualify_toml():

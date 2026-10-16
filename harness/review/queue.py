@@ -1,7 +1,8 @@
 """The queue: what a person can decide on now, and the verdict route that records each decision.
 
-Hot targets come first, newest post first, then the pending drafts of recent rounds, newest round first
-and best predicted first within a round. A card leaves the queue once its action has a verdict.
+Hot targets come first, newest post first, then the pending drafts of recent rounds, newest round first and in
+the round's saved order within a round: qualify's order, in which a scored post moves only among the posts' own
+places, so it never floats above an unscored reply. A card leaves the queue once its action has a verdict.
 
 The queue leaves out what a person can't post as written: follows, which carry no text, and drafts the
 critic vetoed. Their records stay in memory.
@@ -83,7 +84,7 @@ def run_cards(decided: set[str], now: datetime | None = None) -> list[dict]:
         rows = conn.execute(
             """SELECT a.id, a.run_id, a.data, r.started_at FROM actions a JOIN runs r ON r.id = a.run_id
                WHERE r.started_at >= ? AND COALESCE(r.sources, '') != 'watch' AND (? OR r.provider != ?)
-               ORDER BY a.run_id DESC, a.predicted_score DESC""",
+               ORDER BY a.run_id DESC, a.rowid""",
             (since, config.PROVIDER == MOCK, MOCK),
         ).fetchall()
     accounts: dict[int, str | None] = {}

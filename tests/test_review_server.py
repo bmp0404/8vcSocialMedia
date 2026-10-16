@@ -175,6 +175,18 @@ def test_the_queue_leaves_out_vetoed_textless_old_and_decided_drafts(store):
     assert [(c["id"], c["run_id"], c["context"], c["target"]) for c in res["cards"]] == [("p1", run_id, "Story headline", None)]
 
 
+def test_a_rounds_cards_keep_its_saved_order_and_a_scored_post_does_not_float_above_unscored_replies(store):
+    run_id = save_round(
+        Action(type="reply", text="first reply", mind="reply_lane", narrative_id="n", id="r1",
+               target_url="https://x.com/WNBA/status/2110844208961708245"),
+        Action(type="post", text="a scored caption", mind="caption", narrative_id="n", predicted_score=0.9, id="p1"),
+        Action(type="reply", text="second reply", mind="reply_lane", narrative_id="n", id="r2",
+               target_url="https://x.com/WNBA/status/2110844208961708246"),
+    )
+    _, res = request("GET", "/api/queue")
+    assert [(c["id"], c["run_id"]) for c in res["cards"]] == [("r1", run_id), ("p1", run_id), ("r2", run_id)]
+
+
 def test_mock_rounds_are_shown_only_when_the_harness_runs_on_mock(store, monkeypatch):
     monkeypatch.setattr(config, "PROVIDER", "mock")
     save_round(Action(type="reply", text="mock draft", mind="reply_lane", narrative_id="n",

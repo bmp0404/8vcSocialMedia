@@ -57,7 +57,10 @@ class Action:
     rationale: str = ""
     target_url: str | None = None
     target_handle: str | None = None
-    predicted_score: float = 0.0
+    # qualify's score for this draft, or None when nothing scored it: the profile names no post ranker, or the draft
+    # is a reply or a follow, which the learned ranker leaves alone (harness/qualify.py). None is "no prediction",
+    # never a prediction of 0.
+    predicted_score: float | None = None
     panel: dict = field(default_factory=dict)
     vetoed: bool = False
     critique: str = ""

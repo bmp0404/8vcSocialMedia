@@ -226,6 +226,8 @@ def qualify(llm: LLM, mission: str, actions: list[Action], panel: dict[str, str]
             if model and rankable(a):
                 a.draft_meta["ranker"] = model.describe(a.text)
                 a.predicted_score = a.draft_meta["ranker"]["percentile"]
+            else:
+                a.predicted_score = None  # no prediction, which a 0.0 would misstate
         kept = rank_posts([a for a in actions if not a.vetoed])
         ranker = model.name if model else "decide's order (the profile names no post ranker)"
     print(f"[qualify] kept {len(kept)}/{len(actions)} drafts; ranked by {ranker}")

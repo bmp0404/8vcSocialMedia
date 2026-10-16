@@ -47,7 +47,10 @@ def run(args) -> None:
         print(f"[run] the critic vetoed all {len(actions)} drafts, and captions and replies aren't redrafted, "
               "so this round recommends nothing; the critiques are saved with the run")
 
-    run_id = memory.save_run(actions, account=account or None)
+    # Saved in the round's order, the order the review queue and the hand-off show: what qualify kept, in qualify's
+    # order, then what the critic vetoed.
+    kept_ids = {a.id for a in kept}
+    run_id = memory.save_run(kept + [a for a in actions if a.id not in kept_ids], account=account or None)
     write_decision_log(run_id)  # out/decisions-run<id>.json: abstentions, rejected drafts, questions
     record_round(run_id)  # one episode note per draft in the profile's memory store
     config.OUT_DIR.mkdir(exist_ok=True)
@@ -62,7 +65,7 @@ def run(args) -> None:
     for i, a in enumerate(ranked, 1):
         target = a.target_url or (f"@{a.target_handle}" if a.target_handle else "")
         # qualify scores only the post lane's posts and quotes, unless the panel ranks (harness/qualify.py).
-        score = f"{a.predicted_score:.2f}" if a.panel or "ranker" in a.draft_meta else " -- "
+        score = " -- " if a.predicted_score is None else f"{a.predicted_score:.2f}"
         print(f"{i:>2}. [{score}] {a.type:<7} {a.mind:<18} {a.text}  {target}")
 
 
