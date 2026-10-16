@@ -9,6 +9,7 @@ The dev-tool dataset (`data/devtools_virality_30d.csv`) holds only the two tails
 - Every pair the backtest compares is a gap of 10x or more. In production, qualify picks among one brand's drafts that differ far less. **Every number here is an upper bound** on how well a predictor would rank real drafts.
 - The labels mostly encode account size. Account identity alone separates viral from Deadweight at AUC 0.906 (memory research, `8vc-context/research/memory.md`, finding 2), so any comparison across accounts measures brand recognition first.
 - The dataset can't measure calibration for deployment. A predicted probability fitted here would describe a world with no middle.
+- Within one account, a viral post is almost always Medium Viral. After removing thread continuations, only 1 of 38 eligible accounts posts in both the Super Viral and Deadweight tails (context worker's leakage check). So the within-account hit-vs-flop pairs are mostly Medium Viral against Deadweight.
 
 Other facts about the file, all checked in code:
 
@@ -31,46 +32,58 @@ Other people's pieces this branch connects to:
 
 ## Results
 
-All runs use protocol v2 (described below) on the same sample: 27 accounts that have both tiers, 144 posts, 192 within-account viral-vs-Deadweight pairs. Each post was scored in its own model call. Brackets are 95% intervals from resampling accounts. Reports: `eval/reports/backtest-20261015T205419-anthropic.md` (panel, reader, baselines) and the judge reports listed in the judge section.
+All predictors scored the same sample under protocol v2 (described below), and `eval/reports/backtest-v2-combined-anthropic.md` holds every number in this section. The sample has 144 posts from the 27 accounts with both tiers. The judge failed on some posts, and a post any predictor failed on drops out of every predictor's numbers, so the table covers 120 posts, 26 accounts and 140 within-account viral-vs-Deadweight pairs. Each post was scored in its own model call. Brackets are 95% intervals from resampling accounts.
 
-| Predictor | Viral vs Deadweight, same account | Same media status | Viral vs viral |
-| --- | --- | --- | --- |
-| random | 0.495 [0.39, 0.60] | 0.507 | 0.537 |
-| media type | 0.737 [0.63, 0.84] | 0.633 | 0.573 |
-| text length | 0.680 [0.54, 0.82] | 0.667 | 0.476 |
-| TF-IDF logistic, cross-fitted by account | 0.672 [0.55, 0.80] | 0.707 | 0.451 |
-| single reader, Claude | 0.719 [0.64, 0.81] | 0.720 | 0.555 |
-| single reader, GPT | 0.823 [0.75, 0.90] | 0.807 | 0.524 |
-| panel, Claude (`claude-sonnet-5-5`) | 0.797 [0.72, 0.89] | 0.813 | 0.506 |
-| panel, GPT (`gpt-6.1-sol`) | 0.854 [0.76, 0.95] | 0.813 | 0.500 |
-| panel, mean of both | 0.836 [0.75, 0.93] | 0.820 | 0.530 |
+There are two headlines, and they answer different questions.
 
-Without the 9 posts the context worker flags as boost suspects (its enriched CSV at `7f1c759`), 135 posts and 170 pairs remain, and the headline barely moves: panel Claude 0.788, panel GPT 0.865, media type 0.732.
+1. **Viral vs Deadweight, same account.** Can the predictor tell an account's hit from its flop? Here the gap is 10x or more.
+2. **Viral vs viral, same account.** Can it pick the bigger of two of the account's hits? That is the content question qualify faces in production. Within one account the author floor is 0.5 by construction. Across accounts, the context worker's past-only author floor separates Super Viral from Medium Viral at AUC 0.763 (`data/context/analysis.json` on `sam/context-dynamics`, `author_floor_timeline_only`: 58 Super against 162 Medium, medians ending 72 hours before each post).
 
-Paired differences on the same pairs, panel minus baseline:
+| Predictor | Viral vs Deadweight | Viral vs viral |
+| --- | --- | --- |
+| random | 0.493 [0.34, 0.63] | 0.460 |
+| media type | 0.768 [0.67, 0.86] | 0.556 |
+| text length | 0.689 [0.53, 0.84] | 0.460 |
+| TF-IDF logistic, cross-fitted by account | 0.657 [0.53, 0.79] | 0.444 |
+| single reader, Claude | 0.721 [0.64, 0.83] | 0.540 |
+| single reader, GPT | 0.846 [0.77, 0.93] | 0.516 |
+| panel, Claude (`claude-sonnet-5-5`) | 0.811 [0.74, 0.91] | 0.492 [0.32, 0.68] |
+| panel, GPT (`gpt-6.1-sol`) | 0.900 [0.84, 0.95] | 0.540 [0.41, 0.68] |
+| post judge, one post per call | 0.779 [0.66, 0.90] | 0.468 |
+| post judge, `rank_candidates` | 0.831 [0.73, 0.95] | 0.452 |
+| post judge, reference labels shuffled | 0.711 [0.60, 0.84] | 0.540 |
+| the judge's references alone (word overlap) | 0.671 [0.54, 0.81] | 0.429 |
 
-| | minus media | minus length | minus TF-IDF | minus same-model reader |
+Paired differences on the same pairs, for the first headline:
+
+| | minus media | minus TF-IDF | minus same-model reader | other |
 | --- | --- | --- | --- | --- |
-| panel, Claude | +0.060 [-0.05, 0.18] | +0.117 [-0.01, 0.26] | +0.125 [-0.01, 0.25] | +0.078 [0.02, 0.13] |
-| panel, GPT | +0.117 [0.01, 0.22] | +0.174 [0.07, 0.30] | +0.182 [0.02, 0.33] | +0.031 [-0.06, 0.12] |
+| panel, Claude | +0.043 [-0.08, 0.19] | +0.154 [0.01, 0.30] | +0.089 [0.02, 0.15] | |
+| panel, GPT | +0.132 [0.03, 0.24] | +0.243 [0.09, 0.40] | +0.054 [-0.03, 0.13] | |
+| post judge | +0.011 [-0.12, 0.15] | +0.121 [-0.11, 0.35] | | minus its references alone +0.107 [-0.12, 0.33]; minus shuffled labels +0.068 [-0.01, 0.15] |
 
 What I take from this:
 
-- The panel can tell one brand's hit from its flop when the gap is 10x, at about 0.8 to 0.85. The GPT panel cleared every cheap baseline at 95%, barely in the case of media type. The Claude panel didn't clear media type. The report holds 27 paired comparisons, so one interval that just excludes zero is weak evidence.
-- Nobody can rank viral posts against each other. Every predictor sits near 0.5 on viral-vs-viral pairs. The panel can spot a flop, but it can't pick the bigger of two hits, and the second job is closer to what qualify does in production.
-- Media type alone gets 0.737. The harness drafts text, so the panel's edge over media is the part that matters for qualify, and it is small.
-- Personas helped Claude (+0.078 over a single reader, interval excludes zero) and made no difference to GPT. The literature says personas hurt (arXiv 2609.25010). I would keep them until a larger sample says otherwise, and I wouldn't pick personas by their individual scores on 27 accounts.
-- Rerunning the same posts gave Spearman 0.93 (Claude panel), 0.99 (GPT panel) and 0.81 to 0.84 (single readers), so the readers are noisier.
+- **On the content question, nothing shows signal.** Every predictor sits between 0.43 and 0.56 on viral-vs-viral pairs within an account. The panel can spot an account's flop, but it can't pick the bigger of two hits. Across accounts, no predictor beats the author floor on Super against Medium either: the Claude panel gets 0.737 and the GPT panel 0.637 on this sample's 9 Super Viral posts, against the floor's 0.763.
+- **The panel tells a hit from a flop, at about 0.8 to 0.9.** The GPT panel cleared media type, length, TF-IDF and the Claude reader at 95%. The Claude panel cleared TF-IDF and its own reader but not media type. The report holds about 50 paired comparisons, so an interval that just excludes zero is weak evidence.
+- **The within-account pairs aren't an author-floor artifact.** The context worker's past-only author median scores 0.47 within accounts on the 51 sampled pairs that have enough history. Posting volume does carry some signal: posts that came after more of the account's own posts in the previous 2 hours were more often Deadweight (within-account AUC 0.39, so 0.61 inverted).
+- **Media type alone gets 0.768.** The harness drafts text, so only the panel's edge over media matters for qualify, and for the Claude panel that edge is inside the noise.
+- **The judge doesn't beat media type or its own references yet.** Shuffling its reference labels costs 0.068 [-0.01, 0.15], so the labelled references help a little, at the edge of the interval. Ranking a batch with `rank_candidates` (0.831) did better than grading posts one at a time (0.779), with each batch scored in two orders.
+- **Personas helped Claude** (+0.089 over a single reader, interval excludes zero) and made no difference to GPT. The literature says personas hurt (arXiv 2609.25010). I would keep them until a larger sample says otherwise, and I wouldn't pick personas by their individual scores on 26 accounts.
+- **Rerunning the same posts** gave Spearman 0.93 (Claude panel), 0.99 (GPT panel) and 0.81 to 0.84 (single readers).
+- **Boost suspects barely matter.** Without the 6 posts the context worker flags (its enriched CSV at `7f1c759`), 114 posts and 130 pairs remain: panel GPT 0.892, panel Claude 0.796, media type 0.765.
 
-Expect much less in production. On same-author tweet pairs with the same link, wording models reach about 65% and people 61% (Tan, Lee and Pang 2014, arXiv 1405.1438), and content explains R² 0.055 of engagement against 0.317 for author features (arXiv 1812.06034). A judge scoring 0.8 there would be extraordinary.
+The 24 dropped posts skew the sample. The judge can't grade posts from the first days of the dataset, when no earlier Super Viral references exist, and `rank_candidates` then fails the whole batch. That removed CockroachDB, QodoAI, CodeRabbit, E2B and PostHog entirely. The panel-only run on all 144 posts (`eval/reports/backtest-20261015T205419-anthropic.md`) gives panel GPT 0.854, panel Claude 0.797 and media type 0.737, the same picture.
+
+Expect much less in production. On same-author tweet pairs with the same link, wording models reach about 65% and people 61% (Tan, Lee and Pang 2014, arXiv 1405.1438), and content explains R² 0.055 of engagement against 0.317 for author features (arXiv 1812.06034). The viral-vs-viral column above is this dataset's version of that ceiling.
 
 ### The post judge
 
-The backtest scores Dhilan's judge (`harness/post_judge`, PR #5) on the same protocol as the panel, through two predictors in `harness/evals/predictors.py`. `post_judge` grades each post alone against references that `select_references` picks with `before` set to the candidate's day. `post_judge_rank` calls `rank_candidates` on up to 4 posts from one account, in a shuffled order and its reverse, and compares only posts ranked in the same call. The batch-order finding above applies to `rank_candidates`, which scores candidates listwise. A `post_judge_refs_only` baseline scores each post by word overlap with the judge's viral references minus its Deadweight ones; the judge earns its cost only by beating that lookup. `--memory shuffled` keeps the same references but permutes their labels, which is the memory ablation.
+The backtest scores Dhilan's judge (`harness/post_judge`, PR #5) on the same protocol as the panel, through two predictors in `harness/evals/predictors.py`. `post_judge` grades each post alone against references that `select_references` picks with `before` set to the candidate's day. `post_judge_rank` calls `rank_candidates` on up to 4 posts from one account, in a shuffled order and its reverse, and compares only posts ranked in the same call. The batch-order finding below applies to `rank_candidates`, which scores candidates listwise. `post_judge_refs_only` scores each post by word overlap with the judge's viral references minus its Deadweight ones; the judge earns its cost only by beating that lookup. `--memory shuffled` keeps the same references but permutes their labels, which is the memory ablation.
 
-The first judge run aborted when one post hit the BAML client's `max_tokens = 2500` three times. Failed posts now drop out of every predictor's numbers instead. The judge numbers are not in this branch yet.
+The judge failed on 11 of 144 posts (6 had no earlier Super Viral references, 5 hit the BAML client's `max_tokens = 2500`), `rank_candidates` on 17, and the shuffled run on 8. A first judge run aborted on the `max_tokens` failure; failed posts now drop out of every predictor's numbers instead.
 
-How the judge ran: a scratch worktree merged `dhilan/version-1` with this branch. The `baml` CLI came from `brew install baml` (system-wide; the lead has since ruled out system-wide installs without asking), then `baml toolchain install 0.22.2` and `BAML_VERSION=0.22.2 baml generate --directory eval --agent-skill-check off`, which skipped installing BAML's agent skill. The judge ran as `HARNESS_JUDGE_PROVIDER=anthropic HARNESS_JUDGE_MODEL=claude-sonnet-5-5` through the gateway, not the Claude Code CLI client, which would have started a Claude Code session per post.
+How the judge ran: a scratch worktree merged `dhilan/version-1` with this branch at `883f84b`. The `baml` CLI came from `brew install baml` (system-wide; the lead has since ruled out system-wide installs without asking), then `baml toolchain install 0.22.2` and `BAML_VERSION=0.22.2 baml generate --directory eval --agent-skill-check off`, which skipped installing BAML's agent skill. The judge ran as `HARNESS_JUDGE_PROVIDER=anthropic HARNESS_JUDGE_MODEL=claude-sonnet-5-5` through the gateway, not the Claude Code CLI client, which would have started a Claude Code session per post. `harness eval rescore --merge` combined the judge runs with the panel run, because all three share the same sample ids.
 
 ### Leakage
 
@@ -80,7 +93,7 @@ The model could have memorized these posts and their reception. The probe (`harn
 
 `origin/aarav/self-improving` has its own backtest (`harness/backtest.py` there). It samples 10 posts per category from the smaller segments, correlates panel scores with log engagement across accounts, and reported Spearman 0.704 on 30 posts. It also fits panel weights on the same 30 posts it reports.
 
-Every report here recomputes his protocol on the same predictions, 500 draws of the sample (`category_balanced` in `harness/evals/backtest.py`). The Claude panel gets a median of 0.776, which reproduces his number, with 95% of single draws between 0.43 and 0.90. The same predictions score 0.797 on the within-account headline. The protocols disagree on the baselines: text length gets -0.14 under his and 0.68 under mine, and media type gets 0.58 against 0.74. His protocol measures how well a score tracks raw engagement across brands, which mostly measures brand size. Under the earlier v1 protocol, his Coordigent persona file scored like ours within accounts (0.596 against 0.592, `eval/reports/v1/`), so the persona wording mattered little.
+Every report here recomputes his protocol on the same predictions, 500 draws of the sample (`category_balanced` in `harness/evals/backtest.py`). In the panel-only run on all 144 posts, the Claude panel gets a median of 0.776, which reproduces his number, with 95% of single draws between 0.43 and 0.90. The same predictions score 0.797 on the within-account headline. The protocols disagree on the baselines: text length gets -0.14 under his and 0.68 under mine, and media type gets 0.58 against 0.74. His protocol measures how well a score tracks raw engagement across brands, which mostly measures brand size. Under the earlier v1 protocol, his Coordigent persona file scored like ours within accounts (0.596 against 0.592, `eval/reports/v1/`), so the persona wording mattered little.
 
 ## How the backtest works, and what I ruled out
 
