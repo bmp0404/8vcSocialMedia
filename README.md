@@ -26,14 +26,14 @@ that helps the next round make better decisions. `data/` supports all four subsy
 and persisted records; it is not a separate decision stage. The observe subsystem currently uses
 the directory name `observation/`.
 
-### Integration layer: `enginer/`
+### Integration layer: `engine/`
 
-`enginer/` is the integration layer for connecting observe, action, eval, and memory into one
+`engine/` is the integration layer for connecting observe, action, eval, and memory into one
 agent loop. Its responsibility is to coordinate stage order, pass outputs between subsystems,
 and feed evaluation results and remembered lessons into the next round.
 
 The folder is scaffolded for this work. Current CLI orchestration still lives in `harness/cli.py`;
-continuous orchestration in `enginer/` remains to be implemented.
+continuous orchestration in `engine/` remains to be implemented.
 
 ### Run one round, then close the loop
 
@@ -82,10 +82,10 @@ Keyboard: `j`/`k` move, `a` approve, `x` kill, `u` reset, `e` edit.
 ## Layout
 
 Python code lives in `harness/`. The four subsystems keep non-code assets in the following
-directories, with `data/` shared across the loop and `enginer/` reserved for integration:
+directories, with `data/` shared across the loop and `engine/` reserved for integration:
 
 ```text
-enginer/      # Integration and orchestration connecting all four subsystems
+engine/      # Integration and orchestration connecting all four subsystems
 observation/  # Inputs and observations collected by the harness
 action/       # Actions and execution workflows
 eval/         # Evaluations, scoring, and validation
