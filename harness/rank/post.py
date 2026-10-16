@@ -106,7 +106,7 @@ def format_baseline(pairs: list[Pair], corpus: Corpus) -> dict:
             "test": accuracy(cr, [p.group for p in test]).to_dict(), "single_features_test": single}
 
 
-def label_baseline(pairs: list[Pair], votes: dict, schema: dict) -> dict:
+def label_baseline(pairs: list[Pair], votes: dict, schema: dict, corpus: Corpus | None = None) -> dict:
     """Pairwise logistic on LLM label features (harness/rank/reply.label_features), dev authors -> test authors.
     Only pairs whose two posts both have labels count, so the number is on a subset of the test pairs."""
     from harness.rank.reply import label_features
@@ -131,7 +131,13 @@ def label_baseline(pairs: list[Pair], votes: dict, schema: dict) -> dict:
     l2, _ = pairwise.choose_l2(diffs, [p.group for p in dev])
     w = pairwise.fit(diffs, l2)
     cr = [pair_credit(pairwise.dot(w, z(p.winner)), pairwise.dot(w, z(p.loser))) for p in test]
-    return {"l2": l2, "test": accuracy(cr, [p.group for p in test]).to_dict(),
+    vs_length = None
+    if corpus is not None:
+        from harness.corpus.stats import paired_difference
+        cl = [pair_credit(len(clean_text(corpus.get(p.winner).text)), len(clean_text(corpus.get(p.loser).text)))
+              for p in test]
+        vs_length = paired_difference(cr, cl, [p.group for p in test]).to_dict()
+    return {"l2": l2, "test": accuracy(cr, [p.group for p in test]).to_dict(), "minus_length_test": vs_length,
             "test_pairs_labeled": len(test), "test_pairs_total": sum(p.split == "test" for p in pairs),
             "weights": {k: round(v, 4) for k, v in sorted(w.items(), key=lambda kv: -abs(kv[1]))[:12]}}
 

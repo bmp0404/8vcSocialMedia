@@ -158,7 +158,7 @@ def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False,
     if with_labels:
         from harness.label.features import REFERENCE_MODELS, reply_label_votes
         votes, schema = reply_label_votes(label_models or REFERENCE_MODELS)
-        res["label_logistic"] = post.label_baseline(pairs, votes, schema) | {"models": list(label_models or REFERENCE_MODELS)}
+        res["label_logistic"] = post.label_baseline(pairs, votes, schema, corpus) | {"models": list(label_models or REFERENCE_MODELS)}
 
     targets = post.within_account_targets(corpus)
     accounts = sorted({a for a, _ in targets.values()})

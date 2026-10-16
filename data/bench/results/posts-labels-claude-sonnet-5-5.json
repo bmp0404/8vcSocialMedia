@@ -1,0 +1,245 @@
+{
+ "pairs": {
+  "dev": 1157,
+  "test": 1016
+ },
+ "authors": {
+  "dev": 43,
+  "test": 37
+ },
+ "format_logistic": {
+  "l2": 0.1,
+  "weights": {
+   "f:quote": -0.3773,
+   "f:gap_known": -0.3019,
+   "f:log_gap": 0.22,
+   "f:all_lowercase": 0.2121,
+   "f:media": 0.1688,
+   "f:log_chars": 0.0927,
+   "f:link": -0.0758
+  },
+  "test": {
+   "estimate": 0.5915,
+   "ci95": [
+    0.5262,
+    0.6541
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "single_features_test": {
+   "all_lowercase": {
+    "estimate": 0.4951,
+    "ci95": [
+     0.4707,
+     0.5164
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "link": {
+    "estimate": 0.4916,
+    "ci95": [
+     0.4457,
+     0.5393
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "log_chars": {
+    "estimate": 0.6024,
+    "ci95": [
+     0.5478,
+     0.6613
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "log_gap": {
+    "estimate": 0.5394,
+    "ci95": [
+     0.473,
+     0.6038
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "media": {
+    "estimate": 0.5753,
+    "ci95": [
+     0.5316,
+     0.6172
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "quote": {
+    "estimate": 0.563,
+    "ci95": [
+     0.5316,
+     0.5932
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "time_of_day": {
+    "estimate": 0.5266,
+    "ci95": [
+     0.4827,
+     0.5719
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "media_or_link": {
+    "estimate": 0.5797,
+    "ci95": [
+     0.5438,
+     0.6168
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "constant": {
+    "estimate": 0.5,
+    "ci95": [
+     0.5,
+     0.5
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   }
+  }
+ },
+ "label_logistic": {
+  "l2": 0.1,
+  "test": {
+   "estimate": 0.7303,
+   "ci95": [
+    0.6672,
+    0.783
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "minus_length_test": {
+   "estimate": 0.128,
+   "ci95": [
+    0.0588,
+    0.2028
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "test_pairs_labeled": 1016,
+  "test_pairs_total": 1016,
+  "weights": {
+   "l:engagement_guess": 0.5195,
+   "l:novelty": 0.3101,
+   "l:format=promo_or_event": -0.2719,
+   "l:format=other": 0.2109,
+   "l:humor": -0.2094,
+   "l:format=announcement": 0.1539,
+   "l:format=praise_or_thanks": -0.1294,
+   "l:format=joke_or_meme": 0.1003,
+   "l:hostility": 0.0818,
+   "l:format=tip_or_howto": 0.0376,
+   "l:format=opinion_or_take": 0.0279,
+   "l:format=question": -0.025
+  },
+  "models": [
+   "claude-sonnet-5-5"
+  ]
+ },
+ "tfidf_ridge": {
+  "vs_length_all": {
+   "length": {
+    "estimate": 0.5759,
+    "ci95": [
+     0.5311,
+     0.6224
+    ],
+    "pairs": 1839,
+    "clusters": 69
+   },
+   "tfidf_minus_length": {
+    "estimate": 0.1229,
+    "ci95": [
+     0.0721,
+     0.1784
+    ],
+    "pairs": 1839,
+    "clusters": 69
+   }
+  },
+  "vs_length_test": {
+   "length": {
+    "estimate": 0.5921,
+    "ci95": [
+     0.5265,
+     0.6587
+    ],
+    "pairs": 885,
+    "clusters": 34
+   },
+   "tfidf_minus_length": {
+    "estimate": 0.1198,
+    "ci95": [
+     0.0396,
+     0.2053
+    ],
+    "pairs": 885,
+    "clusters": 34
+   }
+  },
+  "alpha": 10.0,
+  "folds": 5,
+  "posts_fit": 1531,
+  "accounts": 74,
+  "clean_pairs_all": {
+   "estimate": 0.6987,
+   "ci95": [
+    0.6579,
+    0.7397
+   ],
+   "pairs": 1839,
+   "clusters": 69
+  },
+  "clean_pairs_test": {
+   "estimate": 0.7119,
+   "ci95": [
+    0.6484,
+    0.7789
+   ],
+   "pairs": 885,
+   "clusters": 34
+  },
+  "viral_vs_deadweight_clean": {
+   "estimate": 0.5814,
+   "ci95": [
+    0.4951,
+    0.7734
+   ],
+   "pairs": 129,
+   "clusters": 12
+  },
+  "viral_vs_deadweight_with_thread_tails_and_immature": {
+   "estimate": 0.6644,
+   "ci95": [
+    0.5448,
+    0.7711
+   ],
+   "pairs": 4785,
+   "clusters": 38
+  },
+  "length_on_viral_vs_deadweight_clean": {
+   "estimate": 0.5116,
+   "ci95": [
+    0.2958,
+    0.8333
+   ],
+   "pairs": 129,
+   "clusters": 12
+  }
+ }
+}
