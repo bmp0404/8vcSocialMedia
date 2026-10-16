@@ -95,6 +95,8 @@ The one live LLM call proposed the GPT panel (research/eval.md, finding 14), and
 
 Mock runs write to `out/iterate/`, which git ignores, and never import real cached scores.
 
+A run that needs another worker's unmerged code runs from a scratch merge. `run-20261016T022529` names `64f065b`, a local merge of sam/iterate `6264e58` and sam/action `8045583`. Its `harness/minds/` is identical to `8045583`, so `git merge` of those two commits rebuilds it.
+
 ## How this differs from aarav/self-improving
 
 Aarav's branch improves the harness from online rewards. Reviews count with weight 1 and real outcomes with weight 3 (`harness/reward.py:16-18`). `bandit.py:37` gives more drafting turns to prompt variants with a higher posterior mean. `evolve.py:95` has an LLM rewrite the best prompt into a challenger and retires the weakest. `evolve.py:41` reweights the panel by correlation once five outcomes exist. `evolve.py:159` has an LLM rewrite `memory/lessons.md`.
