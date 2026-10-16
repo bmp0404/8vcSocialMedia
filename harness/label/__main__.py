@@ -53,7 +53,12 @@ async def _run(args) -> None:
     for model in args.models.split(","):
         run_id = f"{args.run_prefix}-{model}"
         ann = annotate.Annotator(model=model, effort=args.effort or None)
-        tasks.append(annotate.run_annotator(ann, run_id, items, by_id, guard, int(lanes.get(model, 8))))
+        todo = items
+        if args.skip_labeled:
+            have = set().union(*(annotate.done_items(p) for p in annotate.LLM_DIR.glob(f"*-{model}.jsonl")))
+            todo = [it for it in items if it["item_id"] not in have]
+            print(f"[label] {model}: {len(items) - len(todo)} items already labeled in data/labels/llm, {len(todo)} to go")
+        tasks.append(annotate.run_annotator(ann, run_id, todo, by_id, guard, int(lanes.get(model, 8))))
         names.append(run_id)
     results = await asyncio.gather(*tasks)
     for name, stats in zip(names, results):
@@ -106,6 +111,8 @@ def main() -> None:
     r.add_argument("--concurrency", default="", help="per-model lanes, e.g. claude-sonnet-5-5=6,gpt-6.1-sol=10")
     r.add_argument("--limit", type=int, default=0)
     r.add_argument("--max-calls", type=int, default=0, help="cap for this run, below the global budget")
+    r.add_argument("--skip-labeled", action="store_true",
+                   help="skip items this model already answered in any run in data/labels/llm")
     r.add_argument("--fresh-window", action="store_true",
                    help="ignore logged failures; use only after checking that a stopped model answers again")
     sub.add_parser("calls")

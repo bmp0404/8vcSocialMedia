@@ -8,8 +8,8 @@ Corpus and benchmarks are in `harness/corpus/DESIGN.md`.
 
 - Claude Sonnet 5.5 and GPT-6.1 Sol label seven fields with Krippendorff's alpha between 0.51 and 0.86 on a 1,000-item pilot. Two fields from the starting set were dropped.
 - No cheaper Claude-and-GPT pair matched that agreement, so the scale run uses Sonnet and Sol.
-- Claude labeled all 14,462 corpus items. GPT-6.1 Sol labeled 1,976 before the Codex pool behind the gateway stopped serving it (85 of its last 200 calls failed, then every call returned 503). Gate 3 asks for 10,000 items with both; this run has 1,976.
-- As ranker features, Claude's labels beat the hand-built text block (0.683 against 0.577 alone) but add nothing once timing and reach are known: +0.007 [-0.036, 0.040] on the test weeks. On posts they rank an account's better post 0.730 of the time.
+- Claude labeled all 14,462 corpus items. GPT-6.1 Sol labeled 5,113, including every one of the 3,580 benchmark replies, in the stretches when the Codex pool behind the gateway was serving it. Gate 3 asks for 10,000 items with both; this run has 5,113, and 9,349 remain for Sol.
+- As ranker features, the labels beat the hand-built text block (0.677 against 0.577 alone, both annotators averaged) but add nothing once timing and reach are known: +0.005 [-0.041, 0.040] on the test weeks. On posts Claude's labels rank an account's better post 0.730 of the time.
 
 ## Annotators
 
@@ -96,7 +96,7 @@ None of these clear delay on replies (0.755 on test); the ranker ablation is the
 
 ## Labels as ranker features
 
-The question for the labels: added to the reply ranker (`harness/corpus/DESIGN.md`, "Reply ranker"), do they beat the text block? Label features are each ordinal field's mean rank over the annotators and each enum value's share. The run below uses Claude Sonnet 5.5's labels, which cover all 3,580 benchmark replies; GPT-6.1 Sol's cover too few (see Scale). `data/bench/results/replies-labels-claude-sonnet-5-5.json`; rerun with `python -m harness.rank replies --labels --label-models claude-sonnet-5-5`.
+The question for the labels: added to the reply ranker (`harness/corpus/DESIGN.md`, "Reply ranker"), do they beat the text block? Label features are each ordinal field's mean rank over the annotators and each enum value's share. The table uses Claude Sonnet 5.5's labels alone (`data/bench/results/replies-labels-claude-sonnet-5-5.json`, `python -m harness.rank replies --labels --label-models claude-sonnet-5-5`). Once Sol had labeled all 3,580 benchmark replies too, the same run with both annotators averaged (`replies-labels.json`, `python -m harness.rank replies --labels`) gave the same answer on the test weeks: labels alone 0.677 [0.612, 0.740], +0.100 [0.006, 0.181] over the text block; added to timing and text, +0.005 [-0.041, 0.040]; added to timing, -0.007 [-0.056, 0.035].
 
 | Cutoff (eval threads) | text alone | labels alone | timing + text | timing + text + labels | labels added to timing + text | labels added to timing |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -115,21 +115,30 @@ On posts the labels do carry signal. A pairwise logistic on Claude's labels, fit
 
 ## Scale
 
-The surviving schema went to every corpus item outside the pilot, ordered so the benchmark items came first: 3,080 reply-benchmark items, 1,055 post-benchmark items, then 9,327 others, listed in `data/labels/scale-order.txt` (`python -m harness.label run --set data/labels/scale-order.txt --models claude-sonnet-5-5,gpt-6.1-sol --run-prefix scale-v2`, prompt `eb8acc6a017cdcc1`).
+The surviving schema went to every corpus item outside the pilot, ordered so the benchmark items came first: 3,080 reply-benchmark items, 1,055 post-benchmark items, then 9,327 others, listed in `data/labels/scale-order.txt` (run prefixes `scale-v2` and, after a restart, `scale-v2b`; prompt `eb8acc6a017cdcc1`).
 
 | | Claude Sonnet 5.5 | GPT-6.1 Sol | Both |
 | --- | --- | --- | --- |
-| Items with a label (pilot and scale) | 14,462 (8,716 replies, 5,746 posts) | 1,976 | 1,976 (1,476 replies, 500 posts) |
+| Items with a label (pilot and scale) | 14,462 (8,716 replies, 5,746 posts) | 5,113 | 5,113 (3,580 replies, 1,533 posts) |
+| Benchmark items covered | all | all 3,580 replies; 1,289 of 1,311 posts | same as Sol |
 
-Sol ran at about 60 calls a minute from 08:14 UTC, slowed to under 10 by 08:40, and by 09:37 had failed 85 of its last 200 calls with 502 ("servers are currently overloaded") and 503 ("auth_unavailable: no auth available ... model=gpt-6.1-sol"). The failure-rate stop now works per model (`Guard` in `annotate.py`), so Sol stopped while Sonnet finished. At 10:05 Sol still returned 503 on every call; GPT-6 Luna answered. To finish the GPT side when Sol answers again:
+Sol's throughput followed the Codex pool behind the gateway, not the request rate:
+
+- 08:14 to 08:30 UTC, about 60 calls a minute.
+- 08:40 to 09:37, under 10 a minute, then 85 of its last 200 calls failed with 502 ("servers are currently overloaded") and 503 ("auth_unavailable: no auth available ... model=gpt-6.1-sol"). The per-model guard stopped it while Sonnet finished.
+- 10:05, every call returned 503. 10:37, it answered again and I resumed it.
+- 10:37 to 12:51, between 10 and 60 calls a minute. Eight requests at once drew 17% failures for no gain; four did best. Twice, at 12:14 and 12:44, the gateway answered 429 "All credentials for model gpt-6.1-sol are cooling down (last error: usage_limit_reached)" and the run sat idle for about 15 minutes. I stopped it at 12:51, in the second cooldown.
+
+To finish the GPT side:
 
 ```sh
-uv run python -m harness.label run --set data/labels/scale-order.txt --models gpt-6.1-sol --run-prefix scale-v2 --concurrency gpt-6.1-sol=3 --fresh-window
+uv run python -m harness.label run --set data/labels/scale-order.txt --models gpt-6.1-sol \
+  --run-prefix scale-v2b --concurrency gpt-6.1-sol=4 --skip-labeled
 ```
 
-It skips the items Sol already labeled. During the pilot, three requests per GPT model ran with under 1% failures and eleven drew 40 to 56%; in the scale run, six ran cleanly for 20 minutes before the pool degraded. Switching the remaining items to Luna would be faster to start but would put `engagement_guess` below the agreement gate (0.32 with Sonnet), so I left that choice to the lead.
+`--skip-labeled` skips the 4,113 scale items Sol already answered in either run. At the 30 to 60 calls a minute it managed when the pool served it, the other 9,349 take three to five hours, and they draw on the same Codex usage limit the cooldowns came from, which other work on this machine shares. Switching them to GPT-6 Luna would put `engagement_guess` below the agreement gate (0.32 with Sonnet). Both are the lead's call.
 
-Of the 1,976 items both models labeled, 170 agree on all seven fields and 1,806 differ on at least one (494 on one field, 601 on two, 478 on three, 233 on four or more). Of the ordinal disagreements, 94% are one step apart (3,536 of 3,777); the other 362 are `format`. That is why the queue meant for a person is the audit set, not the disagreement list.
+Of the 5,113 items both models labeled, 411 agree on all seven fields and 4,702 differ on at least one (1,209 on one field, 1,566 on two, 1,232 on three, 695 on four or more). Of the ordinal disagreements, 94% are one step apart (9,469 of 10,080); the other 936 are `format`. That is why the queue meant for a person is the audit set, not the disagreement list.
 
 **Calls, tokens and errors per model**, every logged HTTP attempt in `data/labels/calls/` (pilot, scale, retest, probes and the 49 calls of an aborted first scale launch whose prompt still mentioned a dropped field):
 
@@ -137,11 +146,11 @@ Of the 1,976 items both models labeled, 170 agree on all seven fields and 1,806 
 | --- | --- | --- | --- | --- | --- | --- |
 | claude-sonnet-5-5 | 15,497 | 15,492 | 4,577,418 | 21,198,599 | 1,991,897 | timeout 4, invalid answer 1 |
 | claude-haiku-5-5 | 1,012 | 999 | 301,701 | 1,698,820 | 169,074 | invalid answer 13 |
-| gpt-6.1-sol | 2,263 | 1,999 | 3,101,657 | 27,520 | 219,092 | 502: 121, 503: 112, 429: 24, timeout 4, 408: 3 |
+| gpt-6.1-sol | 5,520 | 5,136 | 7,498,638 | 118,400 | 586,238 | 429: 139, 502: 121, 503: 112, timeout 8, 408: 4 |
 | gpt-6-luna | 1,029 | 1,004 | 1,673,903 | 4,352 | 116,747 | 503: 13, 502: 10, 429: 1, timeout 1 |
 | gpt-6-sol, gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna | 39 | 30 | 43,576 | 1,280 | 5,172 | 502 and 503: 9 |
 
-That is 19,840 logged calls of the 40,000 budget. About 52 more went out from probe scripts that did not log to that folder, and each of five restarts dropped at most 16 requests in flight, which no log counts. "Invalid answer" means a reply that failed schema validation (Haiku invented formats such as "wish_or_opinion") and was retried. The gateway reported cache reads for GPT models only rarely, so their input tokens are mostly uncached.
+That is 23,097 logged label calls. Phase D's judges made 1,191 more (`harness/corpus/DESIGN.md`), probe scripts that did not log to that folder about 60, and each of about ten restarts dropped at most 16 requests in flight that no log counts. The total stays under 24,600 of the 40,000 budget. "Invalid answer" means a reply that failed schema validation (Haiku invented formats such as "wish_or_opinion") and was retried. The gateway reported cache reads for GPT models only rarely, so their input tokens are mostly uncached.
 
 ## The label store
 
@@ -167,7 +176,7 @@ API in `harness/label/store.py` (module functions use `data/labels/`; `Store(roo
 | `queue(mode, limit, offset)` | entries with the item, `n_disagree`, `disagree_fields`, `llm_labeled`, `human_labeled` |
 | `append_human(item_id, labeler, labels, note)` | the appended row; unknown fields, values outside the schema, fields that don't apply to the item's kind and blank labelers raise `ValueError` |
 
-Queue modes: `disagree` (LLM votes differ on a field no human has settled, most disagreeing fields first), `unlabeled` (no human label yet, disagreements first), `all` (everything, disagreements first) and `audit`. One developer can't reconcile thousands of disagreements, so `audit` is the queue meant for a person: 200 items frozen by `python -m harness.label audit` from the 1,976 items both models labeled, an equal share from each of six strata (post or reply, times 0, 1 to 2, or 3 or more disagreeing fields; posts with no disagreement ran out at 28, so the other strata took the rest), so 200 human labels estimate how often the LLM labels are right both where the models agree and where they don't. Labeled items drop out of it.
+Queue modes: `disagree` (LLM votes differ on a field no human has settled, most disagreeing fields first), `unlabeled` (no human label yet, disagreements first), `all` (everything, disagreements first) and `audit`. One developer can't reconcile thousands of disagreements, so `audit` is the queue meant for a person: 200 items frozen by `python -m harness.label audit` from the 5,113 items both models labeled, an equal share from each of six strata (post or reply, times 0, 1 to 2, or 3 or more disagreeing fields), so 200 human labels estimate how often the LLM labels are right both where the models agree and where they don't. Labeled items drop out of it.
 
 A human label never replaces an LLM label: `consensus` reports it under `human`, and the LLM files are never rewritten. The store loads `llm/` once per process, so a server must restart to see a new run. `tests/test_label_store.py` has 17 tests on fixtures, covering every function, mode and validation error.
 
