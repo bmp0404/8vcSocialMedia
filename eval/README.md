@@ -114,3 +114,34 @@ uv run python -m harness run --provider mock --sources sample
 
 [The eval design](JUDGE_DESIGN.md) separates this judge from the backtests that measure it and
 lists the next evaluation systems to build.
+
+## Rank alternatives in one request
+
+Use `rank_candidates` when choosing among 2 to 6 drafts for the same target. Every candidate must
+share a mission, context, and lane. Give each draft a stable ID and pass a train-only reference pool
+containing both performance classes. The result includes every candidate exactly once, ranked by
+a relative 0 to 100 score, with a verdict, confidence, reason, and reference citations.
+
+```python
+from baml_sdk import RankingCandidate
+from harness.post_judge.ranking import rank_candidates
+
+# candidate_a and candidate_b are CandidatePost objects with the same context.
+result = rank_candidates(
+    [RankingCandidate(id="a", post=candidate_a), RankingCandidate(id="b", post=candidate_b)],
+    references,
+    dataset_sha256=training_dataset_hash,
+)
+for item in result.ranking.ranked:
+    print(item.candidate_id, item.score, item.verdict, item.reason)
+```
+
+This makes one model request for the whole batch. Scores are relative within the batch and are
+not interchangeable with single-post rubric scores. Ties are allowed. A batch can contain no
+`Strong` drafts; do not post the top draft merely because it ranked first. Malformed rankings,
+invented IDs, invalid scores, and leaked candidate text raise errors. A timeout is an error,
+not an abstention or a low score. No sub-10-second latency guarantee has been established.
+
+For offline action tests, stub the BAML `RankCandidates` boundary with an explicit
+`CandidateRanking` fixture, as shown in `tests/test_post_ranking.py`. Production code never
+substitutes fixture scores after a provider failure.

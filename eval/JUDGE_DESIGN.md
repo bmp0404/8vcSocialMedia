@@ -26,6 +26,13 @@ The prompt treats candidate text and historical examples as data. It asks for un
 reference domains differ, when reply context is absent, or when media and exposure could explain
 performance. These are instructions to the judge, not proven defenses against prompt injection.
 
+## Batch ranking
+
+`rank_candidates` now compares 2 to 6 alternatives for a shared mission, context and lane in one
+BAML call. It returns relative scores and reasons, with evidence citations for each draft. This
+supports the action team's best-of-N selection. It does not implement the position-swap benchmark
+or human preference dataset described below; those remain necessary to measure ranking quality.
+
 ## Next evaluation systems
 
 These are designs, not implemented systems. Sam owns the first row; agree on ownership before
