@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 
 from harness import config, memory
 from harness.llm import MockLLM
+from harness.minds import lanes
 from harness.models import Action, Narrative, Signal
 from engine.runner import Components, Options, run_loop
 from engine.runtime import runtime
@@ -39,11 +40,40 @@ class EngineTests(unittest.TestCase):
                          ["memory_read", "observe", "orient", "action", "eval", "persist", "memory_write"])
         self.assertIn("Prior lesson", self.components.observe.call_args.args[1])
         self.assertEqual(self.components.decide.call_args.args[2], "Prior lesson")
-        self.components.save_run.assert_called_once_with([self.action])
+        self.components.save_run.assert_called_once_with([self.action], account="_sgu_")
         self.components.finish_memory.assert_called_once_with(self.llm)
         artifact = json.loads(Path(result["recommendations_path"]).read_text())
         self.assertEqual(artifact["run_id"], 7)
         self.assertEqual(artifact["recommendations"][0]["id"], "draft-1")
+
+    def queue_abstention(self, *args, **kwargs):
+        lanes.PENDING.append(lanes.Decision(lanes.REPLY_LANE, "https://x.com/a/status/1", "abstain", "stale_target",
+                                            "posted 95 minutes ago"))
+        return []
+
+    def test_round_writes_the_decision_log_with_its_abstentions(self):
+        self.addCleanup(lanes.PENDING.clear)
+        self.components.decide.side_effect = self.queue_abstention
+        result = self.run_engine()[0]
+        self.assertEqual(result["decisions_path"], str(self.root / "decisions-run7.json"))
+        log = json.loads((self.root / "decisions-run7.json").read_text())
+        self.assertEqual(log["run_id"], 7)
+        self.assertEqual([(d["tool"], d["reason"], d["detail"]) for d in log["decisions"]],
+                         [("abstain", "stale_target", "posted 95 minutes ago")])
+        self.assertEqual(lanes.PENDING, [])
+
+    def test_failed_round_drops_its_queued_decisions(self):
+        self.addCleanup(lanes.PENDING.clear)
+        self.components.decide.side_effect = lambda *a, **k: self.queue_abstention() or [self.action]
+        self.components.evaluate.side_effect = RuntimeError("judge unavailable")
+        with self.assertRaises(RuntimeError):
+            self.run_engine()
+        self.assertEqual(lanes.PENDING, [])
+        self.assertFalse(list(self.root.glob("decisions-run*.json")))
+
+    def test_recommendations_name_the_account(self):
+        artifact = json.loads(Path(self.run_engine()[0]["recommendations_path"]).read_text())
+        self.assertEqual(artifact["account"], "_sgu_")
 
     def test_retry_receives_critique_and_preserves_vetoed_history(self):
         revised = Action(id="draft-2", type="post", text="Revised", mind="test", narrative_id="story")
@@ -56,7 +86,7 @@ class EngineTests(unittest.TestCase):
         result = self.run_engine(retries=2)[0]
         self.assertEqual(result["actions"], 2)
         self.assertEqual(self.components.decide.call_args.kwargs["vetoed"][0].critique, "Needs support")
-        self.components.save_run.assert_called_once_with([self.action, revised])
+        self.components.save_run.assert_called_once_with([self.action, revised], account="_sgu_")
 
     def test_no_signals_is_abstention_and_still_finishes_memory(self):
         self.components.observe.return_value = []
@@ -64,7 +94,7 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(result["reason"], "no_signals")
         self.assertEqual(result["status"], "abstained")
         self.components.decide.assert_not_called()
-        self.components.save_run.assert_called_once_with([])
+        self.components.save_run.assert_called_once_with([], account="_sgu_")
         self.components.finish_memory.assert_called_once()
 
     def test_empty_action_is_not_retried(self):

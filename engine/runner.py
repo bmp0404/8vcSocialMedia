@@ -10,10 +10,11 @@ from typing import Callable
 from harness import config, memory
 from harness.learn import learn
 from harness.llm import LLM
-from harness.minds import decide
+from harness.minds import decide, lanes, write_decision_log
 from harness.models import Action, Narrative, Signal
 from harness.orient import orient
 from harness.sources import observe
+from harness.sources.watch import account_handle
 
 from .evaluation import panel_evaluate
 
@@ -41,7 +42,10 @@ class Components:
     orient: Callable[..., list[Narrative]] = orient
     decide: Callable[..., list[Action]] = decide
     evaluate: Callable[..., tuple[list[Action], dict]] = panel_evaluate
-    save_run: Callable[[list[Action]], int] = memory.save_run
+    save_run: Callable[..., int] = memory.save_run
+    # decide() queues every decision, abstentions included, in lanes.PENDING; this writes them out as
+    # decisions-run<id>.json, the file `harness run` writes, so engine rounds keep their abstentions.
+    log_decisions: Callable[[int, Path], Path | None] = write_decision_log
     finish_memory: Callable[[LLM], object] = learn
 
 
@@ -68,6 +72,7 @@ def run_round(llm: LLM, mission: str, sources: list[str], options: Options,
         return result
 
     try:
+        account, _ = account_handle()
         lessons = stage("memory_read", components.read_memory)
         observation_context = f"{mission}\n\nLESSONS FROM PREVIOUS ROUNDS:\n{lessons}"
         signals = stage("observe", lambda: components.observe(sources, observation_context))
@@ -101,10 +106,13 @@ def run_round(llm: LLM, mission: str, sources: list[str], options: Options,
         write_json(folder / "actions.json", {"actions": [a.to_dict() for a in all_actions], "evaluations": evaluations})
         if len({a.id for a in all_actions}) != len(all_actions):
             raise ValueError("Action IDs must be unique across retry attempts")
-        run_id = stage("persist", lambda: components.save_run(all_actions))
+        run_id = stage("persist", lambda: components.save_run(all_actions, account=account or None))
         journal["run_id"] = run_id
+        decisions_path = components.log_decisions(run_id, output_dir)
+        journal["decisions_path"] = str(decisions_path) if decisions_path else None
         recommendation_path = output_dir / f"recommendations-engine-{round_id}.json"
-        write_json(recommendation_path, {"run_id": run_id, "recommendations": [a.to_dict() for a in kept[:options.top]]})
+        write_json(recommendation_path, {"run_id": run_id, "account": account or None,
+                                         "recommendations": [a.to_dict() for a in kept[:options.top]]})
         journal["recommendations_path"] = str(recommendation_path)
         journal["recommendations"] = min(len(kept), options.top)
         journal["actions"] = len(all_actions)
@@ -116,6 +124,8 @@ def run_round(llm: LLM, mission: str, sources: list[str], options: Options,
         write_json(folder / "round.json", journal)
         return journal
     except Exception as exc:
+        # A failed round's queued decisions would otherwise be written under the next round's run id.
+        lanes.PENDING.clear()
         journal["status"] = "failed"
         journal["error_type"] = type(exc).__name__
         write_json(folder / "round.json", journal)
