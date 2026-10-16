@@ -206,6 +206,7 @@ def render(d: ReportData) -> str:
         needs.append(f"Free disk is {d.disk_free_gb:.1f} GB, under the 8 GB floor")
     needs += [f"Queue spec {q['spec']} is stuck: {q['note']}" for q in d.queue if q["state"] == "stale"]
     needs += [f"Queue spec {q['spec']} won't test what it says: {q['note']}" for q in d.queue if q["state"] == "refused"]
+    needs += [f"Queue spec {q['spec']} can't run in this checkout: {q['note']}" for q in d.queue if q["state"] == "blocked"]
     needs += [f"Queue spec {q['spec']} can't run until the gateway answers: {q['note']}" for q in d.queue
               if q["state"] == "deferred" and q["note"].startswith("waiting for")]
     lines += ["", "## Needs a person", ""] + ([f"- {n}." for n in needs] or ["- Nothing."])

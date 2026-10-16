@@ -28,6 +28,16 @@ A code change is tested through the knob that switches it on, because the engine
 can hash, diff and revert; the commit must already be in the checkout the loop runs from, so the arm
 really runs that code. Anything else in the file is an error, so a typo can't silently drop a guardrail.
 
+Two optional keys size and source a spec's items, for a question one phase's default items can't decide:
+
+    sources = ["watcher", "corpus"]       # where the instrument's items come from (its `sources`); default: watcher
+    min_clusters = 40                     # each phase waits for this many clusters and may use this many
+
+`min_clusters` raises the screen's cap of 40 and the confirmation's floor of 20 and cap of 30 to itself, and
+makes a screen wait, rather than run, until it has that many clusters rooted by its cutoff. A source whose
+items all predate the proposal (the corpus) can only feed the screen, because a confirmation uses items rooted
+after the cutoff.
+
 A spec may also name a baseline, for a knob only some arms read:
 
     [baseline]                            # optional; one to four knobs both arms set
@@ -66,7 +76,7 @@ QUEUE_DIR = config.ROOT / "eval" / "experiments" / "queue"
 ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 COMMIT = re.compile(r"^[0-9a-f]{7,40}$")
 TOP_KEYS = {"id", "proposed_at", "proposed_by", "profile", "fitness", "hypothesis", "source", "label", "change",
-            "guardrails", "budget", "threads", "baseline"}
+            "guardrails", "budget", "threads", "baseline", "sources", "min_clusters"}
 REQUIRED = ("id", "proposed_at", "proposed_by", "profile", "fitness", "hypothesis", "change")
 CHANGE_KEYS = {"kind", "knobs", "commit", "summary"}
 BUDGET_KEYS = {"screen_calls", "confirm_calls"}
@@ -84,6 +94,9 @@ MIN_CONFIRM_CLUSTERS = 20
 CONFIRM_CLUSTERS = 30
 SCREEN_CLUSTERS = 40
 CLOCK_SKEW = timedelta(minutes=10)  # how far in the future a proposal time may be
+# The most clusters a spec may ask each phase for. A lineup thread costs 12 or more calls across three arms, so the
+# 800-call cycle can't afford more than about 66; 100 catches a typo. Policy.
+MAX_MIN_CLUSTERS = 100
 
 
 class SpecError(ValueError):
@@ -111,6 +124,8 @@ class Spec:
     screen_calls: int = DEFAULT_CALLS
     confirm_calls: int = DEFAULT_CALLS
     baseline: dict[str, Any] = field(default_factory=dict)  # knobs both arms set; empty means the champion
+    sources: tuple[str, ...] = ()  # the instrument's item sources; empty means its default
+    min_clusters: int = 0  # 0 means the phases' own floors and caps
 
     @property
     def digest(self) -> str:
@@ -119,15 +134,24 @@ class Spec:
                  for name, path in zip(self.thread_names, self.threads)]
         what = {"fitness": self.fitness, "profile": self.profile, "knobs": self.knobs, "kind": self.kind,
                 "commit": self.commit, "guardrails": self.guardrails, "threads": files}
-        if self.baseline:  # only when set, so a spec written before baselines keeps its digest and its records
-            what["baseline"] = self.baseline
+        # Each optional key joins only when set, so a spec written before it keeps its digest and its records.
+        for key in ("baseline", "sources", "min_clusters"):
+            if getattr(self, key):
+                what[key] = list(self.sources) if key == "sources" else getattr(self, key)
         return hashlib.sha256(json.dumps(what, sort_keys=True).encode()).hexdigest()[:12]
+
+    def clusters(self, phase: str) -> tuple[int, int]:
+        """(fewest, most) clusters the phase may run on: the policy above, raised to `min_clusters`."""
+        floor, cap = (1, SCREEN_CLUSTERS) if phase == "screen" else (MIN_CONFIRM_CLUSTERS, CONFIRM_CLUSTERS)
+        return max(floor, self.min_clusters), max(cap, self.min_clusters)
 
     def proposer(self, phase: str, cutoff: datetime) -> dict:
         return {"kind": "queue", "spec": self.id, "spec_digest": self.digest, "phase": phase, "source": self.source,
                 "by": self.proposed_by, "proposed_at": cutoff.isoformat(timespec="seconds"),
                 **({"commit": self.commit, "summary": self.summary} if self.kind == "code" else {}),
-                **({"baseline": dict(self.baseline)} if self.baseline else {})}
+                **({"baseline": dict(self.baseline)} if self.baseline else {}),
+                **({"sources": list(self.sources)} if self.sources else {}),
+                **({"min_clusters": self.min_clusters} if self.min_clusters else {})}
 
 
 def _datetime(value: Any) -> datetime:
@@ -264,6 +288,19 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT, now
         missing = [t for t in threads if not (repo / t).is_file()]
         if missing:
             raise SpecError(f"{sid}: thread file(s) {missing} not found under {repo}")
+    sources = data.get("sources", [])
+    if "sources" in data:
+        offered = getattr(fit, "sources", None)
+        if offered is None:
+            raise SpecError(f"{sid}: {data['fitness']} takes no sources")
+        if not isinstance(sources, list) or not sources or not all(isinstance(x, str) for x in sources):
+            raise SpecError(f"{sid}: sources must be a non-empty list of names from {list(offered)}")
+        if len(set(sources)) != len(sources) or set(sources) - set(offered):
+            raise SpecError(f"{sid}: sources {sources} must name each of {list(offered)} at most once")
+    min_clusters = data.get("min_clusters", 0)
+    if "min_clusters" in data and (isinstance(min_clusters, bool) or not isinstance(min_clusters, int)
+                                   or not 1 <= min_clusters <= MAX_MIN_CLUSTERS):
+        raise SpecError(f"{sid}: min_clusters must be an integer from 1 to {MAX_MIN_CLUSTERS}, got {min_clusters!r}")
     proposed_at = _datetime(data["proposed_at"])
     if proposed_at > (now or datetime.now(timezone.utc)) + CLOCK_SKEW:
         raise SpecError(f"{sid}: proposed_at {proposed_at.isoformat()} is in the future; a screen would include "
@@ -273,7 +310,8 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT, now
                 knobs=dict(knob_values), kind=kind, source=data.get("source"), label=data.get("label", ""),
                 commit=commit, summary=summary, guardrails={k: float(v) for k, v in guardrails.items()},
                 threads=tuple(repo / t for t in threads), thread_names=tuple(threads), screen_calls=calls["screen_calls"],
-                confirm_calls=calls["confirm_calls"], baseline=dict(base_values))
+                confirm_calls=calls["confirm_calls"], baseline=dict(base_values), sources=tuple(sources),
+                min_clusters=min_clusters)
 
 
 def load(directory: Path, catalog: dict[str, type], *, repo: Path = config.ROOT,

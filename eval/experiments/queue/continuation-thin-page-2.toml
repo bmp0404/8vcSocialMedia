@@ -1,0 +1,70 @@
+# Why this follow-up. continuation-thin-page (exp-20261016-action-c9a9a8) cut detection from 0.636 to 0.273 on 11
+# devtools watcher threads, -0.364 [-0.636, -0.091], p 0.006, but its bound didn't clear the 0.182 noise floor. That
+# run's champion arm, raw continuation on the full page, also ran as the champion and its repeat in the page-filter
+# screen (exp-20261016-action-3eed44): the same config on the same 11 threads (item hash 04fb2dc5f27a). Its four
+# draws were found 2, 4, 5 and 7 times out of 11. The 7 was the thin-page run's champion. Pooled, the full page is
+# found 0.41 of the time against 0.27 for the thin page, so the effect is nearer -0.14 than -0.36. It bears on the lane's
+# 5-reply minimum (harness/minds/settings.py, min_page_replies, unmeasured), below which the lane drops continuation.
+#
+# Size. Across the nine arm pairs in the three live screens, a thread's paired difference has a standard deviation
+# of 0.48 to 0.72, about 0.6. At 40 threads the standard error is 0.6 / sqrt(40) = 0.095. With one comparison in the
+# run, the gate promotes when the 97.5% lower bound (about 1.96 standard errors under the observed change) clears the
+# noise floor, which averages about 0.8 standard errors. So 40 threads promote an observed cut of about 0.26 or more.
+# By a normal approximation, not a run, that gives about a 10% chance of a promotion if the true cut is 0.14 and 85%
+# if it is 0.36. The likely outcome is inconclusive, with a 95% interval about +/-0.19 wide, which still bounds how
+# much a thin page can cost. Deciding a 0.14 cut at 80% power would take about 240 threads a phase, 2,900 calls; the
+# 800-call cycle affords 66.
+#
+# Sources. The screen draws on the devtools watcher threads and on the corpus's reply threads (data/corpus,
+# rebuilt locally in each checkout). Of the corpus's 138 threads the lineup can use, 96 are rooted by accounts the
+# devtools watch list covers, and 45 of those were sampled at coverage 0.8 or more, the watcher's own keep line. The
+# watcher also read 5 of the 45, and the instrument keeps its copy. That makes 51 threads; the screen keeps the 40
+# rooted latest, 11 from the watcher and 29 from the corpus, by 15 accounts. Both sources read replies through XReader.replies: X's first page in likes order merged with its first
+# page in recency order. A thread whose replies fit on one page, about 33, is sampled whole. In a bigger thread the
+# lineup's six real replies and its page (ranks 7 to 18) come from the likes page, so they are the most-liked among
+# the replies X ranks first, which leans toward early replies. That shapes the lineup and both arms' pages alike, so
+# it moves the detection rate, not the difference between arms. The coverage line keeps the unsampled share under a
+# fifth in both sources.
+#
+# Two differences matter more. First, the full-page arm's page is every reply after the top six, up to 12, so its
+# size follows the thread: 6 to 12 in these 40, and 12 in 17 of them. Corpus threads are bigger (12 in 15 of 29) than
+# watcher threads (6 in 5 of 11), so the screen, mostly corpus, compares 2 replies with more than the confirmation will.
+# If the effect grows with that gap, the screen can pass and the confirmation fail. Second, the context worker picked
+# the corpus's roots by virality where the watcher takes every post, and read each thread once, days to weeks later.
+# The wnba profile isn't pooled: the instrument's veto judges every draft against the active profile's mission, and
+# wnba adds 3 watcher threads. The bootstrap resamples threads, and one account roots 8 of the 40, so the interval may
+# be narrower than the evidence.
+#
+# Confirmation uses only devtools watcher threads rooted after the loop first sees this file, because every corpus
+# thread predates it. From 34 kept devtools roots with 11 the lineup can use, rooted from 2026-10-14 16:29 to
+# 2026-10-16 15:11, the watcher adds about 4 to 7 such threads a day. 40 takes about 6 to 10 days, plus up to a
+# day for the +24h reads, plus up to 6 hours for the next cycle. Below 2 a day it would pass the loop's 21-day wait.
+#
+# What the thin page is. The lineup's 2-reply page is the two most-liked replies after the lineup's six, not the first
+# two replies a fresh post gets, as on the hot path. A promotion says a short page of good replies writes no worse
+# than a full one. It doesn't show that the earliest replies make a good page.
+id = "continuation-thin-page-2"
+proposed_at = 2026-10-16T16:51:00Z
+proposed_by = "agent:B9 builder"
+profile = "devtools"
+fitness = "action_lineup"
+hypothesis = "Continuing a page of only the two most-liked replies after the lineup's six makes the reply harder for the lineup detector to find than continuing the full page of up to 12, without lowering the veto pass rate or raising the GPT detector's rate."
+source = "exp-20261016-action-c9a9a8 (the 11-thread screen) and the four full-page draws on its threads (with exp-20261016-action-3eed44)"
+label = "continuation on a 2-reply page, 40 threads"
+sources = ["watcher", "corpus"]
+min_clusters = 40
+
+[baseline]
+knobs = { "action.reply.generation" = "continuation" }
+
+[change]
+kind = "code"
+knobs = { "action.page_replies" = 2 }
+commit = "ebd16a5"
+summary = "The lineup's raw continuation arm puts only the first action.page_replies of its likes-ordered page replies on the page."
+
+[budget]
+# 4 calls a thread an arm (the writer, two detectors, the instrument's veto), 12 for three arms: 480 for 40 threads,
+# plus 3 probe calls. Both phases fit the loop's 800-call cycle.
+screen_calls = 500
+confirm_calls = 500

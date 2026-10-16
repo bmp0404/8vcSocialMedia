@@ -25,7 +25,7 @@ class Threads:
 
     def thread(self, root_at: datetime, read_after: timedelta, likes: list[int], author="brand", profile="devtools",
                reply_delay=timedelta(minutes=5), root_likes=0, texts: list[str] | None = None,
-               root_text: str | None = None):
+               root_text: str | None = None, coverage: float = 1.0):
         root = sid(root_at)
         read = root_at + read_after
         extra = {"text": root_text} if root_text else {}
@@ -34,7 +34,7 @@ class Threads:
             rid = sid(root_at + reply_delay * (i + 1), i)
             text = {"text": f"@{author} {texts[i]}"} if texts else {}
             self.replies.append(row(rid, f"fan{i}", read, likes=n, replying_to=author, replying_to_status=root,
-                                    reply_to_post=root, coverage=1.0, watch_profile=profile, **text))
+                                    reply_to_post=root, coverage=coverage, watch_profile=profile, **text))
         return root
 
     def write(self):

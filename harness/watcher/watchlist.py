@@ -30,6 +30,12 @@ class Watchlist:
     handles: tuple[Watched, ...]
     keywords: tuple[str, ...]
 
+    def covers(self, author: str, text: str) -> bool:
+        """True when a root post by `author` with `text` is one this list watches: an account's post, or a broad
+        account's post that holds a keyword. For posts read elsewhere, such as the corpus's reply threads."""
+        watched = next((w for w in self.handles if w.handle.lower() == author.lower()), None)
+        return watched is not None and (not watched.broad or any(k.lower() in text.lower() for k in self.keywords))
+
     def counts(self, handle: str, post) -> bool:
         """True when `post` (an xreader XPost read from `handle`'s timeline) is a watched root post."""
         if post.is_repost or post.timeline_context or post.replying_to or post.replying_to_status:

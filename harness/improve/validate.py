@@ -34,7 +34,7 @@ class Verdict:
     note: str = ""
     spec: queue.Spec | None = None
     plan: sch.Plan | None = None
-    fixture_items: int = 0  # of the plan's items, how many come from the spec's own thread files
+    items_by_source: dict[str, int] = field(default_factory=dict)  # the plan's items: fixture files, watcher, corpus
     stacks_due: list[str] = field(default_factory=list)  # promotions whose stack check the loop runs first
 
     @property
@@ -69,11 +69,29 @@ def check(paths: list[Path], cfg: sch.ImproveConfig, catalog: dict[str, type] | 
             entry: dict = {}
             with sch.profile_env(spec.profile):
                 plan = s.admit(spec, entry, now, s.cfg.experiment_calls)
-                fixture = {it.id for it in s.catalog[spec.fitness](list(spec.threads)).items()} if spec.threads else set()
-                own = sum(it.id in fixture for it in plan.fit.items()) if plan else 0
+                counts = _by_source(s, spec, plan) if plan else {}
             out.append(Verdict(Path(path).name, "ready" if plan else entry["state"], entry.get("note", ""), spec, plan,
-                               own, [st.latest for st in due if st.fitness == spec.fitness]))
+                               counts, [st.latest for st in due if st.fitness == spec.fitness]))
         return out
+
+
+def _by_source(s: sch.Scheduler, spec: queue.Spec, plan: sch.Plan) -> dict[str, int]:
+    """How many of the phase's items each source supplied. A thread two sources hold counts once, under the source
+    whose copy the instrument keeps: fixture files, then the watcher, then the corpus (Scheduler.build's order)."""
+    fixture = {it.id for it in s.catalog[spec.fitness](list(spec.threads)).items()} if spec.threads else set()
+    watcher = set()
+    if "watcher" in (spec.sources or ("watcher",)):
+        watch, profiles = s._watch()
+        watcher = {t["id"] for t in fold.lineup_threads(watch, profiles, spec.profile)} if watch is not None else set()
+    corpus = {t["id"] for t in s.corpus_threads(spec.profile)} if "corpus" in spec.sources else set()
+    out = {"fixture files": 0, "watcher": 0, "corpus": 0}
+    for it in plan.fit.items():
+        source = next((n for n, ids in (("fixture files", fixture), ("watcher", watcher), ("corpus", corpus))
+                       if it.id in ids), None)
+        if source is None:
+            raise AssertionError(f"item {it.id} came from no source the spec names")
+        out[source] += 1
+    return out
 
 
 def render(v: Verdict) -> list[str]:
@@ -84,6 +102,9 @@ def render(v: Verdict) -> list[str]:
         lines.append(f"  fitness {v.spec.fitness}, profile {v.spec.profile}, kind {v.spec.kind}, digest {v.spec.digest}")
         if v.spec.baseline:
             lines.append(f"  both arms: {v.spec.baseline}")
+        if v.spec.sources or v.spec.min_clusters:
+            lines.append(f"  sources: {', '.join(v.spec.sources) or 'the instrument default'}; each phase needs at "
+                         f"least {v.spec.min_clusters or 'its default number of'} clusters")
         lines.append(f"  challenger adds: {v.spec.knobs}")
     if v.plan is not None:
         p = v.plan
@@ -91,8 +112,8 @@ def render(v: Verdict) -> list[str]:
         lines += [
             f"  next phase: {p.phase}, on items rooted {'by' if p.phase == 'screen' else 'after'} "
             f"{p.cutoff.isoformat(timespec='minutes')}",
-            f"  items: {len(items)} in {len({it.cluster for it in items})} {p.fit.cluster_unit}s, {v.fixture_items} from "
-            f"the spec's thread files and {len(items) - v.fixture_items} from the instrument's other sources",
+            f"  items: {len(items)} in {len({it.cluster for it in items})} {p.fit.cluster_unit}s: "
+            + ", ".join(f"{n} from {src}" for src, n in v.items_by_source.items() if n),
             f"  estimated calls: {p.estimate} for the champion, its repeat and the challenger; budget {p.budget} after "
             f"{p.probes} probe call(s)",
             f"  models it would probe first: {', '.join(sorted(p.needed))}",
@@ -110,7 +131,7 @@ def main(args) -> int:
         print(f"[improve] no spec files in {queue_dir}")
         return 1
     paths_kw: dict = {k: Path(v) for k, v in (("threads_dir", args.threads_dir), ("ledger_dir", args.ledger_dir),
-                                        ("instruments_path", args.instruments)) if v}
+                                        ("instruments_path", args.instruments), ("corpus_dir", args.corpus_dir)) if v}
     if args.experiment_calls is not None:
         paths_kw["experiment_calls"] = args.experiment_calls
     cfg = sch.ImproveConfig(provider="anthropic", **paths_kw)  # the live loop's settings: probes count, real ledger

@@ -74,6 +74,8 @@ An agent or a person writes `eval/experiments/queue/<id>.toml`. `queue.py`'s doc
 
 **Baselines.** The champion's own arm may not read the knob a question is about. The lineup's champion writes with the persona prompt, which reads no continuation knob, so a continuation question asked against it would run the same code twice. A spec can name a `[baseline]` of one to four knobs that both arms set, and the challenger adds the change on top. The record's knob diff runs from the baseline's arm to the challenger, so a promotion moves only the change into the champion. The runner accepts that arm only when it equals the ledger's champion with the baseline applied.
 
+**Sources and size.** A spec can name where its items come from (`sources`, from the instrument's list: for the lineup, `watcher`, the default, and `corpus`) and how many clusters each phase needs (`min_clusters`). `min_clusters` raises each phase's floor and cap to itself, and a screen short of it waits instead of running thin. The corpus source is the corpus's reply threads rooted by accounts the profile's watch list covers, at the watcher's coverage line of 0.8 (`fold.corpus_threads`). Its threads all predate any proposal, so they only ever screen. A checkout without the corpus blocks the spec, listed under "Needs a person".
+
 Two more checks run before a phase spends a call, and refuse the spec as `refused`, listed under "Needs a person": a changed knob that neither arm reads (`ActionLineup.reads`), and a config the instrument says it can't run as written (`ActionLineup.check_config`, which refuses a profile framing under a profile with no framing handle). Both would compare identical code.
 
 The spec then goes through two phases, both recorded in the ledger with the spec's id and a digest of what it tests (fitness, profile, knobs, guardrails, commit, thread files, and the baseline when there is one):
@@ -157,6 +159,10 @@ Raw continuation was found 6 times in 19 (action/DESIGN.md) and 0.35 of the time
 
 Two other open questions aren't queued. Banter against continuation on rival threads can't be measured yet. The planner labelled 1 of the watcher's first 20 hot targets rival, and abstained on all 3 rival threads among side_experiment.py's 19 (action/DESIGN.md), so a phase of 20 threads would hold one or two threads where the arms differ. The continuation sample count is a coverage question, because the lane picks at random among the drafts that survive the gate and veto: apart from the veto judging each batch of survivors together, the shipped draft's detectability doesn't depend on the count, only the chance that any draft survives does. That chance can be computed from the candidates and verdicts already logged in `out/hot/` and `out/decisions-run*.json`, without new calls. And the lineup's pipeline arm, which the count would need, costs 36 calls a thread, so a 20-thread confirmation would take 720 of the cycle's 800.
 
+The loop screened all three in one cycle on 2026-10-16 (records `exp-20261016-action-836102`, `-3eed44` and `-c9a9a8`). Framing and the page filter were not significant. The thin page cut detection from 0.636 to 0.273 on 11 threads, p 0.006, but its bound didn't clear the 0.182 noise floor. The thin-page and page-filter screens ran the same full-page arm on the same 11 threads four times, and it was found 2, 4, 5 and 7 times. The 7 was the thin-page champion, so the cut is nearer 0.14 than 0.36.
+
+`continuation-thin-page-2` asks the thin-page question again on 40 threads a phase: the watcher's devtools threads and the corpus's for the screen, and only watcher threads rooted after the loop first sees it for the confirmation. Its file gives the sizing, the sources and their biases, and the wait. In short: 40 threads give a standard error near 0.095, which promotes an observed cut of about 0.26 or more. A true cut of 0.14 would most likely end inconclusive, with an interval about ±0.19 wide. At 4 to 7 new usable threads a day, the confirmation waits about 6 to 10 days.
+
 ## Not verified
 
 - No `_sgu_` reply has been ranked yet, so every `_sgu_` scorer has run only on synthetic outcomes in the tests.
@@ -167,4 +173,5 @@ Two other open questions aren't queued. Banter against continuation on rival thr
 - The 24-hour reply window, the 20-outcome threshold, the 30 and 40 cluster caps, 21 days to stale, the 6-hour cycle and the four-knob baseline limit are policy.
 - The three queued specs have run only on the mock provider: one mock cycle recorded each screen with its baseline, and spent exactly the estimated calls. No live arm has written under the framing handle, filtered its page or continued a 2-reply page.
 - A baseline promotion and the stack check that skips it have run only in tests.
+- The corpus source and `min_clusters` have run only in tests and in `validate`; no live phase has used either.
 - Until a lineup pipeline arm runs live again, the metering fix (every pipeline call charged to its arm) has been checked only against a fake SDK client.

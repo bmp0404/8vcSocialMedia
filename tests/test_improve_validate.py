@@ -76,7 +76,7 @@ def test_a_spec_with_a_baseline_is_admitted_with_its_items_budget_and_probes(liv
     assert knobs.diff(v.plan.base, v.plan.challenger) == {"action.continuation.framing": {"from": "neutral",
                                                                                          "to": "profile"}}
     n = len(v.plan.fit.items())
-    assert n == v.fixture_items and n >= 15  # the wnba fixture; the six watcher threads are devtools
+    assert v.items_by_source == {"fixture files": n, "watcher": 0, "corpus": 0} and n >= 15  # the watcher's are devtools
     assert v.plan.estimate == 12 * n  # raw continuation: the writer, two detectors, the veto; three arms
     assert v.plan.needed == {knobs.OPUS55, knobs.OPUS45, "claude-fable-5-dd-los-6.5-tpg"}
     assert v.plan.budget == 400 - 3  # the spec's default screen budget, less one probe per model
@@ -88,7 +88,7 @@ def test_watcher_threads_are_read_from_a_copy_and_counted(live):
     tmp_path, cfg = live
     before = {p.name: p.stat().st_mtime_ns for p in (tmp_path / "threads").iterdir()}
     (v,) = validate.check([_write(tmp_path, "filter", FILTER)], cfg, now=NOW)
-    assert v.state == "ready" and v.fixture_items == 0 and len(v.plan.fit.items()) == 6
+    assert v.state == "ready" and v.items_by_source == {"fixture files": 0, "watcher": 6, "corpus": 0}
     assert v.plan.estimate == (4 + 4 + 5) * 6  # the challenger's page filter adds a call per thread
     assert {p.name: p.stat().st_mtime_ns for p in (tmp_path / "threads").iterdir()} == before
 
@@ -115,10 +115,66 @@ def test_the_command_prints_each_decision_and_fails_when_any_spec_is_refused(liv
     bad = _write(tmp_path / "bad", "x", "id = [")
     args = argparse.Namespace(specs=[str(good)], queue_dir=None, threads_dir=str(cfg.threads_dir),
                               ledger_dir=str(cfg.ledger_dir), instruments=str(cfg.instruments_path),
-                              experiment_calls=None)
+                              corpus_dir=None, experiment_calls=None)
     assert validate.main(args) == 0
     out = capsys.readouterr().out
     assert "filter.toml: admitted (ready)" in out and "estimated calls: 78" in out and "1 of 1 admitted" in out
     args.specs = [str(good), str(bad)]
     assert validate.main(args) == 1
     assert "x.toml: NOT ADMITTED (refused)" in capsys.readouterr().out
+
+
+THIN = FILTER.replace('id = "filter"', 'id = "thin"').replace(
+    '"action.continuation.page_filter" = true', '"action.page_replies" = 2').replace(
+    "[baseline]", 'sources = ["watcher", "corpus"]\nmin_clusters = 30\n\n[baseline]') + """
+[budget]
+screen_calls = 500
+"""
+
+
+def _corpus(tmp_path):
+    """30 supabase threads the devtools watch list covers, plus two it would drop: a sample under the coverage
+    line and an author nobody watches."""
+    threads = Threads(tmp_path / "corpus")
+    texts = [f"reply number {i} with words" for i in range(13)]
+    for n in range(30):
+        threads.thread(NOW - timedelta(days=10, hours=n), timedelta(days=3), list(range(13, 0, -1)), author="supabase",
+                       texts=texts, root_text=f"a long enough corpus root number {n}")
+    threads.thread(NOW - timedelta(days=12), timedelta(days=3), list(range(13, 0, -1)), author="supabase", texts=texts,
+                   root_text="a thread sampled too thinly", coverage=0.5)
+    threads.thread(NOW - timedelta(days=12, hours=1), timedelta(days=3), list(range(13, 0, -1)), author="nobody",
+                   texts=texts, root_text="a thread nobody watches here")
+    return threads.write()
+
+
+def test_a_thread_both_sources_hold_counts_once_under_the_watcher(live):
+    tmp_path, cfg = live
+    corpus = Threads(tmp_path / "corpus")
+    texts = [f"reply number {i} with words" for i in range(13)]
+    for n in range(2):  # the same roots the watcher read in the `live` fixture, as the context worker read them
+        corpus.thread(NOW - timedelta(days=1, hours=n), timedelta(days=3), list(range(13, 0, -1)), author="supabase",
+                      texts=texts, root_text=f"a long enough root post number {n}")
+    cfg.corpus_dir = corpus.write()
+    (v,) = validate.check([_write(tmp_path, "thin", THIN.replace("min_clusters = 30", "min_clusters = 6"))], cfg,
+                          now=NOW)
+    assert v.items_by_source == {"fixture files": 0, "watcher": 6, "corpus": 0} and len(v.plan.fit.items()) == 6
+
+
+def test_a_corpus_source_adds_the_watched_threads_and_counts_them_apart(live):
+    tmp_path, cfg = live
+    cfg.corpus_dir = _corpus(tmp_path)
+    (v,) = validate.check([_write(tmp_path, "thin", THIN)], cfg, now=NOW)
+    assert v.state == "ready" and v.items_by_source == {"fixture files": 0, "watcher": 6, "corpus": 30}
+    assert v.plan.estimate == 12 * 36 and v.plan.budget == 500 - 3
+    assert "watcher threads (6) and corpus threads (30)" in v.plan.fit.instrument()["dataset"]
+    lines = "\n".join(validate.render(v))
+    assert "36 in 36 threads: 6 from watcher, 30 from corpus" in lines and "at least 30 clusters" in lines
+
+
+def test_a_screen_short_of_its_floor_is_reported_waiting(live):
+    tmp_path, cfg = live
+    cfg.corpus_dir = _corpus(tmp_path)
+    (v,) = validate.check([_write(tmp_path, "thin", THIN.replace("min_clusters = 30", "min_clusters = 40"))], cfg,
+                          now=NOW)
+    assert v.state == "waiting" and v.admitted and "a screen waiting for 40 threads rooted by" in v.note
+    assert "it has 36" in v.note
