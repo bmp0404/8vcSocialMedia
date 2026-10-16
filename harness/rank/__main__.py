@@ -1,7 +1,8 @@
-"""python -m harness.rank replies [--labels] | posts
+"""python -m harness.rank replies [--labels] | posts | judges | fit-post
 
 Scores the reply baselines and the learned ranker on the frozen reply benchmark and writes
-data/bench/results/replies.json (or replies-labels.json with the label ablation).
+data/bench/results/replies.json (or replies-labels.json with the label ablation). `fit-post` fits the
+post ranker qualify uses and saves it to eval/rankers/ (harness/rank/post_ranker.py).
 """
 
 import argparse
@@ -242,9 +243,58 @@ def run_judges(budget: int = 3000, model: str = "claude-sonnet-5-5") -> dict:
     return res
 
 
+def run_fit_post() -> dict:
+    """Fit qualify's post ranker on the dev authors, score it on the test authors, and save it with its hash.
+    The manifest holds no timestamp, so a refit on the same corpus rewrites both files byte for byte."""
+    import hashlib
+
+    from harness.rank import post_ranker
+    from harness.rank.judges import JUDGE_DIR, Cache
+    corpus = load()
+    pairs = load_pairs("posts")
+    test = [p for p in pairs if p.split == "test"]
+    texts, y, accounts = post_ranker.training_set(corpus)
+    model, quantiles = post_ranker.fit(corpus)
+    ids = sorted({s for p in test for s in (p.winner, p.loser)})
+    clean = {s: post.clean_text(corpus.get(s).text) for s in ids}
+    scores = {s: model.predict(clean[s]) for s in ids}
+    unfiltered = post.ridge_fit(texts, y, post_ranker.ALPHA)
+    others = {"length": {s: float(len(clean[s])) for s in ids},
+              "same_fit_without_the_vocabulary_filter": {s: unfiltered.predict(clean[s]) for s in ids},
+              "cross_fitted_ridge": post.tfidf_oof(corpus, post_ranker.ALPHA)}
+    panel_cache = JUDGE_DIR / "panel-claude-sonnet-5-5.jsonl"
+    if panel_cache.exists():
+        others["panel_claude_sonnet_5_5"] = Cache(panel_cache).scores()
+
+    def credits(s, ps):
+        return [pair_credit(s[p.winner], s[p.loser]) for p in ps]
+
+    test_block = {"pairs": len(test), "authors": len({p.group for p in test}),
+                  "accuracy": accuracy(credits(scores, test), [p.group for p in test]).to_dict()}
+    for name, other in others.items():
+        ps = [p for p in test if p.winner in other and p.loser in other]
+        test_block[f"minus_{name}"] = paired_difference(credits(scores, ps), credits(other, ps), [p.group for p in ps]).to_dict()
+    bench = json.loads((BENCH_DIR / "manifest.json").read_text(encoding="utf-8"))
+    manifest = {
+        "fitted_on": {"benchmark": "data/bench/posts.jsonl", "split": "dev", "accounts": len(set(accounts)),
+                      "posts": len(texts), "target": "log1p engagement, z-scored within each account",
+                      "bench_posts_sha256": hashlib.sha256((BENCH_DIR / "posts.jsonl").read_bytes()).hexdigest(),
+                      "corpus_snapshot_sha256": bench["corpus_snapshot_sha256"]},
+        "params": {"alpha": post_ranker.ALPHA, "min_accounts": post_ranker.MIN_ACCOUNTS, "word_min_df": model.word.min_df,
+                   "char_min_df": model.char.min_df, "digits": post_ranker.DIGITS},
+        "vocabulary": {"word": len(model.word.idf), "char": len(model.char.idf), "weights": len(model.weights)},
+        "test": test_block,
+    }
+    sha = post_ranker.save(model, quantiles, manifest)
+    if post_ranker.load().sha256 != sha:
+        raise post_ranker.RankerError("the saved post ranker doesn't load back with the hash it was saved under")
+    return {"sha256": sha, **manifest}
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="python -m harness.rank")
     sub = p.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("fit-post", help="fit qualify's post ranker on the dev authors and save it to eval/rankers/")
     r = sub.add_parser("replies")
     r.add_argument("--labels", action="store_true", help="add the LLM label ablation")
     r.add_argument("--label-models", default="", help="comma-separated annotators to average (default: both reference models)")
@@ -254,6 +304,9 @@ def main() -> None:
     jd = sub.add_parser("judges", help="phase D: score the panel and the BAML judge on test-author post pairs")
     jd.add_argument("--budget", type=int, default=3000, help="hard cap on judge calls")
     args = p.parse_args()
+    if args.cmd == "fit-post":
+        print(json.dumps(run_fit_post(), indent=1))
+        return
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     if args.cmd == "judges":
         res = run_judges(args.budget)
