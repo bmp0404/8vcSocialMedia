@@ -56,7 +56,7 @@ class Decision:
 
 
 class Budget:
-    """Per-run and per-day caps on recommended actions, plus spacing between posts."""
+    """Per-run caps on recommendations, plus per-day caps and post spacing counted from approvals."""
 
     def __init__(self, cfg: ActionConfig | None = None, used_today: Counter | None = None,
                  last_post_at: datetime | None = None, now: datetime | None = None):
@@ -79,20 +79,27 @@ class Budget:
         return True
 
     @classmethod
-    def from_logs(cls, cfg: ActionConfig, out_dir: Path | None = None, now: datetime | None = None) -> "Budget":
-        """Count today's recommended actions, and the latest post, from earlier decision logs."""
+    def from_approvals(cls, cfg: ActionConfig, out_dir: Path | None = None, now: datetime | None = None) -> "Budget":
+        """Count today's approved actions, and the latest approved post, from out/approved-run<id>.json.
+
+        Only approvals count. The harness never learns what Grok actually posted, and counting
+        recommendations let one round block the next when nothing went out (Integration: run 31 got
+        budget_exhausted after run 22's single quote, which nobody approved). The review dashboard
+        rewrites approved-run<id>.json on every verdict, so killing an approval removes it here too."""
         out_dir, now = out_dir or config.OUT_DIR, now or datetime.now()
         used, last_post = Counter(), None
-        for path in out_dir.glob("decisions-run*.json"):
-            log = json.loads(path.read_text(encoding="utf-8"))
-            at = datetime.fromisoformat(log.get("at", "1970-01-01T00:00:00"))
-            if at.date() != now.date() or log.get("provider") == "mock":
-                continue
-            for d in log.get("decisions", []):
-                if d.get("action_id"):
-                    used[d["tool"]] += 1
-                    if d["tool"] in ("post", "quote", "mention") and (last_post is None or at > last_post):
-                        last_post = at
+        for path in out_dir.glob("approved-run*.json"):
+            for a in json.loads(path.read_text(encoding="utf-8")).get("actions", []):
+                stamp = a.get("approved_at")
+                if not stamp:
+                    continue
+                at = datetime.fromisoformat(stamp)
+                at = at.astimezone().replace(tzinfo=None) if at.tzinfo else at  # dashboard stamps are UTC
+                if at.date() != now.date():
+                    continue
+                used[a.get("type", "")] += 1
+                if a.get("type") in ("post", "quote", "mention") and (last_post is None or at > last_post):
+                    last_post = at
         return cls(cfg, used, last_post, now)
 
 
@@ -486,7 +493,7 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
     cfg = cfg or ActionConfig()
     mock = routing.is_mock(llm)
     PENDING_PROVIDER["name"] = "mock" if mock else type(llm).__name__
-    budget = budget or (Budget(cfg) if mock else Budget.from_logs(cfg))
+    budget = budget or (Budget(cfg) if mock else Budget.from_approvals(cfg))
     grounding = None if mock else veto.grounding_checker(cfg)
     actions, decisions = [], []
     if not revising:  # a veto retry revises chorus drafts; replies aren't redrafted

@@ -318,19 +318,38 @@ def test_write_decision_log_uses_the_run_id_and_clears(tmp_out):
     assert lanes.PENDING == [] and lanes.write_decision_log(8) is None
 
 
-def test_daily_budget_and_post_spacing_come_from_todays_logs(tmp_out):
+def write_approved(tmp_out, run_id, actions):
+    (tmp_out / f"approved-run{run_id}.json").write_text(json.dumps({"run_id": run_id, "actions": actions}), encoding="utf-8")
+
+
+def test_daily_budget_and_post_spacing_count_only_approvals(tmp_out):
     now = datetime(2026, 10, 15, 21, 0)
-    (tmp_out / "decisions-run1.json").write_text(json.dumps({"run_id": 1, "at": (now - timedelta(minutes=30)).isoformat(),
-        "decisions": [{"tool": "reply", "action_id": "a"}, {"tool": "post", "action_id": "b"}, {"tool": "abstain"}]}), encoding="utf-8")
-    (tmp_out / "decisions-run0.json").write_text(json.dumps({"run_id": 0, "at": "2026-10-14T21:00:00",
-        "decisions": [{"tool": "reply", "action_id": "old"}]}), encoding="utf-8")
-    (tmp_out / "decisions-run2.json").write_text(json.dumps({"run_id": 2, "at": now.isoformat(), "provider": "mock",
-        "decisions": [{"tool": "reply", "action_id": "mock"}]}), encoding="utf-8")
-    b = lanes.Budget.from_logs(ActionConfig(), now=now)
-    assert b.used_today == {"reply": 1, "post": 1}
-    assert b.left("post") == 0 and b.left("quote") == 0  # spaced: a post went out 30 minutes ago
+    stamp = lambda minutes: (now - timedelta(minutes=minutes)).astimezone().isoformat()  # noqa: E731
+    write_approved(tmp_out, 1, [{"type": "reply", "approved_at": stamp(40)}, {"type": "quote", "approved_at": stamp(30)}])
+    write_approved(tmp_out, 0, [{"type": "reply", "approved_at": "2026-10-14T21:00:00+00:00"}])  # yesterday
+    b = lanes.Budget.from_approvals(ActionConfig(), now=now)
+    assert b.used_today == {"reply": 1, "quote": 1}
+    assert b.left("post") == 0 and b.left("quote") == 0  # spaced: an approved quote went out 30 minutes ago
     assert b.left("reply") == min(ActionConfig().run_caps["reply"], ActionConfig().daily_caps["reply"] - 1)
-    assert lanes.Budget.from_logs(ActionConfig(), now=now + timedelta(hours=2)).left("post") == 1
+    assert lanes.Budget.from_approvals(ActionConfig(), now=now + timedelta(hours=2)).left("post") == 1
+
+
+def test_recommendations_without_approval_spend_nothing(tmp_out):
+    now = datetime(2026, 10, 15, 21, 0)
+    # A run recommended a quote; nobody approved it (Integration: run 22 then blocked run 31).
+    (tmp_out / "decisions-run22.json").write_text(json.dumps({"run_id": 22, "at": now.isoformat(), "provider": "AnthropicLLM",
+        "decisions": [{"tool": "quote", "action_id": "q"}]}), encoding="utf-8")
+    write_approved(tmp_out, 22, [])
+    b = lanes.Budget.from_approvals(ActionConfig(), now=now)
+    assert b.used_today == {} and b.left("quote") == ActionConfig().run_caps["quote"]
+
+
+def test_killing_an_approval_frees_the_budget(tmp_out):
+    now = datetime(2026, 10, 15, 21, 0)
+    write_approved(tmp_out, 3, [{"type": "post", "approved_at": (now - timedelta(minutes=5)).astimezone().isoformat()}])
+    assert lanes.Budget.from_approvals(ActionConfig(), now=now).left("post") == 0
+    write_approved(tmp_out, 3, [])  # the dashboard rewrites the file when the approval is killed
+    assert lanes.Budget.from_approvals(ActionConfig(), now=now).left("post") == 1
 
 
 def test_page_drops_replies_the_judge_reads_as_bots():
@@ -353,8 +372,7 @@ def test_bot_filter_is_a_knob():
 def test_mock_behind_a_proxy_never_touches_network_logs_or_budget(tmp_out):
     from tests.test_minds_veto_writer import Proxy
 
-    (tmp_out / "decisions-run1.json").write_text(json.dumps({"run_id": 1, "at": datetime.now().isoformat(),
-        "provider": "AnthropicLLM", "decisions": [{"tool": "quote", "action_id": "q"}]}), encoding="utf-8")
+    write_approved(tmp_out, 1, [{"type": "quote", "approved_at": datetime.now().astimezone().isoformat()}])
     # thread=[] with a nonzero reply count would make a real run fetch; mock must not.
     t = target(replies=[]) | {"replies": 40}
     actions, _ = lanes.run(Proxy(MockLLM()), "mission", "lessons", [narrative([t])], [],

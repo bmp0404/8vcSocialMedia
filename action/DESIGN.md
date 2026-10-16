@@ -68,7 +68,9 @@ The post lane gets less weight for a second reason. In the dev-tool data, within
 
 Model routing looks at what the LLM object exposes, never at its class (`harness/minds/routing.py`). An Anthropic messages client means continuation and the Opus veto are available; `is_mock` means no network and no budget. A tracing wrapper that forwards attributes keeps both working. A fallback to a weaker route prints a warning once per run.
 
-Every decision lands in `lanes.PENDING`. `cli.py` writes `out/decisions-run<id>.json` after `memory.save_run`: abstentions with reason codes, every candidate with its gate findings and veto verdicts, and questions for a person. Mock runs don't count against the real budget.
+Every decision lands in `lanes.PENDING`. `cli.py` writes `out/decisions-run<id>.json` after `memory.save_run`: abstentions with reason codes, every candidate with its gate findings and veto verdicts, and questions for a person.
+
+Daily caps and post spacing count only actions a person approved in the review dashboard (`out/approved-run<id>.json`), never recommendations. The harness can't see what Grok actually posted, and counting recommendations let one round block the next when nothing went out: Integration's run 31 hit `budget_exhausted` after run 22's single unapproved quote. Killing an approval frees the budget, and mock runs never spend it.
 
 ### Why the veto checks mission fit
 
