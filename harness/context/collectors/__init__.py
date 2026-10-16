@@ -19,8 +19,12 @@ def attention(
     end: datetime,
     wikipedia_article: str | None = None,
     sources: tuple[str, ...] = ("wikipedia", "hackernews", "google_trends", "gdelt"),
-) -> tuple[dict[str, Series], dict[str, str]]:
-    """Attention to `term` from each source: ({source: Series}, {source: error message})."""
+    errors: dict[str, str] | None = None,
+) -> dict[str, Series]:
+    """Attention to `term` from each source that answered, as {source: Series}.
+
+    Pass a dict as `errors` to receive {source: reason} for every source that failed.
+    """
     from harness.context.collectors import gdelt, google_trends, hackernews, wikipedia
 
     calls = {
@@ -29,13 +33,14 @@ def attention(
         "google_trends": lambda: google_trends.interest_over_time(term, start, end),
         "gdelt": lambda: gdelt.news_volume(f'"{term}"', start, end),
     }
-    got, errors = {}, {}
+    got = {}
     for name in sources:
         try:
             got[name] = calls[name]()
         except (FetchError, KeyError, ValueError) as e:
-            errors[name] = f"{type(e).__name__}: {e}"
-    return got, errors
+            if errors is not None:
+                errors[name] = f"{type(e).__name__}: {e}"
+    return got
 
 
 __all__ = ["Series", "attention"]
