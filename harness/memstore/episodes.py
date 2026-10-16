@@ -115,6 +115,21 @@ def _write_ledger(path: Path, ledger: dict) -> None:
     os.replace(tmp, path)
 
 
+def record_round(run_id: int) -> list[str]:
+    """round_end for a run that just finished, under the run's provider. harness run and the engine call it
+    once per round. A store that can't be written costs the round its episodes, not the round, so the
+    store's own errors are reported and skipped; anything else raises."""
+    from harness.memstore.note import MemoryValidationError
+
+    try:
+        ids = round_end(run_id, provider=config.PROVIDER)
+    except (OSError, MemoryValidationError) as e:
+        print(f"[memory] run {run_id}: episodes not written: {type(e).__name__}: {e}")
+        return []
+    print(f"[memory] run {run_id}: {len(ids)} episode notes written")
+    return ids
+
+
 def round_end(run_id: int, *, provider: str) -> list[str]:
     """Write one episode note per action in the run; return the ids written."""
     actions = memory.run_actions(run_id)
@@ -170,7 +185,7 @@ def selftest_episodes() -> None:
         assert sorted(first) == sorted([f"ep-{draft.id}", f"ep-{reply.id}"]), first
         assert round_end(run_id, provider="mock") == [], "second call writes nothing"
 
-        path = tmp / "store" / "episodes" / f"ep-{draft.id}.md"
+        path = store_root() / "episodes" / f"ep-{draft.id}.md"
         with path.open(encoding="utf-8", newline="\n") as f:
             note = parse(f.read(), path)
         assert note.type == "episode" and note.meta["source"] == "run"
@@ -180,7 +195,7 @@ def selftest_episodes() -> None:
         assert "review_status" not in note.meta, "pending review is not a verdict"
         assert "Line one line two — café" in note.body and "0.71" in note.body
 
-        ledger = _read_ledger(tmp / "store" / LEDGER)
+        ledger = _read_ledger(store_root() / LEDGER)
         assert set(ledger) == {draft.id, reply.id}
         assert ledger[draft.id]["outcome_at"] and ledger[reply.id]["outcome_at"] is None
 

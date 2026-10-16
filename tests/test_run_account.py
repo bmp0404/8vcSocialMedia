@@ -43,3 +43,31 @@ def test_mock_run_records_the_account(isolated, monkeypatch):
     data = json.loads(path.read_text(encoding="utf-8"))
     assert data["account"] == "other"
     assert memory.run_account(data["run_id"]) == "other"
+
+
+def test_mock_run_writes_one_episode_per_draft(isolated):
+    from harness import memstore
+
+    cli.run(argparse.Namespace(provider="mock", sources="sample", narratives=2, per_mind=1, top=10, retries=0))
+    (run,) = memory.list_runs()
+    drafts = memory.run_actions(run["id"])
+    assert drafts and sorted(n.id for n in memstore.list_notes("episode")) == sorted(f"ep-{a['id']}" for a in drafts)
+
+
+def test_a_full_critic_veto_ends_the_round_without_recaptioning(isolated, monkeypatch, capsys):
+    calls = []
+
+    def veto_all(llm, mission, actions, *args, **kwargs):
+        calls.append([a.text for a in actions])
+        for a in actions:
+            a.vetoed, a.critique = True, "factually shaky"
+        return []
+
+    monkeypatch.setattr(cli, "qualify", veto_all)
+    cli.run(argparse.Namespace(provider="mock", sources="sample", narratives=2, per_mind=1, top=10, retries=2))
+    (path,) = (isolated / "out").glob("recommendations-*.json")
+    assert json.loads(path.read_text(encoding="utf-8"))["recommendations"] == []
+    assert len(calls) == 2 and calls[1] == []  # the retry produced nothing new to judge
+    assert "the critic vetoed all 1 drafts" in capsys.readouterr().out
+    (run,) = memory.list_runs()
+    assert [a["critique"] for a in memory.run_actions(run["id"])] == ["factually shaky"]

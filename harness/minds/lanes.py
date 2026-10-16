@@ -22,12 +22,13 @@ from urllib.parse import urlparse
 
 from harness import config
 from harness.llm import LLM
-from harness.minds import corpus, gate, routing, thread, veto, writer
+from harness.minds import brand, corpus, gate, routing, thread, veto, writer
 from harness.minds.schema import POST_LANE, REPLY_LANE, ActionSchemaError, Offer, parse_call, parse_plan
 from harness.minds.settings import ActionConfig, GateLimits
 from harness.models import Action, Narrative
+from harness.xtext import MAX_WEIGHTED_CHARS, weighted_length
 
-PLAN_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. For each candidate post, decide whether the account should reply. Reply only where a person who follows these subjects would plausibly jump in. Abstain where any reply risks reading as cruel, opportunistic or off-mission (injury news needs care), with reason off_mission or mute_risk. In "intent", say in a few words what a good reply would do. You don't write the reply.
+PLAN_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. For each candidate post, decide whether the account should reply. Reply only where a person who follows these subjects would plausibly jump in. Abstain where any reply risks reading as cruel, opportunistic or off-mission ({plan_care}), with reason off_mission or mute_risk. In "intent", say in a few words what a good reply would do. You don't write the reply.
 
 MISSION:
 {mission}"""
@@ -149,7 +150,7 @@ def plan_targets(llm: LLM, mission: str, lessons: str, targets: list[dict]) -> t
             'Return JSON {"plans": [{"target_url": "...", "tool": "reply" or "abstain", "side": "own|rival|neutral", "intent": "...", '
             '"reason": "off_mission|mute_risk|no_angle (abstain only)", "detail": "..."}]} with one entry per post.')
     try:
-        out = llm.complete_json(PLAN_SYSTEM.format(mission=mission), user,
+        out = llm.complete_json(PLAN_SYSTEM.format(mission=mission, plan_care=brand.text("plan_care")), user,
                                 mock=lambda: {"plans": [{"target_url": t["url"], "tool": "reply", "side": "own", "intent": "mock"}
                                                         for t in targets]})
         return parse_plan(out, offer), ""
@@ -279,7 +280,8 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
             method, note = "styled", str(e)
             routing.warn(f"continuation unavailable ({e}); replies fall back to the styled prompt")
     if method in ("styled", "banter"):
-        texts = writer.styled_replies(llm, mission, author, post, page, cfg, angle=writer.BANTER_ANGLE if banter else "")
+        texts = writer.styled_replies(llm, mission, author, post, page, cfg,
+                                      angle=brand.text("rival_angle") if banter else "")
     # The page hides handles; the gate's context keeps the real ones, so a draft may @ a real replier.
     known = " ".join(f"@{r['author']}" for r in replies if r.get("author"))
     context = (f"POST by @{author}:\n{post}\n\nTHREAD:\n" + "\n".join(f"- {r}" for r in page)
@@ -301,7 +303,9 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
                     "written_as": framing.framing_handle if framing and method == "continuation" else None,
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
-                    "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground)},
+                    "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground),
+                    # What the veto judged the draft against; qualify's critic gets the same (Integration run 37).
+                    "veto_context": context},
     )
     return Decision(REPLY_LANE, url, "reply", detail=detail, candidates=cands), action
 
@@ -328,7 +332,7 @@ def offered(narratives: list[Narrative]) -> tuple[frozenset[str], frozenset[str]
 
 def load_takes(path: Path | None = None) -> list[dict]:
     """A person's own takes: the profile's takes.json, a list of {"text", "quote_url"?}. Never rewritten."""
-    path = path or config.profile_dir() / "takes.json"
+    path = path or config.profile_file("takes.json")
     if not path.exists():
         return []
     takes = json.loads(path.read_text(encoding="utf-8"))
@@ -374,7 +378,7 @@ REDIRECT_HOSTS = {"news.google.com"}
 
 def credit_for(url: str, sources: dict[str, str]) -> str:
     """Who to credit for a link, the way a person would: @handle for an X post, else the publisher's
-    name from the signal (Signal.author), else the bare domain."""
+    name from the signal (Signal.publisher, else Signal.author), else the bare domain."""
     host = urlparse(url).netloc.removeprefix("www.")
     if host in ("x.com", "twitter.com"):
         return "@" + urlparse(url).path.strip("/").split("/")[0]
@@ -427,13 +431,17 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     credit = credit_for(url, sources) if url else ""
     # A quote embeds its source. A link post names the publisher the way people do, then the link.
     text = f"{picked.text} via {credit} {url}" if kind == "post" and url else picked.text
+    cap = cfg.gate.max_chars.get(kind, MAX_WEIGHTED_CHARS)
+    if weighted_length(text) > cap:  # the gate saw the caption alone, before the credit and link
+        return [], [Decision(POST_LANE, url or n.id, "abstain", "gate_rejected",
+                             f"caption with credit and link weighs {weighted_length(text)} (max {cap})", candidates=cands)]
     budget.take(kind)
     a = Action(type=kind, text=text, mind="caption", narrative_id=n.id, target_url=url if kind == "quote" else None,
                lane=POST_LANE, target_text=source,
                rationale=f"caption of a real source ({credit})" if credit else "caption of hand-supplied material",
                draft_meta={"method": "caption" if url else "caption, no link", "writer_model": cfg.styled_model,
                            "source_url": url or None, "credit": credit or None,
-                           "judge": judge_meta(cfg, picked, cands, ground)})
+                           "judge": judge_meta(cfg, picked, cands, ground), "veto_context": context})
     return [a], [Decision(POST_LANE, url or n.id, kind, detail="caption of a real source" if url else "caption, no link",
                           action_id=a.id, candidates=cands)]
 
@@ -473,7 +481,7 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
         top = max(narratives, key=lambda n: n.relevance * n.velocity)
         decisions.append(Decision(
             POST_LANE, top.id, "ask_human",
-            question=(f"{top.title}. Got a take, a clip or a detail only a real fan would know? Add it to "
+            question=(f"{top.title}. Got a take, a clip or {brand.text('ask_detail')}? Add it to "
                       f"mission/profiles/{config.profile_name()}/takes.json; the harness picks the timing and "
                       "posts your words as written."),
             candidates=angles[:3],
@@ -503,6 +511,10 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
                      sources, revising)
     actions += a
     decisions += d
+    for action in actions:
+        if markers := gate.verify_markers(action.text):
+            action.draft_meta["needs_verification"] = markers
+            print(f"[decide] {action.id} needs a person to check {', '.join(markers)} before it can be approved")
     print(f"[decide] {summarize(decisions)}")
     for dec in decisions:
         if dec.tool == "ask_human":

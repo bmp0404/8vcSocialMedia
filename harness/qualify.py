@@ -31,7 +31,9 @@ DRAFTS:
 Return JSON: {{"scores": {{"<draft id>": {{"<panelist>": 0.0}}}}}}"""
 
 CRITIC_SYSTEM = """You are the brand-safety and quality critic for the account described in MISSION. Veto any
-draft that is harassing, cruel, factually shaky, off-mission, or a reply/quote with no target. Otherwise keep it."""
+draft that is harassing, cruel, factually shaky, off-mission, or a reply/quote with no target. Otherwise keep it.
+A draft's "context" is what the drafting stage checked it against: the post or source, the thread and the round's
+facts. A claim that context supports is not factually shaky."""
 
 CRITIC_PROMPT = """MISSION:
 {mission}
@@ -58,6 +60,18 @@ def load_panel(path: Path | None = None) -> dict[str, str]:
 def _drafts(actions: list[Action]) -> str:
     return json.dumps(
         [{"id": a.id, "type": a.type, "text": a.text, "target_url": a.target_url, "target_handle": a.target_handle}
+         for a in actions],
+        indent=1,
+    )
+
+
+def _critic_drafts(actions: list[Action]) -> str:
+    """The drafts with the context the action veto judged them against, so the critic and the veto see the same
+    facts. In Integration run 37 the critic vetoed a caption as unsupported because only the veto had seen the
+    narrative's facts. The panel keeps _drafts: it predicts engagement, and the backtest measured it on that input."""
+    return json.dumps(
+        [{"id": a.id, "type": a.type, "text": a.text, "target_url": a.target_url, "target_handle": a.target_handle,
+          **({"context": a.draft_meta["veto_context"]} if a.draft_meta.get("veto_context") else {})}
          for a in actions],
         indent=1,
     )
@@ -112,7 +126,7 @@ def qualify(llm: LLM, mission: str, actions: list[Action], panel: dict[str, str]
 
     verdicts = llm.complete_json(
         CRITIC_SYSTEM,
-        CRITIC_PROMPT.format(mission=mission, drafts=_drafts(actions)),
+        CRITIC_PROMPT.format(mission=mission, drafts=_critic_drafts(actions)),
         mock=lambda: {"verdicts": {a.id: {"veto": False, "critique": "mock ok"} for a in actions}},
     ).get("verdicts", {})
 

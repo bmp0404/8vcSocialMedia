@@ -19,9 +19,9 @@ def selftest(args) -> None:
     root = Path(tempfile.mkdtemp(prefix="memstore-selftest-")) / "store"
     seed_dir = config.memory_seed_dir()
     if seed_dir.is_dir():
-        shutil.copytree(seed_dir, root)
+        shutil.copytree(seed_dir, root / config.profile_name())
     else:
-        root.mkdir()
+        (root / config.profile_name()).mkdir(parents=True)
     for name in MODULES:
         try:
             module = importlib.import_module(f"harness.memstore.{name}")

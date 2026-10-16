@@ -157,6 +157,7 @@ def rss_signals(xml_text: str, query: str) -> list[Signal]:
                 text=title,
                 url=(item.findtext("link") or "").strip() or None,
                 author=name,
+                publisher=name,
                 created_at=iso_utc(published) if published else None,
                 metrics={},
                 kind="news",

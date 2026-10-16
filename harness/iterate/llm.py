@@ -11,7 +11,7 @@ from collections import defaultdict
 from collections.abc import Callable
 from typing import Any
 
-from harness.llm import LLM, parse_json
+from harness.llm import LLM, check_stop, parse_json
 
 
 class BudgetExceeded(RuntimeError):
@@ -73,6 +73,7 @@ class MeteredLLM(LLM):
                 continue
             usage = getattr(resp, "usage", None)
             self.meter.record(self.arm, getattr(usage, "input_tokens", 0) or 0, getattr(usage, "output_tokens", 0) or 0)
+            check_stop(resp.stop_reason, self.model, kw.get("max_tokens"))
             return "".join(b.text for b in resp.content if b.type == "text")
         raise AssertionError("unreachable")
 

@@ -83,8 +83,8 @@ def test_page_uses_neutral_handles_and_no_counts():
 
 
 class FakeClient:
-    def __init__(self, text):
-        self.text, self.kwargs = text, []
+    def __init__(self, text, stop_reason="stop_sequence"):
+        self.text, self.stop_reason, self.kwargs = text, stop_reason, []
         self.messages = self
 
     def create(self, **kw):
@@ -94,7 +94,7 @@ class FakeClient:
             type, text = "text", self.text
 
         class Resp:
-            content = [Block()]
+            content, stop_reason = [Block()], self.stop_reason
 
         return Resp()
 
@@ -112,6 +112,15 @@ def test_continuation_prefills_the_page_and_stops_at_the_next_reply():
     assert out == "state farm about to be loud"
     assert kw["model"] == "claude-opus-4-5-20251101" and kw["stop_sequences"] == ["\n@"]
     assert kw["messages"][-1] == {"role": "assistant", "content": "PAGE\n@kaymarie:"}
+
+
+def test_continuation_cut_off_at_the_cap_is_dropped():
+    llm = fake_anthropic("state farm about to be loud and the whole arena")
+    llm.client.stop_reason = "max_tokens"
+    assert writer.continue_page(llm, "PAGE", "kaymarie", CFG) == ""
+    # A line that ended before the cap is whole, even if the sample ran on afterwards.
+    llm.client.text = "state farm about to be loud\nand then"
+    assert writer.continue_page(llm, "PAGE", "kaymarie", CFG) == "state farm about to be loud"
 
 
 def test_continuations_use_distinct_handles():

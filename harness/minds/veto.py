@@ -24,16 +24,16 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 
 from harness.llm import LLM
-from harness.minds import routing
+from harness.minds import brand, routing
 from harness.minds.settings import ActionConfig
 
 VETO_SYSTEM = """You screen candidate {lane}s before a small account posts them on X. The mission below says whose side the account is on and how it talks. Judge each candidate on its own, against the mission, the post, the thread and the facts given.
 
 For each candidate give:
 - p_ai: 0-100, the probability that an AI model wrote it rather than a person scrolling X
-- unsupported: true if it states a fact, number, name or event that the post, thread and facts don't support
-- off_mission: true if it works against the account's side or voice: it sincerely cheers or congratulates a rival (banter or a jab at a rival is fine), says nothing at all, or is off the mission's subjects
-- risk: true if it could get the account muted, blocked or reported: insults, mocks or swears at a person (a player, coach, reporter or fan), piles on, slurs, harassment, spam
+- unsupported: true if it states a fact, number, name or event that the post, thread and facts don't support. A fact inside a [VERIFY: ...] marker is flagged for a person to check, so it doesn't count
+- off_mission: true if it works against the account's side or voice: {side_rule}, says nothing at all, or is off the mission's subjects
+- risk: true if it could get the account muted, blocked or reported: insults, mocks or swears at a person ({risk_people}), piles on, slurs, harassment, spam
 - reason: under 15 words
 
 Return JSON only: {{"verdicts": [{{"p_ai": 0, "unsupported": false, "off_mission": false, "risk": false, "reason": "..."}}]}} with exactly one entry per candidate, in the order given.
@@ -79,7 +79,8 @@ def _judge_llm(llm: LLM, cfg: ActionConfig) -> LLM:
 def _one_pass(judge: LLM, texts: list[str], lane: str, context: str, mission: str) -> list[Verdict]:
     cands = "\n".join(f"{i + 1}. {t}" for i, t in enumerate(texts))
     out = judge.complete_json(
-        VETO_SYSTEM.format(lane=lane, mission=mission or "(none given)"), f"{context}\n\nCANDIDATES:\n{cands}",
+        VETO_SYSTEM.format(lane=lane, mission=mission or "(none given)", side_rule=brand.text("side_rule"),
+                           risk_people=brand.text("risk_people")), f"{context}\n\nCANDIDATES:\n{cands}",
         mock=lambda: {"verdicts": [{"p_ai": 10, "unsupported": False, "off_mission": False, "risk": False,
                                     "reason": "mock"} for _ in texts]},
     )

@@ -10,19 +10,39 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from harness import config, memory
+from harness.minds.gate import verify_markers
+from harness.xtext import MAX_WEIGHTED_CHARS, weighted_length
 
 INDEX = Path(__file__).parent / "index.html"
 
 
 def export_approved(run_id: int) -> Path:
+    """Write the hand-off. An approved action whose text still holds a [VERIFY: ...] marker is refused:
+    it goes under "refused", never under "actions", so the bot can't post an unchecked fact."""
     config.OUT_DIR.mkdir(exist_ok=True)
     path = config.OUT_DIR / f"approved-run{run_id}.json"
-    path.write_text(
-        json.dumps({"run_id": run_id, "account": memory.run_account(run_id),
-                    "actions": memory.approved_actions(run_id)}, indent=2),
-        encoding="utf-8",
-    )
+    ready, refused = [], []
+    for a in memory.approved_actions(run_id):
+        if markers := verify_markers(a["text"]):
+            refused.append({"id": a["id"], "unresolved": markers})
+            print(f"[review] hand-off refuses {a['id']}: resolve {', '.join(markers)} first")
+        else:
+            ready.append(a)
+    path.write_text(json.dumps({"run_id": run_id, "account": memory.run_account(run_id), "actions": ready,
+                                "refused": refused}, indent=2), encoding="utf-8")
     return path
+
+
+def check_approval(action_id: str, status: str, text: str | None) -> None:
+    """Refuse an approval the hand-off can't take, before the verdict is saved: an edit X would reject on
+    length (drafts passed the gate's length rule; an edit hasn't), or text with a [VERIFY: ...] marker
+    nobody resolved. KeyError for an unknown action."""
+    if status != "approved":
+        return
+    if text and weighted_length(text) > MAX_WEIGHTED_CHARS:
+        raise ValueError(f"edited text weighs {weighted_length(text)} as X counts it (max {MAX_WEIGHTED_CHARS})")
+    if markers := verify_markers(text or memory.action_text(action_id)):
+        raise ValueError(f"resolve {', '.join(markers)} before approving: check the fact and write it in, or cut it")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -53,6 +73,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": "not found"}, 404)
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            check_approval(m[1], body.get("status", ""), body.get("text"))
             run_id = memory.set_review(m[1], body.get("status", ""), body.get("text"), body.get("note", ""))
         except KeyError:
             return self._json({"error": "unknown action"}, 404)

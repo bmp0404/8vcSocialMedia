@@ -87,9 +87,20 @@ def test_length_cap_is_x_limit_by_default_and_configurable():
 
 
 def test_placeholders_block_shipping():
-    assert "placeholder" in rules("she shot [VERIFY: 45%] from three")
     assert "placeholder" in rules("hi {name}")
     assert "placeholder" in rules("TODO")
+    assert "placeholder" in rules("[insert stat] from three")
+
+
+def test_a_verify_marker_passes_the_gate_and_its_contents_are_not_ungrounded():
+    # CLAUDE.md asks for [VERIFY: ...] wherever the model can't ground a fact; review catches it later.
+    text = "Clark shot [VERIFY: 45% from three, Mercury] last night"
+    res = gate.check(text, "post", context="clark had a big night")
+    assert res.passed, res.reasons()
+    assert gate.verify_markers(text) == ["[VERIFY: 45% from three, Mercury]"]
+    # Outside the marker, the same number is still checked.
+    assert "ungrounded_number" in {f.rule for f in gate.check("Clark shot 45% last night", "post",
+                                                              context="clark had a big night").findings}
 
 
 def test_wrapped_quotes_and_empty():

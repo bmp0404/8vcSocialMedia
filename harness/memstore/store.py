@@ -276,7 +276,8 @@ def selftest_store() -> None:
     os.environ["MEMSTORE_PATH"] = str(tmp / "store")
     try:
         root = _root()
-        assert root.resolve() == (tmp / "store").resolve(), f"store root ignored MEMSTORE_PATH: {root}"
+        assert root.resolve() == (tmp / "store" / config.profile_name()).resolve(), \
+            f"store root ignored MEMSTORE_PATH: {root}"
         today = date.today().isoformat()
 
         def make(id, type, **meta):

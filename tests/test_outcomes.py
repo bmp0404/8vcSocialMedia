@@ -257,6 +257,31 @@ def test_approved_file_without_approved_at_is_an_error(tmp_path):
         load_approved(tmp_path)
 
 
+def test_a_hand_off_for_another_account_is_refused_naming_both(tmp_path):
+    def write(name, account):
+        (tmp_path / name).write_text(json.dumps({"run_id": 1, "account": account, "actions": [
+            {"id": "a1", "type": "post", "text": "hi", "approved_at": T0.isoformat()}]}), encoding="utf-8")
+
+    write("approved-run1.json", "_sgu_")
+    write("approved-run2.json", None)  # written before hand-offs named an account
+    assert [a.id for a in load_approved(tmp_path, "@_SGU_")] == ["a1"]
+    write("approved-run3.json", "otherfan")
+    with pytest.raises(HandoffError, match=r"approved-run3.json is for @otherfan but sync reads @_sgu_"):
+        load_approved(tmp_path, "_sgu_")
+    assert [a.id for a in load_approved(tmp_path)] == ["a1"]  # without a handle nothing is compared
+
+
+def test_sync_refuses_another_accounts_hand_off_before_reading_x(tmp_path):
+    (tmp_path / "approved-run1.json").write_text(json.dumps({"run_id": 1, "account": "otherfan", "actions": [
+        {"id": "a1", "type": "post", "text": "hi", "approved_at": T0.isoformat()}]}), encoding="utf-8")
+
+    def no_reader():
+        raise AssertionError("sync read X before checking the account")
+
+    with pytest.raises(HandoffError, match="is for @otherfan but sync reads @_sgu_"):
+        sync("_sgu_", tmp_path, tmp_path / "ledger.db", reader_factory=no_reader)
+
+
 def test_missing_reader_names_pr_18(monkeypatch):
     monkeypatch.setitem(sys.modules, "harness.context", None)
     with pytest.raises(ReaderMissing, match="PR #18"):

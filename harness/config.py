@@ -9,21 +9,23 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-DB_PATH = ROOT / "data" / "harness.db"
-OUT_DIR = ROOT / "out"
+# Each can point elsewhere, so a test or a throwaway run keeps the checkout's data/ and out/ clean.
+DB_PATH = Path(os.getenv("HARNESS_DB_PATH") or ROOT / "data" / "harness.db")
+OUT_DIR = Path(os.getenv("HARNESS_OUT_DIR") or ROOT / "out")
 SAMPLE_SIGNALS_PATH = ROOT / "data" / "sample_signals.json"
 
 PROVIDER = os.getenv("HARNESS_PROVIDER", "mock").lower()
 MODEL = os.getenv("HARNESS_MODEL", "")
 SOURCES = [s.strip() for s in os.getenv("HARNESS_SOURCES", "sample").split(",") if s.strip()]
 
-# Mission profiles. mission/profiles/<name>/ holds one brand's mission.md, observe.toml, panel.json and
-# reply_framing.json, plus an optional takes.json. HARNESS_PROFILE picks the profile; use_profile() switches
+# Mission profiles. mission/profiles/<name>/ holds one brand's mission.md, observe.toml, panel.json,
+# reply_framing.json and prompts.toml (the brand wording the action prompts insert), plus an optional takes.json. HARNESS_PROFILE picks the profile; use_profile() switches
 # it for a block, so one process can work for two brands. Every reader of these files goes through
 # profile_file(), which raises ProfileError naming the path when a profile or file is missing.
 PROFILES_DIR = ROOT / "mission" / "profiles"
 DEFAULT_PROFILE = "wnba"
-PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json")
+PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json", "prompts.toml")
+OPTIONAL_PROFILE_FILES = ("takes.json",)  # a person's own takes; a profile may have none
 # Each points one profile file somewhere else, for tests and one-off runs; it applies to the active profile.
 FILE_OVERRIDES = {"observe.toml": "HARNESS_OBSERVE_CONFIG", "panel.json": "HARNESS_PANEL",
                   "reply_framing.json": "HARNESS_REPLY_FRAMING"}
@@ -62,12 +64,15 @@ def profile_dir(name: str | None = None) -> Path:
 
 
 def profile_file(filename: str, name: str | None = None) -> Path:
-    """The profile's `filename`, or the path its override variable names when `name` isn't given."""
-    if filename not in PROFILE_FILES:
-        raise ValueError(f"{filename!r} isn't a profile file; expected one of {PROFILE_FILES}")
+    """The profile's `filename`, or the path its override variable names when `name` isn't given. A missing
+    required file raises; an optional one (OPTIONAL_PROFILE_FILES) returns its path for the caller to check."""
+    if filename not in PROFILE_FILES + OPTIONAL_PROFILE_FILES:
+        raise ValueError(f"{filename!r} isn't a profile file; expected one of {PROFILE_FILES + OPTIONAL_PROFILE_FILES}")
     variable = FILE_OVERRIDES.get(filename)
     override = os.getenv(variable, "") if variable and name is None else ""
     path = Path(override) if override else profile_dir(name) / filename
+    if filename in OPTIONAL_PROFILE_FILES:
+        return path
     if not path.is_file():
         raise ProfileError(f"{filename} not found at {path}" + (f" ({variable} points there)" if override else ""))
     return path
@@ -104,15 +109,16 @@ def mission() -> str:
 
 
 def lessons() -> str:
+    from harness.learning.memstore_adapter import written_by_learning
+    from harness.memstore import MemoryValidationError, prompt_block
+
     path = lessons_path()
     text = path.read_text(encoding="utf-8") if path.exists() else "(no lessons yet)"
-    # Memory must never break a run, so any memstore failure falls back to the lessons file alone.
+    # The lessons file is learn's rendering of the store's tested lessons; the block adds the store's other notes.
     try:
-        from harness.learning.memstore_adapter import written_by_learning
-        from harness.memstore import prompt_block
-
-        # The lessons file is learn's rendering of the store's tested lessons; the block adds the store's other notes.
         block = prompt_block(exclude=written_by_learning)
-    except Exception:
+    except (OSError, MemoryValidationError) as e:
+        # A store that can't be read costs this round its memory, not the round. Anything else is a bug and raises.
+        print(f"[memory] skipped the memory store this round: {type(e).__name__}: {e}")
         block = ""
     return text + "\n\n" + block if block else text

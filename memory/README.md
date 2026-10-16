@@ -33,7 +33,7 @@ memory/
   format/        # JSON log format (raw input for ingest, not memory itself)
 ```
 
-The live store is gitignored so that five branches don't fight over generated files, and so that mock runs never pollute it. Each mission profile has its own store, `memory/store/<profile>/`, seeded from `memory/seed/<profile>/`; the current seed is dev-tools, so it lives in `memory/seed/devtools/`. Set `MEMSTORE_PATH` to use a different folder. To share good state, promote it into the profile's seed folder and commit that. For a demo, run the whole loop on one machine.
+The live store is gitignored so that five branches don't fight over generated files, and so that mock runs never pollute it. Each mission profile has its own store, `memory/store/<profile>/`, seeded from `memory/seed/<profile>/`; the current seed is dev-tools, so it lives in `memory/seed/devtools/`. Set `MEMSTORE_PATH` to put the stores in a different folder; each profile's store is a subfolder of it, as under `memory/store/`. To share good state, promote it into the profile's seed folder and commit that. For a demo, run the whole loop on one machine.
 
 The SQLite database (`data/harness.db`) and the JSON logs in `memory/format/` are the raw record of every run. The markdown store is the distilled version that the harness actually reads.
 

@@ -5,6 +5,7 @@ from datetime import datetime
 from harness import config, memory
 from harness.learn import learn
 from harness.llm import get_llm
+from harness.memstore import record_round
 from harness.minds import decide, write_decision_log
 from harness.orient import orient
 from harness.qualify import qualify
@@ -32,14 +33,21 @@ def run(args) -> None:
     for _ in range(args.retries):
         if kept or not batch:
             break
-        # The critic vetoed every draft, so each mind revises its own drafts against the critiques.
+        # The critic vetoed every draft. Only persona drafts are revised against the critiques, and persona
+        # text no longer ships, so decide() returns [] and the round ends with no recommendations. That is
+        # deliberate: rerunning the caption on the same source shipped two captions of one story
+        # (Integration run 36; action/DESIGN.md, "Rushi"). The vetoed drafts and critiques stay in the run.
         batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, vetoed=batch)
         kept = qualify(llm, mission, batch)
         actions = actions + batch
     ranked = kept[: args.top]
+    if actions and not kept:
+        print(f"[run] the critic vetoed all {len(actions)} drafts, and captions and replies aren't redrafted, "
+              "so this round recommends nothing; the critiques are saved with the run")
 
     run_id = memory.save_run(actions, account=account or None)
     write_decision_log(run_id)  # out/decisions-run<id>.json: abstentions, rejected drafts, questions
+    record_round(run_id)  # one episode note per draft in the profile's memory store
     config.OUT_DIR.mkdir(exist_ok=True)
     out = config.OUT_DIR / f"recommendations-{datetime.now():%Y%m%d-%H%M%S}.json"
     out.write_text(
@@ -70,7 +78,8 @@ def main() -> None:
     p.add_argument("--narratives", type=int, default=5)
     p.add_argument("--per-mind", type=int, default=3)
     p.add_argument("--top", type=int, default=10)
-    p.add_argument("--retries", type=int, default=2, help="revision rounds when the critic vetoes every draft")
+    p.add_argument("--retries", type=int, default=2, help="revision rounds when the critic vetoes every draft; only persona drafts are revised, and they don't "
+                        "ship, so today a full veto ends the round (action/DESIGN.md)")
     p.set_defaults(func=run)
 
     # Outcomes: match approved actions to real posts and record their metrics (sam/outcomes).

@@ -157,6 +157,15 @@ def set_review(action_id: str, status: str, text: str | None = None, note: str =
     return row["run_id"]
 
 
+def action_text(action_id: str) -> str:
+    """The draft's text as decide wrote it, before any review edit. KeyError for an unknown id."""
+    with connect() as conn:
+        row = conn.execute("SELECT data FROM actions WHERE id = ?", (action_id,)).fetchone()
+    if not row:
+        raise KeyError(action_id)
+    return json.loads(row["data"]).get("text", "")
+
+
 def approved_actions(run_id: int) -> list[dict]:
     """Approved actions for a run in hand-off shape, with any human edits applied."""
     out = []

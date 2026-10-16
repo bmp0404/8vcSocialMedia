@@ -12,6 +12,9 @@ class Signal:
     text: str
     url: str | None = None
     author: str | None = None
+    # Who published a news link, for credit ("via ESPN"). `author` is the byline for some sources (ESPN), so
+    # a caption credited it as "via Michael Voepel" (Integration run 37). Optional; None for posts.
+    publisher: str | None = None
     created_at: str | None = None
     metrics: dict = field(default_factory=dict)
     # What the item is: "news", "game", "post", "reply_target", "own_post" or "mention".

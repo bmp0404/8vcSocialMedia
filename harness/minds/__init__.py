@@ -117,7 +117,7 @@ def decide(
     """Draft actions from every mind. With `vetoed`, each mind instead revises its own vetoed drafts.
     Returns only the actions that clear the lanes (see lanes.run). Every decision, abstentions
     included, waits in lanes.PENDING until write_decision_log(run_id). `signals` lets the post lane
-    credit a link's publisher by name (Signal.author)."""
+    credit a link's publisher by name (Signal.publisher, else Signal.author)."""
     minds = load_minds()
     prompts = {}
     if vetoed and not [a for a in vetoed if a.mind in minds and a.type != "follow"]:
@@ -148,7 +148,7 @@ def decide(
     actions = [a for batch in results for a in batch]
     verb = "revised into" if vetoed else "proposed"
     print(f"[decide] {len(prompts)} minds {verb} {len(actions)} actions")
-    sources = {s.url: s.author for s in signals or [] if s.url and s.author}
+    sources = {s.url: s.publisher or s.author for s in signals or [] if s.url and (s.publisher or s.author)}
     shipped, decisions = lanes.run(llm, mission, lessons, narratives, actions, revising=bool(vetoed),
                                    cfg=cfg or settings.load(), budget=budget, sources=sources)
     lanes.PENDING.extend(decisions)

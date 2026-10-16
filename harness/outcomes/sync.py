@@ -261,7 +261,7 @@ def sync(handle: str, approved_dir: Path, ledger_path: Path = ledger.DEFAULT_PAT
          now: datetime | None = None, limit: int = DEFAULT_LIMIT, hot_dir: Path | None = None) -> SyncReport:
     """One pass. `hot_dir` holds the watcher's out/hot/<status_id>.json files; None leaves hot targets out."""
     now = now or datetime.now(timezone.utc)
-    approved = load_approved(approved_dir)
+    approved = load_approved(approved_dir, handle)
     hot = load_hot(hot_dir) if hot_dir is not None else []
     report = SyncReport(handle, actions=len(approved) + len(hot), hot_targets=len(hot))
     reader = None

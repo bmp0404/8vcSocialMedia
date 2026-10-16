@@ -14,7 +14,7 @@ from harness.memstore.note import (
     selftest_note,
     store_root,
 )
-from harness.memstore.episodes import round_end
+from harness.memstore.episodes import record_round, round_end
 from harness.memstore.prompt import context_for, prompt_block
 from harness.memstore.search import search
 from harness.memstore.store import delete_note, list_notes, load, selftest_store, write_note
@@ -30,6 +30,7 @@ __all__ = [
     "load",
     "parse",
     "prompt_block",
+    "record_round",
     "round_end",
     "search",
     "selftest_note",
