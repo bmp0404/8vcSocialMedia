@@ -56,7 +56,7 @@ def score_baselines(train, test, corpus, b=2000) -> dict:
     return out
 
 
-def run_replies(with_labels: bool = False) -> dict:
+def run_replies(with_labels: bool = False, label_models: tuple[str, ...] | None = None) -> dict:
     corpus = load()
     pairs = load_pairs("replies")
     dev, test = [p for p in pairs if p.split == "dev"], [p for p in pairs if p.split == "test"]
@@ -89,8 +89,12 @@ def run_replies(with_labels: bool = False) -> dict:
 
     labels = schema = None
     if with_labels:
-        from harness.label.features import reply_label_votes
-        labels, schema = reply_label_votes()
+        from harness.label.features import REFERENCE_MODELS, reply_label_votes
+        label_models = label_models or REFERENCE_MODELS
+        labels, schema = reply_label_votes(label_models)
+        bench_items = {f"x:{s}" for p in pairs for s in (p.winner, p.loser)}
+        results["labels"] = {"models": list(label_models), "benchmark_replies": len(bench_items),
+                             "benchmark_replies_labeled": len(bench_items & labels.keys())}
     variants = {"timing": ("timing",), "text": ("text",), "full": ("timing", "text"),
                 "full+ngrams": ("timing", "text", "ngrams")}
     if with_labels:
@@ -213,6 +217,7 @@ def main() -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("replies")
     r.add_argument("--labels", action="store_true", help="add the LLM label ablation")
+    r.add_argument("--label-models", default="", help="comma-separated annotators to average (default: both reference models)")
     ps = sub.add_parser("posts")
     ps.add_argument("--labels", action="store_true", help="add a logistic model on the LLM label fields")
     args = p.parse_args()
@@ -223,8 +228,10 @@ def main() -> None:
         out.write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
         print(json.dumps(res, indent=1))
         return
-    res = run_replies(args.labels)
-    out = RESULTS_DIR / ("replies-labels.json" if args.labels else "replies.json")
+    models = tuple(m for m in args.label_models.split(",") if m) or None
+    res = run_replies(args.labels, models)
+    name = "replies.json" if not args.labels else f"replies-labels-{'+'.join(models)}.json" if models else "replies-labels.json"
+    out = RESULTS_DIR / name
     out.write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
     print(f"wrote {out}")
     for c, e in res["ranker"].items():
