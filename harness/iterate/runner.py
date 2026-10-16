@@ -200,7 +200,7 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
     adjusted, rejected = stats.benjamini_hochberg([r[2]["paired"].p_one_sided for r in tested], Q)
     n_rej = sum(rejected)
     decisions = {}
-    for (prop, cfg, res, _), p_adj, rej in zip(tested, adjusted, rejected):
+    for (prop, _cfg, res, _), p_adj, rej in zip(tested, adjusted, rejected):
         noise = abs(res["repeat"]["delta"]["value"])
         dec = stats.decide(res["paired"], rejected_by_bh=rej, n_rejected=n_rej, family_size=len(tested), q=Q,
                            noise_floor=noise)
