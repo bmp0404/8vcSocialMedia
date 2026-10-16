@@ -543,6 +543,14 @@ def test_an_abstained_hot_file_offers_nothing_to_match(env):
     assert (report.hot_targets, report.matched) == (0, [])
 
 
+def test_a_reply_to_the_accounts_own_post_is_a_thread_continuation_even_without_replying_to():
+    feed = [xpost("2", T0 + H, "and another thing", reply_status="1"),  # fxtwitter dropped replying_to
+            xpost("1", T0, "first post"),
+            xpost("3", T0 + 2 * H, "@fan nice", reply_to="fan", reply_status="9")]
+    tl = own_timeline(feed, "brand", T0.isoformat())
+    assert {p.id: p.kind for p in tl.posts} == {"1": "original", "2": "self_reply", "3": "reply"}
+
+
 def test_a_hot_file_missing_its_arm_fails_loudly(env):
     hot_dir = env.out / "hot"
     hot_dir.mkdir()
