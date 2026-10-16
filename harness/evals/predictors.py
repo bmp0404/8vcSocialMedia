@@ -53,7 +53,7 @@ def with_retries(fn: Callable, attempts: int = 3) -> Callable:
             except Exception as e:  # noqa: BLE001 - re-raised after the last attempt
                 if i == attempts - 1:
                     raise
-                print(f"[backtest] retrying after {type(e).__name__}: {str(e)[:120]}")
+                print(f"[eval] retrying after {type(e).__name__}: {str(e)[:120]}")
     return call
 
 
