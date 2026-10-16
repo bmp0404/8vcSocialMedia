@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-15T20:50:20",
+  "provider": "anthropic",
+  "seed": 1,
+  "judge": {
+    "start": {
+      "dev": 0.9
+    },
+    "iterations": [
+      {
+        "change": "Added criteria that reward concrete specifics, clear audience/payoff and direct asks, and penalize vague enthusiasm and thank-you posts, since the misses favored generic drafts over specific, actionable ones.",
+        "dev": 0.867,
+        "core": "You judge pairs of draft X posts for a company's account. For each pair, pick the one more likely to spread among the target audience (reposts, quotes, replies), weighing the opening line most.\n\nFavor the draft whose opening gives a developer a concrete reason to keep reading or respond: a specific number, a named detail, a clear claim, a real problem or tension, or a direct invitation or ask. Readers should quickly understand what it is, who it's for, and what they gain or can do.\n\nPenalize vague praise, generic enthusiasm, thank-you lists, insider references that outsiders can't parse, and posts that gesture at value without showing it. Hype words and emojis are not substance. Don't reward length or polish for their own sake. Prefer the draft with a sharper stake, voice, or payoff, whatever its genre."
+      },
+      {
+        "change": "Added a test for concrete, self-contained payoff (specifics, stakes, clear ask) and penalties for vague praise and insider thank-yous, since the losing drafts were generic while the winners were specific and actionable.",
+        "dev": 0.867,
+        "core": "You judge pairs of draft X posts for a company's account. For each pair, pick the one more likely to spread among the target audience (reposts, quotes, replies), weighing the opening line most.\n\nFavor the draft that gives a developer something concrete right away: a specific number, a named problem, a clear stake, a vivid detail, or a direct invitation or question they can act or reply on. Ask whether a stranger would understand the value in one read and have a reason to respond.\n\nPenalize vague praise (\"blazing fast\", \"excited to see\"), thank-you or name-check lists that mostly serve insiders, claims with no evidence, and openings that say nothing. Clear, substantive writing beats polished but empty writing. Don't reward length or hype for its own sake."
+      }
+    ],
+    "adopted": false,
+    "final": {
+      "dev": 0.9,
+      "holdout": null,
+      "core": "You judge pairs of draft X posts for a company's account. For each pair, pick the one more\nlikely to spread among the target audience (reposts, quotes, replies), weighing the opening line most."
+    }
+  }
+}

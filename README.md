@@ -58,7 +58,22 @@ uv run python -m harness run --narratives 2 --per-mind 1   # cheap real run
 | `evolve` | `learn`, plus: calibrate the panel (5+ own outcomes), rebuild `memory/playbook.md` from our winners and the dataset, mutate champion prompts into challengers, retire losers; `--spawn` invents a new mind |
 | `cycle` | `evolve` then `run` |
 | `backtest` | Panel rank-correlation and judge accuracy on real dataset posts; `--calibrate` applies the fitted panel weights; report goes to `eval/` |
-| `stats` | Variant leaderboard |
+| `train` | Fit the virality model on the dataset (local, free); saves `data/virality_model.joblib`, which qualify then uses as an extra `dataset_model` vote |
+| `tune` | Evolve the judge and panel instructions against the dataset. A revision is adopted only if it wins on dev *and* gains 0.05 on holdout accounts |
+| `stats` | Variant leaderboard, virality model scores, recent tune results |
+
+### Using the dataset to train the evaluators
+
+| Piece | What it does | Measured (held-out) |
+| --- | --- | --- |
+| `harness/virality.py` | Ridge regression on word and character n-grams plus shape features. The target is engagement relative to the post's own account, which removes reach and fame | Spearman +0.345, same-account pair accuracy 0.78 |
+| `harness/tune.py` | Proposes revised judge and panel instructions from their misses; adopted only on a real holdout gain | Default judge 0.90–0.93 on same-account pairs. No revision has beaten it by the required margin |
+| `harness/retrieval.py` | Shows the judge similar real posts and their results (`HARNESS_JUDGE_EVIDENCE=1`) | Off by default: 82/90 with evidence vs. 84/90 without |
+
+Caveats:
+- The dataset is official company accounts, so the model also rewards launch language ("introducing", "now") and length.
+- It is one vote among the panel's six, not the decider.
+- An early tune adopted a launch-announcement bias on a one-pair margin, which is why the holdout gate is now 0.05.
 | `actions` | The action space: each action type, its channels, how it's scored, and which minds use it |
 
 ## Action space

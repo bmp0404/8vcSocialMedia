@@ -8,14 +8,21 @@ shortlists) aren't scored, only critiqued.
 
 import json
 
-from harness import config, memory
+from harness import config, memory, virality
 from harness.actions import BY_TYPE, Context
 from harness.llm import LLM
 from harness.models import Action
 
-PANEL_SYSTEM = """You simulate an X audience panel. For each draft, each panelist predicts how likely
+# `tune` evolves this against the dataset and stores the winner in kv "panel_core".
+PANEL_CORE = """You simulate an X audience panel. For each draft, each panelist predicts how likely
 they are to engage (like, reply, repost, quote) on a 0-1 scale. Be harsh: most posts get scrolled past.
 Reserve scores above 0.7 for posts that panelist would actually repost."""
+
+DATASET_MODEL = "dataset_model"  # the virality model's vote in a draft's panel (see harness/virality.py)
+
+
+def panel_system(core: str | None = None) -> str:
+    return core or memory.kv_get("panel_core") or PANEL_CORE
 
 PANEL_PROMPT = """PANEL:
 {panel}
@@ -66,11 +73,11 @@ def _drafts(actions: list[Action], ctx: Context | None = None) -> str:
     return json.dumps(rows, indent=1)
 
 
-def panel_scores(llm: LLM, actions: list[Action]) -> dict:
-    """{action_id: {panelist: 0-1}}"""
+def panel_scores(llm: LLM, actions: list[Action], core: str | None = None) -> dict:
+    """{action_id: {panelist: 0-1}}. `core` overrides the panel's evolvable instructions (used by `tune`)."""
     panel = config.panel()
     return llm.complete_json(
-        PANEL_SYSTEM,
+        panel_system(core),
         PANEL_PROMPT.format(panel=json.dumps(panel, indent=1), drafts=_drafts(actions)),
         mock=lambda: {"scores": {a.id: {p: 0.5 for p in panel} for a in actions}},
     ).get("scores", {})
@@ -112,17 +119,21 @@ def qualify(llm: LLM, mission: str, actions: list[Action]) -> list[Action]:
     scores = panel_scores(llm, public) if public else {}
     recipient = recipient_scores(llm, direct) if direct else {}
     verdicts = critic(llm, mission, actions)
+    model_votes = dict(zip((a.id for a in public), virality.score([a.text for a in public]) or []))
 
     for a in actions:
         if audience[a.id] == "person":
             a.panel = {"recipient": float(recipient.get(a.id, 0.0))}
         else:
-            a.panel = scores.get(a.id, {})
+            a.panel = dict(scores.get(a.id, {}))
+            if a.id in model_votes:
+                a.panel[DATASET_MODEL] = model_votes[a.id]
         a.predicted_score = weighted_score(a.panel, weights)
         v = verdicts.get(a.id, {})
         a.vetoed = bool(v.get("veto"))
         a.critique = v.get("critique", "")
 
     kept = sorted((a for a in actions if not a.vetoed), key=lambda a: a.predicted_score, reverse=True)
-    print(f"[qualify] kept {len(kept)}/{len(actions)} drafts")
+    print(f"[qualify] kept {len(kept)}/{len(actions)} drafts"
+          + ("" if model_votes or not public else " (no virality model yet: `python -m harness train`)"))
     return kept

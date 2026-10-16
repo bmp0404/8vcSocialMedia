@@ -1,0 +1,58 @@
+{
+  "at": "2026-10-15T20:47:52",
+  "provider": "anthropic",
+  "seed": 0,
+  "judge": {
+    "start": {
+      "dev": 0.933
+    },
+    "iterations": [
+      {
+        "change": "Added a preference for self-contained, announcement-style posts with a share/tag trigger and a penalty for context-dependent thread fragments, since the misses favored the wrong type.",
+        "dev": 1.0,
+        "core": "You judge pairs of draft X posts for a dev-tool company's account. For each pair, pick the one more likely to spread among developers (reposts, quotes, replies), weighing the opening line most. Favor posts that work standalone: a clear headline of what is new or offered, concrete specifics (numbers, capabilities, scope), and a reason to share or tag someone, such as a direct ask, a hiring call, or a launch others will want to pass along. Penalize thread fragments, numbered follow-ups, or setup/how-to steps that depend on earlier context, since they read as mid-conversation and rarely get reshared. Prefer announcements with stakes or novelty over incremental documentation-style detail. Pick the stronger post.",
+        "holdout": 0.9,
+        "holdout_current": 0.867,
+        "adopted": true
+      },
+      {
+        "change": "No changes: no misses were provided, so there is no evidence of a pattern to correct and the current instructions stay as they are.",
+        "dev": 1.0,
+        "core": "You judge pairs of draft X posts for a dev-tool company's account. For each pair, pick the one more likely to spread among developers (reposts, quotes, replies), weighing the opening line most. Favor posts that work standalone: a clear headline of what is new or offered, concrete specifics (numbers, capabilities, scope), and a reason to share or tag someone, such as a direct ask, a hiring call, or a launch others will want to pass along. Penalize thread fragments, numbered follow-ups, or setup/how-to steps that depend on earlier context, since they read as mid-conversation and rarely get reshared. Prefer announcements with stakes or novelty over incremental documentation-style detail. Pick the stronger post."
+      }
+    ],
+    "adopted": true,
+    "final": {
+      "dev": 1.0,
+      "holdout": 0.9,
+      "core": "You judge pairs of draft X posts for a dev-tool company's account. For each pair, pick the one more likely to spread among developers (reposts, quotes, replies), weighing the opening line most. Favor posts that work standalone: a clear headline of what is new or offered, concrete specifics (numbers, capabilities, scope), and a reason to share or tag someone, such as a direct ask, a hiring call, or a launch others will want to pass along. Penalize thread fragments, numbered follow-ups, or setup/how-to steps that depend on earlier context, since they read as mid-conversation and rarely get reshared. Prefer announcements with stakes or novelty over incremental documentation-style detail. Pick the stronger post."
+    }
+  },
+  "panel": {
+    "start": {
+      "dev": 0.157
+    },
+    "iterations": [
+      {
+        "change": "Past version was too uniformly harsh and rewarded abstraction; it now favors concrete shipped capability, hard numbers, and community news, and penalizes vague teasers and gated promos.",
+        "dev": 0.29,
+        "core": "You simulate an X audience panel. For each draft, each panelist predicts how likely they are to engage (like, reply, repost, quote) on a 0-1 scale. Most posts get scrolled past, but don't penalize short or plain posts by default. Score higher for: shipped, usable things (\"now live\", \"open beta\") with concrete verbs showing what a developer can do; hard numbers or striking comparisons (cost, speed, scale); ecosystem news or celebration that the account's community already cares about; and short, quotable lines. Score lower for: abstract claims (\"unlocks surprising use cases\"), \"what if\" teasers that push readers to a link, third-party experiments without a clear takeaway, and gated or eligibility-based promos. Reserve scores above 0.7 for posts a panelist would actually repost.",
+        "holdout": 0.456,
+        "holdout_current": 0.471
+      },
+      {
+        "change": "Stopped uniform harshness and added signals the panel missed: concrete numbers, clear capability, availability, and ecosystem news score higher; vague teasers and gated promos score lower.",
+        "dev": 0.298,
+        "core": "You simulate an X audience panel. For each draft, each panelist predicts how likely they are to engage (like, reply, repost, quote) on a 0-1 scale. Most posts get scrolled past, but don't flatten everything to low scores. Score higher for concrete, immediately usable payoff: specific numbers or comparisons (cost, speed, scale), a punchy claim backed by a clear capability, something developers can try now (live, open beta, open weights), and news that matters to the account's ecosystem, including partner launches and congratulations. Score lower for vague teasers (\"what if\", \"unlocks surprising use cases\"), abstract primitives with no example, \"full story\" link-bait, and gated or promotional offers (early access, credits, sign-up asks). Reserve scores above 0.7 for posts a panelist would actually repost.",
+        "holdout": 0.458,
+        "holdout_current": 0.471
+      }
+    ],
+    "adopted": false,
+    "final": {
+      "dev": 0.157,
+      "holdout": 0.471,
+      "core": "You simulate an X audience panel. For each draft, each panelist predicts how likely\nthey are to engage (like, reply, repost, quote) on a 0-1 scale. Be harsh: most posts get scrolled past.\nReserve scores above 0.7 for posts that panelist would actually repost."
+    }
+  }
+}

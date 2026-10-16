@@ -16,6 +16,9 @@ from harness.review import serve
 from harness.reward import score
 from harness.sources import observe
 from harness.tournament import tournament
+from harness.tune import tune
+from harness.virality import load as load_virality
+from harness.virality import train as train_virality
 
 
 def run(args) -> None:
@@ -94,6 +97,12 @@ def stats(args) -> None:
     for v in lb["variants"]:
         print(f"{v['id']:<26}{v['status']:<9}{v['n']:>7}{v['mean']:>7.2f}  {v['parent']} / {v['note'] or ''}")
     print(f"\npanel weights: {lb['panel_weights'] or 'uncalibrated (all 1.0)'}")
+    model = load_virality()
+    print("virality model: " + (f"pair accuracy {model.meta['pair_accuracy']}, spearman {model.meta['spearman']:+.3f} "
+                                f"on held-out accounts" if model else "not trained (`python -m harness train`)"))
+    for h in memory.kv_get("tune_history", [])[-3:]:
+        print(f"tune {h['at']}: " + ", ".join(f"{t} {'adopted' if r['adopted'] else 'kept'} (dev {r['dev']})"
+                                             for t, r in h.items() if isinstance(r, dict)))
 
 
 def add_run_args(p) -> None:
@@ -143,6 +152,18 @@ def main() -> None:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--calibrate", action="store_true", help="apply the fitted panel weights")
     p.set_defaults(func=lambda a: backtest(get_llm(a.provider), a.per_category, a.pairs, a.seed, a.calibrate))
+
+    p = sub.add_parser("train", help="fit the virality model on the dev-tool dataset (local, no API calls)")
+    p.set_defaults(func=lambda a: train_virality())
+
+    p = sub.add_parser("tune", help="evolve the judge and panel instructions against the dataset (holdout-gated)")
+    p.add_argument("--provider")
+    p.add_argument("--target", choices=("judge", "panel", "both"), default="both")
+    p.add_argument("--iterations", type=int, default=2, help="revisions tried per evaluator")
+    p.add_argument("--pairs", type=int, default=30, help="same-account pairs per split for the judge")
+    p.add_argument("--posts", type=int, default=30, help="posts per split for the panel")
+    p.add_argument("--seed", type=int, default=0)
+    p.set_defaults(func=lambda a: tune(get_llm(a.provider), a.target, a.iterations, a.pairs, a.posts, a.seed))
 
     p = sub.add_parser("evolve", help="learn from reviews + metrics: lessons, playbook, new prompt variants")
     p.add_argument("--provider")

@@ -5,17 +5,31 @@ panel score seeds the bracket and Elo from head-to-head rounds sets the final or
 """
 
 import json
+import os
 import random
 
+from harness import memory, retrieval
 from harness.actions import is_public
 from harness.llm import LLM
 from harness.models import Action
 
 K = 32  # Elo step
 
-JUDGE_SYSTEM = """You judge pairs of draft X posts for a company's account. For each pair, pick the one more
-likely to spread among the target audience (reposts, quotes, replies), weighing the opening line most.
-A draft that breaks the mission's fact sheet or reads like an ad always loses."""
+# The core is what `tune` evolves against the dataset (stored in kv "judge_core"); the rules never change.
+JUDGE_CORE = """You judge pairs of draft X posts for a company's account. For each pair, pick the one more
+likely to spread among the target audience (reposts, quotes, replies), weighing the opening line most."""
+
+JUDGE_RULES = """A draft that breaks the mission's fact sheet or reads like an ad always loses.
+Some drafts list `similar_real_posts`: real dev-tool posts close to the draft, with how they performed.
+Treat them as evidence of what this audience rewards, but judge each draft's own writing, and remember a
+big account's numbers say little about what a small account can expect."""
+
+# Off by default: in backtests (90 same-account pairs) evidence scored 82/90 vs. 84/90 without it.
+EVIDENCE = os.getenv("HARNESS_JUDGE_EVIDENCE", "0") == "1"
+
+
+def judge_system(core: str | None = None) -> str:
+    return f"{core or memory.kv_get('judge_core') or JUDGE_CORE}\n\n{JUDGE_RULES}"
 
 JUDGE_PROMPT = """MISSION:
 {mission}
@@ -26,18 +40,28 @@ PAIRS:
 Return JSON: {{"winners": {{"<pair id>": "A" or "B"}}}}"""
 
 
-def _view(a: Action) -> dict:
-    return {"type": a.type, "text": a.text, "replying_to": a.target_url or a.target_handle}
+def _view(a: Action, evidence: bool) -> dict:
+    view = {"type": a.type, "text": a.text, "replying_to": a.target_url or a.target_handle}
+    if evidence:
+        # Backtests judge dataset posts (mind "dataset", narrative_id = account): hide that account's posts.
+        exclude = {a.narrative_id} if a.mind == "dataset" else set()
+        if similar := retrieval.similar(a.text, k=3, exclude_accounts=exclude):
+            view["similar_real_posts"] = similar
+    return view
 
 
-def judge(llm: LLM, mission: str, pairs: list[tuple[Action, Action]], rng: random.Random) -> list[Action | None]:
-    """One LLM call judges every pair. Sides are shuffled to cancel position bias."""
+def judge(llm: LLM, mission: str, pairs: list[tuple[Action, Action]], rng: random.Random,
+          evidence: bool | None = None, core: str | None = None) -> list[Action | None]:
+    """One LLM call judges every pair. Sides are shuffled to cancel position bias.
+    `evidence` adds similar real posts per draft (default: HARNESS_JUDGE_EVIDENCE); `core` overrides the
+    judge's evolvable instructions (used by `tune` to try a candidate)."""
     if not pairs:
         return []
+    evidence = EVIDENCE if evidence is None else evidence
     sides = [(a, b) if rng.random() < 0.5 else (b, a) for a, b in pairs]
-    payload = [{"pair": str(i), "A": _view(a), "B": _view(b)} for i, (a, b) in enumerate(sides)]
+    payload = [{"pair": str(i), "A": _view(a, evidence), "B": _view(b, evidence)} for i, (a, b) in enumerate(sides)]
     out = llm.complete_json(
-        JUDGE_SYSTEM,
+        judge_system(core),
         JUDGE_PROMPT.format(mission=mission, pairs=json.dumps(payload, indent=1)),
         mock=lambda: {"winners": {str(i): "A" if a.predicted_score >= b.predicted_score else "B"
                                   for i, (a, b) in enumerate(sides)}},

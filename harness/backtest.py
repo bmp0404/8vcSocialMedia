@@ -15,34 +15,14 @@ import random
 from collections import defaultdict
 from datetime import datetime
 
-from harness import config, dataset, memory
+from harness import config, dataset, memory, virality
 from harness.llm import LLM
+from harness.metrics import spearman
 from harness.models import Action
 from harness.qualify import panel_scores, weighted_score
 from harness.tournament import judge
-
-
-def _ranks(xs: list[float]) -> list[float]:
-    order = sorted(range(len(xs)), key=xs.__getitem__)
-    ranks = [0.0] * len(xs)
-    i = 0
-    while i < len(order):
-        j = i
-        while j + 1 < len(order) and xs[order[j + 1]] == xs[order[i]]:
-            j += 1
-        for k in range(i, j + 1):
-            ranks[order[k]] = (i + j) / 2
-        i = j + 1
-    return ranks
-
-
-def spearman(xs: list[float], ys: list[float]) -> float:
-    """Rank correlation; 0.0 when either side is constant (nothing to rank)."""
-    rx, ry = _ranks(xs), _ranks(ys)
-    mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
-    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
-    vx, vy = sum((a - mx) ** 2 for a in rx), sum((b - my) ** 2 for b in ry)
-    return round(cov / (vx * vy) ** 0.5, 3) if vx and vy else 0.0
+from harness.tune import _pairs
+from harness.virality import training_set
 
 
 def _as_action(p: dataset.Post) -> Action:
@@ -81,12 +61,24 @@ def backtest(llm: LLM, per_category: int = 10, pairs: int = 20, seed: int = 0, c
     judged = [(w is h) for (h, _), w in zip(pair_acts, picks) if w is not None]
     judge_acc = round(sum(judged) / len(judged), 3) if judged else None
 
+    # 3. Same-account pairs isolate the writing (no account fame); compare with and without retrieved evidence.
+    rows = [(p, 0.0) for p in training_set()[3] if len(p.clean_text) >= 20]
+    same = _pairs(rows, pairs, rng)
+    same_acc = {}
+    for evidence in (False, True):
+        sp = judge(llm, config.mission(), [(h, f) for h, f, _, _ in same], random.Random(seed), evidence=evidence)
+        hits = [w is h for (h, _, _, _), w in zip(same, sp) if w is not None]
+        same_acc["with_evidence" if evidence else "no_evidence"] = round(sum(hits) / len(hits), 3) if hits else None
+    model = virality.load()
+
     report = {
         "at": datetime.now().isoformat(timespec="seconds"),
         "provider": config.PROVIDER,
         "panel": {"n_posts": len(sample), "spearman_unweighted": before, "spearman_calibrated": after,
                   "per_panelist_spearman": per_panelist, "suggested_weights": weights},
-        "judge": {"n_pairs": len(judged), "accuracy": judge_acc},
+        "judge": {"n_pairs": len(judged), "accuracy": judge_acc,
+                  "same_account": {"n_pairs": len(same), **same_acc}},
+        "virality_model": model.meta if model else None,
         "calibrated": calibrate,
     }
     if calibrate:
@@ -100,5 +92,12 @@ def backtest(llm: LLM, per_category: int = 10, pairs: int = 20, seed: int = 0, c
     for name, rho in sorted(per_panelist.items(), key=lambda kv: -kv[1]):
         print(f"           {name:<26} {rho:+.2f}  -> weight {weights[name]}")
     print(f"[backtest] judge picked the viral post in {judge_acc if judge_acc is not None else 'n/a'} of {len(judged)} pairs (0.5 = chance)")
+    print(f"[backtest] same-account pairs ({len(same)}): judge {same_acc['no_evidence']} without evidence, "
+          f"{same_acc['with_evidence']} with similar real posts")
+    if model:
+        print(f"[backtest] virality model (held-out accounts): pair accuracy {model.meta['pair_accuracy']}, "
+              f"spearman {model.meta['spearman']:+.3f}")
+    else:
+        print("[backtest] no virality model yet: `python -m harness train`")
     print(f"[backtest] {'calibrated panel weights' if calibrate else 'weights NOT applied (use --calibrate)'}; report -> {out}")
     return report

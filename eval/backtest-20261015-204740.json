@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-15T20:47:40",
+  "provider": "anthropic",
+  "panel": {
+    "n_posts": 12,
+    "spearman_unweighted": 0.594,
+    "spearman_calibrated": 0.594,
+    "per_panelist_spearman": {
+      "agent_power_user": 0.441,
+      "eng_lead": 0.251,
+      "skeptical_senior": 0.442,
+      "ai_tooling_influencer": 0.621,
+      "multi_agent_researcher": 0.442
+    },
+    "suggested_weights": {
+      "agent_power_user": 1.44,
+      "eng_lead": 1.25,
+      "skeptical_senior": 1.44,
+      "ai_tooling_influencer": 1.62,
+      "multi_agent_researcher": 1.44
+    }
+  },
+  "judge": {
+    "n_pairs": 60,
+    "accuracy": 0.883,
+    "same_account": {
+      "n_pairs": 60,
+      "no_evidence": 0.933,
+      "with_evidence": 0.917
+    }
+  },
+  "virality_model": {
+    "alpha": 10.0,
+    "n_posts": 1532,
+    "n_accounts": 70,
+    "n_pairs": 2000,
+    "spearman": 0.345,
+    "pair_accuracy": 0.78,
+    "dataset": "devtools_virality_30d.csv"
+  },
+  "calibrated": false
+}
