@@ -116,8 +116,9 @@ def changelog(recs: list[dict], cfg: Config, history: list[str]) -> str:
                   f"- **Proposed by:** {rec['proposer']['kind']} ({rec['proposer'].get('source') or 'no source'})"]
         if primary:
             dirn = "higher" if primary["higher_is_better"] else "lower"
-            lines += [f"- **{primary['name']}** ({dirn} is better), {ev['n']} {ev['unit']}s in {ev['clusters']} "
-                      f"{ev['cluster_unit']}s: champion {_fmt(primary['champion'])}, challenger "
+            where = (f"{ev['n']} {ev['unit']}s" if ev["unit"] == ev["cluster_unit"]
+                     else f"{ev['n']} {ev['unit']}s from {ev['clusters']} {ev['cluster_unit']}s")
+            lines += [f"- **{primary['name']}** ({dirn} is better), {where}: champion {_fmt(primary['champion'])}, challenger "
                       f"{_fmt(primary['challenger'])}, difference {_fmt(primary['delta'])}"]
             nf, corr = ev.get("noise_floor") or {}, ev.get("correction") or {}
             if nf:
