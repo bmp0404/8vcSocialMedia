@@ -17,3 +17,8 @@ def no_network(monkeypatch):
 
     monkeypatch.setattr(socket.socket, "connect", refuse)
     monkeypatch.setattr(socket.socket, "connect_ex", refuse)
+    # Once baml_sdk is generated, Action's veto calls Dhilan's post_judge for grounding, and its
+    # default provider (claude_code) runs the local Claude Code client in a subprocess, which the
+    # socket guard doesn't see: test_provider_without_prefill_uses_styled hung there. A test that
+    # wants the grounding veto injects a fake checker.
+    monkeypatch.setenv("HARNESS_GROUNDING", "off")
