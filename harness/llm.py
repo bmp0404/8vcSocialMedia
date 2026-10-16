@@ -52,14 +52,26 @@ class AnthropicLLM(LLM):
 
     def complete_tools(self, system, prompt, tools, mock=None):
         # Forced tool_choice ("any") is rejected by current models; strict schemas + the prompt steer instead.
-        resp = self.client.messages.create(
-            model=self.model,
-            max_tokens=MAX_TOKENS,
-            system=system,
-            tools=[{**t, "strict": True} for t in tools],
-            tool_choice={"type": "auto"},
-            messages=[{"role": "user", "content": prompt}],
-        )
+        import anthropic
+
+        def call(strict: bool):
+            return self.client.messages.create(
+                model=self.model,
+                max_tokens=MAX_TOKENS,
+                system=system,
+                tools=[{**t, "strict": strict} for t in tools],
+                tool_choice={"type": "auto"},
+                messages=[{"role": "user", "content": prompt}],
+            )
+
+        try:
+            resp = call(strict=True)
+        except anthropic.BadRequestError as e:
+            # Minds with many tools exceed the strict-mode grammar limit. actions.validate() still checks
+            # every call, so falling back to non-strict schemas keeps those lanes drafting.
+            if "grammar is too large" not in str(e):
+                raise
+            resp = call(strict=False)
         if resp.stop_reason == "max_tokens":  # the last tool call's arguments would be cut off
             raise TruncatedError(f"{self.model} hit max_tokens={MAX_TOKENS}; ask for fewer actions")
         return [(b.name, b.input) for b in resp.content if b.type == "tool_use"]
