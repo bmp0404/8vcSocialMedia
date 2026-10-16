@@ -132,7 +132,7 @@ The screen compared the styled prompt with the persona call on 20 WNBA threads (
 
 BH passed it (p = 0.044), but its lower bound, +0.000, didn't clear the noise floor of 0.05 between the champion and its repeat, so the record is inconclusive and the spec is done. More threads would decide it: the persona call is found almost every time, and the styled prompt still four times in five.
 
-Three defects came out of the live runs, each fixed with a test. The devtools facts refresh died on the first unreadable account (13:58 run). Every gateway GPT model answered 429 `usage_limit_reached` from 13:50 to about 14:50, so the loop now probes a phase's models before spending its budget, and deferred the screen twice. And cycle 1's hang came from compounding retries: `MeteredLLM` retried four times and the SDK twice more inside each attempt, with backoff sleeps, against a GPT pool still answering some calls with 429. Cycle 2 ran on the fixed client and logged 15 such retries without stalling.
+Three defects came out of the live runs, each fixed with a test. The devtools facts refresh died on the first unreadable account (13:58 run). Every GPT model on the gateway answered 429 `usage_limit_reached` in probes at 13:50, 13:58 and 14:03, and answered again by 14:52, so the loop now probes a phase's models before spending its budget; it deferred the screen twice. And cycle 1's hang came from compounding retries: `MeteredLLM` retried four times and the SDK twice more inside each attempt, with backoff sleeps, against a GPT pool still answering some calls with 429. Cycle 2 ran on the fixed client and logged 40 such retries on the GPT detector without stalling.
 
 ## Not verified
 
