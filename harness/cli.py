@@ -10,12 +10,16 @@ from harness.orient import orient
 from harness.qualify import qualify
 from harness.review import serve
 from harness.sources import observe
+from harness.sources.watch import account_handle
 
 
 def run(args) -> None:
     llm = get_llm(args.provider)
     mission = config.mission()
     sources = args.sources.split(",") if args.sources else config.SOURCES
+    # Read before any LLM call, so a broken observe config fails the run before it spends anything.
+    account, account_source = account_handle()
+    print(f"[run] account @{account} (from {account_source})" if account else f"[run] no account: {account_source} is empty")
 
     signals = observe(sources, mission)
     if not signals:
@@ -39,7 +43,8 @@ def run(args) -> None:
     config.OUT_DIR.mkdir(exist_ok=True)
     out = config.OUT_DIR / f"recommendations-{datetime.now():%Y%m%d-%H%M%S}.json"
     out.write_text(
-        json.dumps({"run_id": run_id, "recommendations": [a.to_dict() for a in ranked]}, indent=2),
+        json.dumps({"run_id": run_id, "account": account or None, "recommendations": [a.to_dict() for a in ranked]},
+                   indent=2),
         encoding="utf-8",
     )
 
