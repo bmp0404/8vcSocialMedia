@@ -1,0 +1,2 @@
+# Mock runs exercise the code path, not the panel; keep their reports out of git.
+*-mock.*

@@ -1,0 +1,637 @@
+{
+ "top": 5,
+ "window_h": 24,
+ "n_cutoffs": 9,
+ "n_live": 11,
+ "n_orient_errors": 2,
+ "recall": 0.8181818181818182,
+ "naive_recall": 0.5454545454545454,
+ "rows": [
+  {
+   "cutoff": "2026-09-21T17:34:12.970000+00:00",
+   "n_signals": 34,
+   "live": [
+    "grok-4.7"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [
+    "grok-4.7"
+   ],
+   "narratives": [
+    {
+     "id": "new-model-day-one-integrations",
+     "title": "New frontier models landing in coding tools within hours",
+     "summary": "Dev-tool companies are racing to ship day-one support for new models: Kiro added Claude Fable 5.1 for enterprise customers, Railway added Grok 4.7 via `railway code --grok`, and Cline is offering Kimi K3 free in its desktop app. The story is less about the models than about how fast tools wire them into agent workflows.",
+     "relevance": 0.95,
+     "velocity": 0.85,
+     "angle": "Compare how fast each tool shipped support and what it exposes: Kiro gates Fable 5.1 to enterprise, Railway has a one-flag CLI path, Cline gives away Kimi K3. Ask which setup holds up on long agentic sessions.",
+     "signal_urls": [
+      "https://x.com/kirodotdev/status/2102064625474785741",
+      "https://x.com/Railway/status/2102073924783837479",
+      "https://x.com/cline/status/2101754721677840702"
+     ]
+    },
+    {
+     "id": "mcp-agent-native-devtools",
+     "title": "MCP servers and agent-first workflows become standard dev-tool surface",
+     "summary": "Trigger.dev shipped an MCP server and a 'Copy AI agent prompt' flow that handles setup, dev runs, trace reading and TRQL queries. Resend is closing the gap between dashboard, API, CLI and MCP. Expo is making the iPhone Duo testable by agents without a Mac. Strapi is also demoing MCP for content.",
+     "relevance": 0.93,
+     "velocity": 0.8,
+     "angle": "Point out the pattern: products now ship API, CLI and MCP parity. Trigger's rules baked into the prompt (export every task, use built-in fetch, stop and ask for secrets) are the part that makes generated code correct. Share a concrete example of that kind of guardrail.",
+     "signal_urls": [
+      "https://x.com/triggerdotdev/status/2102065355548205144",
+      "https://x.com/triggerdotdev/status/2102065367741088158",
+      "https://x.com/triggerdotdev/status/2102065391111705060",
+      "https://x.com/triggerdotdev/status/2102065403019378889",
+      "https://x.com/resend/status/2102035680432206007",
+      "https://x.com/expo/status/2102040916080927044",
+      "https://x.com/strapijs/status/2102057814696882352"
+     ]
+    },
+    {
+     "id": "inference-benchmarks-cost-performance",
+     "title": "Concrete inference and cost numbers: vLLM Pareto curves and MotherDuck's 50x classification",
+     "summary": "vLLM published a Qwen3.8-2.4T Pareto frontier on GB300 NVL72 (5K tokens/s/GPU at high throughput, 180 tokens/s/user at low latency, 8K in / 1K out). MotherDuck says prompt_jev() classifies 100k rows in 40s for $0.50 versus 32 min and $37 for a frontier LLM.",
+     "relevance": 0.85,
+     "velocity": 0.6,
+     "angle": "Say what each number leaves out. For vLLM, ask how the frontier moves with longer inputs than 8K. For MotherDuck, ask what accuracy looks like on messy labels versus the benchmark set, and where a small model stops matching a frontier LLM.",
+     "signal_urls": [
+      "https://x.com/vllm_project/status/2102051703579373706",
+      "https://x.com/motherduck/status/2102077291081896307"
+     ]
+    },
+    {
+     "id": "zero-downtime-migration-and-db-reliability",
+     "title": "Database and infra reliability stories: shadow-running migrations and safe Postgres failover",
+     "summary": "Checkly migrated daemons by running both side by side on production traffic for a week, with CI blocking merges on either failure, and customers noticed nothing. PlanetScale highlights that a replica can finish WAL replay yet still lack logical replication slots, which breaks change streams on promotion. CockroachDB is teasing Continuum for AI workloads on Oct 15.",
+     "relevance": 0.75,
+     "velocity": 0.5,
+     "angle": "Give the checklist version: a replica being caught up is not the same as being promotable. Name the slot-sync failure mode and credit Checkly's dual-run approach as the testing pattern to copy.",
+     "signal_urls": [
+      "https://x.com/checklyHQ/status/2101989899742179416",
+      "https://x.com/PlanetScale/status/2102082058424074339",
+      "https://x.com/CockroachDB/status/2102068628459806757"
+     ]
+    },
+    {
+     "id": "agent-onboarding-education-community",
+     "title": "Learning programs and community pushes around AI dev tools",
+     "summary": "Kiro launched a one-week University Challenge covering steering, hooks, MCP and Powers with credits. Cline Desktop reports 6% of tasks one week after launch, half from new users. Lovable is announcing ambassadors, Replit is running founder success stories, and Storybook published a component testing guide that covers agent-written UI.",
+     "relevance": 0.6,
+     "velocity": 0.55,
+     "angle": "Be useful instead of cheering: share what a good first-week agent setup looks like (steering files, hooks, MCP scope). Also note Storybook's point that agent-written UI makes component tests more valuable.",
+     "signal_urls": [
+      "https://x.com/kirodotdev/status/2102081961665744917",
+      "https://x.com/cline/status/2101754721677840702",
+      "https://x.com/Lovable/status/2102071205373300934",
+      "https://x.com/storybookjs/status/2102076831604035927",
+      "https://x.com/Replit/status/2102065557784723766"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-22T17:37:01.213000+00:00",
+   "n_signals": 71,
+   "live": [
+    "opus-5.5"
+   ],
+   "naive_surfaced": [
+    "opus-5.5"
+   ],
+   "surfaced": [
+    "opus-5.5"
+   ],
+   "narratives": [
+    {
+     "id": "opus-5-5-rollout",
+     "title": "Claude Opus 5.5 lands across coding tools",
+     "summary": "Within about an hour, Cursor, Devin, Factory, Lovable and CodeRabbit all announced Opus 5.5 support with their own numbers: CursorBench 57.8% at 40% lower cost per task than Opus 5, FrontierCode 1.1 #1, 20-25% fewer output tokens, up to 48% fewer steps, and CodeRabbit's 51 vs 49 and 10 vs 5 bug-catch results with ~50% more tokens. This is the newest and fastest-moving thread.",
+     "relevance": 0.95,
+     "velocity": 0.95,
+     "angle": "Line up the vendor numbers side by side: CursorBench cost-per-task, Factory's token reduction, CodeRabbit's bug catches. Point out that each tool measures something different and say which metric matters for your workflow. CodeRabbit's ~50% extra tokens is the honest caveat.",
+     "signal_urls": [
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/coderabbitai/status/2102437018311532862"
+     ]
+    },
+    {
+     "id": "grok-4-7-value-push",
+     "title": "Grok 4.7 launches with discounts and value claims",
+     "summary": "Cline, Vercel AI Gateway, Devin and Factory shipped Grok 4.7. Cline and Vercel both offer 40% off through 9/27, and Cline claims near-frontier DeepSWE scores at ~8x lower cost. Devin reports 59.4% on FrontierCode 1.1 Extended, and Factory notes faster command discovery than Grok 4.6.",
+     "relevance": 0.9,
+     "velocity": 0.75,
+     "angle": "Put the price-versus-score tradeoff in concrete terms: cost per solved task for Grok 4.7 versus Opus 5.5 on the same benchmark. Note that the 40% discount ends 9/27, so teams should compare before then.",
+     "signal_urls": [
+      "https://x.com/cline/status/2102109776960463299",
+      "https://x.com/vercel/status/2102176023207166256",
+      "https://x.com/cognition/status/2102147831519666639",
+      "https://x.com/FactoryAI/status/2102162709647430116"
+     ]
+    },
+    {
+     "id": "jev-gateway-day-zero",
+     "title": "Jev model and the AI gateway race",
+     "summary": "Typesafe's new Jev model is rolling out through AI gateways. Convex launched its gateway with no token markup and no API key to manage, Lovable is offering Jev free through 9/27, Cloudflare posted a 60-second setup guide, and Upstash shipped a demo built on Jev. Gateways are competing on day-0 access and price.",
+     "relevance": 0.85,
+     "velocity": 0.7,
+     "angle": "Compare gateways on the details that matter: markup, key management, streaming support and time-to-first-model-on-release-day. Convex's no-markup claim versus free promos is a fair point of comparison.",
+     "signal_urls": [
+      "https://x.com/convex/status/2102094480400912753",
+      "https://x.com/convex/status/2102094483617906869",
+      "https://x.com/Lovable/status/2102111625545486444",
+      "https://x.com/CloudflareDev/status/2102447080631632208",
+      "https://x.com/upstash/status/2102350503158100079"
+     ]
+    },
+    {
+     "id": "mimo-v2-6-open-weights",
+     "title": "MiMo-V2.6 and open-weights serving infrastructure",
+     "summary": "MiMo-V2.6-Pro is billed as the top open-weights model on the Artificial Analysis index and is already in ClinePass. vLLM shipped day-0 support (1.02T total and 42B active parameters, 1M context, FP8). Its RL training ran on 1,000+ TPUs with vLLM rollouts. vLLM also added XGrammar tool calling for DeepSeek-v4.1 and NVDEC video decoding that doubles throughput.",
+     "relevance": 0.85,
+     "velocity": 0.6,
+     "angle": "Focus on what day-0 support means in practice: a 1T MoE with 42B active parameters and native FP8 is servable the day it ships. Ask whether open weights are now good enough for agentic coding loops.",
+     "signal_urls": [
+      "https://x.com/cline/status/2102164322860613725",
+      "https://x.com/vllm_project/status/2102181397138128962",
+      "https://x.com/vllm_project/status/2102264807630180468",
+      "https://x.com/vllm_project/status/2102142742231216140",
+      "https://x.com/vllm_project/status/2102142730134814943"
+     ]
+    },
+    {
+     "id": "agents-as-api-consumers",
+     "title": "Products opening up APIs and MCP for agents",
+     "summary": "Resend now exposes most dashboard actions programmatically, including an Email Metrics API. Linear Inbox is available via MCP. Strapi has an MCP server for blog posts. Netlify demos Claude deploying directly. Expo's EAS Simulator closes the loop from issue to bug reproduction to PR. Neon added a second Function Trigger type. Cockroach Continuum targets one database per agent.",
+     "relevance": 0.8,
+     "velocity": 0.6,
+     "angle": "Describe the pattern: if the dashboard can do it, the API and MCP should too. Name which Resend endpoints and Linear Inbox MCP actions you would give an agent first, and which you would withhold.",
+     "signal_urls": [
+      "https://x.com/resend/status/2102391570981134695",
+      "https://x.com/linear/status/2102431323889775037",
+      "https://x.com/strapijs/status/2102337395773346109",
+      "https://x.com/Netlify/status/2102422240172105944",
+      "https://x.com/expo/status/2102421737073713559",
+      "https://x.com/CockroachDB/status/2102407070750323054",
+      "https://x.com/neondatabase/status/2102420442527256938"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-22T19:08:24.120000+00:00",
+   "n_signals": 73,
+   "live": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "naive_surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "narratives": [
+    {
+     "id": "opus-5-5-launch-coding-tools",
+     "title": "Claude Opus 5.5 lands across coding tools",
+     "summary": "Within about an hour, Cursor, Devin, Factory, Lovable and CodeRabbit all shipped or evaluated Opus 5.5. Reported results: 57.8% on CursorBench at 40% lower cost per task than Opus 5, #1 on FrontierCode 1.1, 20-25% fewer output tokens, up to 48% fewer steps in Lovable, and CodeRabbit's 51 vs 49 and 10 vs 5 bug catches at roughly 50% more tokens.",
+     "relevance": 0.98,
+     "velocity": 0.95,
+     "angle": "Put the numbers side by side: CursorBench 57.8%, Factory's 20-25% fewer output tokens, CodeRabbit's 10 vs 5 on hard cases but ~50% more tokens. Each vendor measures a different cost axis, so ask which one actually predicts your bill.",
+     "signal_urls": [
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/coderabbitai/status/2102437018311532862"
+     ]
+    },
+    {
+     "id": "gpt-6-sol-luna-cost-per-task",
+     "title": "GPT-6 Sol and Luna: same score, far lower cost per task",
+     "summary": "Devin reports GPT-6 Sol matching GPT-5.6 Sol on FrontierCode 1.1 at 61% lower cost per task. Luna beats GPT-5.6 Luna at about a quarter of the cost, under $0.10 per task. Lovable reports 6-12% gains on 0-to-1 builds and 10-15% better intent alignment.",
+     "relevance": 0.93,
+     "velocity": 0.85,
+     "angle": "Cost per task is replacing raw score as the headline metric. At under $0.10 per task, Luna makes it cheap to run an agent on every PR. Which workflows do you move to it first?",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102463672224543018",
+      "https://x.com/Lovable/status/2102460015290548249",
+      "https://x.com/Lovable/status/2102460017182171367",
+      "https://x.com/Lovable/status/2102470230719266861"
+     ]
+    },
+    {
+     "id": "mimo-v2-6-open-weights-vllm",
+     "title": "MiMo-V2.6 open weights and day-0 vLLM support",
+     "summary": "MiMo-V2.6 (Pro 1.02T/42B active, Flash 309B/15B active, 1M context, native FP8) shipped with day-0 vLLM support. Cline calls it the best open-weights model on the Artificial Analysis index. Peano ran full-parameter RL across 1,000+ TPUs with vLLM rollouts bitwise-matched to the trainer.",
+     "relevance": 0.9,
+     "velocity": 0.7,
+     "angle": "Pro is 1T total but only 42B active, with native FP8 and built-in speculative decoding. What matters for self-hosters is the serving cost per token, not the leaderboard rank. Has anyone benchmarked Flash at 15B active for agent loops?",
+     "signal_urls": [
+      "https://x.com/vllm_project/status/2102181397138128962",
+      "https://x.com/cline/status/2102164322860613725",
+      "https://x.com/vllm_project/status/2102264807630180468"
+     ]
+    },
+    {
+     "id": "self-driving-product-posthog",
+     "title": "PostHog's self-driving product thread",
+     "summary": "PostHog posted a long thread of agent-driven fixes: fail-soft cache accounting, a leaking iOS survey, a bulk-delete bug, docs gaps from support tickets, and a Rust CLI race condition where the agent disagreed with its own brief. It closes with an npx wizard. They also admit it is a re-share with a new opening.",
+     "relevance": 0.82,
+     "velocity": 0.7,
+     "angle": "The best case in the thread is the flaky Rust test, where the agent checked the missing env-var theory and found the real race in tracing's cached callsite interest. Agents that can disagree with the brief matter more than ones that ship +39/-3 diffs.",
+     "signal_urls": [
+      "https://x.com/posthog/status/2102424081253752928",
+      "https://x.com/posthog/status/2102424103345156453",
+      "https://x.com/posthog/status/2102424212384453036",
+      "https://x.com/posthog/status/2102424229534917033",
+      "https://x.com/posthog/status/2102424254306521120"
+     ]
+    },
+    {
+     "id": "agent-safety-auth-mcp",
+     "title": "Agent safety, auth and MCP guardrails",
+     "summary": "WorkOS argues destructive agent actions need step-up auth, not confirmation boxes. It also proposes Auth.md for agent registration and shipped Pipes with 300+ connectors. PostHog found MCP workflow edits landing straight on live config with no draft or rollback, plus duplicated MCP payloads that waste context. Temporal and Linear add context and guardrails via MCP.",
+     "relevance": 0.88,
+     "velocity": 0.65,
+     "angle": "PostHog's numbers (1,093 live edits from 295 users in 90 days, no versioning) show why step-up auth and drafts matter for MCP write tools. A confirm dialog proves intent, not identity. Which write tools in your stack have no undo?",
+     "signal_urls": [
+      "https://x.com/WorkOS/status/2102135783234613741",
+      "https://x.com/WorkOS/status/2102464173787771157",
+      "https://x.com/WorkOS/status/2102468210847252591",
+      "https://x.com/posthog/status/2102424160299610259",
+      "https://x.com/posthog/status/2102424178666471694",
+      "https://x.com/linear/status/2102431323889775037",
+      "https://x.com/temporalio/status/2102395877033754982"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-22T19:22:56.001000+00:00",
+   "n_signals": 73,
+   "live": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "naive_surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "surfaced": [
+    "opus-5.5",
+    "gpt-6-sol"
+   ],
+   "narratives": [
+    {
+     "id": "opus-5-5-launch-coding-tools",
+     "title": "Claude Opus 5.5 lands across coding tools",
+     "summary": "Within about an hour, Cursor, Devin, Factory, Lovable and CodeRabbit all shipped or evaluated Opus 5.5. Reported numbers: CursorBench 57.8% at 40% lower cost per task than Opus 5, #1 on FrontierCode 1.1, 20-25% fewer output tokens in Factory, up to 48% fewer steps in Lovable, and CodeRabbit catching 51 vs 49 of 80 known bugs and 10 vs 5 on 13 harder cases at ~50% more tokens.",
+     "relevance": 0.97,
+     "velocity": 0.95,
+     "angle": "Put the vendor numbers side by side: Cursor says 40% cheaper per task, CodeRabbit says ~50% more tokens, Factory says 20-25% fewer output tokens. Cost per task and cost per token are different things, so ask which metric holds up on your own repo.",
+     "signal_urls": [
+      "https://x.com/cursor_ai/status/2102448392773435706",
+      "https://x.com/cognition/status/2102451801303998506",
+      "https://x.com/FactoryAI/status/2102439895109370349",
+      "https://x.com/Lovable/status/2102441067199295971",
+      "https://x.com/coderabbitai/status/2102437018311532862"
+     ]
+    },
+    {
+     "id": "gpt-6-sol-luna-cost-per-task",
+     "title": "GPT-6 Sol and Luna: cost-per-task wins",
+     "summary": "Devin and Lovable added GPT-6 Sol. Devin reports Sol matching GPT-5.6 Sol on FrontierCode 1.1 at 61% lower cost per task. Luna beats GPT-5.6 Luna at about a quarter of the cost, under $0.10 per task. Lovable reports 6-12% gains on its 0-to-1 benchmark.",
+     "relevance": 0.93,
+     "velocity": 0.88,
+     "angle": "A sub-$0.10 task that tops the leaderboard on price makes the Pareto frontier the story, not the #1 spot. Plot score against cost per task for Opus 5.5, GPT-6 Sol and Luna and see who is actually on the frontier.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102463672224543018",
+      "https://x.com/Lovable/status/2102460015290548249",
+      "https://x.com/Lovable/status/2102460017182171367",
+      "https://x.com/Lovable/status/2102470230719266861"
+     ]
+    },
+    {
+     "id": "mimo-v2-6-open-weights-vllm",
+     "title": "MiMo-V2.6 open weights and the vLLM ecosystem",
+     "summary": "MiMo-V2.6 launched with day-0 vLLM support: a 1.02T/42B-active Pro and a 309B/15B-active Flash, 1M context and native FP8. Cline calls Pro the best open-weights model on the Artificial Analysis index. vLLM also highlighted 1,000+ TPU full-parameter RL with bitwise-matched rollouts, plus XGrammar tool calling for DeepSeek-v4.1.",
+     "relevance": 0.9,
+     "velocity": 0.75,
+     "angle": "Day-0 support for a 1T-parameter MoE with 42B active is the real story. Discuss what native FP8 and built-in speculative decoding mean for serving cost compared with closed frontier models, and where open weights now sit on coding tasks.",
+     "signal_urls": [
+      "https://x.com/vllm_project/status/2102181397138128962",
+      "https://x.com/cline/status/2102164322860613725",
+      "https://x.com/vllm_project/status/2102264807630180468",
+      "https://x.com/vllm_project/status/2102142742231216140"
+     ]
+    },
+    {
+     "id": "grok-4-7-rollout",
+     "title": "Grok 4.7 rollout in agents and gateways",
+     "summary": "Grok 4.7 arrived in Devin (59.4% on FrontierCode 1.1 Extended) and Factory's Droid, which notes faster command discovery than Grok 4.6 and recommends Medium as the default. Vercel is discounting it 40% on AI Gateway through Sept 27.",
+     "relevance": 0.88,
+     "velocity": 0.7,
+     "angle": "Use the Vercel 40% discount window to run Grok 4.7 against Opus 5.5 on the same backend tasks, since Devin says Grok is strong on hard backend work. Share which one finishes in fewer steps.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2102147831519666639",
+      "https://x.com/FactoryAI/status/2102162709647430116",
+      "https://x.com/vercel/status/2102176023207166256"
+     ]
+    },
+    {
+     "id": "agent-native-apis-mcp",
+     "title": "Products opening up to agents via API and MCP",
+     "summary": "Resend now exposes most dashboard actions programmatically. Linear Inbox is available over MCP. Strapi has an MCP server, and Temporal is pushing skills and a knowledge-base MCP to keep coding agents on track. Netlify gives every project a real Git repo, since 93% of new projects have no connected Git host. CockroachDB Continuum targets a database per agent, and tldraw is working on agents that point and draw.",
+     "relevance": 0.85,
+     "velocity": 0.65,
+     "angle": "The dashboard-parity-via-API pattern from Resend is spreading, so ask what the agent-ready checklist looks like. Candidates: full API coverage, scoped tokens, a real Git repo behind every project, and a database per agent.",
+     "signal_urls": [
+      "https://x.com/resend/status/2102391570981134695",
+      "https://x.com/linear/status/2102431323889775037",
+      "https://x.com/Netlify/status/2102472041865654632",
+      "https://x.com/CockroachDB/status/2102407070750323054",
+      "https://x.com/temporalio/status/2102395877033754982",
+      "https://x.com/strapijs/status/2102337395773346109"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-28T19:04:27.534000+00:00",
+   "n_signals": 41,
+   "live": [
+    "sonnet-5.5"
+   ],
+   "naive_surfaced": [
+    "sonnet-5.5"
+   ],
+   "surfaced": [
+    "sonnet-5.5"
+   ],
+   "narratives": [
+    {
+     "id": "claude-5-5-rollout-across-coding-tools",
+     "title": "Claude Sonnet 5.5 / Opus 5.5 land across coding tools",
+     "summary": "Within about an hour, v0, Factory, Kiro and Replit announced support for the new Anthropic models. Factory shared early behavioral observations, and Kiro claimed Opus 5.5 delivers Fable 5.1-level performance at 40% lower cost than Opus 5. Most posts are availability announcements, and few include concrete evals.",
+     "relevance": 0.95,
+     "velocity": 0.9,
+     "angle": "Post a concrete comparison, e.g. the same refactor task run on Sonnet 5.5 vs Opus 5.5, with tokens, cost and pass rate. Factory's note that it checks the real requirement rather than the nearest failing test is worth testing directly.",
+     "signal_urls": [
+      "https://x.com/v0/status/2104633350170251519",
+      "https://x.com/FactoryAI/status/2104640328611639731",
+      "https://x.com/kirodotdev/status/2104646075051102680",
+      "https://x.com/Replit/status/2104609792937574413"
+     ]
+    },
+    {
+     "id": "agent-pricing-and-token-efficiency",
+     "title": "Cheaper agents: Devin price cuts and Ember-1 token savings",
+     "summary": "Cognition cut Devin prices by 15-70% depending on tier while claiming the top spot on FrontierCode 1.1 Extended. Cline highlighted Fireworks' Ember-1, a Kimi K3 post-train that uses about 40% fewer tokens at the same benchmark scores. Cost per task is becoming the main axis of competition.",
+     "relevance": 0.93,
+     "velocity": 0.8,
+     "angle": "Ask for cost per solved task, not just per-token price, and quote the numbers: 40% fewer tokens only matters if pass@1 holds on real repos. Offer to compare Devin Fusion and Ember-1 on one shared task set.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2104633216145436831",
+      "https://x.com/cline/status/2104329978146115998",
+      "https://x.com/cline/status/2104629249948999967"
+     ]
+    },
+    {
+     "id": "cloudflare-birthday-week-cf-cli",
+     "title": "Cloudflare Birthday Week kicks off with the agentic `cf` CLI",
+     "summary": "Cloudflare opened its 16th birthday week of launches with `cf`, an agentic CLI covering the whole API with programmatic TypeScript configuration. More announcements are expected all week, so this is an early window to join.",
+     "relevance": 0.85,
+     "velocity": 0.75,
+     "angle": "Take the TypeScript-config angle: how does `cf` compare with Terraform or Pulumi for drift and reviewability? Then follow the rest of the week with a quick take on each launch.",
+     "signal_urls": [
+      "https://x.com/CloudflareDev/status/2104594002838524197",
+      "https://x.com/CloudflareDev/status/2104335951866822748"
+     ]
+    },
+    {
+     "id": "agent-native-infra-and-self-hosting",
+     "title": "Agents get their own infrastructure: VMs, sandboxes, self-hosted",
+     "summary": "Railway shows an agent getting a VM over a single ssh with no signup. Upstash Box is pitched at $0.022/h for 4 vCPU / 8 GB in a sandbox pricing comparison. Coder Agents offers a fully self-hosted option for air-gapped orgs. The common theme is where agents run and how much compute costs.",
+     "relevance": 0.85,
+     "velocity": 0.7,
+     "angle": "Put the numbers side by side: agent sandbox cost per hour, cold-start time and isolation model across Railway, Upstash Box and Coder. Self-hosted is the only answer for air-gapped orgs.",
+     "signal_urls": [
+      "https://x.com/Railway/status/2104572401468199274",
+      "https://x.com/upstash/status/2104320882550415734",
+      "https://x.com/coderhq/status/2104606566406086676"
+     ]
+    },
+    {
+     "id": "ai-tool-integrations-chatgpt-mcp",
+     "title": "Plugins, MCP and agent builders: Retool, n8n, Netlify WebMCP",
+     "summary": "Retool shipped a ChatGPT plugin, with CLI and MCP as fallbacks for plans where admins haven't approved it. n8n launched a new Agent type usable from Slack, schedules and workflows. Netlify and OpenAI announced WebMCP Challenge winners.",
+     "relevance": 0.8,
+     "velocity": 0.65,
+     "angle": "Compare the three integration surfaces (plugin vs MCP vs CLI) and say which works best for admin-gated enterprise setups, using Retool's plan restrictions as the example.",
+     "signal_urls": [
+      "https://x.com/retool/status/2104634650497036606",
+      "https://x.com/retool/status/2104634671719989545",
+      "https://x.com/n8n_io/status/2104488818170630389",
+      "https://x.com/Netlify/status/2104641327506030873"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-09-29T18:37:26.474000+00:00",
+   "n_signals": 42,
+   "live": [
+    "gpt-6.1-sol"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [
+    "gpt-6.1-sol"
+   ],
+   "narratives": [
+    {
+     "id": "sonnet-5-5-rollout-across-coding-tools",
+     "title": "Sonnet 5.5 and Opus 5.5 land across coding tools",
+     "summary": "Within hours of release, Kiro, Cline, Cursor, Devin and Netlify all shipped Sonnet 5.5 / Opus 5.5 support, each citing different benchmarks. Cline claims Sonnet 5.5 beats Opus 5.5 on Terminal-Bench 4.0 at half the cost. Cognition reports 64.4% on FrontierCode 1.1 Main (up from 56.2% for Sonnet 5). Kiro says Opus 5.5 is 40% cheaper than Opus 5. Netlify shows the integration is a plain SDK call.",
+     "relevance": 0.95,
+     "velocity": 0.9,
+     "angle": "Put the numbers side by side: Terminal-Bench 4.0 (Cline) and FrontierCode 1.1 (Cognition) are different evals, so post a cost-per-task comparison and say which workloads each benchmark actually represents.",
+     "signal_urls": [
+      "https://x.com/kirodotdev/status/2104646075051102680",
+      "https://x.com/cline/status/2104654757508129113",
+      "https://x.com/cursor_ai/status/2104666044220821594",
+      "https://x.com/cognition/status/2104670026770919586",
+      "https://x.com/Netlify/status/2104664382126862705"
+     ]
+    },
+    {
+     "id": "chatgpt-subscription-as-dev-tool-auth",
+     "title": "Sign in with ChatGPT: subscriptions become the billing layer for dev tools",
+     "summary": "Warp, Devin and v0 all launched ChatGPT Plus/Pro sign-in in the same window, so agent usage draws down from the user's included Codex/Work quota instead of separate API billing. This is a pricing and integration shift for AI coding tools.",
+     "relevance": 0.9,
+     "velocity": 0.85,
+     "angle": "Point out what changes for users: bring-your-own-subscription means no per-token API bill, but quota caps now decide how long agents can run. Ask who will set sensible per-tool limits first.",
+     "signal_urls": [
+      "https://x.com/warpdotdev/status/2104988839177855450",
+      "https://x.com/cognition/status/2104996240190792029",
+      "https://x.com/cognition/status/2104996242719993876",
+      "https://x.com/v0/status/2104997515905102118"
+     ]
+    },
+    {
+     "id": "chatgpt-plugins-and-apps-for-devtools",
+     "title": "Dev platforms ship ChatGPT plugins (PlanetScale, tldraw, Lovable x Muse)",
+     "summary": "PlanetScale released a ChatGPT/Codex/dots plugin and tldraw shipped a multiplayer canvas plugin in the ChatGPT app. Lovable is integrating Muse for building small-business tools. Dev tools are becoming surfaces inside assistants.",
+     "relevance": 0.8,
+     "velocity": 0.8,
+     "angle": "Take a practical view: a database plugin inside an always-on assistant is useful only if permissions and read/write scopes are clear. Show a concrete example of what the plugin can safely do.",
+     "signal_urls": [
+      "https://x.com/PlanetScale/status/2104999004371141053",
+      "https://x.com/tldraw/status/2105003566351908892",
+      "https://x.com/Lovable/status/2104995461891518897"
+     ]
+    },
+    {
+     "id": "gpt-6-1-sol-cost-per-task",
+     "title": "GPT-6.1 Sol: same score as GPT-6 Sol at a fraction of the cost",
+     "summary": "Cognition reports GPT-6.1 Sol scoring 60.4% on FrontierCode 1.1, in line with GPT-6 Sol (60.7%), at $0.31 per task at medium effort, which is 81% less than GPT-6 Sol at max effort. The story is cost-efficiency rather than a new capability ceiling.",
+     "relevance": 0.85,
+     "velocity": 0.7,
+     "angle": "Cost per solved task is the metric that matters. Compare it with Sonnet 5.5's 64.4% on the same benchmark and ask whether the reasoning-effort setting is carrying the savings.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2104988938817413583",
+      "https://x.com/cognition/status/2104670026770919586"
+     ]
+    },
+    {
+     "id": "database-performance-and-agent-memory",
+     "title": "Databases for agents: Turso 0.8 concurrent writes, Postgres-only memory, Cockroach Continuum",
+     "summary": "Turso 0.8.0 claims up to 500x lower tail latency and 7x write throughput over SQLite under concurrent writes. TimescaleDB reports F1 0.665 on LoCoMo using one Postgres table and three MCP search tools. CockroachDB introduced Continuum with an AI operator, and Upstash Blob added 1TB free egress.",
+     "relevance": 0.85,
+     "velocity": 0.6,
+     "angle": "Ask about the benchmark setup: what writer count and workload produce Turso's 500x tail-latency number? Praise TimescaleDB's move of complexity into the tool interface, and say what that means for agent memory design.",
+     "signal_urls": [
+      "https://x.com/tursodatabase/status/2104958085492081025",
+      "https://x.com/TimescaleDB/status/2104939608484282449",
+      "https://x.com/CockroachDB/status/2104945311797895291",
+      "https://x.com/upstash/status/2104931792218096074"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-10-07T19:14:00.769000+00:00",
+   "n_signals": 59,
+   "live": [
+    "opus-5.5"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [],
+   "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 10142 (char 10141)",
+   "narratives": []
+  },
+  {
+   "cutoff": "2026-10-13T17:22:52.929000+00:00",
+   "n_signals": 45,
+   "live": [
+    "gemini-4-argon"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [
+    "gemini-4-argon"
+   ],
+   "narratives": [
+    {
+     "id": "cursor-x-subscription-grok-bundle",
+     "title": "Cursor folds into The X Subscription, and the Grok integrations follow",
+     "summary": "Cursor is now part of The X Subscription. Paid plans share one usage pool across Cursor, Grok Build and other Grok products, with 2x coding usage on Grok models. Supabase immediately announced Cursor and Grok Bot working through its MCP server. This is a pricing, packaging and integration story that engineers will debate.",
+     "relevance": 0.9,
+     "velocity": 0.9,
+     "angle": "Do the pricing math in public: what 2x usage on Grok models means against a normal Cursor plan for a heavy agent user, and where a shared usage pool helps or hurts.",
+     "signal_urls": [
+      "https://x.com/cursor_ai/status/2109783879490191502",
+      "https://x.com/supabase/status/2110040855360741868"
+     ]
+    },
+    {
+     "id": "frontiercode-model-race-coding-agents",
+     "title": "New models and FrontierCode 1.1 reshuffle the coding-agent leaderboard",
+     "summary": "Cognition launched FrontierCode 1.1, a benchmark of whether a maintainer would merge the PR, on Artificial Analysis. Gemini 4 Argon scores 60.5% and is 75% off in Devin through Oct 27. Meta's Muse Wonder now leads DeepSWE, and Cline shipped support right away. Benchmarks, model releases and pricing are the core of the mission.",
+     "relevance": 0.95,
+     "velocity": 0.85,
+     "angle": "Banter on mergeability vs pass@1: a PR that passes tests but a maintainer would reject is a different failure than a wrong answer, so ask which FrontierCode tasks Argon and Muse Wonder diverge on and share any results from your own tool's runs.",
+     "signal_urls": [
+      "https://x.com/cognition/status/2109729058745725037",
+      "https://x.com/cognition/status/2110043605528408110",
+      "https://x.com/cline/status/2109755052227490281",
+      "https://x.com/cline/status/2109755053586473047"
+     ]
+    },
+    {
+     "id": "bun-fmt-vs-prettier-oxc-biome",
+     "title": "bun fmt claims 320x over Prettier, and the Oxc/Biome lineage argument starts",
+     "summary": "Bun announced a formatter that is 320x faster than Prettier and passes 99% of its tests across 20 languages. About 47k of its ~100k lines derive from Oxc, which itself came from Biome. Biome publicly clarified the fork history, so there is some friction around attribution.",
+     "relevance": 0.8,
+     "velocity": 0.8,
+     "angle": "Stay neutral and technical: ask what the 1% of Prettier tests that fail look like, and whether 320x holds on large monorepos or only in the benchmark, rather than picking sides in the fork drama.",
+     "signal_urls": [
+      "https://x.com/bunjavascript/status/2109861465100632567",
+      "https://x.com/bunjavascript/status/2109870225156104494",
+      "https://x.com/biomejs/status/2110015673296400420"
+     ]
+    },
+    {
+     "id": "cloud-agent-sandboxes-and-isolation",
+     "title": "Sandboxes and isolated runtimes become the agent infrastructure layer",
+     "summary": "Factory's Environments (GA) and Remote Control give agents a sandbox or a persistent remote machine. Fly Sprites with Resend let agents send email without ever holding the API key. Pulumi Neo runs in a Docker Sandbox, and Xata scratch offers throwaway DB branches. Railway pushes sandboxes alongside TanStack Start. The shared theme is giving agents capability without giving them credentials or production access.",
+     "relevance": 0.9,
+     "velocity": 0.7,
+     "angle": "Name the common pattern: the agent gets the capability and never the secret. Compare the connector/gateway approach (Sprites + Resend), sealed sandboxes (Docker, Pulumi) and disposable DB branches (Xata) on what each one protects against.",
+     "signal_urls": [
+      "https://x.com/FactoryAI/status/2109723187563184493",
+      "https://x.com/FactoryAI/status/2110037841967493258",
+      "https://x.com/resend/status/2109705935098892758",
+      "https://x.com/resend/status/2109705959983796309",
+      "https://x.com/PulumiCorp/status/2110016633796534561",
+      "https://x.com/xata/status/2110023162096488779",
+      "https://x.com/Railway/status/2110038855932157970"
+     ]
+    },
+    {
+     "id": "posthog-ai-lessons-mcp-first",
+     "title": "PostHog's 38 lessons: build MCP first, beware prompt injection",
+     "summary": "PostHog shared lessons from 10 AI products used by about 100k people monthly. Its MCP server has 5x the daily users of PostHog AI. It also warns that public inputs can trigger prompt injection when agents open PRs without human approval. The thread invites concrete replies from other builders.",
+     "relevance": 0.85,
+     "velocity": 0.6,
+     "angle": "Add a concrete data point on lesson 2 (MCP over chat UI) and ask how teams gate agent-opened PRs against lesson 33, such as an allowlist of signal sources or a required human approval step.",
+     "signal_urls": [
+      "https://x.com/posthog/status/2109706421919248499",
+      "https://x.com/posthog/status/2109706433893961788",
+      "https://x.com/posthog/status/2109706445549945051",
+      "https://x.com/posthog/status/2109706819048518094",
+      "https://x.com/posthog/status/2109706830649917727"
+     ]
+    }
+   ]
+  },
+  {
+   "cutoff": "2026-10-15T16:50:32.538000+00:00",
+   "n_signals": 72,
+   "live": [
+    "nemotron-3.5-super"
+   ],
+   "naive_surfaced": [],
+   "surfaced": [],
+   "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 10008 (char 10007)",
+   "narratives": []
+  }
+ ],
+ "at": "2026-10-15T21:03:30",
+ "provider": "anthropic"
+}

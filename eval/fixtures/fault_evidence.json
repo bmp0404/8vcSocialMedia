@@ -1,0 +1,12 @@
+[
+ {"action_id": "inside-band", "engagement": 6, "account_p10": 2, "account_p90": 40, "account_median": 9, "n_baseline_posts": 30,
+  "story_peer_ratio": 1.4, "n_peer_posts": 5, "draft_score": 0.7},
+ {"action_id": "bad-draft", "engagement": 0, "account_p10": 2, "account_p90": 40, "account_median": 9, "n_baseline_posts": 30,
+  "story_peer_ratio": 1.6, "n_peer_posts": 6, "draft_score": 0.24, "notes": "peers did well on the story; the judge called the draft weak"},
+ {"action_id": "dead-story", "engagement": 1, "account_p10": 2, "account_p90": 40, "account_median": 9, "n_baseline_posts": 30,
+  "story_peer_ratio": 0.2, "n_peer_posts": 4, "draft_score": 0.72, "notes": "everyone on the story flopped, like Nemotron 3.5 Super on 2026-10-15"},
+ {"action_id": "critic-flag", "engagement": 0, "account_p10": 2, "account_p90": 40, "account_median": 9, "n_baseline_posts": 30,
+  "story_peer_ratio": 1.2, "n_peer_posts": 3, "critic_flags": ["invented benchmark number"]},
+ {"action_id": "new-account", "engagement": 0, "account_p10": 0, "account_p90": 1, "account_median": 0, "n_baseline_posts": 2,
+  "notes": "the two-follower fan account: no band yet, so no verdict"}
+]
