@@ -1,0 +1,52 @@
+# What observe watches for this brand. harness/sources/watch.py reads this file.
+# Brand-specific values live here so the same sources run for another brand with another file.
+# Point HARNESS_OBSERVE_CONFIG at a different TOML file to swap brands.
+
+[brand]
+# The account's own X handle, without "@". Unknown on 2026-10-15. The x_brand source
+# raises until this is set.
+x_handle = ""
+
+[espn]
+# ESPN site-API paths, <sport>/<league>. espn_news and espn_scores read every league here.
+leagues = ["basketball/wnba", "basketball/womens-college-basketball"]
+articles_per_league = 15
+
+# Extra team-filtered news, keyed by league. ESPN team ids: Indiana Fever 5, Iowa 2294.
+[espn.teams]
+"basketball/wnba" = ["5"]
+"basketball/womens-college-basketball" = ["2294"]
+
+[google_news]
+# Google News RSS search queries. Quote a phrase to require it.
+queries = ['"Caitlin Clark"', '"Indiana Fever"', '"WNBA Finals"', "\"Iowa\" women's basketball"]
+# Google News "when:" window: 1h, 12h, 1d, 2d, 7d.
+window = "2d"
+per_query = 15
+
+[x]
+# Plain search terms. Each X backend adds its own filters (no reposts, English).
+queries = ["Caitlin Clark", "WNBA Finals", "Indiana Fever", "Aliyah Boston"]
+lookback_hours = 24
+per_query = 25
+
+[reply_targets]
+# Accounts whose fresh posts draw enough traffic that an early reply gets seen.
+# A first guess from the brief's storylines; nobody has checked them against real reply traffic.
+# Everything these accounts post is on topic.
+accounts = [
+  "WNBA", "IndianaFever", "CaitlinClark22", "IowaWBB", "AtlantaDream", "GSValkyries", "HerHoopStats",
+]
+# Big general outlets. Their posts count only when the text matches a keyword below, because
+# most of what they post (other sports) is no use to this account.
+broad_accounts = ["espnW", "SportsCenter", "BleacherReport", "NBA2K", "FOS"]
+# Case-insensitive substrings for broad accounts and search results.
+keywords = [
+  "Caitlin Clark", "Fever", "WNBA", "Hawkeyes", "Aliyah Boston", "Atlanta Dream", "Valkyries", "2K27",
+]
+# Also rank the top posts from the [x] searches as targets.
+include_search = true
+# Posts older than this are past the window where a new reply still lands near the top.
+max_age_minutes = 180
+# How many targets to emit per run.
+limit = 10

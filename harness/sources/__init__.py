@@ -1,11 +1,24 @@
 from harness.models import Signal
 from harness.sources.base import Source
+from harness.sources.espn import EspnNewsSource, EspnScoresSource
+from harness.sources.google_news import GoogleNewsSource
 from harness.sources.reddit import RedditSource
+from harness.sources.reply_targets import ReplyTargetSource
 from harness.sources.sample import SampleSource
-from harness.sources.x_search import XSearchSource
+from harness.sources.x_search import BrandActivitySource, XSearchSource
 
 REGISTRY: dict[str, type[Source]] = {
-    cls.name: cls for cls in (SampleSource, RedditSource, XSearchSource)
+    cls.name: cls
+    for cls in (
+        SampleSource,
+        RedditSource,
+        XSearchSource,
+        EspnNewsSource,
+        EspnScoresSource,
+        GoogleNewsSource,
+        ReplyTargetSource,
+        BrandActivitySource,
+    )
 }
 
 

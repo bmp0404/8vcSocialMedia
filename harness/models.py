@@ -14,6 +14,9 @@ class Signal:
     author: str | None = None
     created_at: str | None = None
     metrics: dict = field(default_factory=dict)
+    # What the item is: "news", "game", "post", "reply_target", "own_post" or "mention".
+    # Orient uses it to pick a velocity formula and to keep reply targets apart from news.
+    kind: str = ""
 
 
 @dataclass
@@ -27,6 +30,12 @@ class Narrative:
     velocity: float = 0.0
     angle: str = ""
     signal_urls: list[str] = field(default_factory=list)
+    # "data" when orient computed velocity from timestamps and counts, "llm" when it kept the
+    # model's guess because no member signal had a timestamp.
+    velocity_basis: str = ""
+    # X posts in this narrative that a reply or quote can target, hottest first. Each dict has
+    # url, author, text, age_minutes and engagement_per_hour (null when X gave no counts).
+    reply_targets: list[dict] = field(default_factory=list)
 
 
 @dataclass
