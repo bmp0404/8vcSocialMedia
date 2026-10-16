@@ -53,6 +53,8 @@ These numbers are correlational. The fixture holds X's first page of replies, wh
 
 That last point is the platform's own reason for the AI-register veto. A slop label would cost the account its only growth channel.
 
+The post lane gets less weight for a second reason. In the dev-tool data, within an account, quote posts and posts made within 2 hours of the account's last post are the clearest losers (Context worker, PR #18). Super Viral and Medium Viral posts convert viewers at nearly the same rate (1.22% against 1.17% engagement per view); Super Viral posts reached 4.6 times more people per follower. Distribution separates them, not wording. These are brand accounts, not a fan account, and quotes do reach the quoter's followers. Still, quote volume isn't free, so the quote caps are 1 per run and 2 per day, and posts stay at least 120 minutes apart (`post_spacing_minutes`).
+
 ## What decide does now
 
 `decide()` in `harness/minds/__init__.py` keeps its signature. Rushi's `vetoed=` and the persona chorus are unchanged. It hands everything to `lanes.run`:
