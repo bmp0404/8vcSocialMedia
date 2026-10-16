@@ -3,8 +3,13 @@
 It sits beside the review page rather than inside it, and nothing here writes.
 """
 
+import csv
+import html
 import json
 import re
+import subprocess
+import sys
+import threading
 from pathlib import Path
 from datetime import datetime
 from statistics import median
@@ -15,6 +20,8 @@ from harness.trace import seed_minds
 
 PAGE = Path(__file__).parent / "console.html"
 EVAL_DIR = config.ROOT / "eval"
+DATASET = config.ROOT / "data" / "devtools_virality_30d.csv"
+RUN_LOG = config.OUT_DIR / "console-run.log"
 
 ENGAGEMENT_KEYS = ("likes", "replies", "reposts", "retweets", "quotes", "bookmarks")
 
@@ -162,11 +169,116 @@ def evals() -> list[dict]:
     return reports
 
 
+def _median(xs: list[float]) -> float | None:
+    return median(xs) if xs else None
+
+
+def _group(rows: list[dict], key) -> list[dict]:
+    groups: dict[str, list[dict]] = {}
+    for r in rows:
+        groups.setdefault(key(r), []).append(r)
+    return [
+        {"key": k, "posts": len(g), "median": _median([r["eng"] for r in g]),
+         "viral_rate": round(sum(r["viral"] for r in g) / len(g), 3)}
+        for k, g in groups.items()
+    ]
+
+
+_market_cache: dict = {}
+
+
+def market() -> dict | None:
+    """What spreads in the dev-tool dataset (data/devtools_virality_30d.csv)."""
+    if not DATASET.exists():
+        return None
+    mtime = DATASET.stat().st_mtime
+    if _market_cache.get("mtime") == mtime:
+        return _market_cache["data"]
+    with DATASET.open(encoding="utf-8") as f:
+        raw = list(csv.DictReader(f))
+    rows = []
+    for r in raw:
+        try:
+            eng = int(r["Engagement"])
+        except (KeyError, ValueError):
+            continue
+        text = html.unescape(r.get("Post Content", ""))
+        rows.append({
+            "account": r.get("Account", ""), "text": text, "media": r.get("Media") or "none", "eng": eng,
+            "likes": int(r.get("Likes") or 0), "replies": int(r.get("Replies") or 0), "reposts": int(r.get("Retweets") or 0),
+            "url": r.get("Post URL", ""), "date": r.get("Date", ""), "segment": r.get("Segment", ""),
+            "category": r.get("Category", ""), "viral": r.get("Category") in ("Medium Viral", "Super Viral"),
+            "chars": len(re.sub(r"https://t\.co/\S+", "", text).strip()),
+        })
+    length = lambda r: "<80" if r["chars"] < 80 else "80–159" if r["chars"] < 160 else "160–239" if r["chars"] < 240 else "240+"
+    accounts = []
+    for g in _group(rows, lambda r: r["account"]):
+        posts = [r for r in rows if r["account"] == g["key"]]
+        best = max(posts, key=lambda r: r["eng"])
+        accounts.append({**g, "segment": posts[0]["segment"], "best": {k: best[k] for k in ("text", "eng", "url", "date", "media")}})
+    data = {
+        "file": DATASET.name,
+        "posts": len(rows),
+        "accounts": len(accounts),
+        "dates": [min(r["date"] for r in rows), max(r["date"] for r in rows)] if rows else [],
+        "median": _median([r["eng"] for r in rows]),
+        "viral_rate": round(sum(r["viral"] for r in rows) / len(rows), 3) if rows else 0,
+        "categories": _group(rows, lambda r: r["category"]),
+        "media": sorted(_group(rows, lambda r: r["media"]), key=lambda g: -g["posts"]),
+        "length": sorted(_group(rows, length), key=lambda g: ["<80", "80–159", "160–239", "240+"].index(g["key"])),
+        "segments": sorted(_group(rows, lambda r: r["segment"]), key=lambda g: -g["posts"]),
+        "account_rows": sorted(accounts, key=lambda a: -(a["median"] or 0)),
+        "top": sorted(rows, key=lambda r: -r["eng"])[:40],
+    }
+    _market_cache.update(mtime=mtime, data=data)
+    return data
+
+
+_run_lock = threading.Lock()
+_run: dict = {"proc": None, "provider": None, "started": None}
+
+
+def start_run(body: dict) -> tuple[int, dict]:
+    """Start `python -m harness run` in the background; the page watches /api/runs for the result."""
+    provider = str(body.get("provider") or config.PROVIDER).lower()
+    if provider not in ("mock", "anthropic", "xai", "openai"):
+        return 400, {"error": f"unknown provider '{provider}'"}
+    with _run_lock:
+        if _run["proc"] and _run["proc"].poll() is None:
+            return 409, {"error": "a run is already in progress"}
+        config.OUT_DIR.mkdir(parents=True, exist_ok=True)
+        log = RUN_LOG.open("w", encoding="utf-8")
+        _run.update(provider=provider, started=datetime.now().isoformat(timespec="seconds"), proc=subprocess.Popen(
+            [sys.executable, "-m", "harness", "run", "--provider", provider],
+            cwd=config.ROOT, stdout=log, stderr=subprocess.STDOUT,
+        ))
+    return 200, {"ok": True, "provider": provider}
+
+
+def run_status() -> dict:
+    proc = _run["proc"]
+    log = RUN_LOG.read_text(encoding="utf-8")[-4000:] if RUN_LOG.exists() else ""
+    return {
+        "running": bool(proc and proc.poll() is None),
+        "exit_code": proc.poll() if proc else None,
+        "provider": _run["provider"], "started": _run["started"], "log": log,
+        "default_provider": config.PROVIDER,
+    }
+
+
+def post(path: str, body: dict) -> tuple[int, dict] | None:
+    """Answer a console POST, or None if the path isn't the console's."""
+    if path == "/api/console/run":
+        return start_run(body)
+    return None
+
+
 def get(path: str) -> tuple[int, bytes, str] | None:
     """Answer a console request, or None if the path isn't the console's."""
     if path == "/console":
         return 200, PAGE.read_bytes(), "text/html; charset=utf-8"
-    routes = {"/api/console/overview": overview, "/api/console/context": context, "/api/console/evals": evals}
+    routes = {"/api/console/overview": overview, "/api/console/context": context, "/api/console/evals": evals,
+              "/api/console/market": market, "/api/console/run": run_status}
     if path in routes:
         data = routes[path]()
     elif m := re.fullmatch(r"/api/console/trace/(\d+)", path):

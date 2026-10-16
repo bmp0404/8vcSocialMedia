@@ -1,5 +1,16 @@
 """Run tracing for the observability console (`/console`).
 
+Two ways in. `instrument()` (called from harness/__main__.py) wraps the stages harness.cli imports.
+Any other entry point can trace explicitly:
+
+    trace = Trace()
+    llm = trace.wrap(llm)
+    with trace.stage("orient") as st:
+        narratives = orient(llm, ...)
+        trace.output(st, narratives)
+    ...
+    trace.write(run_id, actions)
+
 `instrument()` wraps whichever loop stages `harness.cli` imports (observe, orient, decide, qualify,
 and tournament / sharpen_hooks / evolve when present), every LLM call, and the mind bandit's draw.
 When a run is saved it writes out/trace-run<id>.json. Nothing in the loop reads the trace back, and
@@ -13,7 +24,7 @@ import json
 import re
 import threading
 import time
-from contextlib import redirect_stdout
+from contextlib import contextmanager, redirect_stdout
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
 from typing import Any
@@ -54,26 +65,47 @@ class Trace:
     def ms(self, t: float) -> int:
         return round((t - self.t0) * 1000)
 
-    def span(self, name: str, fn):
-        @functools.wraps(fn)
-        def wrapped(*args, **kwargs):
-            if name in ("evolve", "observe") and not any(s["name"] == "evolve" for s in self.stages):
-                self.reset()  # a new run starts here (`cycle` starts with evolve)
-            self.stage_name = name
-            start = time.perf_counter()
-            out = self._observe(*args, **kwargs) if name == "observe" else fn(*args, **kwargs)
-            self.stages.append({"name": name, "start_ms": self.ms(start), "ms": self.ms(time.perf_counter()) - self.ms(start),
-                                "n_out": len(out) if isinstance(out, list) else None})
-            if name == "observe":
-                self.signals = out
-            elif name == "orient":
-                self.narratives = out
-            elif name in ("qualify", "tournament", "sharpen_hooks"):
-                self.ranked = out
-            return out
+    @contextmanager
+    def stage(self, name: str):
+        """Time one stage. Call `output(name, value)` inside it to record what the stage produced."""
+        if name in ("evolve", "observe") and not any(s["name"] == "evolve" for s in self.stages):
+            self.reset()  # a new run starts here (`cycle` starts with evolve)
+        self.stage_name = name
+        entry = {"name": name, "start_ms": self.ms(time.perf_counter()), "ms": 0, "n_out": None}
+        start = time.perf_counter()
+        try:
+            yield entry
+        finally:
+            entry["ms"] = self.ms(time.perf_counter()) - self.ms(start)
+            self.stages.append(entry)
 
+    def output(self, entry: dict, out: Any) -> None:
+        if isinstance(out, list):
+            entry["n_out"] = len(out)
+            if entry["name"] in ("decide", "qualify"):
+                entry["ids"] = [a.id for a in out if hasattr(a, "id")]
+        if entry["name"] == "observe":
+            self.signals = out
+        elif entry["name"] == "orient":
+            self.narratives = out
+        elif entry["name"] in ("qualify", "tournament", "sharpen_hooks"):
+            self.ranked = out
+
+    def wrap(self, llm: LLM) -> LLM:
+        return llm if isinstance(llm, TracingLLM) else TracingLLM(llm, self)
+
+    def span(self, name: str, fn):
+        """Wrap a stage function so every call is timed and its output recorded."""
         if name == "observe":
             self._observe_fn = fn
+
+        @functools.wraps(fn)
+        def wrapped(*args, **kwargs):
+            with self.stage(name) as entry:
+                out = self._observe(*args, **kwargs) if name == "observe" else fn(*args, **kwargs)
+                self.output(entry, out)
+            return out
+
         return wrapped
 
     def _observe(self, names: list[str], mission: str):
@@ -93,6 +125,12 @@ class Trace:
         return signals
 
     def write(self, run_id: int, actions: list) -> None:
+        try:
+            self._write(run_id, actions)
+        except Exception as e:  # noqa: BLE001 - a lost trace must never fail the run
+            print(f"[trace] could not write trace for run {run_id}: {e}")
+
+    def _write(self, run_id: int, actions: list) -> None:
         data = {
             "run_id": run_id,
             "started_at": self.started_at,
@@ -219,10 +257,7 @@ def instrument() -> None:
     @functools.wraps(save_run)
     def traced_save_run(actions, *args, **kwargs):
         run_id = save_run(actions, *args, **kwargs)
-        try:
-            trace.write(run_id, actions)
-        except Exception as e:  # noqa: BLE001 - a lost trace must never fail the run
-            print(f"[trace] could not write trace for run {run_id}: {e}")
+        trace.write(run_id, actions)
         return run_id
 
     memory.save_run = traced_save_run

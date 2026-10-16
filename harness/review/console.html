@@ -95,6 +95,21 @@
   .corr .ctrack b { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--line); }
   .corr .ctrack i { position: absolute; top: 2px; bottom: 2px; background: var(--accent); border-radius: 4px; min-width: 2px; }
   .corr .val { font-weight: 700; text-align: right; font-family: var(--mono); font-size: 12px; }
+  .runctl { display: inline-flex; }
+  .runctl select { border-radius: 6px 0 0 6px; border-right: 0; padding: 4px 6px; font-size: 13px; }
+  .runctl button { border-radius: 0 6px 6px 0; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .runctl button.busy { color: var(--accent); }
+  .rev { font-size: 10.5px; font-weight: 700; color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); border-radius: 999px; padding: 0 6px; white-space: nowrap; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .chips button { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 3px 11px; font-size: 12.5px; }
+  .chips button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .rows { display: grid; grid-template-columns: max-content 1fr max-content; gap: 7px 12px; align-items: center; font-size: 13px; }
+  .rows .track { height: 14px; position: relative; cursor: default; }
+  .rows .track i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; }
+  .rows .val { font-weight: 700; text-align: right; font-family: var(--mono); font-size: 12px; }
+  .rows .val small { font-weight: 400; color: var(--faint); margin-left: 6px; }
+  .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 10px; }
+  .star { color: var(--accent); }
   .funnel .drop { font-size: 11.5px; color: var(--faint); text-align: right; min-width: 6ch; }
 
   /* ---------- lineage ---------- */
@@ -253,6 +268,7 @@
     <span class="badge" id="mode"></span>
     <button class="newrun" id="newrun"></button>
     <div class="spacer"></div>
+    <span class="runctl"><select id="runprov" aria-label="Provider for a new run"></select><button id="runbtn" class="ghost" title="Run observe → orient → decide → qualify now">▶ Run loop</button></span>
     <a class="ghost" href="/" style="text-decoration:none;color:inherit;font-size:13px">Review page ↗</a>
     <span class="live" id="live" title="Polling the harness every 4 seconds"><i></i><span>Live</span></span>
   </div>
@@ -270,7 +286,7 @@
 <script>
 /* ======================= state & helpers ======================= */
 const VIEWS = [
-  ["loop", "Loop"], ["review", "Review"], ["trace", "Trace"], ["minds", "Minds"], ["eval", "Eval"], ["learning", "Learning"], ["runs", "Runs"],
+  ["loop", "Loop"], ["review", "Review"], ["trace", "Trace"], ["market", "Market"], ["minds", "Minds"], ["eval", "Eval"], ["learning", "Learning"], ["runs", "Runs"],
 ];
 const FILTERS = {
   pending: a => a.review.status === "pending" && !a.vetoed,
@@ -415,11 +431,19 @@ function renderChrome() {
 function render() {
   renderChrome();
   const v = $("#view");
-  if (!state.runs.length && !["minds", "eval", "learning"].includes(state.view)) {
+  if (!state.runs.length && !["market", "minds", "eval", "learning"].includes(state.view)) {
     v.innerHTML = `<div class="section empty">No runs yet. Start one with <code>uv run python -m harness run --provider mock</code>; this page picks it up automatically.</div>`;
     return;
   }
-  ({ loop: renderLoop, review: renderReview, trace: renderTrace, minds: renderMinds, eval: renderEval, learning: renderLearning, runs: renderRuns })[state.view]();
+  ({ loop: renderLoop, review: renderReview, trace: renderTrace, market: renderMarket, minds: renderMinds, eval: renderEval, learning: renderLearning, runs: renderRuns })[state.view]();
+}
+
+/* ---------- revision rounds (critic-driven retries) ---------- */
+function decideRounds() { return (state.trace?.stages || []).filter(s => s.name === "decide").length; }
+function roundOf(id) {
+  const rounds = (state.trace?.stages || []).filter(s => s.name === "decide");
+  const i = rounds.findIndex(s => (s.ids || []).includes(id));
+  return i < 0 ? 1 : i + 1;
 }
 
 /* ---------- Loop ---------- */
@@ -486,6 +510,7 @@ function renderLoop() {
   const max = Math.max(1, ...funnel.map(f => f[1]));
 
   $("#view").innerHTML = `
+    ${decideRounds() > 1 ? `<div class="note-strip"><b>The critic vetoed every draft ${decideRounds() - 1 === 1 ? "once" : decideRounds() - 1 + " times"}.</b> The minds revised against the critiques ${decideRounds() - 1}×; revised drafts are tagged <span class="rev">revision n</span>.</div>` : ""}
     ${!t ? `<div class="note-strip"><b>No trace for run ${state.runId}.</b> It ran before tracing existed, so only drafts and reviews are shown. New runs record signals, narratives, timings and LLM calls.</div>` : ""}
     <div class="kpis">${kpis.map(([k, v, d]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join("")}</div>
     <section>
@@ -551,7 +576,7 @@ function statusChip(a) {
 }
 function nodeDraft(a) {
   return `<button class="node" data-k="a:${esc(a.id)}">
-    <div class="h"><span class="score">${Math.round(a.predicted_score * 100)}</span><span class="pill">${esc(a.type)}</span><b>${esc(a.variant || human(a.mind))}</b>${a.rank ? `<span>#${a.rank}</span>` : ""}${statusChip(a)}</div>
+    <div class="h"><span class="score">${Math.round(a.predicted_score * 100)}</span><span class="pill">${esc(a.type)}</span><b>${esc(a.variant || human(a.mind))}</b>${a.rank ? `<span>#${a.rank}</span>` : ""}${roundOf(a.id) > 1 ? `<span class="rev">rev ${roundOf(a.id) - 1}</span>` : ""}${statusChip(a)}</div>
     <div class="x">${esc(a.review.text ?? a.text) || `<span class="muted">follow @${esc(a.target_handle)}</span>`}</div></button>`;
 }
 function lineageHtml() {
@@ -697,6 +722,7 @@ function cardHtml(a, i, g) {
       ${a.lane ? `<span class="pill">${esc(a.lane)} lane</span>` : ""}
       <span>${a.variant ? `<code>${esc(a.variant)}</code>` : esc(human(a.mind))}</span>
       ${a.pre_hook_text ? `<span title="the hook pass swapped in a stronger opening line">· hook upgraded</span>` : ""}
+      ${roundOf(a.id) > 1 ? `<span class="rev" title="the critic vetoed every draft in the earlier round; this mind revised against the critiques">revision ${roundOf(a.id) - 1}</span>` : ""}
       ${a.hook_alternatives?.length ? `<a href="/" title="swap hooks on the review page">${a.hook_alternatives.length} alt hooks ↗</a>` : ""}
       <span>· ${narr ? esc(narr.title) : esc(a.narrative_id)}</span>
       ${a.vetoed ? `<span class="chip vetoed">⚠ critic veto</span>` : ""}
@@ -944,6 +970,114 @@ async function renderEval() {
     </section>`;
 }
 
+/* ---------- Market ---------- */
+const SEGMENT_NOTE = { "Smaller/closest": "closest to Coordigent", "Mid-size": "mid-size dev tools", "Other": "everyone else" };
+const MIN_GROUP = 20;  // smaller groups are shown muted and don't set the scale
+function rowsChart(groups, id) {
+  const max = Math.max(...groups.filter(g => g.posts >= MIN_GROUP).map(g => g.viral_rate), 0.01);
+  return `<div class="rows" id="${id}">${groups.map((g, i) => `
+    <span${g.posts < MIN_GROUP ? ` class="muted" title="fewer than ${MIN_GROUP} posts; too few to trust"` : ""}>${esc(g.key)}</span>
+    <span class="track" data-i="${i}"><i style="width:${Math.min(g.viral_rate / max, 1) * 100}%${g.posts < MIN_GROUP ? ";opacity:.3" : ""}"></i></span>
+    <span class="val">${Math.round(g.viral_rate * 100)}%<small>${g.posts} posts</small></span>`).join("")}</div>`;
+}
+function wireRows(id, groups, what) {
+  const el = $("#" + id); if (!el) return;
+  el.addEventListener("mousemove", e => {
+    const tr = e.target.closest(".track"); if (!tr) return tip(e, "");
+    const g = groups[+tr.dataset.i];
+    tip(e, `<b>${esc(g.key)}</b> ${what}<br>${Math.round(g.viral_rate * 100)}% reach 100+ engagements · median ${fmtN(g.median)} · ${g.posts} posts`);
+  });
+  el.addEventListener("mouseleave", e => tip(e, ""));
+}
+function postCard(p, i) {
+  return `<button class="node" data-post="${i}">
+    <div class="h"><b>${esc(p.account)}</b><span>· ${esc(p.date)}</span>${p.media !== "none" ? `<span class="pill">${esc(p.media)}</span>` : ""}<span class="score" style="margin-left:auto">${fmtN(p.eng)}</span></div>
+    <div class="x">${esc(p.text)}</div>
+    <div class="m">${fmtN(p.likes)} likes · ${fmtN(p.reposts)} reposts · ${fmtN(p.replies)} replies</div></button>`;
+}
+async function renderMarket() {
+  if (!state.market) state.market = await api("/api/console/market");
+  const m = state.market;
+  if (!m) { $("#view").innerHTML = `<div class="section empty">No dataset at <code>data/devtools_virality_30d.csv</code>.</div>`; return; }
+  const seg = state.marketSeg || "all", q = (state.marketQ || "").toLowerCase();
+  const minPosts = q ? 1 : 5;  // tiny accounts' medians are noise unless you search for one
+  const accounts = m.account_rows.filter(a => a.posts >= minPosts && (seg === "all" || a.segment === seg) && (!q || a.key.toLowerCase().includes(q)));
+  const top = m.top.filter(p => seg === "all" || p.segment === seg).slice(0, 12);
+  $("#view").innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><div class="k">Posts observed</div><div class="v">${fmtN(m.posts)}</div><div class="d">${m.accounts} dev-tool accounts · ${esc(m.dates.join(" → "))}</div></div>
+      <div class="kpi"><div class="k">Median engagement</div><div class="v">${fmtN(m.median)}</div><div class="d">likes + replies + reposts + quotes</div></div>
+      <div class="kpi"><div class="k">Reach 100+ engagements</div><div class="v">${Math.round(m.viral_rate * 100)}<small>%</small></div><div class="d">"Medium" or "Super" viral in the dataset</div></div>
+      <div class="kpi"><div class="k">Best format</div><div class="v">${esc([...m.media].filter(g => g.posts >= 20).sort((a, b) => b.viral_rate - a.viral_rate)[0]?.key || "–")}</div><div class="d">highest share reaching 100+ (≥20 posts)</div></div>
+    </div>
+    <div class="note-strip"><b>Read with care:</b> the viral labels are raw engagement cutoffs, so they partly track account size. Compare formats and lengths, not accounts' absolute numbers. Source: <code>data/${esc(m.file)}</code>.</div>
+    <div class="grid2">
+      <section class="section"><h2>By format <span class="sub">share of posts reaching 100+ engagements</span></h2>${rowsChart(m.media, "rows-media")}</section>
+      <section class="section"><h2>By length <span class="sub">characters, links excluded</span></h2>${rowsChart(m.length, "rows-len")}</section>
+    </div>
+    <section class="section">
+      <div class="rv-head" style="margin-bottom:10px">
+        <h2 style="margin:0">Accounts <span class="sub">${accounts.length} shown${q ? "" : " (5+ posts)"} · <span class="star">★</span> marks the accounts closest to Coordigent</span></h2>
+        <div class="spacer"></div>
+        <div class="chips" id="segchips">${["all", ...m.segments.map(g => g.key)].map(k => `<button data-seg="${esc(k)}" class="${k === seg ? "on" : ""}">${k === "all" ? "All" : esc(k)}</button>`).join("")}</div>
+        <input id="mq" placeholder="Filter accounts" value="${esc(state.marketQ || "")}" style="width:150px">
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th class="l">Account</th><th class="l">Segment</th><th>Posts</th><th>Median eng.</th><th>Reach 100+</th><th class="l">Best post</th></tr></thead>
+        <tbody>${accounts.slice(0, 60).map(a => `<tr>
+          <td class="l"><b>${a.segment === "Smaller/closest" ? `<span class="star">★</span> ` : ""}${esc(a.key)}</b></td>
+          <td class="l muted">${esc(SEGMENT_NOTE[a.segment] || a.segment)}</td>
+          <td>${a.posts}</td><td>${fmtN(a.median)}</td>
+          <td><span class="ibar">${Math.round(a.viral_rate * 100)}%<span><i style="width:${a.viral_rate * 100}%"></i></span></span></td>
+          <td class="l" style="white-space:normal;max-width:46ch"><a href="${esc(a.best.url)}" target="_blank" rel="noopener">${fmtN(a.best.eng)}</a> <span class="muted">${esc(a.best.text.slice(0, 90))}${a.best.text.length > 90 ? "…" : ""}</span></td></tr>`).join("")}</tbody>
+      </table></div>
+    </section>
+    <section class="section">
+      <h2>Top posts <span class="sub">${seg === "all" ? "whole dataset" : esc(seg)} · click for the full post</span></h2>
+      <div class="posts" id="posts">${top.map(postCard).join("")}</div>
+    </section>`;
+  wireRows("rows-media", m.media, "posts"); wireRows("rows-len", m.length, "characters");
+  $("#segchips").onclick = e => { const b = e.target.closest("button"); if (b) { state.marketSeg = b.dataset.seg; renderMarket(); } };
+  $("#mq").oninput = e => { state.marketQ = e.target.value; clearTimeout(renderMarket._h); renderMarket._h = setTimeout(() => { renderMarket().then(() => { const i = $("#mq"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); }, 200); };
+  $("#posts").onclick = e => {
+    const b = e.target.closest("[data-post]"); if (!b) return;
+    const p = top[+b.dataset.post];
+    openDrawer(`Post · ${p.account}`, `<pre>${esc(p.text)}</pre>
+      <dl class="kv"><dt>Engagement</dt><dd>${fmtN(p.eng)} <span class="muted">(${esc(p.category)})</span></dd><dt>Likes</dt><dd>${fmtN(p.likes)}</dd>
+      <dt>Reposts</dt><dd>${fmtN(p.reposts)}</dd><dt>Replies</dt><dd>${fmtN(p.replies)}</dd><dt>Format</dt><dd>${esc(p.media)}</dd><dt>Length</dt><dd>${p.chars} chars</dd>
+      <dt>Date</dt><dd>${esc(p.date)}</dd><dt>Segment</dt><dd>${esc(SEGMENT_NOTE[p.segment] || p.segment)}</dd>
+      <dt>Link</dt><dd><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a></dd></dl>`);
+  };
+}
+
+/* ---------- Run control ---------- */
+async function refreshRunCtl(watch = false) {
+  const st = await api("/api/console/run");
+  const sel = $("#runprov");
+  if (!sel.options.length) {
+    const provs = [...new Set(["mock", st.default_provider])];
+    sel.innerHTML = provs.map(p => `<option value="${p}">${p}</option>`).join("");
+    sel.value = st.default_provider;
+  }
+  const btn = $("#runbtn");
+  btn.classList.toggle("busy", st.running);
+  btn.textContent = st.running ? `● Running (${st.provider})…` : "▶ Run loop";
+  btn.disabled = st.running;
+  if (st.running) setTimeout(() => refreshRunCtl(true), 1500);
+  else if (watch) {
+    if (st.exit_code === 0) { toast("Run finished"); await poll(); $("#newrun").classList.remove("show"); go("loop", state.latest); }
+    else openDrawer("Run failed", `<div class="note-strip">Exit code ${st.exit_code}. Output from <code>out/console-run.log</code>:</div><pre>${esc(st.log)}</pre>`);
+  }
+}
+$("#runbtn").addEventListener("click", async () => {
+  const provider = $("#runprov").value;
+  if (provider !== "mock" && !confirm(`Run the loop with ${provider}? This spends LLM credits. The harness only recommends; nothing is posted.`)) return;
+  const res = await fetch("/api/console/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ provider }) }).then(r => r.json());
+  if (!res.ok) return toast(res.error || "Could not start run");
+  toast(`Started a ${provider} run`);
+  refreshRunCtl(true);
+});
+
 /* ---------- Learning ---------- */
 function mdHtml(md) {
   const inline = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\*([^*]+)\*/g, "<i>$1</i>");
@@ -1051,6 +1185,7 @@ function renderRuns() {
 $("#run").addEventListener("change", e => go(state.view, +e.target.value));
 $("#newrun").addEventListener("click", e => { e.target.classList.remove("show"); go(state.view, +e.target.dataset.id); });
 boot();
+refreshRunCtl();
 </script>
 </body>
 </html>
