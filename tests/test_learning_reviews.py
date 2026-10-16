@@ -390,3 +390,11 @@ def test_set_review_rejects_an_unknown_status_and_action(db):
     with pytest.raises(KeyError):
         memory.set_review("nope", "approved")
     assert memory.review_history() == []
+
+
+def test_a_draft_nothing_scored_has_no_eval_number_in_its_episode():
+    rows = [run_row("a1", predicted_score=None), run_row("a2", predicted_score=0.7)]
+    eps = {e.id: e for e in run_episodes(rows, {}, brand="_sgu_")}
+    assert eps["ep-a1"].outcomes[0].raw == "" and eps["ep-a1"].features["predicted_score"] is None
+    assert eps["ep-a2"].outcomes[0].raw == "0.7"
+    assert eps["ep-a2"].decision["siblings"] == [{"id": "a1", "predicted_score": None, "vetoed": False}]

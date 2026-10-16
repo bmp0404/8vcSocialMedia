@@ -59,11 +59,23 @@ def refresh(profile: str, *, at: datetime | None = None, espn: Espn | None = Non
                 from harness.context.xreader import FxTwitterReader
 
                 reader = FxTwitterReader(PoliteClient(min_interval_s=1.0), max_age_s=600)
+            from harness.context.http import FetchError
+
+            failed = {}
             for handle in watch.reply_targets.accounts:
+                # fxtwitter answers about 1 timeline read in 10 with a 404 that a later read gets past
+                # (harness/watcher/DESIGN.md), so one failed handle skips that handle, not the other 23.
+                try:
+                    statuses = reader.profile_statuses(handle, limit=20)
+                except FetchError as e:
+                    failed[handle] = str(e)
+                    print(f"[facts] skipped @{handle}: {e}")
+                    continue
                 own = [{"id": p.id, "text": p.text, "created_at": p.created_at, "url": p.url}
-                       for p in reader.profile_statuses(handle, limit=20)
-                       if not p.is_repost and p.author_handle.lower() == handle.lower()]
+                       for p in statuses if not p.is_repost and p.author_handle.lower() == handle.lower()]
                 counts[f"posts:{handle}"] = save(posts.post_facts(handle, own), store)
+            if not counts:
+                raise FactsError(f"every timeline read failed: {failed}")
         else:
             raise FactsError(f"profile {profile!r} has neither [espn] scoreboard_leagues nor [reply_targets] accounts "
                              "in observe.toml, so there is nothing to read facts from")

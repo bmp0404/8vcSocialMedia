@@ -1,0 +1,81 @@
+{
+ "schema": "post_ridge.manifest/v1",
+ "model_file": "post_ridge.json.gz",
+ "sha256": "f468e8c0eed23a720acf7451b3d8eb5cb4646f485bd1260d5e8070c35ab403ca",
+ "fitted_on": {
+  "benchmark": "data/bench/posts.jsonl",
+  "split": "dev",
+  "accounts": 39,
+  "posts": 861,
+  "target": "log1p engagement, z-scored within each account",
+  "bench_posts_sha256": "d33797be36cac97bc6d0130f621cbc7281b379f11bdce4282ee9dfda2adb7466",
+  "corpus_snapshot_sha256": {
+   "x_metrics.jsonl": "5d1fe5db5fc5a6be7d09fdd8d99f221bbe2c71a51e21b59b3cd5eb265f116f13",
+   "author_timelines.jsonl": "339758f174e5ee0a77dbd916568ed14686490cd68d16801c07130b0dec3de76a",
+   "reply_samples.jsonl": "60197b0dfb2355b441771a6c1341a4386924afbf0ab73e609b77cabaa0247614",
+   "boost_flags.csv": "bc22aad2987132aa7f0ddbf74ed37734c6cdddca25c5bd46456c9043dcdcb6d5",
+   "timeline_posts.csv": "b67d4803fddcbd87e1a5b5585d23eaf39289b342cc30b3c193ffda709862eea8"
+  }
+ },
+ "params": {
+  "alpha": 10.0,
+  "min_accounts": 5,
+  "word_min_df": 3,
+  "char_min_df": 5,
+  "digits": 6
+ },
+ "vocabulary": {
+  "word": 1033,
+  "char": 8868,
+  "weights": 9910
+ },
+ "test": {
+  "pairs": 1016,
+  "authors": 37,
+  "accuracy": {
+   "estimate": 0.7092,
+   "ci95": [
+    0.6444,
+    0.7665
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "minus_length": {
+   "estimate": 0.1068,
+   "ci95": [
+    0.0352,
+    0.1848
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "minus_same_fit_without_the_vocabulary_filter": {
+   "estimate": -0.0049,
+   "ci95": [
+    -0.0259,
+    0.0169
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "minus_cross_fitted_ridge": {
+   "estimate": 0.0097,
+   "ci95": [
+    -0.0148,
+    0.0331
+   ],
+   "pairs": 932,
+   "clusters": 34
+  },
+  "minus_panel_claude_sonnet_5_5": {
+   "estimate": -0.0138,
+   "ci95": [
+    -0.0809,
+    0.0408
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  }
+ }
+}

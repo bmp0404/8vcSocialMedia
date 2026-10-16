@@ -465,3 +465,46 @@ def test_a_news_caption_credits_the_publisher_not_the_byline(monkeypatch):
     shipped = decide(MockLLM(), "MISSION", "", [n], per_mind=1, signals=[signal, Signal(source="x", text="t")])
     (caption,) = [a for a in shipped if a.mind == "caption"]
     assert caption.text.endswith(f" via ESPN {url}") and caption.draft_meta["credit"] == "ESPN"
+
+
+# ---- one round doesn't contradict itself: no quote of a post the planner called off_mission
+
+OTHER = "https://x.com/IndianaFever/status/2110808408366493999"
+
+
+def plan_off_mission(monkeypatch, *urls):
+    def plan(llm, mission, lessons, targets, facts=None):
+        return {t["url"]: ({"target_url": t["url"], "tool": "abstain", "reason": "off_mission", "detail": "ticket promo"}
+                           if t["url"] in urls else {"target_url": t["url"], "tool": "reply", "side": "own", "intent": "x"})
+                for t in targets}, ""
+    monkeypatch.setattr(lanes, "plan_targets", plan)
+
+
+def test_a_post_the_planner_called_off_mission_is_not_quoted_by_the_caption(monkeypatch):
+    plan_off_mission(monkeypatch, X_URL)
+    actions, decisions = run(MockLLM(), [narrative([target()])])
+    assert not [a for a in actions if a.type == "quote" or a.target_url == X_URL]
+    (cap,) = [d for d in by_lane(decisions, "post") if d.tool == "abstain"]
+    assert (cap.reason, cap.opportunity) == ("off_mission", X_URL)
+    assert "reply planner called off_mission" in cap.detail
+
+
+def test_the_caption_quotes_another_post_and_misses_the_off_mission_one_in_any_url_form(monkeypatch):
+    plan_off_mission(monkeypatch, X_URL)
+    variant = X_URL.replace("https://x.com", "https://twitter.com") + "?s=20"
+    n = narrative([target(), target(url=OTHER, author="IndianaFever", eph=100.0)], signal_urls=[variant])
+    actions, _ = run(MockLLM(), [n])
+    assert [(a.type, a.target_url) for a in actions if a.mind == "caption"] == [("quote", OTHER)]
+
+
+def test_a_take_quoting_an_off_mission_post_waits_for_another_round(monkeypatch):
+    plan_off_mission(monkeypatch, X_URL)
+    actions, decisions = run(MockLLM(), [narrative([target()])], takes=[{"text": "lol", "quote_url": X_URL}])
+    assert not [a for a in actions if a.mind == "human"]
+    assert any(d.reason == "off_mission" and d.opportunity == "lol" and X_URL in d.detail for d in decisions)
+
+
+def test_a_post_the_planner_answered_can_still_be_quoted(monkeypatch):
+    plan_off_mission(monkeypatch)  # nothing off_mission
+    actions, _ = run(MockLLM(), [narrative([target()])])
+    assert [(a.type, a.target_url) for a in actions if a.mind == "caption"] == [("quote", X_URL)]

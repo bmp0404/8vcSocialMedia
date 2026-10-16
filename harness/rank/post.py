@@ -177,11 +177,20 @@ class Tfidf:
         self.analyzer, self.min_df, self.max_features, self.prefix = analyzer, min_df, max_features, prefix
         self.idf: dict[str, float] = {}
 
-    def fit(self, texts: list[str]) -> "Tfidf":
+    def fit(self, texts: list[str], groups: list[str] | None = None, min_groups: int = 1) -> "Tfidf":
+        """With `groups` (one per text, such as its account), also drop n-grams that fewer than `min_groups`
+        distinct groups used."""
+        if groups is not None and len(groups) != len(texts):
+            raise ValueError(f"Tfidf.fit: {len(groups)} groups for {len(texts)} texts")
         df = Counter()
-        for t in texts:
-            df.update(set(self.analyzer(t)))
-        kept = [g for g, c in df.items() if c >= self.min_df]
+        users = defaultdict(set)
+        for i, t in enumerate(texts):
+            grams = set(self.analyzer(t))
+            df.update(grams)
+            if groups is not None:
+                for g in grams:
+                    users[g].add(groups[i])
+        kept = [g for g, c in df.items() if c >= self.min_df and (groups is None or len(users[g]) >= min_groups)]
         total = Counter()
         for t in texts:
             total.update(g for g in self.analyzer(t) if df[g] >= self.min_df)
@@ -221,11 +230,12 @@ def _row(text, word, char, mean, std) -> dict[str, float]:
 
 
 def ridge_fit(texts: list[str], y: list[float], alpha: float, iters: int = 60, word_min_df: int = 3,
-              char_min_df: int = 5) -> RidgeModel:
+              char_min_df: int = 5, groups: list[str] | None = None, min_groups: int = 1) -> RidgeModel:
     """Solve (X'X + alpha I) w = X'(y - mean y) by conjugate gradient; the intercept is mean y.
-    Vocabulary limits follow harness/virality.py: words min_df 3 (20,000 max), characters min_df 5 (30,000 max)."""
-    word = Tfidf(_word_grams, word_min_df, 20000, "w:").fit(texts)
-    char = Tfidf(_char_wb, char_min_df, 30000, "c:").fit(texts)
+    Vocabulary limits follow harness/virality.py: words min_df 3 (20,000 max), characters min_df 5 (30,000 max).
+    `groups` and `min_groups` also drop n-grams fewer than `min_groups` accounts used (see Tfidf.fit)."""
+    word = Tfidf(_word_grams, word_min_df, 20000, "w:").fit(texts, groups, min_groups)
+    char = Tfidf(_char_wb, char_min_df, 30000, "c:").fit(texts, groups, min_groups)
     shapes = [_shape(t) for t in texts]
     mean = [sum(s[i] for s in shapes) / len(shapes) for i in range(len(shapes[0]))]
     std = [math.sqrt(sum((s[i] - mean[i]) ** 2 for s in shapes) / len(shapes)) + 1e-9 for i in range(len(mean))]

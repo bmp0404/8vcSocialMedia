@@ -10,7 +10,8 @@ from harness.qualify import qualify
 
 def panel_evaluate(llm: LLM, mission: str, actions: list[Action],
                    narratives: list[Narrative], signals: list[Signal]) -> tuple[list[Action], dict]:
-    return qualify(llm, mission, actions), {"backend": "panel"}
+    # `--eval panel` names the audience panel, so it asks for it; production qualify ranks with the post ridge.
+    return qualify(llm, mission, actions, ranker="panel"), {"backend": "panel"}
 
 
 def reference_evaluate(llm: LLM, mission: str, actions: list[Action],

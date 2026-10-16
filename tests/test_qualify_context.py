@@ -22,7 +22,7 @@ def test_critic_gets_the_veto_context_and_the_panel_does_not():
                    narrative_id="n", draft_meta={"veto_context": FACTS})
     bare = Action(type="post", text="a take", mind="caption", narrative_id="n")
     llm = Recorder()
-    qualify(llm, "MISSION", [draft, bare], panel={"fan": "a fan"})
+    qualify(llm, "MISSION", [draft, bare], panel={"fan": "a fan"}, ranker="panel")
     (critic,) = llm.prompts[CRITIC_SYSTEM.split("\n")[0]]
     assert "four-word message" in critic
     assert critic.count('"context"') == 1  # only the draft that has one

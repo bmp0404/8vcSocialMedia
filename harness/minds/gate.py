@@ -15,7 +15,8 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
-from harness.facts.ground import FactIndex, grounded_numbers
+from harness.facts.ground import FactIndex, anchor_words, grounded_numbers, unit_after
+from harness.learning.kinds import Fact
 from harness.minds.settings import GateLimits
 from harness.xtext import MAX_WEIGHTED_CHARS, overflow_index, weighted_length
 
@@ -54,8 +55,33 @@ AI_VOCAB = [
 ENGAGEMENT_BAIT = re.compile(
     r"\b(?:like|rt|retweet|repost|share)(?: this)? if\b|\bwho (?:agrees|else)\b|\btag (?:someone|a friend|your)\b"
     r"|\b(?:drop|comment) (?:a|your|below)\b|\bfollow (?:me )?for\b|\bsmash (?:that|the) like\b", re.I)
-PLACEHOLDER = re.compile(
-    r"\[(?:insert|todo|tbd|link|name|stat|video|image|photo|gif|media|clip)\b[^\]]*\]|\{[a-z_]+\}|\bTODO\b|\bTBD\b", re.I)
+PLACEHOLDER = re.compile(r"\[(?:insert|todo|tbd|link|name|stat|video|image|photo|gif|media|clip)\b[^\]]*\]|\{[a-z_]+\}", re.I)
+# Capitals only: under re.I it flagged 4 real dev-tool replies, 3 of them for the Spanish word "todo".
+TODO = re.compile(r"\bTODO\b|\bTBD\b")
+# The harness posts text only, so a line that describes media or acts out a stage direction is a draft talking about
+# a post instead of being one. The watcher's hot path shipped "(image of Caitlin Clark in defensive stance)" on
+# 2026-10-16. These catch media and stage words leading a bracket of any style, a starred media placeholder, and the
+# bare forms "image of ...", "video: ...", "insert ... here" and a draft that is only "screenshot". An aside people
+# bracket themselves, such as "(not kidding)" or "(and Biome's)", leads with neither, so it passes;
+# action/experiments/placeholder_gate.json counts what these patterns reject in real replies.
+MEDIA_WORDS = (r"(?:image|img|photo|pic|picture|gif|video|vid|clip|meme|screenshot|screen\s?(?:shot|grab|cap)|media|"
+               r"attachment|emoji|sticker|link|url|audio|sound\s?effect|sfx)s?")
+STAGE_WORDS = (r"(?:laughs?|laughing|laughter|sighs?|sighing|gasps?|gasping|cries|crying|sobs?|sobbing|screams?|screaming|"
+               r"applause|applauds|claps?|clapping|slow\s+clap|shrugs?|shrugging|eye\s?rolls?|rolls\s+eyes|facepalms?|"
+               r"dramatic\s+pause)")
+_LEAD = (r"(?:(?:a|an|the|insert|add|attach|attached|cue|see|with|posts?|shows?|crowd|audience|fans|everyone|"
+         r"nervous|awkward|evil|loud)[:\s]+)*")
+_OPEN, _CLOSE = r"[\(\[\{<（【]", r"[\)\]\}>）】]"
+MEDIA_PLACEHOLDERS = (
+    re.compile(rf"{_OPEN}\s*{_LEAD}(?:{MEDIA_WORDS}|{STAGE_WORDS})\b[^\)\]\}}>）】\n]{{0,120}}{_CLOSE}", re.I),
+    re.compile(rf"\*\s*{_LEAD}{MEDIA_WORDS}\b[^*\n]{{0,80}}\*", re.I),
+    re.compile(r"^\s*(?:an?\s+)?(?:image|gif|video|photo|pic|picture|meme|clip|screenshot|screen\s?shot)s?\s+of\b",
+               re.I | re.M),
+    re.compile(r"^\s*(?:image|img|video|gif|photo|pic|clip|screenshot|meme|media|audio)s?\s*:", re.I | re.M),
+    re.compile(rf"\binsert\s+(?:\w+\s+){{0,2}}?(?:{MEDIA_WORDS}|name|stat|number|player|team|joke|quote|caption|here)\b",
+               re.I),
+    re.compile(r"^\s*screen\s?shots?\s*[.!]*\s*$", re.I | re.M),
+)
 # CLAUDE.md: a fact the model can't ground is written as [VERIFY: ...]. The marker passes the gate so a
 # person sees the draft and checks the fact or cuts it; review and the hand-off refuse it unresolved.
 VERIFY = re.compile(r"\[VERIFY\b[^\]]*\]", re.I)
@@ -196,7 +222,14 @@ def _unmarked(text: str) -> str:
 
 
 def _rule_placeholder(text: str, c: _Ctx) -> list[str]:
-    return [(f"unresolved placeholder {m.group(0)!r}", m.start(), m.end()) for m in PLACEHOLDER.finditer(text)]
+    out, taken = [], []
+    for pattern in (PLACEHOLDER, TODO, *MEDIA_PLACEHOLDERS):
+        for m in pattern.finditer(text):
+            if any(m.start() < b and a < m.end() for a, b in taken):
+                continue  # one finding per span, from the first pattern that matched it
+            taken.append((m.start(), m.end()))
+            out.append((f"unresolved placeholder {m.group(0).strip()!r}", m.start(), m.end()))
+    return sorted(out, key=lambda f: f[1])
 
 
 def _rule_url(text: str, c: _Ctx) -> list[str]:
@@ -258,6 +291,19 @@ def _rule_ungrounded_name(text: str, c: _Ctx) -> list[str]:
         return []
     return [(f"name {w!r} isn't in the context", a, b) for w, a, b in capitalized_names(_unmarked(text))
             if w.lower() not in c.context and not (c.facts and c.facts.grounds_name(w))]
+
+
+def facts_used(text: str, *, context: str, facts: FactIndex, post: str | None = None) -> list[tuple[Fact, str]]:
+    """(fact, the name or number it backs) for every name or number in `text` that `context` lacks and a fact in
+    `facts` backs: what the grounding rules leaned on to let `text` through. Same matching as the rules."""
+    text = _unmarked(unicodedata.normalize("NFC", text))
+    ctx = unicodedata.normalize("NFC", context).lower()
+    out = [(f, w) for w, _, _ in capitalized_names(text) if w.lower() not in ctx for f in facts.facts_for_name(w)]
+    anchors = anchor_words(text) | anchor_words(post or "") | facts.anchors
+    for m in NUMBER.finditer(text):
+        if m.group(0) not in ctx:
+            out += [(f, m.group(0)) for f in facts.facts_for_number(m.group(0), unit_after(text, m.end()), anchors)]
+    return out
 
 
 RULES = {

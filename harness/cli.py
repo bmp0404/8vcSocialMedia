@@ -8,7 +8,7 @@ from harness.llm import get_llm
 from harness.memstore import record_round
 from harness.minds import decide, write_decision_log
 from harness.orient import orient
-from harness.qualify import qualify
+from harness.qualify import qualify, ranker_choice, ready as qualify_ready
 from harness.review import serve
 from harness.sources import observe
 from harness.sources.watch import account_handle
@@ -21,6 +21,8 @@ def run(args) -> None:
     # Read before any LLM call, so a broken observe config fails the run before it spends anything.
     account, account_source = account_handle()
     print(f"[run] account @{account} (from {account_source})" if account else f"[run] no account: {account_source} is empty")
+    ranker = ranker_choice()
+    print(f"[run] qualify orders the post lane by {qualify_ready(ranker)}")  # loads and checks it before any spend
 
     signals = observe(sources, mission)
     if not signals:
@@ -29,7 +31,7 @@ def run(args) -> None:
     print(f"[orient] {len(narratives)} narratives: " + ", ".join(n.id for n in narratives))
     lessons = config.lessons()
     batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, signals=signals)
-    actions, kept = batch, qualify(llm, mission, batch)
+    actions, kept = batch, qualify(llm, mission, batch, ranker=ranker)
     for _ in range(args.retries):
         if kept or not batch:
             break
@@ -38,14 +40,17 @@ def run(args) -> None:
         # deliberate: rerunning the caption on the same source shipped two captions of one story
         # (Integration run 36; action/DESIGN.md, "Rushi"). The vetoed drafts and critiques stay in the run.
         batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, vetoed=batch)
-        kept = qualify(llm, mission, batch)
+        kept = qualify(llm, mission, batch, ranker=ranker)
         actions = actions + batch
     ranked = kept[: args.top]
     if actions and not kept:
         print(f"[run] the critic vetoed all {len(actions)} drafts, and captions and replies aren't redrafted, "
               "so this round recommends nothing; the critiques are saved with the run")
 
-    run_id = memory.save_run(actions, account=account or None)
+    # Saved in the round's order, the order the review queue and the hand-off show: what qualify kept, in qualify's
+    # order, then what the critic vetoed.
+    kept_ids = {a.id for a in kept}
+    run_id = memory.save_run(kept + [a for a in actions if a.id not in kept_ids], account=account or None)
     write_decision_log(run_id)  # out/decisions-run<id>.json: abstentions, rejected drafts, questions
     record_round(run_id)  # one episode note per draft in the profile's memory store
     config.OUT_DIR.mkdir(exist_ok=True)
@@ -59,7 +64,9 @@ def run(args) -> None:
     print(f"\nTop {len(ranked)} recommendations (run {run_id}) -> {out}\n")
     for i, a in enumerate(ranked, 1):
         target = a.target_url or (f"@{a.target_handle}" if a.target_handle else "")
-        print(f"{i:>2}. [{a.predicted_score:.2f}] {a.type:<7} {a.mind:<18} {a.text}  {target}")
+        # qualify scores only the post lane's posts and quotes, unless the panel ranks (harness/qualify.py).
+        score = " -- " if a.predicted_score is None else f"{a.predicted_score:.2f}"
+        print(f"{i:>2}. [{score}] {a.type:<7} {a.mind:<18} {a.text}  {target}")
 
 
 def record(args) -> None:

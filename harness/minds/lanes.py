@@ -14,6 +14,7 @@ The measurements behind each step are in action/DESIGN.md.
 
 import json
 import random
+import re
 from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -273,6 +274,64 @@ def judge_meta(cfg: ActionConfig, picked: veto.VetoResult, cands: list[dict], gr
             "pick": "random among drafts that passed", "grounding": grounding}
 
 
+# Live facts the veto sees per target, and per name or number in a draft. No measurement picked either number:
+# they bound the prompt when several drafts lean on different box-score lines.
+VETO_FACTS = 8
+FACTS_PER_TOKEN = 2
+FACT_CHARS = 300
+VETO_FACTS_HEADER = ("LIVE FACTS (from sources such as box scores, rosters and the account's own posts, each with the "
+                     "date it was true):")
+
+
+def _snippet(answer: str, token: str, width: int = FACT_CHARS) -> str:
+    """The part of a fact's answer that holds `token`: only the matching lines of a multi-line fact (a thread),
+    and a window around the token when the answer is longer than `width`. The token matches as a whole word or
+    number, so "18" finds "18 points" and not the 18 in "6-18"."""
+    key = token.lower().replace("’", "'").removesuffix("'s")
+    pattern = re.compile(rf"(?<![\w\-./']){re.escape(key)}(?![\w\-])")
+
+    def find(text: str) -> int:
+        m = pattern.search(text.lower().replace("’", "'"))
+        return m.start() if m else -1
+
+    lines = [line for line in answer.splitlines() if line.strip()]
+    if len(lines) > 1:
+        answer = " / ".join([line for line in lines if find(line) >= 0] or lines[:1])
+    answer = " ".join(answer.split())
+    if len(answer) <= width:
+        return answer
+    start = max(0, min(find(answer) - width // 2, len(answer) - width))
+    return ("…" if start else "") + answer[start:start + width] + ("…" if start + width < len(answer) else "")
+
+
+def veto_facts(texts: list[str], context: str, post: str, index: ground.FactIndex | None) -> list[str]:
+    """Lines for the live facts the gate leaned on to pass `texts`: the facts behind each name or number the context
+    lacks, facts about that name first, then the newest. Every name or number gets its best fact before any gets a
+    second, so one draft can't fill the block. Replies from the thread (posts.thread_facts) are labelled as what
+    someone replied, not as facts. Empty when the gate leaned on none, so the veto's input is what it was before
+    facts existed."""
+    if not index:
+        return []
+    ranked: list[tuple[str, list[Fact]]] = []  # (name or number, its facts best first), in draft order
+    for text in texts:
+        by_token: dict[str, list[Fact]] = {}
+        for f, token in gate.facts_used(text, context=context, facts=index, post=post):
+            by_token.setdefault(token, []).append(f)
+        for token, facts in by_token.items():
+            named = ground.anchor_words(token)
+            facts = sorted(sorted(facts, key=lambda f: f.as_of, reverse=True),
+                           key=lambda f: not (ground.subject_anchors(f) & named))
+            ranked.append((token, facts[:FACTS_PER_TOKEN]))
+    chosen: dict[str, str] = {}
+    for rank in range(FACTS_PER_TOKEN):
+        for token, facts in ranked:
+            if rank < len(facts) and facts[rank].id not in chosen and len(chosen) < VETO_FACTS:
+                f = facts[rank]
+                said = "a reply under this post said" if posts.is_thread_fact(f) else f"fact, true as of {f.as_of}"
+                chosen[f.id] = f"- {said}: {_snippet(f.answer, token)}"
+    return list(chosen.values())
+
+
 def fact_index(live_facts: list[Fact], author: str, url: str, post: str, replies: list[dict],
                now: datetime | None = None) -> ground.FactIndex:
     """Live facts plus the whole thread under the target (the page shows at most `page_replies` of it).
@@ -326,7 +385,11 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     detail = f"{method}: {len(passing)}/{len(cands)} drafts passed the gate" + (f" ({note})" if note else "")
     if not passing:
         return Decision(REPLY_LANE, url, "abstain", "gate_rejected", detail, candidates=cands), None
-    picked, grounded, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane="reply", context=context,
+    # The veto sees the live facts the gate leaned on, so a name or number they back isn't vetoed as unsupported.
+    # The gate's own context stays without them: its substring check would accept any number in the block.
+    shown = veto_facts(passing, context, post, index)
+    veto_context = context + ("\n\n" + VETO_FACTS_HEADER + "\n" + "\n".join(shown) if shown else "")
+    picked, grounded, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane="reply", context=veto_context,
                                            seed=url, grounding=grounding)
     if picked is None:
         return Decision(REPLY_LANE, url, "abstain", "judge_rejected", why, candidates=cands), None
@@ -339,9 +402,9 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
                     "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, grounded),
-                    "facts_live": None if live_facts is None else len(live_facts),
+                    "facts_live": None if live_facts is None else len(live_facts), "facts_shown_to_veto": len(shown),
                     # What the veto judged the draft against; qualify's critic gets the same (Integration run 37).
-                    "veto_context": context},
+                    "veto_context": veto_context},
     )
     return Decision(REPLY_LANE, url, "reply", detail=detail, candidates=cands), action
 
@@ -377,12 +440,27 @@ def load_takes(path: Path | None = None) -> list[dict]:
     return takes
 
 
+def _status_ids(urls) -> frozenset[str]:
+    return frozenset(m.group(1) for u in urls if (m := thread.STATUS_ID.search(u or "")))
+
+
+def _off_mission(url: str | None, off_mission: frozenset[str]) -> bool:
+    """True when `url` is an X post the reply planner abstained on as off_mission this round, in any URL form."""
+    return bool(url) and bool(_status_ids([url]) & off_mission)
+
+
 def _human_takes(takes: list[dict], offer: Offer, narratives: list[Narrative],
-                 budget: Budget) -> tuple[list[Action], list[Decision]]:
+                 budget: Budget, off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
     actions, decisions, done = [], [], shipped_takes()
     for take in takes:
         text = take["text"]
         if text in done:
+            continue
+        if _off_mission(take.get("quote_url"), off_mission):
+            # Not shipped, so it stays in takes.json and a later round can quote it.
+            decisions.append(Decision(POST_LANE, text, "abstain", "off_mission",
+                                      f"human take quotes {take['quote_url']}, which the reply planner called "
+                                      "off_mission this round"))
             continue
         kind = "quote" if take.get("quote_url") else "post"
         call = {"tool": kind, "text": text} | ({"target_url": take["quote_url"]} if kind == "quote" else {})
@@ -422,13 +500,18 @@ def credit_for(url: str, sources: dict[str, str]) -> str:
 
 
 def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionConfig, budget: Budget,
-             offer: Offer, grounding, sources: dict[str, str]) -> tuple[list[Action], list[Decision]]:
+             offer: Offer, grounding, sources: dict[str, str],
+             off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
     """Quote a real X post, or link a news story, with a caption that stands on its own and the source
-    credited. Never links an opaque redirect."""
+    credited. Never links an opaque redirect, and never quotes a post the reply planner called off_mission this
+    round: the round would otherwise answer a post it had just judged off the account's subjects."""
     ranked = sorted(narratives, key=lambda n: -n.relevance * n.velocity)
-    targets = reply_targets(narratives)
+    all_targets = reply_targets(narratives)
+    targets = [t for t in all_targets if not _off_mission(t["url"], off_mission)]
     # X posts the narratives cite but Observe didn't offer as reply targets can still be quoted.
-    cited = [(n, u) for n in ranked for u in n.signal_urls if u in offer.target_urls]
+    all_cited = [(n, u) for n in ranked for u in n.signal_urls if u in offer.target_urls]
+    cited = [(n, u) for n, u in all_cited if not _off_mission(u, off_mission)]
+    skipped = sorted({t["url"] for t in all_targets if t not in targets} | {u for n, u in all_cited if (n, u) not in cited})
     news = [(n, u) for n in ranked for u in n.signal_urls if u and not thread.STATUS_ID.search(u)]
     linkable = [(n, u) for n, u in news if urlparse(u).netloc.removeprefix("www.") not in REDIRECT_HOSTS]
     if targets and budget.left("quote") > 0:
@@ -443,6 +526,9 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     elif news and not linkable and not (targets or cited):
         return [], [Decision(POST_LANE, news[0][1], "abstain", "no_linkable_source",
                              f"only redirect links ({', '.join(sorted(REDIRECT_HOSTS))}) to caption")]
+    elif not (targets or cited or news) and skipped:
+        return [], [Decision(POST_LANE, skipped[0], "abstain", "off_mission",
+                             f"the only X posts to quote, {skipped}, are ones the reply planner called off_mission")]
     elif not (targets or cited or news) and ranked and not any(n.signal_urls for n in ranked) and budget.left("post") > 0:
         # No link anywhere: the material came in by hand (the operator dashboard's manual signals),
         # so the caption is of the story itself, with nothing to link or credit.
@@ -484,7 +570,9 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
 
 def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[Action], cfg: ActionConfig,
               budget: Budget, takes: list[dict], grounding=None, sources: dict[str, str] | None = None,
-              revising: bool = False) -> tuple[list[Action], list[Decision]]:
+              revising: bool = False, off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
+    """`off_mission` holds the status IDs of X posts the reply planner abstained on as off_mission this round;
+    neither a caption nor a take quotes them."""
     urls, handles = offered(narratives)
     offer = Offer(target_urls=urls, target_handles=handles)
     actions, decisions, angles = [], [], []
@@ -507,11 +595,11 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
 
     if revising:  # a retry revises chorus drafts; takes and captions already had their turn this run
         return actions, decisions
-    took, d = _human_takes(takes, offer, narratives, budget)
+    took, d = _human_takes(takes, offer, narratives, budget, off_mission)
     actions += took
     decisions += d
     if not took and narratives:
-        cap, d = _caption(llm, mission, narratives, cfg, budget, offer, grounding, sources or {})
+        cap, d = _caption(llm, mission, narratives, cfg, budget, offer, grounding, sources or {}, off_mission)
         actions += cap
         decisions += d
         top = max(narratives, key=lambda n: n.relevance * n.velocity)
@@ -547,8 +635,11 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
         a, d = reply_lane(llm, mission, lessons, narratives, cfg, budget, fetch, grounding, facts)
         actions += a
         decisions += d
+    # Posts the planner judged off the account's subjects this round; the post lane must not quote them either.
+    off_mission = _status_ids(d.opportunity for d in decisions
+                              if d.lane == REPLY_LANE and d.tool == "abstain" and d.reason == "off_mission")
     a, d = post_lane(llm, mission, narratives, chorus, cfg, budget, load_takes() if takes is None else takes, grounding,
-                     sources, revising)
+                     sources, revising, off_mission)
     actions += a
     decisions += d
     for action in actions:

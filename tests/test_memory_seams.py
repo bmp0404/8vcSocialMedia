@@ -99,6 +99,14 @@ def test_lessons_report_an_unreadable_store_and_raise_on_a_bug(isolated, monkeyp
         config.lessons()
 
 
+def test_an_episode_says_none_for_a_draft_nothing_scored_and_the_score_for_one_that_was(isolated):
+    run_id = memory.save_run([Action(type="reply", text="a reply", mind="m", narrative_id="n", id="a1"),
+                              Action(type="post", text="a post", mind="m", narrative_id="n", predicted_score=0.25, id="a2")])
+    assert memstore.record_round(run_id) == ["ep-a1", "ep-a2"]
+    assert "- **Predicted score:** none;" in memstore.load("ep-a1").body
+    assert "- **Predicted score:** 0.25;" in memstore.load("ep-a2").body
+
+
 def test_record_round_writes_episodes_once_and_reports_a_store_error(isolated, monkeypatch, capsys):
     from harness.memstore import episodes
 

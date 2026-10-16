@@ -154,6 +154,40 @@ def test_links_and_media_placeholders():
     assert "placeholder" in rules("[Image: Clark]")
 
 
+@pytest.mark.parametrize("draft", [
+    "(image of Caitlin Clark in defensive stance)",  # shipped by the hot path on 2026-10-16
+    "22 on the heel / / [image of shoe heel detail]",
+    "[IMAGE: side-by-side comparison of two videos]",
+    "<gif of her shrugging>", "{video of the dunk}", "【image】", "（video）",
+    "(see screenshot) she called it", "(attached: photo of the bench)", "lmao (insert crying gif)",
+    "(laughs) okay she cooked", "(dramatic pause) she did it again", "[crowd applause]", "(slow clap)",
+    "*insert gif*", "*image of the scoreboard*",
+    "image of clark mid-shot", "A gif of the bench celebrating", "video: the steal at the buzzer",
+    "nobody:\nscreenshot: the box score", "insert player name here", "insert stat", "screenshot", "Screenshots!",
+])
+def test_media_placeholders_and_stage_directions_in_any_bracket_style(draft):
+    assert "placeholder" in rules(draft)
+
+
+@pytest.mark.parametrize("text", [
+    "(not kidding)", "she's him (affectionate)", "I love it (and Biome's, since Oxc's was based on Biome's)",
+    "(pause)", "screenshot this before they delete it", "there's a video of her hitting that shot",
+    "the image of her holding the trophy lives in my head", "*crashes* lol", "*sigh* every year",
+    "Integrar todo el ciclo de desarrollo en un solo flujo", "my todo list is full", "tbd honestly",
+    "linked below", "(linked in the docs)",
+])
+def test_asides_people_bracket_themselves_pass(text):
+    assert "placeholder" not in rules(text)
+
+
+def test_a_placeholder_finding_covers_its_span_once():
+    draft = "lol (image of Clark) and [gif]"
+    found = [f for f in gate.check(draft, "reply").findings if f.rule == "placeholder"]
+    assert [(draft[f.start:f.end], f.detail) for f in found] == [
+        ("(image of Clark)", "unresolved placeholder '(image of Clark)'"), ("[gif]", "unresolved placeholder '[gif]'")]
+    assert [f.rule for f in gate.check("TODO", "reply").findings] == ["placeholder"]
+
+
 def test_engagement_bait():
     for bait in ("like if you agree", "RT if she's the goat", "who agrees?", "tag someone who needs this", "drop a 🔥"):
         assert "engagement_bait" in rules(bait), bait

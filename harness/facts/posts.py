@@ -14,6 +14,7 @@ from harness.learning.kinds import Fact, short_hash, slug
 
 POST_DAYS = 30
 THREAD_DAYS = 1
+THREAD_PREFIX = "fact-thread-"
 
 
 def _subject(author: str) -> str:
@@ -41,6 +42,11 @@ def thread_facts(author: str, url: str, replies: list[str], at: datetime) -> lis
     texts = [r.strip() for r in replies if r and r.strip()]
     if not texts:
         return []
-    return [Fact(id="fact-thread-" + short_hash(url), subject=_subject(author), question=f"What did people reply to {url}?",
+    return [Fact(id=THREAD_PREFIX + short_hash(url), subject=_subject(author), question=f"What did people reply to {url}?",
                  answer="\n".join(texts), quote="\n".join(texts), source_url=url, as_of=at.date().isoformat(),
                  valid_until=(at + timedelta(days=THREAD_DAYS)).date().isoformat())]
+
+
+def is_thread_fact(fact: Fact) -> bool:
+    """True for thread_facts' output: what strangers replied, which grounds a name but isn't a checked fact."""
+    return fact.id.startswith(THREAD_PREFIX)

@@ -104,11 +104,11 @@ def wnba_threads(espn: Espn, roster_days: int = 0) -> list[dict]:
     return out
 
 
-def devtools_threads() -> list[dict]:
-    roots = {r["id"]: r for r in _read_jsonl(CONTEXT / "x_metrics.jsonl") if "id" in r and "error" not in r}
-    timeline = [r for r in _read_jsonl(CONTEXT / "author_timelines.jsonl") if "id" in r and not r.get("is_repost")]
+def devtools_threads(context_dir=CONTEXT) -> list[dict]:
+    roots = {r["id"]: r for r in _read_jsonl(context_dir / "x_metrics.jsonl") if "id" in r and "error" not in r}
+    timeline = [r for r in _read_jsonl(context_dir / "author_timelines.jsonl") if "id" in r and not r.get("is_repost")]
     by_root: dict[str, dict[str, str]] = {}
-    for r in _read_jsonl(CONTEXT / "reply_samples.jsonl"):
+    for r in _read_jsonl(context_dir / "reply_samples.jsonl"):
         if "id" not in r or str(r.get("replying_to_status")) != str(r["reply_to_post"]):
             continue
         root = roots[str(r["reply_to_post"])]

@@ -63,6 +63,11 @@ def _run_day(run_id: int) -> str:
     return (row["started_at"] or "")[:10] if row else date.today().isoformat()
 
 
+def _score(value) -> str:
+    """qualify's score, or "none": a draft nothing scored has no prediction, which "0.00" would misstate."""
+    return "none" if value is None else f"{value:.2f}"
+
+
 def _episode(action: dict, outcome: dict | None, run_id: int, day: str) -> Note:
     review = action["review"]
     mind, kind, narrative = action["mind"], action["type"], action["narrative_id"]
@@ -71,7 +76,7 @@ def _episode(action: dict, outcome: dict | None, run_id: int, day: str) -> Note:
         f"- **Mind:** {mind}; {stated}",
         f"- **Type:** {kind}; {stated}",
         f"- **Narrative:** {narrative}; {stated}",
-        f"- **Predicted score:** {action['predicted_score']:.2f}; {stated}",
+        f"- **Predicted score:** {_score(action.get('predicted_score'))}; {stated}",
         f"- **Draft text:** {_one_line(action['text'])}; {stated}",
         f"- **Critique:** {_one_line(action.get('critique')) or 'none'}; {stated}",
     ]

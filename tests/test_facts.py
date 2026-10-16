@@ -132,6 +132,17 @@ def test_facts_never_silence_style_rules_or_handles():
     assert rules == {"em_dash", "ai_vocab", "unknown_handle"}
 
 
+def test_facts_used_names_the_fact_behind_each_name_and_number_the_context_lacks():
+    roster = fact("Indiana Fever roster: Aliyah Boston (#7, F), Kelsey Mitchell (#0, G).", subject="entity-indiana-fever",
+                  fid="fact-roster")
+    idx = ground.FactIndex([BOSTON, FEVER, roster], ground.anchor_words("Indiana Fever " + POST))
+    used = gate.facts_used("so Boston had 19 points and 10 boards, Indy", context=POST, facts=idx)
+    assert {(f.id, token) for f, token in used} == {(BOSTON.id, "Boston"), (roster.id, "Boston"), (BOSTON.id, "19"),
+                                                    (BOSTON.id, "10")}  # "Indy" is in the post
+    # A number with the wrong unit backs nothing, the same as in the gate; a [VERIFY] marker is the person's to check.
+    assert gate.facts_used("so Boston dropped 19 tonight [VERIFY: 31 assists]", context="Boston", facts=idx) == []
+
+
 # ---------------------------------------------------------------- ESPN parsers
 
 SUMMARY = {
@@ -252,6 +263,29 @@ def test_refresh_reads_recent_posts_for_a_profile_without_a_scoreboard():
     assert {f.answer for f in store.load(s)} == {"We shipped 2.0"}
 
 
+class FlakyReader(FakeReader):
+    def __init__(self, failing):
+        self.failing = failing
+
+    def profile_statuses(self, handle, limit=20):
+        from harness.context.http import FetchError
+        if handle in self.failing:
+            raise FetchError(f"HTTP 404 from api.fxtwitter.com for /2/profile/{handle}/statuses")
+        return super().profile_statuses(handle, limit)
+
+
+def test_refresh_skips_a_timeline_it_cant_read_and_keeps_the_others(capsys):
+    from harness.sources.watch import load_watch
+    with config.use_profile("devtools"):
+        handles = load_watch().reply_targets.accounts
+    s = FakeStore()
+    counts = store.refresh("devtools", at=AT, reader=FlakyReader({handles[0]}), store=s)
+    assert set(counts) == {f"posts:{h}" for h in handles[1:]}
+    assert f"[facts] skipped @{handles[0]}: HTTP 404" in capsys.readouterr().out
+    with pytest.raises(store.FactsError, match="every timeline read failed"):
+        store.refresh("devtools", at=AT, reader=FlakyReader(set(handles)), store=FakeStore())
+
+
 def test_refresh_refuses_the_mock_providers_throwaway_store(monkeypatch):
     monkeypatch.setattr(config, "PROVIDER", "mock")
     monkeypatch.delenv("MEMSTORE_PATH", raising=False)
@@ -290,6 +324,96 @@ def test_lane_gate_grounds_drafts_on_live_facts(tmp_out, monkeypatch):
     actions, with_facts = lane_run(MockLLM(), [BOSTON])
     assert [a.text for a in actions if a.type == "reply"] == ["Boston had 19 points and 10 boards"]
     assert actions[0].draft_meta["facts_live"] == 1
+
+
+class VetoSpy(MockLLM):
+    """Keeps the user prompt of every veto call."""
+
+    def __init__(self):
+        super().__init__()
+        self.veto_prompts = []
+
+    def complete_json(self, system, prompt, mock=None):
+        if system.startswith("You screen candidate"):
+            self.veto_prompts.append(prompt)
+        return super().complete_json(system, prompt, mock)
+
+
+def test_the_veto_sees_the_facts_the_gate_leaned_on_and_the_critic_gets_the_same(tmp_out, monkeypatch):
+    monkeypatch.setattr(writer, "continuations", lambda *a, **k: ["Boston had 19 points and 10 boards"])
+    gate_contexts = []
+    real_check = gate.check
+    monkeypatch.setattr(gate, "check", lambda *a, **k: gate_contexts.append(k.get("context")) or real_check(*a, **k))
+    spy = VetoSpy()
+    actions, _ = lane_run(spy, [FEVER, BOSTON])
+    [reply] = [a for a in actions if a.type == "reply"]
+    line = f"- fact, true as of {BOSTON.as_of}: {BOSTON.answer}"
+    prompts = [p for p in spy.veto_prompts if p.startswith("POST by @IndianaFever")]  # not the caption's
+    assert len(prompts) == 2 and all(lanes.VETO_FACTS_HEADER + "\n" + line in p for p in prompts)
+    assert "Indiana Fever lost" not in prompts[0]  # the gate didn't need the team's result
+    assert reply.draft_meta["facts_shown_to_veto"] == 1
+    assert line in reply.draft_meta["veto_context"] and prompts[0].startswith(reply.draft_meta["veto_context"])
+    assert gate_contexts and not any("LIVE FACTS" in c for c in gate_contexts if c)
+
+
+@pytest.mark.parametrize("facts", [None, [FEVER]])
+def test_the_veto_context_is_the_gates_context_when_the_gate_leaned_on_no_fact(tmp_out, monkeypatch, facts):
+    monkeypatch.setattr(writer, "continuations", lambda *a, **k: ["thank you for the season, indy"])
+    gate_contexts = []
+    real_check = gate.check
+    monkeypatch.setattr(gate, "check", lambda *a, **k: gate_contexts.append(k.get("context")) or real_check(*a, **k))
+    actions, _ = lane_run(VetoSpy(), facts)
+    [reply] = [a for a in actions if a.type == "reply"]
+    reply_context = next(c for c in gate_contexts if c and c.startswith("POST by @IndianaFever"))
+    assert reply.draft_meta["veto_context"] == reply_context and reply.draft_meta["facts_shown_to_veto"] == 0
+
+
+def test_a_reply_from_the_thread_is_shown_as_a_reply_and_only_the_lines_that_hold_the_name():
+    thread = posts.thread_facts("IndianaFever", X_URL, ["Mitchell was cooking", "great season", "bring back White"], AT)
+    lines = lanes.veto_facts(["honestly Mitchell carried us"], POST, POST, ground.FactIndex(thread, ()))
+    assert lines == ["- a reply under this post said: Mitchell was cooking"]
+    assert lanes.veto_facts(["so Boston had 19 points"], POST, POST, None) == []
+
+
+NAMES = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima"]
+
+
+def test_the_block_is_capped_and_every_draft_gets_its_best_fact_before_any_gets_a_second():
+    many = [fact(f"{n} scored", subject=f"entity-{n.lower()}", fid=f"fact-{n}") for n in NAMES]
+    seconds = [fact(f"{n} scored again", subject=f"entity-{n.lower()}", as_of="2026-09-01", fid=f"fact-{n}-2") for n in NAMES]
+    idx = ground.FactIndex(many + seconds)
+    assert len(lanes.veto_facts(["ok " + " ".join(NAMES)], POST, POST, idx)) == lanes.VETO_FACTS
+    # The first draft names 9 people, each backed twice; the second draft's one name still gets its fact.
+    lines = lanes.veto_facts(["ok " + " ".join(NAMES[:9]), "and Lima too"], POST, POST, idx)
+    assert len(lines) == lanes.VETO_FACTS and "- fact, true as of 2026-10-02: Lima scored" not in lines
+    lines = lanes.veto_facts(["ok " + " ".join(NAMES[:5]), "and Lima too"], POST, POST, idx)
+    assert lines[:6] == [f"- fact, true as of 2026-10-02: {n} scored" for n in NAMES[:5] + ["Lima"]]
+
+
+def test_a_long_fact_is_cut_to_a_window_around_the_whole_token():
+    roster = "Team roster: " + ", ".join(f"Name{i} (#{i}, G)" for i in range(40)) + ", Kelsey Mitchell (#0, G)."
+    snippet = lanes._snippet(roster, "Mitchell")
+    assert "Kelsey Mitchell" in snippet and snippet.startswith("…") and len(snippet) <= lanes.FACT_CHARS + 2
+    line = "Clark (Indiana Fever) shot 6-18 from the field. " + "x " * 200 + "She finished with 18 points."
+    assert "18 points" in lanes._snippet(line, "18")
+
+
+@pytest.mark.parametrize("draft", [
+    "so Boston had 19 points and 10 boards in the last one",
+    "honestly Boston dropped 31 tonight and Mitchell had 12 assists",
+    "the Fever lost 83-94 and Boston had 8-16 from the field",
+    "so Boston had 19 points [VERIFY: 40 minutes] and Indy",
+    "Season's over. thank you",
+])
+def test_facts_used_names_exactly_the_grounding_findings_the_facts_cleared(draft):
+    """facts_used must agree with the gate: its tokens are the name and number findings that facts remove."""
+    idx = ground.FactIndex([BOSTON, FEVER], ground.anchor_words("Indiana Fever " + POST))
+
+    def flagged(facts):
+        return {f.detail.split("'")[1] for f in gate.check(draft, context=POST, facts=facts).findings
+                if f.rule in ("ungrounded_name", "ungrounded_number")}
+
+    assert {token for _, token in gate.facts_used(draft, context=POST, facts=idx, post=POST)} == flagged(None) - flagged(idx)
 
 
 def by_reason(decisions):

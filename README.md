@@ -101,11 +101,11 @@ data/         # Source documents, datasets, and supporting assets
 
 | Path | Stage |
 | --- | --- |
-| `mission/profiles/<name>/` | One brand: `mission.md`, `observe.toml`, `panel.json`, `reply_framing.json`, `prompts.toml`; `HARNESS_PROFILE` picks it |
+| `mission/profiles/<name>/` | One brand: `mission.md`, `observe.toml`, `panel.json`, `reply_framing.json`, `prompts.toml`, `qualify.toml`; `HARNESS_PROFILE` picks it |
 | `harness/sources/` | **Observe.** One plugin per data source; register it in `sources/__init__.py` |
 | `harness/orient.py` | **Orient.** Clusters signals into narratives scored on relevance × velocity |
 | `harness/minds/prompts/*.md` | **Decide.** One persona per file; add a file to add a mind |
-| `harness/qualify.py` | **Qualify.** Simulated audience panel scores drafts; a critic vetoes |
+| `harness/qualify.py` | **Qualify.** A critic vetoes; the learned post ranker (`eval/rankers/`) orders the post lane's drafts |
 | `harness/memory.py` | SQLite log of runs, recommendations, and outcomes (`data/harness.db`) |
 | `harness/learn.py` | **Learn.** Writes `memory/lessons/<profile>.md` |
 | `harness/review/` | **Human checkpoint.** Stdlib HTTP server and a React page built from `web/` into `dist/` |

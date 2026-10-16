@@ -19,12 +19,13 @@ MODEL = os.getenv("HARNESS_MODEL", "")
 SOURCES = [s.strip() for s in os.getenv("HARNESS_SOURCES", "sample").split(",") if s.strip()]
 
 # Mission profiles. mission/profiles/<name>/ holds one brand's mission.md, observe.toml, panel.json,
-# reply_framing.json and prompts.toml (the brand wording the action prompts insert), plus an optional takes.json. HARNESS_PROFILE picks the profile; use_profile() switches
+# reply_framing.json, prompts.toml (the brand wording the action prompts insert) and qualify.toml (which post ranker
+# orders the post lane), plus an optional takes.json. HARNESS_PROFILE picks the profile; use_profile() switches
 # it for a block, so one process can work for two brands. Every reader of these files goes through
 # profile_file(), which raises ProfileError naming the path when a profile or file is missing.
 PROFILES_DIR = ROOT / "mission" / "profiles"
 DEFAULT_PROFILE = "wnba"
-PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json", "prompts.toml")
+PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json", "prompts.toml", "qualify.toml")
 OPTIONAL_PROFILE_FILES = ("takes.json",)  # a person's own takes; a profile may have none
 # Each points one profile file somewhere else, for tests and one-off runs; it applies to the active profile.
 FILE_OVERRIDES = {"observe.toml": "HARNESS_OBSERVE_CONFIG", "panel.json": "HARNESS_PANEL",

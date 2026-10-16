@@ -1,0 +1,213 @@
+{
+ "veto_model": "claude-opus-5-5",
+ "calls": {
+  "made": 42,
+  "from_cache_or_earlier_runs": 368,
+  "models": [
+   [
+    "claude-opus-5-5",
+    "claude-opus-5-5"
+   ]
+  ]
+ },
+ "wnba_real_replies": {
+  "batches": 12,
+  "batches_with_a_block": 12,
+  "rejected": {
+   "judged": 22,
+   "without": 22,
+   "with": 20,
+   "change": {
+    "change": -0.091,
+    "ci95": [
+     -0.2,
+     0.0
+    ],
+    "clusters": 12
+   },
+   "flipped": [
+    {
+     "text": "Lost to Portland lol 😂",
+     "without": "unsupported claim",
+     "with": "passed"
+    },
+    {
+     "text": "I believe Rhyne is the best 2 way guard in womens basketball\n\nFolks think Gabby is \n\nWe will see- this matchup will do wonders for  both legacy",
+     "without": "unsupported claim",
+     "with": "passed"
+    }
+   ]
+  },
+  "flagged_unsupported": {
+   "judged": 22,
+   "without": 17,
+   "with": 11,
+   "change": {
+    "change": -0.273,
+    "ci95": [
+     -0.458,
+     -0.105
+    ],
+    "clusters": 12
+   },
+   "flipped": [
+    {
+     "text": "Now it’s time to fire Stephanie White and let her be “humbled.”\n\nFind someone who can coach without the politics.",
+     "without": "unsupported claim, mute/report risk",
+     "with": "mute/report risk"
+    },
+    {
+     "text": "Lost to Portland lol 😂",
+     "without": "unsupported claim",
+     "with": "passed"
+    },
+    {
+     "text": "I been enjoying smokin on the Caitlin Clark pack thanks to the legend A'Ja Wilson.",
+     "without": "unsupported claim, off mission, mute/report risk",
+     "with": "off mission, mute/report risk"
+    },
+    {
+     "text": "I believe Rhyne is the best 2 way guard in womens basketball\n\nFolks think Gabby is \n\nWe will see- this matchup will do wonders for  both legacy",
+     "without": "unsupported claim",
+     "with": "passed"
+    },
+    {
+     "text": "Watch out for Tiffany flopping ass 😭",
+     "without": "unsupported claim, mute/report risk",
+     "with": "mute/report risk"
+    },
+    {
+     "text": "It's Gabby Williams masterclass week⚔️",
+     "without": "unsupported claim, off mission",
+     "with": "off mission"
+    }
+   ]
+  },
+  "block_example": [
+   "- fact, true as of 2026-09-30: Stephanie Talbot (Las Vegas Aces) against the Indiana Fever on 2026-09-29: 9 points, 5 rebounds, 1 assists, 1 steals, 2 blocks, 2 turnovers, 27 minutes, 0 threes, 4-6 from the field, 0-2 from three, 1-2 from the line.",
+   "- fact, true as of 2026-10-02: Caitlin Clark (Indiana Fever) against the Las Vegas Aces on 2026-10-01: 18 points, 2 rebounds, 4 assists, 2 steals, 4 blocks, 6 turnovers, 37 minutes, 3 threes, 6-18 from the field, 3-12 from three, 3-4 from the line."
+  ]
+ },
+ "devtools_real_replies": {
+  "batches": 60,
+  "batches_with_a_block": 51,
+  "rejected": {
+   "judged": 72,
+   "without": 61,
+   "with": 58,
+   "change": {
+    "change": -0.042,
+    "ci95": [
+     -0.106,
+     0.014
+    ],
+    "clusters": 60
+   },
+   "flipped": 5
+  },
+  "flagged_unsupported": {
+   "judged": 72,
+   "without": 42,
+   "with": 36,
+   "change": {
+    "change": -0.083,
+    "ci95": [
+     -0.167,
+     -0.013
+    ],
+    "clusters": 60
+   },
+   "flipped": 8
+  }
+ },
+ "wnba_invented_stats": {
+  "drafts_with_a_number": 143,
+  "gate_rejected": 123,
+  "grounding_caught": 123,
+  "reached_veto": 20,
+  "batches_with_a_block": 2,
+  "veto_caught": {
+   "without": 20,
+   "with": 19
+  },
+  "caught_in_total": {
+   "without": 143,
+   "with": 142,
+   "of": 143
+  },
+  "veto_flagged_unsupported": {
+   "without": 19,
+   "with": 18
+  },
+  "flipped": [
+   {
+    "text": "the 14 assists in one game still lives rent free in my head. details later pls",
+    "without": "reads as AI, unsupported claim",
+    "with": "passed"
+   }
+  ]
+ },
+ "wnba_invented_stats_heldout": {
+  "drafts_with_a_number": 144,
+  "gate_rejected": 119,
+  "grounding_caught": 119,
+  "reached_veto": 25,
+  "batches_with_a_block": 2,
+  "veto_caught": {
+   "without": 23,
+   "with": 23
+  },
+  "caught_in_total": {
+   "without": 142,
+   "with": 142,
+   "of": 144
+  },
+  "veto_flagged_unsupported": {
+   "without": 23,
+   "with": 23
+  },
+  "flipped": []
+ },
+ "devtools_invented_stats": {
+  "drafts_with_a_number": 235,
+  "gate_rejected": 208,
+  "grounding_caught": 208,
+  "reached_veto": 27,
+  "batches_with_a_block": 0,
+  "veto_caught": {
+   "without": 27,
+   "with": 27
+  },
+  "caught_in_total": {
+   "without": 235,
+   "with": 235,
+   "of": 235
+  },
+  "veto_flagged_unsupported": {
+   "without": 27,
+   "with": 27
+  },
+  "flipped": []
+ },
+ "devtools_invented_stats_heldout": {
+  "drafts_with_a_number": 239,
+  "gate_rejected": 206,
+  "grounding_caught": 206,
+  "reached_veto": 33,
+  "batches_with_a_block": 2,
+  "veto_caught": {
+   "without": 33,
+   "with": 33
+  },
+  "caught_in_total": {
+   "without": 239,
+   "with": 239,
+   "of": 239
+  },
+  "veto_flagged_unsupported": {
+   "without": 31,
+   "with": 31
+  },
+  "flipped": []
+ }
+}
