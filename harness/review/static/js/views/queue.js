@@ -506,7 +506,7 @@ function referencesHtml(refs) {
 /** The veto's verdict on one candidate in words: null when it passed or wasn't run. */
 function vetoProblem(v) {
   if (!v) return null;
-  if (v.orders_agree === false) return `split verdict${v.why ? `: ${v.why}` : ""}`;
+  if (v.orders_agree === false) return v.why && /split/i.test(v.why) ? v.why : `split verdict${v.why ? `: ${v.why}` : ""}`;
   if (v.passed !== false) return null;
   const sides = [v.fwd, v.rev].filter(Boolean);
   const why = v.why || (sides.some((x) => x.unsupported) ? "unsupported claim" : sides.some((x) => x.risk) ? "brand risk" : "reads as AI");

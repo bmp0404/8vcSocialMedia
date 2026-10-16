@@ -362,10 +362,10 @@ function detailHead(x) {
       : ""}
     <p class="xp-meta">
       ${[by, d.at ? clock(d.at, true) : ""].filter(Boolean).join(" · ")}
-      ${d.superseded_by ? html` · replaced by <button class="xp-link mono" type="button" data-goto="${d.superseded_by}">${d.superseded_by}</button>` : ""}
-      ${rerunOf.map((o) => html` · reruns <button class="xp-link mono" type="button" data-goto="${o.id}">${o.id}</button>`)}
-      ${revertOf ? html` · reverts <button class="xp-link mono" type="button" data-goto="${revertOf}">${revertOf}</button>` : ""}
-      ${S.revertedBy.has(x.id) ? html` · reverted by <button class="xp-link mono" type="button" data-goto="${S.revertedBy.get(x.id)}">${S.revertedBy.get(x.id)}</button>` : ""}
+      ${d.superseded_by ? html` · replaced by ${goLink(d.superseded_by)}` : ""}
+      ${rerunOf.map((o) => html` · reruns ${goLink(o.id)}`)}
+      ${revertOf ? html` · reverts ${goLink(revertOf)}` : ""}
+      ${S.revertedBy.has(x.id) ? html` · reverted by ${goLink(S.revertedBy.get(x.id))}` : ""}
     </p>
     ${x.hypothesis ? html`<div class="xp-hyp"><span class="label">Hypothesis</span><p class="prose">${x.hypothesis}</p></div>` : ""}
     <p class="xp-meta">Proposed by ${x.proposer?.kind || "unknown"}${x.proposer?.source ? html` · <span class="xp-src">${x.proposer.source}</span>` : ""}</p>
@@ -457,7 +457,7 @@ function primaryBlock(x, m) {
 
 function secondaryRows(x, ms) {
   if (!ms.length) return "";
-  return html`<div class="xp-tablewrap"><table class="xp-table xp-mtable">
+  return html`<div class="xp-tablewrap" tabindex="0" role="region" aria-label="Metrics, scrolls sideways"><table class="xp-table xp-mtable">
     <caption class="sr-only">Other metrics, champion against challenger</caption>
     <thead><tr><th scope="col">Metric</th><th scope="col" class="r">Champion</th><th scope="col" class="r">Challenger</th><th scope="col" class="xp-plotcol"><span class="sr-only">Improvement plot</span></th><th scope="col" class="r">Improvement</th></tr></thead>
     <tbody>${ms.map((m) => {
@@ -657,13 +657,15 @@ function render() {
   );
   if (S.first) {
     S.first = false;
-    setTimeout(() => $(".xp-list.entering", S.el)?.classList.remove("entering"), 700);
+    const list = $(".xp-list.entering", S.el);
+    setTimeout(() => list?.classList.remove("entering"), 700);
   }
 }
 
 function renderList() {
   const list = $("#xp-list", S.el);
   if (!list) return;
+  list.classList.remove("entering"); // a filter change mustn't replay the first-load entrance
   setHTML(list, listMarkup());
   const bayEl = $(".xp-bays", S.el);
   if (bayEl) bayEl.outerHTML = String(bays());
@@ -674,8 +676,19 @@ function renderDetail() {
   if (d) setHTML(d, detailMarkup());
 }
 
+/** A link to another record, or plain text when the record isn't in this ledger. */
+function goLink(id) {
+  return S.byId.has(id)
+    ? html`<button class="xp-link mono" type="button" data-goto="${id}">${id}</button>`
+    : html`<span class="mono" title="Not in this ledger">${id}</span>`;
+}
+
 function select(id, { focus = false, scroll = true } = {}) {
   if (!S.byId.has(id)) return;
+  // renderDetail() below replaces the whole detail, including whatever had focus there; the
+  // selected option is the nearest logical place to put it back (focus-and-keyboard.md).
+  const a = document.activeElement;
+  focus ||= !a || a === document.body || !!a.closest?.("#xp-detail");
   S.sel = id;
   S.ctx.setParams({ exp: id });
   for (const el of $$("[data-exp]", S.el)) {

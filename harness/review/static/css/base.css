@@ -73,6 +73,7 @@ button {
 /* No double-tap zoom delay on controls. */
 button,
 a,
+summary,
 [role="button"],
 [role="tab"],
 [role="option"] {
@@ -200,7 +201,7 @@ kbd {
     border-color var(--d-fast) ease;
 }
 
-.btn:active:not(:disabled) {
+.btn:active:not(:disabled):not([aria-disabled="true"]) {
   transform: scale(0.97);
 }
 

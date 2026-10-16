@@ -278,9 +278,9 @@ function frame(loading) {
                   <dt>Sources</dt>
                   <dd data-r="sources"></dd>
                 </dl>
-                <div data-r="cost"></div>
+                <div data-r="cost" id="loop-cost"></div>
                 <div class="loop-run-act">
-                  <button class="btn btn-ink" type="button" data-act="run" data-role="start">Start round</button>
+                  <button class="btn btn-ink" type="button" data-act="run" data-role="start" aria-describedby="loop-cost">Start round</button>
                   <span class="loop-run-state num" data-r="runstate"></span>
                 </div>
                 <div class="loop-run-msg" data-r="runmsg"></div>`}
@@ -353,7 +353,7 @@ function narrativesHTML(d) {
 function runsHTML(d, b) {
   const runs = d.runs || [];
   if (!runs.length) return html`<p class="loop-empty">No runs in the store yet. Each round saves one.</p>`;
-  return html`<div class="panel loop-tablewrap">
+  return html`<div class="panel loop-tablewrap" tabindex="0" role="region" aria-label="Recent runs, scrolls sideways">
     <table class="loop-runs">
       <thead>
         <tr>
@@ -399,7 +399,12 @@ function patch(node, markup) {
   const focused = node.contains(document.activeElement) ? document.activeElement.dataset.fk : null;
   node.innerHTML = s;
   lastMarkup.set(node, s);
-  if (focused) node.querySelector(`[data-fk="${CSS.escape(focused)}"]`)?.focus({ preventScroll: true });
+  if (focused) {
+    // Same element if it survived; otherwise the region's first control, otherwise the region.
+    const target = node.querySelector(`[data-fk="${CSS.escape(focused)}"]`) || node.querySelector("a, button") || node;
+    if (target === node && !node.hasAttribute("tabindex")) node.tabIndex = -1;
+    target.focus({ preventScroll: true });
+  }
 }
 
 function refreshAgo(root) {
@@ -444,9 +449,13 @@ function renderRun(s, d, b, now) {
 
   const role = b.kind === "round" && b.inFlight ? "stop" : "start";
   const btn = R.btn;
+  // The click's request has shown up once a new round appears (a fast round may finish between
+  // polls, so the button never shows Stop) or the button flips.
+  if (s.posting && (d?.round?.id ?? null) !== s.postedRoundId) s.posting = null;
   if (btn.dataset.role !== role) {
     btn.dataset.role = role;
     s.flippedAt = Date.now();
+    s.posting = null;
     // A 409 explains the round that is now running; keep it until that round ends.
     if (role === "start") s.runMsg = null;
   }
@@ -496,10 +505,8 @@ function renderLog(s, d) {
 
 function announce(s, prev, b) {
   let say = "";
+  // Only in-flight stage changes go to this region; how a round ended is said once, by the readback.
   if (b.inFlight) say = `${NAMES[b.current]} running.`;
-  else if (b.kind === "round" && b.status === "failed") say = `Round failed at ${b.current}.`;
-  else if (b.kind === "round" && b.status === "stopped") say = "Round stopped.";
-  else if (prev?.inFlight && b.kind) say = `Round finished. Run ${b.runId} is in the Queue.`;
   if (!prev) {
     s.said = say;
     return;
@@ -576,6 +583,7 @@ async function onRun(s, e) {
   if (e.detail > 1 || s.posting || Date.now() - s.flippedAt < FLIP_GUARD_MS) return;
   const role = btn.dataset.role;
   s.posting = role;
+  s.postedRoundId = s.data?.round?.id ?? null;
   s.runMsg = null;
   renderRun(s, s.data, s.board, Date.now());
   try {
@@ -587,15 +595,15 @@ async function onRun(s, e) {
       s.kickedAt = Date.now();
       s.ctx.readback(html`Round started with <b>${r.provider}</b> on ${(r.sources || []).join(", ")}.`);
     }
+    // Stay "Starting…" / "Stopping…" until a poll shows the round flipped (renderRun clears it),
+    // so a second click can't post again into the gap and leave a misleading 409 alert.
+    if (s.alive) poll(s);
   } catch (err) {
     if (!s.alive) return;
     s.runMsg = err.status === 409 ? err.message : `${role === "stop" ? "Couldn't stop" : "Couldn't start"} the round: ${err.message}`;
-  } finally {
-    if (s.alive) {
-      s.posting = null;
-      renderRun(s, s.data, s.board, Date.now());
-      poll(s);
-    }
+    s.posting = null;
+    renderRun(s, s.data, s.board, Date.now());
+    poll(s);
   }
 }
 
@@ -627,6 +635,8 @@ registerView({
     s.offs.push(
       on(el, "click", '[data-act="run"]', (e) => onRun(s, e)),
       on(el, "click", '[data-act="jump"]', () => {
+        // The button hides once the log is pinned, so focus goes to the log it just scrolled.
+        s.r.logbox.focus({ preventScroll: true });
         s.r.logbox.scrollTop = s.r.logbox.scrollHeight;
       }),
     );

@@ -130,7 +130,9 @@
   inset: 0 auto 0 0;
   width: 40%;
   background: var(--warn);
-  animation: loop-scan 1.3s linear infinite;
+  /* Three sweeps, then the bay rests on its track; the ticking timer shows it's still alive.
+     Motion that runs on its own past 5 s needs a pause control (WCAG 2.2.2). */
+  animation: loop-scan 1.3s linear 3 forwards;
 }
 
 .loop-bay[data-state="yours"] .loop-bar {
@@ -778,5 +780,24 @@
   .loop-bay[data-state="running"] .loop-bar::after {
     animation: none;
     width: 100%;
+  }
+}
+
+/* Narrow layout: keep content clear of the notch in landscape, and give text-style controls a
+   44px touch target with visible press feedback (the tap highlight is off). */
+@media (max-width: 860px) {
+  .loop-pad {
+    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+  }
+}
+
+@media (pointer: coarse) {
+  .loop-runs th a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .loop-runs th a:active {
+    background-color: var(--strip-inset);
   }
 }

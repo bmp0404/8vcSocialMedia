@@ -294,7 +294,9 @@ def post_take(req: Request):
         text=text,
         mind="human",
         narrative_id=d.get("opportunity", ""),
-        rationale=f"A person's answer to: {d.get('question', '')}".strip(),
+        # The question ends with instructions for the CLI ("Add it to action/takes.json; ..."), which
+        # don't belong in the record of what a person answered.
+        rationale=f"A person's answer to: {d.get('question', '').split(' Add it to ')[0]}".strip(),
         id=_stable_id("take", run_id, index),
     ).to_dict()
     # The same method string sam/action's lanes write for a take, so learning sees one label.

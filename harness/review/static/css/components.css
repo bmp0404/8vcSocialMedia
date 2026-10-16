@@ -136,6 +136,7 @@
 
 .main {
   grid-area: main;
+  position: relative; /* contains absolutely placed .sr-only text, which would otherwise widen the page */
   min-width: 0;
   min-height: 0;
   overflow: auto;
@@ -1011,6 +1012,7 @@ dialog.sheet::backdrop {
 
   .viewhead {
     padding: var(--s4) var(--s3) var(--s3);
+    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
   }
 
   .bays {

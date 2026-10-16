@@ -424,7 +424,7 @@
 @keyframes xp-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    translate: 0 6px; /* adds to the selected strip's translateX instead of replacing it */
   }
 }
 
@@ -820,4 +820,27 @@
 .xp-famhead {
   font-size: var(--t-small);
   color: var(--ink-3);
+}
+
+/* Narrow layout: keep content clear of the notch in landscape, and give text-style controls a
+   44px touch target with visible press feedback (the tap highlight is off). */
+@media (max-width: 860px) {
+  .xp {
+    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+  }
+}
+
+@media (pointer: coarse) {
+  .xp-link:not(.xp-meta .xp-link) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .xp summary {
+    padding-block: 14px;
+  }
+  .xp-link:active,
+  .xp summary:active {
+    background-color: var(--strip-inset);
+  }
 }
