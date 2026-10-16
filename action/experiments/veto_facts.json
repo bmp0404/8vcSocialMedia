@@ -1,8 +1,8 @@
 {
  "veto_model": "claude-opus-5-5",
  "calls": {
-  "made": 410,
-  "from_cache_or_earlier_runs": 0,
+  "made": 42,
+  "from_cache_or_earlier_runs": 368,
   "models": [
    [
     "claude-opus-5-5",
@@ -206,7 +206,7 @@
   },
   "veto_flagged_unsupported": {
    "without": 31,
-   "with": 30
+   "with": 31
   },
   "flipped": []
  }
