@@ -15,6 +15,10 @@ from harness.llm import LLM
 from harness.models import Action
 
 PANEL_PATH = Path(os.getenv("HARNESS_PANEL") or config.ROOT / "mission" / "panel.json")
+# A separate model for the panel. On the dev-tool backtest (eval/DESIGN.md) gpt-6.1-sol separated a
+# brand's viral posts from its flops at AUC 0.854 against claude-sonnet-5-5's 0.797 (difference inside
+# the interval), and a judge from another family avoids rating its own drafts. Unset keeps the run's LLM.
+PANEL_MODEL = os.getenv("HARNESS_PANEL_MODEL", "")
 
 PANEL_SYSTEM = """You simulate an X audience panel. For each draft, each panelist predicts how likely
 they are to engage (like, reply, repost) on a 0-1 scale. Be harsh; most posts get ignored."""
@@ -92,11 +96,20 @@ def panel_mean(scores: dict[str, float]) -> float:
     return round(sum(scores.values()) / len(scores), 3) if scores else 0.0
 
 
+def panel_llm(llm: LLM) -> LLM:
+    """The run's LLM, or HARNESS_PANEL_MODEL on the same Anthropic-compatible gateway."""
+    from harness.llm import AnthropicLLM
+
+    if PANEL_MODEL and isinstance(llm, AnthropicLLM):
+        return AnthropicLLM(PANEL_MODEL)
+    return llm
+
+
 def qualify(llm: LLM, mission: str, actions: list[Action], panel: dict[str, str] | None = None) -> list[Action]:
     if not actions:
         return []
     panel = panel or load_panel()
-    scores = panel_scores_two_orders(llm, actions, panel)
+    scores = panel_scores_two_orders(panel_llm(llm), actions, panel)
 
     verdicts = llm.complete_json(
         CRITIC_SYSTEM,

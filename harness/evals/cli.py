@@ -1,4 +1,4 @@
-"""`python -m harness eval <backtest|rescore|leakage|fault>`. Reports go to eval/reports/."""
+"""`python -m harness eval <backtest|rescore|leakage|observe|fault>`. Reports go to eval/reports/."""
 
 import json
 from dataclasses import asdict
@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from harness import config
-from harness.evals import backtest, dataset, fault, leakage
+from harness.evals import backtest, dataset, fault, leakage, observe_eval, stories
 from harness.evals.predictors import Prediction, build
 from harness.evals.settings import BacktestConfig, FaultConfig
 from harness.llm import DEFAULT_MODELS, get_llm
@@ -94,9 +94,46 @@ def cmd_leakage(a) -> None:
     print(f"[leakage] report -> {out}")
 
 
+def cmd_observe(a) -> None:
+    posts = [p for p in dataset.load() if dataset.is_scorable(p)]
+    mission = observe_eval.MISSION_PATH.read_text(encoding="utf-8")
+    result = observe_eval.time_travel(get_llm(a.provider), posts, observe_eval.load_stories(), mission, top=a.top)
+    result.update({"at": datetime.now().isoformat(timespec="seconds"), "provider": _provider(a)})
+    backtest.REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    out = backtest.REPORT_DIR / f"observe-{result['at'].replace(':', '').replace('-', '')}-{result['provider']}.json"
+    out.write_text(json.dumps(result, indent=1, default=str), encoding="utf-8")
+    for r in result["rows"]:
+        print(f"{r['cutoff'][:16]}  {r['n_signals']:>3} signals  live {r['live']}  orient {r['surfaced']}  "
+              f"naive {r['naive_surfaced']}" + (f"  orient error: {r['error'][:80]}" if "error" in r else ""))
+    fmt = lambda x: "n/a" if x is None else f"{x:.2f}"  # noqa: E731
+    print(f"[observe] recall@{a.top}: orient {fmt(result['recall'])}, naive {fmt(result['naive_recall'])} "
+          f"over {result['n_live']} live stories at {result['n_cutoffs']} cutoffs -> {out}")
+
+
+def _story_evidence(a) -> tuple[list[fault.FaultEvidence], dict]:
+    """Evidence for every dataset post on a known story; draft scores come from a backtest report."""
+    posts = dataset.load()
+    scored = [p for p in posts if dataset.is_scorable(p) and not dataset.is_thread_continuation(p)]
+    pool = [p for p in posts if dataset.is_eligible(p)]
+    drafts = None
+    if a.scores:
+        report, _, name = a.scores.partition(":")
+        preds = json.loads(Path(report).read_text(encoding="utf-8"))["results"][name]["predictions"]
+        drafts = {pid: v["score"] for pid, v in preds.items()}
+    pairs = stories.story_evidence(scored, observe_eval.load_stories(), pool, drafts)
+    evidence = [e for _, e in pairs]
+    return evidence, stories.liveness_check(evidence)
+
+
 def cmd_fault(a) -> None:
-    rows = json.loads(Path(a.file).read_text(encoding="utf-8"))
-    verdicts = [fault.attribute(fault.FaultEvidence(**r)) for r in rows]
+    if bool(a.file) == bool(a.stories):
+        raise SystemExit("pass an evidence file or --stories, not both")
+    check = None
+    if a.stories:
+        evidence, check = _story_evidence(a)
+    else:
+        evidence = [fault.FaultEvidence(**r) for r in json.loads(Path(a.file).read_text(encoding="utf-8"))]
+    verdicts = [fault.attribute(e) for e in evidence]
     for v in verdicts:
         stage = v.stage_to_fix or "-"
         print(f"{v.action_id:<12} {v.verdict:<22} fix: {stage:<8} {'; '.join(v.reasons)}"
@@ -104,9 +141,13 @@ def cmd_fault(a) -> None:
     summary = fault.aggregate(verdicts)
     print(f"[fault] stages with {FaultConfig.min_repeats}+ matching verdicts: {summary['fix'] or 'none'}; "
           f"counts {summary['counts']}")
+    if check:
+        sp = check["spearman_own_vs_peer"]
+        print(f"[fault] does a live story predict the post's own result? Spearman "
+              f"{'n/a' if sp is None else f'{sp:.2f}'} over {check['n_posts']} posts with {check['min_peers']}+ peers")
     if a.out:
-        Path(a.out).write_text(json.dumps({"verdicts": [v.to_dict() for v in verdicts], "summary": summary},
-                                          indent=1), encoding="utf-8")
+        Path(a.out).write_text(json.dumps({"verdicts": [v.to_dict() for v in verdicts], "summary": summary,
+                                           "liveness_check": check}, indent=1), encoding="utf-8")
         print(f"[fault] verdicts -> {a.out}")
 
 
@@ -145,7 +186,14 @@ def register(sub) -> None:
     lk.add_argument("--seed", type=int, default=0)
     lk.set_defaults(func=cmd_leakage)
 
+    o = ev.add_parser("observe", help="time-travel recall: does orient surface stories before they peak?")
+    o.add_argument("--provider")
+    o.add_argument("--top", type=int, default=5, help="narratives orient may return per cutoff")
+    o.set_defaults(func=cmd_observe)
+
     f = ev.add_parser("fault", help="attribute underperforming actions to observe, action or eval")
-    f.add_argument("file", help="JSON list of FaultEvidence objects (see eval/fixtures/fault_evidence.json)")
+    f.add_argument("file", nargs="?", help="JSON list of FaultEvidence objects (see eval/fixtures/fault_evidence.json)")
+    f.add_argument("--stories", action="store_true", help="build evidence from dataset posts on known stories")
+    f.add_argument("--scores", help="with --stories: draft scores as <backtest report>:<predictor>")
     f.add_argument("--out", help="write verdicts as JSON here")
     f.set_defaults(func=cmd_fault)
