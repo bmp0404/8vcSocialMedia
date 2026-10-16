@@ -234,13 +234,19 @@ def _split(posts: list[dict], handle: str, start: datetime, end: datetime, keep)
     return busy, len(mine) - len(busy)
 
 
+def _reach(timeline: list[dict], default: datetime) -> datetime:
+    """How far back a timeline page reaches: its oldest item that isn't a repost. A repost carries the
+    original post's date, which can be weeks older than the moment it was reposted."""
+    return min((_time(p["created_at"]) for p in timeline if not p.get("is_repost")), default=default)
+
+
 def brand_accounts(handles, threads_by_author: dict[str, list[int]], timelines: list[dict],
                    window: tuple[datetime, datetime] = WINDOW) -> list[Account]:
     out = []
     for h in handles:
         mine = [p for p in timelines if p.get("timeline_of", "").lower() == h and "author_handle" in p]
         posts, quiet = _split(mine, h, window[0], window[1], lambda p: True)
-        covered = (window[1] - max(window[0], min((_time(p["created_at"]) for p in mine), default=window[1]))).total_seconds() / 86400
+        covered = (window[1] - max(window[0], _reach(mine, window[1]))).total_seconds() / 86400
         out.append(Account(h, posts, covered, tuple(threads_by_author.get(h, [])), quiet))
     return out
 
@@ -250,10 +256,8 @@ def candidate_accounts(rows: list[dict], window: tuple[datetime, datetime] = WIN
     for r in rows:
         if "error" in r:
             continue
-        fetched = _time(r["fetched_at"])
-        times = [_time(p["created_at"]) for p in r["timeline"]]
-        end = min(window[1], fetched)
-        start = max(window[0], min(times, default=end))
+        end = min(window[1], _time(r["fetched_at"]))
+        start = max(window[0], _reach(r["timeline"], end))
         posts, quiet = _split(r["timeline"], r["handle"], start, end, lambda p: on_topic(p) or not topical)
         out.append(Account(r["handle"], posts, max((end - start).total_seconds() / 86400, 0.0),
                            tuple(t["small_in_top3"] for t in r["threads"]), quiet))

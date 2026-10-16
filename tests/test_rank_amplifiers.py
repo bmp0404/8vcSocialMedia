@@ -104,3 +104,14 @@ def test_candidate_accounts_cover_only_what_the_page_reaches():
     assert topical.covered_days == pytest.approx(1.0) and topical.posts == (T0 + timedelta(days=1),)
     [everything] = A.candidate_accounts([row], WINDOW, topical=False)
     assert len(everything.posts) == 2 and everything.quiet == 1 and everything.threads == (3,)
+
+
+def test_a_repost_of_an_old_post_doesnt_stretch_coverage():
+    row = {"handle": "fan", "fetched_at": (T0 + timedelta(days=5)).isoformat(), "threads": [], "timeline": [
+        {"author_handle": "fan", "created_at": (T0 + timedelta(days=1, hours=12)).isoformat(), "lang": "en", "text": "x"},
+        {"author_handle": "big", "is_repost": True, "created_at": (T0 - timedelta(days=20)).isoformat(), "text": "y"},
+    ]}
+    [acc] = A.candidate_accounts([row], WINDOW, topical=False)
+    assert acc.covered_days == pytest.approx(0.5)
+    [none] = A.candidate_accounts([{**row, "timeline": row["timeline"][1:]}], WINDOW, topical=False)
+    assert none.covered_days == 0.0 and none.posts == ()

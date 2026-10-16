@@ -60,6 +60,64 @@
    ]
   }
  },
+ "rolling_weekly_sensitivity": {
+  "min_history_1": {
+   "n_threads": 165,
+   "n_authors": 26,
+   "any_small_by_prior_share": {
+    "auc": 0.763,
+    "ci95": [
+     0.581,
+     0.866
+    ],
+    "positives": 151,
+    "negatives": 14,
+    "pairs": 2114
+   },
+   "share_small_by_prior_share": {
+    "rho": 0.117,
+    "ci95": [
+     -0.095,
+     0.277
+    ]
+   },
+   "top3_minutes_by_prior_median": {
+    "rho": 0.293,
+    "ci95": [
+     0.089,
+     0.426
+    ]
+   }
+  },
+  "min_history_3": {
+   "n_threads": 122,
+   "n_authors": 17,
+   "any_small_by_prior_share": {
+    "auc": 0.736,
+    "ci95": [
+     0.444,
+     0.893
+    ],
+    "positives": 112,
+    "negatives": 10,
+    "pairs": 1120
+   },
+   "share_small_by_prior_share": {
+    "rho": 0.041,
+    "ci95": [
+     -0.231,
+     0.221
+    ]
+   },
+   "top3_minutes_by_prior_median": {
+    "rho": 0.323,
+    "ci95": [
+     0.03,
+     0.471
+    ]
+   }
+  }
+ },
  "single_split_2026_10_06": {
   "n_threads": 69,
   "n_authors": 17,

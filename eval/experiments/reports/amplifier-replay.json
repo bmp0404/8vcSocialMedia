@@ -42,7 +42,7 @@
     "candidates_on_topic": {
      "handles": 62,
      "read_every_s": 310.0,
-     "quiet_posts_per_day": 0.99,
+     "quiet_posts_per_day": 1.88,
      "posts_per_day": 0.0,
      "fresh_per_day": 0.0,
      "open_fresh_per_day": 0.0
@@ -50,15 +50,15 @@
     "candidates_any_post": {
      "handles": 62,
      "read_every_s": 310.0,
-     "quiet_posts_per_day": 52.32,
-     "posts_per_day": 2.09,
-     "fresh_per_day": 2.09,
-     "open_fresh_per_day": 2.09
+     "quiet_posts_per_day": 220.09,
+     "posts_per_day": 9.48,
+     "fresh_per_day": 9.48,
+     "open_fresh_per_day": 9.48
     },
     "platform+candidates_on_topic": {
      "handles": 77,
      "read_every_s": 385.0,
-     "quiet_posts_per_day": 6.06,
+     "quiet_posts_per_day": 6.95,
      "posts_per_day": 12.93,
      "fresh_per_day": 12.93,
      "open_fresh_per_day": 8.19
@@ -66,29 +66,29 @@
     "per_handle_candidates_on_topic_minus_platform": {
      "diff": -0.546,
      "ci95": [
-      -0.83,
+      -0.82,
       -0.33
      ]
     },
     "platform+candidates_any_post": {
      "handles": 77,
      "read_every_s": 385.0,
-     "quiet_posts_per_day": 57.39,
-     "posts_per_day": 15.02,
-     "fresh_per_day": 15.02,
-     "open_fresh_per_day": 10.28
+     "quiet_posts_per_day": 225.16,
+     "posts_per_day": 22.41,
+     "fresh_per_day": 22.41,
+     "open_fresh_per_day": 17.68
     },
     "per_handle_candidates_any_post_minus_platform": {
-     "diff": -0.512,
+     "diff": -0.393,
      "ci95": [
-      -0.8,
-      -0.28
+      -0.75,
+      -0.0
      ]
     },
     "watch+candidates_on_topic": {
      "handles": 86,
      "read_every_s": 430.0,
-     "quiet_posts_per_day": 9.35,
+     "quiet_posts_per_day": 10.23,
      "posts_per_day": 19.64,
      "fresh_per_day": 19.64,
      "open_fresh_per_day": 14.34
@@ -103,16 +103,16 @@
     "watch+candidates_any_post": {
      "handles": 86,
      "read_every_s": 430.0,
-     "quiet_posts_per_day": 60.67,
-     "posts_per_day": 21.73,
-     "fresh_per_day": 21.73,
-     "open_fresh_per_day": 16.43
+     "quiet_posts_per_day": 228.44,
+     "posts_per_day": 29.13,
+     "fresh_per_day": 29.13,
+     "open_fresh_per_day": 23.82
     },
     "per_handle_candidates_any_post_minus_watch": {
-     "diff": -0.564,
+     "diff": -0.445,
      "ci95": [
-      -0.76,
-      -0.4
+      -0.74,
+      -0.08
      ]
     }
    }

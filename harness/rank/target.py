@@ -248,14 +248,22 @@ def score_predictions(preds: list[Prediction], n_boot: int = 2000, seed: int = 0
 
 
 def validate(threads: list[Thread], min_history: int = 2, n_boot: int = 2000, seed: int = 0) -> dict:
+    """The rolling weekly check at `min_history` (chosen before it ran), the same at one and three earlier
+    threads as a sensitivity check, and one split at B2's cutoff."""
     rolling = rolling_predictions(threads, WEEKLY_CUTOFFS, min_history)
     single = rolling_predictions(threads, (B2_SPLIT, B2_SPLIT + timedelta(days=365)), min_history)
+    sensitivity = {}
+    for m in (1, 3):
+        res = score_predictions(rolling_predictions(threads, WEEKLY_CUTOFFS, m), n_boot, seed)
+        sensitivity[f"min_history_{m}"] = {k: res[k] for k in ("n_threads", "n_authors", "any_small_by_prior_share",
+                                                               "share_small_by_prior_share", "top3_minutes_by_prior_median")}
     return {
         "question": "Does an author's openness on earlier threads predict whether a small account's reply "
                     "reaches the top 3 of a later thread?",
         "min_history_threads": min_history, "bootstrap": {"draws": n_boot, "seed": seed, "cluster": "author"},
         "threads_scored": sum(small_in_top(t) is not None for t in threads),
         "rolling_weekly": {"cutoffs": [c.date().isoformat() for c in WEEKLY_CUTOFFS], **score_predictions(rolling, n_boot, seed)},
+        "rolling_weekly_sensitivity": sensitivity,
         "single_split_2026_10_06": score_predictions(single, n_boot, seed),
     }
 

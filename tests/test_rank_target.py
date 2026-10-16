@@ -113,13 +113,16 @@ def test_rolling_predictions_use_only_threads_before_the_window():
         open3("a1", "acme", 0, 3), open3("a2", "acme", 1, 0),  # history before c0: share 0.5
         open3("a3", "acme", 3, 3),  # starts exactly at c0, so it is tested against the two above
         open3("a4", "acme", 7, 0),  # window [c1, c2): history a1-a3, share 6/9
+        open3("a5", "acme", 6, 3),  # starts exactly at c1: tested once, in [c1, c2), against a1-a3
         open3("b1", "solo", 0, 3), open3("b2", "solo", 4, 3),  # one earlier thread: below min_history
         open3("z9", "acme", 10, 1),  # after the last cutoff: never tested
     ]
     preds = T.rolling_predictions(threads, (c0, c1, c2), min_history=2)
     got = {(p.thread.root_id, p.window): (p.prior["share_small_top3"], p.prior["n"]) for p in preds}
-    assert got == {("a3", c0.date().isoformat()): (0.5, 2), ("a4", c1.date().isoformat()): (0.667, 3)}
-    assert {p.thread.root_id for p in T.rolling_predictions(threads, (c0, c1, c2), min_history=1)} == {"a3", "a4", "b2"}
+    assert got == {("a3", c0.date().isoformat()): (0.5, 2), ("a4", c1.date().isoformat()): (0.667, 3),
+                   ("a5", c1.date().isoformat()): (0.667, 3)}
+    assert len(preds) == 3
+    assert {p.thread.root_id for p in T.rolling_predictions(threads, (c0, c1, c2), min_history=1)} == {"a3", "a4", "a5", "b2"}
 
 
 def test_score_predictions_auc_counts_ties_as_half():
