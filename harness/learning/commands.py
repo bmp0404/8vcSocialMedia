@@ -57,19 +57,21 @@ def llm_for(provider: str | None, model: str = ""):
         config.MODEL = saved
 
 
+# CLI flag (argparse dest) -> ReflectSettings field it overrides.
+FLAG_TO_SETTING = {"batches": "n_batches", "groups": "groups_per_batch", "per_side": "per_side",
+                   "hypotheses": "n_hypotheses", "label_model": "label_model", "label_source": "label_source"}
+
+
 def _settings(args):
+    """memory/settings.json, then any flag the user passed."""
     settings = load_settings()
     r = settings.reflect
-    for name in ("batches", "groups", "per_side", "hypotheses"):
-        value = getattr(args, name, None)
+    for flag, field_name in FLAG_TO_SETTING.items():
+        value = getattr(args, flag, None)
         if value is not None:
-            setattr(r, {"batches": "n_batches", "groups": "groups_per_batch", "hypotheses": "n_hypotheses"}.get(name, name), value)
-    if getattr(args, "label_model", None):
-        r.label_model = args.label_model
+            setattr(r, field_name, value)
     if getattr(args, "allow_unfiltered", False):
         r.require_boost_flags = False
-    if getattr(args, "label_source", None):
-        r.label_source = args.label_source
     return settings
 
 
