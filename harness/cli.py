@@ -5,7 +5,7 @@ from datetime import datetime
 from harness import config, memory
 from harness.learn import learn
 from harness.llm import get_llm
-from harness.minds import decide
+from harness.minds import decide, write_decision_log
 from harness.orient import orient
 from harness.qualify import qualify
 from harness.review import serve
@@ -23,7 +23,7 @@ def run(args) -> None:
     narratives = orient(llm, mission, signals, top=args.narratives)
     print(f"[orient] {len(narratives)} narratives: " + ", ".join(n.id for n in narratives))
     lessons = config.lessons()
-    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind)
+    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, signals=signals)
     actions, kept = batch, qualify(llm, mission, batch)
     for _ in range(args.retries):
         if kept or not batch:
@@ -35,6 +35,7 @@ def run(args) -> None:
     ranked = kept[: args.top]
 
     run_id = memory.save_run(actions)
+    write_decision_log(run_id)  # out/decisions-run<id>.json: abstentions, rejected drafts, questions
     config.OUT_DIR.mkdir(exist_ok=True)
     out = config.OUT_DIR / f"recommendations-{datetime.now():%Y%m%d-%H%M%S}.json"
     out.write_text(
