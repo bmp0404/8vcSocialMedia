@@ -86,7 +86,7 @@ def add_commands(sub) -> None:
     osub = p.add_subparsers(dest="outcomes_cmd", required=True)
 
     s = osub.add_parser("sync", help="match approved actions to real posts, snapshot due checkpoints, record outcomes")
-    s.add_argument("--handle", help="read this X account instead of mission/observe.toml or action/account.json")
+    s.add_argument("--handle", help="read this X account instead of HARNESS_ACCOUNT_HANDLE or [brand] x_handle")
     s.add_argument("--approved-dir", type=Path, default=config.OUT_DIR, help="where approved-run<id>.json files are")
     s.add_argument("--ledger", type=Path, default=ledger.DEFAULT_PATH, help="the sync state, one file per account")
     s.add_argument("--limit", type=_positive, default=DEFAULT_LIMIT,

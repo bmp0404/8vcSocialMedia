@@ -9,7 +9,7 @@ import pytest
 from harness.sources.common import SourceError, iso_utc, parse_time
 from harness.sources.espn import game_signals, news_signals
 from harness.sources.google_news import rss_signals
-from harness.sources.watch import DEFAULT_PATH, load_watch, parse_watch
+from harness.sources.watch import DEFAULT_PATH, account_handle, load_watch, parse_watch
 
 FIXTURES = Path(__file__).resolve().parent.parent / "observation" / "fixtures"
 
@@ -108,6 +108,21 @@ def test_repo_observe_config_loads():
 
 def test_parse_watch_strips_at_sign_from_handle():
     assert parse_watch({"brand": {"x_handle": "@ccfan"}}).brand_handle == "ccfan"
+
+
+def test_repo_names_sams_test_account(monkeypatch):
+    monkeypatch.delenv("HARNESS_OBSERVE_CONFIG", raising=False)
+    assert account_handle() == ("_sgu_", f"{DEFAULT_PATH} [brand] x_handle")
+
+
+def test_account_handle_env_overrides_brand_x_handle(tmp_path, monkeypatch):
+    toml = tmp_path / "observe.toml"
+    toml.write_text('[brand]\nx_handle = "_sgu_"\n', encoding="utf-8")
+    monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(toml))
+    assert load_watch().brand_handle == "_sgu_"
+    monkeypatch.setenv("HARNESS_ACCOUNT_HANDLE", " @other ")
+    assert load_watch().brand_handle == "other"
+    assert account_handle() == ("other", "HARNESS_ACCOUNT_HANDLE")
 
 
 @pytest.mark.parametrize(

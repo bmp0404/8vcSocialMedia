@@ -32,6 +32,16 @@ FUNCTIONS: dict[str, dict[str, object]] = {
         "stream": "GradePost_stream",
         "stream_async": "GradePost_stream_async",
     },
+    "user.OrientSignals": {
+        "module": "baml_sdk",
+        "type_params": (),
+        "direct": "OrientSignals",
+        "direct_async": "OrientSignals_async",
+        "spec": "OrientSignals_spec",
+        "spec_async": "OrientSignals_spec_async",
+        "stream": "OrientSignals_stream",
+        "stream_async": "OrientSignals_stream_async",
+    },
     "user.RankCandidates": {
         "module": "baml_sdk",
         "type_params": (),

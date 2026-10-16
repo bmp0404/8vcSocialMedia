@@ -5,3 +5,4 @@ __pycache__/
 data/*.db
 out/*
 !out/.gitkeep
+memory/store/

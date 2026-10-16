@@ -10,15 +10,23 @@ because a single run has no baseline to compare against.
 
 The prompt is built to a character budget rather than sliced: reply targets go first, stale
 items are dropped, and the rest is interleaved across sources so no one source crowds out others.
+
+The model is asked through BAML (`OrientSignals` in eval/baml_src/orient.baml) unless
+HARNESS_ORIENT=json selects the older hand-written JSON prompt below. BAML's parser drops a
+narrative it can't parse instead of failing, so the raw reply's count is compared with the parsed one.
 """
 
 import json
 import math
+import os
 import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+from pathlib import Path
 from urllib.parse import urlsplit
 
+from harness import baml_adapter, config
+from harness.baml_reply import json_closes, raw_array_length
 from harness.llm import LLM
 from harness.models import Narrative, Signal
 from harness.sources.common import now_utc, parse_time
@@ -43,6 +51,23 @@ sentence and cite at most 8 signal ids per narrative.
 
 Return JSON: {{"narratives": [{{"id": "kebab-slug", "title": "...", "summary": "...",
 "relevance": 0.0, "velocity": 0.0, "angle": "...", "signal_ids": [0]}}]}}"""
+
+# HARNESS_ORIENT picks how orient asks the model: "baml" or "json". Time-travel recall@5 over 5 runs
+# each (observation/reports/orient-baml-recall-20261016.json): json 0.727, baml 0.709, one story fewer
+# in 55, inside the 0.545 to 0.818 spread of the json prompt alone. baml is the default for its role
+# split, retries and count checks; never surfacing the nemotron story (0/5 against 3/5) is its known miss.
+DEFAULT_BACKEND = "baml"
+BACKENDS = ("baml", "json")
+
+
+# Where a reply the checks below flagged is saved. A live json-path reply on 2026-10-16 parsed one
+# narrative out of 2,578 output tokens, and nobody could say why because the reply was gone.
+REPLY_LOG_DIR = config.OUT_DIR / "orient-replies"
+
+
+class OrientReplyError(ValueError):
+    """The model's reply was unusable twice: cut off, or holding narratives none of which parsed."""
+
 
 X_KINDS = {"post", "reply_target", "mention", "own_post"}
 TARGET_KINDS = {"post", "reply_target", "mention"}
@@ -246,6 +271,68 @@ def build_narratives(data: dict, signals: list[Signal], now: datetime, k: Observ
     return narratives
 
 
+def checked_narratives(value, raw: str) -> tuple[dict, str | None]:
+    """The parsed `Orientation` as orient's JSON shape, and why the reply is unusable, if it is.
+
+    A reply is unusable when its JSON never closed (BAML's parser keeps a narrative cut off
+    mid-string, with its later fields empty) or when it held narratives and none parsed. Short of
+    that, a narrative the parser dropped or one with a score outside 0..1 is logged and left out, and
+    the reply is saved, since a short list otherwise looks like a quiet news day. The scores are
+    floats because BAML rounds a fraction into an int literal (0.8 becomes 1 in 0..10).
+    """
+    problems, failure = [], None
+    sent, parsed = raw_array_length(raw, "narratives"), len(value.narratives)
+    if not json_closes(raw, "narratives"):
+        failure = "reply was cut off before its JSON closed"
+    elif parsed == 0 and sent != 0:
+        failure = f"reply held {sent if sent is not None else 'no list of'} narratives and none parsed"
+    if failure:
+        problems.append(failure)
+    if sent != parsed:
+        problems.append(f"reply had {sent if sent is not None else 'no'} narratives; the parser kept {parsed}")
+    kept = []
+    for n in value.narratives:
+        bad = {f: getattr(n, f) for f in ("relevance", "velocity") if not 0 <= getattr(n, f) <= 1}
+        if bad:
+            problems.append(f"dropped {n.id}: {bad} outside 0..1")
+            continue
+        kept.append(n.model_dump(mode="json"))
+    if problems:
+        saved = save_reply(raw)
+        for problem in problems:
+            print(f"[orient] {problem}")
+        print(f"[orient] raw reply saved to {saved}")
+    return {"narratives": kept}, failure
+
+
+def save_reply(raw: str) -> Path:
+    REPLY_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    path = REPLY_LOG_DIR / f"{datetime.now(timezone.utc):%Y%m%dT%H%M%S%fZ}.txt"
+    path.write_text(raw, encoding="utf-8")
+    return path
+
+
+def ask_baml(llm: LLM, mission: str, payload: str, limit: int, mock) -> dict:
+    """OrientSignals through the harness LLM's settings, asked once more if the reply is unusable."""
+    if getattr(llm, "is_mock", False):
+        return baml_adapter.call(llm, "OrientSignals", mission, payload, limit, mock=mock).value
+    for attempt in range(2):
+        result = baml_adapter.call(llm, "OrientSignals", mission, payload, limit, mock=mock)
+        if result.raw is None:
+            raise OrientReplyError("BAML recorded no reply from the model, so orient can't count its narratives")
+        data, failure = checked_narratives(result.value, result.raw)
+        if failure is None:
+            return data
+        if attempt == 0:
+            print("[orient] asking once more")
+    raise OrientReplyError(f"orient's reply was unusable twice; the second time the {failure}")
+
+
+def ask_json(llm: LLM, mission: str, payload: str, limit: int, mock) -> dict:
+    """The hand-written JSON prompt through llm.complete_json."""
+    return llm.complete_json(SYSTEM, PROMPT.format(mission=mission, signals=payload, limit=limit), mock=mock)
+
+
 def uncited_targets(
     narratives: list[Narrative], signals: list[Signal], now: datetime, k: ObserveKnobs | None = None
 ) -> Narrative | None:
@@ -302,7 +389,10 @@ def orient(
     now = now or replay_now(signals, now_utc(), k)
     ordered, stale = order_signals(signals, now, k)
     chosen, payload, dropped = fit_payload(ordered, now, k)
-    print(f"[orient] sending {len(chosen)} of {len(signals)} signals ({len(payload):,} chars)")
+    backend = os.getenv("HARNESS_ORIENT", DEFAULT_BACKEND)
+    if backend not in BACKENDS:
+        raise ValueError(f"HARNESS_ORIENT must be one of {BACKENDS}, not {backend!r}")
+    print(f"[orient] sending {len(chosen)} of {len(signals)} signals ({len(payload):,} chars) via {backend}")
     if stale:
         print(f"[orient] dropped as older than {k.max_signal_age_h:.0f}h: {dict(stale)}")
     if dropped:
@@ -324,8 +414,8 @@ def orient(
             ]
         }
 
-    prompt = PROMPT.format(mission=mission, signals=payload, limit=top * k.narrative_overdraw)
-    data = llm.complete_json(SYSTEM, prompt, mock=mock)
+    ask = ask_baml if backend == "baml" else ask_json
+    data = ask(llm, mission, payload, top * k.narrative_overdraw, mock)
     narratives = build_narratives(data, chosen, now, k)
     for n in narratives:
         print(f"[orient] {n.id}: relevance {n.relevance:.2f} velocity {n.velocity:.2f} ({n.velocity_basis})")

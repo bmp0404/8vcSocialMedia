@@ -485,6 +485,8 @@ _CLASS_ENTRIES = {
     "user.CandidateRanking": ("baml_sdk", "CandidateRanking"),
     "user.Comparison": ("baml_sdk", "Comparison"),
     "user.Criterion": ("baml_sdk", "Criterion"),
+    "user.Narrative": ("baml_sdk", "Narrative"),
+    "user.Orientation": ("baml_sdk", "Orientation"),
     "user.PostGrade": ("baml_sdk", "PostGrade"),
     "user.RankedCandidate": ("baml_sdk", "RankedCandidate"),
     "user.RankingCandidate": ("baml_sdk", "RankingCandidate"),

@@ -1,0 +1,143 @@
+{
+  "_about": "Keyword lists the text features match against. Generic hooks apply to any brand; each domain block holds brand-specific names so the Python stays brand-agnostic. Matching is case-insensitive on word boundaries.",
+  "hooks": {
+    "announce": [
+      "introducing",
+      "announcing",
+      "announce",
+      "launch",
+      "launching",
+      "launched",
+      "now available",
+      "is here",
+      "are here",
+      "we're excited",
+      "we are excited",
+      "excited to",
+      "just shipped",
+      "shipped",
+      "today we",
+      "now live",
+      "is live",
+      "released",
+      "new:",
+      "meet "
+    ],
+    "feature_tip": [
+      "you can now",
+      "now supports",
+      "now support",
+      "tip:",
+      "how to",
+      "learn how",
+      "now you can",
+      "added support",
+      "support for"
+    ],
+    "funding_deal": [
+      "raised",
+      "series a",
+      "series b",
+      "series c",
+      "seed round",
+      "funding",
+      "acquired",
+      "acquisition",
+      "joining",
+      "joins",
+      "partnership",
+      "partnering"
+    ],
+    "hiring": [
+      "hiring",
+      "open roles",
+      "join the team",
+      "join our team",
+      "we're hiring"
+    ],
+    "event": [
+      "livestream",
+      "live stream",
+      "webinar",
+      "join us",
+      "today at",
+      "tomorrow at",
+      "meetup",
+      "conference",
+      "hackathon",
+      "office hours",
+      "launch week",
+      "spaces",
+      "keynote",
+      "workshop"
+    ],
+    "social_proof": [
+      "thanks",
+      "thank you",
+      "shoutout",
+      "shout out",
+      "congrats",
+      "congratulations",
+      "love this",
+      "loved",
+      "built with",
+      "powered by"
+    ],
+    "humor": [
+      "lol",
+      "lmao",
+      "😂",
+      "💀",
+      "🤣",
+      "😭",
+      "vibe",
+      "vibes",
+      "pov:",
+      "nobody:",
+      "me when",
+      "be like"
+    ]
+  },
+  "domains": {
+    "devtools": {
+      "big_names": [
+        "openai",
+        "anthropic",
+        "claude",
+        "gpt",
+        "chatgpt",
+        "gemini",
+        "grok",
+        "xai",
+        "llama",
+        "deepseek",
+        "mistral",
+        "nvidia",
+        "google",
+        "microsoft",
+        "github",
+        "apple",
+        "aws",
+        "meta"
+      ],
+      "audience_tz": "America/Los_Angeles"
+    },
+    "caitlin_clark": {
+      "big_names": [
+        "caitlin clark",
+        "clark",
+        "fever",
+        "wnba",
+        "aliyah boston",
+        "angel reese",
+        "sky",
+        "dream",
+        "aces",
+        "liberty",
+        "iowa",
+        "nba 2k"
+      ],
+      "audience_tz": "America/Indiana/Indianapolis"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+{
+ "_note": "The handle the reply writer's continuation samples reply under. It frames the drafts; it does not name the account the harness reads or measures, which is [brand] x_handle in mission/observe.toml (HARNESS_ACCOUNT_HANDLE overrides it). harness/minds/lab/framing_probe.py measured this framing: 4/16 drafts passed the veto under this handle, 2/16 under neutral handles, and a 'signed in as' header with a bio made the model write reply-box text instead of replies.",
+ "framing_handle": "clarkfanaccount"
+}

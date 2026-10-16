@@ -3,9 +3,11 @@
 # Point HARNESS_OBSERVE_CONFIG at a different TOML file to swap brands.
 
 [brand]
-# The account's own X handle, without "@". Unknown on 2026-10-15. The x_brand source
-# raises until this is set.
-x_handle = ""
+# The account's own X handle, without "@": the account x_brand reads and `harness outcomes`
+# measures. HARNESS_ACCOUNT_HANDLE overrides it. "_sgu_" is Sam's alt, used for testing because
+# we own no brand account; the harness never posts from it. action/reply_framing.json holds a
+# different handle, the one reply drafts are written under.
+x_handle = "_sgu_"
 
 [espn]
 # ESPN site-API paths, <sport>/<league>. espn_news reads every league here.
@@ -48,16 +50,23 @@ baseline_days = 14
 [reply_targets]
 # Accounts whose fresh posts draw enough traffic that an early reply gets seen. Everything these
 # accounts post is on topic. The Valkyries' real account is "valkyries" (57k); "GSValkyries" is a
-# squatter. CClarkReport (56k), a Clark news account, replied in two of today's Clark threads and sits in the
-# 10k-250k band that scores best (see harness/sources/reply_targets.py). Beat writers in that band
-# still need picking by someone who knows them; today's repliers were mostly fan accounts.
+# squatter. Accounts with 10k-250k followers score best (see harness/sources/reply_targets.py).
+# Handles added on 2026-10-15 were checked against their fxtwitter profiles: follower count and a
+# bio naming the beat. "aliyahboston" (43 followers) and "WNBAonESPN" (28) are impostors.
 accounts = [
   "WNBA", "IndianaFever", "CaitlinClark22", "IowaWBB", "AtlantaDream", "valkyries", "HerHoopStats",
   "CClarkReport",
+  # Women's basketball writers: The Athletic (21k, 34k) and Power Plays (29k).
+  "AnnieCostabile", "ChantelJennings", "linzsports",
 ]
-# Big general outlets. Their posts count only when the text matches a keyword below, because
-# most of what they post (other sports) is no use to this account.
-broad_accounts = ["espnW", "SportsCenter", "BleacherReport", "NBA2K", "FOS"]
+# Big general outlets and writers who cover other sports too. Their posts count only when the
+# text matches a keyword below. Fever and Pacers beat: Scott Agness (34k), Tony East (23k),
+# IndyStar (65k). Kareem Copeland (15k) writes WNBA for ESPN; Howard Megdal (15k) runs The IX;
+# TOGETHXR (49k) covers women's sports.
+broad_accounts = [
+  "espnW", "SportsCenter", "BleacherReport", "NBA2K", "FOS",
+  "ScottAgness", "TonyREast", "IndyStarSports", "kareemcopeland", "HowardMegdal", "togethxr",
+]
 # Case-insensitive substrings for broad accounts and search results.
 keywords = [
   "Caitlin Clark", "Fever", "WNBA", "Hawkeyes", "Aliyah Boston", "Atlanta Dream", "Valkyries", "2K27",

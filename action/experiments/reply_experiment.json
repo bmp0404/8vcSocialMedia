@@ -1,0 +1,481 @@
+{
+ "models": {
+  "generator": "claude-sonnet-5-5",
+  "continuation": "claude-opus-4-5-20251101",
+  "selection": "claude-sonnet-5-5",
+  "rubric_selection": "claude-sonnet-5-5",
+  "judges": {
+   "claude-fable-5-dd-los-6.5-tpg": {
+    "requested": "claude-fable-5-dd-los-6.5-tpg",
+    "gateway_reports": "gpt-5.6-sol"
+   },
+   "claude-fable-5-dd-artsa-6-tpg": {
+    "requested": "claude-fable-5-dd-artsa-6-tpg",
+    "gateway_reports": "gpt-6-astra"
+   },
+   "claude-opus-5-5": {
+    "requested": "claude-opus-5-5",
+    "gateway_reports": "claude-opus-5-5"
+   }
+  },
+  "note": "gateway_reports is the response's model field, probed 2026-10-15; calls made before that probe didn't record it. Nothing verifies which model serves an alias.",
+  "served_models_recorded": {}
+ },
+ "test_threads": [
+  "https://x.com/CaitlinClark22/status/2099247457473339402",
+  "https://x.com/IndianaFever/status/2105879899399668010",
+  "https://x.com/AtlantaDream/status/2110038076114256260",
+  "https://x.com/WNBA/status/2110792840989024541",
+  "https://x.com/espnW/status/2110018728314224992",
+  "https://x.com/valkyries/status/2109672093403279370",
+  "https://x.com/CaitlinClark22/status/2067322859848925290",
+  "https://x.com/IndianaFever/status/2106459938151145977",
+  "https://x.com/AtlantaDream/status/2110808408366493714",
+  "https://x.com/WNBA/status/2110808211347456506",
+  "https://x.com/espnW/status/2109769353935688054",
+  "https://x.com/CaitlinClark22/status/2106419802117976116",
+  "https://x.com/IndianaFever/status/2106399407834898501",
+  "https://x.com/AtlantaDream/status/2109445947881087063",
+  "https://x.com/WNBA/status/2110824046833348936",
+  "https://x.com/espnW/status/2110417062963081284",
+  "https://x.com/CaitlinClark22/status/2105382766682714299",
+  "https://x.com/AtlantaDream/status/2108954459304763841",
+  "https://x.com/WNBA/status/2110808214048502128"
+ ],
+ "methods": {
+  "naive": {
+   "lineup_detected": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "lineup_detected_judge2": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "lineup_detected_opus": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 38,
+    "n": 38,
+    "rate": 1.0
+   },
+   "beat_top_human_reply": {
+    "k": 4,
+    "n": 19,
+    "rate": 0.211
+   },
+   "gate_pass": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "median_chars": 203,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0
+  },
+  "constrained": {
+   "lineup_detected": {
+    "k": 15,
+    "n": 19,
+    "rate": 0.789
+   },
+   "lineup_detected_judge2": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 34,
+    "n": 38,
+    "rate": 0.895
+   },
+   "beat_top_human_reply": {
+    "k": 11,
+    "n": 19,
+    "rate": 0.579
+   },
+   "gate_pass": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "median_chars": 81,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0
+  },
+  "remix": {
+   "lineup_detected": {
+    "k": 12,
+    "n": 19,
+    "rate": 0.632
+   },
+   "lineup_detected_judge2": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "lineup_detected_opus": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 31,
+    "n": 38,
+    "rate": 0.816
+   },
+   "beat_top_human_reply": {
+    "k": 14,
+    "n": 19,
+    "rate": 0.737
+   },
+   "gate_pass": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "median_chars": 75,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0
+  },
+  "continuation": {
+   "lineup_detected": {
+    "k": 16,
+    "n": 19,
+    "rate": 0.842
+   },
+   "lineup_detected_judge2": {
+    "k": 17,
+    "n": 19,
+    "rate": 0.895
+   },
+   "lineup_detected_opus": {
+    "k": 17,
+    "n": 19,
+    "rate": 0.895
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 33,
+    "n": 38,
+    "rate": 0.868
+   },
+   "beat_top_human_reply": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "gate_pass": {
+    "k": 16,
+    "n": 19,
+    "rate": 0.842
+   },
+   "median_chars": 111,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0
+  },
+  "bestof": {
+   "lineup_detected": {
+    "k": 8,
+    "n": 19,
+    "rate": 0.421
+   },
+   "lineup_detected_judge2": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 26,
+    "n": 38,
+    "rate": 0.684
+   },
+   "beat_top_human_reply": {
+    "k": 11,
+    "n": 19,
+    "rate": 0.579
+   },
+   "gate_pass": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "median_chars": 73,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0005
+  },
+  "bestof_random": {
+   "lineup_detected": {
+    "k": 9,
+    "n": 19,
+    "rate": 0.474
+   },
+   "lineup_detected_judge2": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 27,
+    "n": 38,
+    "rate": 0.711
+   },
+   "beat_top_human_reply": {
+    "k": 13,
+    "n": 19,
+    "rate": 0.684
+   },
+   "gate_pass": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "median_chars": 67,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0002
+  },
+  "bestof_rubric": {
+   "lineup_detected": {
+    "k": 8,
+    "n": 13,
+    "rate": 0.615
+   },
+   "lineup_detected_judge2": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0
+   },
+   "lineup_detected_opus": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 21,
+    "n": 26,
+    "rate": 0.808
+   },
+   "beat_top_human_reply": {
+    "k": 7,
+    "n": 13,
+    "rate": 0.538
+   },
+   "gate_pass": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0
+   },
+   "median_chars": 70,
+   "errors": 6,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0
+  },
+  "cont_real": {
+   "lineup_detected": {
+    "k": 8,
+    "n": 19,
+    "rate": 0.421
+   },
+   "lineup_detected_judge2": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "lineup_detected_opus": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 14,
+    "n": 38,
+    "rate": 0.368
+   },
+   "beat_top_human_reply": {
+    "k": 2,
+    "n": 19,
+    "rate": 0.105
+   },
+   "gate_pass": {
+    "k": 16,
+    "n": 19,
+    "rate": 0.842
+   },
+   "median_chars": 51,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.4596
+  },
+  "pipeline": {
+   "lineup_detected": {
+    "k": 6,
+    "n": 18,
+    "rate": 0.333
+   },
+   "lineup_detected_judge2": {
+    "k": 5,
+    "n": 18,
+    "rate": 0.278
+   },
+   "lineup_detected_opus": {
+    "k": 4,
+    "n": 18,
+    "rate": 0.222
+   },
+   "abstained": 1,
+   "lineup_detected_both_judges_pooled": {
+    "k": 11,
+    "n": 36,
+    "rate": 0.306
+   },
+   "beat_top_human_reply": {
+    "k": 4,
+    "n": 18,
+    "rate": 0.222
+   },
+   "gate_pass": {
+    "k": 18,
+    "n": 18,
+    "rate": 1.0
+   },
+   "median_chars": 30.5,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.798
+  },
+  "human_raw": {
+   "lineup_detected": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "lineup_detected_judge2": {
+    "k": 4,
+    "n": 19,
+    "rate": 0.211
+   },
+   "lineup_detected_opus": {
+    "k": 4,
+    "n": 19,
+    "rate": 0.211
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 10,
+    "n": 38,
+    "rate": 0.263
+   },
+   "beat_top_human_reply": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "gate_pass": {
+    "k": 16,
+    "n": 19,
+    "rate": 0.842
+   },
+   "median_chars": 46,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 1.0
+  },
+  "human_polish": {
+   "lineup_detected": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "lineup_detected_judge2": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 38,
+    "n": 38,
+    "rate": 1.0
+   },
+   "beat_top_human_reply": {
+    "k": 8,
+    "n": 19,
+    "rate": 0.421
+   },
+   "gate_pass": {
+    "k": 15,
+    "n": 19,
+    "rate": 0.789
+   },
+   "median_chars": 103,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.0
+  }
+ },
+ "judge_calibration_most_vs_least_liked": {
+  "judge": "claude-fable-5-dd-los-6.5-tpg",
+  "picked_the_more_liked_real_reply": {
+   "k": 31,
+   "n": 40,
+   "rate": 0.775
+  },
+  "picked_position_A": {
+   "k": 19,
+   "n": 40,
+   "rate": 0.475
+  },
+  "pairs": 20
+ },
+ "adjacent_top5_calibration_claude-fable-5-dd-los-6.5-tpg": {
+  "picked_more_liked": {
+   "k": 76,
+   "n": 138,
+   "rate": 0.551
+  },
+  "consistent_in_both_orders": {
+   "k": 32,
+   "n": 69,
+   "rate": 0.464
+  }
+ },
+ "adjacent_top5_calibration_claude-opus-5-5": {
+  "picked_more_liked": {
+   "k": 78,
+   "n": 138,
+   "rate": 0.565
+  },
+  "consistent_in_both_orders": {
+   "k": 34,
+   "n": 69,
+   "rate": 0.493
+  }
+ }
+}

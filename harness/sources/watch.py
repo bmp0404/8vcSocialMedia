@@ -15,6 +15,8 @@ from harness import config
 from harness.sources.common import SourceError
 
 DEFAULT_PATH = config.ROOT / "mission" / "observe.toml"
+# Names the brand account for one run or one machine without editing the shared TOML file.
+ACCOUNT_HANDLE_ENV = "HARNESS_ACCOUNT_HANDLE"
 
 
 @dataclass
@@ -123,14 +125,39 @@ def use(watch: Watch):
         _ACTIVE.reset(token)
 
 
+def config_path() -> Path:
+    return Path(os.getenv("HARNESS_OBSERVE_CONFIG") or DEFAULT_PATH)
+
+
+def _handle_override() -> str:
+    return os.getenv(ACCOUNT_HANDLE_ENV, "").strip().lstrip("@").strip()
+
+
 def load_watch(path: Path | None = None) -> Watch:
+    """The observe config, with HARNESS_ACCOUNT_HANDLE in place of [brand] x_handle when it is set."""
     if path is None and (active := _ACTIVE.get()) is not None:
         return active
-    path = path or Path(os.getenv("HARNESS_OBSERVE_CONFIG") or DEFAULT_PATH)
+    path = path or config_path()
     if not path.exists():
         raise SourceError(f"observe config not found at {path}; copy mission/observe.toml or set HARNESS_OBSERVE_CONFIG")
     try:
         raw = tomllib.loads(path.read_text(encoding="utf-8"))
     except tomllib.TOMLDecodeError as e:
         raise SourceError(f"observe config {path} is not valid TOML: {e}") from e
-    return parse_watch(raw)
+    watch = parse_watch(raw)
+    if override := _handle_override():
+        watch.brand_handle = override
+    return watch
+
+
+def account_handle() -> tuple[str, str]:
+    """(the brand account's X handle without "@", where it came from); the handle is "" when unset.
+
+    [brand] x_handle is the one place the account is named, and HARNESS_ACCOUNT_HANDLE overrides it.
+    This is the account Observe reads as x_brand and `harness outcomes` measures. The reply writer's
+    framing_handle in action/reply_framing.json is a different setting: it shapes how drafts read.
+    """
+    if override := _handle_override():
+        return override, ACCOUNT_HANDLE_ENV
+    path = config_path()
+    return load_watch(path).brand_handle, f"{path} [brand] x_handle"

@@ -7,7 +7,7 @@ This package answers two questions about every action we approve. Did 8VC's bot 
 - `harness/memory.py:15` defines `outcomes (action_id PRIMARY KEY, recorded_at, metrics)`, so it holds one row per action. `record_outcomes` (`:49`) writes with `INSERT OR REPLACE`. `scored_history` (`:127`) joins it to `actions`, and `learn` (`harness/learn.py:22`) reads that join. The table had 0 rows after the 2026-10-15 demo.
 - The only writer is `harness record <file>` (`harness/cli.py:51`), which stores a JSON list someone builds by hand.
 - `export_approved` (`harness/review/__init__.py:17`) writes `out/approved-run<id>.json`. Each action carries its `id`, `type`, `text`, `target_url` and `approved_at`, plus `original_text` when a reviewer edited it (`memory.approved_actions`, `harness/memory.py:113`).
-- `mission/observe.toml:8` leaves `[brand] x_handle` empty. On `sam/action`, `action/account.json` holds the placeholder `clarkfanaccount`.
+- `mission/observe.toml` `[brand] x_handle` names the account `sync` reads: `_sgu_`, Sam's alt for testing. `HARNESS_ACCOUNT_HANDLE` overrides it (`harness/sources/watch.py` `account_handle`). `action/reply_framing.json` holds a different handle, the one reply drafts are written under, and `sync` never reads it.
 
 ## What other branches expect
 
@@ -107,7 +107,7 @@ A skipped action records `{"outcome": "not_posted", "approved_at": ..., "checked
 
 ## Open questions
 
-1. What is the brand's real handle? `sync` refuses to run until `[brand] x_handle` or `action/account.json` names it, or `--handle` does.
+1. What is the brand's real handle? `sync` reads `_sgu_` until `[brand] x_handle`, `HARNESS_ACCOUNT_HANDLE` or `--handle` names another, and refuses when all three are empty.
 2. Can 8VC's bot report the status id it posted for each action id? If it can, the ledger's `matches` table takes those ids directly, and text matching becomes a fallback.
 3. fxtwitter sometimes drops `replying_to` from a reply (see Matching). X's `display_text_range` still marks the reply prefix, and `XPost` could expose it. That would keep such a post's anchor and put it in the reply baseline.
 4. Follows aren't tracked. fxtwitter's `/2/profile/{handle}/following` could confirm them, but nothing here reads it yet.
