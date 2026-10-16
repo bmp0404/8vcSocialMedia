@@ -126,3 +126,11 @@ def test_plan_validates_targets_tools_and_reasons():
         parse_plan({"plans": [{"target_url": URL, "tool": "reply", "text": "hi"}]}, OFFER)
     with pytest.raises(ActionSchemaError, match="'plans' list"):
         parse_plan({"plan": []}, OFFER)
+
+
+def test_plan_side_must_be_known():
+    from harness.minds.schema import parse_plan
+
+    assert parse_plan({"plans": [{"target_url": URL, "tool": "reply", "side": "rival"}]}, OFFER)[URL]["side"] == "rival"
+    with pytest.raises(ActionSchemaError, match=r"plans\[0\].side must be one of \['neutral', 'own', 'rival'\], got 'enemy'"):
+        parse_plan({"plans": [{"target_url": URL, "tool": "reply", "side": "enemy"}]}, OFFER)

@@ -11,9 +11,14 @@ When the page would be too thin, or the provider can't prefill, the styled promp
 is the fallback (AUC 0.79). Captions for the post lane use the same styled prompt.
 """
 
+import json
+import os
 import random
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from pathlib import Path
 
+from harness import config
 from harness.llm import LLM
 from harness.minds import routing
 from harness.minds.settings import ActionConfig
@@ -36,13 +41,50 @@ MISSION:
 {mission}"""
 
 
+ACCOUNT_PATH = config.ROOT / "action" / "account.json"
+
+BANTER_ANGLE = ("This post is about a rival of the account. Reply from the account's side with banter at the rival's "
+                "take or team: a jab, never cheering them, never insulting a person.")
+
+
 class WriterUnavailable(RuntimeError):
     """Continuation needs an Anthropic-gateway provider; callers fall back to the styled writer."""
 
 
-def build_page(author: str, post_text: str, replies: list[str]) -> str:
+@dataclass(frozen=True)
+class Account:
+    """The account the reply lane writes as (action/account.json)."""
+
+    handle: str
+    display_name: str
+    bio: str
+    past_replies: tuple[str, ...] = ()
+
+
+def load_account(path: Path | None = None) -> Account | None:
+    """The account file at HARNESS_ACCOUNT or action/account.json, or None when there is none."""
+    path = path or Path(os.getenv("HARNESS_ACCOUNT") or ACCOUNT_PATH)
+    if not path.exists():
+        return None
+    raw = {k: v for k, v in json.loads(path.read_text(encoding="utf-8")).items() if not k.startswith("_")}
+    known = {"handle", "display_name", "bio", "past_replies"}
+    if set(raw) - known or not all(isinstance(raw.get(k), str) and raw[k].strip() for k in ("handle", "display_name", "bio")):
+        raise ValueError(f"{path}: needs non-empty handle, display_name and bio strings, and optional past_replies; "
+                         f"got keys {sorted(raw)}")
+    return Account(raw["handle"].lstrip("@"), raw["display_name"], raw["bio"], tuple(raw.get("past_replies") or ()))
+
+
+def build_page(author: str, post_text: str, replies: list[str], account: Account | None = None) -> str:
+    """The thread as a saved page. With `account`, the page is saved while signed in as it, so the
+    next reply comes from its side. Iterate's retest found that continuing a rival's thread without
+    this made the model write as that team's fans (12 of 20 vetoes)."""
     lines = "\n".join(f"@user{i + 1:02d}: {r}" for i, r in enumerate(replies))
-    return (f'x.com: {author} on X: "{post_text}"\n\n{author} @{author}\n{post_text}\n\n'
+    signed_in = ""
+    if account:
+        signed_in = f"\nSigned in as {account.display_name} (@{account.handle}). Bio: {account.bio}\n"
+        if account.past_replies:
+            signed_in += f"Recent replies by @{account.handle}:\n" + "\n".join(f"@{account.handle}: {r}" for r in account.past_replies) + "\n"
+    return (f'x.com: {author} on X: "{post_text}"\n{signed_in}\n{author} @{author}\n{post_text}\n\n'
             f"Replies (sorted by relevance):\n\n{lines}")
 
 
@@ -67,18 +109,24 @@ def continue_page(llm: LLM, page: str, handle: str, cfg: ActionConfig, i: int = 
     return _first_line("".join(b.text for b in r.content if b.type == "text"))
 
 
-def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg: ActionConfig, seed: str) -> list[str]:
-    """cfg.reply_samples continuations of the page, one per prefill handle."""
-    page = build_page(author, post_text, replies[: cfg.page_replies])
-    handles = random.Random(seed).sample(PREFILL_HANDLES, min(cfg.reply_samples, len(PREFILL_HANDLES)))
+def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg: ActionConfig, seed: str,
+                  account: Account | None = None) -> list[str]:
+    """cfg.reply_samples continuations of the page: as `account` when given, else one neutral handle each."""
+    page = build_page(author, post_text, replies[: cfg.page_replies], account)
+    if account:
+        handles = [account.handle] * cfg.reply_samples
+    else:
+        handles = random.Random(seed).sample(PREFILL_HANDLES, min(cfg.reply_samples, len(PREFILL_HANDLES)))
     with ThreadPoolExecutor(len(handles) or 1) as pool:
         return list(pool.map(lambda ih: continue_page(llm, page, ih[1], cfg, ih[0]), enumerate(handles)))
 
 
-def styled_replies(llm: LLM, mission: str, author: str, post_text: str, replies: list[str], cfg: ActionConfig) -> list[str]:
+def styled_replies(llm: LLM, mission: str, author: str, post_text: str, replies: list[str], cfg: ActionConfig,
+                   angle: str = "") -> list[str]:
     others = "\n".join(f"- {r}" for r in replies[: cfg.page_replies]) or "(none yet)"
     user = (f'POST by @{author}: "{post_text}"\n\nOTHER REPLIES ALREADY IN THE THREAD:\n{others}\n\n'
-            f'Write {cfg.reply_samples} different replies to the post. Return JSON: {{"replies": ["..."]}}')
+            + (f"{angle}\n\n" if angle else "")
+            + f'Write {cfg.reply_samples} different replies to the post. Return JSON: {{"replies": ["..."]}}')
     out = routing.on_model(llm, cfg.styled_model, "the styled reply writer").complete_json(
         STYLED_SYSTEM.format(mission=mission), user,
         mock=lambda: {"replies": [f"mock styled reply {MOCK_WORDS[i % len(MOCK_WORDS)]}" for i in range(cfg.reply_samples)]},

@@ -143,16 +143,19 @@ def parse_call(obj: object, lane: str, offer: Offer | None = None) -> ToolCall:
     return ToolCall(tool=tool, lane=lane, args=args)
 
 
+SIDES = {"own", "rival", "neutral"}
+
+
 def parse_plan(obj: object, offer: Offer) -> dict[str, dict]:
     """Validate the reply lane's planning call: {"plans": [{"target_url", "tool": "reply"|"abstain",
-    "intent"?, "reason"?, "detail"?}]}. Returns {target_url: plan}. The plan picks targets; it writes no text."""
+    "side"?: "own"|"rival"|"neutral", "intent"?, "reason"?, "detail"?}]}. Returns {target_url: plan}. The plan picks targets; it writes no text."""
     if not isinstance(obj, dict) or not isinstance(obj.get("plans"), list):
         raise ActionSchemaError(f"plan must be an object with a 'plans' list, got {type(obj).__name__}")
     out = {}
     for i, p in enumerate(obj["plans"]):
         if not isinstance(p, dict):
             raise ActionSchemaError(f"plans[{i}] must be an object, got {type(p).__name__}")
-        extra = set(p) - {"target_url", "tool", "intent", "reason", "detail"}
+        extra = set(p) - {"target_url", "tool", "intent", "reason", "detail", "side"}
         if extra:
             raise ActionSchemaError(f"plans[{i}]: unexpected field(s) {sorted(extra)}")
         url, tool = p.get("target_url"), p.get("tool")
@@ -160,6 +163,8 @@ def parse_plan(obj: object, offer: Offer) -> dict[str, dict]:
             raise ActionSchemaError(f"plans[{i}].target_url {url!r} was not offered; offered: {sorted(offer.target_urls) or 'none'}")
         if tool not in ("reply", "abstain"):
             raise ActionSchemaError(f"plans[{i}].tool must be 'reply' or 'abstain', got {tool!r}")
+        if p.get("side", "neutral") not in SIDES:
+            raise ActionSchemaError(f"plans[{i}].side must be one of {sorted(SIDES)}, got {p.get('side')!r}")
         if tool == "abstain" and p.get("reason") not in ABSTAIN_REASONS:
             raise ActionSchemaError(f"plans[{i}].reason {p.get('reason')!r} is not one of {sorted(ABSTAIN_REASONS)}")
         out[url] = {k: v for k, v in p.items() if isinstance(v, str)}

@@ -393,3 +393,38 @@ def test_target_narratives_leaves_picks_alone_when_one_has_targets():
     other.relevance = 0.1
     picked = target_narratives([first, Narrative(id="n1", title="t", summary="s"), other], top=2, explore=0)
     assert [p["id"] for p in picked] == ["first", "n1"]
+
+
+def rival_plan(prompt):
+    return {"plans": [{"target_url": X_URL, "tool": "reply", "side": "rival", "intent": "jab"}]}
+
+
+def test_rival_thread_banters_with_the_styled_writer():
+    prompts = []
+
+    class Spy(Routed):
+        def complete_json(self, system, prompt, mock=None):
+            prompts.append(prompt)
+            return super().complete_json(system, prompt, mock)
+
+    llm = Spy(plan=rival_plan, styled=["state farm is still loud for game three"], veto=ok)
+    actions, _ = run(llm, [narrative([target()])])
+    (a,) = [a for a in actions if a.type == "reply"]
+    assert (a.draft_meta["method"], a.draft_meta["side"]) == ("banter", "rival")
+    assert any(writer.BANTER_ANGLE in p for p in prompts)
+
+
+def test_rival_thread_can_abstain():
+    actions, decisions = run(Routed(plan=rival_plan, veto=ok), [narrative([target()])],
+                             cfg=ActionConfig(rival_thread_mode="abstain"))
+    assert not [a for a in actions if a.type == "reply"]
+    assert [(d.reason, d.detail) for d in decisions if d.lane == "reply"] == [("off_mission", "rival thread; rival_thread_mode is abstain")]
+
+
+def test_own_side_thread_continues_as_the_account(monkeypatch, tmp_path):
+    path = tmp_path / "account.json"
+    path.write_text(json.dumps({"handle": "me", "display_name": "Me", "bio": "Fever fan"}), encoding="utf-8")
+    monkeypatch.setenv("HARNESS_ACCOUNT", str(path))
+    actions, _ = run(MockLLM(), [narrative([target()])])
+    (a,) = [a for a in actions if a.type == "reply"]
+    assert (a.draft_meta["method"], a.draft_meta["side"], a.draft_meta["written_as"]) == ("continuation", "own", "me")

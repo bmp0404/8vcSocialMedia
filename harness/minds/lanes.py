@@ -141,11 +141,12 @@ def plan_targets(llm: LLM, mission: str, lessons: str, targets: list[dict]) -> t
     offer = Offer(target_urls=frozenset(t["url"] for t in targets))
     listing = "\n".join(f"- {t['url']} @{t['author']}: {t.get('text', '')}" for t in targets)
     user = (f"LESSONS FROM PAST ROUNDS:\n{lessons}\n\nCANDIDATE POSTS:\n{listing}\n\n"
-            'Return JSON {"plans": [{"target_url": "...", "tool": "reply" or "abstain", "intent": "...", '
+            'Return JSON {"plans": [{"target_url": "...", "tool": "reply" or "abstain", "side": "own|rival|neutral", "intent": "...", '
             '"reason": "off_mission|mute_risk|no_angle (abstain only)", "detail": "..."}]} with one entry per post.')
     try:
         out = llm.complete_json(PLAN_SYSTEM.format(mission=mission), user,
-                                mock=lambda: {"plans": [{"target_url": t["url"], "tool": "reply", "intent": "mock"} for t in targets]})
+                                mock=lambda: {"plans": [{"target_url": t["url"], "tool": "reply", "side": "own", "intent": "mock"}
+                                                        for t in targets]})
         return parse_plan(out, offer), ""
     except (ActionSchemaError, ValueError) as e:
         return {}, f"planning call failed: {e}"
@@ -181,7 +182,8 @@ def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative]
         if budget.left("reply") <= 0:
             decisions.append(Decision(REPLY_LANE, t["url"], "abstain", "budget_exhausted", "reply cap reached"))
             continue
-        d, a = answer_target(llm, mission, facts, t, cfg, fetch, plan.get("intent", ""), grounding)
+        d, a = answer_target(llm, mission, facts, t, cfg, fetch, plan.get("intent", ""), grounding,
+                             side=plan.get("side", "neutral"), account=writer.load_account())
         if a and budget.take("reply"):
             d.action_id = a.id
             actions.append(a)
@@ -244,9 +246,11 @@ def judge_meta(cfg: ActionConfig, picked: veto.VetoResult, cands: list[dict], gr
 
 
 def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig, fetch, intent: str = "",
-                  grounding=None) -> tuple[Decision, Action | None]:
+                  grounding=None, side: str = "neutral", account: writer.Account | None = None) -> tuple[Decision, Action | None]:
     url, author, post = t["url"], t["author"], t.get("text", "")
     note = ""
+    if side == "rival" and cfg.rival_thread_mode == "abstain":
+        return Decision(REPLY_LANE, url, "abstain", "off_mission", "rival thread; rival_thread_mode is abstain"), None
     try:
         replies = thread.replies_for(t, (lambda _u: []) if routing.is_mock(llm) else fetch)
     except thread.ThreadUnavailable as e:
@@ -260,16 +264,17 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
             page = [r for r, s in zip(page, scores) if s < cfg.page_max_p_ai]
         except veto.VetoError as e:
             note = f"page bot filter skipped: {e}"
-    method = "continuation" if len(page) >= cfg.min_page_replies else "styled"
+    banter = side == "rival" and cfg.rival_thread_mode == "banter"
+    method = "banter" if banter else "continuation" if len(page) >= cfg.min_page_replies else "styled"
     texts = []
     if method == "continuation":
         try:
-            texts = writer.continuations(llm, author, post, page, cfg, seed=url)
+            texts = writer.continuations(llm, author, post, page, cfg, seed=url, account=account)
         except writer.WriterUnavailable as e:
             method, note = "styled", str(e)
             routing.warn(f"continuation unavailable ({e}); replies fall back to the styled prompt")
-    if method == "styled":
-        texts = writer.styled_replies(llm, mission, author, post, page, cfg)
+    if method in ("styled", "banter"):
+        texts = writer.styled_replies(llm, mission, author, post, page, cfg, angle=writer.BANTER_ANGLE if banter else "")
     # The page hides handles; the gate's context keeps the real ones, so a draft may @ a real replier.
     known = " ".join(f"@{r['author']}" for r in replies if r.get("author"))
     context = (f"POST by @{author}:\n{post}\n\nTHREAD:\n" + "\n".join(f"- {r}" for r in page)
@@ -287,7 +292,8 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     action = Action(
         type="reply", text=picked.text, mind="reply_lane", narrative_id=n.id, rationale=intent,
         target_url=url, target_handle=author, lane=REPLY_LANE, target_text=post,
-        draft_meta={"method": method, "intent": intent, "samples": len(texts), "page_replies": len(page),
+        draft_meta={"method": method, "side": side, "intent": intent, "samples": len(texts), "page_replies": len(page),
+                    "written_as": account.handle if account and method == "continuation" else None,
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
                     "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground)},

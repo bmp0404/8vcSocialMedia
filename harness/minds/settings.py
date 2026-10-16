@@ -11,6 +11,9 @@ from dataclasses import asdict, dataclass, field, fields, replace
 from pathlib import Path
 
 
+RIVAL_MODES = {"banter", "abstain", "continuation"}
+
+
 @dataclass(frozen=True)
 class GateLimits:
     # X's hard limit. The tighter 160-char reply cap rejected 12.7% of 670 real replies
@@ -38,6 +41,11 @@ class ActionConfig:
     page_replies: int = 12  # real replies shown in the continuation page; research used 12
     min_page_replies: int = 5  # below this the page has too little to copy; use the styled fallback (no measurement)
     continuation_model: str = "claude-opus-4-5-20251101"  # the only gateway model that accepts assistant prefill
+    # What to do with a post about a rival (the planning call labels each post own, rival or neutral).
+    # Iterate's retest: continuing rival threads wrote as the rival's fans in 12 of 20 vetoes.
+    # "banter" writes with the styled prompt and a banter angle; "abstain" skips; "continuation"
+    # continues the page anyway. No measurement picks between them yet.
+    rival_thread_mode: str = "banter"
     styled_model: str = "claude-opus-4-5-20251101"  # research condition F, AUC 0.79 vs 0.88 for Sonnet 5.5
     # --- veto judge
     # Caught 90-100% of generated replies where claude-fable-5-dd-los-6.5-tpg (gateway reports
@@ -67,6 +75,10 @@ class ActionConfig:
     run_caps: dict = field(default_factory=lambda: {"reply": 3, "quote": 1, "post": 1, "mention": 1, "follow": 3})
     daily_caps: dict = field(default_factory=lambda: {"reply": 12, "quote": 2, "post": 2, "mention": 2, "follow": 10})
     gate: GateLimits = field(default_factory=GateLimits)
+
+    def __post_init__(self):
+        if self.rival_thread_mode not in RIVAL_MODES:
+            raise ValueError(f"ActionConfig.rival_thread_mode must be one of {sorted(RIVAL_MODES)}, got {self.rival_thread_mode!r}")
 
     def to_dict(self) -> dict:
         return asdict(self)
