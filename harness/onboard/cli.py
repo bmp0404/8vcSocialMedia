@@ -1,5 +1,7 @@
 """`harness onboard --handle X [--site URL] --profile NAME` and `harness onboard check --profile NAME`."""
 
+import os
+
 from harness import config
 from harness.context.http import PoliteClient
 from harness.context.xreader import FxTwitterReader
@@ -10,10 +12,22 @@ from harness.onboard import claims, profile
 from harness.watcher import modelrec
 
 
+def store_mismatch(provider: str | None) -> str | None:
+    """Why the site facts would be lost, or None. The memory store follows HARNESS_PROVIDER (config.PROVIDER), not
+    --provider, and under mock it is a temporary folder deleted at exit; facts.store.refresh refuses the same case."""
+    drafting = (provider or config.PROVIDER).lower()
+    if drafting != "mock" and config.PROVIDER == "mock" and not os.getenv("MEMSTORE_PATH"):
+        return (f"--provider {drafting} drafts for real, but HARNESS_PROVIDER is mock, so the site facts would go to a "
+                "temporary memory store; set HARNESS_PROVIDER as for a real run, or MEMSTORE_PATH")
+    return None
+
+
 def _draft(args) -> None:
     if not args.handle:
         raise SystemExit("[onboard] --handle is required to draft a profile")
     profile.check_free(args.profile, config.PROFILES_DIR)  # before any request or LLM call
+    if problem := store_mismatch(args.provider):
+        raise SystemExit(f"[onboard] {problem}")
     # A 2-second interval on the throttle every process shares keeps this read to half of fxtwitter's 1 request a
     # second, so the watcher's polls still get their turns. Cached for a day, so a rerun reads nothing new.
     reader = FxTwitterReader(PoliteClient(min_interval_s=2.0), max_age_s=86400)

@@ -1,21 +1,31 @@
 """Read a brand's site as text: the homepage and up to ten linked pages on the same domain.
 
-Politeness: every request goes through `PoliteClient`, which waits its turn on the per-host throttle in
-`~/.cache/media-harness/throttle/` that every process on this Mac shares. Site requests use a 2-second interval
-there, half the rate the fxtwitter readers use, and each host's robots.txt is honored for our User-Agent. Pages
+Politeness: every request, redirect hops included, waits its turn on the per-host throttle in
+`~/.cache/media-harness/throttle/` that every process on this Mac shares, at a 2-second interval, half the rate the
+fxtwitter readers use. Each host's robots.txt is honored for our User-Agent, only text pages are kept, and answers
 are cached for a day under `out/onboard/cache/`, so rerunning an onboarding doesn't fetch them again.
 """
 
+import gzip
+import hashlib
+import http.client
+import json
+import os
 import re
+import time
+import urllib.error
 import urllib.parse
-from collections import Counter
+import urllib.request
 import urllib.robotparser
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from html.parser import HTMLParser
+from pathlib import Path
 
 from harness import config
-from harness.context.http import USER_AGENT, FetchError, PoliteClient
+from harness.context.http import RETRY_STATUSES, USER_AGENT, FetchError, PoliteClient
 
 MAX_LINKED_PAGES = 10
 SITE_INTERVAL_S = 2.0
@@ -188,25 +198,118 @@ def pick_links(links: list[str], home: str, n: int = MAX_LINKED_PAGES) -> list[s
 # ---------------------------------------------------------------- fetching
 
 
-Getter = Callable[[str], tuple[str, str]]  # url -> (body, fetched_at); raises FetchError
+class Redirect(Exception):
+    """A 3xx answer. The getter doesn't follow it, so `read_site` can check the new URL's domain and robots.txt and
+    wait a throttle turn for it, as for any other request."""
+
+    def __init__(self, url: str, location: str):
+        super().__init__(f"{url} redirects to {location}")
+        self.url, self.location = url, location
 
 
-def polite_getter(client: PoliteClient | None = None) -> Getter:
-    client = client or PoliteClient(min_interval_s=SITE_INTERVAL_S, cache_dir=CACHE_DIR, max_retries=2)
+Getter = Callable[[str], tuple[str, str]]  # url -> (body, fetched_at); raises FetchError or Redirect
+
+REDIRECT_CODES = {301, 302, 303, 307, 308}
+MAX_REDIRECTS = 5  # RFC 9309 asks robots.txt readers to follow at least five
+MAX_BYTES = 5_000_000  # supabase.com's homepage was 1.3 MB of HTML; a page past this is cut, not refused
+TEXT_TYPES = ("text/html", "application/xhtml+xml", "text/plain")
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None  # urlopen then raises HTTPError with the 3xx and its Location header
+
+
+_OPENER = urllib.request.build_opener(_NoRedirect)
+
+
+def polite_getter(throttle: PoliteClient | None = None, cache_dir: Path | None = CACHE_DIR) -> Getter:
+    """GET one URL, text only, without following redirects, after a turn on the shared per-host throttle.
+
+    `PoliteClient.get` can't be used as it is: urllib follows redirects inside it, so a redirect hop is a request
+    without its own throttle turn and can land on a host whose robots.txt was never read. This getter takes the
+    client's throttle (`_wait_turn`, the lock every process on the Mac shares) and does the request itself. Answers,
+    redirects included, are cached for CACHE_MAX_AGE_S. 429 and 5xx are retried twice with backoff."""
+    throttle = throttle or PoliteClient(min_interval_s=SITE_INTERVAL_S, cache_dir=None)
 
     def get(url: str) -> tuple[str, str]:
-        resp = client.get(url, max_age_s=CACHE_MAX_AGE_S)
-        return resp.body, resp.fetched_at
+        host = urllib.parse.urlsplit(url).netloc
+        path = cache_dir / host.replace(":", "_") / f"{hashlib.sha1(url.encode('utf-8')).hexdigest()}.json" if cache_dir else None
+        if path and path.is_file():
+            try:
+                cached = json.loads(path.read_text(encoding="utf-8"))
+                age = time.time() - datetime.fromisoformat(cached["fetched_at"]).timestamp()
+            except (json.JSONDecodeError, KeyError, ValueError, OSError):
+                cached, age = None, None
+            if cached and age is not None and age <= CACHE_MAX_AGE_S:
+                if cached.get("location"):
+                    raise Redirect(url, cached["location"])
+                return cached["body"], cached["fetched_at"]
+        record: dict = {}
+        for attempt in range(3):
+            throttle._wait_turn(host)
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html,text/plain;q=0.9"})
+                with _OPENER.open(req, timeout=25) as resp:
+                    ctype = resp.headers.get_content_type()
+                    if ctype not in TEXT_TYPES:
+                        raise FetchError(f"{url} is {ctype}, not a text page")
+                    raw = resp.read(MAX_BYTES)
+                    charset = resp.headers.get_content_charset() or "utf-8"
+                if raw[:2] == b"\x1f\x8b":
+                    raw = gzip.decompress(raw)
+                try:
+                    text = raw.decode(charset, errors="replace")
+                except LookupError:  # a charset name Python doesn't know
+                    text = raw.decode("utf-8", errors="replace")
+                record = {"body": text}
+                break
+            except urllib.error.HTTPError as e:
+                if e.code in REDIRECT_CODES and e.headers.get("Location"):
+                    record = {"location": urllib.parse.urljoin(url, e.headers["Location"])}
+                    break
+                if e.code not in RETRY_STATUSES or attempt == 2:
+                    raise FetchError(f"HTTP {e.code} from {host} for {url}") from e
+            except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
+                if attempt == 2:
+                    raise FetchError(f"{type(e).__name__} reaching {host}: {e} for {url}") from e
+            time.sleep(2.0 * 2 ** attempt)
+        record["fetched_at"] = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+        if path:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(f".{os.getpid()}.tmp")
+            tmp.write_text(json.dumps({"url": url} | record), encoding="utf-8")
+            os.replace(tmp, path)
+        if "location" in record:
+            raise Redirect(url, record["location"])
+        return record["body"], record["fetched_at"]
 
     return get
 
 
+def same_site(url: str, home: str) -> bool:
+    """True when `url` is http(s) on `home`'s domain or a subdomain of it."""
+    parts, base = urllib.parse.urlsplit(url), _base(urllib.parse.urlsplit(home).netloc)
+    host = parts.netloc.lower()
+    return parts.scheme in ("http", "https") and (_base(host) == base or host.endswith("." + base))
+
+
 class _Robots:
-    """robots.txt per host, read once. A 4xx means no rules (RFC 9309); any other failure stops the site."""
+    """robots.txt per host, read once, following up to MAX_REDIRECTS redirects. A 4xx means no rules (RFC 9309);
+    any other failure raises SiteError."""
 
     def __init__(self, get: Getter):
         self.get = get
         self.parsers: dict[str, urllib.robotparser.RobotFileParser | None] = {}
+
+    def _read(self, robots_url: str) -> str:
+        url = robots_url
+        for _ in range(MAX_REDIRECTS + 1):
+            try:
+                return self.get(url)[0]
+            except Redirect as r:
+                url = r.location
+        raise FetchError(f"{robots_url} redirected more than {MAX_REDIRECTS} times")
 
     def allowed(self, url: str) -> bool:
         parts = urllib.parse.urlsplit(url)
@@ -214,7 +317,7 @@ class _Robots:
         if host not in self.parsers:
             robots_url = f"{parts.scheme}://{host}/robots.txt"
             try:
-                body, _ = self.get(robots_url)
+                body = self._read(robots_url)
             except FetchError as e:
                 if not re.search(r"HTTP 4\d\d", str(e)):
                     raise SiteError(f"can't read {robots_url} to check what it allows: {e}") from e
@@ -227,37 +330,58 @@ class _Robots:
         return rp is None or rp.can_fetch(USER_AGENT, url)
 
 
+class _Skip(Exception):
+    """A page the site policy won't read: off the site, disallowed, or redirected too often."""
+
+
+def _fetch(url: str, home: str, get: Getter, robots: _Robots) -> tuple[str, str, str]:
+    """(final url, body, fetched_at), following redirects that stay on the site and robots.txt allows."""
+    start = url
+    for _ in range(MAX_REDIRECTS + 1):
+        if not same_site(url, home):
+            raise _Skip(f"redirects off the site, to {url}")
+        if not robots.allowed(url):
+            raise _Skip("robots.txt disallows it" if url == start else f"redirects to {url}, which robots.txt disallows")
+        try:
+            body, fetched_at = get(url)
+            return url, body, fetched_at
+        except Redirect as r:
+            url = r.location
+    raise _Skip(f"redirected more than {MAX_REDIRECTS} times")
+
+
 def read_site(url: str, get: Getter | None = None, max_linked: int = MAX_LINKED_PAGES) -> tuple[list[Page], dict]:
     """The homepage and up to `max_linked` linked pages as text, and a log of what was skipped and why.
 
-    A homepage that can't be fetched, or whose robots.txt disallows it or can't be read, raises SiteError. A linked
-    page that fails, or whose host's robots.txt can't be read, is logged and skipped."""
+    Every request, redirect hops included, stays on the homepage's domain and its subdomains and is checked against
+    that host's robots.txt. A homepage that can't be read for any of these reasons raises SiteError. A linked page
+    that can't is logged and skipped. A page is cited by the URL it was finally read from."""
     get = get or polite_getter()
     home = url if urllib.parse.urlsplit(url).scheme else "https://" + url
     robots = _Robots(get)
     log: dict = {"skipped": {}}
-    if not robots.allowed(home):
-        raise SiteError(f"robots.txt disallows {home} for {USER_AGENT}")
     try:
-        body, fetched_at = get(home)
+        home, body, fetched_at = _fetch(home, home, get, robots)
+    except _Skip as e:
+        raise SiteError(f"can't read the homepage {url}: {e}") from e
     except FetchError as e:
-        raise SiteError(f"can't read the homepage {home}: {e}") from e
+        raise SiteError(f"can't read the homepage {url}: {e}") from e
     title, text, links = extract(body, home)
     pages = [Page(home, title, text, fetched_at)]
+    read = {_canonical(home)}
     for link in pick_links(links, home, max_linked):
         try:
-            allowed = robots.allowed(link)
-        except SiteError as e:  # a subdomain whose robots.txt is down (perf.vllm.ai answered 522) costs only its pages
+            final, body, fetched_at = _fetch(link, home, get, robots)
+        except _Skip as e:
             log["skipped"][link] = str(e)
             continue
-        if not allowed:
-            log["skipped"][link] = "robots.txt disallows it"
-            continue
-        try:
-            body, fetched_at = get(link)
-        except FetchError as e:
+        except (SiteError, FetchError) as e:  # a subdomain whose robots.txt is down (perf.vllm.ai answered 522)
             log["skipped"][link] = str(e)
             continue
-        t, x, _ = extract(body, link)
-        pages.append(Page(link, t, x, fetched_at))
+        if _canonical(final) in read:
+            log["skipped"][link] = f"redirects to {final}, already read"
+            continue
+        read.add(_canonical(final))
+        t, x, _ = extract(body, final)
+        pages.append(Page(final, t, x, fetched_at))
     return pages, log

@@ -72,9 +72,13 @@ def content_words(text: str) -> set[str]:
 
 
 def names(text: str) -> list[str]:
-    """The names `trace` requires a source for: see the module docstring."""
-    found = [w for w, _, _ in capitalized_names(text)]
-    found += INNER_CAPITAL.findall(text)
+    """The names `trace` requires a source for: see the module docstring.
+
+    A capitalized word inside a word with a digit or inner capital is checked as that whole word, so "Qwen3" needs
+    "qwen3" in the source, not "qwen", which the source's own tokens would never hold."""
+    whole = [(m.start(), m.end()) for m in INNER_CAPITAL.finditer(text)]
+    found = [w for w, start, end in capitalized_names(text) if not any(a <= start and end <= b for a, b in whole)]
+    found += [text[a:b] for a, b in whole]
     found += ["@" + h for h in HANDLE.findall(text)]
     return list(dict.fromkeys(found))
 
@@ -183,7 +187,8 @@ def extract_facts(llm: LLM, handle: str, page: Page) -> tuple[list[SiteFact], li
 def memory_fact(f: SiteFact, handle: str, as_of: date) -> Fact:
     """The fact as the facts store keeps it, live for FACT_DAYS from the day the page was read."""
     handle = handle.lstrip("@")
-    return Fact(id=f"fact-site-{short_hash(f.url, f.quote)}", subject="entity-" + slug(ground.split_handle(handle)),
+    # Two facts can share a quote ("Auth and Storage for every project" backs both), so the statement is in the id too.
+    return Fact(id=f"fact-site-{short_hash(f.url, f.quote, normalize(f.statement))}", subject="entity-" + slug(ground.split_handle(handle)),
                 question=f"What does {f.url} say about @{handle}'s {f.kind}?", answer=f.statement, quote=f.quote,
                 source_url=f.url, as_of=as_of.isoformat(), valid_until=(as_of + timedelta(days=FACT_DAYS)).isoformat())
 
@@ -208,7 +213,7 @@ SECTIONS = {
     "Goals": SectionRule("any"),
     "Examples, good": SectionRule("post", verbatim=True),
 }
-LABEL = re.compile(r"^\*\*(.+?):\*\*")
+LABEL = re.compile(r"^(?:\*\*(.+?):\*\*|#+\s+(.+?):?\s*$)")  # "**What it is:**", or a heading a person made of it
 LINK = re.compile(r"\[([^\]]*)\]\((https?://[^)\s]+)\)")
 CITATIONS = re.compile(r"\s*\((?:\s*\[[^\]]*\]\(https?://[^)\s]+\)\s*,?)+\)\s*$")
 
@@ -222,18 +227,37 @@ class ClaimCheck:
 
 
 def parse_mission(md: str) -> list[ClaimCheck]:
-    """Every bullet under a SECTIONS label, with the URLs it cites and its text without the citations."""
-    out, section = [], None
-    for line in md.splitlines():
-        m = LABEL.match(line.strip())
-        if m:
-            section = m.group(1).strip() if m.group(1).strip() in SECTIONS else None
-            continue
-        if line.startswith("#"):
-            section = None
-        elif section and line.lstrip().startswith("- "):
-            body = line.lstrip()[2:].strip()
+    """Every bullet under a SECTIONS label, with the URLs it cites and its text without the citations.
+
+    A label may be bold ("**What it is:**") or a heading. Any other label or heading ends the section. A line under
+    a bullet that isn't a new bullet, a label or a blank line continues that bullet, so a claim a person adds on
+    the next line is checked with it. Text in a section that isn't a bullet is checked as a claim of its own, because
+    a claim written as a paragraph needs a source as much as one written as a bullet."""
+    out, section, bullet = [], None, None
+
+    def finish():
+        if bullet is not None:
+            body = " ".join(bullet)
             out.append(ClaimCheck(section, CITATIONS.sub("", body).strip(), [u for _, u in LINK.findall(body)]))
+
+    for line in md.splitlines():
+        stripped = line.strip()
+        m = LABEL.match(stripped)
+        if m or stripped.startswith("#"):
+            finish()
+            label = ((m.group(1) or m.group(2)) if m else "").strip()
+            section, bullet = (label if label in SECTIONS else None), None
+        elif not stripped:
+            finish()
+            bullet = None
+        elif section and stripped.startswith(("- ", "* ")):
+            finish()
+            bullet = [stripped[2:].strip()]
+        elif section and bullet is not None:
+            bullet.append(stripped)
+        elif section:
+            bullet = [stripped]
+    finish()
     return out
 
 

@@ -67,11 +67,13 @@ class CorpusReader:
     The Posts tab is the account's own posts and its reposts. The corpus timelines came from that tab, so they hold
     no replies to other accounts; the Posts and replies tab adds the account's replies found in the corpus reply
     samples, which covers only threads under dataset posts. A repost is placed by the reposted post's own time,
-    since fxtwitter gives no repost time. With `end` set, every read is dated no later than `end`, so a post younger
+    since fxtwitter gives no repost time, so a September post reposted in October counts as September;
+    `reposts=False` leaves reposts out to bound that. With `end` set, every read is dated no later than `end`, so a post younger
     than 48 hours at the cutoff isn't treated as settled; its counts are still the later read's."""
 
-    def __init__(self, corpus: Corpus, start: datetime | None = None, end: datetime | None = None):
-        self.corpus, self.start, self.end = corpus, start, end
+    def __init__(self, corpus: Corpus, start: datetime | None = None, end: datetime | None = None,
+                 reposts: bool = True):
+        self.corpus, self.start, self.end, self.reposts = corpus, start, end, reposts
 
     def _in_window(self, item: Item) -> bool:
         return (self.start is None or item.created_at >= self.start) and (self.end is None or item.created_at < self.end)
@@ -89,7 +91,7 @@ class CorpusReader:
                 out.append(_to_post(item, self.corpus, None, self.end))  # a thread continuation
             elif own and with_replies and "reply_samples" in item.sources:
                 out.append(_to_post(item, self.corpus, None, self.end))
-            elif not own and h in {r.lower() for r in item.reposted_by}:
+            elif not own and self.reposts and h in {r.lower() for r in item.reposted_by}:
                 out.append(_to_post(item, self.corpus, handle.lstrip("@"), self.end))
         return sorted(out, key=lambda p: int(p.id), reverse=True)[:limit]
 
@@ -97,9 +99,10 @@ class CorpusReader:
 # ---------------------------------------------------------------- watch-list recall
 
 
-def engaged_accounts(corpus: Corpus, handle: str, start: datetime | None, end: datetime | None) -> dict[str, int]:
+def engaged_accounts(corpus: Corpus, handle: str, start: datetime | None, end: datetime | None,
+                     reposts: bool = True) -> dict[str, int]:
     """Lowercased account -> posts in [start, end) in which `handle` engaged it, by `history.engagements`."""
-    reader = CorpusReader(corpus, start, end)
+    reader = CorpusReader(corpus, start, end, reposts)
     tl = history.split(handle, reader.profile_statuses(handle, limit=10**6, with_replies=True))
     return {c.handle.lower(): c.events for c in history.rank_accounts(history.engagements(tl), exclude=(handle,))}
 
@@ -113,13 +116,13 @@ def timeline_accounts(raw_dir: Path = RAW_DIR) -> tuple[str, ...]:
 
 
 def popular_list(corpus: Corpus, brand: str, end: datetime, accounts: tuple[str, ...],
-                 n: int = history.WATCH_MAX) -> list[str]:
+                 n: int = history.WATCH_MAX, reposts: bool = True) -> list[str]:
     """The `n` accounts the most other corpus brands (`accounts`) engaged with before `end`, then by total posts."""
     brands, posts = {}, {}
     for other in accounts:
         if other.lower() == brand.lower():
             continue
-        for account, events in engaged_accounts(corpus, other, None, end).items():
+        for account, events in engaged_accounts(corpus, other, None, end, reposts).items():
             if account == brand.lower():
                 continue
             brands[account] = brands.get(account, 0) + 1
@@ -262,9 +265,15 @@ def run_brand(corpus: Corpus, brand: str, site: str, llm: LLM, out: Path, cutoff
     engaged_after = engaged_accounts(corpus, brand, cutoff, None)
     engaged_before = engaged_accounts(corpus, brand, None, cutoff)
     accounts = timeline_accounts()
+    before = history.split(brand, CorpusReader(corpus, end=cutoff, reposts=False).profile_statuses(
+        brand, limit=10**6, with_replies=True))
     lists = {"onboarded": watch, "devtools": devtools_list(), "popular": popular_list(corpus, brand, cutoff, accounts),
              # Not the drafted rule: the same ranking filled to the devtools list's 24 without the 2-post floor.
-             "onboarded_top24": [c.handle for c in ranked[:history.WATCH_MAX]]}
+             "onboarded_top24": [c.handle for c in ranked[:history.WATCH_MAX]],
+             # Reposts can't be placed in time (CorpusReader), so these leave the brands' earlier reposts out.
+             "onboarded_no_reposts": [c.handle for c in history.watchlist(
+                 history.rank_accounts(history.engagements(before), exclude=(brand,)))],
+             "popular_no_reposts": popular_list(corpus, brand, cutoff, accounts, reposts=False)}
     res.recall = {arm: recall(w, engaged_after) for arm, w in lists.items()}
     res.recall["ceiling"] = recall(list(engaged_before), engaged_after)  # every account seen before the cutoff
 

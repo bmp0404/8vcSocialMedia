@@ -12,7 +12,7 @@ import pytest
 
 from harness import config
 from harness.context import snowflake
-from harness.context.http import FetchError
+from harness.context.http import FetchError, PoliteClient
 from harness.context.xreader import XPost
 from harness.corpus.load import Corpus, Item
 from harness.llm import MockLLM
@@ -232,11 +232,13 @@ def test_pick_links_caps_pages_per_section():
 
 
 class FakeWeb:
-    def __init__(self, pages: dict[str, str], robots: str | None = None):
-        self.pages, self.robots, self.urls = pages, robots, []
+    def __init__(self, pages: dict[str, str], robots: str | None = None, redirects: dict[str, str] | None = None):
+        self.pages, self.robots, self.redirects, self.urls = pages, robots, redirects or {}, []
 
     def __call__(self, url):
         self.urls.append(url)
+        if url in self.redirects:
+            raise site.Redirect(url, self.redirects[url])
         if url.endswith("/robots.txt"):
             if self.robots is None:
                 raise FetchError(f"HTTP 404 from host for {url}")
@@ -257,6 +259,29 @@ def test_read_site_honors_robots_and_logs_failed_pages():
     assert log["skipped"]["https://acme.dev/pricing"] == "robots.txt disallows it"
     assert "HTTP 500" in log["skipped"]["https://acme.dev/about"]
     assert "https://acme.dev/pricing" not in web.urls
+
+
+def test_redirects_are_followed_only_on_the_site_and_where_robots_allow():
+    # The homepage moves to www, so its links resolve against www.acme.dev.
+    web = FakeWeb({"https://www.acme.dev/": HOME, "https://www.acme.dev/features/all": FEATURES},
+                  robots="User-agent: *\nDisallow: /private\n",
+                  redirects={"https://acme.dev": "https://www.acme.dev/",
+                             "https://www.acme.dev/features": "https://www.acme.dev/features/all",
+                             "https://www.acme.dev/pricing": "https://stripe.example/checkout",
+                             "https://www.acme.dev/about": "https://www.acme.dev/private/about",
+                             "https://docs.acme.dev/": "https://www.acme.dev/"})
+    pages, log = site.read_site("acme.dev", web)
+    assert [p.url for p in pages] == ["https://www.acme.dev/", "https://www.acme.dev/features/all"]
+    assert log["skipped"]["https://www.acme.dev/pricing"] == "redirects off the site, to https://stripe.example/checkout"
+    assert "robots.txt disallows" in log["skipped"]["https://www.acme.dev/about"]
+    assert "already read" in log["skipped"]["https://docs.acme.dev/"]
+    assert not any("stripe.example" in u or "/private" in u for u in web.urls)  # never requested
+
+
+def test_a_homepage_that_redirects_off_the_site_is_refused():
+    web = FakeWeb({}, redirects={"https://acme.dev": "https://acme.io/"})
+    with pytest.raises(site.SiteError, match="redirects off the site"):
+        site.read_site("https://acme.dev", web)
 
 
 def test_read_site_refuses_a_disallowed_or_missing_homepage():
@@ -315,6 +340,38 @@ def test_quotes_must_appear_verbatim_once_normalized():
 def test_trace_requires_names_and_numbers_from_the_sources(claim, problem):
     problems = claims.trace(claim, [PAGE])
     assert (problem is None and problems == []) or (problem is not None and any(problem in p for p in problems))
+
+
+def test_names_with_digits_or_inner_capitals_match_as_whole_words():
+    assert claims.names("It supports Qwen3 and Web3Auth models.") == ["Qwen3", "Web3Auth"]
+    assert claims.trace("It supports Qwen3 models.", ["It supports Qwen3 models."], 0.6) == []
+    assert claims.trace("It supports Qwen3 models.", ["It supports Qwen models."]) != []
+
+
+def test_check_mission_reads_continuation_lines_headings_and_paragraphs():
+    md = """**What it is:**
+- Background jobs for web apps ([acme.dev](https://acme.dev))
+  with payments for Stripe
+## Who it's for:
+- Teams on PostgreSQL ([acme.dev](https://acme.dev))
+
+**Core subjects:**
+A paragraph with no source about Kubernetes.
+
+**Don't:**
+- Mention Stripe.
+"""
+    results = claims.check_mission(md, {"https://acme.dev": PAGE}, {})
+    assert [(c.section, bool(c.problems)) for c in results] == [
+        ("What it is", True), ("Who it's for", False), ("Core subjects", True)]
+    assert any("Stripe" in p for p in results[0].problems)
+    assert results[2].problems == ["cites no source"]
+
+
+def test_facts_sharing_a_quote_get_their_own_ids():
+    a = claims.SiteFact("feature", "Acme has Auth", "Auth and Storage for every project", "https://acme.dev")
+    b = claims.SiteFact("feature", "Acme has Storage", "Auth and Storage for every project", "https://acme.dev")
+    assert claims.memory_fact(a, "acme", date(2026, 10, 16)).id != claims.memory_fact(b, "acme", date(2026, 10, 16)).id
 
 
 def test_years_and_numbers_followed_by_stopwords_match_on_digits():
@@ -415,7 +472,6 @@ def test_draft_and_write_produce_a_profile_that_loads_and_traces(tmp_path, monke
     assert {c.section for c in results} >= {"What it is", "Examples, good"}
     report = (target / "ONBOARDING.md").read_text(encoding="utf-8")
     assert "@partner" in report and "Median engagement" in report
-    assert not list(tmp_path.glob(".acme-draft.onboarding-*"))  # the temporary directory was renamed away
     monkeypatch.setattr(config, "PROFILES_DIR", tmp_path)
     assert [w.handle for w in watchlist.load("acme-draft").handles] == ["partner2", "fan", "partner"]  # as the watcher reads it
 
@@ -436,7 +492,38 @@ def test_write_refuses_a_profile_created_after_drafting(tmp_path):
     with pytest.raises(profile.ProfileExists):
         profile.write(d, profiles_dir=tmp_path, out_dir=tmp_path / "out")
     assert (tmp_path / "late" / "mission.md").read_text(encoding="utf-8") == "a person's mission"
-    assert sorted(p.name for p in tmp_path.iterdir()) == ["late"]
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["late"]  # refused before writing anything
+
+
+def test_write_never_replaces_an_empty_directory_made_after_the_check(tmp_path, monkeypatch):
+    d = profile.draft("acme", "race", reader=FakeReader(*timeline()), llm=MockLLM(), profiles_dir=tmp_path,
+                      today=date(2026, 10, 16))
+    real = profile.check_free
+
+    def check_then_lose_the_race(name, profiles_dir):  # passes, then another process makes the directory
+        target = real(name, profiles_dir)
+        target.mkdir()
+        return target
+    monkeypatch.setattr(profile, "check_free", check_then_lose_the_race)
+    with pytest.raises(profile.ProfileExists, match="appeared while drafting"):
+        profile.write(d, profiles_dir=tmp_path, out_dir=tmp_path / "out")
+    assert list((tmp_path / "race").iterdir()) == []
+
+
+def test_a_failed_write_removes_the_profile_it_claimed_but_keeps_the_sources(tmp_path, monkeypatch):
+    d = profile.draft("acme", "broken", reader=FakeReader(*timeline()), llm=MockLLM(), profiles_dir=tmp_path,
+                      today=date(2026, 10, 16))
+    real = profile.shutil.copyfile
+
+    def fail_on_panel(src, dst):
+        if str(dst).endswith("panel.json"):
+            raise OSError("disk full")
+        return real(src, dst)
+    monkeypatch.setattr(profile.shutil, "copyfile", fail_on_panel)
+    with pytest.raises(OSError, match="disk full"):
+        profile.write(d, profiles_dir=tmp_path, out_dir=tmp_path / "out")
+    assert not (tmp_path / "broken").exists()
+    assert (tmp_path / "out" / "broken" / "sources.json").is_file()
 
 
 def test_a_tab_that_fails_deep_is_read_as_far_as_it_goes():
@@ -518,6 +605,19 @@ def test_onboard_cli_parses(monkeypatch):
     assert parser.parse_args(["onboard", "check", "--profile", "acme-x"]).action == "check"
 
 
+def test_a_real_provider_with_a_mock_store_is_refused(monkeypatch):
+    from harness.onboard.cli import store_mismatch
+
+    monkeypatch.setattr(config, "PROVIDER", "mock")
+    assert "temporary memory store" in store_mismatch("anthropic")
+    assert store_mismatch(None) is None and store_mismatch("mock") is None
+    monkeypatch.setenv("MEMSTORE_PATH", "/tmp/somewhere")
+    assert store_mismatch("anthropic") is None
+    monkeypatch.delenv("MEMSTORE_PATH")
+    monkeypatch.setattr(config, "PROVIDER", "anthropic")
+    assert store_mismatch(None) is None
+
+
 def test_draft_json_has_no_page_text(tmp_path):
     posts, replies = timeline()
     d = profile.draft("acme", "acme-j", reader=FakeReader(posts, replies), llm=MockLLM(), site="https://acme.dev",
@@ -575,6 +675,11 @@ def test_corpus_reader_replays_a_window_of_the_brands_tabs():
     assert by_text["quoting carol here"].quoted_author == "carol"
     assert by_text["@bob nice one"].replying_to == "bob"
     assert "and a thread reply" in by_text and "bob ships a thing" not in by_text
+
+
+def test_the_reader_can_leave_reposts_out():
+    tabs = validate.CorpusReader(corpus_fixture(), start=CUT, reposts=False).profile_statuses(BRAND, 100, with_replies=True)
+    assert not any(p.is_repost for p in tabs) and len(tabs) == 4
 
 
 def test_engaged_accounts_after_the_cutoff_count_every_kind_once_per_post():
@@ -642,3 +747,57 @@ def test_run_brand_resumes_from_its_draft_and_verdicts_without_llm_calls(tmp_pat
     again, _ = validate.run_brand(corpus_fixture(), BRAND, "https://acme.dev", NoCalls(), tmp_path, CUT, get=web)
     assert again == first
     assert validate.planned_calls(corpus_fixture(), {BRAND: ""}, CUT, tmp_path) == 0
+
+
+# ---------------------------------------------------------------- the real getter, against a loopback server
+
+
+@pytest.fixture
+def loopback(monkeypatch, tmp_path):
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    from harness.context import http as context_http
+
+    monkeypatch.setattr(context_http, "THROTTLE_DIR", tmp_path / "throttle")  # never the Mac's shared throttle
+    hits = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            hits.append(self.path)
+            if self.path == "/old":
+                self.send_response(301)
+                self.send_header("Location", "/new")
+                self.end_headers()
+                return
+            ctype = "application/pdf" if self.path == "/paper.pdf" else "text/html; charset=utf-8"
+            body = "<p>café page</p>".encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{server.server_address[1]}", hits, tmp_path
+    server.shutdown()
+
+
+def test_getter_does_not_follow_redirects_and_caches_answers(loopback):
+    base, hits, tmp = loopback
+    get = site.polite_getter(PoliteClient(min_interval_s=0.0, cache_dir=None), cache_dir=tmp / "cache")
+    with pytest.raises(site.Redirect) as r:
+        get(base + "/old")
+    assert r.value.location == base + "/new" and hits == ["/old"]
+    body, _ = get(base + "/new")
+    assert body == "<p>café page</p>"
+    with pytest.raises(site.Redirect):
+        get(base + "/old")  # from the cache
+    get(base + "/new")
+    assert hits == ["/old", "/new"]
+    with pytest.raises(FetchError, match="application/pdf, not a text page"):
+        get(base + "/paper.pdf")

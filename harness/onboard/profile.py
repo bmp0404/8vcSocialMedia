@@ -1,7 +1,7 @@
 """Draft a provisional mission profile from a brand's timeline and site, and write it without overwriting anything.
 
-`draft` reads and decides; `write` puts the six profile files and ONBOARDING.md in place in one rename, and the
-sources the claim check needs in `out/onboard/<profile>/`. The CLI in `cli.py` saves the site facts to the
+`draft` reads and decides; `write` puts the sources the claim check needs in `out/onboard/<profile>/`, then claims
+the profile directory with one mkdir and writes the six profile files and ONBOARDING.md into it. The CLI in `cli.py` saves the site facts to the
 profile's memory store after `write`, because the store is found by profile name.
 """
 
@@ -467,27 +467,17 @@ def render_report(d: Draft) -> str:
 
 def write(d: Draft, profiles_dir: Path | None = None, out_dir: Path | None = None,
           template_dir: Path | None = None) -> Path:
-    """Write the profile directory in one rename, and the claim check's sources to `out_dir/<profile>/`.
+    """Write the claim check's sources to `out_dir/<profile>/`, then the profile directory.
 
-    Refuses when the profile directory exists, checked again just before the rename."""
+    The profile directory is claimed with one `mkdir`, which fails when anything already has the name, so a profile
+    made after `check_free` passed is never written into or replaced. The sources go first, so a profile that exists
+    can always be checked. If a write into the claimed directory fails, the directory is removed again."""
     profiles_dir = profiles_dir or config.PROFILES_DIR
     out_dir = out_dir or config.OUT_DIR / "onboard"
     template_dir = template_dir or config.PROFILES_DIR / TEMPLATE_PROFILE
     target = check_free(d.profile, profiles_dir)
     files = {"mission.md": render_mission(d), "observe.toml": render_observe(d, template_dir),
              "ONBOARDING.md": render_report(d)}
-    tmp = profiles_dir / f".{d.profile}.onboarding-{os.getpid()}"
-    tmp.mkdir(parents=True)
-    try:
-        for name, text in files.items():
-            (tmp / name).write_text(text, encoding="utf-8")
-        for name in COPIED_FILES:
-            shutil.copyfile(template_dir / name, tmp / name)
-        check_free(d.profile, profiles_dir)
-        os.rename(tmp, target)
-    except BaseException:
-        shutil.rmtree(tmp, ignore_errors=True)
-        raise
     record = out_dir / d.profile
     record.mkdir(parents=True, exist_ok=True)
     (record / "sources.json").write_text(json.dumps({"pages": d.page_texts(), "posts": d.post_texts()}, indent=1,
@@ -498,6 +488,19 @@ def write(d: Draft, profiles_dir: Path | None = None, out_dir: Path | None = Non
                "left_out": d.left_out, "facts": [asdict(f) for f in d.facts], "dropped_facts": d.dropped_facts,
                "models": d.models}
     (record / "draft.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
+    profiles_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        target.mkdir()
+    except FileExistsError:
+        raise ProfileExists(f"{target} appeared while drafting; onboarding never overwrites a profile") from None
+    try:
+        for name, text in files.items():
+            (target / name).write_text(text, encoding="utf-8")
+        for name in COPIED_FILES:
+            shutil.copyfile(template_dir / name, target / name)
+    except BaseException:
+        shutil.rmtree(target, ignore_errors=True)  # only this call created it
+        raise
     return target
 
 
