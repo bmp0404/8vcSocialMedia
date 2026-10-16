@@ -126,8 +126,8 @@ def gather(rows: list[dict], k: int = 5) -> dict:
         ranked = sorted(measured, key=lambda r: r["actual_score"], reverse=True)
         verified = True
     else:
-        pool = [r for r in rows if r.get("predicted_score") is not None
-                and r.get("verdict") not in ("skipped", "killed") and not r.get("vetoed")]
+        pool = [r for r in rows if r.get("predicted_score") is not None and r.get("type") != "follow"
+                and r.get("verdict") not in ("skipped", "killed") and not r.get("vetoed")]  # follow score isn't the panel's
         ranked = sorted(pool, key=lambda r: r["predicted_score"], reverse=True)
         verified = False
     best = ranked[:k]

@@ -45,6 +45,8 @@ TARGETS_PATH = _targets_path()
 PROVIDER = os.getenv("HARNESS_PROVIDER", "mock").lower()
 MODEL = os.getenv("HARNESS_MODEL", "")
 SOURCES = [s.strip() for s in os.getenv("HARNESS_SOURCES", "sample").split(",") if s.strip()]
+# Recommendation slots reserved for follows (ranked by the reply lane's follow ranker, not the panel).
+FOLLOW_SLOTS = max(0, int(os.getenv("HARNESS_FOLLOW_SLOTS") or 2))
 
 
 def mission() -> str:

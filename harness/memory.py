@@ -271,6 +271,20 @@ def recall(lane: str, context_text: str | None = None, k: int = 3, days: int = 7
     }
 
 
+def followed_handles(pending_hours: int = RECOMMENDED_WINDOW_HOURS) -> set[str]:
+    """Lowercase handles we already follow (a follow with status `posted`, ever) or recommended a follow
+    for within `pending_hours` (still waiting on the bot)."""
+    since = (datetime.now(timezone.utc) - timedelta(hours=pending_hours)).isoformat(timespec="seconds")
+    with connect() as conn:
+        rows = conn.execute(
+            """SELECT DISTINCT lower(target_handle) AS h FROM actions WHERE type = 'follow'
+               AND target_handle IS NOT NULL
+               AND (status = 'posted' OR (status = 'recommended' AND rank IS NOT NULL AND created_at >= ?))""",
+            (since,),
+        )
+        return {r["h"].lstrip("@") for r in rows}
+
+
 def format_recall(mem: dict) -> str:
     """Render a recall() dict as a prompt block."""
 

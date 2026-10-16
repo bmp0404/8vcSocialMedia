@@ -27,7 +27,10 @@ def deliver(
     out_dir/handoff-<run>.eml + .txt. Returns {"mode": "sent"|"dry_run"|"empty", "reason", "count", paths...}.
     """
     keep = [_as_dict(a) for a in actions
-            if not _get(a, "vetoed") and (_get(a, "type") or "").lower() not in DECLINE_TYPES][: max(top, 0)]
+            if not _get(a, "vetoed") and (_get(a, "type") or "").lower() not in DECLINE_TYPES]
+    # Reserved follow slots (context.slot == "follow") survive the `top` cut; content fills the rest.
+    slots = [a for a in keep if (a.get("context") or {}).get("slot") == "follow"][: max(top, 0)]
+    keep = [a for a in keep if a not in slots][: max(top - len(slots), 0)] + slots
     if not keep:
         print("[handoff] nothing to hand off (no non-vetoed recommendations)")
         return {"mode": "empty", "reason": "no recommendations", "count": 0}

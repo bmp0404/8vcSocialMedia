@@ -6,7 +6,14 @@ Enable with HARNESS_SOURCES=feed and point HARNESS_FEED_PATH at a file, a glob
 A .json file may be a list of posts or an object wrapping one (`data`, `tweets`, `posts`,
 `items`, `results`, `statuses`), including the raw X API v2 shape (`includes.users` is used to
 resolve `author_id`). Field names are matched loosely (see FIELD_ALIASES); rows with no text are
-skipped and counted.
+skipped and counted. The teammate's spreadsheet export (`data/devtools_virality_30d.csv`: Category,
+Account, Post Content, Media, Likes, Replies, Retweets, Engagement, Post URL, Date, Segment) maps
+directly; the tweet id is parsed from the URL's `/status/<id>` when there's no id column, and
+Category / Segment / Media ride along in `metrics` (`category`, `segment`, `media`).
+
+Big exports can be trimmed per run (newest first, applied after de-duplication):
+  HARNESS_FEED_SINCE_DAYS   keep posts created within the last N days (undated posts are dropped)
+  HARNESS_FEED_LIMIT        keep the N most recent posts
 """
 
 from __future__ import annotations
@@ -14,6 +21,9 @@ from __future__ import annotations
 import csv
 import glob
 import json
+import os
+import re
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -27,14 +37,15 @@ WRAPPER_KEYS = ("data", "tweets", "posts", "items", "results", "statuses", "reco
 
 FIELD_ALIASES = {
     "id": ("id", "tweet_id", "id_str", "rest_id", "post_id"),
-    "text": ("text", "full_text", "content", "body", "tweet", "note_tweet.text", "legacy.full_text"),
+    "text": ("text", "full_text", "content", "body", "tweet", "note_tweet.text", "legacy.full_text",
+             "Post Content", "post_content", "Text", "Content"),
     "author": (
-        "author", "username", "handle", "screen_name", "user.username", "user.screen_name",
+        "author", "username", "handle", "screen_name", "Account", "account", "user.username", "user.screen_name",
         "author.username", "author.screen_name", "author.handle", "user_screen_name", "author_handle",
         "core.user_results.result.legacy.screen_name",
     ),
-    "url": ("url", "tweet_url", "link", "permalink"),
-    "created_at": ("created_at", "createdAt", "date", "timestamp", "time", "legacy.created_at"),
+    "url": ("url", "tweet_url", "link", "permalink", "Post URL", "post_url", "URL"),
+    "created_at": ("created_at", "createdAt", "date", "Date", "timestamp", "time", "legacy.created_at"),
     "conversation_id": ("conversation_id", "conversation_id_str", "conversationId", "thread_id"),
     "followers": (
         "author_followers", "followers_count", "user.followers_count", "user.public_metrics.followers_count",
@@ -44,13 +55,18 @@ FIELD_ALIASES = {
 
 # Our metric name -> accepted source names (public_metrics or flat).
 METRIC_ALIASES = {
-    "likes": ("like_count", "likes", "favorite_count", "favorites", "likeCount"),
-    "reposts": ("retweet_count", "retweets", "reposts", "repost_count", "retweetCount"),
-    "replies": ("reply_count", "replies", "replyCount"),
+    "likes": ("like_count", "likes", "Likes", "favorite_count", "favorites", "likeCount"),
+    "reposts": ("retweet_count", "retweets", "Retweets", "reposts", "repost_count", "retweetCount"),
+    "replies": ("reply_count", "replies", "Replies", "replyCount"),
     "quotes": ("quote_count", "quotes", "quoteCount"),
     "bookmarks": ("bookmark_count", "bookmarks", "bookmarkCount"),
     "views": ("impression_count", "impressions", "views", "view_count", "viewCount"),
+    "engagement": ("engagement", "Engagement", "total_engagement"),
 }
+# Non-numeric spreadsheet columns kept in metrics as strings.
+EXTRA_FIELDS = {"category": ("Category", "category"), "segment": ("Segment", "segment"),
+                "media": ("Media", "media")}
+STATUS_ID = re.compile(r"/status(?:es)?/(\d+)")
 
 
 def _dig(row: Any, dotted: str) -> Any:
@@ -96,6 +112,10 @@ def _metrics(row: dict) -> dict:
     for ours, raw in (("likes", "like_count"), ("reposts", "retweet_count"), ("replies", "reply_count"),
                       ("quotes", "quote_count"), ("views", "impression_count")):
         out[raw] = out.get(ours, 0)
+    for ours, keys in EXTRA_FIELDS.items():
+        v = next((row[k] for k in keys if row.get(k) not in (None, "")), None)
+        if v is not None and not isinstance(v, (dict, list)):
+            out[ours] = str(v).strip()
     return out
 
 
@@ -151,10 +171,12 @@ def to_signal(row: dict) -> Signal | None:
     if not isinstance(text, str) or not text.strip():
         return None
     sid = _first(row, "id")
+    url = _first(row, "url")
+    if sid is None and url and (m := STATUS_ID.search(str(url))):
+        sid = m.group(1)
     sid = str(sid) if sid is not None else None
     author = _first(row, "author")
     author = str(author).strip().lstrip("@") if author else None
-    url = _first(row, "url")
     if not url and sid:
         url = f"https://x.com/{author or 'i/web'}/status/{sid}"
     created = _first(row, "created_at")
@@ -174,6 +196,31 @@ def to_signal(row: dict) -> Signal | None:
         created_at=str(created) if created else None,
         metrics=metrics,
     )
+
+
+def _created(s: Signal) -> datetime | None:
+    try:
+        ts = datetime.fromisoformat(str(s.created_at).replace("Z", "+00:00")) if s.created_at else None
+    except ValueError:
+        return None
+    return ts.replace(tzinfo=timezone.utc) if ts and ts.tzinfo is None else ts
+
+
+def _env_int(name: str) -> int | None:
+    v = (os.getenv(name) or "").strip()
+    return int(v) if v else None
+
+
+def trim(signals: list[Signal], since_days: int | None = None, limit: int | None = None) -> list[Signal]:
+    """Newest first; keep posts from the last `since_days` days, then at most `limit` of them."""
+    if since_days is None and limit is None:
+        return signals
+    epoch = datetime.min.replace(tzinfo=timezone.utc)
+    out = sorted(signals, key=lambda s: _created(s) or epoch, reverse=True)
+    if since_days is not None:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=since_days)
+        out = [s for s in out if (ts := _created(s)) and ts >= cutoff]
+    return out[:limit] if limit is not None else out
 
 
 class FeedSource(Source):
@@ -206,7 +253,12 @@ class FeedSource(Source):
                     continue
                 seen.add(key)
                 signals.append(s)
-        print(f"[feed] loaded {len(signals)} posts from {len(paths)} file(s); "
-              f"skipped {skipped} (no text or unparseable), {dupes} duplicates")
+        total = len(signals)
+        since, limit = _env_int("HARNESS_FEED_SINCE_DAYS"), _env_int("HARNESS_FEED_LIMIT")
+        signals = trim(signals, since, limit)
+        rules = [f"since {since}d"] * (since is not None) + [f"limit {limit}"] * (limit is not None)
+        kept = f"; kept the {len(signals)} most recent ({', '.join(rules)})" if rules else ""
+        print(f"[feed] loaded {total} posts from {len(paths)} file(s); "
+              f"skipped {skipped} (no text or unparseable), {dupes} duplicates{kept}")
         signals.sort(key=lambda s: s.metrics.get("reply_score", 0), reverse=True)
         return signals

@@ -3,10 +3,9 @@ import json
 import sys
 from dataclasses import replace
 
-from harness import config, memory
+from harness import config, feedback, learn, memory
 from harness.handoff import deliver
 from harness.lanes import LANES, LaneContext
-from harness.learn import learn
 from harness.llm import get_llm
 from harness.models import DECLINE_TYPES
 from harness.review import serve
@@ -30,12 +29,24 @@ def run(args) -> None:
     run_id = memory.start_run(lanes, sources, args.provider)
     ctx = LaneContext(llm, mission, run_id, per_mind=args.per_mind)
 
-    ranked = []
+    # Rank by predicted_score x the learned action-type weight (learn.get_weights); predicted_score itself
+    # stays the panel's number. Follows are ranked by the reply lane's follow ranker and get up to
+    # HARNESS_FOLLOW_SLOTS reserved slots after the content actions.
+    weights = {lane: learn.get_weights(lane)["type"] for lane in lanes}
+    rank_score = {}
+    content, follows = [], []
     for lane in lanes:
         limit = args.targets if lane == "reply" else args.narratives
         evaluated = LANES[lane](replace(ctx, limit=limit), signals)
-        ranked += [a for a in evaluated if not a.vetoed and a.type not in DECLINE_TYPES][: args.top]
-    ranked.sort(key=lambda a: a.predicted_score, reverse=True)
+        keep = [a for a in evaluated if not a.vetoed and a.type not in DECLINE_TYPES]
+        for a in keep:
+            rank_score[a.id] = a.predicted_score * weights[lane].get(a.type, 1)
+        follows += [a for a in keep if a.type == "follow"]
+        lane_content = sorted((a for a in keep if a.type != "follow"), key=lambda a: rank_score[a.id], reverse=True)
+        content += lane_content[: args.top]
+    content.sort(key=lambda a: rank_score[a.id], reverse=True)
+    follows = sorted(follows, key=lambda a: rank_score[a.id], reverse=True)[: config.FOLLOW_SLOTS]
+    ranked = content + follows
     memory.mark_ranked(run_id, ranked)
 
     # Hand-off contract: a JSON list of Action.to_dict(), best first, vetoed drafts removed.
@@ -47,7 +58,10 @@ def run(args) -> None:
     for i, a in enumerate(ranked, 1):
         target = a.target_url or (f"@{a.target_handle.lstrip('@')}" if a.target_handle else "")
         sent = "/".join(f"{a.sentiment.get(k, 0):.0%}" for k in ("positive", "neutral", "negative")) if a.sentiment else "-"
-        print(f"{i:>2}. [{a.predicted_score:.2f} +/=/- {sent}] {a.lane:<5} {a.type:<7} {a.mind:<19} "
+        if a.context.get("slot") == "follow":
+            sent = "follow slot"
+        w = f" x{rank_score[a.id] / a.predicted_score:.2f}" if a.predicted_score and abs(rank_score[a.id] - a.predicted_score) > 1e-9 else ""
+        print(f"{i:>2}. [{a.predicted_score:.2f}{w} +/=/- {sent}] {a.lane:<5} {a.type:<7} {a.mind:<19} "
               f"{a.text.replace(chr(10), ' / ')}  {target}")
 
     if args.email:
@@ -59,6 +73,36 @@ def record(args) -> None:
     with open(args.file, encoding="utf-8") as f:
         n = memory.record_outcomes(json.load(f))
     print(f"[record] stored {n} outcomes")
+
+
+def ingest_reply(args) -> None:
+    text = sys.stdin.read() if args.file == "-" else open(args.file, encoding="utf-8").read()
+    recs = feedback.ingest_bot_reply(text)
+    for r in recs:
+        mark = "ok " if r.get("applied") else "-- "
+        extra = r.get("post_url") or r.get("post_id") or r.get("reason") or ""
+        print(f"  {mark}{r['action_id']:<10} {r['outcome']:<8} {extra}")
+
+
+def ingest_metrics(args) -> None:
+    out = feedback.ingest_metrics(args.source, handle=args.handle)
+    if out.get("error"):
+        raise SystemExit(1)
+
+
+def calibrate(args) -> None:
+    rows = feedback.outcomes()
+    if not rows:
+        print("[calibrate] no recommended, posted or rejected actions in memory yet")
+        return
+    print(feedback.format_calibration(feedback.calibration(rows)))
+
+
+def run_learn(args) -> None:
+    out = learn.learn(get_llm(args.provider))
+    if out:
+        print()
+        print(out["lessons_md"])
 
 
 def main() -> None:
@@ -90,9 +134,21 @@ def main() -> None:
     p.add_argument("file")
     p.set_defaults(func=record)
 
-    p = sub.add_parser("learn", help="rewrite the lessons file from predicted vs. actual")
+    p = sub.add_parser("ingest-reply", help="apply the posting bot's reply email (ACTION_ID <id> | <url>|followed|skipped | why)")
+    p.add_argument("file", help="the reply as a .txt/.eml body, or - for stdin")
+    p.set_defaults(func=ingest_reply)
+
+    p = sub.add_parser("ingest-metrics", help="fill actual metrics for posted actions from X or a scraper file")
+    p.add_argument("--from", dest="source", default="x", help="x (X API, needs X_BEARER_TOKEN) or a .json/.csv file")
+    p.add_argument("--handle", help="with --from x: the brand's X handle, to match posts the bot didn't link")
+    p.set_defaults(func=ingest_metrics)
+
+    p = sub.add_parser("calibrate", help="predicted vs. actual by lane, mind, type, relationship and panelist")
+    p.set_defaults(func=calibrate)
+
+    p = sub.add_parser("learn", help="lessons, weights and mission proposals from predicted vs. actual + bot skips")
     p.add_argument("--provider")
-    p.set_defaults(func=lambda a: learn(get_llm(a.provider)))
+    p.set_defaults(func=run_learn)
 
     p = sub.add_parser("review", help="open the approve/kill dashboard; writes out/approved-run<id>.json")
     p.add_argument("--port", type=int, default=8765)

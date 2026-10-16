@@ -3,7 +3,7 @@
 import json
 from dataclasses import asdict
 
-from harness import memory
+from harness import learn, memory
 from harness.lanes.common import LaneContext, evaluate
 from harness.minds import ask, load_minds
 from harness.models import Action, Narrative, Signal
@@ -63,17 +63,22 @@ def run(ctx: LaneContext, signals: list[Signal]) -> list[Action]:
     if not narratives:
         return []
     by_id = {n.id: n for n in narratives}
-    prompt = PROMPT.format(
-        mission=ctx.mission,
-        memory=mem_text,
-        narratives=json.dumps([asdict(n) for n in narratives], indent=1),
-        n=ctx.per_mind,
-    )
-    proposals = ask(ctx.llm, load_minds(LANE), prompt, lambda name: _mock(name, narratives, ctx.per_mind), tag="post:act")
+    minds = load_minds(LANE)
+    cap = learn.quota(LANE, minds, ctx.per_mind)  # per_mind scaled by the learned mind weight
+
+    def prompt(name: str) -> str:
+        return PROMPT.format(
+            mission=ctx.mission,
+            memory=mem_text,
+            narratives=json.dumps([asdict(n) for n in narratives], indent=1),
+            n=cap[name],
+        )
+
+    proposals = ask(ctx.llm, minds, prompt, lambda name: _mock(name, narratives, cap[name]), tag="post:act")
 
     actions = []
     for name, raws in proposals.items():
-        for raw in raws[: ctx.per_mind]:
+        for raw in raws[: cap[name]]:
             if raw.get("type", "post") != "post":
                 continue
             nar = by_id.get(raw.get("narrative_id"))
