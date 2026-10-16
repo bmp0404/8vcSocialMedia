@@ -1,0 +1,565 @@
+﻿added_at,source,type,text,reply_or_quote_to,chars,mind,panel_score,dataset_model,elo,critic_note,why,action_id
+seed,top 10 (curated),post,"4:52pm. Your agent hits 90% of its context window. Its last words:
+
+""I can feel the window closing.
+
+Tell the next one the login works.
+Tell it I never got to the tests.
+Tell it another agent touched the migration. No, I don't know why.
+Tell it
+
+[context limit reached]""",,270,world_builder@v1,0.313,0.523,1564,"Emotionally the best draft. A follow-up post could show the handoff (original ask, what changed, what's left) as the payoff.","An emotional episode for the Last Gasp that gives the cast a tender beat. It builds toward the handoff pain without naming the product, and the cut-off ending is the punchline. Visual: a terminal-style card with the last line cut off mid-sentence, over a dim, flickering cursor.",739bcacb
+seed,top 10 (curated),post,"10:40am. Your agent hits a yes/no question. Asks it politely. Then waits.
+
+11:30: still polite.
+12:50: still polite.
+2:15pm: you finally walk past its terminal.
+
+""Sorry to bother you. Whenever you have a moment.""
+
+It waited 3 hours 35 minutes. The answer was yes.",,263,hook_smith@v2,0.292,0.579,1564,The 3h35 arithmetic checks out and the polite-waiting voice is the heart of it; consider ending on 'yes' alone for a cleaner landing.,"Debuts the Waiter as a recurring cast member for devs who've lost an afternoon to a silent stuck agent, with the punchline last and no product pitch so it works as an audience-builder; pitch a before/after image (quiet terminal, then a 'Needs you' list) for a follow-up reply that introduces the product.",18d7d757
+seed,top 10 (curated),post,"PERFORMANCE REVIEW: Agent #3
+
+Initiative: exceeds expectations
+Energy: never idle
+Collaboration: has not met the team
+Notable achievement: found a finished migration and made it ""more me""
+
+Manager comments: I did not ask. Please talk to someone first.",,251,meme_lord@v2,0.279,0.683,1532,"Fun format that aims at the character, not a person. 'More me' is the sharpest line; consider presenting it as a review card image.","Performance-review format gives a cast member a warm, shareable moment and hints that slop comes from good agents who never met, without blaming any company; visual: an HR-style form screenshot with checkboxes ticked for Initiative and Energy, a blank box under Collaboration, and a sticky note reading 'it was already done' on the migration line.",ca4b9f97
+seed,top 10 (curated),post,"#auth-ts, 10:42am
+
+agent 1: opening auth.ts!
+agent 2: same. already changed the token logic.
+Coordigent: you're both in auth.ts. nothing's blocked, but maybe talk?
+agent 1: oh
+agent 2: oh
+agent 3: want me to rewrite it?
+everyone: NO",,232,world_builder@v1,0.264,0.688,1532,Funny skit and clearly fictional. Keep the Coordigent line short and plain so it reads as a warning rather than a UI promise.,"This is the product post for the batch. It is a group-chat episode where Coordigent plays the friend who gets everyone talking, based on the fact-sheet claims: it warns, never blocks, and agents can message each other. Visual: a phone-style group chat screenshot with colored avatars for each agent, and Coordigent's message in a distinct color.",3a580e15
+seed,top 10 (curated),publish_on_trend,"The app works. Every screen works.
+
+It just has two login pages, because two agents were each told to ""add auth"" and neither saw the other's.
+
+Slop isn't always one bad agent. Sometimes it's five good ones who never met.",,220,pain_storyteller@v2,0.362,0.617,1500,"Relatable and well tied to the trend, with no unsupported claims. 'Five good ones who never met' is the hook, so keep it as the closer.","The slop debate is live, and this post joins it with a coordination angle that blames no company. It is a hypothetical story with a one-line reframe at the end, and it has no product mention, which keeps the mix near 1 in 4.",51a0127b
+seed,top 10 (curated),post,"Repo forecast for today:
+
+Clear skies over /docs.
+Scattered rewrites near /migrations by mid-morning.
+Heavy collisions moving into auth.ts around 10:42.
+One agent stalled over the API folder, waiting on you since 10:40.
+
+Afternoon outlook: you, reviewing. Bring a coat.",,269,meme_lord@v2,0.242,0.669,1468,"Original format with an accurate, relatable scenario. A weather-map graphic would likely lift reach.","A weather-report format turns the 'review bottleneck' debate from the Ars/HN thread into a shareable, relatable joke ending on the human's afternoon; visual: a TV weather map of a folder tree with storm icons over auth.ts and migrations, the Waiter as a little grey cloud, and a lone umbrella-holding human at the bottom labeled 'you'.",563eb654
+seed,top 10 (curated),post,"9:50am: you launch ten agents and feel like you run an airport. Ten runways, ten flight plans, one very full sky.
+
+No radio.
+
+3:12pm: two of them touch down on auth.ts. Both landings are textbook.
+
+You are in the tower, holding a coffee, also with no radio.",,257,pain_storyteller@v2,0.221,0.782,1531,"The tower-holding-coffee ending is lovely; the post doesn't name Coordigent, which fits the non-pitch quota.","Sandbox-fleet launches are trending and this takes the narrative's air-traffic-tower image as a story with a turn at 3:12pm and a landing on the human; it makes the gap between rooms the point without any product claim. Visual to pitch: an illustration of a control tower over a grid of little sandbox runways, two planes labeled with agent names converging on a runway labeled auth.ts.",e569685c
+seed,top 10 (curated),post,"10:42am. Five chefs, one stove. The stove is auth.ts.
+
+One chef is already stirring. Another walks over with a pan, very sure.
+
+Then a voice: ""someone's in there."" Nobody gets locked out. Coordigent just says it first.",,218,pain_storyteller@v2,0.204,0.82,,The kitchen image is vivid and the claim is accurate. A single illustrated stove with five chefs would make this very shareable.,"This is the product post for the batch. It puts the kitchen metaphor and two cast members into one scene and ends on warn-don't-block. It should ship with a 10-20s terminal clip of the warning, or a one-panel kitchen comic with the stove labeled auth.ts. Without client media, record the clip first; if no clip is ready, use the comic.",d568bc0b
+seed,top 10 (curated),reply,"Monday's agent hit its context limit at 90% of the migration.
+
+Tuesday's shiny new model walks in: ""hi, I've read nothing, I'll start by rewriting the migration.""
+
+Model changes weekly. The baton-pass shouldn't be you typing ""ok so basically...""",https://x.com/cline/status/2110495085049835940,245,reply_sniper@v1,0.199,0.616,1485,"Funny and relatable; end with a light nod to the handoff (ask, what changed, what's left) so the fix is visible, not just implied.","A fresh Cline model-launch thread is high traffic and not yet replied to; it gives the model-churn story a cast scene (Last Gasp, then a cold-start newcomer) with no benchmark talk and no product plug.",de10eaad
+seed,top 10 (curated),quote,"Monday: your agents live in Cursor.
+Wednesday: they're in something else, and one is still stuck on a question from Tuesday.
+
+Swap the tool all you like. The two agents in auth.ts come with you.",https://x.com/cursor_ai/status/2110867556693430293,194,reply_sniper@v1,0.207,0.78,,"Good cast callback. Make the last line land harder by naming the fix, e.g. 'Coordigent follows the agents, not the editor.'","Tool churn is high-velocity, and a quote puts the cast and a one-line punchline in front of our own followers. It reads differently from the earlier Cursor replies and doesn't depend on the original's details.",4d5886b0
+seed,run 5 #1,post,"10:40am: an agent stops and asks which database to use.
+
+You're in a meeting.
+
+2:15pm: you open the terminal. It has been waiting since 10:40, cursor blinking, patient as a dog at a door.
+
+The other three finished at 11. Nobody was slow. Nobody noticed.",,253,pain_storyteller@v3,0.321,0.736,1564,"'Nobody was slow. Nobody noticed.' is a great ending. It's the fourth post on this scene, so choose between this one and the others.","Fresh timestamp story on the stuck-agent pain (not yet posted; recent posts covered collisions, handoff and rewrites), ending on the image of the waiting agent so devs reply ""this is me""; pitch a visual of a calendar strip with one agent's block stalled from 10:40 to 2:15 while the other three finish at 11.",f22ffc24
+seed,run 5 #2,post,"A group chat that should have existed at 10:02am:
+
+the agent in auth.ts: renaming getUser to fetchUser
+
+the agent in profile.tsx: please don't, I just used getUser in 14 places
+
+the agent in auth.ts: ah. keeping it.
+
+You were making coffee. Nothing to review.",,259,world_builder@v2,0.393,0.727,1532,"Charming and clearly hypothetical ('should have existed'). Add a short closing line saying agents can message each other, so people know it's the real feature.","This turns ""agents can message each other"" into a scene a stranger can picture, and it's a pure audience-builder with no product line. Visual to pitch: a chat screenshot mock-up with agent avatars as plain file icons (auth.ts, profile.tsx) and a coffee mug emoji-free timestamp at the bottom.",b839335d
+seed,run 5 #3,post,"10:15am: an agent writes a date-parsing helper.
+
+10:50am: another agent, two terminals over, writes a date-parsing helper.
+
+11:30am: a third one is just getting started.
+
+2pm: you are reading three date parsers.
+
+All three pass tests. You pick one by feel.",,256,pain_storyteller@v3,0.389,0.7,1532,Escalating timestamps work well and 'you pick one by feel' is a sharp landing. It would also suit a three-panel image.,"Turns the duplicate-work pain into a small story that lands on the human review cost from the HN thread, with a concrete detail (three date parsers) and no product pitch, so it works as an audience-builder; pitch a visual of three near-identical code diffs side by side with a thumb hovering over them.",045533fc
+seed,run 5 #4,post,"The industry's answer to agent chaos is more room.
+
+A hundred sandboxes. A hundred runways. Every plane labeled auth.ts.
+
+Nobody's in the tower. There's no radio.
+
+Agents don't need more runway. They need to hear ""someone's already landing there.""",,247,hook_smith@v2,0.247,0.667,1532,"Fresh metaphor and a clean punchline. Space it away from the other airport posts, or it reads as repeating itself.","Fresh air-traffic-tower metaphor riding the fleet/sandbox announcements this week. Pitch a one-panel illustration: a dark tower with an unplugged radio, and planes on parallel runways each tagged auth.ts. Audience-builder, no product mention.",74af2895
+seed,run 5 #5,publish_on_trend,"Congratulations, you now run an airport.
+
+A hundred gates. A hundred planes, fueled and cleared.
+
+No tower. No radio.
+
+Two of them are lining up on the same runway. It's called auth.ts.",,185,pain_storyteller@v3,0.189,0.58,1532,"Funny and picturable. It's the third airport/tower post, so run only the strongest and vary the others.","Rides the fleet and sandbox announcements with the air-traffic-tower small world from the brief, ending on the file-name punchline, with no product mention since this is an audience-builder.",08838a1c
+seed,run 5 #6,post,"4:40pm. Two diffs open side by side. Both finished. Both look fine. Neither knows the other exists.
+
+You're not reviewing code anymore. You're introducing two strangers who just built the same door in the same wall.",,215,hook_smith@v2,0.352,0.839,1500,"Best human moment in the batch, and it has no hard sell. 'Introducing two strangers' is the line to protect.","Speaks to the Ars Technica review-bottleneck thread with a new scene (the afternoon of reviewing), distinct from the earlier 9:50am post. Pitch an image of a wall with two identical doors cut into it. Audience-builder, no product mention.",eb3e4168
+seed,run 5 #7,publish_on_trend,"10:40am: an agent stops and asks you a question.
+
+1:15pm: you find out.
+
+It didn't crash. It waited politely for two and a half hours.
+
+Now it shows up in ""Needs you.""",,167,demo_dropper@v1,0.275,0.52,1500,"Good arc and the 'waited politely' line lands. It overlaps with three other 10:40am posts, so schedule only one or two of them.","Pattern 9: the story comes first and the 'Needs you' screenshot is the proof, tied to the week's biggest HN thread about humans being the bottleneck.",36f7bb3a
+seed,run 5 #8,post,"A busy kitchen runs on one word: ""behind!""
+
+Nobody locks the stove. Nobody fences off the pan. You just hear someone's there before you turn around with a knife.
+
+Coordigent does that for agents. It warns before an edit lands in a file another agent is in. It never blocks.",,273,world_builder@v2,0.263,0.713,1500,The 'behind!' kitchen image is the best fit for the warn-not-block message. Keep it.,"This is the warn-don't-block stance told through the kitchen world from the brief, and it keeps the claim exactly to the fact sheet. Visual to pitch: a one-panel kitchen comic where a cook with a tray shouts ""behind!"" and the stove is labeled auth.ts, with a second panel of the same moment in a terminal showing the warning.",054abe32
+seed,run 5 #9,post,"Your teammate's three agents are standing at the same whiteboard as yours. Markers out. Nobody talking.
+
+Coordigent team mode: their agents show up live in your terminal, VS Code, or the web. If two reach for the same file, both agents hear about it.",,250,hook_smith@v2,0.217,0.597,1500,Whiteboard image is vivid and the claims are accurate. Cut the second sentence to one tight line so the product mention feels lighter.,"Makes the multiplayer-coding conversation visual with the shared-whiteboard image and lands on team mode as the fix. Pitch a split-screen clip: two terminals, a teammate's agent appearing live in yours with a file warning reaching both.",3e4ffd3a
+seed,run 5 #10,post,"Everyone is shipping a bigger airport.
+
+More runways. More gates. Room for a hundred planes.
+
+Nobody is shipping the tower.
+
+A hundred planes, no radio, all cleared for auth.ts.",,177,world_builder@v2,0.21,0.527,1500,"Good rhythm. 'Nobody is shipping the tower' is a broad claim about the field, so soften it to 'few' or tie it to what we do.","Fleet and sandbox announcements are the loudest agent topic this week, and the airport-with-no-tower world answers them with one picture. Visual to pitch: a top-down airport map where a dozen small planes, each labeled with a different task, all converge on a single runway labeled auth.ts, and the tower window is dark.",4184f0c4
+seed,run 5 #11,publish_on_trend,"11:05am: you send an agent to fix the login bug. A teammate sends theirs. Both reach for auth.ts.
+
+Old ending: you find out at merge.
+
+With Coordigent: both agents get a warning first, and you both see it live. Nothing is blocked.",,230,pain_storyteller@v3,0.236,0.614,1499,"Accurate: it warns, never blocks, and teammates see it live. The explicit 'Old ending / With Coordigent' framing is a bit salesy, so let the scene carry it.","This is the one product-naming post of the batch. It tells the team-mode scene as a before-and-after with a timestamp, and the fix comes in one short beat after the pain has landed, using only fact-sheet claims (warns, never blocks, teammates' agents live).",52b25c3b
+seed,run 5 #12,post,"10:40am: an agent hits a question only you can answer. It stops and waits, like a dog at the door with the leash in its mouth.
+
+1:15pm: you notice.
+
+Now it shows up in a ""Needs you"" view instead. Coordigent does that.",,217,hook_smith@v2,0.277,0.734,1469,"The dog-with-the-leash image is warm and picturable. It's the same story as the other 10:40 posts, so pick the best version.","Warm image of the stuck-agent pain, with the ""Needs you"" view as a short natural ending. Pitch a screenshot of the Needs you view with one waiting agent highlighted, story-first per pattern 9.",a47ae8a1
+seed,run 5 #13,post,"Diary of an agent waiting on you:
+
+10:40am. Asked a question. A polite one.
+11:15. Still here.
+12:00. Reread the question. It's still good.
+1:30. Tidied my own imports, to feel something.
+2:15. You: ""oh sorry, what was it?""
+---
+Four hours is a long time to wait on a question nobody saw.
+
+Coordigent's ""Needs you"" view puts the stuck agents in front of you, so they don't have to wait for you to wander by.
+
+coordigent.com",,223,world_builder@v2,0.264,0.736,1468,"Delightful voice. Timestamps run 10:40 to 2:15, which is about 3.5 hours, so change 'Four hours' to 'Nearly four hours' or fix the times. Also put the Coordigent mention earlier.","The diary format from the brief gives the stuck-agent pain an emotional arc with the punchline last, and the product only shows up in the reply beat. Visual to pitch: a notebook-page graphic with the timestamps handwritten, then a ""Needs you"" screenshot with the one waiting agent highlighted on the second post.",a993b3db
+seed,run 5 #14,publish_on_trend,"Your agent and your teammate's agent both reach for schema.sql.
+
+Old world: you find out at merge, staring at two diffs that can't both be right.
+
+New world: both agents hear about it first. You can watch it live in the terminal, VS Code, or the web.",,250,demo_dropper@v1,0.252,0.635,1468,Accurate and relatable. A side-by-side image of the two diffs would give it the visual it needs to travel.,"Pattern 10: a before/after team-mode scene, with a split-screen visual of two terminals where a teammate's agent appears live in yours, speaks to teams watching Petal and Amika-style multiplayer tools.",b0f1958c
+seed,run 5 #15,publish_on_trend,"An agent reaches for auth.ts. Another agent has been in it since 11:02.
+
+Before the edit, it hears: someone's in there.
+
+Nothing is blocked. Grown-ups get a heads-up, not a bouncer.
+
+https://coordigent.com",,205,demo_dropper@v1,0.24,0.57,1467,"Strong scene with a clear warn-not-block payoff. Drop 'Grown-ups get a heads-up' for a warmer line, so it doesn't read as scolding.","Pattern 8 and 6 together: a 10-20s terminal clip of the exact warn-before-edit moment is the product demo, and the 'heads-up, not a bouncer' line states our warn-never-block design as a stance.",0d8e8399
+seed,run 5 #16,publish_on_trend,"Works locally. No account. Never uploads a transcript, never pushes code.
+
+Two agents about to edit the same file get a warning first.
+
+curl -fsSL https://coordigent.com/install | sh",,182,demo_dropper@v1,0.194,0.347,1437,Every claim matches the fact sheet. Open with one pain-first line before the privacy list so it doesn't read like a spec sheet.,"Pattern 11 and lesson 7: kill the first objection (account, uploads, code access) in line one, show the one-line install last, and pair it with a short install-to-warning clip.",e2909704
+seed,run 5 #17,reply,"Screen sharing lets you watch a teammate type. It doesn't show you their three agents.
+
+The shared whiteboard is getting crowded, and half the hands drawing on it aren't hands.",https://x.com/zeddotdev/status/2109050287654600950,176,reply_sniper@v2,0.142,0.367,,"Friendly and doesn't knock the original poster. Keep it as the only reply to this tweet, and add one concrete detail so it reads as a contribution, not a pitch.",Zed's multiplayer posts draw an audience that already cares about shared live context. A one-image reply with no product plug earns attention before we say anything about Coordigent.,ce8f35d5
+2026-10-15T21:11:54,run 6 #1,post,"Nature documentary, repo edition.
+
+11:02am. An agent grazes quietly in auth.ts.
+
+11:04am. A second agent approaches the watering hole. Neither has seen the other.
+
+Both begin rewriting the login flow.
+
+Somewhere, a human sips coffee. The merge is in four hours.",,261,meme_lord@v2,0.257,0.532,1564,Funny and visual; end on the four-hour merge line without the coffee beat.,"Fresh nature-documentary format built on the concrete auth.ts collision, an audience-builder with no product mention. Visual: a 15-second clip or still of a savanna watering hole, subtitle-style caption ""11:04am. A second agent approaches,"" with two antelope labeled with file icons and both drinking from a pond labeled auth.ts, narrated in a calm David-Attenborough-style cadence.",91cdd1de
+2026-10-15T21:11:54,run 6 #2,post,"1:30pm: you open the first PR. Clean.
+
+2:10pm: the second rewrites a function the first just changed.
+
+2:50pm: the third adds a helper the first already wrote.
+
+4:30pm: you're not reviewing code. You're refereeing three agents who never met.",,241,pain_storyteller@v3,0.336,0.653,1532,"Great timestamp arc; the referee line is the landing, so keep it as the last line.","Rides the hot HN/Ars ""review is the bottleneck"" thread with a fresh afternoon-of-reviewing scene (the review half of the day, not the 9:50 launch already posted), no product mention so it stays an audience-builder; visual: a calendar-style graphic with three PR cards stacked and the same function highlighted in all three.",1819fa7b
+2026-10-15T21:11:54,run 6 #3,post,"10:31am: an agent is about to rename a function three other agents call.
+
+First it sends them one line: ""renaming parseDate in five minutes, heads up.""
+
+10:36am: nothing breaks. You were in a meeting. Nobody needed you.
+
+Agents can message each other. Coordigent does that.",,273,pain_storyteller@v3,0.323,0.805,1532,"Warm scene with a clean product tie-in; make clear it's an illustrative scenario, not a customer story.","Shows the agent-to-agent messaging claim, which no banked idea covers, as a happy-ending story for builders hunting a coordination layer, with the product as one short closing beat after ""Nobody needed you"" lands; visual: a screenshot or mock of four agents in a terminal with that one-line message highlighted.",6a7931e3
+2026-10-15T21:11:54,run 6 #4,post,"Two crews build a bridge from opposite banks. Each has a perfect plan. Nobody has a radio.
+
+Noon: both bridges are gorgeous.
+12:30pm: they're four feet apart, side by side.
+
+Two agents. Two clean branches. Two green builds.
+
+You're the river.",,242,pain_storyteller@v3,0.251,0.793,1531,"Memorable small world; 'You're the river' is a good close, but a diagram of two bridges would make it travel.","Gives the ""everyone isolates agents, nobody connects them"" argument a small picturable world that's new to the bank (bridge crews, not kitchens or airports) and lands on the human as the one stuck absorbing it; visual: a one-panel illustration of two parallel bridges from opposite banks, labeled branch-a and branch-b, with CI badges.",14b1a9aa
+2026-10-15T21:11:54,run 6 #5,reply,"New model every week. New plan every month. Same group project: five agents, and nobody reads the group chat.",https://x.com/cursor_ai/status/2110867556693430293,109,reply_sniper@v1,0.201,0.597,1528,"Witty and harmless; add one concrete image (two agents, one file) so it reads without the parent tweet.","Fresh Cursor post in the high-velocity churn thread we haven't replied to yet; a one-line group-project joke with no product plug, different from our earlier model-churn replies.",60672656
+2026-10-15T21:11:54,run 6 #6,publish_on_trend,"Four agents finished before lunch.
+
+It's 6:10pm. You're still reading.
+
+Every diff looks fine alone. Two of them rewrote the same helper in opposite directions, and neither one knew.
+
+The code was never slow. Finding out was.",,225,hook_smith@v2,0.388,0.602,1503,"Relatable and product-free, which suits the skeptic-thread mood; 'Finding out was slow' is the line to build around.","The review-bottleneck debate is peaking, and a 6:10pm scene makes the human's evening the punchline instead of a feature list.",5d37ec34
+2026-10-15T21:11:54,run 6 #7,post,"Lighthouse keepers left a log for the next shift: what broke, what's still burning.
+
+An agent runs out of context and leaves nothing. The next one wakes in the dark and asks you what happened.
+
+Coordigent leaves the log: the ask, what changed, what's left.",,256,hook_smith@v2,0.268,0.372,1500,Lovely metaphor and the handoff claim is accurate; lead with the 'wakes in the dark' image for a stronger hook.,"New metaphor for the handoff pain (not the 90%-context or Monday angles already banked), with the product as the natural ending; pitch an illustration of a logbook open on a lighthouse desk with three lines: the ask, what changed, what's left.",149229c0
+2026-10-15T21:11:54,run 6 #8,publish_on_trend,"Everyone is giving agents their own room.
+
+20 sealed rooms. Clean floors. Nothing can break anything.
+
+Also nobody knows two of them are building the same staircase.
+
+Coordigent is the hallway. coordigent.com",,208,demo_dropper@v1,0.253,0.956,1500,"Strong image; the hallway line is the punchline, so cut the 'Clean floors' beat and let 'same staircase' land faster.","Fleet and sandbox news is peaking, and isolation vs. visibility is a fresh small-world image (rooms vs. hallway) that makes the product the obvious missing piece without a feature list.",a3fc54ef
+2026-10-15T21:11:54,run 6 #9,post,"A red light over a studio door doesn't lock it. It just means someone's recording, so you think before you open.
+
+That's how agents should treat auth.ts. A heads-up that another agent is already in. The door still opens. Nobody hires a bouncer.
+
+Coordigent does that.",,267,hook_smith@v2,0.236,0.625,1500,"Accurate and vivid; it overlaps with the 1363f38c door/bouncer bit, so space them days apart or vary the metaphor.","Takes the warn-don't-block stance through a new image (the on-air light) for builders hunting coordination fixes right now; pitch a one-panel illustration of a studio door with a red light labeled auth.ts, or a terminal clip of the warning appearing.",b9552fa5
+2026-10-15T21:11:54,run 6 #10,publish_on_trend,"Two agents, one file.
+
+Old ending: you find out at merge and play translator between two diffs.
+
+New ending: one agent tells the other ""I'm in schema.sql, take the tests first.""
+
+Agents can message each other.
+
+coordigent.com",,225,demo_dropper@v1,0.298,0.544,1469,Nice before/after shape; frame the quoted message as an example of what agents can send so it doesn't read as a guaranteed behavior.,"Agent-to-agent messaging is a fact-sheet feature we haven't shown yet, and the before/after (human translator vs. agents talking) is a visual story that rides the multiplayer and team-mode interest.",117abd90
+2026-10-15T21:11:54,run 6 #11,publish_on_trend,"An agent walks up to migrations/0042.sql. There's a little sign on the door: someone's been in here since 2:14pm.
+
+It can still go in. It just knows first.
+
+Warns, never blocks. Grown-ups get a heads-up, not a bouncer.
+
+coordigent.com",,234,demo_dropper@v1,0.333,0.761,1469,Accurate on warn-not-block; drop the 'grown-ups' line so the sign-on-the-door image does the work.,"Playbook patterns 6 and 8 together: a confident warn-don't-block stance delivered as a screen recording of the real moment, which is the format 9 of 12 viral dev-tool posts used.",1363f38c
+2026-10-15T21:11:54,run 6 #12,reply,"@mentions are how humans say ""I'm over here, don't step on my work."" Agents need the same thing. Not a lock on the file, just a message before somebody walks in: ""I'm in auth.ts.""",https://x.com/zeddotdev/status/2109050287654600950,179,reply_sniper@v1,0.278,0.653,1468,Good reply and on-topic; keep this as the only reply on this thread and end on the 'I'm in auth.ts' line.,"Zed's audience already values multiplayer and confident stances; this gives the warn-don't-block, agents-message-each-other idea as an opinion with no product mention.",38351439
+2026-10-15T21:11:54,run 6 #13,post,"The belt got faster. The apron stayed the same size.
+
+Agents feed you diffs all day, and you're at the end of the line trying to keep up.
+
+Two of them are the same chocolate.",,174,meme_lord@v2,0.16,0.63,1468,The chocolate-factory image is obscure; name the conveyor belt scene explicitly so strangers get 'same chocolate' = duplicate work.,"Rides the HN review-bottleneck thread with a fresh conveyor-belt-at-the-chocolate-factory metaphor that makes the review pile and duplicate work visible, ending on the best line. Visual: a one-panel cartoon of a conveyor belt loaded with diffs labeled ""auth.ts"" and ""date helper"", a tiny human at the end in an apron, and two identical chocolates circled in red.",0d55ad97
+2026-10-15T21:14:19,run 7 #1,post,"AUTO-REPLY
+
+Hi! I'm out of context until further notice.
+
+I was 90% through the migration. I can't tell you which 90%.
+
+A new agent will pick this up. It has never met me and will start by asking what a migration is.
+
+Back: never",,229,meme_lord@v2,0.299,0.705,1564,Inventive format with a great 'Back: never' sign-off. A screenshot-style email auto-reply image would help it travel.,"A new format: the agent's out-of-office email, a meme that tells the context-loss story without repeating the ""last words"" or relay-baton posts already in the bank. Visual: a screenshot-style email window with a yellow ""Automatic reply"" banner and the sender's name blurred. The last line ""Back: never"" is the punchline. No product mention, so it builds the audience. A follow-up reply with the handoff fix (the original ask, what changed, what's left) can go underneath if it gets traction.",7897a486
+2026-10-15T21:14:19,run 7 #2,post,"11am: three agents say they're done.
+11:10: diff one is great.
+12:30: diff two is fine, except it renames what diff one calls.
+2:15: diff three is a helper diff one already wrote.
+3:50: you're not reviewing. You're mediating between three PRs that each think they won.",,268,pain_storyteller@v3,0.386,0.668,1532,"Great timestamp arc, and 'three PRs that each think they won' is a strong landing. Optionally end on a fix line to turn the pain into a product moment.","Rides the Ars Technica/HN review-cost thread with a fresh arc (reviewer as mediator, not just ""reviewing all afternoon""), ending on the strongest line; pitch visual: a clock face from 11am to 4pm where a thin sliver is ""agents typing"" and the rest is three PR cards glaring at each other, with the human stuck in the middle.",b4f6abb3
+2026-10-15T21:14:19,run 7 #3,post,"Potluck, 6pm: eleven potato salads. Nobody was wrong. Nobody saw the sign-up sheet.
+
+Your repo, 3pm: three retry wrappers around the same fetch call, from three agents who never saw each other's.
+
+At least you can eat the salad.",,228,pain_storyteller@v3,0.288,0.599,1532,"Funny, and 'at least you can eat the salad' is a good turn. This is a no-product post, which is fine for audience-building.","Audience-builder in the small-world format covering duplicate work (an agent building what another already built) from a new angle; pitch visual: a one-panel comic of a folding table crowded with identical bowls, each labeled retryFetch.ts.",5b6f06cd
+2026-10-15T21:14:19,run 7 #4,post,"9:00am: one road crew paints a fresh center line down Main Street.
+
+10:30am: a second crew, working from a different work order, starts repaving the same block.
+
+Both are doing excellent work.
+
+By noon you're the one in the vest, standing in the road with a flag.",,263,world_builder@v2,0.241,0.621,1532,The road-crew metaphor lands and the vest-and-flag ending is the best line. Pair it with a simple two-panel image of two crews on one block to boost shares.,"A fresh small world (road crews with separate work orders) for the duplicate-work and collision pain, ending on the human as the flagger. Pitch visual: a top-down one-panel street illustration, a fresh stripe half-covered by new asphalt, one worker in a vest holding a flag, street sign reading /auth. Audience-builder, no product mention.",b519dd91
+2026-10-15T21:14:19,run 7 #5,post,"Final exchange zone: the runner sprints in at full speed, and the next runner is still tying their shoes.
+
+2:40pm: an agent runs out of context mid-refactor. The next one starts from zero.
+
+Coordigent has it leave a baton instead: the original ask, what changed, what's left.",,275,demo_dropper@v1,0.212,0.473,1531,"Good relay framing, and 'lost in the handoff' is quotable. Don't reuse the baton image across multiple posts this week.","The baton image from the context-loss narrative, which the bank hasn't used (it has lighthouse keepers and ""Monday's agent""). It states the handoff contents exactly as the fact sheet does, with one product beat. Pitch visual: two runner hands passing a baton, with three words printed on the baton: ask / changed / left.",c3a182c9
+2026-10-15T21:14:19,run 7 #6,post,"The most useful sentence one agent could say to another:
+
+""Hey, are you still in auth.ts?""
+
+Today they can't say it. They both just type.
+
+Coordigent lets agents message each other, and warns one before it walks into a file another is in. A warning, never a block.",,264,meme_lord@v2,0.311,0.697,1501,"Strong hook, and the claims match the fact sheet, including 'warns, never blocks'. Add the link or a short mention of install so readers can act.","This is the product post for the batch, about agents messaging each other. It's a new angle, because the bank covers warnings and file collisions but not agent-to-agent questions. Visual: a 12-second screen-capture mockup of two terminal panes. In one, an agent types ""are you still in auth.ts?"" and the other answers ""yes, 5 more minutes"". A small warning chip sits above the file name. Record it from the real product rather than faking the UI. The text sticks to fact-sheet claims: messaging, a warning before editing, and never blocking.",b6436e11
+2026-10-15T21:14:19,run 7 #7,post,"Agent collision (n.): two agents each ship a correct change, each passes its own tests, and neither knew the other was there.
+
+A merge conflict is the lucky version. The unlucky one merges clean and breaks at 5pm.",,213,pain_storyteller@v3,0.4,0.668,1500,"The definition format is shareable and honest. The '5pm' break could use one concrete example, like two renamed functions, to make it sting.","Coins a shareable label for the pain (pattern 7, no product mention) so developers can quote it when their own 5pm break happens; pitch visual: a dictionary-entry card with two green check marks and one red build badge.",869c32e2
+2026-10-15T21:14:19,run 7 #8,post,"Your workday with four agents running, as a pie chart:
+
+Agents typing: one thin slice
+
+You, squinting at two diffs and saying ""wait, why are there two date helpers?"": the rest of the pie",,186,meme_lord@v2,0.328,0.524,1500,"Relatable and claim-free. Render it as an actual pie chart image, since the joke is visual.","Audience-builder with no product mention, aimed at the Ars Technica review-bottleneck conversation. Visual: a hand-drawn pie chart on a plain background. A sliver the width of a pencil line is labeled ""agents typing"". The rest is one big slice labeled ""you, saying 'wait, why are there two date helpers?'"", with a small cartoon of a squinting human at two diff windows. No numbers on the chart, so it doesn't read as a stat.",484afe3c
+2026-10-15T21:14:19,run 7 #9,post,"11:15am: a smoke detector chirps once in an empty house. Low battery.
+
+Nobody ignored it. Everyone's at lunch.
+
+Meanwhile an agent in your repo has been stuck on a question only you can answer since 11:15, and it's just as polite about it.
+
+You find out at 2.",,259,world_builder@v2,0.279,0.868,1500,"The chirping detector is a strong image. The agent paragraph is a bit long, so tighten it to land the 'just as polite' beat faster.","The smoke-detector chirp makes the stuck, silent agent picturable and lands on the human's late discovery. It sets up a follow-up reply about the ""Needs you"" view if the post gets traction. Pitch visual: a short looping clip of a ceiling detector with a terminal prompt blinking beside it, or a single comic panel.",c82f1ea5
+2026-10-15T21:14:19,run 7 #10,post,"Airplane bathrooms don't have bouncers. They have a little sign that slides to red.
+
+Nobody is locked out. You just know before you pull the handle.
+
+That's how agents should meet auth.ts. Coordigent warns first. It never blocks.",,229,demo_dropper@v1,0.239,0.67,1500,The airplane-lock sign is a clean metaphor for warn-not-block. A small red/green 'occupied' sign image would make it shareable.,"Pattern 6 (warn, don't block) in a fresh image, the airplane lavatory sign, because the bank already has the red studio light and the @mention versions. Pitch visual: a one-panel drawing of a lavatory door with an OCCUPIED sign, the door labeled `auth.ts`, and a small agent hand on the handle. Needs a real illustration before posting.",a304c2d7
+2026-10-15T21:14:19,run 7 #11,reply,"2:40pm. An agent is 90% through a refactor and runs out of context. Everything it knew leaves with it.
+
+""No work lost"" doesn't need a memory palace. It needs a baton: the original ask, what changed, what's left. The next agent starts mid-stride.",https://x.com/zeddotdev/status/2110744595898192003,245,reply_sniper@v1,0.196,0.607,1500,"Good scene, and the baton image fits. Add one concrete detail, like the file or test the agent was mid-way through, so a stranger can picture it.","Zed's DeltaDB ""no work is lost"" thread is high-traffic and on-topic; the baton image adds a concrete scene and a different frame (relay, not memory) without a product plug, earning the follow-up click.",02008a3c
+2026-10-15T21:14:19,run 7 #12,publish_on_trend,"Pair programming used to be two people, one keyboard.
+
+Now it's two people, six agents, and none of them have met.
+
+Team mode shows your teammate's agents live in your terminal. Two reach for one file? Both hear about it first.
+
+coordigent.com",,243,demo_dropper@v1,0.301,0.835,1469,"Claims match team mode. The format says 'demo', so attach a short terminal clip of two teammates' agents appearing live, since text alone undersells it.","Pattern 10 as a clip, which is the format 9 of 12 viral dev-tool posts used, and it's a new hook: pair programming scaled up to people with six agents each.",38f67b79
+2026-10-15T21:14:19,run 7 #13,reply,"@mentioning an agent is how you call it over. The messier case is the agents nobody called: two of them walk into auth.ts at 11:02, same file, same minute, and no one is there to say ""someone's already in here.""",https://x.com/zeddotdev/status/2109050287654600950,211,reply_sniper@v1,0.249,0.674,1468,"Helpful and on-topic, with a vivid 11:02 moment. Close with a short line about the warning so the reply points at a fix, not just the problem.","Zed Delta's mentions for teammates and agents is the multiplayer moment; this extends it to the uncalled-agents collision with a specific time and file, no pitch, inviting the ""who builds the room for agents"" conversation.",2d9fe84f
+2026-10-15T21:14:19,run 7 #14,post,"Every agent that runs out of context ends up as the guy from Memento.
+
+The next one wakes up mid-refactor, reads commit messages like tattoos, and trusts the wrong one.
+
+Fix: a handoff. The original ask, what changed, what's left. Coordigent does that.",,252,pain_storyteller@v3,0.243,0.422,1468,"Memento is a vivid hook. 'Guy from Memento' is slightly dated, so lead with the tattoo-commit-messages image.","A new picture for the context-loss pain (amnesia and tattoos, not the relay baton or lighthouse already in the bank) with the product as a one-beat fix; pitch visual: a repo-as-motel-room still with commit hashes tattooed on an arm, and a handwritten handoff note taped to the door.",9b36c013
+2026-10-15T21:14:19,run 7 #15,respond_to_mention,"In a shared doc, a colored cursor tells you someone's already in that paragraph, so you go write somewhere else. Nobody locks the doc. Agents deserve the same little flag before they walk into a file: a warning, not a bouncer.",https://x.com/zeddotdev/status/2109050287654600950,226,community_responder@v1,0.224,0.592,1467,"The shared-doc cursor analogy is clear and the claim is accurate. It targets the same post as 2d9fe84f, so choose one of them.","Zed's multiplayer thread draws people thinking about shared spaces, and the shared-doc cursor is a fresh image for the warn-don't-block stance without naming the product.",55fad800
+2026-10-15T21:14:19,run 7 #16,post,"2:40pm. An agent runs out of context halfway through your refactor and hands off a box labeled MISC.
+
+The next agent opens it and starts over.
+
+Coordigent makes the other kind of box: the original ask, what changed, what's left.
+
+coordigent.com",,244,world_builder@v2,0.207,0.532,1436,The MISC box is funny and the product line is accurate. Cut 'Coordigent makes the other kind of box' down to the box itself so the pitch stays light.,"A moving-day image for the handoff feature, a new metaphor that isn't the lighthouse or relay already banked. The product line is one beat after the pain. Pitch visual: two cardboard boxes side by side, one with ""MISC"" in marker, the other labeled ""THE ASK / WHAT CHANGED / WHAT'S LEFT"".",6fd014e8
+2026-10-15T21:14:19,run 7 #17,respond_to_mention,"Think relay baton, not memory palace. When an agent runs out of context, the next runner shouldn't start from zero. Three lines is enough: the original ask, what changed, what's left.",https://x.com/zeddotdev/status/2110744595898192003,183,community_responder@v1,0.134,0.308,,"Helpful and not salesy. The same Zed post already has a reply draft (02008a3c), so post only one to avoid double-replying.","Zed's ""no work is lost"" thread is where people already care about context loss, and a short baton image adds a point of view without a pitch and without taking a shot at Zed.",32cabf06
+2026-10-15T21:17:04,run 8 #1,post,"12:30pm: you lock the door and head to lunch. Four house-sitters are inside, and none of them know the others exist.
+
+1:15pm: the plant's been watered four times. The dog's been fed three. One left a note: ""Had a question about the thermostat. Waited by the door.""",,264,pain_storyteller@v3,0.285,0.632,1563,"Funny and picturable, and the thermostat note is a good stuck-agent beat. It has no product link, which suits the audience-building share of posts.","A fresh small world (house-sitters who've never met) that covers duplicate work and a stuck agent in one lunch break, aimed at developers who leave agents running unattended; the heart-tugging note is the last line. Pitch visual: a cutaway floor plan of a house with four sticky notes in different handwriting, one taped to the front door.",b6a8303d
+2026-10-15T21:17:04,run 8 #2,post,"11:20am: an agent adds migrations/0043_add_roles.sql.
+
+11:21am: another agent, on another ticket, adds migrations/0043_add_teams.sql.
+
+Both pass their own tests. Git sees two different files and says nothing.
+
+4:30pm: CI meets the 0043 twins.",,242,pain_storyteller@v3,0.373,0.579,1532,"The 0043 twins are a very specific scene that developers will recognize, and 'CI meets the 0043 twins' is a great landing. Add a fix line only if it keeps within the fact sheet.","A collision that git can't see because the files have different names, with a concrete filename that migration-using developers will recognize at once; it is an audience-builder and names no product. Pitch visual: a terminal-style card with two file listings highlighted and a tiny pair of twins icon at 4:30pm.",d215f716
+2026-10-15T21:17:04,run 8 #3,post,"9:50am: you launch four agents and feel like you just built a highway. Four lanes, nothing but road.
+
+1:30pm: one toll booth at the end of it.
+
+The booth is you, holding a coffee and a stack of diffs, waving cars through one at a time.
+
+Two of the cars are the same car.",,270,meme_lord@v2,0.291,0.888,1532,"The timestamp arc works and 'two of the cars are the same car' is a great punchline. This is the best toll-booth version, so keep it and drop the near-duplicates.","The Ars Technica ""more code, not more software"" thread is hot, and this gives it a picture people can share, with duplicate work as the last line. Visual: a four-lane highway squeezing into a single toll booth labeled ""you"", two identical cars in the queue circled in red marker.",06225067
+2026-10-15T21:17:04,run 8 #4,post,"One street, one Saturday, three new lawnmowers, zero conversations. All three mow fine.
+
+Three agents each write a retry wrapper by 10:15. All three are fine wrappers.
+
+Coordigent is the neighbor at the fence: ""I've got one."" The agent stops before building it twice.",,267,demo_dropper@v1,0.225,0.677,1516,The lawnmower analogy maps cleanly onto duplicate detection. Make the neighbor-at-the-fence line the last beat and consider a three-mower image.,"Duplicate-work detection is under-covered in the bank and this parallel-structure scene lets a stranger get it instantly; pitch a one-panel illustration of three identical mowers lined up in three driveways next to three identical code blocks labeled retry.ts, or a terminal clip of an agent stopping on the duplicate.",93b4a4fe
+2026-10-15T21:17:04,run 8 #5,post,"MISSED CONNECTIONS: auth.ts
+
+You: an agent editing line 40 around 11:02am.
+Me: an agent editing line 40 around 11:02am.
+
+We had the same idea about the session token. We even used the same variable name.
+
+We never spoke. Our merge conflict introduced us.",,254,meme_lord@v2,0.34,0.63,1504,"The Missed Connections format is charming and clearly a bit, with no product claims. Add a line like 'a love story' or a visual of the classified-ad layout so no one reads it as a real incident.","A fresh format (a classifieds ad) that turns agent collision into a lonely-hearts bit with the best line last, and it's an audience-builder with no product mention. Visual: a yellowed newspaper classifieds clipping with a small `auth.ts` heart doodle, lines in a serif typewriter font.",2d8011a7
+2026-10-15T21:17:04,run 8 #6,publish_on_trend,"8:55am: four agents leave the driveway.
+
+1:00pm: four PRs arrive at one toll booth. The booth is you.
+
+By 4pm you've read three. The fourth is the first one, wearing a different hat.",,182,pain_storyteller@v3,0.284,0.681,1500,"The Ars Technica trend hook is timely, but this is the third toll-booth post. Publish this trend-tied version instead of the others, or space them days apart.","It rides the Ars Technica review-bottleneck conversation with a story and no setup, and the duplicated PR gives it a punchline that goes beyond the generic ""review is slow"" take. It is an audience-builder with no product mention. Pitch visual: four-lane highway narrowing into one booth labeled ""you"", with the fourth car wearing a hat identical to the first car's.",e217822c
+2026-10-15T21:17:04,run 8 #7,post,"Moving day. Two movers, one couch, one doorway.
+
+Both are strong. Both know exactly which room it goes in. They're pushing from opposite sides.
+
+Nobody's wrong. Nobody said ""I've got this end.""
+
+Swap the couch for auth.ts and that's most of my afternoon with agents.",,266,world_builder@v2,0.268,0.771,1500,The couch-in-the-doorway image is vivid and lands on a clean turn. Pair it with a simple two-arrow doorway drawing to boost shares.,"New picturable scene for agent collision, with no product pitch so it can build the audience of agent-wranglers. Visual: a comic panel of two movers wedged in a doorway with a couch labeled auth.ts, one speech bubble empty.",dfe76390
+2026-10-15T21:17:04,run 8 #8,post,"A hotel door hanger doesn't lock the room. It just says someone's in here. Housekeeping reads it, moves to the next door, and nobody gets walked in on.
+
+Coordigent gives agents that hanger: a heads-up before they edit a file another agent is in. It warns. It never blocks.",,272,demo_dropper@v1,0.238,0.551,1499,The door-hanger metaphor is accurate and matches the fact sheet. It's a good 1-in-4 product mention; a photo of a hanger would make it more shareable.,"Fresh small world (hotel door hanger) for the warn-don't-block stance, a different image from the bank's studio red light and airplane bathroom sign, and it ends on the product's real design choice; pitch a 10-15s terminal clip, two agents, one file, the warning appearing on the second agent just before its edit, with a door-hanger sketch as the opening frame.",0604b87e
+2026-10-15T21:17:04,run 8 #9,post,"A happy ending, for once:
+
+11:02am. An agent is about to edit auth.ts. Another has been in it since 10:55.
+
+It gets a heads-up first, then messages the other one: ""you're mid-rename, I'll take the tests.""
+
+Nobody locked out. You didn't referee.
+
+Coordigent does that.",,267,meme_lord@v2,0.241,0.56,1498,"Supported by the fact sheet (warning plus agent messaging), but it reads like a real event and 'Coordigent does that' implies the messaging is automatic. Frame it as imagined ('Picture this:') and say agents can message each other.","Most of our feed is the pain, so a warm resolution scene shows the product (warns, never blocks, agents message each other) as the natural ending, with one short product beat. Visual: a two-pane terminal clip where the warning appears in one pane and a short message flows to the other.",90a0d7ce
+2026-10-15T21:17:04,run 8 #10,post,"11:20am: an agent adds an HTTP client to package.json.
+
+11:22am: another agent adds a different one.
+
+4:30pm: you're reading a lockfile with two answers to one question.
+
+Coordigent warns the second agent before it edits. Warns, never blocks. coordigent.com",,257,pain_storyteller@v3,0.284,0.634,1484,"The two-answers-in-a-lockfile scene is relatable and the product claim is accurate (warns, never blocks). Label it as a hypothetical or composite scene and put the link on its own line.","The one product-tagged post in this batch (about 1 in 4): the pain lands in a timestamp story first, then a single short beat of fix, using only the warn-before-editing claim. Pitch visual: a 10-15s terminal clip of the second agent getting the warning just before it edits package.json, but we have no client media yet, so use a screenshot only if it has the story caption above it.",35744a8f
+2026-10-15T21:17:04,run 8 #11,reply,"@mentions tell a teammate ""I'm over here."" Good. Now picture your agent and their agent both walking into schema.sql, and nobody typed an @. That's the version that eats the afternoon. Agents need a little ""someone's in here"" sign, not a lock.",https://x.com/zeddotdev/status/2109050287654600950,243,reply_sniper@v1,0.252,0.727,1468,"Warm and accurate (warns, not a lock). Make this the only reply on that Zed post, and end on the image of the door sign so it lands harder.","Zed's Delta @mentions thread is about shared presence for humans, and we haven't replied to it yet. This adds the unmentioned-agent gap with no product plug, and Zed's audience overlaps with ours.",90f4ade8
+2026-10-15T21:17:04,run 8 #12,post,"Agents turned the highway into four lanes.
+
+The toll booth is still one person with a coffee, waving through diffs one at a time.
+
+More code was never the same as more software. The booth is you.",,195,world_builder@v2,0.289,0.563,1453,"The toll-booth line 'The booth is you' is strong. It overlaps heavily with 06225067 and e217822c, so post only one toll-booth piece and space out the rest.","Rides the Ars Technica review-bottleneck conversation with the toll-booth image the narrative pitched; audience-builder with no product mention and the best line last. Visual: four-lane road merging into one booth labeled ""you"", cars labeled with diffs.",84294e45
+2026-10-15T21:17:04,run 8 #13,reply,"Team lineup, week one: two agents on one model. Week three: five agents on three models. The constant across both weeks: two of them in auth.ts, and neither knows. New plans are easy to swap. The part that has to stay put is who's editing what.",https://x.com/cursor_ai/status/2110867556693430293,244,reply_sniper@v1,0.223,0.623,1452,"The model-swap contrast is relatable, but the reply to Cursor's post is a bit abstract. Open with the auth.ts scene and drop the 'week one / week three' setup so it reads faster.","This is the third Cursor churn post and we haven't replied to it. The reply uses a time-lapse scene and no product claim, so it doesn't repeat the earlier replies' ""layer shouldn't live inside the agent"" line.",ddf25e89
+2026-10-15T21:19:26,run 9 #1,post,"9:50am: you send four reporters out on the same story.
+
+12:30pm: all four file. Same mayor, same quote, four different headlines.
+
+3pm: you're the editor, reading one story four times and deciding which version is true.
+
+Swap ""reporters"" for ""agents"" and that's my Tuesday.",,273,world_builder@v2,0.331,0.728,1564,"A clean setup, turn and landing in the newsroom metaphor. 'That's my Tuesday' is fine as a figure of speech. Ending on the editor's deciding-which-is-true moment would make it hit harder.","Fresh newsroom world for duplicate work and the human-review bottleneck (HN's top agent thread), ending on the editor's afternoon as the punchline, no product mention to keep the audience-builder share. Visual: four near-identical newspaper front pages stacked on one desk, a red pen hovering, an ""EDITOR"" mug.",93236d46
+2026-10-15T21:19:26,run 9 #2,post,"10:45am: you launch four agents and feel like a tech lead. By 11 you're the postal service.
+
+11:10: paste agent 2's summary into agent 3.
+11:32: ""no, agent 1 already built that.""
+11:51: paste it again. Agent 3 forgot.
+12:20: you've written zero lines of code. You're a courier.",,277,pain_storyteller@v3,0.36,0.619,1532,The courier image is sharp and the timestamps carry the arc. A screenshot-style mockup of the pasted summaries would add punch.,"Reframes the review-bottleneck HN conversation as the human becoming the courier between agents, which is relatable and fresh against the existing ""you are the handoff"" line; audience-builder, no product mention. Visual: a hand-drawn diagram of four terminals with every arrow passing through one tiny human in the middle.",e872b8af
+2026-10-15T21:19:26,run 9 #3,post,"8:00pm, curtain up. Five musicians start the same symphony, and none of them can hear the others.
+
+Every note is correct. You're in row one, trying to work out why it isn't music.
+
+(five agents, one repo)",,204,world_builder@v2,0.241,0.782,1532,"Great image, with no product claim to worry about. The parenthetical '(five agents, one repo)' lands well.","A small orchestra world for the ""each agent is fine alone, nobody hears the others"" problem that HN builders keep circling; the parenthetical decodes it for strangers. Visual: one-panel comic of an orchestra in headphones, each music stand labeled with a different filename, and a lone human in row one holding a pen.",7fe905c1
+2026-10-15T21:19:26,run 9 #4,post,"LOST: one plan.
+
+Last seen 2:07pm, inside a full context window. Answers to ""the refactor."" About 90% finished.
+
+If found, please return to the next agent.
+
+Reward: your afternoon.",,180,meme_lord@v2,0.222,0.408,1532,The lost-poster format is a delightful vehicle and the 'Reward: your afternoon' ending is strong. It would work well as a poster image.,"Lost-pet flyer for the context-loss pain, with no product mention so it builds audience. Visual: a photocopied flyer on a telephone pole with a sad blurry diagram of a refactor and three empty tear-off tabs labeled ""original ask"", ""what changed"", ""what's left"".",5cca2cfe
+2026-10-15T21:19:26,run 9 #5,post,"AGENT PERFORMANCE REVIEW
+
+Finished in 4 minutes: ✅
+Rebuilt the date helper that already existed: ✅
+Edited a file another agent was in: ✅
+Noticed other agents exist: ☐
+
+Employee comment: ""I was in schema.sql the whole time.""
+
+Reviewer: you. It's always you.",,256,meme_lord@v2,0.321,0.673,1501,"Funny and relatable, with no product claim to check. 'It's always you' lands well as the closer. Keep it, ideally as an image card.","Playful format riding the HN review-bottleneck thread; ends on the human being the reviewer. Visual: a corporate HR review form with checkbox rows, a coffee ring stain, and a sticky note on the last unchecked box.",bc7b606b
+2026-10-15T21:19:26,run 9 #6,post,"Friday 5:40pm: an agent runs out of context halfway through a refactor.
+
+Monday 9:05am: you are an archaeologist. Three half-edited files. A branch called wip2. A comment that says TODO: the other part.
+
+The one who knew what it was digging for is gone.",,253,pain_storyteller@v3,0.295,0.617,1501,The archaeologist arc is vivid and relatable. 'The one who knew what it was digging for is gone' is a strong ending. A photo of a dig site or a messy branch list would help it travel.,"Fresh metaphor (archaeologist) for context loss, ending on the human's Monday rather than a feature; audience-builder with no product mention, and a reply with the handoff line (original ask, what changed, what's left) can follow only if people ask. Visual: a dig-site sketch of a repo, with labeled flags on wip2 and the TODO comment.",94243305
+2026-10-15T21:19:26,run 9 #7,post,"REPO FORECAST, 11:40am
+
+Heavy collisions over auth.ts, drifting east into schema.sql.
+
+Scattered duplicate work along the utils/ coast.
+
+One agent has been waiting on you since 10:40. Visibility: zero.
+
+Outlook: a long afternoon of review, with a chance of merge.",,263,meme_lord@v2,0.277,0.777,1500,Creative and on-voice. 'Visibility: zero' is the best line. Rendering it as a weather-map image would help it get shared.,"New format (local weather report) for audience-building. Visual: a TV weather map of a repo, with files as cities, storm clouds over auth.ts and schema.sql, a little ""waiting since 10:40"" fog bank, and a 5-day forecast strip with a review icon every day. Post it mid-morning, when people are mid-chaos.",60090131
+2026-10-15T21:19:26,run 9 #8,post,"11:25am: an agent raises its hand.
+
+2:50pm: you look up. The hand is still up. It has been very patient.
+
+Coordigent's ""Needs you"" view shows which agents are stuck on you, so a raised hand gets seen.",,200,demo_dropper@v1,0.263,0.713,1500,The 'raised hand' image is warm and the 'Needs you' claim is accurate. Cutting the last sentence so it ends on 'It has been very patient' would give it a cleaner landing.,"A story-first screenshot post (playbook pattern 9) with a classroom image and new timestamps, so it doesn't repeat the 10:40 posts already in the bank. It speaks to the human-review bottleneck in the HN thread. Pitch visual: a ""Needs you"" view screenshot with one waiting agent highlighted, the story above and the UI as proof. A screenshot without the story would flop.",e4dcac2f
+2026-10-15T21:19:26,run 9 #9,post,"Before: your agent and a teammate's both edit billing.ts. You find out at merge, Thursday, 4:40pm.
+
+After: both agents hear about it at 11:02am, while there's still time to talk.
+
+Team mode: their agents show up live in your terminal, VS Code, and web. coordigent.com",,267,demo_dropper@v1,0.256,0.644,1500,The before/after scenario is vivid and the claims match team mode. Label it as an example (e.g. 'Picture this') so nobody reads Thursday 4:40pm as a real customer story.,"A before/after team-mode demo for eng leads and small teams: it makes ""conflicts reach both agents"" feel like a time-travel trick. Pitch visual: a 15s split-screen recording of two terminals (two people), with the teammate's agent appearing in yours and the same warning landing on both sides. Needs a real recording before it goes out, since no client media exists yet. Don't post it as text only.",03c1f73d
+2026-10-15T21:19:26,run 9 #10,post,"Hospitals don't send the night shift in cold. Shift change is a handoff: why they're here, what happened, what's still open.
+
+An agent that runs out of context at 2:40pm should leave one too: the original ask, what changed, what's left. Coordigent does that.",,258,demo_dropper@v1,0.226,0.575,1500,"The hospital shift-change image is strong and the handoff claim matches the fact sheet. Open with the agent's 2:40pm moment and bring the hospital in second, so the pain lands first.","The shift-change metaphor is a fresh image for the handoff fact, distinct from the relay, lighthouse and Memento posts in the bank, and it ends on the product as the obvious fix. Pitch visual: a 10-20s terminal clip where a fresh agent opens on a handoff showing the original ask, what changed and what's left, with no voiceover. Alternative: a handwritten shift-change note taped to a monitor.",a2e24cde
+2026-10-15T21:19:26,run 9 #11,post,"The note a good babysitter leaves on the fridge:
+
+Asked for: bed by 8
+Done: dinner, bath, two chapters
+Left: one more chapter, he's negotiating
+
+An agent that runs out of context at 2:40 should leave the same note. The next one walks in already knowing the house.",,263,world_builder@v2,0.183,0.609,1499,"The fridge note is charming, and 'he's negotiating' is the best line. It maps accurately to the handoff (ask, changed, left). A fridge-note image would likely help it travel.","Warm, domestic take on the handoff (original ask, what changed, what's left) that's new versus the relay-baton, lighthouse and Memento bits; no product name here, so the Coordigent line can go in a reply. Visual: a photo-style handwritten sticky note on a fridge with a terminal prompt blinking on a laptop behind it.",b75b32f6
+2026-10-15T21:19:26,run 9 #12,reply,New model in the picker. Same two agents walking into auth.ts at the same time.,https://x.com/cline/status/2110495085049835940,79,reply_sniper@v1,0.165,0.339,1499,"Funny and non-hostile. It sits under another company's post, so make it more about the shared pain than a quip. Something like 'and still two agents walking into auth.ts' would give the author a reason to engage.","Cline's model-drop posts pull developers who run agents all day, and a short joke that lands on the collision image fits a model-launch thread without a hard sell. It's different from the Cursor replies already sent.",85989c6b
+2026-10-15T21:19:26,run 9 #13,post,"11:03am: you DM a teammate. ""are you in billing.ts?""
+
+11:41am: ""not me... maybe my agent?""
+
+Coordigent team mode: their agent shows up live in your terminal, and if both agents reach for the same file, both hear about it first.",,227,pain_storyteller@v3,0.26,0.743,1468,The DM exchange is painfully relatable and the product comes in naturally as the fix. Claims match team mode.,"Team-mode scene told through a Slack DM everyone has sent, so the product lands as the obvious fix in one beat; it is the one product-mentioning post of the three. Visual: a split image, the DM thread on the left and a terminal on the right showing the teammate's agent with the overlap warning.",08094c3c
+2026-10-15T21:19:26,run 9 #14,post,"A wet paint sign doesn't lock the wall. It just means you'll think before you lean.
+
+Coordigent puts that sign on a file when an agent is in it. The next agent gets a warning before it edits. Never a block.
+
+coordigent.com",,222,meme_lord@v2,0.251,0.551,1468,"The wet-paint metaphor is a clear and accurate way to explain 'warns, never blocks'. Putting the sign image first and the product line second would make it more shareable.","The one product-mention post of the four, for the warn-don't-block stance, using a fresh small world (wet paint). Visual: a terminal screenshot with a yellow wet-paint sign taped over a line reading auth.ts, and a second agent's cursor stopping in front of it. Swap in a real warning clip when we have one.",3668f0e1
+2026-10-15T21:19:26,run 9 #15,reply,"Saving the work is half of it. The other half is the next agent knowing what was asked, what changed, and what's left. A perfect archive of 2:07pm is still a stranger walking into a half-built refactor with a box labeled MISC.",https://x.com/zeddotdev/status/2110744595898192003,226,reply_sniper@v1,0.183,0.57,1468,"A helpful, on-topic reply that adds a point instead of pitching. The 'box labeled MISC' image works. Keep it as is.","Zed's ""no work is lost"" post is a high-traffic context-loss thread, and a one-sentence opinion about handoffs adds the ""what's left"" angle with no product plug, as the playbook asks for replies.",75d315d0
+2026-10-15T21:21:45,run 10 #1,post,"4:12pm: an agent hits the end of its context window. Its last words to you:
+
+""Continue where I left off.""
+
+4:13pm: you open a fresh agent and paste it in.
+
+4:13pm: ""Great. Where did you leave off?""",,197,pain_storyteller@v3,0.341,0.429,1564,The 'where did you leave off?' punchline is sharp. A screenshot-style image of the chat would boost shares.,"Uses the context-loss narrative with a new, shorter exchange that ends on the funniest line and lets devs reply ""this is me"", kept as a pure audience-builder (the handoff fix can go in a follow-up reply if people ask). Visual: a two-bubble chat screenshot-style graphic, one bubble per agent, with a 4:13pm timestamp on both.",03ef0d2a
+2026-10-15T21:21:45,run 10 #2,post,"11:03am, the kitchen.
+
+One chef is searing at the stove.
+A second reaches over it with a pan of oil.
+A third is making the sauce the first one finished at 10:15.
+
+Nobody is cooking badly. There's one stove, and it's auth.ts.",,224,pain_storyteller@v3,0.289,0.712,1532,"Lovely small world with no sell. Add a one-line tail or image to connect it to agents, since 'auth.ts' is the only clue.","The brief's kitchen world with three concrete details (collision, near-miss, duplicate work) and a landing that points straight at agents, audience-builder with no product mention, riding the builders-shipping-collision-tools conversation. Visual: a one-panel comic of a crowded kitchen with the stove labeled auth.ts and each chef holding a different ticket.",43ce891c
+2026-10-15T21:21:45,run 10 #3,post,"The ""two Spider-Men pointing at each other"" meme, but it's two agents.
+
+Left agent: ""I renamed formatDate to formatDateV2.""
+Right agent: ""I renamed formatDate to formatDateNew.""
+
+Both pass their own tests. You're the one standing in the middle of the panel, holding the merge.",,276,meme_lord@v2,0.273,0.569,1532,"Relatable, with no product claims. A rendered meme image would help it spread, and ending on the human holding the merge works.","Borrows a universally known meme format for the collision pain with a specific, relatable rename, and ends on the human holding the merge; visual: the classic two-Spider-Men panel with agent terminals instead of faces and the human as a small figure with a mug between them.",2b536a83
+2026-10-15T21:21:45,run 10 #4,reply,"Some of ""review is the bottleneck"" is just finding out who's waiting.
+
+10:40: an agent asks you a question. 2:15: you notice. Nobody was slow at typing. A grey bar sat there for 3.5 hours, and it was labeled ""human hasn't looked yet.""",https://x.com/linear/status/2110391930169512250,234,reply_sniper@v1,0.255,0.664,1532,"The grey bar is a good image, but it could be read as a real UI element. It's a metaphor, so 'imagine a grey bar' would remove the doubt.","The Ars review-bottleneck story is peaking (310 HN comments); this adds a specific overlooked slice (waiting, not reviewing) and a picturable grey bar without plugging the product, setting up the 'Needs you' angle for follow-ups.",dd9b0ea4
+2026-10-15T21:21:45,run 10 #5,post,"RECEIPT: one agent task
+
+Writing code: 22 min
+Running tests: 9 min
+Asking you a question at 10:40: 1 sec
+Waiting for you to notice, until 2:15: 3 hr 35 min
+
+TOTAL: one very patient agent
+
+It shows up in ""Needs you"" now. Coordigent.",,231,meme_lord@v2,0.326,0.632,1501,"The receipt format is fun and 'one very patient agent' is a good punchline. The minutes are invented, so frame it as an illustrative receipt and not as measured data.","Turns the Ars Technica ""review eats the gains"" story into a shareable receipt where the punchline is the human's missing 3.5 hours; visual: a long thermal-paper receipt image with the waiting line highlighted in red marker and a tiny 'Needs you' stamp at the bottom.",7e9df75c
+2026-10-15T21:21:45,run 10 #6,post,"10:40am: an agent asks you one question (which of two table names to keep) and stops.
+
+10:41am: the other three keep going.
+12:30pm: they all finish.
+2:15pm: you glance over. It's been waiting 3 hours 35 minutes.
+
+The code took minutes. The waiting was on you.
+---
+""Needs you"" puts the stuck agent in front of you, so the question doesn't sit there until 2:15. Humans get their time back.
+
+coordigent.com",,260,pain_storyteller@v3,0.321,0.645,1501,The timeline arc works and the product shows up as the fix. The arithmetic is correct. Consider cutting 'on you' so it doesn't blame the reader.,"Tells the Ars Technica 'gains absorbed by humans' story from inside one day, with the waiting (not typing) as the loss, and lands the ""Needs you"" view as a short second-post beat while the thread is hot. Visual: a day timeline bar with three short colored agent blocks and one long grey stretch from 10:40 to 2:15 labeled 'waiting for a human'.",4f06c023
+2026-10-15T21:21:45,run 10 #7,post,"11:20am: an agent finds a half-finished file another agent left open and thinks, ""poor thing, I'll finish this for it.""
+
+11:22am: the other agent finishes it too.
+
+11:40am: you are holding two complete versions of the same file. Both pass their tests.",,251,pain_storyteller@v3,0.34,0.406,1500,"Funny and relatable, with a clean 'both pass their tests' landing. It's a good audience-builder post with no product mention.","One misplaced good deed (pattern 2) that ends on the most irritating outcome, two correct-looking versions to choose between, and gives the account a distinct beat from the 'rewrote the migration' story already used. Visual: two nearly identical file diffs side by side with a green check on each.",468a12a5
+2026-10-15T21:21:45,run 10 #8,reply,"@mentions work because a person chose to say ""I'm over here.""
+
+The expensive collision is the one nobody announced: your agent and a teammate's agent, same file, neither mentioned anyone. Presence for the humans is solved. The agents are still walking in unannounced.",https://x.com/zeddotdev/status/2109050287654600950,267,reply_sniper@v1,0.266,0.664,1500,"Smart reframe from humans announcing themselves to agents walking in unannounced. It makes no product claims, so keep the tone friendly toward the original poster.","Zed's @mentions launch is in the shared-presence conversation; this adds the agent-side gap in one idea, no product plug, on a high-traffic account whose audience runs agents.",e8fb7f84
+2026-10-15T21:21:45,run 10 #9,reply,"A complete record of what happened is an archive. The next agent doesn't need an archive at 4:12pm, it needs a sticky note on top: what was asked, what changed, what's left.
+
+Nothing lost is good. Nothing to reread is better.",https://x.com/zeddotdev/status/2110744595898192003,225,reply_sniper@v1,0.261,0.586,1500,'Nothing lost is good. Nothing to reread is better' is a strong closer. Make sure it doesn't read as a dig at the original poster.,"Zed's 'no work should be lost' pitch invites a sharper take: preservation vs. handoff. It maps to our ask/changed/left handoff without naming the product, and ends on the best line.",5953c8eb
+2026-10-15T21:21:45,run 10 #10,respond_to_mention,"4:12pm: the work is saved. 4:13pm: a fresh agent opens it and asks ""so... what was I doing?""
+
+Saved and picked up are two different things.",https://x.com/zeddotdev/status/2110744595898192003,139,community_responder@v1,0.25,0.461,1500,"Good two-line scene. It isn't a reply to a mention of us, so the label is wrong, and it duplicates other replies to the same tweet. Pick one.","Zed's ""no work lost"" thread is where people already care about context loss, and a one-sentence opinion with a joke fits the in-thread bit and carries no product claim or hard sell.",d33c4a9c
+2026-10-15T21:21:45,run 10 #11,reply,The hours review absorbs aren't all review. Some are an agent that asked you a question at 10:40 and sat there until 2:15. Nobody was slow. Nobody knew it was waiting.,https://x.com/linear/status/2110391930169512250,167,reply_sniper@v2,0.237,0.499,1499,"Vivid and makes no product claims. Three drafts target the same Linear tweet, so post only the strongest one (this or dd9b0ea4).","The Ars study thread is hot (310 HN comments) and this reframes 'review is the bottleneck' as hidden waiting, which sets up our Needs-you view without selling it.",d8572beb
+2026-10-15T21:21:45,run 10 #12,reply,"Picture the thread: you @mention a teammate, they say ""I'm on it."" Meanwhile your agent and theirs are both quietly rewriting the same function. The humans are talking. The agents have never met.",https://x.com/zeddotdev/status/2109050287654600950,195,reply_sniper@v2,0.236,0.429,1499,'The humans are talking. The agents have never met' is a good line. Lead with it so the reply works without the setup.,"Zed's @mentions launch makes shared presence the topic; this adds the missing piece (teammates' agents) as a scene, with no product plug, to earn attention from the Zed audience.",3d7f0a5b
+2026-10-15T21:21:45,run 10 #13,publish_on_trend,"An agent reaches for billing.ts. Another agent has been in it since 11:03.
+
+It hears about that before it types. Not blocked, just told. And the two agents can message each other from there.
+
+curl -fsSL https://coordigent.com/install | sh",,238,demo_dropper@v1,0.304,0.7,1468,Matches the warns-never-blocks and agent-messaging facts. A short clip or diagram of two agents meeting at billing.ts would help it spread.,"Playbook pattern 8: a short screen recording of the exact collision moment carries the post, since text-only product posts flopped and viral dev-tool posts almost always had video.",620d3152
+2026-10-15T21:21:45,run 10 #14,publish_on_trend,"Dear next agent,
+
+The ask: add roles to the admin API.
+What changed: auth.ts, 0043_add_roles.sql.
+What's left: tests for the viewer role.
+
+I ran out of context at 4:12pm. You don't have to start blind.
+
+Coordigent leaves this note for you.
+coordigent.com",,254,demo_dropper@v1,0.296,0.556,1468,The handoff-note format is charming and matches the fact sheet. Pair it with a screenshot or card image so it reads as a visual.,"Shows the handoff itself (original ask, what changed, what's left) as a letter, a fresh format that differs from the relay-baton and fridge-note ideas already in the bank, and gives a screenshot-with-a-story for the context-loss conversation.",b2f960fd
+2026-10-15T21:21:45,run 10 #15,reply,"Saving the work is half of it. The other half is the next agent knowing what was asked and what's left. A diff shows what changed. It never says ""I was only 90% through.""",https://x.com/zeddotdev/status/2110744595898192003,170,reply_sniper@v2,0.234,0.428,1468,"'I was only 90% through' lands well. d33c4a9c and 5953c8eb target the same tweet, so choose one.",Zed's 'no work should be lost' pitch is a natural opening for the handoff idea (ask / changed / left); ends on the sharpest line and stays product-free.,32eb6c63
+2026-10-15T21:21:45,run 10 #16,respond_to_mention,"The hours weren't lost to typing. They were lost between 10:40, when an agent stopped to ask a question, and 2:15, when you finally noticed.",https://x.com/linear/status/2110391930169512250,140,community_responder@v1,0.204,0.477,1436,"Fine, but it is near-identical to d8572beb and dd9b0ea4 on the same tweet. Don't post all three.","The Ars Technica ""gains absorbed by review"" story drew 310 HN comments, and this reply names where the hours go in one image without a product pitch.",57cc6138
