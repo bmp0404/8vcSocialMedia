@@ -2,17 +2,18 @@ import argparse
 import json
 from datetime import datetime
 
+from harness import actions as action_space
 from harness import bandit, config, dataset, memory
 from harness.backtest import backtest
 from harness.evolve import _examples, evolve, leaderboard
-from harness.learn import learn
 from harness.hooks import sharpen_hooks
+from harness.learn import learn
 from harness.llm import get_llm
 from harness.minds import decide
 from harness.orient import orient
 from harness.qualify import qualify
-from harness.reward import score
 from harness.review import serve
+from harness.reward import score
 from harness.sources import observe
 from harness.tournament import tournament
 
@@ -48,7 +49,10 @@ def run(args) -> None:
     )
     kept = qualify(llm, mission, actions)
     ranked = tournament(llm, mission, kept, rounds=args.rounds, field=args.field)
-    ranked = sharpen_hooks(llm, mission, ranked, top=args.hooks)[: args.top]
+    ranked = sharpen_hooks(llm, mission, ranked, top=args.hooks)
+    # --top caps public posts; outreach and holds are few and each needs a person's look anyway.
+    ranked = [a for a in ranked if action_space.is_public(a)][: args.top] + [
+        a for a in ranked if not action_space.is_public(a)]
 
     run_id = memory.save_run(actions)
     config.OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -60,10 +64,11 @@ def run(args) -> None:
 
     print(f"\nTop {len(ranked)} recommendations (run {run_id}) -> {out}\n")
     for i, a in enumerate(ranked, 1):
-        target = a.target_url or (f"@{a.target_handle}" if a.target_handle else "")
+        target = a.target_url or (f"@{a.target_handle}" if a.target_handle else "") or a.target_person or ""
         elo = f"elo {a.elo} {a.record}" if a.elo is not None else ""
         hook = " *hook" if a.pre_hook_text else ""
-        print(f"{i:>2}. [{a.predicted_score:.2f}] {elo:<14} {a.type:<7} {a.variant:<22} {a.text}{hook}  {target}")
+        print(f"{i:>2}. [{a.predicted_score:.2f}] {elo:<14} {a.type:<26} {a.channel:<10} {a.variant:<24} "
+              f"{a.text[:90]}{hook}  {target}")
     print("\nNext: `python -m harness review` to approve/kill, then `python -m harness evolve`.")
 
 
@@ -71,6 +76,15 @@ def record(args) -> None:
     with open(args.file, encoding="utf-8") as f:
         n = memory.record_outcomes(json.load(f))
     print(f"[record] stored {n} outcomes")
+
+
+def list_actions(args) -> None:
+    """The action space: every action type, its tool, channels, and who executes it."""
+    who = {name: [m for m, tools in config.mind_tools().items() if s.type in tools]
+           for name, s in action_space.BY_TYPE.items()}
+    print(f"{'tier':<5}{'type':<28}{'channels':<56}{'scored by':<11}minds")
+    for s in sorted(action_space.SPECS, key=lambda s: s.tier):
+        print(f"{s.tier:<5}{s.type:<28}{','.join(s.channels):<56}{s.audience:<11}{', '.join(who[s.type]) or '-'}")
 
 
 def stats(args) -> None:
@@ -86,7 +100,7 @@ def add_run_args(p) -> None:
     p.add_argument("--provider", help="override HARNESS_PROVIDER (anthropic|xai|openai|mock)")
     p.add_argument("--sources", help="comma-separated source plugins, overrides HARNESS_SOURCES")
     p.add_argument("--narratives", type=int, default=5)
-    p.add_argument("--minds", type=int, default=5, help="how many mind variants the bandit picks per run")
+    p.add_argument("--minds", type=int, default=8, help="how many mind variants the bandit picks per run")
     p.add_argument("--per-mind", type=int, default=4, help="drafts per mind variant (best-of-N pool)")
     p.add_argument("--rounds", type=int, default=4, help="pairwise tournament rounds (0 = off)")
     p.add_argument("--field", type=int, default=16, help="how many top drafts enter the tournament")
@@ -142,6 +156,9 @@ def main() -> None:
 
     p = sub.add_parser("stats", help="leaderboard of mind variants")
     p.set_defaults(func=stats)
+
+    p = sub.add_parser("actions", help="list the action space: types, channels, and which minds use them")
+    p.set_defaults(func=list_actions)
 
     args = parser.parse_args()
     args.func(args)

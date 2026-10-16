@@ -50,6 +50,20 @@ class AnthropicLLM(LLM):
             raise TruncatedError(f"{self.model} hit max_tokens={MAX_TOKENS}; ask this stage for less output")
         return "".join(b.text for b in resp.content if b.type == "text")
 
+    def complete_tools(self, system, prompt, tools, mock=None):
+        # Forced tool_choice ("any") is rejected by current models; strict schemas + the prompt steer instead.
+        resp = self.client.messages.create(
+            model=self.model,
+            max_tokens=MAX_TOKENS,
+            system=system,
+            tools=[{**t, "strict": True} for t in tools],
+            tool_choice={"type": "auto"},
+            messages=[{"role": "user", "content": prompt}],
+        )
+        if resp.stop_reason == "max_tokens":  # the last tool call's arguments would be cut off
+            raise TruncatedError(f"{self.model} hit max_tokens={MAX_TOKENS}; ask for fewer actions")
+        return [(b.name, b.input) for b in resp.content if b.type == "tool_use"]
+
 
 class OpenAICompatLLM(LLM):
     def __init__(self, model: str, api_key: str | None, base_url: str | None):
@@ -68,6 +82,20 @@ class OpenAICompatLLM(LLM):
             raise TruncatedError(f"{self.model} hit max_tokens={MAX_TOKENS}; ask this stage for less output")
         return resp.choices[0].message.content or ""
 
+    def complete_tools(self, system, prompt, tools, mock=None):
+        resp = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+            tools=[
+                {"type": "function", "function": {"name": t["name"], "description": t["description"],
+                                                  "parameters": t["input_schema"]}}
+                for t in tools
+            ],
+            tool_choice="required",
+        )
+        calls = resp.choices[0].message.tool_calls or []
+        return [(c.function.name, json.loads(c.function.arguments or "{}")) for c in calls]
+
 
 class MockLLM(LLM):
     """Offline backend so the pipeline runs end to end without any API key."""
@@ -77,6 +105,9 @@ class MockLLM(LLM):
 
     def complete_json(self, system: str, prompt: str, mock: Callable[[], Any] | None = None) -> Any:
         return mock() if mock else {}
+
+    def complete_tools(self, system, prompt, tools, mock=None):
+        return mock() if mock else []
 
 
 def parse_json(text: str) -> Any:

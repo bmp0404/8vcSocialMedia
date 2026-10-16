@@ -39,4 +39,13 @@ a feature list. The product appears as the natural punchline or the obvious fix,
 Roughly 1 in 4 posts should mention Coordigent directly; the rest build an audience of agent-wranglers.
 
 ## Action space
-Original posts, threads (as several posts), replies, quote posts, mentions, follows. X only.
+On X (the posting bot executes these): original posts, threads (as several posts), replies, quote posts,
+mentions, follows, and X-channel versions of the plays below.
+
+Recommended to the team (a person approves and sends): responding to mentions on GitHub, HN, Reddit, and
+Discord; docs answers to recurring questions; release announcements; follow-ups and contributor thanks;
+DMs; expert collaborations; reciprocal shares; warm intros; network shortlists; journalist, newsletter,
+and podcast pitches; clips from our own recordings; roundtables; swag.
+
+Relationship actions only target people in mission/contacts.json or in the conversations we observed, and
+never someone marked do_not_contact or contacted recently.

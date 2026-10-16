@@ -1,0 +1,9 @@
+{
+  "_comment": "PLACEHOLDERS. Replace with the real catalog and budget. send_swag only proposes items listed here and stays under the monthly budget.",
+  "monthly_budget_usd": 150,
+  "items": [
+    {"item": "sticker pack", "cost_usd": 4, "for": "anyone who contributed or wrote about us"},
+    {"item": "t-shirt", "cost_usd": 25, "for": "merged contributors and power users"},
+    {"item": "hoodie", "cost_usd": 55, "for": "champions and design partners"}
+  ]
+}

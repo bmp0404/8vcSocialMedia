@@ -1,0 +1,12 @@
+{
+  "_comment": "PLACEHOLDERS. Replace with a real CRM export. Relationship actions (DMs, intros, pitches, swag) can only target people listed here or seen in the observed conversations. Fields: name, role, x, github, email, linkedin, org, outlet, tags, stage (none|aware|active_user|champion|partner), notes, knows (names this person can introduce), do_not_contact.",
+  "contacts": [
+    {"name": "Example Newsletter Editor", "role": "journalist", "outlet": "Example Dev Weekly", "email": "editor@example.com", "x": "example_devweekly", "tags": ["newsletter", "ai-tools"], "stage": "none", "notes": "Covers new AI dev tools every Tuesday."},
+    {"name": "Example Podcast Host", "role": "podcast_host", "outlet": "Example Agents Podcast", "email": "host@example.com", "tags": ["podcast", "multi-agent"], "stage": "none", "notes": "Interviews people building with coding agents."},
+    {"name": "Example Maintainer", "role": "maintainer", "github": "example-maintainer", "x": "example_maint", "tags": ["oss", "mcp"], "stage": "aware", "notes": "Maintains an MCP server that pairs well with Coordigent."},
+    {"name": "Example Power User", "role": "user", "x": "example_poweruser", "tags": ["claude-code", "codex"], "stage": "active_user", "notes": "Asked for Windsurf support; it shipped."},
+    {"name": "Example Investor", "role": "connector", "email": "investor@example.com", "knows": ["Example Eng Lead"], "stage": "partner", "notes": "Happy to make intros to portfolio eng leads."},
+    {"name": "Example Eng Lead", "role": "prospect", "email": "englead@example.com", "org": "Example Startup", "tags": ["eng-lead"], "stage": "none", "notes": "Rolling out agents to a 20-person team."},
+    {"name": "Example Do Not Contact", "role": "user", "x": "example_dnc", "do_not_contact": true, "notes": "Asked not to be contacted."}
+  ]
+}

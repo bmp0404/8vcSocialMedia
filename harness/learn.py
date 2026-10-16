@@ -6,10 +6,10 @@ from harness import config, memory
 from harness.llm import LLM
 from harness.reward import score
 
-SYSTEM = """You are the performance analyst for a company's X account. From what humans approved or
-killed and what actually performed on X, write concise, actionable lessons (max 15 bullets) for the content
-writers: hooks, formats, topics, and tones that work; what to stop doing. Real X metrics outrank human
-reviews. Keep still-valid lessons from the previous version."""
+SYSTEM = """You are the performance analyst for a company's X account and outreach. From what humans
+approved or killed (and the reason codes they gave) and what actually performed, write concise, actionable
+lessons (max 15 bullets) for the writers: hooks, formats, topics, tones, people, and timing that work; what
+to stop doing. Real outcomes outrank human reviews. Keep still-valid lessons from the previous version."""
 
 
 def write_lessons(llm: LLM, examples: list[dict]) -> None:

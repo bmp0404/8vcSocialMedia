@@ -9,6 +9,7 @@ import json
 import random
 import re
 
+from harness.actions import is_public
 from harness.llm import LLM
 from harness.models import Action
 from harness.qualify import critic
@@ -40,7 +41,7 @@ def split_hook(text: str) -> tuple[str, str]:
 def sharpen_hooks(llm: LLM, mission: str, ranked: list[Action], top: int = 5,
                   rng: random.Random | None = None) -> list[Action]:
     rng = rng or random.Random()
-    targets = [a for a in ranked[:top] if a.type != "follow" and a.text.strip()]
+    targets = [a for a in ranked if is_public(a) and a.text.strip()][:top]
     if not targets:
         return ranked
     parts = {a.id: split_hook(a.text) for a in targets}
@@ -58,7 +59,7 @@ def sharpen_hooks(llm: LLM, mission: str, ranked: list[Action], top: int = 5,
         a.hook_alternatives = [h.strip() for h in alts.get(a.id, []) if isinstance(h, str) and h.strip()][:3]
         for h in a.hook_alternatives:
             c = Action(type=a.type, text=h + parts[a.id][1], mind=a.mind, narrative_id=a.narrative_id,
-                       target_url=a.target_url, target_handle=a.target_handle)
+                       target_url=a.target_url, target_handle=a.target_handle, channel=a.channel, details=a.details)
             challengers.append((a, h, c))
             pairs.append((a, c))
     winners = judge(llm, mission, pairs, rng)

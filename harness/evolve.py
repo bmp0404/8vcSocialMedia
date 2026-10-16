@@ -33,7 +33,7 @@ def _examples(rows: list[dict], rewards: dict[str, Reward]) -> list[dict]:
         out.append({
             "variant": a.get("variant", ""), "mind": a["mind"], "type": a["type"],
             "text": r["edited_text"] or a["text"], "reward": round(rw.value, 2), "signal": rw.source,
-            "human_note": r["note"], "critic": a.get("critique", ""), "metrics": r["metrics"],
+            "human_note": r["note"], "reasons": r.get("reasons", []), "critic": a.get("critique", ""), "metrics": r["metrics"],
         })
     return sorted(out, key=lambda e: e["reward"], reverse=True)
 

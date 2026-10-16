@@ -12,7 +12,7 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from harness import config, memory
+from harness import actions, config, memory
 from harness.evolve import evolve, leaderboard
 from harness.llm import get_llm
 
@@ -36,10 +36,20 @@ def run_evolve(spawn: bool) -> tuple[int, dict]:
 
 
 def export_approved(run_id: int) -> Path:
-    config.OUT_DIR.mkdir(exist_ok=True)
+    """Write the hand-off: X actions for the posting bot, everything else for the team."""
+    config.OUT_DIR.mkdir(parents=True, exist_ok=True)
     path = config.OUT_DIR / f"approved-run{run_id}.json"
+    approved = [actions.handoff(a) for a in memory.approved_actions(run_id)]
     path.write_text(
-        json.dumps({"run_id": run_id, "actions": memory.approved_actions(run_id)}, indent=2),
+        json.dumps(
+            {
+                "run_id": run_id,
+                "x_bot": [a for a in approved if a["intent"]["executor"] == "x_bot"],
+                "team": [a for a in approved if a["intent"]["executor"] == "team"],
+                "notes": [a for a in approved if a["intent"]["executor"] == "none"],
+            },
+            indent=2,
+        ),
         encoding="utf-8",
     )
     return path
@@ -64,9 +74,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/stats":
             return self._json(leaderboard())
         if m := re.fullmatch(r"/api/runs/(\d+)", self.path):
-            return self._json(memory.run_actions(int(m[1])))
+            return self._json([{**a, "executor": actions.intent(a)["executor"]} for a in memory.run_actions(int(m[1]))])
         if m := re.fullmatch(r"/api/runs/(\d+)/approved", self.path):
-            return self._json(memory.approved_actions(int(m[1])))
+            return self._json([actions.handoff(a) for a in memory.approved_actions(int(m[1]))])
+        if self.path == "/api/catalog":
+            return self._json(actions.catalog())
         self._json({"error": "not found"}, 404)
 
     def do_POST(self) -> None:
@@ -81,7 +93,13 @@ class Handler(BaseHTTPRequestHandler):
         if not m:
             return self._json({"error": "not found"}, 404)
         try:
-            run_id = memory.set_review(m[1], body.get("status", ""), body.get("text"), body.get("note", ""))
+            if body.get("text") and body.get("status") == "approved":
+                original = memory.get_action(m[1])
+                if original and (errors := actions.text_errors({**original, "text": body["text"]})):
+                    raise ValueError("; ".join(errors))
+            run_id = memory.set_review(
+                m[1], body.get("status", ""), body.get("text"), body.get("note", ""), body.get("reasons") or []
+            )
         except KeyError:
             return self._json({"error": "unknown action"}, 404)
         except ValueError as e:

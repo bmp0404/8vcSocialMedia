@@ -9,6 +9,9 @@ load_dotenv(ROOT / ".env")
 
 # Brand-specific text lives in files, not Python (see CONTRIBUTING.md).
 MISSION_PATH = ROOT / "mission" / "mission.md"
+CONTACTS_PATH = ROOT / "mission" / "contacts.json"
+SWAG_PATH = ROOT / "mission" / "swag.json"
+MEDIA_PATH = ROOT / "mission" / "media.json"
 MINDS_DIR = ROOT / "harness" / "minds" / "prompts"
 PANEL_PATH = ROOT / "eval" / "panel.json"
 SAMPLE_SIGNALS_PATH = ROOT / "data" / "sample_signals.json"
@@ -48,6 +51,39 @@ def panel() -> dict[str, str]:
     return json.loads(PANEL_PATH.read_text(encoding="utf-8"))
 
 
+def contacts() -> list[dict]:
+    """CRM-lite: the people relationship actions can target. See mission/contacts.json."""
+    return json.loads(_read(CONTACTS_PATH, '{"contacts": []}'))["contacts"]
+
+
+def swag() -> dict:
+    """Swag catalog and monthly budget: {"monthly_budget_usd", "items": [{"item", "cost_usd"}]}."""
+    return json.loads(_read(SWAG_PATH, "{}"))
+
+
+def media() -> list[dict]:
+    """Client recordings that clips can be cut from: [{"title", "url", "notes"}]."""
+    return json.loads(_read(MEDIA_PATH, '{"episodes": []}'))["episodes"]
+
+
+def _seed_files() -> dict[str, tuple[list[str] | None, str]]:
+    """harness/minds/prompts/<name>.md -> (action types from an optional `tools: a, b` first line, prompt)."""
+    out = {}
+    for p in sorted(MINDS_DIR.glob("*.md")):
+        text = p.read_text(encoding="utf-8").strip()
+        first, _, rest = text.partition("\n")
+        if first.lower().startswith("tools:"):
+            out[p.stem] = ([t.strip() for t in first[6:].split(",") if t.strip()], rest.strip())
+        else:
+            out[p.stem] = (None, text)
+    return out
+
+
 def seed_minds() -> dict[str, str]:
     """harness/minds/prompts/<name>.md -> prompt. Editing a file seeds a new variant of that mind."""
-    return {p.stem: p.read_text(encoding="utf-8").strip() for p in sorted(MINDS_DIR.glob("*.md"))}
+    return {name: prompt for name, (_, prompt) in _seed_files().items()}
+
+
+def mind_tools() -> dict[str, list[str]]:
+    """Mind -> the action types it may propose. Minds without a `tools:` line (and spawned ones) get the X types."""
+    return {name: tools for name, (tools, _) in _seed_files().items() if tools}

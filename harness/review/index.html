@@ -37,6 +37,19 @@
   .card.focus { outline: 2px solid var(--focus); outline-offset: 1px; }
   .card.approved { border-left-color: var(--ok); }
   .card.killed { border-left-color: var(--bad); opacity: .65; }
+  .card.snoozed { border-left-color: var(--warn); opacity: .8; }
+  .pill.ch { text-transform: none; color: var(--muted); }
+  .exec { font-weight: 600; color: var(--ink); }
+  .plan { display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; font-size: 13px; margin: 0; }
+  .plan dt { color: var(--muted); }
+  .plan dd { margin: 0; overflow-wrap: anywhere; min-width: 0; }
+  .plan a { color: var(--focus); }
+  .missing { color: var(--warn); font-weight: 600; }
+  .reasons { display: flex; flex-wrap: wrap; gap: 6px; }
+  .reasons button { border: 1px dashed var(--line); background: transparent; border-radius: 999px; padding: 2px 10px;
+                    font-size: 12px; color: var(--muted); cursor: pointer; }
+  .reasons button.on { border-style: solid; border-color: var(--bad); color: var(--bad); font-weight: 600; }
+  .snooze { background: var(--warn); color: #fff; }
   .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 12px; color: var(--muted); }
   .score { font-weight: 700; font-size: 13px; color: var(--ink); background: var(--bg); border-radius: 6px; padding: 2px 8px; }
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; text-transform: uppercase; letter-spacing: .03em; font-size: 11px; color: var(--ink); }
@@ -105,7 +118,7 @@
   <div class="spacer"></div>
   <button class="ghost review-only" id="copy" title="Copy the approved hand-off JSON">Copy approved JSON</button>
 </header>
-<p class="hint review-only"><kbd>j</kbd>/<kbd>k</kbd> move · <kbd>a</kbd> approve · <kbd>x</kbd> kill · <kbd>u</kbd> reset · <kbd>e</kbd> edit text · click a hook to swap it in</p>
+<p class="hint review-only"><kbd>j</kbd>/<kbd>k</kbd> move · <kbd>a</kbd> approve · <kbd>x</kbd> kill · <kbd>s</kbd> snooze · <kbd>u</kbd> reset · <kbd>e</kbd> edit text · click a hook to swap it in</p>
 <main id="list" class="review-only"></main>
 <main id="learning" class="learning-only"></main>
 <div class="toast" id="toast"></div>
@@ -115,11 +128,14 @@ const FILTERS = {
   pending: a => a.review.status === "pending" && !a.vetoed,
   approved: a => a.review.status === "approved",
   killed: a => a.review.status === "killed",
+  snoozed: a => a.review.status === "snoozed",
   vetoed: a => a.vetoed && a.review.status === "pending",
   all: () => true,
 };
-const LABELS = { pending: "To review", approved: "Approved", killed: "Killed", vetoed: "Critic vetoed", all: "All" };
-let state = { runs: [], runId: null, actions: [], filter: "pending", focus: 0 };
+const LABELS = { pending: "To review", approved: "Approved", killed: "Killed", snoozed: "Snoozed", vetoed: "Critic vetoed", all: "All" };
+let state = { runs: [], runId: null, actions: [], filter: "pending", focus: 0, catalog: {} };
+const EXECUTOR = { x_bot: "→ posting bot", team: "→ team", none: "internal" };
+const spec = a => state.catalog[a.type] || { title: a.type, feedback: [], has_text: true, audience: "public" };
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -141,6 +157,7 @@ function renderTabs() {
 function targetHtml(a) {
   if (a.target_url) return `→ <a href="${esc(a.target_url)}" target="_blank" rel="noopener">${esc(a.target_url)}</a>`;
   if (a.target_handle) return `→ <a href="https://x.com/${esc(a.target_handle)}" target="_blank" rel="noopener">@${esc(a.target_handle)}</a>`;
+  if (a.target_person) return `→ ${esc(a.target_person)}`;
   return "";
 }
 
@@ -152,16 +169,42 @@ function panelHtml(panel) {
   ).join("")}</div>`;
 }
 
+const link = v => /^https?:\/\//.test(v) ? `<a href="${esc(v)}" target="_blank" rel="noopener">${esc(v)}</a>` : esc(v);
+function value(v) {
+  if (Array.isArray(v)) return v.map(x => typeof x === "object" ? Object.values(x).map(esc).join(" · ") : link(x)).join("<br>");
+  if (v && typeof v === "object") return esc(JSON.stringify(v));
+  return link(v);
+}
+function planHtml(a) {
+  const rows = [
+    ...Object.entries(a.details || {}).map(([k, v]) => [k.replaceAll("_", " "), v]),
+    ["evidence", a.evidence], ["timing", a.timing], ["needs first", a.prerequisites],
+    ["intended outcome", a.intended_outcome && `${a.intended_outcome}${a.measure_days ? ` (measured over ${a.measure_days}d)` : ""}`],
+    ["drop if", a.dismiss_if],
+  ].filter(([, v]) => v !== "" && v != null && (!Array.isArray(v) || v.length));
+  const missing = (a.missing_info || []).length
+    ? `<dt class="missing">needs from team</dt><dd class="missing">${a.missing_info.map(esc).join("<br>")}</dd>` : "";
+  return rows.length || missing ? `<dl class="plan">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${value(v)}</dd>`).join("")}${missing}</dl>` : "";
+}
+function reasonsHtml(a) {
+  const picked = new Set(a.review.reasons || []);
+  return spec(a).feedback.length ? `<div class="reasons" title="Why kill, edit, or snooze? Fed to learning.">${spec(a).feedback.map(r =>
+    `<button data-reason="${esc(r)}" class="${picked.has(r) ? "on" : ""}">${esc(r.replaceAll("_", " "))}</button>`).join("")}</div>` : "";
+}
+const isXPost = a => a.channel === "x" && spec(a).audience !== "person";
+
 function cardHtml(a, i) {
   const st = a.review.status;
   const text = a.review.text ?? a.text;
-  const isFollow = a.type === "follow";
+  const isFollow = !spec(a).has_text;
   return `<article class="card ${st} ${i === state.focus ? "focus" : ""}" data-i="${i}" data-id="${a.id}">
     <div class="meta">
       ${a.rank ? `<span class="score" title="final rank">#${a.rank}</span>` : ""}
       <span title="audience panel score">panel ${(a.predicted_score * 100).toFixed(0)}</span>
       ${a.elo != null ? `<span class="elo" title="tournament Elo, wins-losses">elo ${a.elo} · ${esc(a.record)}</span>` : ""}
-      <span class="pill">${esc(a.type)}</span>
+      <span class="pill" title="${esc(a.type)} · tier ${spec(a).tier ?? ""}">${esc(spec(a).title)}</span>
+      <span class="pill ch">${esc(a.channel || "x")}</span>
+      <span class="exec">${EXECUTOR[a.executor] || ""}</span>
       <span title="mind variant">${esc(a.variant || a.mind)}</span>
       <span>· ${esc(a.narrative_id)}</span>
       ${a.vetoed ? `<span class="veto">⚠ critic veto</span>` : ""}
@@ -170,7 +213,8 @@ function cardHtml(a, i) {
       ${a.pre_hook_text ? `<span title="the hook pass swapped in a stronger opening line">· hook upgraded</span>` : ""}
     </div>
     ${targetHtml(a) ? `<div class="meta target">${targetHtml(a)}</div>` : ""}
-    ${isFollow ? "" : `<textarea aria-label="Post text">${esc(text)}</textarea><div class="count"></div>`}
+    ${isFollow ? "" : `<textarea aria-label="Draft text">${esc(text)}</textarea><div class="count"></div>`}
+    ${planHtml(a)}
     ${isFollow ? "" : hooksHtml(a, text)}
     <details>
       <summary>Why this?</summary>
@@ -180,10 +224,12 @@ function cardHtml(a, i) {
         ${panelHtml(a.panel)}
       </div>
     </details>
+    ${reasonsHtml(a)}
     <div class="actions">
       <input class="note" placeholder="Note (optional, fed to learning)" value="${esc(a.review.note)}">
       <button class="btn approve" data-act="approved">Approve</button>
       <button class="btn kill" data-act="killed">Kill</button>
+      <button class="btn snooze" data-act="snoozed">Snooze</button>
       ${st !== "pending" ? `<button class="btn reset" data-act="pending">Reset</button>` : ""}
     </div>
   </article>`;
@@ -216,6 +262,8 @@ const longest = text => Math.max(0, ...parts(text).map(p => [...p].length));
 function updateCount(card) {
   const ta = card.querySelector("textarea"), c = card.querySelector(".count");
   if (!ta) return;
+  const a = state.actions.find(x => x.id === card.dataset.id);
+  if (!isXPost(a)) { c.textContent = `${[...ta.value].length} characters`; return; }
   const n = longest(ta.value), k = parts(ta.value).length;
   c.textContent = k > 1 ? `thread · ${k} posts · longest ${n} / 280` : `${n} / 280`;
   c.classList.toggle("over", n > 280);
@@ -235,15 +283,17 @@ async function review(card, status) {
   const a = state.actions.find(x => x.id === card.dataset.id);
   const ta = card.querySelector("textarea");
   const edited = ta && ta.value.trim() !== a.text.trim() ? ta.value.trim() : null;
-  if (status === "approved" && edited && longest(edited) > 280) return toast("A post is over 280 characters");
+  if (status === "approved" && edited && isXPost(a) && longest(edited) > 280) return toast("A post is over 280 characters");
   const note = card.querySelector(".note").value;
+  const reasons = [...card.querySelectorAll(".reasons .on")].map(b => b.dataset.reason);
   const res = await api(`/api/actions/${a.id}/review`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status, text: edited, note }),
+    body: JSON.stringify({ status, text: edited, note, reasons }),
   });
   if (!res.ok) return toast(res.error || "Failed");
-  a.review = { status, text: status === "pending" ? null : edited, note: status === "pending" ? "" : note };
-  toast(status === "pending" ? "Reset" : status === "approved" ? "Approved → hand-off file updated" : "Killed");
+  const reset = status === "pending";
+  a.review = { status, text: reset ? null : edited, note: reset ? "" : note, reasons: reset ? [] : reasons };
+  toast({ pending: "Reset", approved: "Approved → hand-off file updated", killed: "Killed", snoozed: "Snoozed" }[status]);
   render();
   loadRuns(false);
 }
@@ -273,6 +323,7 @@ $("#tabs").addEventListener("click", e => {
 $("#list").addEventListener("click", e => {
   const card = e.target.closest(".card"); if (!card) return;
   if (e.target.dataset.act) return review(card, e.target.dataset.act);
+  if (e.target.dataset.reason) return e.target.classList.toggle("on");
   const chip = e.target.closest(".chip");
   if (chip) {
     const ta = card.querySelector("textarea");
@@ -287,7 +338,7 @@ $("#list").addEventListener("input", e => { if (e.target.tagName === "TEXTAREA")
 $("#copy").addEventListener("click", async () => {
   if (!state.runId) return;
   const data = await api(`/api/runs/${state.runId}/approved`);
-  try { await navigator.clipboard.writeText(JSON.stringify(data, null, 2)); toast(`Copied ${data.length} approved`); }
+  try { await navigator.clipboard.writeText(JSON.stringify(data, null, 2)); toast(`Copied ${data.length} approved actions`); }
   catch { toast("Clipboard blocked; see out/approved-run" + state.runId + ".json"); }
 });
 document.addEventListener("keydown", e => {
@@ -308,6 +359,7 @@ document.addEventListener("keydown", e => {
   else if (!card) return;
   else if (e.key === "a") review(card, "approved");
   else if (e.key === "x") review(card, "killed");
+  else if (e.key === "s") review(card, "snoozed");
   else if (e.key === "u") review(card, "pending");
   else if (e.key === "e") { e.preventDefault(); card.querySelector("textarea")?.focus(); }
 });
@@ -399,7 +451,10 @@ function setView(v) {
 }
 $("#views").addEventListener("click", e => { if (e.target.dataset.v) setView(e.target.dataset.v); });
 
-loadRuns().then(() => { if (location.hash === "#learning") setView("learning"); });
+api("/api/catalog")
+  .then(c => { state.catalog = Object.fromEntries(c.map(t => [t.type, t])); })
+  .then(() => loadRuns())
+  .then(() => { if (location.hash === "#learning") setView("learning"); });
 </script>
 </body>
 </html>

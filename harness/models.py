@@ -1,6 +1,8 @@
 import uuid
 from dataclasses import asdict, dataclass, field
 
+# The X actions 8VC's posting bot executes. The full action space, including outreach the team
+# sends, is defined in harness/actions/catalog.py.
 ACTION_TYPES = {"post", "reply", "quote", "mention", "follow"}
 
 
@@ -31,7 +33,12 @@ class Narrative:
 
 @dataclass
 class Action:
-    """A recommended X action, handed to the posting bot."""
+    """A recommended action: an X action for the posting bot, or outreach/content work for the team.
+
+    The fields after `target_handle` follow the action-selection output: who it's for, why (evidence),
+    where and when, what it needs first, what success looks like and by when, and when to drop it.
+    Type-specific fields (a pitch's outlet, a clip's timestamps...) live in `details`.
+    """
 
     type: str
     text: str
@@ -41,6 +48,16 @@ class Action:
     rationale: str = ""
     target_url: str | None = None
     target_handle: str | None = None
+    channel: str = "x"
+    target_person: str | None = None
+    evidence: list[str] = field(default_factory=list)
+    timing: str = ""
+    prerequisites: list[str] = field(default_factory=list)
+    intended_outcome: str = ""
+    measure_days: int = 0
+    dismiss_if: str = ""
+    missing_info: list[str] = field(default_factory=list)
+    details: dict = field(default_factory=dict)
     predicted_score: float = 0.0
     panel: dict = field(default_factory=dict)
     vetoed: bool = False

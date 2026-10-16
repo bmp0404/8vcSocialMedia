@@ -7,6 +7,7 @@ panel score seeds the bracket and Elo from head-to-head rounds sets the final or
 import json
 import random
 
+from harness.actions import is_public
 from harness.llm import LLM
 from harness.models import Action
 
@@ -54,13 +55,17 @@ def _expected(ra: float, rb: float) -> float:
 
 def tournament(llm: LLM, mission: str, actions: list[Action], rounds: int = 3, field: int = 16,
                rng: random.Random | None = None) -> list[Action]:
-    """Rank `actions` (already sorted by panel score). Only the top `field` play; the rest keep their order."""
+    """Rank `actions` (already sorted by score). Only the top `field` public actions play; the rest keep their
+    order. Outreach and internal actions aren't judged on spread, so they follow the public ones."""
     rng = rng or random.Random()
-    pool, rest = actions[:field], actions[field:]
+    public = [a for a in actions if is_public(a)]
+    others = [a for a in actions if not is_public(a)]
+    pool, rest = public[:field], public[field:] + others
     if len(pool) < 2 or rounds <= 0:
-        for i, a in enumerate(actions, 1):
+        ordered = public + others
+        for i, a in enumerate(ordered, 1):
             a.rank = i
-        return actions
+        return ordered
 
     elo = {a.id: 1500.0 for a in pool}
     wins = {a.id: 0 for a in pool}
