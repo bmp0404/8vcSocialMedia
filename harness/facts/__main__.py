@@ -15,8 +15,13 @@ def main() -> None:
     args = p.parse_args()
     profile = args.profile or config.profile_name()
     if args.command == "refresh":
-        counts = store.refresh(profile)
-        print(f"[facts] {profile}: wrote {sum(counts.values())} facts ({', '.join(f'{k} {v}' for k, v in counts.items())})")
+        skipped: dict[str, str] = {}
+        counts = store.refresh(profile, skipped=skipped)
+        for handle, error in skipped.items():
+            print(f"[facts] skipped @{handle}: {error}")
+        left_out = f"; skipped {len(skipped)} unreadable account(s): {', '.join('@' + h for h in skipped)}" if skipped else ""
+        print(f"[facts] {profile}: wrote {sum(counts.values())} facts ({', '.join(f'{k} {v}' for k, v in counts.items())})"
+              + left_out)
         return
     with config.use_profile(profile):
         facts = store.load_live(datetime.now(timezone.utc))

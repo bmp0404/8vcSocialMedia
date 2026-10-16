@@ -85,12 +85,21 @@ def _metric(rec: dict) -> str:
     return f"{line}, on {rec['eval']['n']} {rec['eval']['unit']}s"
 
 
+def _clip(text: str, limit: int = 240) -> str:
+    """At most `limit` characters, cut at the last clause boundary so no word is broken."""
+    text = " ".join(text.split()).rstrip(".")
+    if len(text) <= limit:
+        return text
+    cut = max(text.rfind("; ", 0, limit), text.rfind(". ", 0, limit))
+    return text[:cut] if cut > 0 else text[:limit].rsplit(" ", 1)[0]
+
+
 def _decision(rec: dict) -> str:
-    who = rec["proposer"].get("spec") or rec["proposer"].get("source") or rec["id"]
+    who = rec["proposer"].get("spec") or rec["id"]
     phase = rec["proposer"].get("phase") or rec["proposer"].get("kind")
     numbers = _metric(rec)
-    return (f"- **{who}** ({rec['eval'].get('fitness')}, {phase}): {rec['decision']['status']}."
-            + (f" {numbers}." if numbers else "") + f" {rec['decision']['reason'][:240].rstrip('.')}.")
+    return (f"- **{who}** ({rec['eval'].get('fitness') or 'no instrument'}, {phase}): {rec['decision']['status']}."
+            + (f" {numbers}." if numbers else "") + f" {_clip(rec['decision']['reason'])}.")
 
 
 def render(d: ReportData) -> str:
@@ -131,7 +140,7 @@ def render(d: ReportData) -> str:
     lines += [_decision(r) for r in d.decided] or ["- No experiment was decided."]
     for q in d.queue:
         if q["state"] not in ("ran", "done"):
-            lines.append(f"- {q['spec']} ({q['fitness']}, {q['profile']}): {q['note']}.")
+            lines.append(f"- {q['spec']} ({q['fitness']}, {q['profile']}): {_clip(q['note'])}.")
 
     lines += ["", "## The watcher's day", ""]
     if d.day is None:
@@ -162,7 +171,7 @@ def render(d: ReportData) -> str:
         lines.append(f"- Threads kept: {kept or 'none'}" + (f"; {other} other reads were low coverage, empty or missed"
                                                            if other else "") + ".")
 
-    needs = list(d.failures)
+    needs = [_clip(f, 300) for f in d.failures]
     waiting = [h for h in (d.day.hot if d.day else []) if d.hot_offers.get(h["status_id"], {}).get("offer")
                in ("draft", "human_prompt")]
     if waiting:

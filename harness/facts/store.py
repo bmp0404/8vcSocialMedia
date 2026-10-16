@@ -38,8 +38,13 @@ def load_live(at: datetime, store=None) -> list[Fact]:
     return ground.live(load(store), at)
 
 
-def refresh(profile: str, *, at: datetime | None = None, espn: Espn | None = None, reader=None, store=None) -> dict:
-    """Fetch the profile's facts as of `at` (default now) and save them. Returns counts per source."""
+def refresh(profile: str, *, at: datetime | None = None, espn: Espn | None = None, reader=None, store=None,
+            skipped: dict[str, str] | None = None) -> dict:
+    """Fetch the profile's facts as of `at` (default now) and save them. Returns counts per source.
+
+    An account whose timeline can't be read is left out and named in `skipped` with the error, so one
+    fxtwitter 404 (they come and go; the watcher sees about 9% of polls fail) doesn't cost every other
+    account its facts. If no account can be read, the refresh raises."""
     from harness.sources.watch import load_watch
 
     at = at or datetime.now(timezone.utc)
@@ -59,11 +64,22 @@ def refresh(profile: str, *, at: datetime | None = None, espn: Espn | None = Non
                 from harness.context.xreader import FxTwitterReader
 
                 reader = FxTwitterReader(PoliteClient(min_interval_s=1.0), max_age_s=600)
+            from harness.context.http import FetchError
+
+            failed = {}
             for handle in watch.reply_targets.accounts:
+                try:
+                    statuses = reader.profile_statuses(handle, limit=20)
+                except FetchError as e:
+                    failed[handle] = str(e)
+                    continue
                 own = [{"id": p.id, "text": p.text, "created_at": p.created_at, "url": p.url}
-                       for p in reader.profile_statuses(handle, limit=20)
-                       if not p.is_repost and p.author_handle.lower() == handle.lower()]
+                       for p in statuses if not p.is_repost and p.author_handle.lower() == handle.lower()]
                 counts[f"posts:{handle}"] = save(posts.post_facts(handle, own), store)
+            if failed and not counts:
+                raise FactsError(f"no account's timeline could be read: {failed}")
+            if skipped is not None:
+                skipped.update(failed)
         else:
             raise FactsError(f"profile {profile!r} has neither [espn] scoreboard_leagues nor [reply_targets] accounts "
                              "in observe.toml, so there is nothing to read facts from")

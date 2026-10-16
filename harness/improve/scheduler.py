@@ -84,6 +84,11 @@ class State:
         with self._conn() as c:
             c.execute("UPDATE cycles SET finished_at = ?, stop_reason = ? WHERE id = ?", (iso(at), reason, cycle))
 
+    def first_started(self) -> datetime | None:
+        with self._conn() as c:
+            row = c.execute("SELECT MIN(started_at) FROM cycles").fetchone()[0]
+        return datetime.fromisoformat(row) if row else None
+
     def last_finished(self) -> datetime | None:
         with self._conn() as c:
             row = c.execute("SELECT MAX(finished_at) FROM cycles").fetchone()[0]
@@ -168,7 +173,8 @@ def run_facts(profile: str, provider: str) -> str:
     out = subprocess.run([sys.executable, "-m", "harness.facts", "refresh", "--profile", profile], cwd=config.ROOT,
                          env=env, capture_output=True, text=True, timeout=900)
     if out.returncode != 0:
-        raise RuntimeError(f"facts refresh for {profile} exited {out.returncode}: {(out.stderr or out.stdout)[-400:]}")
+        last = [line for line in (out.stderr or out.stdout).splitlines() if line.strip()]
+        raise RuntimeError(f"facts refresh for {profile} exited {out.returncode}: {last[-1] if last else 'no output'}")
     lines = [line for line in out.stdout.splitlines() if line.strip()]
     return lines[-1] if lines else "(no output)"
 
@@ -294,7 +300,9 @@ class Scheduler:
             self.step(f"facts:{profile}:{now.date()}", "facts", cycle, lambda p=profile: self.facts(p))
         steps = [(self._fold_key(now), "fold", self.fold), (f"instruments:{cycle}", "instruments", self.instruments),
                  (f"experiments:{cycle}", "experiments", self.experiments)]
-        if self.cfg.force_report or now.hour >= self.cfg.report_hour:
+        if self.cfg.force_report:  # a person asked for one: write it even if today's exists
+            steps.append((f"report:{now.date()}:cycle{cycle}", "report", self.write_report))
+        elif now.hour >= self.cfg.report_hour:
             steps.append((f"report:{now.date()}", "report", self.write_report))
         for key, name, fn in steps:
             if self.stop.is_set():
@@ -397,7 +405,7 @@ class Scheduler:
             try:
                 client.messages.create(model=model, max_tokens=5, messages=[{"role": "user", "content": "Say ok."}])
             except Exception as e:  # noqa: BLE001 - any failure means the phase can't run on this model now
-                bad[model] = f"{type(e).__name__}: {str(e)[:160]}"
+                bad[model] = api_error(e)
         return bad
 
     def _preflight(self, fit, configs) -> tuple[str | None, int]:
@@ -529,7 +537,8 @@ class Scheduler:
     def write_report(self) -> dict:
         now = self.clock()
         last = self.state.last_report()
-        since = datetime.fromisoformat(last["written_at"]) if last else None
+        # The first report covers what the loop has done, not the ledger's whole history.
+        since = datetime.fromisoformat(last["written_at"]) if last else self.state.first_started()
         steps = self.state.steps_since(since)
         led = instrument_ledger.load(self.cfg.instruments_path)
         events = [{"instrument": n, **e} for n, i in led.get("instruments", {}).items() for e in i.get("events", [])
@@ -562,6 +571,15 @@ class Scheduler:
         path.write_text(report.render(data), encoding="utf-8")
         self.state.save_report(now.date().isoformat(), path, now)
         return {"path": str(path)}
+
+
+def api_error(e: Exception) -> str:
+    """"HTTP 429: All credentials for model ... are cooling down" rather than the whole response body."""
+    status = getattr(e, "status_code", None)
+    body = getattr(e, "body", None)
+    message = body.get("error", {}).get("message") if isinstance(body, dict) else None
+    text = (message or str(e)).split("(last error")[0].strip()
+    return f"{'HTTP ' + str(status) if status else type(e).__name__}: {text[:140]}"
 
 
 def _diff(a, b) -> dict:

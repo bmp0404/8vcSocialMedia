@@ -56,3 +56,22 @@ def test_mock_runs_keep_their_state_apart_from_the_live_loop():
     assert mock.out_dir == scheduler.OUT_DIR / "mock" and mock.ledger_dir == mock.out_dir / "experiments"
     assert live.out_dir == scheduler.OUT_DIR and live.ledger_dir.name == "experiments"
     assert live.instruments_path.name == "instruments.json" and "mock" not in str(live.instruments_path)
+
+
+def test_clip_cuts_at_a_clause_and_never_inside_a_word():
+    assert report._clip("short reason.") == "short reason"
+    long = "first clause is here; " + "x" * 300
+    assert report._clip(long, 40) == "first clause is here"
+    words = "word " * 100
+    clipped = report._clip(words, 33)
+    assert len(clipped) <= 33 and clipped.endswith("word")
+
+
+def test_api_errors_read_as_a_status_and_the_gateway_message():
+    class Err(Exception):
+        status_code = 429
+        body = {"type": "error", "error": {"type": "rate_limit_error", "message":
+                "All credentials for model gpt-5.6-sol are cooling down (last error: usage_limit_reached: ...)"}}
+
+    assert scheduler.api_error(Err("raw body")) == "HTTP 429: All credentials for model gpt-5.6-sol are cooling down"
+    assert scheduler.api_error(TimeoutError("read timed out")) == "TimeoutError: read timed out"

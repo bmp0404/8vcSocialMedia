@@ -91,7 +91,8 @@ def add_commands(sub) -> None:
                                        "queued experiments, morning report")
     p.add_argument("--provider", help="mock or anthropic; defaults to HARNESS_PROVIDER")
     p.add_argument("--once", action="store_true", help="run one cycle now and exit")
-    p.add_argument("--report", action="store_true", help="write today's report this cycle whatever the hour")
+    p.add_argument("--report", action="store_true",
+                   help="write a report this cycle, whatever the hour and even if today's exists")
     p.add_argument("--every", type=_positive, default=sch.DEFAULT_EVERY_S / 3600, help="hours between cycles")
     p.add_argument("--report-hour", type=int, default=sch.REPORT_HOUR, help="UTC hour from which a cycle writes the report")
     p.add_argument("--instrument-calls", type=int, default=300, help="LLM call cap for instrument scoring per cycle")
