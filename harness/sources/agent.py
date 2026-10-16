@@ -170,7 +170,7 @@ def run_agent(
 ) -> tuple[list[Signal], list[Call], list[str]]:
     """Plan, read and optionally dig deeper. Returns the signals, the calls made and planning notes."""
     from harness.orient import signal_heat  # orient imports this package; import late to avoid a cycle
-    from harness.sources import REGISTRY
+    from harness.sources import REGISTRY, RUN_LAST
 
     k = knobs or current()
     now = now or now_utc()
@@ -208,6 +208,8 @@ def run_agent(
             calls = [Call(f, None, "default plan (planner failed)", round_no) for f in defaults] if first else []
         if not calls:
             break
+        # Same reason as observe(): reply targets are read last so their ages stay fresh.
+        calls.sort(key=lambda c: c.feed in RUN_LAST)
         for call in calls:
             try:
                 with use(watch_for(call, base)):

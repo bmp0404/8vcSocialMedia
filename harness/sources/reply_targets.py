@@ -50,6 +50,7 @@ class TargetScore:
     rate_from_delta: bool
     size_band: float
     score: float
+    replies_possibly_restricted: bool = False
 
 
 def engagement(post: XPost) -> int | None:
@@ -84,6 +85,15 @@ def _per_hour(
     return now_count / max(age_min, k.min_age_min) * 60, False
 
 
+def possibly_restricted(post: XPost, age_minutes: float, k: ObserveKnobs) -> bool:
+    """Zero replies on a post people are clearly engaging with suggests replies are restricted."""
+    return (
+        post.replies == 0
+        and (post.likes or 0) > k.restricted_min_likes
+        and age_minutes > k.restricted_min_age_min
+    )
+
+
 def score_target(post: XPost, now: datetime, prev: Snapshot | None = None, k: ObserveKnobs | None = None) -> TargetScore:
     k = k or current()
     created = parse_time(post.created_at)
@@ -99,7 +109,8 @@ def score_target(post: XPost, now: datetime, prev: Snapshot | None = None, k: Ob
     band = size_band(post.author_followers, age, replies, k)
     freshness = 0.5 ** (age / k.target_half_life_min)
     crowding = (1 + replies) ** -k.crowding_exponent
-    score = (traffic or 0.0) * freshness * crowding * band
+    restricted = possibly_restricted(post, age, k)
+    score = (traffic or 0.0) * freshness * crowding * band * (k.restricted_penalty if restricted else 1.0)
     return TargetScore(
         post,
         round(age, 1),
@@ -108,6 +119,7 @@ def score_target(post: XPost, now: datetime, prev: Snapshot | None = None, k: Ob
         view_delta if view_rate is not None else eng_delta,
         band,
         score,
+        restricted,
     )
 
 
@@ -158,6 +170,8 @@ def target_signal(t: TargetScore) -> Signal:
         rate_from_delta=int(t.rate_from_delta),
         size_band=t.size_band,
     )
+    if t.replies_possibly_restricted:
+        metrics["replies_possibly_restricted"] = 1
     if t.engagement_per_hour is not None:
         metrics["engagement_per_hour"] = t.engagement_per_hour
     if t.views_per_hour is not None:
