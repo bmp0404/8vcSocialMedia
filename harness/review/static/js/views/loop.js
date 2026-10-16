@@ -122,6 +122,7 @@ function doneDetail(b, s, n) {
   }
   const total = b.trace?.n_drafts ?? (f.qualifies ? f.scored : (b.latest?.actions ?? null));
   if (total == null || n == null) return "";
+  if (total === 0) return html`<p>No drafts reached the critic.</p>`;
   const cut = total - n;
   return html`<p>${cut > 0 ? `The critic vetoed ${cut} of ${total}` : `The critic kept all ${total}`}</p>`;
 }
