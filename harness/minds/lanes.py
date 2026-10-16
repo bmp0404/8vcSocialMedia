@@ -450,17 +450,11 @@ def _off_mission(url: str | None, off_mission: frozenset[str]) -> bool:
 
 
 def _human_takes(takes: list[dict], offer: Offer, narratives: list[Narrative],
-                 budget: Budget, off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
+                 budget: Budget) -> tuple[list[Action], list[Decision]]:
     actions, decisions, done = [], [], shipped_takes()
     for take in takes:
         text = take["text"]
         if text in done:
-            continue
-        if _off_mission(take.get("quote_url"), off_mission):
-            # Not shipped, so it stays in takes.json and a later round can quote it.
-            decisions.append(Decision(POST_LANE, text, "abstain", "off_mission",
-                                      f"human take quotes {take['quote_url']}, which the reply planner called "
-                                      "off_mission this round"))
             continue
         kind = "quote" if take.get("quote_url") else "post"
         call = {"tool": kind, "text": text} | ({"target_url": take["quote_url"]} if kind == "quote" else {})
@@ -571,8 +565,9 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
 def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[Action], cfg: ActionConfig,
               budget: Budget, takes: list[dict], grounding=None, sources: dict[str, str] | None = None,
               revising: bool = False, off_mission: frozenset[str] = frozenset()) -> tuple[list[Action], list[Decision]]:
-    """`off_mission` holds the status IDs of X posts the reply planner abstained on as off_mission this round;
-    neither a caption nor a take quotes them."""
+    """`off_mission` holds the status IDs of X posts the reply planner abstained on as off_mission this round.
+    A caption never quotes them. A person's take still may: the planner's verdict is a model's opinion, and a
+    person's own words are the final edit."""
     urls, handles = offered(narratives)
     offer = Offer(target_urls=urls, target_handles=handles)
     actions, decisions, angles = [], [], []
@@ -595,7 +590,7 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
 
     if revising:  # a retry revises chorus drafts; takes and captions already had their turn this run
         return actions, decisions
-    took, d = _human_takes(takes, offer, narratives, budget, off_mission)
+    took, d = _human_takes(takes, offer, narratives, budget)
     actions += took
     decisions += d
     if not took and narratives:

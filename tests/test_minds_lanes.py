@@ -497,11 +497,12 @@ def test_the_caption_quotes_another_post_and_misses_the_off_mission_one_in_any_u
     assert [(a.type, a.target_url) for a in actions if a.mind == "caption"] == [("quote", OTHER)]
 
 
-def test_a_take_quoting_an_off_mission_post_waits_for_another_round(monkeypatch):
+def test_a_persons_take_may_quote_a_post_the_planner_called_off_mission(monkeypatch):
+    # The planner's verdict is a model's opinion; a person's own words are the final edit.
     plan_off_mission(monkeypatch, X_URL)
-    actions, decisions = run(MockLLM(), [narrative([target()])], takes=[{"text": "lol", "quote_url": X_URL}])
-    assert not [a for a in actions if a.mind == "human"]
-    assert any(d.reason == "off_mission" and d.opportunity == "lol" and X_URL in d.detail for d in decisions)
+    actions, _ = run(MockLLM(), [narrative([target()])], takes=[{"text": "lol", "quote_url": X_URL}])
+    assert [(a.type, a.target_url, a.text) for a in actions if a.mind == "human"] == [("quote", X_URL, "lol")]
+    assert not [a for a in actions if a.mind == "caption" and a.target_url == X_URL]
 
 
 def test_a_post_the_planner_answered_can_still_be_quoted(monkeypatch):
