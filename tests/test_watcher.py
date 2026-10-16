@@ -77,8 +77,9 @@ class Clock:
 
 
 def config_for(tmp_path, **kw) -> loop.WatchConfig:
-    return loop.WatchConfig(profiles=("wnba",), watch_dir=tmp_path / "watch", hot_dir=tmp_path / "hot",
-                            threads_dir=tmp_path / "threads", sync_every_s=None, **kw)
+    kw.setdefault("profiles", ("wnba",))
+    return loop.WatchConfig(watch_dir=tmp_path / "watch", hot_dir=tmp_path / "hot", threads_dir=tmp_path / "threads",
+                            sync_every_s=None, **kw)
 
 
 def watcher(tmp_path, reader, clock, **kw) -> loop.Watcher:
@@ -204,6 +205,29 @@ def test_recover_requeues_an_interrupted_hot_job_and_finishes_one_whose_file_was
     assert {r["status_id"]: r["state"] for r in w.state.hot_rows()} == {a.id: st.HOT_QUEUED, b.id: st.HOT_DONE}
 
 
+def test_an_ingestion_job_a_crash_left_running_goes_back_to_pending(tmp_path):
+    post = xpost(T0, replies=5)
+    w = watcher(tmp_path, FakeReader({"WNBA": [post]}, now=T0 + 61 * M), Clock(T0 + 61 * M))
+    w.poll(WNBA)
+    claimed = w.state.claim_ingest(T0 + 61 * M)
+    assert claimed["checkpoint"] == 1 and w.state.claim_ingest(T0 + 61 * M) is None  # claimed once
+    assert st.State(w.state.path).recover(lambda s: hot.hot_path(w.cfg.hot_dir, s))["ingest_requeued"] == 1
+    assert w.state.claim_ingest(T0 + 61 * M)["status_id"] == post.id
+
+
+def test_a_read_that_finishes_after_the_window_closed_is_missed_not_kept(tmp_path):
+    post = xpost(T0, replies=5)
+    reader = FakeReader({"WNBA": [post]}, {post.id: thread_for(post, 5)}, now=T0 + 119 * M)
+    clock = Clock(T0 + 119 * M)
+    w = watcher(tmp_path, reader, clock)
+    w.poll(WNBA)
+    reader.now = T0 + 120 * M  # the reads land on the window's closing second
+    assert w.ingest_one()
+    job = next(r for r in rows(w.state.path, "ingest") if r["checkpoint"] == 1)
+    assert job["state"] == st.MISSED and "after the window closed" in job["error"]
+    assert not (tmp_path / "threads" / ingest.ROOTS_FILE).exists()
+
+
 def test_a_queued_job_older_than_the_lane_cutoff_goes_stale_instead_of_drafting(tmp_path):
     post = xpost(T0 - 3 * M)
     clock = Clock()
@@ -262,8 +286,8 @@ LOADER_OPTIONAL = ("bookmarks", "views", "author_followers", "author_verified", 
 def test_thread_rows_have_the_shape_the_corpus_loader_reads(tmp_path):
     post, replies, nested = ingest_one_thread(tmp_path)
     threads = tmp_path / "threads"
-    assert sorted(p.name for p in threads.iterdir()) == sorted(
-        [ingest.ROOTS_FILE, ingest.REPLIES_FILE, *ingest.EMPTY_INPUTS])
+    assert sorted(p.name for p in threads.iterdir()) == sorted(ingest.EMPTY_INPUTS)
+    assert {ingest.ROOTS_FILE, ingest.REPLIES_FILE} <= set(ingest.EMPTY_INPUTS)
     assert read_gz(threads / "x_metrics.jsonl.gz") == []
     roots, reps = read_gz(threads / ingest.ROOTS_FILE), read_gz(threads / ingest.REPLIES_FILE)
     for row in roots + reps:
@@ -341,6 +365,15 @@ def test_a_failed_handle_is_logged_and_skipped_and_the_rest_still_poll(tmp_path)
     assert "@WNBA skipped this cycle: FetchError: HTTP 404" in w.log_path.read_text(encoding="utf-8")
 
 
+def test_the_watcher_refuses_no_profiles_and_a_handle_on_two_lists(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="profiles is empty"):
+        loop.Watcher(config_for(tmp_path, profiles=()), MockLLM(), FakeReader(), echo=False)
+    both = Watchlist("x", (WNBA,), ())
+    monkeypatch.setattr(loop, "load_watchlist", lambda p: both)
+    with pytest.raises(ValueError, match="@WNBA is on both the wnba and devtools watch lists"):
+        loop.Watcher(config_for(tmp_path, profiles=("wnba", "devtools")), MockLLM(), FakeReader(), echo=False)
+
+
 def test_the_schedule_interleaves_profiles(tmp_path):
     w = loop.Watcher(loop.WatchConfig(watch_dir=tmp_path / "watch", sync_every_s=None), MockLLM(), FakeReader(),
                      echo=False)
@@ -395,9 +428,12 @@ def test_the_thread_is_read_through_the_watchers_reader():
     replies = thread_for(post, 3, likes=lambda i: i)
     replies.append(xpost(T0 + 5 * M, author="x", text="@fan0 ok sure thing", replying_to_status=replies[0].id))
     replies.append(xpost(T0 + 6 * M, author="y", text="@WNBA lol", replying_to_status=post.id))  # too few words
-    got = hot.reader_fetch(FakeReader(threads={post.id: replies}, now=T0 + 7 * M))(post.url)
+    # fxtwitter dropped this one's parent link; it counts as direct, as Observe's thread_replies counts it.
+    replies.append(xpost(T0 + 7 * M, author="z", text="@WNBA see you all next season", likes=5))
+    got = hot.reader_fetch(FakeReader(threads={post.id: replies}, now=T0 + 8 * M))(post.url)
     assert [(r["author"], r["text"], r["likes"]) for r in got] == [
-        ("fan2", "what a reply number 2", 2), ("fan1", "what a reply number 1", 1), ("fan0", "what a reply number 0", 0)]
+        ("z", "see you all next season", 5), ("fan2", "what a reply number 2", 2), ("fan1", "what a reply number 1", 1),
+        ("fan0", "what a reply number 0", 0)]
 
 
 def test_an_unreadable_thread_raises_the_lanes_thread_unavailable():
@@ -420,6 +456,7 @@ def test_run_drafts_a_fresh_post_then_stops_and_releases_the_pid_file(tmp_path):
     reason = w.run()
     assert reason.startswith("duration")
     assert not w.pid_path.exists()
+    assert sorted(p.name for p in (tmp_path / "threads").iterdir()) == sorted(ingest.EMPTY_INPUTS)  # loadable at once
     (row,) = w.state.hot_rows()
     assert row["state"] == st.HOT_DONE and hot.hot_path(w.cfg.hot_dir, row["status_id"]).exists()
     assert rows(w.state.path, "runs")[0]["stop_reason"].startswith("duration")

@@ -68,7 +68,8 @@ def reader_fetch(reader):
         out = []
         for r in page:
             text = thread.clean(r.text)
-            if r.replying_to_status == sid and thread.usable(text):
+            # A reply whose parent link fxtwitter dropped counts as direct, as Observe's thread_replies does.
+            if r.replying_to_status in (None, sid) and r.id != sid and thread.usable(text):
                 out.append({"text": text, "likes": r.likes, "followers": r.author_followers, "author": r.author_handle})
         return sorted(out, key=lambda r: -r["likes"])
 

@@ -104,7 +104,15 @@ class Watcher:
             self.client = CountingClient()
             reader = FxTwitterReader(self.client, max_age_s=0)
         self.reader = reader
+        if not cfg.profiles:
+            raise ValueError("WatchConfig.profiles is empty; name at least one mission profile")
         self.watchlists = {p: load_watchlist(p) for p in cfg.profiles}
+        owner: dict[str, str] = {}
+        for p, wl in self.watchlists.items():
+            for w in wl.handles:
+                if owner.setdefault(w.handle.lower(), p) != p:
+                    # One post would be one row in state.db, so the second profile would never draft for it.
+                    raise ValueError(f"@{w.handle} is on both the {owner[w.handle.lower()]} and {p} watch lists")
         cfg.watch_dir.mkdir(parents=True, exist_ok=True)
         self.state = st.State(cfg.watch_dir / "state.db")
         self.log_path = cfg.watch_dir / "watch.log"
@@ -214,7 +222,7 @@ class Watcher:
     def ingest_one(self) -> bool:
         """Run the earliest due ingestion job. False when none is due."""
         now = self.clock()
-        job = self.state.due_ingest(now)
+        job = self.state.claim_ingest(now)
         if job is None:
             return False
         sid, cp, profile = job["status_id"], job["checkpoint"], job["profile"]
@@ -226,6 +234,11 @@ class Watcher:
             self.log(f"[ingest] {sid} +{cp}h read failed ({new_state}): {error}")
             return True
         coverage = sample.coverage
+        if datetime.fromisoformat(sample.fetched_at) >= st.utc(job["closes_at"]):
+            self.state.finish_ingest(sid, cp, st.MISSED, self.clock(), coverage=coverage,
+                                     error=f"read at {sample.fetched_at}, after the window closed")
+            self.log(f"[ingest] {sid} +{cp}h missed: the read finished after the window closed")
+            return True
         if coverage is None:
             new_state = st.NO_REPLIES
         elif coverage < ingest.MIN_COVERAGE:
@@ -292,6 +305,7 @@ class Watcher:
 
             signals = {s: signal.signal(s, on_signal) for s in (signal.SIGTERM, signal.SIGINT)}
         run_id = self.state.start_run(os.getpid(), self.clock())
+        ingest.ensure_inputs(self.cfg.threads_dir)
         moved = self.state.recover(lambda sid: hot.hot_path(self.cfg.hot_dir, sid))
         order = self.schedule()
         self.log(f"[watch] pid {os.getpid()} watching {len(order)} handles in {', '.join(self.cfg.profiles)} every "
@@ -334,12 +348,18 @@ class Watcher:
             stop.set()
             self._hot_event.set()
             worker.join(timeout=120)  # a hot draft takes under a minute; a stuck one is requeued next start
+            stuck = worker.is_alive()
             for s, handler in signals.items():
                 signal.signal(s, handler)
             self._heartbeat(t0)
             self.state.stop_run(run_id, self.clock(), self.requests() or 0, reason)
-            self.log(f"[watch] stopped: {reason}")
-            self.release_pid()
+            if stuck:
+                # Keep the pid file: this process still owns the job until it exits, and a dead pid's
+                # file is reclaimed by the next start.
+                self.log(f"[watch] stopped: {reason}; the hot job in flight didn't finish in 120 s and is requeued next start")
+            else:
+                self.log(f"[watch] stopped: {reason}")
+                self.release_pid()
         return reason
 
     def _heartbeat(self, t0: float) -> None:

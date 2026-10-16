@@ -13,8 +13,8 @@ high-coverage line, because below it the middle of the thread is missing and los
 Kept threads are appended to data/threads/ in the files `harness.corpus.load` (branch sam/corpus)
 reads: the post as a row of author_timelines.jsonl.gz, since it came off the account's own
 timeline, and each reply as a row of reply_samples.jsonl.gz with `reply_to_post` and `coverage`,
-like the context worker's reply samples. The loader requires all five of its inputs, so the two
-it would find empty here (x_metrics, no dataset rows; the two flag CSVs) are created once, empty.
+like the context worker's reply samples. The loader requires all five of its inputs, so the watcher
+creates them empty when it starts: x_metrics stays empty (no dataset rows), and so do the two flag CSVs.
 `load(Path("data/threads"))` then reads the directory as it is. Each append is one more gzip
 member; Python's gzip reads a multi-member file as one stream. Rows also carry `checkpoint`,
 `watch_profile` and, on replies, `minutes_after_parent` from the two Snowflake IDs. Repliers' bios
@@ -23,6 +23,7 @@ are left out: nothing reads them, and the repository is public.
 
 import gzip
 import json
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -35,8 +36,9 @@ CHECKPOINTS = (1, 24)  # hours after posting
 MIN_COVERAGE = 0.8
 THREADS_DIR = config.ROOT / "data" / "threads"
 ROOTS_FILE, REPLIES_FILE = "author_timelines.jsonl.gz", "reply_samples.jsonl.gz"
-# Inputs harness.corpus.load requires that the watcher has nothing for.
-EMPTY_INPUTS = {"x_metrics.jsonl.gz": "", "boost_flags.csv.gz": "post_id,is_thread_continuation,boost_suspect\n",
+# Every input harness.corpus.load requires, created empty so the directory loads before any thread is kept.
+EMPTY_INPUTS = {ROOTS_FILE: "", REPLIES_FILE: "", "x_metrics.jsonl.gz": "",
+                "boost_flags.csv.gz": "post_id,is_thread_continuation,boost_suspect\n",
                 "timeline_posts.csv.gz": "post_id,is_thread_continuation\n"}
 DROPPED_REPLY_FIELDS = ("author_description",)
 
@@ -85,9 +87,14 @@ def rows_for(root, sample: ReplySample, profile: str, checkpoint: int) -> tuple[
 
 def _append(path: Path, rows: list[dict]) -> None:
     data = "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows).encode("utf-8")
+    # The whole member is compressed first and appended in one write, so a SIGTERM can't split it; a
+    # SIGKILL or power loss mid-write still can, and would leave the file unreadable from that member on.
     # mtime=0 keeps a member's bytes a function of its rows alone.
-    with path.open("ab") as raw, gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as gz:
-        gz.write(data)
+    member = gzip.compress(data, mtime=0)
+    with path.open("ab") as f:
+        f.write(member)
+        f.flush()
+        os.fsync(f.fileno())
 
 
 def ensure_inputs(threads_dir: Path) -> None:

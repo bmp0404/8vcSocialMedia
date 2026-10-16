@@ -128,14 +128,19 @@ class State:
                 + [(status_id, cp, profile, None, None, MISSED) for cp in missed],
             )
 
-    def due_ingest(self, now: datetime) -> sqlite3.Row | None:
-        """The earliest pending job whose window has opened; jobs whose window closed become missed first."""
+    def claim_ingest(self, now: datetime) -> sqlite3.Row | None:
+        """The earliest pending job whose window has opened, now marked running; jobs whose window
+        closed become missed first. A crash leaves the claimed job running, and `recover` re-pends it."""
         stamp = iso(now)
         with self._conn() as conn:
             conn.execute("UPDATE ingest SET state = ?, error = 'window closed before the job ran' "
                          "WHERE state = ? AND closes_at <= ?", (MISSED, PENDING, stamp))
-            return conn.execute("SELECT * FROM ingest WHERE state = ? AND due_at <= ? ORDER BY due_at LIMIT 1",
-                                (PENDING, stamp)).fetchone()
+            row = conn.execute("SELECT * FROM ingest WHERE state = ? AND due_at <= ? ORDER BY due_at LIMIT 1",
+                               (PENDING, stamp)).fetchone()
+            if row is not None:
+                conn.execute("UPDATE ingest SET state = ? WHERE status_id = ? AND checkpoint = ?",
+                             (RUNNING, row["status_id"], row["checkpoint"]))
+            return row
 
     def next_ingest_at(self) -> datetime | None:
         with self._conn() as conn:
