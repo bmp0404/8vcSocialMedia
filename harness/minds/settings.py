@@ -44,7 +44,10 @@ class ActionConfig:
     # gpt-5.6-sol) caught 40-77% (research report, finding 5).
     veto_model: str = "claude-opus-5-5"
     veto_max_p_ai: int = 50  # a draft the judge puts at or above this P(AI), in either order, is vetoed (no measurement)
-    post_judge_min_grounding: int = 3  # Dhilan's 0-5 grounding score; below this is a veto (no measurement)
+    # Dhilan's post_judge grounding score as one more veto. Off by default: nothing measured it, its
+    # default client spawns the local claude CLI per draft, and a failed call vetoes the draft.
+    grounding_veto: bool = False
+    post_judge_min_grounding: int = 3  # 0-5; below this is a veto (no measurement)
     # --- the continuation page: drop scraped replies the judge reads as bots, so the writer doesn't
     # copy them (research finding 10: the two most AI-looking "human" replies got 19 and 23 likes
     # against 170-2,026 for the top replies). One single-order judge call per target; no tuning yet.

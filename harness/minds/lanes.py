@@ -392,6 +392,11 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     elif news and not linkable and not (targets or cited):
         return [], [Decision(POST_LANE, news[0][1], "abstain", "no_linkable_source",
                              f"only redirect links ({', '.join(sorted(REDIRECT_HOSTS))}) to caption")]
+    elif not (targets or cited or news) and ranked and not any(n.signal_urls for n in ranked) and budget.left("post") > 0:
+        # No link anywhere: the material came in by hand (the operator dashboard's manual signals),
+        # so the caption is of the story itself, with nothing to link or credit.
+        kind, n, url = "post", ranked[0], ""
+        source = f"{n.title}\n{n.summary}"
     elif not (targets or cited or news):
         return [], [Decision(POST_LANE, "", "abstain", "no_source", "nothing real to quote or caption")]
     else:
@@ -404,19 +409,22 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     if not passing:
         return [], [Decision(POST_LANE, url, "abstain", "gate_rejected", f"caption: 0/{len(cands)} passed the gate",
                              candidates=cands)]
-    picked, ground, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane=kind, context=context, seed=url,
-                                         grounding=grounding)
+    picked, ground, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane=kind, context=context,
+                                         seed=url or n.id, grounding=grounding)
     if picked is None:
-        return [], [Decision(POST_LANE, url, "abstain", "judge_rejected", why, candidates=cands)]
-    credit = credit_for(url, sources)
+        return [], [Decision(POST_LANE, url or n.id, "abstain", "judge_rejected", why, candidates=cands)]
+    credit = credit_for(url, sources) if url else ""
     # A quote embeds its source. A link post names the publisher the way people do, then the link.
-    text = picked.text if kind == "quote" else f"{picked.text} via {credit} {url}"
+    text = f"{picked.text} via {credit} {url}" if kind == "post" and url else picked.text
     budget.take(kind)
     a = Action(type=kind, text=text, mind="caption", narrative_id=n.id, target_url=url if kind == "quote" else None,
-               lane=POST_LANE, target_text=source, rationale=f"caption of a real source ({credit})",
-               draft_meta={"method": "caption", "writer_model": cfg.styled_model, "source_url": url, "credit": credit,
+               lane=POST_LANE, target_text=source,
+               rationale=f"caption of a real source ({credit})" if credit else "caption of hand-supplied material",
+               draft_meta={"method": "caption" if url else "caption, no link", "writer_model": cfg.styled_model,
+                           "source_url": url or None, "credit": credit or None,
                            "judge": judge_meta(cfg, picked, cands, ground)})
-    return [a], [Decision(POST_LANE, url, kind, detail="caption of a real source", action_id=a.id, candidates=cands)]
+    return [a], [Decision(POST_LANE, url or n.id, kind, detail="caption of a real source" if url else "caption, no link",
+                          action_id=a.id, candidates=cands)]
 
 
 def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[Action], cfg: ActionConfig,
@@ -473,7 +481,7 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
     mock = routing.is_mock(llm)
     PENDING_PROVIDER["name"] = "mock" if mock else type(llm).__name__
     budget = budget or (Budget(cfg) if mock else Budget.from_logs(cfg))
-    grounding = None if mock else veto.grounding_checker()
+    grounding = None if mock else veto.grounding_checker(cfg)
     actions, decisions = [], []
     if not revising:  # a veto retry revises chorus drafts; replies aren't redrafted
         a, d = reply_lane(llm, mission, lessons, narratives, cfg, budget, fetch, grounding)

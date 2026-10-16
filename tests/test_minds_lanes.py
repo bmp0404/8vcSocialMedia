@@ -361,3 +361,35 @@ def test_mock_behind_a_proxy_never_touches_network_logs_or_budget(tmp_out):
                            cfg=ActionConfig(), takes=[], fetch=lambda url: pytest.fail("mock run fetched the network"))
     assert lanes.PENDING_PROVIDER["name"] == "mock"
     assert [a.type for a in actions] == ["reply", "quote"]  # a real budget would have blocked the quote (spacing)
+
+
+
+def test_caption_of_hand_supplied_material_has_no_link():
+    # The operator dashboard ingests pasted signals with no URL (engine/demo, tests/test_dashboard.py).
+    n = Narrative(id="manual", title="A sample release", summary="A sample release", relevance=0.5, velocity=0.5)
+    actions, decisions = run(MockLLM(), [n])
+    (p,) = [a for a in actions if a.mind == "caption"]
+    assert p.type == "post" and "http" not in p.text and " via " not in p.text
+    assert p.draft_meta["method"] == "caption, no link" and p.draft_meta["source_url"] is None
+
+
+def test_target_narratives_adds_the_best_narrative_with_reply_targets():
+    from harness.minds import target_narratives
+
+    plain = [Narrative(id=f"n{i}", title="t", summary="s", relevance=0.9 - i * 0.1, velocity=0.5) for i in range(3)]
+    weak, strong = narrative([target()], nid="weak"), narrative([target(url=X_URL2)], nid="strong")
+    weak.relevance, strong.relevance = 0.2, 0.6
+    picked = target_narratives(plain + [weak, strong], top=2, explore=0)
+    assert [p["id"] for p in picked] == ["n0", "n1", "strong"]
+    assert [p["reply_targets_fallback"] for p in picked] == [False, False, True]
+    assert not picked[-1]["explore"]
+
+
+def test_target_narratives_leaves_picks_alone_when_one_has_targets():
+    from harness.minds import target_narratives
+
+    first = narrative([target()], nid="first")
+    other = narrative([target(url=X_URL2)], nid="other")
+    other.relevance = 0.1
+    picked = target_narratives([first, Narrative(id="n1", title="t", summary="s"), other], top=2, explore=0)
+    assert [p["id"] for p in picked] == ["first", "n1"]

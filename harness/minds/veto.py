@@ -15,8 +15,8 @@ claude-fable-5-dd-los-6.5-tpg (gateway reports gpt-5.6-sol) caught 40-77% (findi
 judgments shift with order, so every batch is judged forward and reversed, and a draft passes only
 when both passes clear it; a split counts as a veto.
 
-Dhilan's post_judge (PR #5) contributes one more veto when it's installed: its grounding
-criterion, 0-5. Its overall score isn't used, because its rubric rewards the explained register
+Dhilan's post_judge (PR #5) contributes one more veto when ActionConfig.grounding_veto is on: its
+grounding criterion, 0-5. Its overall score isn't used, because its rubric rewards the explained register
 and its default references are dev-tool posts.
 """
 
@@ -155,14 +155,12 @@ class PostJudgeGrounding:
         return ev.grade.grounding.score, ev.grade.grounding.reason
 
 
-def grounding_checker():
-    """PostJudgeGrounding when installed, else None. HARNESS_GROUNDING=off disables it."""
-    import os
-
-    if os.getenv("HARNESS_GROUNDING", "").lower() == "off":
+def grounding_checker(cfg: ActionConfig):
+    """PostJudgeGrounding when cfg.grounding_veto is on and post_judge is installed, else None."""
+    if not cfg.grounding_veto:
         return None
     try:
         return PostJudgeGrounding()
     except GroundingUnavailable as e:
-        print(f"[decide] {e}; skipping the grounding veto")
+        routing.warn(f"{e}; the grounding veto is on but can't run")
         return None

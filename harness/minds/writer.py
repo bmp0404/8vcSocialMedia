@@ -19,6 +19,7 @@ from harness.minds import routing
 from harness.minds.settings import ActionConfig
 
 # Handles for the reply the model writes. Plain, not themed, so the code stays brand-agnostic.
+MOCK_WORDS = ("alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel")
 PREFILL_HANDLES = ("realone_j", "kaymarie", "tuesdayfan", "dmo_44", "lo_gx", "brennnn", "itsnotkev", "marisolxo")
 
 STYLED_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. Write replies the way a real person types them on a phone.
@@ -54,7 +55,7 @@ def _first_line(text: str) -> str:
 
 def continue_page(llm: LLM, page: str, handle: str, cfg: ActionConfig, i: int = 0) -> str:
     if routing.is_mock(llm):
-        return f"mock continuation {i + 1}"
+        return f"mock continuation {MOCK_WORDS[i % len(MOCK_WORDS)]}"
     client = routing.messages_client(llm)
     if client is None:
         raise WriterUnavailable(f"{type(llm).__name__} can't prefill; continuation needs the Anthropic gateway")
@@ -80,7 +81,7 @@ def styled_replies(llm: LLM, mission: str, author: str, post_text: str, replies:
             f'Write {cfg.reply_samples} different replies to the post. Return JSON: {{"replies": ["..."]}}')
     out = routing.on_model(llm, cfg.styled_model, "the styled reply writer").complete_json(
         STYLED_SYSTEM.format(mission=mission), user,
-        mock=lambda: {"replies": [f"mock styled reply {i + 1}" for i in range(cfg.reply_samples)]},
+        mock=lambda: {"replies": [f"mock styled reply {MOCK_WORDS[i % len(MOCK_WORDS)]}" for i in range(cfg.reply_samples)]},
     )
     return [_first_line(x) for x in out.get("replies", []) if isinstance(x, str)][: cfg.reply_samples]
 
@@ -90,6 +91,6 @@ def captions(llm: LLM, mission: str, source: str, cfg: ActionConfig) -> list[str
             'Return JSON: {"captions": ["..."]}')
     out = routing.on_model(llm, cfg.styled_model, "the caption writer").complete_json(
         CAPTION_SYSTEM.format(mission=mission, max_chars=cfg.caption_max_chars), user,
-        mock=lambda: {"captions": [f"mock caption {i + 1}" for i in range(cfg.caption_samples)]},
+        mock=lambda: {"captions": [f"mock caption {MOCK_WORDS[i % len(MOCK_WORDS)]}" for i in range(cfg.caption_samples)]},
     )
     return [_first_line(x) for x in out.get("captions", []) if isinstance(x, str)][: cfg.caption_samples]

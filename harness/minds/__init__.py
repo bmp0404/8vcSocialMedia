@@ -46,10 +46,19 @@ any draft you can't fix."""
 
 
 def target_narratives(narratives: list[Narrative], top: int = 2, explore: int = 1) -> list[dict]:
-    """Orient's top narratives, plus random lower-ranked ones so we learn whether the ranking holds."""
+    """Orient's top narratives, plus random lower-ranked ones so we learn whether the ranking holds.
+    When none of those carries reply targets, the best narrative that does joins them, so the minds
+    see a live post to work with."""
     focus, rest = narratives[:top], narratives[top:]
     picked = focus + random.sample(rest, min(explore, len(rest)))
-    return [{**asdict(n), "explore": i >= len(focus)} for i, n in enumerate(picked)]
+    fallback = None
+    if not any(n.reply_targets for n in picked):
+        with_targets = [n for n in narratives if n.reply_targets and n not in picked]
+        if with_targets:
+            fallback = max(with_targets, key=lambda n: n.relevance * n.velocity)
+            picked.append(fallback)
+    return [{**asdict(n), "explore": i >= len(focus) and n is not fallback, "reply_targets_fallback": n is fallback}
+            for i, n in enumerate(picked)]
 
 
 def load_minds() -> dict[str, str]:
