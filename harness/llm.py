@@ -15,6 +15,21 @@ DEFAULT_MODELS = {"anthropic": "claude-sonnet-5-5"}
 MAX_TOKENS = int(os.getenv("HARNESS_MAX_TOKENS", "16000"))
 
 
+class TruncatedError(RuntimeError):
+    """The reply stopped at the output-token cap, so it is incomplete (ported from aarav/self-improving).
+
+    A RuntimeError, not a ValueError, so complete_json's JSON retry never catches it: a cut-off answer
+    must not be parsed, and the same request would be cut off again."""
+
+
+def check_stop(stop_reason: str | None, model: str, max_tokens: int | str) -> None:
+    """Raise TruncatedError for the stop reasons that mean "out of tokens": Anthropic's max_tokens and
+    the OpenAI-compatible length."""
+    if stop_reason in ("max_tokens", "length"):
+        raise TruncatedError(f"{model} stopped at its output cap ({max_tokens} tokens) with stop reason "
+                             f"{stop_reason!r}; the reply is cut off. Ask for less output or raise HARNESS_MAX_TOKENS")
+
+
 class LLM:
     # Read by harness/baml_adapter.py, which builds a BAML function's client from them:
     # - `provider` ("anthropic", "openai", "xai" or "mock") and `model`, set by each backend below.
@@ -56,6 +71,7 @@ class AnthropicLLM(LLM):
             system=system,
             messages=[{"role": "user", "content": prompt}],
         )
+        check_stop(resp.stop_reason, self.model, MAX_TOKENS)
         return "".join(b.text for b in resp.content if b.type == "text")
 
 
@@ -72,6 +88,7 @@ class OpenAICompatLLM(LLM):
             model=self.model,
             messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}],
         )
+        check_stop(resp.choices[0].finish_reason, self.model, "the provider's default")
         return resp.choices[0].message.content or ""
 
 

@@ -100,7 +100,10 @@ def continue_page(llm: LLM, page: str, handle: str, cfg: ActionConfig, i: int = 
         messages=[{"role": "user", "content": "Saved page text:"}, {"role": "assistant", "content": f"{page}\n@{handle}:"}],
         stop_sequences=["\n@"],
     )
-    return _first_line("".join(b.text for b in r.content if b.type == "text"))
+    text = "".join(b.text for b in r.content if b.type == "text")
+    if r.stop_reason == "max_tokens" and "\n" not in text.strip():
+        return ""  # the reply hit the cap before its line ended, so it's cut off; the lanes drop empty samples
+    return _first_line(text)
 
 
 def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg: ActionConfig, seed: str,
