@@ -125,6 +125,16 @@ def test_step_jump_wins_over_two_waves():
     assert shape_of(snaps_from(cum)) == "step_jump"
 
 
+@pytest.mark.parametrize("offset", range(15))
+def test_step_found_whatever_the_polling_phase(offset):
+    # A jump at minute 100, polled every 15 minutes starting at `offset`: interpolation can split it
+    # across two grid bins, and the two-bin window still has to find it.
+    base = exp_cum(200, 30)
+    cum = lambda m: base(m) + (600 if m >= 100 else 0)  # noqa: E731
+    snaps = [Snapshot("1", T0 + timedelta(minutes=m), round(cum(m)), 0, 0, 0) for m in range(offset or 15, 2880, 15)]
+    assert detect(T0, snaps).shape == "step_jump"
+
+
 def test_sparse_polling_hides_a_step():
     # The same jump seen only through 6 h gaps is spread over the gap, so it is not called a step.
     base = exp_cum(200, 30)

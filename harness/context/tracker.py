@@ -19,7 +19,10 @@ Storage, under data/context/tracker/ (gitignored, append-only JSONL):
     tracked.json     {post_id: {"author", "created_at", "added_at", "reason"}}
     watch.json       {"handles": [...], "every_min": 15}
     snapshots.jsonl  one Snapshot per line
-    replies.jsonl    reply samples, for amplifier attribution
+    replies.jsonl    reply samples (both sort orders, with coverage)
+    reposters.jsonl  the largest reposters at each poll; a big account's first
+                     appearance brackets when it reposted, which is the only
+                     repost timing fxtwitter exposes
 
 Any `XReader` works; `FxTwitterReader` is the default until an official reader exists.
 """
@@ -55,7 +58,8 @@ def next_due(created_at: datetime, last_observed: datetime | None, now: datetime
         return False
     if last_observed is None:
         return True
-    last_age = (last_observed - created_at).total_seconds() / 60
+    # One second of slack: fetch times and creation times are rounded differently.
+    last_age = (last_observed - created_at).total_seconds() / 60 + 1 / 60
     return last_age < passed[-1]
 
 
@@ -70,6 +74,7 @@ class Tracker:
         self.watch_path = root / "watch.json"
         self.snap_path = root / "snapshots.jsonl"
         self.reply_path = root / "replies.jsonl"
+        self.repost_path = root / "reposters.jsonl"
 
     # ----------------------------------------------------------------- state
     def tracked(self) -> dict:
@@ -135,7 +140,7 @@ class Tracker:
         self._save(self.watch_path, w)
         return added
 
-    def poll_posts(self, now: datetime, with_replies: bool = False) -> int:
+    def poll_posts(self, now: datetime, with_replies: bool = False, with_reposters: bool = False) -> int:
         snaps = self.snapshots()
         polled = 0
         for post_id, meta in self.tracked().items():
@@ -152,47 +157,79 @@ class Tracker:
                 f.write(json.dumps(Snapshot.from_xpost(post).to_dict()) + "\n")
             if with_replies:
                 self._sample_replies(post_id)
+            if with_reposters and post.reposts:
+                self._sample_reposters(post_id, post.fetched_at)
             polled += 1
         return polled
 
     def _sample_replies(self, post_id: str) -> None:
         try:
-            replies = self.reader.conversation(post_id)
+            sample = self.reader.replies(post_id)
         except FetchError as e:
             print(f"[tracker] replies for {post_id} failed: {e}")
             return
         with self.reply_path.open("a", encoding="utf-8") as f:
-            for r in replies:
-                f.write(json.dumps({"reply_to_post": post_id, **r.to_dict()}) + "\n")
+            for r in sample.replies:
+                f.write(json.dumps({"reply_to_post": post_id, "coverage": sample.coverage, **r.to_dict()}) + "\n")
 
-    def poll_once(self, now: datetime | None = None, with_replies: bool = False) -> dict:
+    def _sample_reposters(self, post_id: str, observed_at: str) -> None:
+        try:
+            users = self.reader.reposters(post_id, max_pages=1)
+        except FetchError as e:
+            print(f"[tracker] reposters for {post_id} failed: {e}")
+            return
+        with self.repost_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"post_id": post_id, "observed_at": observed_at,
+                                "users": [u.to_dict() for u in users]}) + "\n")
+
+    def poll_once(self, now: datetime | None = None, with_replies: bool = False, with_reposters: bool = False) -> dict:
         now = now or datetime.now(timezone.utc)
-        return {"discovered": self.poll_watch(now), "polled": self.poll_posts(now, with_replies)}
+        return {"discovered": self.poll_watch(now), "polled": self.poll_posts(now, with_replies, with_reposters)}
 
-    def loop(self, interval_s: float | None = None, with_replies: bool = False, max_passes: int | None = None) -> None:
+    def loop(
+        self,
+        interval_s: float | None = None,
+        with_replies: bool = False,
+        max_passes: int | None = None,
+        with_reposters: bool = False,
+    ) -> None:
         interval_s = interval_s or self.params.loop_interval_s
         n = 0
         while max_passes is None or n < max_passes:
-            print(f"[tracker] {datetime.now(timezone.utc):%H:%M:%S} {self.poll_once(with_replies=with_replies)}")
+            result = self.poll_once(with_replies=with_replies, with_reposters=with_reposters)
+            print(f"[tracker] {datetime.now(timezone.utc):%H:%M:%S} {result}")
             n += 1
             time.sleep(interval_s)
 
     # ----------------------------------------------------------------- reading
     def amplifiers(self, post_id: str) -> list[Amplifier] | None:
-        """Large accounts seen replying, from reply samples. None when no sample was taken."""
-        rows = [r for r in read_jsonl(self.reply_path) if r["reply_to_post"] == post_id]
-        if not rows:
+        """Large accounts that reposted (first poll they appeared in) or replied (reply time).
+
+        None unless reposters were sampled: a quote or repost by a big account
+        is the usual cause of a step, and replies alone cannot rule it out, so
+        an empty list would wrongly flag every step as unexplained.
+        """
+        snaps = sorted(
+            (r for r in read_jsonl(self.repost_path) if r["post_id"] == post_id), key=lambda r: r["observed_at"]
+        )
+        if not snaps:
             return None
-        seen = {}
-        for r in rows:
-            if (r.get("author_followers") or 0) >= self.params.amplifier_min_followers and r["id"] not in seen:
-                seen[r["id"]] = Amplifier(
-                    at=datetime.fromisoformat(r["created_at"]),
-                    handle=r["author_handle"],
-                    followers=r["author_followers"],
-                    kind="reply",
-                )
-        return list(seen.values())
+        big = self.params.amplifier_min_followers
+        found: dict[str, Amplifier] = {}
+        for snap in snaps:
+            for u in snap["users"]:
+                if (u.get("followers") or 0) >= big and u["handle"] not in found:
+                    found[u["handle"]] = Amplifier(
+                        at=datetime.fromisoformat(snap["observed_at"]), handle=u["handle"],
+                        followers=u["followers"], kind="repost",
+                    )
+        for r in read_jsonl(self.reply_path):
+            if r["reply_to_post"] == post_id and (r.get("author_followers") or 0) >= big:
+                found.setdefault(r["author_handle"], Amplifier(
+                    at=datetime.fromisoformat(r["created_at"]), handle=r["author_handle"],
+                    followers=r["author_followers"], kind="reply",
+                ))
+        return list(found.values())
 
     def early_metrics(self, post_id: str, snaps: list[Snapshot], followers: int | None) -> dict:
         """Minutes to the k-th reply, and the like-per-view rate X's cold-start ranking sees."""

@@ -12,7 +12,7 @@ week hourly, longer spans daily. Only the last 3 months are queryable.
 from __future__ import annotations
 
 import urllib.parse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from harness.context.collectors.base import Series
 from harness.context.http import FetchError, PoliteClient
@@ -37,8 +37,7 @@ def news_volume(query: str, start: datetime, end: datetime) -> Series:
         "startdatetime": f"{start:%Y%m%d%H%M%S}",
         "enddatetime": f"{end:%Y%m%d%H%M%S}",
     }
-    past = end < datetime.now(timezone.utc)
-    resp = _client.get(f"{DOC}?" + urllib.parse.urlencode(params), max_age_s=None if past else 1800)
+    resp = _client.get(f"{DOC}?" + urllib.parse.urlencode(params), max_age_s=1800, settled_after=end + timedelta(hours=1))
     if not resp.body.lstrip().startswith("{"):
         raise FetchError(f"GDELT returned non-JSON for {query!r}: {resp.body[:160]!r}")
     timeline = resp.json().get("timeline") or []

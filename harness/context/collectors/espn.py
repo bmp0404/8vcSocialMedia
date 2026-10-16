@@ -38,8 +38,9 @@ def _dt(s: str) -> datetime:
 def scoreboard(day: datetime, league: str = "wnba") -> list[Game]:
     """Games on one ESPN (US) calendar day."""
     url = f"{SITE.format(league=league)}/scoreboard?dates={day:%Y%m%d}"
-    past = day.date() < (datetime.now(timezone.utc) - timedelta(days=2)).date()
-    data = client().get_json(url, max_age_s=None if past else 300)
+    # Final once the latest game on that US date has ended; 10 h after UTC midnight of the next day covers it.
+    day_end = datetime(day.year, day.month, day.day, tzinfo=timezone.utc) + timedelta(days=1, hours=10)
+    data = client().get_json(url, max_age_s=300, settled_after=day_end)
     games = []
     for e in data.get("events") or []:
         comp = e["competitions"][0]
@@ -62,7 +63,7 @@ def scoreboard(day: datetime, league: str = "wnba") -> list[Game]:
 def with_wallclock(game: Game, league: str = "wnba") -> Game:
     """Fill `started` and `ended` from the play-by-play wallclock."""
     url = f"{SITE.format(league=league)}/summary?event={game.id}"
-    data = client().get_json(url, max_age_s=None if game.completed else 120)
+    data = client().get_json(url, max_age_s=120, settled_after=game.scheduled + timedelta(hours=5))
     clocks = [_dt(p["wallclock"]) for p in data.get("plays") or [] if p.get("wallclock")]
     if not clocks:
         raise FetchError(f"ESPN summary for game {game.id} has no play wallclocks yet")

@@ -37,7 +37,7 @@ BINARY = [
 NUMERIC = [
     "pre_n_chars", "pre_n_words", "pre_n_lines", "pre_n_links_text", "pre_n_mentions", "pre_n_hashtags",
     "pre_n_emoji", "pre_n_exclaim", "pre_caps_ratio", "pre_hour_local", "pre_author_posts_prev2h",
-    "pre_hn_stories_prev24h", "pre_hn_500plus_stories_prev24h", "pre_wiki_prev_day_ratio",
+    "pre_hn_stories_prev24h", "pre_wiki_prev_day_ratio",
 ]
 
 
@@ -217,7 +217,7 @@ def run() -> dict:
     sd = [r for r in elig if r["Category"] in ("Super Viral", "Deadweight")]
     nd = [r for r in elig]
     floors = {}
-    for feat in ("pre_author_prior_median_eng", "pre_author_prior_viral_share", "pre_author_followers_at_fetch"):
+    for feat in ("pre_author_prior_median_eng", "pre_author_prior_viral_share", "outcome_author_followers_at_fetch"):
         a = [_f(r[feat]) for r in sd if r["Category"] == "Super Viral" and _f(r.get(feat)) is not None]
         b = [_f(r[feat]) for r in sd if r["Category"] == "Deadweight" and _f(r.get(feat)) is not None]
         c = [_f(r[feat]) for r in nd if r["Category"] != "Deadweight" and _f(r.get(feat)) is not None]
@@ -265,9 +265,9 @@ def run() -> dict:
         for k, v in reach.items()
     }
 
-    amp = [r for r in elig if _f(r.get("outcome_max_reposter_followers")) is not None and _f(r.get("pre_author_followers_at_fetch"))]
+    amp = [r for r in elig if _f(r.get("outcome_max_reposter_followers")) is not None and _f(r.get("outcome_author_followers_at_fetch"))]
     res["reposter_larger_than_author"] = {
-        cat: {"n": len(v), "share": round(sum(_f(r["outcome_max_reposter_followers"]) > _f(r["pre_author_followers_at_fetch"]) for r in v) / len(v), 3)}
+        cat: {"n": len(v), "share": round(sum(_f(r["outcome_max_reposter_followers"]) > _f(r["outcome_author_followers_at_fetch"]) for r in v) / len(v), 3)}
         for cat in ("Super Viral", "Medium Viral", "Deadweight")
         if (v := [r for r in amp if r["Category"] == cat])
     }
