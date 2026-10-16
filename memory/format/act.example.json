@@ -1,0 +1,25 @@
+{
+  "schema_version": "1",
+  "loop_id": "loop-20261015T2100Z",
+  "step": "act",
+  "ts": "2026-10-15T21:01:45Z",
+  "decision": "ship",
+  "reason_code": null,
+  "candidate_id": "a1-c2",
+  "request": {
+    "method": "POST",
+    "path": "/2/tweets",
+    "body": {
+      "text": "Placeholder stat_nerd quote draft. #IndianaFever",
+      "quote_tweet_id": "1000000000000000002"
+    }
+  },
+  "predicted_public_metrics": {
+    "impression_count": 650,
+    "like_count": 18,
+    "retweet_count": 2,
+    "reply_count": 2,
+    "quote_count": 0,
+    "bookmark_count": 3
+  }
+}
