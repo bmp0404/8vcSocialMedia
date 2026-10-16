@@ -6,11 +6,11 @@ from dataclasses import asdict
 from harness.llm import LLM
 from harness.models import Narrative, Signal
 
-SYSTEM = """You are the strategist for a fan account on X. Group the observed signals into
-distinct narratives the account could join. Score each:
-- relevance (0-1): fit with the mission's subjects and tone
+SYSTEM = """You are the social strategist for a company's X account. Group the observed signals into
+distinct narratives the account could credibly join. Score each:
+- relevance (0-1): how naturally the brand's point of view (see mission) fits the conversation
 - velocity (0-1): how fast attention is moving right now
-Suggest a one-line `angle` the account could take (banter beats generic praise)."""
+Suggest a one-line `angle`: the specific take that would make the brand's post the one people repost."""
 
 PROMPT = """MISSION:
 {mission}
@@ -34,7 +34,7 @@ def orient(llm: LLM, mission: str, signals: list[Signal], top: int = 5) -> list[
                     "summary": s.text,
                     "relevance": 0.8 - i * 0.1,
                     "velocity": 0.7,
-                    "angle": "playful rivalry banter",
+                    "angle": "the coordination angle",
                     "signal_urls": [s.url] if s.url else [],
                 }
                 for i, s in enumerate(signals[:top])

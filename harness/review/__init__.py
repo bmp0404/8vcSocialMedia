@@ -3,15 +3,36 @@
 Every verdict rewrites out/approved-run<id>.json, the hand-off file for the posting bot.
 """
 
+import contextlib
+import io
 import json
 import re
+import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from harness import config, memory
+from harness.evolve import evolve, leaderboard
+from harness.llm import get_llm
 
 INDEX = Path(__file__).parent / "index.html"
+EVOLVE_LOCK = threading.Lock()
+PROVIDER: str | None = None  # set by serve(); None = HARNESS_PROVIDER
+
+
+def run_evolve(spawn: bool) -> tuple[int, dict]:
+    if not EVOLVE_LOCK.acquire(blocking=False):
+        return 409, {"error": "evolve is already running"}
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            evolve(get_llm(PROVIDER), spawn=spawn)
+        return 200, {"ok": True, "log": buf.getvalue()}
+    except (Exception, SystemExit) as e:  # noqa: BLE001 - report to the page instead of crashing the server
+        return 500, {"error": str(e) or type(e).__name__, "log": buf.getvalue()}
+    finally:
+        EVOLVE_LOCK.release()
 
 
 def export_approved(run_id: int) -> Path:
@@ -40,6 +61,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, INDEX.read_bytes(), "text/html; charset=utf-8")
         if self.path == "/api/runs":
             return self._json(memory.list_runs())
+        if self.path == "/api/stats":
+            return self._json(leaderboard())
         if m := re.fullmatch(r"/api/runs/(\d+)", self.path):
             return self._json(memory.run_actions(int(m[1])))
         if m := re.fullmatch(r"/api/runs/(\d+)/approved", self.path):
@@ -47,11 +70,17 @@ class Handler(BaseHTTPRequestHandler):
         self._json({"error": "not found"}, 404)
 
     def do_POST(self) -> None:
+        try:
+            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+        except json.JSONDecodeError:
+            return self._json({"error": "invalid JSON"}, 400)
+        if self.path == "/api/evolve":
+            code, data = run_evolve(bool(body.get("spawn")))
+            return self._json(data, code)
         m = re.fullmatch(r"/api/actions/(\w+)/review", self.path)
         if not m:
             return self._json({"error": "not found"}, 404)
         try:
-            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
             run_id = memory.set_review(m[1], body.get("status", ""), body.get("text"), body.get("note", ""))
         except KeyError:
             return self._json({"error": "unknown action"}, 404)
@@ -64,7 +93,9 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
 
-def serve(port: int = 8765, open_browser: bool = True) -> None:
+def serve(port: int = 8765, open_browser: bool = True, provider: str | None = None) -> None:
+    global PROVIDER
+    PROVIDER = provider
     url = f"http://127.0.0.1:{port}"
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     print(f"[review] dashboard at {url}  (Ctrl+C to stop)")

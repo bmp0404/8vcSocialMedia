@@ -1,3 +1,3 @@
 # Lessons
 
-(No lessons yet. `python -m harness learn` rewrites this file after outcomes are recorded.)
+(No lessons yet. `python -m harness learn` or `evolve` rewrites this file from reviewed and posted results.)

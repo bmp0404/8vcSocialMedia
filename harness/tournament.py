@@ -1,0 +1,97 @@
+"""Best-of-N: a Swiss-style pairwise tournament over the drafts that survived qualify.
+
+Pairwise "which spreads further?" judgments are more reliable than absolute 0-1 scores, so the
+panel score seeds the bracket and Elo from head-to-head rounds sets the final order.
+"""
+
+import json
+import random
+
+from harness.llm import LLM
+from harness.models import Action
+
+K = 32  # Elo step
+
+JUDGE_SYSTEM = """You judge pairs of draft X posts for a company's account. For each pair, pick the one more
+likely to spread among the target audience (reposts, quotes, replies), weighing the opening line most.
+A draft that breaks the mission's fact sheet or reads like an ad always loses."""
+
+JUDGE_PROMPT = """MISSION:
+{mission}
+
+PAIRS:
+{pairs}
+
+Return JSON: {{"winners": {{"<pair id>": "A" or "B"}}}}"""
+
+
+def _view(a: Action) -> dict:
+    return {"type": a.type, "text": a.text, "replying_to": a.target_url or a.target_handle}
+
+
+def judge(llm: LLM, mission: str, pairs: list[tuple[Action, Action]], rng: random.Random) -> list[Action | None]:
+    """One LLM call judges every pair. Sides are shuffled to cancel position bias."""
+    if not pairs:
+        return []
+    sides = [(a, b) if rng.random() < 0.5 else (b, a) for a, b in pairs]
+    payload = [{"pair": str(i), "A": _view(a), "B": _view(b)} for i, (a, b) in enumerate(sides)]
+    out = llm.complete_json(
+        JUDGE_SYSTEM,
+        JUDGE_PROMPT.format(mission=mission, pairs=json.dumps(payload, indent=1)),
+        mock=lambda: {"winners": {str(i): "A" if a.predicted_score >= b.predicted_score else "B"
+                                  for i, (a, b) in enumerate(sides)}},
+    ).get("winners", {})
+    picks = []
+    for i, (a, b) in enumerate(sides):
+        w = str(out.get(str(i), "")).strip().upper()
+        picks.append(a if w == "A" else b if w == "B" else None)
+    return picks
+
+
+def _expected(ra: float, rb: float) -> float:
+    return 1 / (1 + 10 ** ((rb - ra) / 400))
+
+
+def tournament(llm: LLM, mission: str, actions: list[Action], rounds: int = 3, field: int = 16,
+               rng: random.Random | None = None) -> list[Action]:
+    """Rank `actions` (already sorted by panel score). Only the top `field` play; the rest keep their order."""
+    rng = rng or random.Random()
+    pool, rest = actions[:field], actions[field:]
+    if len(pool) < 2 or rounds <= 0:
+        for i, a in enumerate(actions, 1):
+            a.rank = i
+        return actions
+
+    elo = {a.id: 1500.0 for a in pool}
+    wins = {a.id: 0 for a in pool}
+    losses = {a.id: 0 for a in pool}
+    played: set[frozenset] = set()
+
+    for r in range(rounds):
+        # Swiss pairing: sort by score so far, pair neighbours, avoid rematches where possible.
+        order = sorted(pool, key=lambda a: (-wins[a.id], -elo[a.id], -a.predicted_score))
+        pairs, waiting = [], order[:]
+        while len(waiting) >= 2:
+            a = waiting.pop(0)
+            j = next((j for j, b in enumerate(waiting) if frozenset((a.id, b.id)) not in played), 0)
+            b = waiting.pop(j)
+            pairs.append((a, b))
+            played.add(frozenset((a.id, b.id)))
+        for (a, b), w in zip(pairs, judge(llm, mission, pairs, rng)):
+            if w is None:
+                continue
+            l = b if w is a else a
+            e = _expected(elo[w.id], elo[l.id])
+            elo[w.id] += K * (1 - e)
+            elo[l.id] -= K * (1 - e)
+            wins[w.id] += 1
+            losses[l.id] += 1
+        print(f"[tournament] round {r + 1}: {len(pairs)} matches")
+
+    for a in pool:
+        a.elo = round(elo[a.id])
+        a.record = f"{wins[a.id]}-{losses[a.id]}"
+    ranked = sorted(pool, key=lambda a: elo[a.id], reverse=True) + rest
+    for i, a in enumerate(ranked, 1):
+        a.rank = i
+    return ranked

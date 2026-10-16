@@ -66,18 +66,48 @@
   .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg);
            padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
   .toast.show { opacity: 1; }
+  .views { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .views button { border: 0; background: var(--card); padding: 5px 12px; cursor: pointer; }
+  .views button.on { background: var(--accent); color: #fff; }
+  body[data-view="learning"] .review-only, body[data-view="review"] .learning-only { display: none !important; }
+  .elo { font-variant-numeric: tabular-nums; color: var(--ink); }
+  .hooks { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+  .chip { border: 1px dashed var(--line); background: transparent; border-radius: 6px; padding: 3px 8px; cursor: pointer;
+          font-size: 12px; text-align: left; max-width: 100%; }
+  .chip:hover { border-color: var(--accent); }
+  .chip.on { border-style: solid; border-color: var(--accent); }
+  .chip small { color: var(--muted); margin-right: 4px; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; }
+  .box h2 { font-size: 14px; margin: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+  .sub { color: var(--muted); font-size: 12px; margin: 0; }
+  pre.log, pre.doc { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12.5px/1.5 ui-monospace, Consolas, monospace;
+                     background: var(--bg); border-radius: 8px; padding: 10px; max-height: 420px; overflow: auto; }
+  .variant { border-top: 1px solid var(--line); padding-top: 8px; }
+  .variant summary { display: grid; grid-template-columns: minmax(0, 1fr) auto 5ch minmax(60px, 140px) 4ch; gap: 10px;
+                     align-items: center; color: var(--ink); list-style: none; }
+  .variant summary::-webkit-details-marker { display: none; }
+  .variant.retired summary { opacity: .5; }
+  .variant code { overflow-wrap: anywhere; }
+  .diff { display: grid; font: 12px/1.5 ui-monospace, Consolas, monospace; background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+  .diff .add { color: var(--ok); } .diff .del { color: var(--bad); } .diff .ctx { color: var(--muted); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .weights { display: grid; grid-template-columns: max-content minmax(60px, 1fr) 4ch; gap: 6px 10px; align-items: center; font-size: 13px; }
+  .weights .desc { grid-column: 1 / -1; color: var(--muted); font-size: 12px; margin-top: -4px; }
 </style>
 </head>
-<body>
+<body data-view="review">
 <header>
-  <h1>Harness <span>Review</span></h1>
-  <select id="run" aria-label="Run"></select>
-  <div class="tabs" id="tabs"></div>
+  <h1>Coordigent <span>Harness</span></h1>
+  <div class="views" id="views"><button data-v="review" class="on">Review</button><button data-v="learning">Learning</button></div>
+  <select id="run" class="review-only" aria-label="Run"></select>
+  <div class="tabs review-only" id="tabs"></div>
   <div class="spacer"></div>
-  <button class="ghost" id="copy" title="Copy the approved hand-off JSON">Copy approved JSON</button>
+  <button class="ghost review-only" id="copy" title="Copy the approved hand-off JSON">Copy approved JSON</button>
 </header>
-<p class="hint"><kbd>j</kbd>/<kbd>k</kbd> move · <kbd>a</kbd> approve · <kbd>x</kbd> kill · <kbd>u</kbd> reset · <kbd>e</kbd> edit text</p>
-<main id="list"></main>
+<p class="hint review-only"><kbd>j</kbd>/<kbd>k</kbd> move · <kbd>a</kbd> approve · <kbd>x</kbd> kill · <kbd>u</kbd> reset · <kbd>e</kbd> edit text · click a hook to swap it in</p>
+<main id="list" class="review-only"></main>
+<main id="learning" class="learning-only"></main>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -128,16 +158,20 @@ function cardHtml(a, i) {
   const isFollow = a.type === "follow";
   return `<article class="card ${st} ${i === state.focus ? "focus" : ""}" data-i="${i}" data-id="${a.id}">
     <div class="meta">
-      <span class="score">${(a.predicted_score * 100).toFixed(0)}</span>
+      ${a.rank ? `<span class="score" title="final rank">#${a.rank}</span>` : ""}
+      <span title="audience panel score">panel ${(a.predicted_score * 100).toFixed(0)}</span>
+      ${a.elo != null ? `<span class="elo" title="tournament Elo, wins-losses">elo ${a.elo} · ${esc(a.record)}</span>` : ""}
       <span class="pill">${esc(a.type)}</span>
-      <span>${esc(a.mind.replaceAll("_", " "))}</span>
+      <span title="mind variant">${esc(a.variant || a.mind)}</span>
       <span>· ${esc(a.narrative_id)}</span>
       ${a.vetoed ? `<span class="veto">⚠ critic veto</span>` : ""}
       ${st !== "pending" ? `<span class="status-${st}">${st}</span>` : ""}
       ${a.review.text ? `<span>· edited</span>` : ""}
+      ${a.pre_hook_text ? `<span title="the hook pass swapped in a stronger opening line">· hook upgraded</span>` : ""}
     </div>
     ${targetHtml(a) ? `<div class="meta target">${targetHtml(a)}</div>` : ""}
     ${isFollow ? "" : `<textarea aria-label="Post text">${esc(text)}</textarea><div class="count"></div>`}
+    ${isFollow ? "" : hooksHtml(a, text)}
     <details>
       <summary>Why this?</summary>
       <div class="why">
@@ -155,11 +189,35 @@ function cardHtml(a, i) {
   </article>`;
 }
 
+// Mirrors harness/hooks.py split_hook: first line, else first sentence.
+function splitHook(t) {
+  const i = t.indexOf("\n");
+  if (i >= 0) return [t.slice(0, i), t.slice(i)];
+  const m = /[.!?]\s+/.exec(t);
+  return m ? [t.slice(0, m.index + 1), t.slice(m.index + 1)] : [t, ""];
+}
+
+function hooksHtml(a, text) {
+  if (!a.hook_alternatives?.length) return "";
+  const options = [
+    ["original", splitHook(a.pre_hook_text ?? a.text)[0]],
+    ...a.hook_alternatives.map((h, i) => [`alt ${i + 1}`, h]),
+  ];
+  const current = splitHook(text)[0];
+  return `<div class="hooks"><span>Hooks:</span>${options.map(([label, h]) =>
+    `<button class="chip ${h === current ? "on" : ""}" data-hook="${esc(h)}"><small>${label}</small>${esc(h)}</button>`
+  ).join("")}</div>`;
+}
+
+// Threads separate posts with a line containing only "---"; the limit applies per post.
+const parts = text => text.split(/^\s*---\s*$/m).map(s => s.trim()).filter(Boolean);
+const longest = text => Math.max(0, ...parts(text).map(p => [...p].length));
+
 function updateCount(card) {
   const ta = card.querySelector("textarea"), c = card.querySelector(".count");
   if (!ta) return;
-  const n = [...ta.value].length;
-  c.textContent = `${n} / 280`;
+  const n = longest(ta.value), k = parts(ta.value).length;
+  c.textContent = k > 1 ? `thread · ${k} posts · longest ${n} / 280` : `${n} / 280`;
   c.classList.toggle("over", n > 280);
 }
 
@@ -177,7 +235,7 @@ async function review(card, status) {
   const a = state.actions.find(x => x.id === card.dataset.id);
   const ta = card.querySelector("textarea");
   const edited = ta && ta.value.trim() !== a.text.trim() ? ta.value.trim() : null;
-  if (status === "approved" && edited && [...edited].length > 280) return toast("Over 280 characters");
+  if (status === "approved" && edited && longest(edited) > 280) return toast("A post is over 280 characters");
   const note = card.querySelector(".note").value;
   const res = await api(`/api/actions/${a.id}/review`, {
     method: "POST", headers: { "Content-Type": "application/json" },
@@ -215,6 +273,13 @@ $("#tabs").addEventListener("click", e => {
 $("#list").addEventListener("click", e => {
   const card = e.target.closest(".card"); if (!card) return;
   if (e.target.dataset.act) return review(card, e.target.dataset.act);
+  const chip = e.target.closest(".chip");
+  if (chip) {
+    const ta = card.querySelector("textarea");
+    ta.value = chip.dataset.hook + splitHook(ta.value)[1];
+    card.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c === chip));
+    updateCount(card);
+  }
   state.focus = +card.dataset.i;
   document.querySelectorAll(".card").forEach(c => c.classList.toggle("focus", c === card));
 });
@@ -226,6 +291,7 @@ $("#copy").addEventListener("click", async () => {
   catch { toast("Clipboard blocked; see out/approved-run" + state.runId + ".json"); }
 });
 document.addEventListener("keydown", e => {
+  if (document.body.dataset.view !== "review") return;
   if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
     if (e.key === "Escape") document.activeElement.blur();
     return;
@@ -246,7 +312,94 @@ document.addEventListener("keydown", e => {
   else if (e.key === "e") { e.preventDefault(); card.querySelector("textarea")?.focus(); }
 });
 
-loadRuns();
+// ---- Learning view ------------------------------------------------------------------------
+
+function diffHtml(lines) {
+  if (!lines.length) return "";
+  return `<div class="diff">${lines.map(l => {
+    const cls = l.startsWith("+") ? "add" : l.startsWith("-") ? "del" : "ctx";
+    return `<span class="${cls}">${esc(l) || "&nbsp;"}</span>`;
+  }).join("")}</div>`;
+}
+
+function variantHtml(v) {
+  return `<details class="variant ${v.status}">
+    <summary>
+      <code>${esc(v.id)}</code>
+      <span class="pill">${esc(v.status)}</span>
+      <span class="num" title="scored drafts">${v.n}</span>
+      <span class="bar" title="mean reward ${v.mean}"><i style="width:${Math.round(v.mean * 100)}%"></i></span>
+      <span class="num">${Math.round(v.mean * 100)}</span>
+    </summary>
+    <div class="why">
+      <div class="sub">from <b>${esc(v.parent)}</b>${v.note ? ` · ${esc(v.note)}` : ""}</div>
+      ${v.diff.length ? `<div><b>Change vs. parent</b></div>${diffHtml(v.diff)}` : ""}
+      <div><b>Prompt</b></div><pre class="doc">${esc(v.prompt)}</pre>
+    </div>
+  </details>`;
+}
+
+function weightsHtml(panel, weights) {
+  return `<div class="weights">${Object.entries(panel).map(([k, desc]) => {
+    const w = weights[k] ?? 1;
+    return `<span>${esc(k.replaceAll("_", " "))}</span>
+      <span class="bar"><i style="width:${Math.min(100, Math.round(w * 50))}%"></i></span>
+      <span class="num">${w.toFixed(2)}</span><span class="desc">${esc(desc)}</span>`;
+  }).join("")}</div>`;
+}
+
+async function loadLearning(log) {
+  const s = await api("/api/stats");
+  const calibrated = Object.keys(s.panel_weights).length > 0;
+  $("#learning").innerHTML = `
+    <section class="box">
+      <div class="row"><h2>Evolve</h2><span class="spacer"></span>
+        <label class="sub"><input type="checkbox" id="spawn"> also spawn a new mind</label>
+        <button class="btn approve" id="evolve">Run evolve</button></div>
+      <p class="sub">${s.scored} scored drafts · ${s.real_outcomes} real X outcomes · ${s.scored - s.real_outcomes} human reviews.
+        Evolve calibrates the panel, rewrites lessons + playbook, and breeds challenger prompts.</p>
+      ${log ? `<pre class="log">${esc(log)}</pre>` : ""}
+    </section>
+    <section class="box">
+      <h2>Mind variants</h2>
+      <p class="sub">Mean reward (0–100) from reviews and real metrics. The bandit gives better variants more drafting turns. Click to see the prompt and what changed.</p>
+      ${s.variants.map(variantHtml).join("") || `<p class="sub">No variants yet.</p>`}
+    </section>
+    <section class="box">
+      <h2>Audience panel weights</h2>
+      <p class="sub">${calibrated ? "Calibrated against real outcomes: panelists who predict well count more." : "Uncalibrated: needs 5+ recorded X outcomes."}</p>
+      ${weightsHtml(s.panel, s.panel_weights)}
+    </section>
+    <section class="box"><h2>Viral playbook</h2><pre class="doc">${esc(s.playbook)}</pre></section>
+    <section class="box"><h2>Lessons</h2><pre class="doc">${esc(s.lessons)}</pre></section>`;
+}
+
+$("#learning").addEventListener("click", async e => {
+  if (e.target.id !== "evolve") return;
+  const btn = e.target;
+  btn.disabled = true; btn.textContent = "Evolving…";
+  try {
+    const res = await fetch("/api/evolve", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ spawn: $("#spawn").checked }),
+    }).then(r => r.json());
+    toast(res.ok ? "Evolve finished" : `Evolve failed: ${res.error}`);
+    await loadLearning(res.log || res.error);
+  } catch (err) {
+    toast("Evolve request failed");
+    btn.disabled = false; btn.textContent = "Run evolve";
+  }
+});
+
+function setView(v) {
+  document.body.dataset.view = v;
+  document.querySelectorAll("#views button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  history.replaceState(null, "", v === "review" ? location.pathname : "#" + v);
+  if (v === "learning") loadLearning(); else if (state.runId) loadRun(state.runId); else loadRuns();
+}
+$("#views").addEventListener("click", e => { if (e.target.dataset.v) setView(e.target.dataset.v); });
+
+loadRuns().then(() => { if (location.hash === "#learning") setView("learning"); });
 </script>
 </body>
 </html>

@@ -2,6 +2,6 @@
 __pycache__/
 *.pyc
 .venv/
-data/*.db
+data/harness.db
 out/*
 !out/.gitkeep

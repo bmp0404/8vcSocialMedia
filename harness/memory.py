@@ -1,4 +1,4 @@
-"""SQLite memory: every run, every recommendation, and every observed outcome."""
+"""SQLite memory: runs, recommendations, human reviews, real outcomes, and mind variants."""
 
 import json
 import sqlite3
@@ -16,13 +16,18 @@ CREATE TABLE IF NOT EXISTS outcomes (action_id TEXT PRIMARY KEY, recorded_at TEX
 CREATE TABLE IF NOT EXISTS reviews (
     action_id TEXT PRIMARY KEY, status TEXT, text TEXT, note TEXT, reviewed_at TEXT
 );
+CREATE TABLE IF NOT EXISTS variants (
+    id TEXT PRIMARY KEY, mind TEXT, version INTEGER, prompt TEXT, parent TEXT,
+    status TEXT DEFAULT 'active', note TEXT, created_at TEXT
+);
+CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT);
 """
 
 REVIEW_STATUSES = {"approved", "killed", "pending"}
 
 
 def connect() -> sqlite3.Connection:
-    config.DB_PATH.parent.mkdir(exist_ok=True)
+    config.DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(config.DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
@@ -31,6 +36,9 @@ def connect() -> sqlite3.Connection:
 
 def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+# --- runs & actions -------------------------------------------------------------------------
 
 
 def save_run(actions: list[Action]) -> int:
@@ -56,6 +64,31 @@ def record_outcomes(outcomes: list[dict]) -> int:
     return len(outcomes)
 
 
+def scored_actions() -> list[dict]:
+    """Every action that has a human review or a real outcome, with both attached."""
+    with connect() as conn:
+        rows = conn.execute(
+            """SELECT a.data, rv.status, rv.text AS edited_text, rv.note, o.metrics
+               FROM actions a
+               LEFT JOIN reviews rv ON rv.action_id = a.id
+               LEFT JOIN outcomes o ON o.action_id = a.id
+               WHERE rv.status IN ('approved', 'killed') OR o.metrics IS NOT NULL"""
+        ).fetchall()
+    return [
+        {
+            "action": json.loads(r["data"]),
+            "review": r["status"],
+            "edited_text": r["edited_text"],
+            "note": r["note"] or "",
+            "metrics": json.loads(r["metrics"]) if r["metrics"] else None,
+        }
+        for r in rows
+    ]
+
+
+# --- review dashboard -----------------------------------------------------------------------
+
+
 def list_runs(limit: int = 50) -> list[dict]:
     with connect() as conn:
         rows = conn.execute(
@@ -70,7 +103,7 @@ def list_runs(limit: int = 50) -> list[dict]:
 
 
 def run_actions(run_id: int) -> list[dict]:
-    """Every action from a run, with its review state merged in, best predicted first."""
+    """Every action from a run, with its review state merged in, in final rank order (unranked last)."""
     with connect() as conn:
         rows = conn.execute(
             """SELECT a.data, rv.status, rv.text AS edited_text, rv.note, rv.reviewed_at
@@ -78,7 +111,7 @@ def run_actions(run_id: int) -> list[dict]:
                WHERE a.run_id = ? ORDER BY a.predicted_score DESC""",
             (run_id,),
         ).fetchall()
-    return [
+    actions = [
         {
             **json.loads(r["data"]),
             "review": {
@@ -90,6 +123,7 @@ def run_actions(run_id: int) -> list[dict]:
         }
         for r in rows
     ]
+    return sorted(actions, key=lambda a: (a.get("rank") is None, a.get("rank") or 0))
 
 
 def set_review(action_id: str, status: str, text: str | None = None, note: str = "") -> int:
@@ -124,11 +158,58 @@ def approved_actions(run_id: int) -> list[dict]:
     return out
 
 
-def scored_history(limit: int = 200) -> list[dict]:
+# --- mind variants --------------------------------------------------------------------------
+
+
+def sync_seed_minds(seeds: dict[str, str]) -> None:
+    """Make sure each harness/minds/prompts/*.md prompt exists as a variant; an edited file becomes a new one."""
     with connect() as conn:
-        rows = conn.execute(
-            """SELECT a.data, o.metrics FROM actions a JOIN outcomes o ON o.action_id = a.id
-               ORDER BY o.recorded_at DESC LIMIT ?""",
-            (limit,),
-        ).fetchall()
-    return [{"action": json.loads(r["data"]), "actual": json.loads(r["metrics"])} for r in rows]
+        for mind, prompt in seeds.items():
+            known = conn.execute(
+                "SELECT 1 FROM variants WHERE mind = ? AND prompt = ?", (mind, prompt)
+            ).fetchone()
+            if not known:
+                _insert_variant(conn, mind, prompt, parent="seed", note="from minds/prompts")
+
+
+def _insert_variant(conn, mind: str, prompt: str, parent: str, note: str) -> str:
+    version = conn.execute("SELECT COALESCE(MAX(version), 0) + 1 FROM variants WHERE mind = ?", (mind,)).fetchone()[0]
+    vid = f"{mind}@v{version}"
+    conn.execute(
+        "INSERT INTO variants (id, mind, version, prompt, parent, status, note, created_at) VALUES (?, ?, ?, ?, ?, 'active', ?, ?)",
+        (vid, mind, version, prompt, parent, note, now()),
+    )
+    return vid
+
+
+def add_variant(mind: str, prompt: str, parent: str, note: str = "") -> str:
+    with connect() as conn:
+        return _insert_variant(conn, mind, prompt, parent, note)
+
+
+def variants(status: str | None = "active") -> list[dict]:
+    with connect() as conn:
+        if status:
+            rows = conn.execute("SELECT * FROM variants WHERE status = ? ORDER BY mind, version", (status,))
+        else:
+            rows = conn.execute("SELECT * FROM variants ORDER BY mind, version")
+        return [dict(r) for r in rows]
+
+
+def retire_variant(variant_id: str, note: str) -> None:
+    with connect() as conn:
+        conn.execute("UPDATE variants SET status = 'retired', note = ? WHERE id = ?", (note, variant_id))
+
+
+# --- key/value ------------------------------------------------------------------------------
+
+
+def kv_get(key: str, default=None):
+    with connect() as conn:
+        row = conn.execute("SELECT value FROM kv WHERE key = ?", (key,)).fetchone()
+    return json.loads(row["value"]) if row else default
+
+
+def kv_set(key: str, value) -> None:
+    with connect() as conn:
+        conn.execute("INSERT OR REPLACE INTO kv VALUES (?, ?)", (key, json.dumps(value)))

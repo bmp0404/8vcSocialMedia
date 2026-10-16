@@ -4,11 +4,11 @@ import urllib.request
 from harness.models import Signal
 from harness.sources.base import Source
 
-SUBREDDITS = "caitlinclark+wnba+indianafever"
+SUBREDDITS = "ClaudeAI+cursor+ChatGPTCoding+ExperiencedDevs"
 
 
 class RedditSource(Source):
-    """Hot posts from fan subreddits via Reddit's JSON listing.
+    """Hot posts from AI-coding subreddits via Reddit's JSON listing.
 
     TODO: Reddit now returns 403 for unauthenticated requests; switch to OAuth
     (script app at reddit.com/prefs/apps -> oauth.reddit.com) before enabling.
