@@ -8,6 +8,7 @@ from harness.llm import get_llm
 from harness.minds import decide
 from harness.orient import orient
 from harness.qualify import qualify
+from harness.review import serve
 from harness.sources import observe
 
 
@@ -63,6 +64,11 @@ def main() -> None:
     p = sub.add_parser("learn", help="rewrite memory/lessons.md from predicted vs. actual")
     p.add_argument("--provider")
     p.set_defaults(func=lambda a: learn(get_llm(a.provider)))
+
+    p = sub.add_parser("review", help="open the approve/kill dashboard; writes out/approved-run<id>.json")
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--no-browser", action="store_true")
+    p.set_defaults(func=lambda a: serve(a.port, not a.no_browser))
 
     args = parser.parse_args()
     args.func(args)
