@@ -55,6 +55,8 @@ class OpenAICompatLLM(LLM):
 class MockLLM(LLM):
     """Offline backend so the pipeline runs end to end without any API key."""
 
+    is_mock = True  # read through wrappers by harness/minds/routing.py; class checks break under tracing
+
     def complete(self, system: str, prompt: str) -> str:
         return "(mock completion)"
 

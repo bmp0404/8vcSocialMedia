@@ -36,7 +36,9 @@ class ActionConfig:
     continuation_model: str = "claude-opus-4-5-20251101"  # the only gateway model that accepts assistant prefill
     styled_model: str = "claude-opus-4-5-20251101"  # research condition F, AUC 0.79 vs 0.88 for Sonnet 5.5
     # --- veto judge
-    veto_model: str = "claude-opus-5-5"  # caught 90-100% of generated replies where GPT caught 40-77%
+    # Caught 90-100% of generated replies where claude-fable-5-dd-los-6.5-tpg (gateway reports
+    # gpt-5.6-sol) caught 40-77% (research report, finding 5).
+    veto_model: str = "claude-opus-5-5"
     veto_max_p_ai: int = 50  # a draft the judge puts at or above this P(AI), in either order, is vetoed (no measurement)
     post_judge_min_grounding: int = 3  # Dhilan's 0-5 grounding score; below this is a veto (no measurement)
     # --- the continuation page: drop scraped replies the judge reads as bots, so the writer doesn't

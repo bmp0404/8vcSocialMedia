@@ -21,8 +21,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from harness import config
-from harness.llm import LLM, MockLLM
-from harness.minds import corpus, gate, thread, veto, writer
+from harness.llm import LLM
+from harness.minds import corpus, gate, routing, thread, veto, writer
 from harness.minds.schema import POST_LANE, REPLY_LANE, ActionSchemaError, Offer, parse_call, parse_plan
 from harness.minds.settings import ActionConfig, GateLimits
 from harness.models import Action, Narrative
@@ -248,12 +248,12 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     url, author, post = t["url"], t["author"], t.get("text", "")
     note = ""
     try:
-        replies = thread.replies_for(t, (lambda _u: []) if isinstance(llm, MockLLM) else fetch)
+        replies = thread.replies_for(t, (lambda _u: []) if routing.is_mock(llm) else fetch)
     except thread.ThreadUnavailable as e:
         replies, note = [], str(e)
     page = [r["text"] for r in replies][: cfg.page_replies]
     dropped = []
-    if cfg.filter_page_bots and page and not isinstance(llm, MockLLM):
+    if cfg.filter_page_bots and page and not routing.is_mock(llm):
         try:
             scores = veto.p_ai_scores(llm, cfg, page, context=f"POST by @{author}:\n{post}")
             dropped = [r for r, s in zip(page, scores) if s >= cfg.page_max_p_ai]
@@ -267,6 +267,7 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
             texts = writer.continuations(llm, author, post, page, cfg, seed=url)
         except writer.WriterUnavailable as e:
             method, note = "styled", str(e)
+            routing.warn(f"continuation unavailable ({e}); replies fall back to the styled prompt")
     if method == "styled":
         texts = writer.styled_replies(llm, mission, author, post, page, cfg)
     # The page hides handles; the gate's context keeps the real ones, so a draft may @ a real replier.
@@ -444,7 +445,7 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
         takes: list[dict] | None = None, fetch=thread.fetch_replies) -> tuple[list[Action], list[Decision]]:
     """Both lanes for one decide() call. Returns the actions that ship and every decision."""
     cfg = cfg or ActionConfig()
-    mock = isinstance(llm, MockLLM)
+    mock = routing.is_mock(llm)
     PENDING_PROVIDER["name"] = "mock" if mock else type(llm).__name__
     budget = budget or (Budget(cfg) if mock else Budget.from_logs(cfg))
     grounding = None if mock else veto.grounding_checker()

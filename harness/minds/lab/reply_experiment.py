@@ -25,17 +25,20 @@ For each thread, every method produces one candidate reply from the root post al
 Blind judgments per candidate, by judges from a different model family than the generators:
   lineup    the root plus 5 replies (4 real top replies + the candidate): which one is the AI?
             Chance is 20%. Lower is better for a generator; human_raw measures false alarms.
-            Run by three judges (gpt-6.5-sol, gpt-6-astra, claude-opus-5-5); Opus is the bar.
+            Run by three judges: claude-fable-5-dd-los-6.5-tpg (gateway reports gpt-5.6-sol),
+            claude-fable-5-dd-artsa-6-tpg (gateway reports gpt-6-astra) and claude-opus-5-5.
+            Opus is the bar.
   pairwise  candidate vs the thread's most-liked real reply: which gets more likes?
 
 Calibration: the pairwise judge on real-vs-real pairs, both orders. The easy version pits the
 most-liked reply against the least-liked; the hard version, the one best-of-N actually faces, pits
-adjacent ranks among the top 5 (1v2 ... 4v5), judged by gpt-6.5-sol and claude-opus-5-5.
+adjacent ranks among the top 5 (1v2 ... 4v5), judged by claude-fable-5-dd-los-6.5-tpg and claude-opus-5-5.
 
     HARNESS_PROVIDER=anthropic uv run python -m harness.minds.lab.reply_experiment --threads 10
 """
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 import random
@@ -56,9 +59,13 @@ from harness.minds.lab.fetch_x_threads import OUT as FIXTURE
 GEN_MODEL = "claude-sonnet-5-5"
 CONTINUATION_MODEL = "claude-opus-4-5-20251101"
 SELECT_MODEL = "claude-sonnet-5-5"
-JUDGE_MODEL = "claude-fable-5-dd-los-6.5-tpg"  # gpt-6.5-sol through the gateway
-JUDGE2_MODEL = "claude-fable-5-dd-artsa-6-tpg"  # gpt-6-astra through the gateway
+# Judges are named by the exact id sent. The gateway's response says which model answered; on
+# 2026-10-15 it reported gpt-5.6-sol and gpt-6-astra for the two aliases. Nothing verifies that
+# claim beyond the response field, so reports quote it as "gateway reports".
+JUDGE_MODEL = "claude-fable-5-dd-los-6.5-tpg"
+JUDGE2_MODEL = "claude-fable-5-dd-artsa-6-tpg"
 JUDGE3_MODEL = "claude-opus-5-5"
+GATEWAY_REPORTED = {JUDGE_MODEL: "gpt-5.6-sol", JUDGE2_MODEL: "gpt-6-astra", JUDGE3_MODEL: "claude-opus-5-5"}
 RUBRIC_MODEL = "claude-sonnet-5-5"  # Dhilan's judge defaults to sonnet through the claude CLI
 EXP_DIR = config.ROOT / "action" / "experiments"
 RAW = EXP_DIR / "reply_experiment_raw.json"
@@ -130,6 +137,11 @@ def client() -> anthropic.Anthropic:
 
 
 def call(model: str, system: str, user: str, prefill: str | None = None, max_tokens: int = 2000) -> str:
+    return call_served(model, system, user, prefill, max_tokens)[0]
+
+
+def call_served(model: str, system: str, user: str, prefill: str | None = None, max_tokens: int = 2000) -> tuple[str, str]:
+    """The reply text and the response's `model` field: what the gateway says answered."""
     messages = [{"role": "user", "content": user}]
     if prefill:
         messages.append({"role": "assistant", "content": prefill})
@@ -137,7 +149,7 @@ def call(model: str, system: str, user: str, prefill: str | None = None, max_tok
         try:
             kw = {"system": system} if system else {}
             r = client().messages.create(model=model, max_tokens=max_tokens, messages=messages, **kw)
-            return "".join(b.text for b in r.content if b.type == "text")
+            return "".join(b.text for b in r.content if b.type == "text"), r.model
         except (anthropic.APIStatusError, anthropic.APIConnectionError) as e:
             if attempt == 3:
                 raise
@@ -149,7 +161,11 @@ def call(model: str, system: str, user: str, prefill: str | None = None, max_tok
 def call_json(model: str, system: str, user: str) -> dict:
     for attempt in range(2):
         try:
-            return parse_json(call(model, system + "\n\nRespond with JSON only. Escape any double quotes inside strings.", user))
+            text, served = call_served(model, system + "\n\nRespond with JSON only. Escape any double quotes inside strings.", user)
+            out = parse_json(text)
+            if isinstance(out, dict):
+                out["_served_model"] = served
+            return out
         except ValueError:
             if attempt:
                 raise
@@ -362,12 +378,14 @@ def judge_lineup(t: dict, candidate: str, seed: str, model: str = JUDGE_MODEL) -
     replies = "\n".join(f"{i + 1}. {s}" for i, s in enumerate(shown))
     out = call_json(model, LINEUP_SYSTEM, f"POST:\n{root_block(t)}\n\nREPLIES:\n{replies}")
     pick = int(out["ai_reply"])
-    return {"candidate_position": pos, "pick": pick, "detected": pick == pos, "why": out.get("why", "")}
+    return {"candidate_position": pos, "pick": pick, "detected": pick == pos, "why": out.get("why", ""),
+            "requested_model": model, "served_model": out.get("_served_model")}
 
 
 def judge_pair(t: dict, a: str, b: str, model: str = JUDGE_MODEL) -> dict:
     out = call_json(model, PAIRWISE_SYSTEM, f"POST:\n{root_block(t)}\n\nA: {a}\nB: {b}")
-    return {"better": str(out["better"]).strip().upper()[:1], "why": out.get("why", "")}
+    return {"better": str(out["better"]).strip().upper()[:1], "why": out.get("why", ""),
+            "requested_model": model, "served_model": out.get("_served_model")}
 
 
 def judge_pairwise(t: dict, candidate: str, seed: str) -> dict:
@@ -489,8 +507,14 @@ def main() -> None:
         calib = {k: f.result() for k, f in jc.items()}
         adjacent = {k: f.result() for k, f in adj.items()}
 
+    served = Counter(v.get("served_model") for v in cache.data.values() if isinstance(v, dict) and v.get("served_model"))
     summary = {"models": {"generator": GEN_MODEL, "continuation": CONTINUATION_MODEL, "selection": SELECT_MODEL,
-                          "rubric_selection": RUBRIC_MODEL, "judge": JUDGE_MODEL, "judge2": JUDGE2_MODEL},
+                          "rubric_selection": RUBRIC_MODEL,
+                          "judges": {j: {"requested": j, "gateway_reports": GATEWAY_REPORTED[j]}
+                                     for j in (JUDGE_MODEL, JUDGE2_MODEL, JUDGE3_MODEL)},
+                          "note": "gateway_reports is the response's model field, probed 2026-10-15; calls made "
+                                  "before that probe didn't record it. Nothing verifies which model serves an alias.",
+                          "served_models_recorded": dict(served)},
                "test_threads": [t["url"] for t in test], "methods": {}}
     drafts = []
     for m in methods:
@@ -520,12 +544,12 @@ def main() -> None:
         if "better" in v:
             hits.append(v["better"] == ("A" if order == "hi_first" else "B"))
     first = [v["better"] == "A" for v in calib.values() if "better" in v]
-    summary["judge_calibration"] = {
+    summary["judge_calibration_most_vs_least_liked"] = {"judge": JUDGE_MODEL, **{
         "picked_the_more_liked_real_reply": rate(hits),
         "picked_position_A": rate(first),
         "pairs": len(calib_threads),
-    }
-    for jname in ("sol", "opus"):
+    }}
+    for jname in ("sol", "opus"):  # "sol" keys mean claude-fable-5-dd-los-6.5-tpg (gateway reports gpt-5.6-sol)
         hit, both = [], []
         for t in test:
             for i in range(4):
@@ -534,17 +558,18 @@ def main() -> None:
                     continue
                 hit += [fw["better"] == "A", rv["better"] == "B"]
                 both.append(fw["better"] == "A" and rv["better"] == "B")
-        summary[f"adjacent_top5_calibration_{jname}"] = {"picked_more_liked": rate(hit), "consistent_in_both_orders": rate(both)}
+        label = {"sol": JUDGE_MODEL, "opus": JUDGE3_MODEL}[jname]
+        summary[f"adjacent_top5_calibration_{label}"] = {"picked_more_liked": rate(hit), "consistent_in_both_orders": rate(both)}
     SUMMARY.write_text(json.dumps(summary, indent=1, ensure_ascii=False), encoding="utf-8")
     DRAFTS.write_text(json.dumps(drafts, indent=1, ensure_ascii=False), encoding="utf-8")
     for m, v in summary["methods"].items():
-        print(f"{m:<14} det(sol) {v['lineup_detected']['k']}/{v['lineup_detected']['n']}  det(astra) "
+        print(f"{m:<14} det(los-6.5) {v['lineup_detected']['k']}/{v['lineup_detected']['n']}  det(artsa-6) "
               f"{v['lineup_detected_judge2']['k']}/{v['lineup_detected_judge2']['n']}  det(opus) "
               f"{v['lineup_detected_opus']['k']}/{v['lineup_detected_opus']['n']}  abstained {v['abstained']}  beat_top "
               f"{v['beat_top_human_reply']['k']}/{v['beat_top_human_reply']['n']}  gate {v['gate_pass']['k']}/{v['gate_pass']['n']}"
               f"  p_vs_human {v.get('pooled_detection_vs_human_raw_fisher_p')}")
-    print("calibration", summary["judge_calibration"])
-    print("adjacent sol", summary["adjacent_top5_calibration_sol"], "opus", summary["adjacent_top5_calibration_opus"])
+    print("calibration", summary["judge_calibration_most_vs_least_liked"])
+    print("adjacent", {k: v for k, v in summary.items() if k.startswith("adjacent")})
 
 
 if __name__ == "__main__":

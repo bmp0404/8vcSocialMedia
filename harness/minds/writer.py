@@ -11,11 +11,11 @@ When the page would be too thin, or the provider can't prefill, the styled promp
 is the fallback (AUC 0.79). Captions for the post lane use the same styled prompt.
 """
 
-import json
 import random
 from concurrent.futures import ThreadPoolExecutor
 
-from harness.llm import LLM, AnthropicLLM, MockLLM
+from harness.llm import LLM
+from harness.minds import routing
 from harness.minds.settings import ActionConfig
 
 # Handles for the reply the model writes. Plain, not themed, so the code stays brand-agnostic.
@@ -53,11 +53,12 @@ def _first_line(text: str) -> str:
 
 
 def continue_page(llm: LLM, page: str, handle: str, cfg: ActionConfig, i: int = 0) -> str:
-    if isinstance(llm, MockLLM):
+    if routing.is_mock(llm):
         return f"mock continuation {i + 1}"
-    if not isinstance(llm, AnthropicLLM):
+    client = routing.messages_client(llm)
+    if client is None:
         raise WriterUnavailable(f"{type(llm).__name__} can't prefill; continuation needs the Anthropic gateway")
-    r = llm.client.messages.create(
+    r = client.messages.create(
         model=cfg.continuation_model, max_tokens=80,
         messages=[{"role": "user", "content": "Saved page text:"}, {"role": "assistant", "content": f"{page}\n@{handle}:"}],
         stop_sequences=["\n@"],
@@ -73,15 +74,11 @@ def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg
         return list(pool.map(lambda ih: continue_page(llm, page, ih[1], cfg, ih[0]), enumerate(handles)))
 
 
-def _styled_llm(llm: LLM, model: str) -> LLM:
-    return AnthropicLLM(model) if isinstance(llm, AnthropicLLM) else llm
-
-
 def styled_replies(llm: LLM, mission: str, author: str, post_text: str, replies: list[str], cfg: ActionConfig) -> list[str]:
     others = "\n".join(f"- {r}" for r in replies[: cfg.page_replies]) or "(none yet)"
     user = (f'POST by @{author}: "{post_text}"\n\nOTHER REPLIES ALREADY IN THE THREAD:\n{others}\n\n'
             f'Write {cfg.reply_samples} different replies to the post. Return JSON: {{"replies": ["..."]}}')
-    out = _styled_llm(llm, cfg.styled_model).complete_json(
+    out = routing.on_model(llm, cfg.styled_model, "the styled reply writer").complete_json(
         STYLED_SYSTEM.format(mission=mission), user,
         mock=lambda: {"replies": [f"mock styled reply {i + 1}" for i in range(cfg.reply_samples)]},
     )
@@ -91,13 +88,8 @@ def styled_replies(llm: LLM, mission: str, author: str, post_text: str, replies:
 def captions(llm: LLM, mission: str, source: str, cfg: ActionConfig) -> list[str]:
     user = (f"SOURCE:\n{source}\n\nWrite {cfg.caption_samples} different captions. "
             'Return JSON: {"captions": ["..."]}')
-    out = _styled_llm(llm, cfg.styled_model).complete_json(
+    out = routing.on_model(llm, cfg.styled_model, "the caption writer").complete_json(
         CAPTION_SYSTEM.format(mission=mission, max_chars=cfg.caption_max_chars), user,
         mock=lambda: {"captions": [f"mock caption {i + 1}" for i in range(cfg.caption_samples)]},
     )
     return [_first_line(x) for x in out.get("captions", []) if isinstance(x, str)][: cfg.caption_samples]
-
-
-def page_json(author: str, post_text: str, replies: list[str]) -> str:
-    """The page as JSON, for the decision log."""
-    return json.dumps({"author": author, "post": post_text, "replies": replies}, ensure_ascii=False)

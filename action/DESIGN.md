@@ -12,7 +12,7 @@ So the human raw-material path carries the person's text through untouched (`lan
 
 Continuing the real thread as a document, then vetoing. On 19 real X threads, with Opus as the judge:
 
-| How the reply was made | Opus spotted it | Astra spotted it | Sol spotted it |
+| How the reply was made | Opus spotted it | artsa alias spotted it | los alias spotted it |
 | --- | --- | --- | --- |
 | `pipeline`: the shipped reply lane (continuation, gate, two-order Opus veto, random pick) | 4/18 (1 abstention) | 5/18 | 6/18 |
 | `cont_real`: one continuation of a page of real replies | 6/19 | 6/19 | 8/19 |
@@ -25,15 +25,17 @@ Continuing the real thread as a document, then vetoing. On 19 real X threads, wi
 | `continuation` without real replies (my first version) | 17/19 | 17/19 | 16/19 |
 | `human_polish`: the held-out real reply after an LLM polish | 18/19 | 19/19 | 19/19 |
 
-Each lineup shows the post and five replies: the four most-liked real replies and one candidate. The judge names the one it thinks an AI wrote. Chance is 4/19. Against `human_raw` under Opus, Fisher's exact test gives p=1.0 for `pipeline` and p=0.71 for `cont_real`; pooled over the three judges, p=0.80 and p=0.46. Every instruct-prompt arm is at p<0.0001. Judges: `claude-opus-5-5`, gpt-6-astra and gpt-6.5-sol through the gateway. Generators: `claude-sonnet-5-5`, and `claude-opus-4-5-20251101` for continuation.
+Each lineup shows the post and five replies: the four most-liked real replies and one candidate. The judge names the one it thinks an AI wrote. Chance is 4/19. Against `human_raw` under Opus, Fisher's exact test gives p=1.0 for `pipeline` and p=0.71 for `cont_real`; pooled over the three judges, p=0.80 and p=0.46. Every instruct-prompt arm is at p<0.0001. Generators: `claude-sonnet-5-5`, and `claude-opus-4-5-20251101` for continuation.
+
+The three judges are named by the id sent to the gateway: `claude-opus-5-5`; `claude-fable-5-dd-artsa-6-tpg` (gateway reports gpt-6-astra), called the artsa alias below; and `claude-fable-5-dd-los-6.5-tpg` (gateway reports gpt-5.6-sol), called the los alias below. The only evidence of which model serves an alias is the `model` field in the gateway's response. The experiment records that field per call from now on; calls made before the probe on 2026-10-15 didn't record it.
 
 The research thread ran the same comparison independently: 4 threads, 16 drafts per condition, judged by AUC. It found the same direction under both judges. Continuation scored AUC 0.44, the persona prompt 1.00 (`research/action.md`, finding 2). Two things made continuation work, and my first version had neither. The page needs the thread's real replies, and the replies need neutral handles and no like counts. Given only a fake header with counts ("1,894 likes"), the model writes a hype "top reply" and invents stats ("27/5/8 against the Lynx in Game 4").
 
 Three readings matter for anyone building on this.
 
-- **Selection doesn't fix an instruct prompt.** A random pick among five samples was caught exactly as often as the "least AI-sounding" pick (18/19 each under Opus). The pick only fooled the weakest judge. My first summary said `bestof` matched humans; that came from one gpt-6.5-sol pass and doesn't survive Opus or astra.
-- **Judges prefer the register they catch.** Asked "which reply gets more likes?", gpt-6.5-sol picked `remix` over the thread's most-liked real reply 14 times in 19. It picked `cont_real` only 2 times in 19. A best-of-N ranker built on that preference pulls drafts toward the AI register. The research run measured exactly that: selecting continuation drafts for likes raised AUC from 0.44 to 0.70.
-- **The GPT judges are weak detectors.** gpt-6.5-sol caught `remix` 12/19 where Opus and astra caught it 19/19. Treat Opus as the bar.
+- **Selection doesn't fix an instruct prompt.** A random pick among five samples was caught exactly as often as the "least AI-sounding" pick (18/19 each under Opus). The pick only fooled the weakest judge. My first summary said `bestof` matched humans; that came from one pass of the los alias and doesn't survive Opus or the artsa alias.
+- **Judges prefer the register they catch.** Asked "which reply gets more likes?", the los alias picked `remix` over the thread's most-liked real reply 14 times in 19. It picked `cont_real` only 2 times in 19. A best-of-N ranker built on that preference pulls drafts toward the AI register. The research run measured exactly that: selecting continuation drafts for likes raised AUC from 0.44 to 0.70.
+- **The los alias is a weak detector.** It caught `remix` 12/19 where Opus and the artsa alias caught it 19/19. Treat Opus as the bar.
 
 ## The reply lane comes first, and timing beats wording
 
@@ -62,6 +64,8 @@ That last point is the platform's own reason for the AI-register veto. A slop la
 5. **Pick.** One survivor, chosen at random and seeded by the target URL. If Dhilan's `post_judge` is installed, its grounding score adds one more veto. Nothing passes means the target abstains as `judge_rejected`, and the candidates stay in the log.
 6. **Post lane** (`lanes.post_lane`), in the order research finding 8 gives. First, a person's take from `action/takes.json`, verbatim. Else a caption of a real source, under 100 characters: a quote of an X post, or a news link with "(via domain)" credit. Chorus text never ships. It becomes angles attached to an `ask_human` question. Chorus follows ship when the handle appears in the narratives.
 
+Model routing looks at what the LLM object exposes, never at its class (`harness/minds/routing.py`). An Anthropic messages client means continuation and the Opus veto are available; `is_mock` means no network and no budget. A tracing wrapper that forwards attributes keeps both working. A fallback to a weaker route prints a warning once per run.
+
 Every decision lands in `lanes.PENDING`. `cli.py` writes `out/decisions-run<id>.json` after `memory.save_run`: abstentions with reason codes, every candidate with its gate findings and veto verdicts, and questions for a person. Mock runs don't count against the real budget.
 
 ### What the live runs did
@@ -87,14 +91,14 @@ Rejected, with the reason:
 
 - **The persona JSON call writing final text.** Caught 19/19 by every judge. It now only plans: which target, reply or abstain, and the intent.
 - **Best-of-N ranked by an LLM's quality judgment, including Dhilan's `rank_candidates`.** The pick didn't beat a random pick. `bestof_rubric` was caught 13/13. On the hard question (adjacent real replies among the top 5), judges barely beat a coin; see the calibration section. Dhilan's judge stays as a grounding veto only.
-- **Exemplar remix and "constrained" style prompts.** They help against gpt-6.5-sol but are caught 18 to 19 of 19 by Opus.
+- **Exemplar remix and "constrained" style prompts.** They help against the los alias but are caught 18 to 19 of 19 by Opus.
 - **Base-model continuation through a non-chat model.** The gateway has none. `grok-4.6` returns 401 ("Saved Cursor API key is locked"). Claude 5.5 models reject prefill. `claude-opus-4-5-20251101` is the only route, and the lane falls back when it's missing.
 - **Verbalized sampling.** It adds variety, not human-likeness (research finding 9: AUC 0.88, the same as the plain styled prompt). It's worth trying for angles, not for final text.
 - **Meme-format filling.** Next in the post lane's order; not built tonight.
 
 ## The judge calibration
 
-Best-of-N only works if the judge can tell a good reply from a slightly better one. On the easy question, most-liked against least-liked real reply in a thread, gpt-6.5-sol picked the more-liked one 31 times in 40, with no position bias (picked A 19 times in 40). On the question best-of-N actually faces, adjacent ranks among the top 5 asked in both orders, Opus picked the more-liked reply 78 times in 138 (57%) and gpt-6.5-sol 76 times in 138 (55%). Each gave the same answer in both orders on only about half the pairs (34 of 69 and 32 of 69). That is under the 60% the research report set as the bar, so a best-of-N ranker would be choosing close to at random among plausible drafts. The lane picks at random on purpose and spends the judge on vetoes. The research run found Spearman 0.15 (Opus) and about 0 (GPT) between judge score and real likes among the top 6 replies, with the sign flipping when only the rest of the lineup changed.
+Best-of-N only works if the judge can tell a good reply from a slightly better one. On the easy question, most-liked against least-liked real reply in a thread, the los alias picked the more-liked one 31 times in 40, with no position bias (picked A 19 times in 40). On the question best-of-N actually faces, adjacent ranks among the top 5 asked in both orders, Opus picked the more-liked reply 78 times in 138 (57%) and the los alias (`claude-fable-5-dd-los-6.5-tpg`, gateway reports gpt-5.6-sol) 76 times in 138 (55%). Each gave the same answer in both orders on only about half the pairs (34 of 69 and 32 of 69). That is under the 60% the research report set as the bar, so a best-of-N ranker would be choosing close to at random among plausible drafts. The lane picks at random on purpose and spends the judge on vetoes. The research run found Spearman 0.15 (Opus) and about 0 (the los alias) between judge score and real likes among the top 6 replies, with the sign flipping when only the rest of the lineup changed.
 
 ## The typed actions
 

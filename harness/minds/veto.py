@@ -1,14 +1,15 @@
 """The judge only vetoes. It never ranks drafts by expected likes.
 
 Why: on real top replies, judge scores tracked actual likes at Spearman 0.15 (Opus) and about 0
-(GPT), and selecting "the draft most likely to get likes" made continuation drafts more
-detectable, AUC 0.44 to 0.70 (8vc-context/research/action.md, finding 3). What a judge can do is
+(claude-fable-5-dd-los-6.5-tpg), and selecting "the draft most likely to get likes" made
+continuation drafts more detectable, AUC 0.44 to 0.70 (8vc-context/research/action.md, finding 3). What a judge can do is
 catch what's wrong with a draft, so it answers three questions per draft: does it read as AI,
 does it state something the context doesn't support, could it get the account muted or reported.
 
-Opus 5.5 is the judge because it caught 90-100% of generated replies where the GPT judge caught
-40-77% (finding 5). Listwise judgments shift with order, so every batch is judged forward and
-reversed, and a draft passes only when both passes clear it; a split counts as a veto.
+Opus 5.5 is the judge because it caught 90-100% of generated replies where
+claude-fable-5-dd-los-6.5-tpg (gateway reports gpt-5.6-sol) caught 40-77% (finding 5). Listwise
+judgments shift with order, so every batch is judged forward and reversed, and a draft passes only
+when both passes clear it; a split counts as a veto.
 
 Dhilan's post_judge (PR #5) contributes one more veto when it's installed: its grounding
 criterion, 0-5. Its overall score isn't used, because its rubric rewards the explained register
@@ -17,7 +18,8 @@ and its default references are dev-tool posts.
 
 from dataclasses import asdict, dataclass
 
-from harness.llm import LLM, AnthropicLLM, MockLLM
+from harness.llm import LLM
+from harness.minds import routing
 from harness.minds.settings import ActionConfig
 
 VETO_SYSTEM = """You screen candidate {lane}s before a small account posts them on X. Judge each candidate on its own, against the post, the thread and the facts given.
@@ -61,7 +63,7 @@ class VetoError(RuntimeError):
 
 
 def _judge_llm(llm: LLM, cfg: ActionConfig) -> LLM:
-    return AnthropicLLM(cfg.veto_model) if isinstance(llm, AnthropicLLM) else llm
+    return routing.on_model(llm, cfg.veto_model, "the veto judge")
 
 
 def _one_pass(judge: LLM, texts: list[str], lane: str, context: str) -> list[Verdict]:

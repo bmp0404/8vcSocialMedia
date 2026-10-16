@@ -4,8 +4,22 @@
   "continuation": "claude-opus-4-5-20251101",
   "selection": "claude-sonnet-5-5",
   "rubric_selection": "claude-sonnet-5-5",
-  "judge": "claude-fable-5-dd-los-6.5-tpg",
-  "judge2": "claude-fable-5-dd-artsa-6-tpg"
+  "judges": {
+   "claude-fable-5-dd-los-6.5-tpg": {
+    "requested": "claude-fable-5-dd-los-6.5-tpg",
+    "gateway_reports": "gpt-5.6-sol"
+   },
+   "claude-fable-5-dd-artsa-6-tpg": {
+    "requested": "claude-fable-5-dd-artsa-6-tpg",
+    "gateway_reports": "gpt-6-astra"
+   },
+   "claude-opus-5-5": {
+    "requested": "claude-opus-5-5",
+    "gateway_reports": "claude-opus-5-5"
+   }
+  },
+  "note": "gateway_reports is the response's model field, probed 2026-10-15; calls made before that probe didn't record it. Nothing verifies which model serves an alias.",
+  "served_models_recorded": {}
  },
  "test_threads": [
   "https://x.com/CaitlinClark22/status/2099247457473339402",
@@ -426,7 +440,8 @@
    "pooled_detection_vs_human_raw_fisher_p": 0.0
   }
  },
- "judge_calibration": {
+ "judge_calibration_most_vs_least_liked": {
+  "judge": "claude-fable-5-dd-los-6.5-tpg",
   "picked_the_more_liked_real_reply": {
    "k": 31,
    "n": 40,
@@ -439,7 +454,7 @@
   },
   "pairs": 20
  },
- "adjacent_top5_calibration_sol": {
+ "adjacent_top5_calibration_claude-fable-5-dd-los-6.5-tpg": {
   "picked_more_liked": {
    "k": 76,
    "n": 138,
@@ -451,7 +466,7 @@
    "rate": 0.464
   }
  },
- "adjacent_top5_calibration_opus": {
+ "adjacent_top5_calibration_claude-opus-5-5": {
   "picked_more_liked": {
    "k": 78,
    "n": 138,

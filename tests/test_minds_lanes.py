@@ -303,3 +303,16 @@ def test_bot_filter_is_a_knob():
     llm = Routed(styled=["ok then sure"], veto=lambda c: {"p_ai": 95 if "electric" in c else 5, "unsupported": False, "risk": False})
     actions, _ = run(llm, [narrative([target(replies=thread)])], cfg=ActionConfig(filter_page_bots=False))
     assert [a.draft_meta["page_dropped_as_bots"] for a in actions if a.type == "reply"] == [[]]
+
+
+def test_mock_behind_a_proxy_never_touches_network_logs_or_budget(tmp_out):
+    from tests.test_minds_veto_writer import Proxy
+
+    (tmp_out / "decisions-run1.json").write_text(json.dumps({"run_id": 1, "at": datetime.now().isoformat(),
+        "provider": "AnthropicLLM", "decisions": [{"tool": "quote", "action_id": "q"}]}), encoding="utf-8")
+    # thread=[] with a nonzero reply count would make a real run fetch; mock must not.
+    t = target(replies=[]) | {"replies": 40}
+    actions, _ = lanes.run(Proxy(MockLLM()), "mission", "lessons", [narrative([t])], [],
+                           cfg=ActionConfig(), takes=[], fetch=lambda url: pytest.fail("mock run fetched the network"))
+    assert lanes.PENDING_PROVIDER["name"] == "mock"
+    assert [a.type for a in actions] == ["reply", "quote"]  # a real budget would have blocked the quote (spacing)
