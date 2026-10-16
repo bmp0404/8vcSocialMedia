@@ -210,7 +210,7 @@ def test_mock_through_a_proxy_is_still_mock():
     from harness.minds import routing
 
     assert routing.is_mock(Proxy(MockLLM())) and routing.is_mock(Proxy(Proxy(MockLLM())))
-    assert writer.continue_page(Proxy(MockLLM()), "PAGE", "h", CFG) == "mock continuation 1"
+    assert writer.continue_page(Proxy(MockLLM()), "PAGE", "h", CFG) == "mock continuation alpha"
 
 
 def test_fallback_to_the_run_model_is_loud(capsys):
