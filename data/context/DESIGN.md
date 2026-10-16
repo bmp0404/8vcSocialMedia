@@ -18,7 +18,7 @@ These facts change how any model trained on the CSV should be read. Each one was
 
 - Every row has an exact timestamp. A status ID is a Snowflake: `(id >> 22) + 1288834974657` is the creation time in Unix ms. `harness/context/snowflake.py` decodes it, and the test pins two real posts to the second X reports. All 1,665 decoded dates match the `Date` column.
 - `Engagement` is likes + replies + retweets + quotes. On Deno's acquisition post the difference is 618, exactly X's quote count, and on Supabase's "Love that guy" it is 25. So `outcome_quotes` comes free for every row.
-- `Category` is a threshold on `Engagement`: Deadweight 0 to 10, Medium Viral 100 to 749, Super Viral 753 and up. The file holds no post with engagement between 11 and 99. On the accounts' own timelines that band is most posts (see the timeline numbers in the analysis), so the CSV compares the tails of each account's distribution and drops the middle.
+- `Category` is a threshold on `Engagement`: Deadweight 0 to 10, Medium Viral 100 to 749, Super Viral 753 and up. The file holds no post with engagement between 11 and 99. On the accounts' own timelines that band is 52% of original posts, so the CSV compares the tails of each account's distribution and drops the middle.
 - 718 of the 1,133 Deadweight rows, and 19 Medium Viral rows, are the second or later post of the account's own thread (`replying_to` is the account itself). A thread tail is not a failed post. They are flagged `is_thread_continuation` and excluded from labels and baselines.
 - The CSV was committed at 01:07:58 UTC on Oct 16, which bounds the scrape time. 201 rows were under 48 hours old then; `label_mature` marks the rest. Counts moved little between the scrape and the X fetch an hour later (median change 0), so the fetch-time counts and the CSV agree for mature posts.
 
@@ -74,8 +74,8 @@ Hypothesis: the author's own history predicts most of a post's engagement, so a 
 
 | Columns | Meaning | Keyless | History | Cost |
 | --- | --- | --- | --- | --- |
-| `pre_author_prior_n`, `pre_author_prior_median_eng`, `pre_author_prior_median_views`, `pre_author_prior_viral_share` | Median over the author's earlier original posts (timeline and CSV, no thread continuations, at least 5 posts) | Yes | Yes | Timeline reads, about 8 pages per account |
-| `pre_author_followers_at_fetch`, `pre_author_verified` | Read at fetch time. A post that went viral grew the number it would be normalised by, so this overstates followers at post time for exactly the posts that matter | Yes | No (current only) | Free with the status read |
+| `pre_author_prior_n`, `pre_author_prior_median_eng`, `pre_author_prior_median_views`, `pre_author_prior_viral_share` | Median over the author's original posts made at least 48 hours before this one (timeline and CSV, no thread continuations, at least 5 posts). The 48-hour gap matters because every count is read at fetch time: a post from 30 minutes earlier still carries engagement it gathered after this post went out | Yes | Yes | Timeline reads, about 8 pages per account |
+| `outcome_author_followers_at_fetch`, `outcome_author_verified` | Read at fetch time. A post that went viral grew the number it would be normalised by, so these are outcomes. For a follower feature, join `accounts.csv` on the account | Yes | No (current only) | Free with the status read |
 | `label_lift_prior` | `log1p(engagement) - log1p(pre_author_prior_median_eng)` | | | Free |
 | `label_above_author_prior`, `label_above_author_median` | Within-account binary tiers | | | Free |
 | `eng_ratio_author_median`, `label_lift_window`, `label_author_window_median_eng`, `label_author_median_source` | Engagement over the author's median for the whole window, from the timeline when it has 10 or more originals, else from the CSV. The CSV median is distorted because the file drops the 11 to 99 band | | | Free |
@@ -99,8 +99,8 @@ Hypothesis: a post rides attention that already exists. Only counts from strictl
 
 | Columns | Source | Keyless | History | Cost |
 | --- | --- | --- | --- | --- |
-| `pre_hn_stories_prev24h`, `pre_hn_max_points_prev24h` | HN stories whose title names the account, created in the 24 hours before the post | Yes | Yes (points are current) | One request per account for the window |
-| `pre_hn_500plus_stories_prev24h` | All HN stories with 500+ points in the previous 24 hours: competition for developer attention | Yes | Yes | One request per day |
+| `pre_hn_stories_prev24h` | HN stories whose title names the account, created in the 24 hours before the post | Yes | Yes | One request per account for the window |
+| `outcome_hn_max_points_prev24h`, `outcome_hn_500plus_stories_prev24h` | Points on those stories, and all HN stories with 500+ points in the previous 24 hours. Points are read at fetch time, so a story posted a minute before the post carries points it earned later; a point-in-time version needs Wayback snapshots of the front page | Yes | Points are current | One request per day |
 | `pre_wiki_article`, `pre_wiki_views_prev_day`, `pre_wiki_prev_day_ratio` | Wikipedia daily views of the account's article on the day before, against the 14-day median | Yes | Yes | One request per article |
 | `pre_news_articles_prev_day`, `pre_news_prev_day_ratio` | GDELT daily news count, when GDELT answers | Yes | Last 3 months | One request per account, mostly 429 |
 | `pre_x_trend_lists_available`, `pre_mentions_x_trend_prev24h` | trends24 lists published in the 24 hours before the post, from Wayback captures | Yes | Only days with a capture | One request per capture |
@@ -147,15 +147,15 @@ X returns only current counts. A curve exists only if someone records snapshots 
 | --- | --- | --- |
 | `insufficient` | Observed under an hour, or fewer than 3 points | Not enough data |
 | `stillborn` | Observed long enough, total under 20 | Nobody saw it |
-| `step_jump` | One bin after the first hour holds 25% or more of the total, the bin before it is at most a fifth of it, and the next bin falls | A large account quotes or reposts |
+| `step_jump` | One bin, or two adjacent bins when the jump straddles a grid edge, after the first hour holds 25% or more of the total; the bin before is at most a fifth of the largest; the next bin falls | A large account quotes or reposts |
 | `circadian_echo` | Two or more separate peaks, each 20 to 28 hours after the last | The audience waking up again (Kobayashi and Lambiotte 2016) |
-| `multi_wave` | Two or more peaks at least 30% of the highest, 3 hours apart, with a trough under 30% of the smaller | Re-ignition from news, an HN front page, a newsletter |
+| `multi_wave` | Two or more peaks at least 30% of the highest (and at least 5 events in the peak bin), 3 hours apart, with a trough under 30% of the smaller | Re-ignition from news, an HN front page, a newsletter |
 | `delayed_takeoff` | Quiet first hour (mean rate under 20% of the peak), gradual rise over 2 or more bins, peak 3 hours or later | Algorithmic pickup |
 | `early_spike` | Peak in the first 2 hours, rate halves within 3 hours | A post that lands on followers and stops |
 | `slow_burn` | Peak under 3 times the mean rate, half the total after 6 hours | Reference content |
 | `unclassified` | None of the above | Says so rather than guessing |
 
-Flags are independent of the shape. `reply_ratio` (replies plus quotes at least equal to likes, 20 or more replies), `drip_feed`, `like_only_burst`, `count_drop`, `unexplained_step` (a step with no large replier at that moment, when replies were sampled), `view_surge_low_conversion` (view rate 5 times the earlier median while engagement per view falls below 0.3 times the rate so far) and `slow_start` (below the author's median at 60 minutes, when supplied).
+Flags are independent of the shape. `reply_ratio` (replies plus quotes at least equal to likes, 20 or more replies), `drip_feed`, `like_only_burst`, `count_drop`, `unexplained_step` (a step with no large reposter or replier at that moment, raised only when the tracker snapshotted reposters), `view_surge_low_conversion` (view rate 5 times the earlier median while engagement per view falls below 0.3 times the rate so far) and `slow_start` (below the author's median at 60 minutes, when supplied).
 
 `drip_feed` uses the variance-to-mean ratio of raw increments over 16 regular polling intervals after the second hour. A Poisson process gives about 1, organic engagement more, and delivery at a fixed rate near 0. Against 300 simulated Poisson tracks with 15-minute polling, the 0.15 cutoff fired on none of the 14-hour tracks and 2 of the 48-hour tracks; a 12-interval window at 0.2 fired on 50. It runs on raw snapshots only, because interpolation across a long gap makes increments look perfectly regular.
 
@@ -165,66 +165,83 @@ Not built from the red-team taxonomy: author-fueled threads (the author replying
 
 ### Tracker
 
-`python -m harness.context track watch <handles>` and `track loop` poll on a log-spaced schedule by default: 5, 15, 30, 60 and 120 minutes, then 4, 8, 24, 48 and 168 hours, recording views every time. That is 10 requests per post per week. Early speed predicts final size (Szabo and Huberman 2010; Cheng et al. 2014), so the early points matter most. `TrackerParams(dense=True)` polls every 5 to 15 minutes for the first day, about 168 requests per post, and is the only mode fine enough to see a step jump on the 15-minute grid; use it for the brand's own posts. `track report <id>` adds minutes to the 1st, 5th and 10th reply and the like-per-view rate in the first 2 hours, the number X's cold-start code uses for authors under 50,000 followers.
+`python -m harness.context track watch <handles>` and `track loop` poll on a log-spaced schedule by default: 5, 15, 30, 60 and 120 minutes, then 4, 8, 24, 48 and 168 hours, recording views every time. That is 10 requests per post per week. Early speed predicts final size (Szabo and Huberman 2010; Cheng et al. 2014), so the early points matter most. `TrackerParams(dense=True)` polls every 5 to 15 minutes for the first day, about 168 requests per post, and is the only mode fine enough to see a step jump on the 15-minute grid; use it for the brand's own posts. `track loop --reposters` snapshots the 100 largest reposters at each poll; a big account's first appearance brackets when it reposted, which is the only repost timing fxtwitter exposes and what `unexplained_step` needs. `track report <id>` adds minutes to the 1st, 5th and 10th reply and the like-per-view rate in the first 2 hours, the number X's cold-start code uses for authors under 50,000 followers.
 
-A watch pass reads each watched timeline every 15 minutes and starts tracking any post under 6 hours old, so a post is caught near its start. With a 1 request per second budget shared with Observe, the log schedule supports hundreds of tracked posts. A live loop ran tonight on @CaitlinClark22, @IndianaFever, @WNBA and @AtlantaDream.
+A watch pass reads each watched timeline every 15 minutes and starts tracking any post under 6 hours old, so a post is caught near its start. With a 1 request per second budget shared with Observe, the log schedule supports hundreds of tracked posts. A live loop ran tonight on @CaitlinClark22, @IndianaFever, @WNBA and @AtlantaDream and tracked 8 posts. It started after those posts went out, so each curve runs straight from zero to a first snapshot 1 to 5 hours in, and `detect` calls them `unclassified` rather than guess. The watch has to be running before a post to see its start.
 
 ## First analysis: Super Viral against Deadweight
 
-`python -m harness.context analyze` writes every number below to `data/context/analysis.json`. Rows are restricted to `label_eligible` (mature, not a thread continuation): 93 Super Viral, 372 Medium Viral and 363 Deadweight.
+`python -m harness.context analyze` writes every number below to `data/context/analysis.json`. Rows are restricted to `label_eligible` (mature, not a thread continuation): 93 Super Viral, 372 Medium Viral and 363 Deadweight. X metrics cover 1,664 of 1,665 rows and timelines all 91 accounts.
 
-The short version: the account decides almost everything, the CSV's construction exaggerates that, and the content effects that survive a within-account comparison are small, mostly about format, and come from 18 accounts.
+The short version: at the two tails, which account posted explains nearly everything, so Super Viral against Deadweight is not a content question. The CSV's construction exaggerates this. Content effects that survive a within-account comparison are small, mostly about format, and rest on about 20 accounts. What separates Super from Medium Viral is reach, not conversion.
 
 ### Selection effects come first
 
 - 718 of 1,133 Deadweight rows are thread continuations. Left in, "what makes a post fail" learns "being tweet 4 of a thread".
-- The missing band is most of what accounts post. On the timelines fetched so far, 258 of 487 original posts in the window (53%) have engagement 11 to 99, and 257 of those are absent from the CSV. Recomputed categories for every timeline post are in `timeline_posts.csv` (`label_category_x`).
-- 25 of 91 accounts have a Super Viral post, ten of them hold 79% of all Super Viral rows, and no "Smaller/closest" account has one.
+- The missing band is half of what accounts post. Of 1,824 original timeline posts in the window, 942 (52%) have engagement 11 to 99, and 940 of those are absent from the CSV. `timeline_posts.csv` has every one with recomputed categories (`label_category_x`).
+- 25 of 91 accounts have a Super Viral post, ten hold 79% of them, and no "Smaller/closest" account has one.
 
-### The author is the floor every model has to beat
+### At the tails, the account is the answer
 
-The author's past-only median engagement (`pre_author_prior_median_eng`, at least 5 earlier posts) separates eligible Super Viral from Deadweight posts at AUC 0.99 (66 against 248 posts) and any viral post from Deadweight at 0.986 (322 against 248). The share of the author's earlier posts that reached 100 does 0.992. Follower count at fetch time does 0.947. With thread continuations left in, the same feature scores 0.909 (66 against 549), close to the red-team pass's 0.90 on the raw CSV. Continuations cluster in a few accounts (Resend alone has 150), so dropping them changes which accounts the Deadweight rows come from. Part of the remaining gap is the CSV's construction: with the middle band gone, an account's posts are either its tails or nothing, which makes accounts look more separable than they are. Eval should report every model against this floor, on `label_lift_prior`, with time-ordered splits.
+The author's past-only median engagement (`pre_author_prior_median_eng`: original posts at least 48 hours older, at least 5 of them) separates eligible Super Viral from Deadweight at AUC 0.993 (93 against 355 posts). With thread continuations left in, the same feature gives 0.909, close to the red-team pass's 0.90 on the raw CSV; continuations cluster in a few accounts (Resend alone has 150), so dropping them changes which accounts the Deadweight rows come from.
+
+That number looked too good, so I checked it for leakage. Rebuilt from timeline posts only (never CSV rows, which were selected on the outcome) and ending 72 hours before each post, so no earlier post's count includes engagement that arrived after the target, it stays at 0.994 (93 against 341). A 0, 24 or 72 hour gap gives the same result, the window is strictly before the post, and the 19 duplicated texts in the CSV are same-category boilerplate ("download Zed and view the full changelog here"). The separation is real and built into the labels. Deadweight is an absolute 10 or fewer, Super Viral an absolute 753 or more, and once thread tails are gone only 5 of 91 accounts have an eligible post in both.
+
+The comparison where content can matter is Super against Medium Viral, where the same timeline-only floor is 0.67 (93 against 350). Medium against Deadweight is 0.991. Eval should report every model against these floors, score on `label_lift_prior` with time-ordered splits, and not spend effort on Super Viral against Deadweight.
 
 ### Content effects within an account are small
 
-Only 5 accounts have both an eligible Super Viral and an eligible Deadweight post, too few to say anything. 18 accounts have both Medium Viral and Deadweight posts, so the within-account numbers below compare those (mean difference, Medium minus Deadweight, averaged over accounts, with a 95% interval from resampling accounts).
+Each row compares an account with itself: the mean difference between its posts in the two categories, averaged over accounts that have both, with a 95% interval from resampling accounts. About 35 features were tested in each comparison, so one or two intervals clearing zero is what chance alone would produce.
 
-| Feature | Within-account difference | 95% interval | Pooled AUC (Super Viral vs Deadweight) |
-| --- | --- | --- | --- |
-| Announcement wording (`pre_hook_announce`) | +21 points of share | +9 to +35 | 0.58 |
-| Length (`pre_n_chars`) | +81 characters | +28 to +133 | 0.42 (shorter) |
-| Links in text (`pre_n_links_text`) | -0.25 per post | -0.49 to 0.00 | 0.37 |
-| Quote post (`pre_is_quote_post`, 17 accounts) | -39 points of share | -57 to -22 | 0.52 |
-| Event or webinar promo (`pre_hook_event`) | -6 points of share | -10 to -2 | 0.45 |
-| Own posts in the previous 2 hours | -0.36 posts | -0.62 to -0.15 | 0.54 |
-| Local hour | -2.3 hours | -4.0 to -0.7 | 0.64 |
-| Has media (`pre_has_media`) | +16 points of share | -7 to +38 | 0.57 |
-| HN story naming the account in the previous 24 hours | +0.08 stories | -0.01 to +0.19 | 0.64 |
+| Feature | Comparison (accounts) | Within-account difference | 95% interval | Accounts lower / tied / higher |
+| --- | --- | --- | --- | --- |
+| Quote post (`pre_is_quote_post`) | Medium vs Deadweight (17) | -39 points of share | -57 to -22 | 11 / 5 / 1 |
+| Own posts in the previous 2 hours | Medium vs Deadweight (18) | -0.44 posts | -0.86 to -0.11 | 11 / 6 / 1 |
+| Announcement wording (`pre_hook_announce`) | Medium vs Deadweight (18) | +21 points of share | +9 to +35 | 1 / 8 / 9 |
+| Length (`pre_n_chars`) | Medium vs Deadweight (18) | +81 characters | +28 to +133 | 5 / 0 / 13 |
+| Links in text (`pre_n_links_text`) | Medium vs Deadweight (18) | -0.25 per post | -0.49 to 0.00 | 10 / 5 / 3 |
+| Event or webinar promo (`pre_hook_event`) | Medium vs Deadweight (18) | -6 points of share | -10 to -2 | 6 / 12 / 0 |
+| Local hour | Medium vs Deadweight (18) | -2.3 hours | -4.0 to -0.7 | 13 / 0 / 5 |
+| Has media (`pre_has_media`) | Super vs Medium (21) | +19 points of share | +4 to +35 | 3 / 3 / 15 |
+| Mentions (`pre_n_mentions`) | Super vs Medium (21) | -0.23 per post | -0.44 to -0.07 | 12 / 7 / 2 |
 
 Read these with care:
 
-- Length flips sign between the pooled and the within-account view: big accounts post shorter, so pooled data says "short wins" and the same account says "longer wins". Any pooled content finding here can be an account finding in disguise.
-- Quoting someone else's post is the clearest within-account loser: lower in 11 of 17 accounts, tied in 5, higher in 1. A plausible reason is that the quoted post takes the attention, but this data cannot tell.
-- A post that follows the account's own post within 2 hours does worse: lower in 11 of 18 accounts, tied in 7, higher in none. That matches the author-diversity decay in X's 2026 ranker (repeat posts in a batch multiplied by 0.75 times 0.5 to the k, plus 0.25), but bursts of low-effort posts would look the same.
-- Hour of day: pooled it looks strong, within accounts it points the other way (Medium Viral posts earlier), and the eval worker found no within-account signal (pair accuracy 0.499). Treat it as context, not a lever.
-- Media and HN attention do not clear zero within accounts. Their pooled strength is mostly which accounts use them.
+- Length flips sign between views. Pooled, Super Viral posts are shorter than Deadweight (AUC 0.42), because big accounts post short. Within an account, longer posts do better. Any pooled content finding here can be an account finding in disguise.
+- Quoting someone else's post is the clearest within-account loser. A plausible reason is that the quoted post takes the attention, but this data cannot tell.
+- Posting soon after your own last post does worse. That matches the author-diversity decay in X's 2026 ranker (repeat posts in a batch scaled by 0.75 times 0.5 to the k, plus 0.25), but bursts of low-effort posts would look the same.
+- Media is the one format feature that separates Super from Medium Viral within accounts, in 15 of 21.
+- Hour of day: pooled it looks strong (AUC 0.64), within accounts it points the other way, and the eval worker found no within-account signal (pair accuracy 0.499). Treat it as context, not a lever.
 
-Against the within-author lift (`label_lift_prior`, 570 eligible posts with a prior), no content or timing feature reaches a Spearman correlation of 0.14 in absolute value. The strongest are event promos (-0.13), scheduler round minutes (-0.11), emoji count (-0.09) and links (-0.08). That fits Martin et al. (2016): content explains a few percent of the spread once the author is known.
+Against the within-author lift (`label_lift_prior`, 806 eligible posts with a prior), no content or timing feature reaches a Spearman correlation of 0.14 in absolute value. The strongest are links (-0.135), all-lowercase text (+0.135), event promos (-0.133), first-person singular (+0.10) and scheduler round minutes (-0.10). That fits Martin et al. (2016): once the author is known, content explains a few percent of the spread.
 
 ### Super Viral is distribution, not conversion
 
-These are outcomes, so they describe what happened rather than predict it. Median views per follower: Super Viral 1.08, Medium Viral 0.24, Deadweight 0.042. Median engagement per view: 1.22%, 1.17% and 0.58%. Super and Medium Viral posts convert viewers at the same rate. Super Viral posts reached 4.6 times as many people per follower. Deadweight posts were both shown less and converted half as well. So the lever that separates a hit from a solid post is getting distributed (reposted by larger accounts, picked up by the ranker), and the reposter features are where to look next.
+These are outcomes, so they describe what happened rather than predict it.
+
+| | Super Viral | Medium Viral | Deadweight |
+| --- | --- | --- | --- |
+| Median views per follower | 1.08 | 0.24 | 0.042 |
+| Median engagement per view | 1.22% | 1.17% | 0.58% |
+| Has a reposter larger than the author | 39% (of 93) | 31% (of 133) | 4% (of 23) |
+
+Super and Medium Viral posts convert viewers at the same rate. Super Viral posts reached 4.6 times as many people per follower, and more often had a reposter bigger than the author. Deadweight posts were both shown less and converted half as well. The lever that separates a hit from a solid post is distribution: a larger account reposting, or the ranker picking it up. For the fan account, that argues for posts a bigger account would want to quote.
+
+### Reply curves check the curve model on real arrival times
+
+Fifty-nine eligible posts had a reply sample covering at least 80% of their replies and 20 or more replies. Rebuilt from reply timestamps and run through `curves.detect`, 52 come out `early_spike`, 4 `delayed_takeoff` (all Super Viral) and 3 `unclassified`. Pooled per account, the post-peak decay exponent sits between 1.09 and 1.67 for the 13 accounts with enough events. Eleven have mostly sudden onsets and land in the exogenous subcritical class, a shock that replies do not carry forward. Supabase and Expo have mostly gradual onsets with the same fast decay, which the theory does not predict, so they are labelled `mixed`. Replies reach few non-followers, so this tests the model rather than measuring virality. The first run called 33 of the 59 curves `multi_wave`, because three replies landing in one 15-minute bin looked like a second wave; wave peaks now need 5 events.
 
 ### Boost flags
 
-24 posts are `boost_paid_or_external_reach`: 7 Super Viral, 11 Medium Viral and 6 Deadweight. They include Supabase's Grok Bot post (1.1M views against a typical 7k to 13k) and CockroachDB's "cockroaches will outlast us all" (4.5M views, 13.8k followers). None is `boost_likely_inauthentic` at this commit, because the reply and reposter samples that supply most votes are still being fetched; the count-ratio votes alone rarely reach two.
+36 posts are `boost_paid_or_external_reach` (9 Super Viral, 20 Medium Viral, 7 Deadweight), including Supabase's Grok Bot post (1.1M views against a typical 7k to 13k), CockroachDB's "cockroaches will outlast us all" (4.5M views, 13.8k followers) and Qodo 3.0 (414k views, 19.8k followers). 9 are `boost_coordinated_authentic`, all from repliers whose bios name the brand (Expo 3, PostHog 2, Resend 2, Zed 1, vLLM 1). One is `boost_likely_inauthentic`: Polar's post "hello", whose replies are mostly "hello" back. That is a community joke, not a bot ring, and it is the clearest example of why these labels are uncalibrated.
 
 ### What is small-sample or confounded
 
-- Every within-account number rests on 18 accounts, and Super Viral against Deadweight on 5. Intervals are wide.
-- Timeline coverage is partial at this commit (about 20 of 91 accounts), so the author baselines for the rest fall back to CSV posts, whose missing band biases them upward.
-- Followers, views and bookmarks are fetch-time values. Followers are features only with that caveat.
+- The within-account tables rest on 17 to 21 accounts, and about 35 features were tested per comparison.
+- Followers, views, bookmarks and HN points are fetch-time values and appear only as outcomes.
+- Reposter samples cover all Super Viral posts but only a sample of Medium Viral and Deadweight posts.
 - The keyword hooks are crude. "Announcement" means the text matched one of 20 phrases.
+- 201 rows were under 48 hours old at the scrape and are excluded as immature.
 
 ## Interfaces for other workers
 

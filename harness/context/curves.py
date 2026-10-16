@@ -145,6 +145,10 @@ class InflectionParams:
     wave_min_frac: float = 0.3  # a wave peak is >= 30% of the highest peak
     trough_frac: float = 0.3  # waves are separated by a trough <= 30% of the smaller peak
     wave_min_gap: float = 180.0  # and peaks >= 3 h apart
+    # A wave peak bin must hold at least this many events. On sparse reply-time curves (tens of
+    # events) Poisson noise alone made 3-reply bins look like second waves: before this floor, 33 of
+    # 59 reply curves came out multi_wave. Snapshot curves of real posts clear it easily.
+    wave_min_count: float = 5.0
     # step_jump
     step_share: float = 0.25
     step_min_age: float = 60.0
@@ -326,7 +330,7 @@ def find_waves(v: list[float], dt: float, p: InflectionParams) -> list[int]:
     top = max(v)
     if top <= 0:
         return []
-    h = p.wave_min_frac * top
+    h = max(p.wave_min_frac * top, p.wave_min_count / dt)
     n = len(v)
     cands = [
         i

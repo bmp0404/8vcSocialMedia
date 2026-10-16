@@ -1,57 +1,57 @@
 {
  "fxtwitter_status": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:43+00:00",
+  "checked_at": "2026-10-16T03:03:35+00:00",
   "value": "@supabase 2026-09-17T13:00Z likes=17542 views=171963 followers=212101 (as of 2026-10-16T01:25:30+00:00)"
  },
  "wikipedia_daily": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:43+00:00",
+  "checked_at": "2026-10-16T03:03:35+00:00",
   "value": "Caitlin_Clark 2026-09-20: 4039 views"
  },
  "wikipedia_hourly_dump": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:43+00:00",
-  "value": "Caitlin_Clark 2026-10-15T21Z: 177 views (dump file)"
+  "checked_at": "2026-10-16T03:03:35+00:00",
+  "value": "Caitlin_Clark 2026-10-15T23Z: 191 views (dump file)"
  },
  "wikidata_handle_lookup": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:55+00:00",
+  "checked_at": "2026-10-16T03:04:29+00:00",
   "value": "@deno_land -> Deno_(software); @CaitlinClark22 -> Caitlin_Clark"
  },
  "hackernews_algolia": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:55+00:00",
+  "checked_at": "2026-10-16T03:04:29+00:00",
   "value": "22 'supabase' stories 09-15..10-15; top: 'Show HN: HN.watch – Videos of all Hacker News posts' 226 pts 2026-09-28"
  },
  "google_trends_rss": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:55+00:00",
-  "value": "US trending now: 'sal frelick' 1000+ at 2026-10-16T01:30Z"
+  "checked_at": "2026-10-16T03:04:29+00:00",
+  "value": "US trending now: 'novig' 2000+ at 2026-10-16T02:50Z"
  },
  "google_trends_interest": {
   "ok": true,
-  "checked_at": "2026-10-16T01:51:55+00:00",
+  "checked_at": "2026-10-16T03:04:29+00:00",
   "value": "'Caitlin Clark' US daily 09-01..10-14: 44 points, peak 100 on 2026-10-02"
  },
  "x_trends_trends24_live": {
   "ok": true,
-  "checked_at": "2026-10-16T01:52:03+00:00",
-  "value": "24 hourly lists; newest 2026-10-16T00:56Z #1 'Broncos'"
+  "checked_at": "2026-10-16T03:04:30+00:00",
+  "value": "24 hourly lists; newest 2026-10-16T02:40Z #1 'Seahawks'"
  },
  "x_trends_wayback": {
   "ok": true,
-  "checked_at": "2026-10-16T01:53:59+00:00",
+  "checked_at": "2026-10-16T03:04:30+00:00",
   "value": "capture 20260925064129: 24 lists; 2026-09-24T11:42Z #1 'Good Thursday'"
  },
  "gdelt_timeline": {
   "ok": true,
-  "checked_at": "2026-10-16T01:52:12+00:00",
+  "checked_at": "2026-10-16T03:04:30+00:00",
   "value": "'Caitlin Clark' 09-20..09-22: 127 15min buckets, 23 articles"
  },
  "espn_wallclock": {
   "ok": true,
-  "checked_at": "2026-10-16T01:53:46+00:00",
+  "checked_at": "2026-10-16T03:04:30+00:00",
   "value": "MIN @ CON 101-89: first play 17:03Z, last play 19:11Z"
  }
 }

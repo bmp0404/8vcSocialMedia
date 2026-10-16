@@ -6,22 +6,22 @@ https://x.com/ollama/status/2105152056382345544,2105152056382345544,@ollama,Supe
 https://x.com/cursor_ai/status/2102448392773435706,2102448392773435706,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2102786814633464159,2102786814633464159,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2110087611763368271,2110087611763368271,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/zeddotdev/status/2103289058772586872,2103289058772586872,@zeddotdev,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/zeddotdev/status/2103289058772586872,2103289058772586872,@zeddotdev,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/cursor_ai/status/2105012114200887434,2105012114200887434,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tldraw/status/2105003566351908892,2105003566351908892,@tldraw,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
+https://x.com/tldraw/status/2105003566351908892,2105003566351908892,@tldraw,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,author_outlier,False,True,True
 https://x.com/cursor_ai/status/2105787358557999585,2105787358557999585,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2099887193804112190,2099887193804112190,@cognition,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/Lovable/status/2110355248237928857,2110355248237928857,@Lovable,Super Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/cursor_ai/status/2102861817160904808,2102861817160904808,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2104666044220821594,2104666044220821594,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/zeddotdev/status/2110516297230336272,2110516297230336272,@zeddotdev,Super Viral,False,False,False,False,none,0,,,False,False,False
+https://x.com/zeddotdev/status/2110516297230336272,2110516297230336272,@zeddotdev,Super Viral,False,False,False,False,none,0,,author_outlier,False,False,False
 https://x.com/cursor_ai/status/2107897245282799864,2107897245282799864,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2107165034463867001,2107165034463867001,@cognition,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2100265266026590322,2100265266026590322,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2107618653701296162,2107618653701296162,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vercel/status/2101077346203971900,2101077346203971900,@vercel,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/zeddotdev/status/2100390620640526554,2100390620640526554,@zeddotdev,Super Viral,False,False,False,False,none,0,,like_rate_high,False,True,True
-https://x.com/supabase/status/2099855013178741097,2099855013178741097,@supabase,Super Viral,False,False,False,False,none,0,,like_rate_high,False,True,True
+https://x.com/zeddotdev/status/2100390620640526554,2100390620640526554,@zeddotdev,Super Viral,False,False,False,False,none,1,duplicate_replies,like_rate_high,False,True,True
+https://x.com/supabase/status/2099855013178741097,2099855013178741097,@supabase,Super Viral,False,False,False,False,none,0,,like_rate_high;author_outlier,False,True,True
 https://x.com/bunjavascript/status/2109861465100632567,2109861465100632567,@bunjavascript,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2110075611633074295,2110075611633074295,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2103636639038026093,2103636639038026093,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
@@ -35,18 +35,18 @@ https://x.com/Railway/status/2104572401468199274,2104572401468199274,@Railway,Su
 https://x.com/cline/status/2107561157787824347,2107561157787824347,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/modal/status/2110074623337677046,2110074623337677046,@modal,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2107719897115463877,2107719897115463877,@zeddotdev,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/posthog/status/2109706421919248499,2109706421919248499,@posthog,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/posthog/status/2109706421919248499,2109706421919248499,@posthog,Super Viral,False,False,True,False,coordinated_authentic,1,reply_burst;staff_repliers,author_outlier,False,True,True
 https://x.com/cursor_ai/status/2107141004482793827,2107141004482793827,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2105406306966511773,2105406306966511773,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/bunjavascript/status/2104091263842804168,2104091263842804168,@bunjavascript,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tldraw/status/2102430005250994348,2102430005250994348,@tldraw,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/tldraw/status/2102430005250994348,2102430005250994348,@tldraw,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/CloudflareDev/status/2105780792559595666,2105780792559595666,@CloudflareDev,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2106828852353974713,2106828852353974713,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/modal/status/2110379972502139213,2110379972502139213,@modal,Super Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/cursor_ai/status/2108289748628566496,2108289748628566496,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2100223348563194123,2100223348563194123,@zeddotdev,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2103165327815450815,2103165327815450815,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tldraw/status/2101674426987090195,2101674426987090195,@tldraw,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/tldraw/status/2101674426987090195,2101674426987090195,@tldraw,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/ollama/status/2106186667543666841,2106186667543666841,@ollama,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/CloudflareDev/status/2108543342862610912,2108543342862610912,@CloudflareDev,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vllm_project/status/2102670270129647953,2102670270129647953,@vllm_project,Super Viral,False,False,False,False,none,0,,,False,True,True
@@ -63,9 +63,9 @@ https://x.com/supabase/status/2109290802174472425,2109290802174472425,@supabase,
 https://x.com/cognition/status/2104597797672784234,2104597797672784234,@cognition,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Railway/status/2103566393862136150,2103566393862136150,@Railway,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/bunjavascript/status/2108793934256525570,2108793934256525570,@bunjavascript,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/bunjavascript/status/2108441841498804715,2108441841498804715,@bunjavascript,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/bunjavascript/status/2108441841498804715,2108441841498804715,@bunjavascript,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/CloudflareDev/status/2106080773711319498,2106080773711319498,@CloudflareDev,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/supabase/status/2103505487966924982,2103505487966924982,@supabase,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/supabase/status/2103505487966924982,2103505487966924982,@supabase,Super Viral,False,False,False,False,none,1,duplicate_replies,,False,True,True
 https://x.com/vercel/status/2110509321939509421,2110509321939509421,@vercel,Super Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/cursor_ai/status/2106066782155157603,2106066782155157603,@cursor_ai,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/bunjavascript/status/2110692261508079721,2110692261508079721,@bunjavascript,Super Viral,False,False,False,False,none,0,,,False,False,False
@@ -84,18 +84,18 @@ https://x.com/v0/status/2104997515905102118,2104997515905102118,@v0,Super Viral,
 https://x.com/zeddotdev/status/2108641490633433437,2108641490633433437,@zeddotdev,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/boltdotnew/status/2100646000016716180,2100646000016716180,@boltdotnew,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/cognition/status/2105408461701824732,2105408461701824732,@cognition,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tursodatabase/status/2104958085492081025,2104958085492081025,@tursodatabase,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/tursodatabase/status/2104958085492081025,2104958085492081025,@tursodatabase,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/expo/status/2099972359721795738,2099972359721795738,@expo,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2104988938817413583,2104988938817413583,@cognition,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2110790097369010292,2110790097369010292,@cognition,Super Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/turborepo/status/2100994064749604953,2100994064749604953,@turborepo,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vllm_project/status/2109210324985622960,2109210324985622960,@vllm_project,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2101056078872256935,2101056078872256935,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tldraw/status/2103213117576556996,2103213117576556996,@tldraw,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/tldraw/status/2103213117576556996,2103213117576556996,@tldraw,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/bunjavascript/status/2107856309651747196,2107856309651747196,@bunjavascript,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/prisma/status/2107468131841331475,2107468131841331475,@prisma,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/cognition/status/2102104259219406886,2102104259219406886,@cognition,Super Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
-https://x.com/tldraw/status/2102882677422497938,2102882677422497938,@tldraw,Super Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/tldraw/status/2102882677422497938,2102882677422497938,@tldraw,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/cognition/status/2100253548885803404,2100253548885803404,@cognition,Super Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/llama_index/status/2107180957757268252,2107180957757268252,@llama_index,Super Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/cline/status/2104654757508129113,2104654757508129113,@cline,Super Viral,False,False,False,False,none,0,,,False,True,True
@@ -103,14 +103,14 @@ https://x.com/supabase/status/2101657667617833051,2101657667617833051,@supabase,
 https://x.com/ollama/status/2107584722465616123,2107584722465616123,@ollama,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/nuxt_js/status/2107241201934172588,2107241201934172588,@nuxt_js,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vllm_project/status/2106193438098256191,2106193438098256191,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tldraw/status/2103533038495801747,2103533038495801747,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/tldraw/status/2103533038495801747,2103533038495801747,@tldraw,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/zeddotdev/status/2110418782141243766,2110418782141243766,@zeddotdev,Medium Viral,False,False,False,False,none,0,,like_rate_high,False,False,False
 https://x.com/ollama/status/2107193986482126883,2107193986482126883,@ollama,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2102147831519666639,2102147831519666639,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2102451801303998506,2102451801303998506,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/expo/status/2106948538118607039,2106948538118607039,@expo,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Replit/status/2102065557784723766,2102065557784723766,@Replit,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
-https://x.com/neondatabase/status/2106019538924179955,2106019538924179955,@neondatabase,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/neondatabase/status/2106019538924179955,2106019538924179955,@neondatabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2110047099580535131,2110047099580535131,@zeddotdev,Medium Viral,False,False,False,False,none,0,,like_rate_high,False,True,True
 https://x.com/zeddotdev/status/2105336857689035054,2105336857689035054,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/pnpmjs/status/2108646891902640466,2108646891902640466,@pnpmjs,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -129,10 +129,10 @@ https://x.com/ollama/status/2102268230052274300,2102268230052274300,@ollama,Medi
 https://x.com/vllm_project/status/2108736734309896625,2108736734309896625,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/motherduck/status/2102077291081896307,2102077291081896307,@motherduck,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,author_outlier,False,True,True
 https://x.com/zeddotdev/status/2099702845092094373,2099702845092094373,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/zeddotdev/status/2107901444246413755,2107901444246413755,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/zeddotdev/status/2107901444246413755,2107901444246413755,@zeddotdev,Medium Viral,False,False,True,False,coordinated_authentic,0,staff_repliers,,False,True,True
 https://x.com/linear/status/2102098669889552711,2102098669889552711,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2108249633789263917,2108249633789263917,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/polar_sh/status/2108198833167462472,2108198833167462472,@polar_sh,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/polar_sh/status/2108198833167462472,2108198833167462472,@polar_sh,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/vercel/status/2102176023207166256,2102176023207166256,@vercel,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2106011114161176919,2106011114161176919,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2102164322860613725,2102164322860613725,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -154,11 +154,11 @@ https://x.com/cognition/status/2100638797851513215,2100638797851513215,@cognitio
 https://x.com/Replit/status/2103135358024331396,2103135358024331396,@Replit,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/PlanetScale/status/2103524371071733925,2103524371071733925,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2106470199415456151,2106470199415456151,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/greptile/status/2100268607477273048,2100268607477273048,@greptile,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/greptile/status/2100268607477273048,2100268607477273048,@greptile,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/bunjavascript/status/2103368771272659253,2103368771272659253,@bunjavascript,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2104559249854550430,2104559249854550430,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2102508032873943330,2102508032873943330,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/posthog/status/2103140490749395097,2103140490749395097,@posthog,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/posthog/status/2103140490749395097,2103140490749395097,@posthog,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2101754721677840702,2101754721677840702,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2106165782032056581,2106165782032056581,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/astrodotbuild/status/2110799502479159721,2110799502479159721,@astrodotbuild,Medium Viral,False,False,False,False,none,0,,,False,False,False
@@ -194,7 +194,7 @@ https://x.com/Lovable/status/2103167720087077317,2103167720087077317,@Lovable,Me
 https://x.com/cognition/status/2109729058745725037,2109729058745725037,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2110787701167509655,2110787701167509655,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/cognition/status/2107268310236795023,2107268310236795023,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/llama_index/status/2107863919536595237,2107863919536595237,@llama_index,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/llama_index/status/2107863919536595237,2107863919536595237,@llama_index,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/prisma/status/2103135542062076393,2103135542062076393,@prisma,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/ollama/status/2110833609829695718,2110833609829695718,@ollama,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/CockroachDB/status/2100294013462929812,2100294013462929812,@CockroachDB,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
@@ -220,24 +220,24 @@ https://x.com/Railway/status/2104978612323594461,2104978612323594461,@Railway,Me
 https://x.com/Lovable/status/2108210970917314599,2108210970917314599,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2100584412517675317,2100584412517675317,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/pnpmjs/status/2104310921535656132,2104310921535656132,@pnpmjs,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/polar_sh/status/2108137650876031020,2108137650876031020,@polar_sh,Medium Viral,False,False,False,False,none,1,bookmarks_low,,False,True,True
+https://x.com/polar_sh/status/2108137650876031020,2108137650876031020,@polar_sh,Medium Viral,True,False,False,True,likely_inauthentic,2,bookmarks_low;duplicate_replies,,False,True,True
 https://x.com/modal/status/2105764967995838777,2105764967995838777,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2100312496871440694,2100312496871440694,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/motherduck/status/2102414494471188631,2102414494471188631,@motherduck,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/vllm_project/status/2102593516740411733,2102593516740411733,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2105707874420994349,2105707874420994349,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/nuxt_js/status/2109287168757940324,2109287168757940324,@nuxt_js,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/posthog/status/2102110133946052855,2102110133946052855,@posthog,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/posthog/status/2102110133946052855,2102110133946052855,@posthog,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2099876411292958994,2099876411292958994,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2102441067199295971,2102441067199295971,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/coderabbitai/status/2102767517219360794,2102767517219360794,@coderabbitai,Medium Viral,False,False,False,False,none,1,repost_heavy,author_outlier,False,True,True
+https://x.com/coderabbitai/status/2102767517219360794,2102767517219360794,@coderabbitai,Medium Viral,False,False,False,False,none,1,repost_heavy,,False,True,True
 https://x.com/cursor_ai/status/2102861818905727328,2102861818905727328,@cursor_ai,Medium Viral,False,False,False,False,none,0,,,True,True,False
 https://x.com/FactoryAI/status/2105713248507138483,2105713248507138483,@FactoryAI,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/cursor_ai/status/2102786816340562200,2102786816340562200,@cursor_ai,Medium Viral,False,False,False,False,none,0,,,True,True,False
 https://x.com/zeddotdev/status/2109050287654600950,2109050287654600950,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2100310245633397004,2100310245633397004,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/CloudflareDev/status/2106190778485678405,2106190778485678405,@CloudflareDev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/mintlify/status/2103559587500826776,2103559587500826776,@mintlify,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/mintlify/status/2103559587500826776,2103559587500826776,@mintlify,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/cline/status/2104629249948999967,2104629249948999967,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2108630302381994318,2108630302381994318,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2110391930169512250,2110391930169512250,@linear,Medium Viral,False,False,False,False,none,0,,,False,False,False
@@ -249,47 +249,47 @@ https://x.com/vercel/status/2103541839399907424,2103541839399907424,@vercel,Medi
 https://x.com/vllm_project/status/2102181397138128962,2102181397138128962,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/charmcli/status/2109670621693300741,2109670621693300741,@charmcli,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/modal/status/2100996656280076626,2100996656280076626,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/posthog/status/2103508195486703955,2103508195486703955,@posthog,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/posthog/status/2103508195486703955,2103508195486703955,@posthog,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/PlanetScale/status/2110039683829031125,2110039683829031125,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/vllm_project/status/2107934535749140841,2107934535749140841,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/vllm_project/status/2107934535749140841,2107934535749140841,@vllm_project,Medium Viral,False,False,True,False,coordinated_authentic,0,staff_repliers,,False,True,True
 https://x.com/tldraw/status/2103609103797125381,2103609103797125381,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2107909392649826516,2107909392649826516,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/tldraw/status/2102651633780064462,2102651633780064462,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/coderabbitai/status/2099868543709753769,2099868543709753769,@coderabbitai,Medium Viral,False,False,False,False,none,1,repost_heavy,author_outlier,False,True,True
+https://x.com/coderabbitai/status/2099868543709753769,2099868543709753769,@coderabbitai,Medium Viral,False,False,False,False,none,1,repost_heavy,,False,True,True
 https://x.com/modal/status/2108606604610564498,2108606604610564498,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/upstash/status/2100626014866956729,2100626014866956729,@upstash,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/supabase/status/2099671208971448638,2099671208971448638,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2102111625545486444,2102111625545486444,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/biomejs/status/2110015673296400420,2110015673296400420,@biomejs,Medium Viral,False,False,False,False,none,1,replies_low,,False,True,True
-https://x.com/expo/status/2107105089957859761,2107105089957859761,@expo,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/expo/status/2107105089957859761,2107105089957859761,@expo,Medium Viral,False,False,True,False,coordinated_authentic,0,staff_reposters,,False,True,True
 https://x.com/FactoryAI/status/2100993480709533748,2100993480709533748,@FactoryAI,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/upstash/status/2104320882550415734,2104320882550415734,@upstash,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
 https://x.com/v0/status/2107571659842769322,2107571659842769322,@v0,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/convex/status/2102094480400912753,2102094480400912753,@convex,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/triggerdotdev/status/2105326971320443307,2105326971320443307,@triggerdotdev,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/triggerdotdev/status/2105326971320443307,2105326971320443307,@triggerdotdev,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,author_outlier,False,True,True
 https://x.com/cline/status/2106088611116675213,2106088611116675213,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2099860744061722981,2099860744061722981,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/tldraw/status/2105395836427317689,2105395836427317689,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2106084992514232544,2106084992514232544,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2100667648069554423,2100667648069554423,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/e2b/status/2099864565697872320,2099864565697872320,@e2b,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/e2b/status/2099864565697872320,2099864565697872320,@e2b,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/kirodotdev/status/2102081961665744917,2102081961665744917,@kirodotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/warpdotdev/status/2100623731294978243,2100623731294978243,@warpdotdev,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,author_outlier,False,True,True
+https://x.com/warpdotdev/status/2100623731294978243,2100623731294978243,@warpdotdev,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/cline/status/2103537395773911330,2103537395773911330,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/astrodotbuild/status/2100991239545893225,2100991239545893225,@astrodotbuild,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2107532501103391069,2107532501103391069,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2103222349432598701,2103222349432598701,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2108290689184243777,2108290689184243777,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/neondatabase/status/2110758792954581464,2110758792954581464,@neondatabase,Medium Viral,False,False,False,False,none,0,,author_outlier,False,False,False
+https://x.com/neondatabase/status/2110758792954581464,2110758792954581464,@neondatabase,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/charmcli/status/2108629047966109871,2108629047966109871,@charmcli,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/kilocode/status/2107462795516313992,2107462795516313992,@kilocode,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/kilocode/status/2107462795516313992,2107462795516313992,@kilocode,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/FactoryAI/status/2108648361410867395,2108648361410867395,@FactoryAI,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2103157473691787665,2103157473691787665,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/posthog/status/2110427973614755878,2110427973614755878,@posthog,Medium Viral,False,False,False,False,none,0,,author_outlier,False,False,False
+https://x.com/posthog/status/2110427973614755878,2110427973614755878,@posthog,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/FactoryAI/status/2110037841967493258,2110037841967493258,@FactoryAI,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/PlanetScale/status/2107858620725473653,2107858620725473653,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2105319272629096505,2105319272629096505,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/coderabbitai/status/2102437018311532862,2102437018311532862,@coderabbitai,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/coderabbitai/status/2102437018311532862,2102437018311532862,@coderabbitai,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2110857277494169647,2110857277494169647,@supabase,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/vllm_project/status/2102825414762930551,2102825414762930551,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/tldraw/status/2104983011062104324,2104983011062104324,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -297,13 +297,13 @@ https://x.com/CloudflareDev/status/2108255488030941665,2108255488030941665,@Clou
 https://x.com/PlanetScale/status/2102439385543131200,2102439385543131200,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2100971841330221306,2100971841330221306,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2102474718917885968,2102474718917885968,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/modal/status/2102867001748369629,2102867001748369629,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/modal/status/2102867001748369629,2102867001748369629,@modal,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/Lovable/status/2102071205373300934,2102071205373300934,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/FactoryAI/status/2102813941999313158,2102813941999313158,@FactoryAI,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/Railway/status/2099906450101530972,2099906450101530972,@Railway,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/CloudflareDev/status/2108834278897275195,2108834278897275195,@CloudflareDev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2105343912239841596,2105343912239841596,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/depotdev/status/2104990331788038569,2104990331788038569,@depotdev,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/depotdev/status/2104990331788038569,2104990331788038569,@depotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2106057507089289261,2106057507089289261,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2102863477576483209,2102863477576483209,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/FactoryAI/status/2110765256402473416,2110765256402473416,@FactoryAI,Medium Viral,False,False,False,False,none,0,,,False,False,False
@@ -312,11 +312,11 @@ https://x.com/CloudflareDev/status/2104335951866822748,2104335951866822748,@Clou
 https://x.com/Lovable/status/2106056000277242011,2106056000277242011,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/PlanetScale/status/2101011468032295208,2101011468032295208,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vllm_project/status/2107690067619930450,2107690067619930450,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/resend/status/2103862323962388891,2103862323962388891,@resend,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/resend/status/2103862323962388891,2103862323962388891,@resend,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/pnpmjs/status/2102452813888696479,2102452813888696479,@pnpmjs,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2100631041660600478,2100631041660600478,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/warpdotdev/status/2104988839177855450,2104988839177855450,@warpdotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/neondatabase/status/2100667636367630683,2100667636367630683,@neondatabase,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/neondatabase/status/2100667636367630683,2100667636367630683,@neondatabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2105028155849478430,2105028155849478430,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2102861820457521655,2102861820457521655,@cursor_ai,Medium Viral,False,False,False,False,none,0,,,True,True,False
 https://x.com/vercel/status/2100737569369809129,2100737569369809129,@vercel,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -327,7 +327,7 @@ https://x.com/expo/status/2104958820959351060,2104958820959351060,@expo,Medium V
 https://x.com/kirodotdev/status/2105408724655337626,2105408724655337626,@kirodotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/tldraw/status/2105690247854272834,2105690247854272834,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2101023555416727666,2101023555416727666,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/posthog/status/2102424081253752928,2102424081253752928,@posthog,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/posthog/status/2102424081253752928,2102424081253752928,@posthog,Medium Viral,False,False,True,False,coordinated_authentic,1,reply_burst;staff_repliers,,False,True,True
 https://x.com/tldraw/status/2105980995937722687,2105980995937722687,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/FactoryAI/status/2108588934876000389,2108588934876000389,@FactoryAI,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2110105984706257231,2110105984706257231,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -347,8 +347,8 @@ https://x.com/vllm_project/status/2108441335044997468,2108441335044997468,@vllm_
 https://x.com/vllm_project/status/2108128026303357173,2108128026303357173,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/expo/status/2100927383855309247,2100927383855309247,@expo,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2104977412299825278,2104977412299825278,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/flydotio/status/2102076230183035081,2102076230183035081,@flydotio,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
-https://x.com/cline/status/2104769115416326245,2104769115416326245,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/flydotio/status/2102076230183035081,2102076230183035081,@flydotio,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/cline/status/2104769115416326245,2104769115416326245,@cline,Medium Viral,False,False,False,False,none,1,new_account_reposters,,False,True,True
 https://x.com/cline/status/2102836411099676782,2102836411099676782,@cline,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2105372353081291121,2105372353081291121,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2104963389428826273,2104963389428826273,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -364,10 +364,10 @@ https://x.com/zeddotdev/status/2104945383998881832,2104945383998881832,@zeddotde
 https://x.com/astrodotbuild/status/2102811686625235347,2102811686625235347,@astrodotbuild,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2107476221441286363,2107476221441286363,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/PlanetScale/status/2107150359940764022,2107150359940764022,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/tldraw/status/2107876643230613578,2107876643230613578,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/e2b/status/2105345363813286280,2105345363813286280,@e2b,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/tldraw/status/2107876643230613578,2107876643230613578,@tldraw,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
+https://x.com/e2b/status/2105345363813286280,2105345363813286280,@e2b,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/vercel/status/2110777476972761512,2110777476972761512,@vercel,Medium Viral,False,False,False,False,none,0,,,False,False,False
-https://x.com/resend/status/2103123046005678242,2103123046005678242,@resend,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/resend/status/2103123046005678242,2103123046005678242,@resend,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/kirodotdev/status/2104646075051102680,2104646075051102680,@kirodotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/charmcli/status/2105665780658429962,2105665780658429962,@charmcli,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/CloudflareDev/status/2108643431644103115,2108643431644103115,@CloudflareDev,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -390,25 +390,25 @@ https://x.com/vercel/status/2099952028521029820,2099952028521029820,@vercel,Medi
 https://x.com/Replit/status/2102828063184568709,2102828063184568709,@Replit,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/tldraw/status/2102880323763679551,2102880323763679551,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/charmcli/status/2104944219970257044,2104944219970257044,@charmcli,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/n8n_io/status/2104488818170630389,2104488818170630389,@n8n_io,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/n8n_io/status/2104488818170630389,2104488818170630389,@n8n_io,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/tldraw/status/2105326627198837180,2105326627198837180,@tldraw,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2102453931704201508,2102453931704201508,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2104597799383794135,2104597799383794135,@cognition,Medium Viral,False,False,False,False,none,0,,,True,True,False
-https://x.com/browserbase/status/2110415570684580054,2110415570684580054,@browserbase,Medium Viral,False,False,False,False,none,0,,author_outlier,False,False,False
+https://x.com/browserbase/status/2110415570684580054,2110415570684580054,@browserbase,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/supabase/status/2107251228551843859,2107251228551843859,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/FactoryAI/status/2100731368825295227,2100731368825295227,@FactoryAI,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2102827340170400036,2102827340170400036,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vllm_project/status/2109865690031411349,2109865690031411349,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/modal/status/2110196023863963664,2110196023863963664,@modal,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/supabase/status/2110116200705642687,2110116200705642687,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/expo/status/2108193743132348661,2108193743132348661,@expo,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/expo/status/2108193743132348661,2108193743132348661,@expo,Medium Viral,False,False,True,False,coordinated_authentic,0,staff_repliers,,False,True,True
 https://x.com/vllm_project/status/2103297683188527487,2103297683188527487,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/modal/status/2107869014055911856,2107869014055911856,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/daytonaio/status/2108573385269879117,2108573385269879117,@daytonaio,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/daytonaio/status/2108573385269879117,2108573385269879117,@daytonaio,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2110075624253751796,2110075624253751796,@cursor_ai,Medium Viral,False,False,False,False,none,0,,,True,True,False
 https://x.com/Lovable/status/2102470230719266861,2102470230719266861,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/expo/status/2107831469758726212,2107831469758726212,@expo,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/llama_index/status/2108238298938573023,2108238298938573023,@llama_index,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/expo/status/2107831469758726212,2107831469758726212,@expo,Medium Viral,False,False,True,False,coordinated_authentic,0,staff_reposters,,False,True,True
+https://x.com/llama_index/status/2108238298938573023,2108238298938573023,@llama_index,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2108577846788866050,2108577846788866050,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2103469674511970480,2103469674511970480,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2108572224617902408,2108572224617902408,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -424,7 +424,7 @@ https://x.com/linear/status/2110068941364318514,2110068941364318514,@linear,Medi
 https://x.com/linear/status/2108598795487633821,2108598795487633821,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2107618665751576970,2107618665751576970,@cursor_ai,Medium Viral,False,False,False,False,none,0,,,True,True,False
 https://x.com/linear/status/2108261980310265911,2108261980310265911,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/resend/status/2107110142693310970,2107110142693310970,@resend,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/resend/status/2107110142693310970,2107110142693310970,@resend,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/FactoryAI/status/2102162709647430116,2102162709647430116,@FactoryAI,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2110408060799963471,2110408060799963471,@cognition,Medium Viral,False,False,False,False,none,0,,,False,False,False
 https://x.com/modal/status/2105733295774503383,2105733295774503383,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -434,7 +434,7 @@ https://x.com/expo/status/2100998639028257032,2100998639028257032,@expo,Medium V
 https://x.com/v0/status/2104633350170251519,2104633350170251519,@v0,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/vllm_project/status/2102264807630180468,2102264807630180468,@vllm_project,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cognition/status/2102080335936630898,2102080335936630898,@cognition,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/greptile/status/2103140056256888894,2103140056256888894,@greptile,Medium Viral,False,False,False,False,none,0,,,False,True,True
+https://x.com/greptile/status/2103140056256888894,2103140056256888894,@greptile,Medium Viral,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/supabase/status/2106292691961335906,2106292691961335906,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2106097814392783116,2106097814392783116,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Lovable/status/2102397622346719718,2102397622346719718,@Lovable,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -477,9 +477,9 @@ https://x.com/Replit/status/2104647329521520867,2104647329521520867,@Replit,Medi
 https://x.com/Replit/status/2100321324170150301,2100321324170150301,@Replit,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/linear/status/2105711389620736085,2105711389620736085,@linear,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/zeddotdev/status/2102509934474932485,2102509934474932485,@zeddotdev,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/resend/status/2105673390556364852,2105673390556364852,@resend,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/resend/status/2105673390556364852,2105673390556364852,@resend,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/modal/status/2110048620968017947,2110048620968017947,@modal,Medium Viral,False,False,False,False,none,0,,,False,True,True
-https://x.com/resend/status/2100228217911280071,2100228217911280071,@resend,Medium Viral,False,False,False,False,none,0,,author_outlier,False,True,True
+https://x.com/resend/status/2100228217911280071,2100228217911280071,@resend,Medium Viral,False,False,True,False,coordinated_authentic,1,reply_burst;staff_repliers,,False,True,True
 https://x.com/modal/status/2105000134342041780,2105000134342041780,@modal,Medium Viral,False,False,False,False,none,1,repost_heavy,,False,True,True
 https://x.com/supabase/status/2106464597628846125,2106464597628846125,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cline/status/2110784104488980727,2110784104488980727,@cline,Medium Viral,False,False,False,False,none,0,,,False,False,False
@@ -513,7 +513,7 @@ https://x.com/neondatabase/status/2107182156946739330,2107182156946739330,@neond
 https://x.com/CloudflareDev/status/2102447080631632208,2102447080631632208,@CloudflareDev,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/Replit/status/2107135104489505136,2107135104489505136,@Replit,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/cursor_ai/status/2107141021947904430,2107141021947904430,@cursor_ai,Medium Viral,False,False,False,False,none,0,,,True,True,False
-https://x.com/resend/status/2110742035766616567,2110742035766616567,@resend,Medium Viral,False,False,False,False,none,0,,author_outlier,False,False,False
+https://x.com/resend/status/2110742035766616567,2110742035766616567,@resend,Medium Viral,False,False,True,False,coordinated_authentic,1,reply_burst;staff_repliers,,False,False,False
 https://x.com/PlanetScale/status/2107509405881163985,2107509405881163985,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/PlanetScale/status/2104999004371141053,2104999004371141053,@PlanetScale,Medium Viral,False,False,False,False,none,0,,,False,True,True
 https://x.com/supabase/status/2102237339502469327,2102237339502469327,@supabase,Medium Viral,False,False,False,False,none,0,,,False,True,True
@@ -701,7 +701,7 @@ https://x.com/grafana/status/2107425640932851844,2107425640932851844,@grafana,De
 https://x.com/WorkOS/status/2107888395393630652,2107888395393630652,@WorkOS,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/WorkOS/status/2107876250815697096,2107876250815697096,@WorkOS,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/descopeinc/status/2110804058806313429,2110804058806313429,@descopeinc,Deadweight,False,False,False,False,none,0,,,False,False,False
-https://x.com/getpostman/status/2100258584525488621,2100258584525488621,@getpostman,Deadweight,False,False,False,False,none,0,,,False,True,True
+https://x.com/getpostman/status/2100258584525488621,2100258584525488621,@getpostman,Deadweight,False,False,False,False,none,1,new_account_reposters,,False,True,True
 https://x.com/retool/status/2110388017613717518,2110388017613717518,@retool,Deadweight,False,False,False,False,none,0,,,False,False,False
 https://x.com/retool/status/2105675559774646501,2105675559774646501,@retool,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/retool/status/2104634650497036606,2104634650497036606,@retool,Deadweight,False,False,False,False,none,0,,,False,True,True
@@ -759,12 +759,12 @@ https://x.com/coderhq/status/2104606566406086676,2104606566406086676,@coderhq,De
 https://x.com/coderhq/status/2100334904630206748,2100334904630206748,@coderhq,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/browserbase/status/2105355063187357739,2105355063187357739,@browserbase,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/prisma/status/2105402878252953967,2105402878252953967,@prisma,Deadweight,False,False,False,False,none,0,,,False,True,True
-https://x.com/xata/status/2102745095800082853,2102745095800082853,@xata,Deadweight,False,False,False,False,none,0,,,False,True,True
+https://x.com/xata/status/2102745095800082853,2102745095800082853,@xata,Deadweight,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/upstash/status/2105695896566735281,2105695896566735281,@upstash,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/pnpmjs/status/2105332870894235740,2105332870894235740,@pnpmjs,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/pnpmjs/status/2101957828105711929,2101957828105711929,@pnpmjs,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/buildkite/status/2107218962782298261,2107218962782298261,@buildkite,Deadweight,False,False,False,False,none,0,,,False,True,True
-https://x.com/buildkite/status/2106187534011433088,2106187534011433088,@buildkite,Deadweight,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
+https://x.com/buildkite/status/2106187534011433088,2106187534011433088,@buildkite,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/grafana/status/2106074288382181633,2106074288382181633,@grafana,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/descopeinc/status/2108311259904934357,2108311259904934357,@descopeinc,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/retool/status/2103197783062925747,2103197783062925747,@retool,Deadweight,False,False,False,False,none,0,,,False,True,True
@@ -1066,7 +1066,7 @@ https://x.com/speakeasydev/status/2102792650474823801,2102792650474823801,@speak
 https://x.com/tursodatabase/status/2108210106932580381,2108210106932580381,@tursodatabase,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/tursodatabase/status/2105638594748768487,2105638594748768487,@tursodatabase,Deadweight,False,False,False,False,none,0,,,False,True,True
 https://x.com/xata/status/2103220431650222416,2103220431650222416,@xata,Deadweight,False,False,False,False,none,0,,,False,True,True
-https://x.com/xata/status/2103144946563969348,2103144946563969348,@xata,Deadweight,False,False,False,False,none,0,,,False,True,True
+https://x.com/xata/status/2103144946563969348,2103144946563969348,@xata,Deadweight,True,True,False,False,paid_or_external_reach,0,views_without_engagement,,False,True,True
 https://x.com/upstash/status/2107144872222159310,2107144872222159310,@upstash,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/upstash/status/2104932049450594472,2104932049450594472,@upstash,Deadweight,False,False,False,False,none,0,,,True,True,False
 https://x.com/Netlify/status/2110762972234850582,2110762972234850582,@Netlify,Deadweight,False,False,False,False,none,0,,,False,False,False
