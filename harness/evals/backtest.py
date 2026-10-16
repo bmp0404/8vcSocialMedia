@@ -47,6 +47,9 @@ COMPARABLE_SEGMENTS = ("Smaller/closest", "Mid-size")
 
 def eligible(posts: list[Post], cfg: BacktestConfig) -> tuple[list[Post], dict]:
     kept = [p for p in posts if is_eligible(p, cfg)]
+    if all(p.context_eligible is not None for p in posts):
+        return kept, {"unscorable_text_or_reply": sum(not is_scorable(p, cfg) for p in posts),
+                      "context_label_ineligible": sum(is_scorable(p, cfg) and not p.context_eligible for p in posts)}
     dropped = {
         "unscorable_text_or_reply": sum(not is_scorable(p, cfg) for p in posts),
         "thread_continuation": sum(is_scorable(p, cfg) and is_thread_continuation(p, cfg) for p in posts),
@@ -123,16 +126,19 @@ def evaluate(posts: list[Post], preds: dict[str, Prediction], relative: bool = F
 
 
 def paired_difference(posts: list[Post], a: dict[str, Prediction], b: dict[str, Prediction],
-                      n_boot: int, seed: int) -> dict:
+                      n_boot: int, seed: int, relative: bool = False) -> dict:
     """Headline AUC of a minus b on the same pairs, with an interval from resampling accounts once
-    per draw for both. Overlapping marginal intervals can hide a real difference; this can't."""
+    per draw for both. Overlapping marginal intervals can hide a real difference; this can't.
+    If `a` is relative, both predictors are compared only on pairs `a` ranked in one call."""
     viral = [p.viral for p in posts]
     accounts = [p.account for p in posts]
+    calls = [a[p.id].detail.get("call") if relative else None for p in posts]
     sa, sb = [a[p.id].score for p in posts], [b[p.id].score for p in posts]
 
     def diff(idx, draw_ids):
-        x = m.pairwise_accuracy([sa[i] for i in idx], [viral[i] for i in idx], draw_ids)[0]
-        y = m.pairwise_accuracy([sb[i] for i in idx], [viral[i] for i in idx], draw_ids)[0]
+        groups = [(d, calls[i]) for i, d in zip(idx, draw_ids)]
+        x = m.pairwise_accuracy([sa[i] for i in idx], [viral[i] for i in idx], groups)[0]
+        y = m.pairwise_accuracy([sb[i] for i in idx], [viral[i] for i in idx], groups)[0]
         return None if x is None or y is None else x - y
 
     return _stat(diff(list(range(len(posts))), accounts), m.cluster_bootstrap(diff, accounts, n_boot, seed))
@@ -175,7 +181,8 @@ def derived(posts: list[Post], all_preds: dict[str, dict[str, Prediction]], look
     return out
 
 
-def comparisons(posts: list[Post], all_preds: dict[str, dict[str, Prediction]], n_boot: int, seed: int) -> dict:
+def comparisons(posts: list[Post], all_preds: dict[str, dict[str, Prediction]], n_boot: int, seed: int,
+                relative: set[str] = frozenset()) -> dict:
     """Planned comparisons: each model predictor against media, length, TF-IDF and the single reader."""
     against = [b for b in COMPARE_AGAINST if b in all_preds] + [n for n in all_preds if n.startswith("reader")]
     out = {}
@@ -184,7 +191,8 @@ def comparisons(posts: list[Post], all_preds: dict[str, dict[str, Prediction]], 
             continue
         refs = against + (["post_judge_refs_only"] if name == "post_judge" and "post_judge_refs_only" in all_preds
                           else [])
-        out[name] = {f"minus_{b}": paired_difference(posts, all_preds[name], all_preds[b], n_boot, seed)
+        out[name] = {f"minus_{b}": paired_difference(posts, all_preds[name], all_preds[b], n_boot, seed,
+                                                     relative=name in relative)
                      for b in refs}
     for name in all_preds:  # the reader itself, against the cheap baselines
         if name.startswith("reader"):
@@ -291,10 +299,11 @@ def summarize(picked: list[Post], all_preds: dict[str, dict[str, Prediction]], e
         "n_scored_by_all": len(scored),
         "sample_ids": [p.id for p in picked],
         "sampled_categories": {c: sum(p.category == c for p in scored) for c in CATEGORIES},
-        "target_source": "tier labels (enriched boost flags loaded)" if flags_known else "tier labels",
+        "boost_flags": "loaded from the context worker's enriched CSV" if flags_known else "not loaded",
         "seed": seed,
         "results": results,
-        "comparisons": comparisons(scored, all_preds, n_boot, seed),
+        "comparisons": comparisons(scored, all_preds, n_boot, seed,
+                                   {n for n, e in extras.items() if e.get("relative")}),
     }
 
 
@@ -330,6 +339,13 @@ def markdown(report: dict) -> str:
             f"| {_fmt(a['same_launch_type'])} | {_fmt(a['viral_vs_viral_by_engagement'])} "
             f"| {_fmt(a['deadweight_vs_deadweight_noise_check'])} | {_fmt(a['top_pick_is_viral'])} |"
         )
+    unboosted = {n: r["without_boost_suspect"] for n, r in report["results"].items()
+                 if isinstance(r.get("without_boost_suspect"), dict)}
+    if unboosted:
+        ex = next(iter(unboosted.values()))
+        lines += ["", f"Without the {first['n_posts'] - ex['n_posts']} boost-suspect posts ({ex['n_posts']} posts, "
+                  f"{ex['headline_viral_vs_deadweight_auc']['n_pairs']} pairs), headline: "
+                  + "; ".join(f"`{n}` {_fmt(u['headline_viral_vs_deadweight_auc'])}" for n, u in unboosted.items())]
     lines += ["", "Paired differences in the headline AUC (positive means the row predictor wins):", ""]
     for name, row in report["comparisons"].items():
         parts = [f"minus {k[6:]} {_fmt(v)}" for k, v in row.items()]

@@ -97,7 +97,9 @@ def time_travel(llm: LLM, posts: list[Post], stories: dict[str, list[str]], miss
         row = {"cutoff": t.isoformat(), "n_signals": len(signals), "live": live,
                "naive_surfaced": [s for s in live if surfaced(naive, stories[s])]}
         try:
-            narratives = with_retries(orient, attempts=2)(llm, mission, signals, top)
+            # now=t: orient drops signals older than its age limit relative to `now`, so replaying the
+            # past needs the cutoff as the clock.
+            narratives = with_retries(lambda: orient(llm, mission, signals, top, now=t), attempts=2)()
         except Exception as e:  # noqa: BLE001 - an orient failure is a result here, counted as a miss
             row.update(surfaced=[], error=f"{type(e).__name__}: {str(e)[:200]}", narratives=[])
         else:
