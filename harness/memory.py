@@ -103,12 +103,13 @@ def list_runs(limit: int = 50) -> list[dict]:
 
 
 def run_actions(run_id: int) -> list[dict]:
-    """Every action from a run, with its review state merged in, best predicted first."""
+    """Every action from a run, with its review state merged in, best predicted first. Ties, such as the replies
+    qualify leaves unscored, keep the order the run saved them in, which is decide's."""
     with connect() as conn:
         rows = conn.execute(
             """SELECT a.data, rv.status, rv.text AS edited_text, rv.note, rv.reviewed_at
                FROM actions a LEFT JOIN reviews rv ON rv.action_id = a.id
-               WHERE a.run_id = ? ORDER BY a.predicted_score DESC""",
+               WHERE a.run_id = ? ORDER BY a.predicted_score DESC, a.rowid""",
             (run_id,),
         ).fetchall()
     return [

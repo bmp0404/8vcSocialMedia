@@ -1,6 +1,8 @@
 """qualify's ranker: the post ridge orders only the post lane's posts and quotes, replies keep decide's order,
 and the panel comes back only through the qualify.ranker knob."""
 
+import argparse
+
 import pytest
 
 from harness import qualify as q
@@ -118,3 +120,37 @@ def test_the_knob_is_registered_with_the_production_default():
     knob = knobs.BY_PATH["qualify.ranker"]
     assert knob.default == q.RANKERS[0] == q.ranker_choice() == "post_ridge"
     assert knob.choices == q.RANKERS and knob.stage == "qualify" and "HARNESS_QUALIFY_RANKER" in knob.reader
+
+
+RUN = argparse.Namespace(provider="mock", sources="sample", narratives=2, per_mind=1, top=10, retries=0)
+
+
+def test_a_run_with_an_unknown_ranker_stops_before_observe(monkeypatch):
+    from harness import cli
+    monkeypatch.setenv(q.RANKER_ENV, "pannel")
+    monkeypatch.setattr(cli, "observe", lambda *a, **k: pytest.fail("observe ran before the ranker was checked"))
+    with pytest.raises(ValueError, match="pannel"):
+        cli.run(RUN)
+
+
+def test_a_run_whose_model_fails_its_hash_check_stops_before_observe(monkeypatch):
+    from harness import cli
+
+    def broken():
+        raise post_ranker.RankerError("post_ridge.json.gz hashes to x, but the manifest records y")
+
+    monkeypatch.setattr(post_ranker, "load", broken)
+    monkeypatch.setattr(cli, "observe", lambda *a, **k: pytest.fail("observe ran before the ranker was checked"))
+    with pytest.raises(post_ranker.RankerError, match="hashes to"):
+        cli.run(RUN)
+    monkeypatch.setenv(q.RANKER_ENV, "panel")  # the panel needs no model file
+    assert q.ready() == "panel"
+
+
+def test_the_review_list_keeps_unscored_replies_in_the_order_the_run_saved_them(tmp_path, monkeypatch):
+    from harness import config, memory
+    monkeypatch.setattr(config, "DB_PATH", tmp_path / "h.db")
+    actions = [reply("one", "zz"), reply("two", "aa"), post(LOW, "p1"), reply("three", "mm"), follow("f1")]
+    q.qualify(Recorder(), "MISSION", actions)
+    run_id = memory.save_run(actions)
+    assert [a["id"] for a in memory.run_actions(run_id)] == ["p1", "zz", "aa", "mm", "f1"]

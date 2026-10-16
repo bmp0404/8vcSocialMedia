@@ -206,7 +206,8 @@ class TfidfPredictor:
 
 
 class PanelPredictor:
-    """The production audience panel from harness/qualify.py, called with the same prompt.
+    """The audience panel from harness/qualify.py, called with the same prompt. Production ranks with the post ridge
+    now; HARNESS_QUALIFY_RANKER=panel brings the panel back.
 
     `batch=1` scores each post alone. With a larger batch, posts from one account are cut into chunks,
     and each chunk is scored in a seeded shuffle and its reverse, then averaged. A one-entry panel

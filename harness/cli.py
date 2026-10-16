@@ -8,7 +8,7 @@ from harness.llm import get_llm
 from harness.memstore import record_round
 from harness.minds import decide, write_decision_log
 from harness.orient import orient
-from harness.qualify import qualify
+from harness.qualify import qualify, ready as qualify_ready
 from harness.review import serve
 from harness.sources import observe
 from harness.sources.watch import account_handle
@@ -21,6 +21,7 @@ def run(args) -> None:
     # Read before any LLM call, so a broken observe config fails the run before it spends anything.
     account, account_source = account_handle()
     print(f"[run] account @{account} (from {account_source})" if account else f"[run] no account: {account_source} is empty")
+    ranker = qualify_ready()  # loads the post ranker and checks its hash before anything is spent
 
     signals = observe(sources, mission)
     if not signals:
@@ -29,7 +30,7 @@ def run(args) -> None:
     print(f"[orient] {len(narratives)} narratives: " + ", ".join(n.id for n in narratives))
     lessons = config.lessons()
     batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, signals=signals)
-    actions, kept = batch, qualify(llm, mission, batch)
+    actions, kept = batch, qualify(llm, mission, batch, ranker=ranker)
     for _ in range(args.retries):
         if kept or not batch:
             break
@@ -38,7 +39,7 @@ def run(args) -> None:
         # deliberate: rerunning the caption on the same source shipped two captions of one story
         # (Integration run 36; action/DESIGN.md, "Rushi"). The vetoed drafts and critiques stay in the run.
         batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, vetoed=batch)
-        kept = qualify(llm, mission, batch)
+        kept = qualify(llm, mission, batch, ranker=ranker)
         actions = actions + batch
     ranked = kept[: args.top]
     if actions and not kept:

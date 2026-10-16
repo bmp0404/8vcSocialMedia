@@ -140,6 +140,19 @@ def ranker_choice() -> str:
     return choice
 
 
+def ready(ranker: str | None = None) -> str:
+    """The ranker a run will use, after loading it: `harness run` calls this before it spends anything, so a typo
+    in HARNESS_QUALIFY_RANKER or a model that fails its hash check stops the run before observe."""
+    ranker = ranker or ranker_choice()
+    if ranker not in RANKERS:
+        raise ValueError(f"qualify: ranker {ranker!r}; expected one of {list(RANKERS)}")
+    if ranker == "post_ridge":
+        from harness.rank import post_ranker
+
+        post_ranker.load()
+    return ranker
+
+
 def rankable(a: Action) -> bool:
     """The post lane's posts and quotes: people's takes and captions. Replies, follows and mentions aren't."""
     return a.lane == "post" and a.type in ("post", "quote") and bool(a.text.strip())

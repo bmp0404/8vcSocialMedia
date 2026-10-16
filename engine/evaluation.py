@@ -5,14 +5,13 @@ from dataclasses import asdict
 
 from harness.llm import LLM
 from harness.models import Action, Narrative, Signal
-from harness.qualify import qualify, ranker_choice
+from harness.qualify import qualify
 
 
 def panel_evaluate(llm: LLM, mission: str, actions: list[Action],
                    narratives: list[Narrative], signals: list[Signal]) -> tuple[list[Action], dict]:
-    # Production qualify: its critic, and the ranker HARNESS_QUALIFY_RANKER picks (the post ridge by default).
-    ranker = ranker_choice()
-    return qualify(llm, mission, actions, ranker=ranker), {"backend": ranker}
+    # `--eval panel` names the audience panel, so it asks for it; production qualify ranks with the post ridge.
+    return qualify(llm, mission, actions, ranker="panel"), {"backend": "panel"}
 
 
 def reference_evaluate(llm: LLM, mission: str, actions: list[Action],
