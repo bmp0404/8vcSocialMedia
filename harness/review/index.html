@@ -155,10 +155,30 @@ function cardHtml(a, i) {
   </article>`;
 }
 
+// X's weighted count, the way harness/xtext.py computes it (twitter-text config v3): links 23, an emoji 2,
+// characters outside four light ranges 2. The server checks the same limit when a draft is approved.
+const LIGHT = [[0, 4351], [8192, 8205], [8208, 8223], [8242, 8247]];
+const EMOJI = /\p{Emoji_Presentation}|\p{Regional_Indicator}|\uFE0F|\u20E3/u;
+function weightedLength(text) {
+  let n = 0;
+  const rest = text.normalize("NFC").replace(/https?:\/\/\S+/g, m => {
+    n += 23;
+    return m.slice(m.replace(/[.,;:!?)\]}'"]+$/, "").length);
+  });
+  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(rest)) {
+    if (EMOJI.test(segment)) { n += 2; continue; }
+    for (const ch of segment) {
+      const cp = ch.codePointAt(0);
+      n += LIGHT.some(([lo, hi]) => cp >= lo && cp <= hi) ? 1 : 2;
+    }
+  }
+  return n;
+}
+
 function updateCount(card) {
   const ta = card.querySelector("textarea"), c = card.querySelector(".count");
   if (!ta) return;
-  const n = [...ta.value].length;
+  const n = weightedLength(ta.value);
   c.textContent = `${n} / 280`;
   c.classList.toggle("over", n > 280);
 }
@@ -177,7 +197,7 @@ async function review(card, status) {
   const a = state.actions.find(x => x.id === card.dataset.id);
   const ta = card.querySelector("textarea");
   const edited = ta && ta.value.trim() !== a.text.trim() ? ta.value.trim() : null;
-  if (status === "approved" && edited && [...edited].length > 280) return toast("Over 280 characters");
+  if (status === "approved" && edited && weightedLength(edited) > 280) return toast("Over 280 characters as X counts them");
   const note = card.querySelector(".note").value;
   const res = await api(`/api/actions/${a.id}/review`, {
     method: "POST", headers: { "Content-Type": "application/json" },

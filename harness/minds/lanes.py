@@ -26,6 +26,7 @@ from harness.minds import corpus, gate, routing, thread, veto, writer
 from harness.minds.schema import POST_LANE, REPLY_LANE, ActionSchemaError, Offer, parse_call, parse_plan
 from harness.minds.settings import ActionConfig, GateLimits
 from harness.models import Action, Narrative
+from harness.xtext import MAX_WEIGHTED_CHARS, weighted_length
 
 PLAN_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. For each candidate post, decide whether the account should reply. Reply only where a person who follows these subjects would plausibly jump in. Abstain where any reply risks reading as cruel, opportunistic or off-mission (injury news needs care), with reason off_mission or mute_risk. In "intent", say in a few words what a good reply would do. You don't write the reply.
 
@@ -427,6 +428,10 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     credit = credit_for(url, sources) if url else ""
     # A quote embeds its source. A link post names the publisher the way people do, then the link.
     text = f"{picked.text} via {credit} {url}" if kind == "post" and url else picked.text
+    cap = cfg.gate.max_chars.get(kind, MAX_WEIGHTED_CHARS)
+    if weighted_length(text) > cap:  # the gate saw the caption alone, before the credit and link
+        return [], [Decision(POST_LANE, url or n.id, "abstain", "gate_rejected",
+                             f"caption with credit and link weighs {weighted_length(text)} (max {cap})", candidates=cands)]
     budget.take(kind)
     a = Action(type=kind, text=text, mind="caption", narrative_id=n.id, target_url=url if kind == "quote" else None,
                lane=POST_LANE, target_text=source,

@@ -16,6 +16,7 @@ import unicodedata
 from dataclasses import dataclass, field
 
 from harness.minds.settings import GateLimits
+from harness.xtext import MAX_WEIGHTED_CHARS, overflow_index, weighted_length
 
 KINDS = ("reply", "quote", "post", "mention")
 
@@ -165,8 +166,9 @@ def _rule_hashtags(text: str, c: _Ctx) -> list[str]:
 
 
 def _rule_length(text: str, c: _Ctx) -> list[str]:
-    cap = c.limits.max_chars.get(c.kind, 280)
-    return [(f"{len(text)} chars (max {cap} for {c.kind})", cap, len(text))] if len(text) > cap else []
+    # X's weighted count (harness/xtext.py): a link is 23 and CJK or an emoji is 2, so len() is wrong both ways.
+    cap, n = c.limits.max_chars.get(c.kind, MAX_WEIGHTED_CHARS), weighted_length(text)
+    return [(f"{n} weighted chars (max {cap} for {c.kind})", overflow_index(text, cap), len(text))] if n > cap else []
 
 
 def _rule_reply_sentences(text: str, c: _Ctx) -> list[str]:

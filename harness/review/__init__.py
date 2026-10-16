@@ -10,6 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from harness import config, memory
+from harness.xtext import MAX_WEIGHTED_CHARS, weighted_length
 
 INDEX = Path(__file__).parent / "index.html"
 
@@ -23,6 +24,12 @@ def export_approved(run_id: int) -> Path:
         encoding="utf-8",
     )
     return path
+
+
+def check_edit(status: str, text: str | None) -> None:
+    """Refuse to approve an edit X would reject. Drafts passed the gate's length rule; an edit hasn't."""
+    if status == "approved" and text and weighted_length(text) > MAX_WEIGHTED_CHARS:
+        raise ValueError(f"edited text weighs {weighted_length(text)} as X counts it (max {MAX_WEIGHTED_CHARS})")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -53,6 +60,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": "not found"}, 404)
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            check_edit(body.get("status", ""), body.get("text"))
             run_id = memory.set_review(m[1], body.get("status", ""), body.get("text"), body.get("note", ""))
         except KeyError:
             return self._json({"error": "unknown action"}, 404)
