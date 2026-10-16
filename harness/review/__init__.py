@@ -57,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
             # JSON only: a cross-site form can't send it without a CORS preflight, so other pages can't start runs.
             if self.headers.get("Content-Type", "").split(";")[0] != "application/json":
                 return self._json({"error": "expected application/json"}, 415)
-            body =json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
             code, data = console.post(self.path, body) or (404, {"error": "not found"})
             return self._json(data, code)
         m = re.fullmatch(r"/api/actions/(\w+)/review", self.path)
