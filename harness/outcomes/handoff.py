@@ -50,18 +50,24 @@ def _parse_time(value: str, where: str) -> datetime:
     return t.astimezone(timezone.utc)
 
 
-def load_approved(directory: Path) -> list[ApprovedAction]:
+def load_approved(directory: Path, handle: str | None = None) -> list[ApprovedAction]:
     """Every action in `directory/approved-run*.json`.
 
     An id in several files keeps the text of its latest approval and the time of its first, because
     the bot may have posted it any time after the first. memory.set_review restamps approved_at on
-    every re-save.
+    every re-save. With `handle`, a file whose "account" names another account raises HandoffError:
+    matching its actions against this account's timeline would label someone else's posts. Files
+    written before the field existed, or by runs saved without an account, carry none and are read.
     """
     if not directory.is_dir():
         raise HandoffError(f"{directory} isn't a directory; approved-run<id>.json files go in out/")
     found: dict[str, ApprovedAction] = {}
     for path in sorted(directory.glob(APPROVED_GLOB)):
         data = json.loads(path.read_text(encoding="utf-8"))
+        account = str(data.get("account") or "").lstrip("@")
+        if handle and account and account.lower() != handle.lstrip("@").lower():
+            raise HandoffError(f"{path.name} is for @{account} but sync reads @{handle.lstrip('@')}; pass --handle "
+                               f"{account} or point --approved-dir at that account's hand-offs")
         for i, a in enumerate(data.get("actions") or []):
             where = f"{path.name} action {a.get('id') or i}"
             required = [k for k in REQUIRED_KEYS if not (k == "text" and a.get("type") in TEXTLESS_TYPES)]

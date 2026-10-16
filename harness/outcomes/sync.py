@@ -165,7 +165,7 @@ def _stored_outcomes(action_ids: list[str]) -> dict[str, dict]:
 def sync(handle: str, approved_dir: Path, ledger_path: Path = ledger.DEFAULT_PATH, *, reader_factory=fx_reader,
          now: datetime | None = None, limit: int = DEFAULT_LIMIT) -> SyncReport:
     now = now or datetime.now(timezone.utc)
-    approved = load_approved(approved_dir)
+    approved = load_approved(approved_dir, handle)
     report = SyncReport(handle, actions=len(approved))
     reader = None
 
