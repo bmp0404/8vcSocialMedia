@@ -1,0 +1,2271 @@
+{
+ "at": "2026-10-15T20:32:14",
+ "provider": "anthropic",
+ "model": "claude-sonnet-5-5",
+ "panel_path": "/Users/samgu/Programming Projects/8vcSocialMedia-worktrees/eval/eval/panels/devtools.json",
+ "holdout_from": "2026-10-06",
+ "n_train": 1066,
+ "n_holdout_scorable": 471,
+ "n_holdout_dropped_unscorable": 128,
+ "n_sampled": 83,
+ "sampled_categories": {
+  "Super Viral": 6,
+  "Medium Viral": 20,
+  "Deadweight": 57
+ },
+ "target_source": "local author median",
+ "seed": 0,
+ "results": {
+  "random": {
+   "probabilistic": false,
+   "seconds": 0.0,
+   "all": {
+    "n_posts": 83,
+    "n_accounts": 20,
+    "within_account": {
+     "pairwise_accuracy": {
+      "value": 0.4788732394366197,
+      "ci95": [
+       0.4065934065934066,
+       0.5592105263157895
+      ],
+      "n_pairs": 142,
+      "chance": 0.5
+     },
+     "top_pick_beats_median": {
+      "value": 0.575,
+      "ci95": [
+       0.375,
+       0.775
+      ],
+      "n_accounts": 20,
+      "chance": 0.5083333333333333
+     },
+     "spearman_vs_target": {
+      "value": -0.08804787558327017,
+      "ci95": [
+       -0.23644538530975667,
+       0.1001432118934778
+      ]
+     }
+    },
+    "cross_account": {
+     "spearman_vs_log_engagement": {
+      "value": 0.03712833155631119,
+      "ci95": [
+       -0.19565964943566666,
+       0.2802039323468911
+      ]
+     },
+     "super_viral_auc": {
+      "value": 0.47619047619047616,
+      "ci95": [
+       0.10126582278481013,
+       0.7625
+      ],
+      "n_super_viral": 6
+     },
+     "super_viral_base_rate": 0.07228915662650602,
+     "precision_at_k": {
+      "10": {
+       "value": 0.1,
+       "ci95": [
+        0.0,
+        0.3
+       ]
+      },
+      "25": {
+       "value": 0.12,
+       "ci95": [
+        0.0,
+        0.28
+       ]
+      }
+     }
+    },
+    "calibration": null
+   },
+   "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "predictions": {
+    "https://x.com/ClickHouseDB/status/2110083392104497578": {
+     "score": 0.825111568779067,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110675247049359552": {
+     "score": 0.10715306623064869,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110808320533573681": {
+     "score": 0.4872339847105398,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2108935838239195635": {
+     "score": 0.4360017180401141,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110808321758204332": {
+     "score": 0.7659668839175754,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110764103916736691": {
+     "score": 0.10445889316930512,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2108543342862610912": {
+     "score": 0.093534236666307,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110461480080654845": {
+     "score": 0.4470165216418288,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110061433417281897": {
+     "score": 0.12007103450647882,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110776295067910303": {
+     "score": 0.8938128205368252,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2108255488030941665": {
+     "score": 0.9147873732914388,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110457909305864359": {
+     "score": 0.1161757912318655,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209250422157748": {
+     "score": 0.24120113973970558,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209274052813113": {
+     "score": 0.1112900189545748,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209226569109619": {
+     "score": 0.02088794599642907,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209238690676884": {
+     "score": 0.33939044475766666,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209147837878618": {
+     "score": 0.3147929584337409,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209159510589662": {
+     "score": 0.17375506679983055,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2107858620725473653": {
+     "score": 0.010735490799016367,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2110826971064365272": {
+     "score": 0.597095449421232,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2108234615638884769": {
+     "score": 0.47011191381966577,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2107509405881163985": {
+     "score": 0.04292117710696486,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2108943317727617332": {
+     "score": 0.27169597622269226,
+     "detail": {}
+    },
+    "https://x.com/TimescaleDB/status/2107810339295248653": {
+     "score": 0.8659444722667219,
+     "detail": {}
+    },
+    "https://x.com/TimescaleDB/status/2108569942996267346": {
+     "score": 0.10991824345226953,
+     "detail": {}
+    },
+    "https://x.com/astrodotbuild/status/2110799502479159721": {
+     "score": 0.4320157540905257,
+     "detail": {}
+    },
+    "https://x.com/astrodotbuild/status/2110334527469924613": {
+     "score": 0.2440391082267631,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2107560647525548116": {
+     "score": 0.9080262835309125,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2109870225156104494": {
+     "score": 0.5738561428364628,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2110692261508079721": {
+     "score": 0.7895958755056063,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2109504533768659229": {
+     "score": 0.8658995487967053,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2108441841498804715": {
+     "score": 0.14450238330159004,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2110727863339225586": {
+     "score": 0.3040954472403483,
+     "detail": {}
+    },
+    "https://x.com/charmcli/status/2108629047966109871": {
+     "score": 0.9401760453465301,
+     "detail": {}
+    },
+    "https://x.com/charmcli/status/2109670621693300741": {
+     "score": 0.2552008832436955,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2107863631618539929": {
+     "score": 0.23063303464025953,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2109684776999199024": {
+     "score": 0.47414286404649986,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2110412832730751084": {
+     "score": 0.3977357206921269,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2108367385879367757": {
+     "score": 0.6845241353592529,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2108271276020109373": {
+     "score": 0.9594994364144348,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2110406144967454739": {
+     "score": 0.15812714993320354,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233329741066728": {
+     "score": 0.7652556968107648,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.3507585954731858,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.1624859954230925,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623832622018691": {
+     "score": 0.6675259512169548,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 0.028351832010290456,
+     "detail": {}
+    },
+    "https://x.com/llama_index/status/2108238298938573023": {
+     "score": 0.380683820242398,
+     "detail": {}
+    },
+    "https://x.com/llama_index/status/2107863919536595237": {
+     "score": 0.19357083299045286,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386302249476218": {
+     "score": 0.47286542760934525,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386304199565762": {
+     "score": 0.3726651069574973,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 0.932731946998078,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2110264448271450198": {
+     "score": 0.1860663766452344,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.28364537977079407,
+     "detail": {}
+    },
+    "https://x.com/nuxt_js/status/2109287168757940324": {
+     "score": 0.4478064364776764,
+     "detail": {}
+    },
+    "https://x.com/nuxt_js/status/2109287216149406101": {
+     "score": 0.32955184070136756,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225049937211645": {
+     "score": 0.8371355393758492,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225052709929008": {
+     "score": 0.6092118557809534,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225057126285327": {
+     "score": 0.3488477685737945,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2108203511636988390": {
+     "score": 0.7666177140521582,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2110397719361851638": {
+     "score": 0.8173744302205384,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2107818224784146866": {
+     "score": 0.6893068605312034,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2110047364102705341": {
+     "score": 0.7818676496819011,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2107839109918257252": {
+     "score": 0.8434085334802764,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107395441188819035": {
+     "score": 0.12470221931568692,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107841062798512244": {
+     "score": 0.9430202716770998,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2110360595279057240": {
+     "score": 0.8529164600189533,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2108120466976121101": {
+     "score": 0.2007588069135129,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2110394869663293600": {
+     "score": 0.10128141131554336,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107757891549561299": {
+     "score": 0.2241051528984398,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2108196097143218486": {
+     "score": 0.8657852683549061,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2110068088788165076": {
+     "score": 0.34226383513586045,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2109826799618142581": {
+     "score": 0.9256380065829835,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2109698214710690091": {
+     "score": 0.27821196910898727,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2107980512182898716": {
+     "score": 0.7331559309283039,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2110056246141129127": {
+     "score": 0.12002460302687856,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110509321939509421": {
+     "score": 0.7487550673878746,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110786348131258456": {
+     "score": 0.6910001412182448,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110803345309053144": {
+     "score": 0.46625545129314083,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110808586389766404": {
+     "score": 0.08601387203362865,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110803382239945130": {
+     "score": 0.8253573522480568,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110766047842476111": {
+     "score": 0.8533516226251664,
+     "detail": {}
+    },
+    "https://x.com/xata/status/2110747919959941523": {
+     "score": 0.071690032039879,
+     "detail": {}
+    },
+    "https://x.com/xata/status/2110023162096488779": {
+     "score": 0.5315145430038312,
+     "detail": {}
+    }
+   }
+  },
+  "media": {
+   "probabilistic": false,
+   "seconds": 0.0,
+   "all": {
+    "n_posts": 83,
+    "n_accounts": 20,
+    "within_account": {
+     "pairwise_accuracy": {
+      "value": 0.5211267605633803,
+      "ci95": [
+       0.4633333333333333,
+       0.5986842105263158
+      ],
+      "n_pairs": 142,
+      "chance": 0.5
+     },
+     "top_pick_beats_median": {
+      "value": 0.5675000000000001,
+      "ci95": [
+       0.4375,
+       0.6916666666666667
+      ],
+      "n_accounts": 20,
+      "chance": 0.5083333333333333
+     },
+     "spearman_vs_target": {
+      "value": 0.14981861812025932,
+      "ci95": [
+       -0.01687929805470593,
+       0.3408438175474075
+      ]
+     }
+    },
+    "cross_account": {
+     "spearman_vs_log_engagement": {
+      "value": 0.010559866058512009,
+      "ci95": [
+       -0.22861870684180774,
+       0.24734468989970781
+      ]
+     },
+     "super_viral_auc": {
+      "value": 0.44805194805194803,
+      "ci95": [
+       0.19444444444444445,
+       0.6885057471264368
+      ],
+      "n_super_viral": 6
+     },
+     "super_viral_base_rate": 0.07228915662650602,
+     "precision_at_k": {
+      "10": {
+       "value": 0.0,
+       "ci95": [
+        0.0,
+        0.0
+       ]
+      },
+      "25": {
+       "value": 0.03428571428571428,
+       "ci95": [
+        0.0,
+        0.16941176470588235
+       ]
+      }
+     }
+    },
+    "calibration": null
+   },
+   "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "predictions": {
+    "https://x.com/ClickHouseDB/status/2110083392104497578": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110675247049359552": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110808320533573681": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2108935838239195635": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110808321758204332": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110764103916736691": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2108543342862610912": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110461480080654845": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110061433417281897": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110776295067910303": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2108255488030941665": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110457909305864359": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209250422157748": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209274052813113": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209226569109619": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209238690676884": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209147837878618": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209159510589662": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2107858620725473653": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2110826971064365272": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2108234615638884769": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2107509405881163985": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2108943317727617332": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/TimescaleDB/status/2107810339295248653": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/TimescaleDB/status/2108569942996267346": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/astrodotbuild/status/2110799502479159721": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/astrodotbuild/status/2110334527469924613": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2107560647525548116": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2109870225156104494": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2110692261508079721": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2109504533768659229": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2108441841498804715": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2110727863339225586": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/charmcli/status/2108629047966109871": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/charmcli/status/2109670621693300741": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2107863631618539929": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2109684776999199024": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2110412832730751084": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2108367385879367757": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2108271276020109373": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2110406144967454739": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233329741066728": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623832622018691": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/llama_index/status/2108238298938573023": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/llama_index/status/2107863919536595237": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386302249476218": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386304199565762": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2110264448271450198": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/nuxt_js/status/2109287168757940324": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/nuxt_js/status/2109287216149406101": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225049937211645": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225052709929008": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225057126285327": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2108203511636988390": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2110397719361851638": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2107818224784146866": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2110047364102705341": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2107839109918257252": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107395441188819035": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107841062798512244": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2110360595279057240": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2108120466976121101": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2110394869663293600": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107757891549561299": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2108196097143218486": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2110068088788165076": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2109826799618142581": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2109698214710690091": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2107980512182898716": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2110056246141129127": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110509321939509421": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110786348131258456": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110803345309053144": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110808586389766404": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110803382239945130": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110766047842476111": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/xata/status/2110747919959941523": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/xata/status/2110023162096488779": {
+     "score": 2.0,
+     "detail": {}
+    }
+   }
+  },
+  "length": {
+   "probabilistic": false,
+   "seconds": 0.0,
+   "all": {
+    "n_posts": 83,
+    "n_accounts": 20,
+    "within_account": {
+     "pairwise_accuracy": {
+      "value": 0.6232394366197183,
+      "ci95": [
+       0.4883720930232558,
+       0.7206703910614525
+      ],
+      "n_pairs": 142,
+      "chance": 0.5
+     },
+     "top_pick_beats_median": {
+      "value": 0.625,
+      "ci95": [
+       0.425,
+       0.825
+      ],
+      "n_accounts": 20,
+      "chance": 0.5083333333333333
+     },
+     "spearman_vs_target": {
+      "value": 0.1767355455525653,
+      "ci95": [
+       -0.025479739600627063,
+       0.4141888642760716
+      ]
+     }
+    },
+    "cross_account": {
+     "spearman_vs_log_engagement": {
+      "value": -0.12773873314191383,
+      "ci95": [
+       -0.3537959848203234,
+       0.1884145238249409
+      ]
+     },
+     "super_viral_auc": {
+      "value": 0.34523809523809523,
+      "ci95": [
+       0.21296296296296297,
+       0.49033816425120774
+      ],
+      "n_super_viral": 6
+     },
+     "super_viral_base_rate": 0.07228915662650602,
+     "precision_at_k": {
+      "10": {
+       "value": 0.0,
+       "ci95": [
+        0.0,
+        0.0
+       ]
+      },
+      "25": {
+       "value": 0.0,
+       "ci95": [
+        0.0,
+        0.08
+       ]
+      }
+     }
+    },
+    "calibration": null
+   },
+   "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "predictions": {
+    "https://x.com/ClickHouseDB/status/2110083392104497578": {
+     "score": 115.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110675247049359552": {
+     "score": 228.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110808320533573681": {
+     "score": 222.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2108935838239195635": {
+     "score": 240.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110808321758204332": {
+     "score": 133.0,
+     "detail": {}
+    },
+    "https://x.com/ClickHouseDB/status/2110764103916736691": {
+     "score": 234.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2108543342862610912": {
+     "score": 222.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110461480080654845": {
+     "score": 167.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110061433417281897": {
+     "score": 98.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110776295067910303": {
+     "score": 82.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2108255488030941665": {
+     "score": 170.0,
+     "detail": {}
+    },
+    "https://x.com/CloudflareDev/status/2110457909305864359": {
+     "score": 49.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209250422157748": {
+     "score": 216.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209274052813113": {
+     "score": 166.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209226569109619": {
+     "score": 249.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209238690676884": {
+     "score": 190.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209147837878618": {
+     "score": 263.0,
+     "detail": {}
+    },
+    "https://x.com/NxDevTools/status/2108209159510589662": {
+     "score": 257.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2107858620725473653": {
+     "score": 168.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2110826971064365272": {
+     "score": 226.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2108234615638884769": {
+     "score": 51.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2107509405881163985": {
+     "score": 191.0,
+     "detail": {}
+    },
+    "https://x.com/PlanetScale/status/2108943317727617332": {
+     "score": 223.0,
+     "detail": {}
+    },
+    "https://x.com/TimescaleDB/status/2107810339295248653": {
+     "score": 250.0,
+     "detail": {}
+    },
+    "https://x.com/TimescaleDB/status/2108569942996267346": {
+     "score": 251.0,
+     "detail": {}
+    },
+    "https://x.com/astrodotbuild/status/2110799502479159721": {
+     "score": 225.0,
+     "detail": {}
+    },
+    "https://x.com/astrodotbuild/status/2110334527469924613": {
+     "score": 58.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2107560647525548116": {
+     "score": 100.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2109870225156104494": {
+     "score": 200.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2110692261508079721": {
+     "score": 139.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2109504533768659229": {
+     "score": 49.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2108441841498804715": {
+     "score": 95.0,
+     "detail": {}
+    },
+    "https://x.com/bunjavascript/status/2110727863339225586": {
+     "score": 86.0,
+     "detail": {}
+    },
+    "https://x.com/charmcli/status/2108629047966109871": {
+     "score": 187.0,
+     "detail": {}
+    },
+    "https://x.com/charmcli/status/2109670621693300741": {
+     "score": 213.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2107863631618539929": {
+     "score": 227.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2109684776999199024": {
+     "score": 253.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2110412832730751084": {
+     "score": 226.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2108367385879367757": {
+     "score": 55.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2108271276020109373": {
+     "score": 225.0,
+     "detail": {}
+    },
+    "https://x.com/coderhq/status/2110406144967454739": {
+     "score": 238.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233329741066728": {
+     "score": 275.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 213.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 229.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623832622018691": {
+     "score": 114.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 138.0,
+     "detail": {}
+    },
+    "https://x.com/llama_index/status/2108238298938573023": {
+     "score": 273.0,
+     "detail": {}
+    },
+    "https://x.com/llama_index/status/2107863919536595237": {
+     "score": 277.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386302249476218": {
+     "score": 150.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386304199565762": {
+     "score": 95.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 182.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2110264448271450198": {
+     "score": 79.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 226.0,
+     "detail": {}
+    },
+    "https://x.com/nuxt_js/status/2109287168757940324": {
+     "score": 239.0,
+     "detail": {}
+    },
+    "https://x.com/nuxt_js/status/2109287216149406101": {
+     "score": 76.0,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225049937211645": {
+     "score": 71.0,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225052709929008": {
+     "score": 51.0,
+     "detail": {}
+    },
+    "https://x.com/remix_run/status/2108225057126285327": {
+     "score": 58.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2108203511636988390": {
+     "score": 276.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2110397719361851638": {
+     "score": 272.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2107818224784146866": {
+     "score": 262.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2110047364102705341": {
+     "score": 254.0,
+     "detail": {}
+    },
+    "https://x.com/sanity_io/status/2107839109918257252": {
+     "score": 249.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107395441188819035": {
+     "score": 275.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107841062798512244": {
+     "score": 166.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2110360595279057240": {
+     "score": 82.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2108120466976121101": {
+     "score": 65.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2110394869663293600": {
+     "score": 228.0,
+     "detail": {}
+    },
+    "https://x.com/strapijs/status/2107757891549561299": {
+     "score": 50.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2108196097143218486": {
+     "score": 144.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2110068088788165076": {
+     "score": 48.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2109826799618142581": {
+     "score": 279.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2109698214710690091": {
+     "score": 77.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2107980512182898716": {
+     "score": 249.0,
+     "detail": {}
+    },
+    "https://x.com/temporalio/status/2110056246141129127": {
+     "score": 273.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110509321939509421": {
+     "score": 168.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110786348131258456": {
+     "score": 156.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110803345309053144": {
+     "score": 92.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110808586389766404": {
+     "score": 130.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110803382239945130": {
+     "score": 92.0,
+     "detail": {}
+    },
+    "https://x.com/vercel/status/2110766047842476111": {
+     "score": 241.0,
+     "detail": {}
+    },
+    "https://x.com/xata/status/2110747919959941523": {
+     "score": 210.0,
+     "detail": {}
+    },
+    "https://x.com/xata/status/2110023162096488779": {
+     "score": 180.0,
+     "detail": {}
+    }
+   }
+  },
+  "panel": {
+   "probabilistic": true,
+   "seconds": 10.7,
+   "all": {
+    "n_posts": 83,
+    "n_accounts": 20,
+    "within_account": {
+     "pairwise_accuracy": {
+      "value": 0.4894366197183099,
+      "ci95": [
+       0.34532374100719426,
+       0.6396103896103896
+      ],
+      "n_pairs": 142,
+      "chance": 0.5
+     },
+     "top_pick_beats_median": {
+      "value": 0.5333333333333334,
+      "ci95": [
+       0.3416666666666667,
+       0.7333333333333333
+      ],
+      "n_accounts": 20,
+      "chance": 0.5083333333333333
+     },
+     "spearman_vs_target": {
+      "value": 0.04291047719856036,
+      "ci95": [
+       -0.22979210371725486,
+       0.320608934275454
+      ]
+     }
+    },
+    "cross_account": {
+     "spearman_vs_log_engagement": {
+      "value": 0.3333358370056716,
+      "ci95": [
+       -0.09200697387385981,
+       0.658200816525068
+      ]
+     },
+     "super_viral_auc": {
+      "value": 0.9664502164502164,
+      "ci95": [
+       0.9177215189873418,
+       1.0
+      ],
+      "n_super_viral": 6
+     },
+     "super_viral_base_rate": 0.07228915662650602,
+     "precision_at_k": {
+      "10": {
+       "value": 0.5,
+       "ci95": [
+        0.0,
+        0.9
+       ]
+      },
+      "25": {
+       "value": 0.24,
+       "ci95": [
+        0.0,
+        0.52
+       ]
+      }
+     }
+    },
+    "calibration": {
+     "event": "engagement strictly above the account's median",
+     "base_rate": 0.5180722891566265,
+     "brier": 0.3901977590361446,
+     "brier_constant_base_rate": 0.2496733923646393,
+     "ece": 0.36932530120481927,
+     "reliability": [
+      {
+       "lo": 0.0,
+       "hi": 0.2,
+       "n": 66,
+       "mean_pred": 0.10012121212121211,
+       "observed": 0.5151515151515151
+      },
+      {
+       "lo": 0.2,
+       "hi": 0.4,
+       "n": 13,
+       "mean_pred": 0.2740769230769231,
+       "observed": 0.38461538461538464
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.6,
+       "n": 3,
+       "mean_pred": 0.5126666666666667,
+       "observed": 1.0
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.8,
+       "n": 1,
+       "mean_pred": 0.637,
+       "observed": 1.0
+      },
+      {
+       "lo": 0.8,
+       "hi": 1.0,
+       "n": 0,
+       "mean_pred": null,
+       "observed": null
+      }
+     ]
+    }
+   },
+   "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "llm_calls": 20,
+   "approx_input_tokens": 5850,
+   "retest": {
+    "n_posts": 40,
+    "spearman_between_runs": 0.9314342031162005,
+    "mean_abs_diff": 0.027174999999999998
+   },
+   "predictions": {
+    "https://x.com/ClickHouseDB/status/2110083392104497578": {
+     "score": 0.095,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.08,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/ClickHouseDB/status/2110675247049359552": {
+     "score": 0.11,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.1,
+       "early_adopter": 0.12,
+       "skeptical_senior": 0.12,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/ClickHouseDB/status/2110808320533573681": {
+     "score": 0.073,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.07,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/ClickHouseDB/status/2108935838239195635": {
+     "score": 0.04,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.03,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/ClickHouseDB/status/2110808321758204332": {
+     "score": 0.108,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.14,
+       "skeptical_senior": 0.07,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/ClickHouseDB/status/2110764103916736691": {
+     "score": 0.128,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.14
+      }
+     }
+    },
+    "https://x.com/CloudflareDev/status/2108543342862610912": {
+     "score": 0.525,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.55,
+       "early_adopter": 0.4,
+       "skeptical_senior": 0.45,
+       "tech_media": 0.7
+      }
+     }
+    },
+    "https://x.com/CloudflareDev/status/2110461480080654845": {
+     "score": 0.122,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.12
+      }
+     }
+    },
+    "https://x.com/CloudflareDev/status/2110061433417281897": {
+     "score": 0.172,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.25,
+       "early_adopter": 0.22,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.12
+      }
+     }
+    },
+    "https://x.com/CloudflareDev/status/2110776295067910303": {
+     "score": 0.043,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.05,
+       "early_adopter": 0.05,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/CloudflareDev/status/2108255488030941665": {
+     "score": 0.175,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.3,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/CloudflareDev/status/2110457909305864359": {
+     "score": 0.092,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.08,
+       "early_adopter": 0.15,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/NxDevTools/status/2108209250422157748": {
+     "score": 0.113,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.08,
+       "skeptical_senior": 0.12,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/NxDevTools/status/2108209274052813113": {
+     "score": 0.085,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.05,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.15
+      }
+     }
+    },
+    "https://x.com/NxDevTools/status/2108209226569109619": {
+     "score": 0.212,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.25,
+       "early_adopter": 0.3,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/NxDevTools/status/2108209238690676884": {
+     "score": 0.17,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.18,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/NxDevTools/status/2108209147837878618": {
+     "score": 0.168,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.28,
+       "early_adopter": 0.15,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/NxDevTools/status/2108209159510589662": {
+     "score": 0.237,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.3,
+       "early_adopter": 0.3,
+       "skeptical_senior": 0.25,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/PlanetScale/status/2107858620725473653": {
+     "score": 0.073,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.06,
+       "early_adopter": 0.08,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/PlanetScale/status/2110826971064365272": {
+     "score": 0.065,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.07,
+       "early_adopter": 0.06,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/PlanetScale/status/2108234615638884769": {
+     "score": 0.152,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.15,
+       "early_adopter": 0.18,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/PlanetScale/status/2107509405881163985": {
+     "score": 0.217,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.25,
+       "early_adopter": 0.3,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.22
+      }
+     }
+    },
+    "https://x.com/PlanetScale/status/2108943317727617332": {
+     "score": 0.263,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.3,
+       "early_adopter": 0.15,
+       "skeptical_senior": 0.45,
+       "tech_media": 0.15
+      }
+     }
+    },
+    "https://x.com/TimescaleDB/status/2107810339295248653": {
+     "score": 0.1,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.05,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.03
+      }
+     }
+    },
+    "https://x.com/TimescaleDB/status/2108569942996267346": {
+     "score": 0.14,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.18,
+       "early_adopter": 0.07,
+       "skeptical_senior": 0.27,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/astrodotbuild/status/2110799502479159721": {
+     "score": 0.23,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.3,
+       "early_adopter": 0.35,
+       "skeptical_senior": 0.12,
+       "tech_media": 0.15
+      }
+     }
+    },
+    "https://x.com/astrodotbuild/status/2110334527469924613": {
+     "score": 0.028,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.03,
+       "early_adopter": 0.03,
+       "skeptical_senior": 0.02,
+       "tech_media": 0.03
+      }
+     }
+    },
+    "https://x.com/bunjavascript/status/2107560647525548116": {
+     "score": 0.637,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.6,
+       "early_adopter": 0.75,
+       "skeptical_senior": 0.5,
+       "tech_media": 0.7
+      }
+     }
+    },
+    "https://x.com/bunjavascript/status/2109870225156104494": {
+     "score": 0.325,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.25,
+       "early_adopter": 0.3,
+       "skeptical_senior": 0.4,
+       "tech_media": 0.35
+      }
+     }
+    },
+    "https://x.com/bunjavascript/status/2110692261508079721": {
+     "score": 0.588,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.6,
+       "early_adopter": 0.7,
+       "skeptical_senior": 0.45,
+       "tech_media": 0.6
+      }
+     }
+    },
+    "https://x.com/bunjavascript/status/2109504533768659229": {
+     "score": 0.237,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.35,
+       "early_adopter": 0.3,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/bunjavascript/status/2108441841498804715": {
+     "score": 0.35,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.3,
+       "early_adopter": 0.4,
+       "skeptical_senior": 0.4,
+       "tech_media": 0.3
+      }
+     }
+    },
+    "https://x.com/bunjavascript/status/2110727863339225586": {
+     "score": 0.388,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.45,
+       "early_adopter": 0.5,
+       "skeptical_senior": 0.3,
+       "tech_media": 0.3
+      }
+     }
+    },
+    "https://x.com/charmcli/status/2108629047966109871": {
+     "score": 0.088,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.14,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/charmcli/status/2109670621693300741": {
+     "score": 0.103,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.14,
+       "early_adopter": 0.16,
+       "skeptical_senior": 0.06,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/coderhq/status/2107863631618539929": {
+     "score": 0.1,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.14,
+       "skeptical_senior": 0.08,
+       "tech_media": 0.06
+      }
+     }
+    },
+    "https://x.com/coderhq/status/2109684776999199024": {
+     "score": 0.077,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.08,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.07,
+       "tech_media": 0.06
+      }
+     }
+    },
+    "https://x.com/coderhq/status/2110412832730751084": {
+     "score": 0.07,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.07,
+       "early_adopter": 0.06,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/coderhq/status/2108367385879367757": {
+     "score": 0.1,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.15,
+       "skeptical_senior": 0.09,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/coderhq/status/2108271276020109373": {
+     "score": 0.053,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.05,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.07
+      }
+     }
+    },
+    "https://x.com/coderhq/status/2110406144967454739": {
+     "score": 0.138,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.17,
+       "early_adopter": 0.14,
+       "skeptical_senior": 0.14,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/e2b/status/2108233329741066728": {
+     "score": 0.055,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.06,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.07
+      }
+     }
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.055,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.07,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.055,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.07,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/greptile/status/2108623832622018691": {
+     "score": 0.073,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.1,
+       "early_adopter": 0.08,
+       "skeptical_senior": 0.07,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 0.143,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.14,
+       "early_adopter": 0.16,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.07
+      }
+     }
+    },
+    "https://x.com/llama_index/status/2108238298938573023": {
+     "score": 0.143,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.22,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/llama_index/status/2107863919536595237": {
+     "score": 0.17,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.15,
+       "early_adopter": 0.25,
+       "skeptical_senior": 0.08,
+       "tech_media": 0.2
+      }
+     }
+    },
+    "https://x.com/n8n_io/status/2107386302249476218": {
+     "score": 0.13,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/n8n_io/status/2107386304199565762": {
+     "score": 0.122,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.15,
+       "early_adopter": 0.25,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 0.048,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.06,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.06
+      }
+     }
+    },
+    "https://x.com/n8n_io/status/2110264448271450198": {
+     "score": 0.072,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.05,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.02,
+       "tech_media": 0.12
+      }
+     }
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.16,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.25,
+       "skeptical_senior": 0.12,
+       "tech_media": 0.07
+      }
+     }
+    },
+    "https://x.com/nuxt_js/status/2109287168757940324": {
+     "score": 0.242,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.35,
+       "early_adopter": 0.4,
+       "skeptical_senior": 0.12,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/nuxt_js/status/2109287216149406101": {
+     "score": 0.035,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.04,
+       "early_adopter": 0.05,
+       "skeptical_senior": 0.02,
+       "tech_media": 0.03
+      }
+     }
+    },
+    "https://x.com/remix_run/status/2108225049937211645": {
+     "score": 0.077,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/remix_run/status/2108225052709929008": {
+     "score": 0.075,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.08,
+       "early_adopter": 0.12,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/remix_run/status/2108225057126285327": {
+     "score": 0.06,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.07,
+       "early_adopter": 0.04,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.03
+      }
+     }
+    },
+    "https://x.com/sanity_io/status/2108203511636988390": {
+     "score": 0.068,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.06,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.07
+      }
+     }
+    },
+    "https://x.com/sanity_io/status/2110397719361851638": {
+     "score": 0.1,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.1,
+       "early_adopter": 0.14,
+       "skeptical_senior": 0.08,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/sanity_io/status/2107818224784146866": {
+     "score": 0.173,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.26,
+       "skeptical_senior": 0.14,
+       "tech_media": 0.09
+      }
+     }
+    },
+    "https://x.com/sanity_io/status/2110047364102705341": {
+     "score": 0.098,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.08,
+       "early_adopter": 0.14,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.12
+      }
+     }
+    },
+    "https://x.com/sanity_io/status/2107839109918257252": {
+     "score": 0.145,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.17,
+       "early_adopter": 0.18,
+       "skeptical_senior": 0.15,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/strapijs/status/2107395441188819035": {
+     "score": 0.035,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.03,
+       "early_adopter": 0.04,
+       "skeptical_senior": 0.02,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/strapijs/status/2107841062798512244": {
+     "score": 0.06,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.08,
+       "early_adopter": 0.07,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.06
+      }
+     }
+    },
+    "https://x.com/strapijs/status/2110360595279057240": {
+     "score": 0.073,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.07,
+       "early_adopter": 0.1,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.09
+      }
+     }
+    },
+    "https://x.com/strapijs/status/2108120466976121101": {
+     "score": 0.113,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.14,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.04,
+       "tech_media": 0.07
+      }
+     }
+    },
+    "https://x.com/strapijs/status/2110394869663293600": {
+     "score": 0.045,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.07,
+       "early_adopter": 0.05,
+       "skeptical_senior": 0.03,
+       "tech_media": 0.03
+      }
+     }
+    },
+    "https://x.com/strapijs/status/2107757891549561299": {
+     "score": 0.172,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.3,
+       "early_adopter": 0.12,
+       "skeptical_senior": 0.22,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/temporalio/status/2108196097143218486": {
+     "score": 0.25,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.3,
+       "early_adopter": 0.35,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.15
+      }
+     }
+    },
+    "https://x.com/temporalio/status/2110068088788165076": {
+     "score": 0.125,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.15,
+       "skeptical_senior": 0.1,
+       "tech_media": 0.05
+      }
+     }
+    },
+    "https://x.com/temporalio/status/2109826799618142581": {
+     "score": 0.06,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.08,
+       "early_adopter": 0.07,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/temporalio/status/2109698214710690091": {
+     "score": 0.037,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.05,
+       "early_adopter": 0.05,
+       "skeptical_senior": 0.02,
+       "tech_media": 0.03
+      }
+     }
+    },
+    "https://x.com/temporalio/status/2107980512182898716": {
+     "score": 0.073,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.1,
+       "early_adopter": 0.08,
+       "skeptical_senior": 0.07,
+       "tech_media": 0.04
+      }
+     }
+    },
+    "https://x.com/temporalio/status/2110056246141129127": {
+     "score": 0.035,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.03,
+       "early_adopter": 0.03,
+       "skeptical_senior": 0.02,
+       "tech_media": 0.06
+      }
+     }
+    },
+    "https://x.com/vercel/status/2110509321939509421": {
+     "score": 0.425,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.35,
+       "early_adopter": 0.4,
+       "skeptical_senior": 0.45,
+       "tech_media": 0.5
+      }
+     }
+    },
+    "https://x.com/vercel/status/2110786348131258456": {
+     "score": 0.325,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.4,
+       "early_adopter": 0.4,
+       "skeptical_senior": 0.2,
+       "tech_media": 0.3
+      }
+     }
+    },
+    "https://x.com/vercel/status/2110803345309053144": {
+     "score": 0.163,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.25,
+       "skeptical_senior": 0.08,
+       "tech_media": 0.2
+      }
+     }
+    },
+    "https://x.com/vercel/status/2110808586389766404": {
+     "score": 0.1,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.1,
+       "early_adopter": 0.15,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.1
+      }
+     }
+    },
+    "https://x.com/vercel/status/2110803382239945130": {
+     "score": 0.287,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.2,
+       "early_adopter": 0.25,
+       "skeptical_senior": 0.3,
+       "tech_media": 0.4
+      }
+     }
+    },
+    "https://x.com/vercel/status/2110766047842476111": {
+     "score": 0.168,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.12,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.05,
+       "tech_media": 0.3
+      }
+     }
+    },
+    "https://x.com/xata/status/2110747919959941523": {
+     "score": 0.168,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.22,
+       "early_adopter": 0.25,
+       "skeptical_senior": 0.12,
+       "tech_media": 0.08
+      }
+     }
+    },
+    "https://x.com/xata/status/2110023162096488779": {
+     "score": 0.143,
+     "detail": {
+      "panelists": {
+       "working_dev": 0.18,
+       "early_adopter": 0.2,
+       "skeptical_senior": 0.14,
+       "tech_media": 0.05
+      }
+     }
+    }
+   }
+  }
+ }
+}
