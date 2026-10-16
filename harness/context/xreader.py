@@ -55,6 +55,7 @@ class XPost:
     n_mentions: int = 0
     lang: str | None = None
     source: str = "fxtwitter"
+    quoted_author: str | None = None  # handle of the quoted post's author, when `quoted_id` is set
 
     @property
     def created_unix(self) -> int:
@@ -152,6 +153,7 @@ def _parse(raw: dict, fetched_at: str) -> XPost:
         replying_to=reply_to,
         replying_to_status=str(reply_status) if reply_status else None,
         quoted_id=str(quote["id"]) if quote.get("id") else None,
+        quoted_author=(quote.get("author") or {}).get("screen_name") if quote.get("id") else None,
         is_repost=bool(reposted_by),
         reposted_by=reposted_by,
         media_types=[m.get("type", "") for m in media],

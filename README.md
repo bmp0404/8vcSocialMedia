@@ -71,6 +71,7 @@ python -m harness run                    # real run with the provider in .env
 | `learn` | Rewrite `memory/lessons/<profile>.md` from reviews and outcomes; the minds read it next run |
 | `review` | Open the review page at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
 | `watch` | Poll both profiles' watch lists, draft for each post under 10 minutes old (`out/hot/<status_id>.json`) and add each thread to `data/threads/` at +1h and +24h; `watch status` and `watch stop` (see `harness/watcher/DESIGN.md`) |
+| `onboard --handle <x> [--site <url>] --profile <name>` | Draft a provisional profile for a new brand from its X timeline and site, with `ONBOARDING.md` listing what a person must check; never overwrites a profile. `onboard check` re-traces the mission's claims (see `harness/onboard/DESIGN.md`) |
 
 ### Review page
 
@@ -110,6 +111,7 @@ data/         # Source documents, datasets, and supporting assets
 | `harness/learn.py` | **Learn.** Writes `memory/lessons/<profile>.md` |
 | `harness/review/` | **Human checkpoint.** Stdlib HTTP server and a React page built from `web/` into `dist/` |
 | `harness/watcher/` | **Watch.** Continuous polling, the hot path for fresh posts, thread ingestion |
+| `harness/onboard/` | Drafts a new brand's profile from its timeline and site, and checks drafts on corpus brands |
 | `harness/llm.py` | Provider switch: `anthropic`, `xai`, `openai` (any OpenAI-compatible gateway), `mock` |
 
 ## Status / TODO
