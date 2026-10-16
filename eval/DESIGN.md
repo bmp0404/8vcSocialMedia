@@ -120,7 +120,8 @@ When an action underperforms, eval decides whether the agent or its input was at
 
 | Verdict | Evidence it needs | Stage to fix |
 | --- | --- | --- |
-| `variance` | engagement and the account band from 10+ posts | none |
+| `no_fault` | engagement above the account's 90th percentile | none |
+| `variance` | engagement inside the account's 10th to 90th band, from 10+ posts | none |
 | `action_fault` | underperformed, story alive (peers at 1.0x their usual or better, 3+ peers), draft bad (judge under 0.4, or a critic flag) | action |
 | `observe_fault` | underperformed, story dead (peers under 0.5x), draft good (judge 0.6+) | observe |
 | `both` | underperformed, story dead, draft bad | observe first; a better draft on a dead story still flops |
@@ -173,6 +174,14 @@ Every knob is in `harness/evals/settings.py`: `BacktestConfig` (eligibility, sam
 - Should production run the panel on `gpt-6.1-sol` (`HARNESS_PANEL_MODEL`)? It led on this sample, inside the interval.
 - The judge's reference pool is labelled by raw engagement, so its "successful" references come from big accounts. Labels relative to each account would fix that. That decision is Dhilan's.
 - Once followers and boost flags land, should the headline drop boosted launches by default?
+
+## What this branch built
+
+- `harness/evals/`: the dataset loader and eligibility rules (`dataset.py`), metrics (`metrics.py`), predictors including the judge adapters (`predictors.py`), the backtest and its reports (`backtest.py`), the leakage probe (`leakage.py`), fault attribution (`fault.py`, `stories.py`), time-travel recall (`observe_eval.py`), the knobs (`settings.py`) and the `harness eval` commands (`cli.py`).
+- `harness/qualify.py`: panel from a file, mission-aware critic, two-order panel scoring and `HARNESS_PANEL_MODEL`.
+- `mission/panel.json`, `eval/panels/devtools.json`, and fixtures under `eval/fixtures/`.
+- Reports under `eval/reports/`. The superseded v1 runs, scored with the order bias, are in `eval/reports/v1/`.
+- Tests in `tests/test_eval_*.py`.
 
 ## Run it
 
