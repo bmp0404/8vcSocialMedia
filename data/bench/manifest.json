@@ -1,0 +1,1374 @@
+{
+ "seed": 20261016,
+ "corpus_snapshot_sha256": {
+  "x_metrics.jsonl": "5d1fe5db5fc5a6be7d09fdd8d99f221bbe2c71a51e21b59b3cd5eb265f116f13",
+  "author_timelines.jsonl": "339758f174e5ee0a77dbd916568ed14686490cd68d16801c07130b0dec3de76a",
+  "reply_samples.jsonl": "60197b0dfb2355b441771a6c1341a4386924afbf0ab73e609b77cabaa0247614",
+  "boost_flags.csv": "bc22aad2987132aa7f0ddbf74ed37734c6cdddca25c5bd46456c9043dcdcb6d5",
+  "timeline_posts.csv": "b67d4803fddcbd87e1a5b5585d23eaf39289b342cc30b3c193ffda709862eea8"
+ },
+ "replies": {
+  "rule": "direct replies to the same root, mature, not by the root's author, with words; winner has >= 5 likes and >= 3.0x the loser's likes",
+  "split": "dev: root before 2026-10-06; test: from 2026-10-06",
+  "week0": "2026-09-14T00:00:00+00:00",
+  "dev_cutoffs": [
+   "2026-09-29T00:00:00+00:00"
+  ],
+  "test_cutoffs": [
+   "2026-10-06T00:00:00+00:00",
+   "2026-10-13T00:00:00+00:00"
+  ],
+  "max_pairs_per_thread": 50,
+  "pairs": 4725,
+  "threads": {
+   "2099855013178741097": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-15T13:37:03.218000+00:00",
+    "coverage": 0.8490566037735849,
+    "author": "supabase"
+   },
+   "2099887193804112190": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-15T15:44:55.677000+00:00",
+    "coverage": 0.3582887700534759,
+    "author": "cognition"
+   },
+   "2099889957556936813": {
+    "pairs": 33,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-15T15:55:54.607000+00:00",
+    "coverage": 1.0,
+    "author": "linear"
+   },
+   "2099902412253499478": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-15T16:45:24.038000+00:00",
+    "coverage": 0.7291666666666666,
+    "author": "v0"
+   },
+   "2099907042123403466": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-15T17:03:47.885000+00:00",
+    "coverage": 0.859504132231405,
+    "author": "FactoryAI"
+   },
+   "2099972359721795738": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-15T21:23:20.814000+00:00",
+    "coverage": 0.9024390243902439,
+    "author": "expo"
+   },
+   "2100223348563194123": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-16T14:00:41.217000+00:00",
+    "coverage": 0.9344262295081968,
+    "author": "zeddotdev"
+   },
+   "2100253548885803404": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-16T16:00:41.535000+00:00",
+    "coverage": 0.8571428571428571,
+    "author": "cognition"
+   },
+   "2100258072333865363": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-16T16:18:40.009000+00:00",
+    "coverage": 0.8620689655172413,
+    "author": "PlanetScale"
+   },
+   "2100265266026590322": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-16T16:47:15.119000+00:00",
+    "coverage": 0.5391304347826087,
+    "author": "cline"
+   },
+   "2100390620640526554": {
+    "pairs": 24,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-17T01:05:21.988000+00:00",
+    "coverage": 1.0,
+    "author": "zeddotdev"
+   },
+   "2100570682593546310": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-17T13:00:52.103000+00:00",
+    "coverage": 0.8541666666666666,
+    "author": "supabase"
+   },
+   "2100606829982011449": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-17T15:24:30.312000+00:00",
+    "coverage": 0.7023809523809523,
+    "author": "zeddotdev"
+   },
+   "2100646000016716180": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-17T18:00:09.176000+00:00",
+    "coverage": 0.8137254901960784,
+    "author": "boltdotnew"
+   },
+   "2100688880798159254": {
+    "pairs": 12,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-17T20:50:32.751000+00:00",
+    "coverage": 0.75,
+    "author": "CloudflareDev"
+   },
+   "2100731368825295227": {
+    "pairs": 35,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-17T23:39:22.686000+00:00",
+    "coverage": 1.0,
+    "author": "FactoryAI"
+   },
+   "2100994064749604953": {
+    "pairs": 36,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-18T17:03:14.275000+00:00",
+    "coverage": 0.8695652173913043,
+    "author": "turborepo"
+   },
+   "2101056078872256935": {
+    "pairs": 41,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-18T21:09:39.594000+00:00",
+    "coverage": 0.88,
+    "author": "cline"
+   },
+   "2101077346203971900": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-18T22:34:10.121000+00:00",
+    "coverage": 0.43448275862068964,
+    "author": "vercel"
+   },
+   "2101657667617833051": {
+    "pairs": 27,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-20T13:00:09.528000+00:00",
+    "coverage": 0.875,
+    "author": "supabase"
+   },
+   "2101674426987090195": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 0,
+    "root_created_at": "2026-09-20T14:06:45.273000+00:00",
+    "coverage": 1.0,
+    "author": "tldraw"
+   },
+   "2102098669889552711": {
+    "pairs": 22,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-21T18:12:32.663000+00:00",
+    "coverage": 0.6486486486486487,
+    "author": "linear"
+   },
+   "2102104259219406886": {
+    "pairs": 20,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-21T18:34:45.263000+00:00",
+    "coverage": 0.7884615384615384,
+    "author": "cognition"
+   },
+   "2102147831519666639": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-21T21:27:53.709000+00:00",
+    "coverage": 0.8695652173913043,
+    "author": "cognition"
+   },
+   "2102164322860613725": {
+    "pairs": 24,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-21T22:33:25.551000+00:00",
+    "coverage": 0.8709677419354839,
+    "author": "cline"
+   },
+   "2102268230052274300": {
+    "pairs": 41,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-22T05:26:18.956000+00:00",
+    "coverage": 0.7796610169491526,
+    "author": "ollama"
+   },
+   "2102430005250994348": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-22T16:09:09.169000+00:00",
+    "coverage": 1.0,
+    "author": "tldraw"
+   },
+   "2102448392773435706": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-22T17:22:13.096000+00:00",
+    "coverage": 0.24719101123595505,
+    "author": "cursor_ai"
+   },
+   "2102453931704201508": {
+    "pairs": 4,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-22T17:44:13.680000+00:00",
+    "coverage": 0.8333333333333334,
+    "author": "linear"
+   },
+   "2102460015290548249": {
+    "pairs": 46,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-22T18:08:24.120000+00:00",
+    "coverage": 0.92,
+    "author": "Lovable"
+   },
+   "2102463672224543018": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-22T18:22:56.001000+00:00",
+    "coverage": 0.8679245283018868,
+    "author": "cognition"
+   },
+   "2102630092451217782": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T05:24:13.675000+00:00",
+    "coverage": 0.9387755102040817,
+    "author": "bunjavascript"
+   },
+   "2102786814633464159": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T15:46:59.155000+00:00",
+    "coverage": 0.26587301587301587,
+    "author": "cursor_ai"
+   },
+   "2102823962380259443": {
+    "pairs": 23,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T18:14:35.868000+00:00",
+    "coverage": 0.84375,
+    "author": "cognition"
+   },
+   "2102828063184568709": {
+    "pairs": 28,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T18:30:53.576000+00:00",
+    "coverage": 0.9444444444444444,
+    "author": "Replit"
+   },
+   "2102861817160904808": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T20:45:01.151000+00:00",
+    "coverage": 0.3121951219512195,
+    "author": "cursor_ai"
+   },
+   "2102882677422497938": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T22:07:54.625000+00:00",
+    "coverage": 1.0,
+    "author": "tldraw"
+   },
+   "2102903557624352905": {
+    "pairs": 15,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-23T23:30:52.853000+00:00",
+    "coverage": 0.68,
+    "author": "ollama"
+   },
+   "2103140056256888894": {
+    "pairs": 2,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-24T15:10:38.521000+00:00",
+    "coverage": 1.0,
+    "author": "greptile"
+   },
+   "2103165327815450815": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-24T16:51:03.730000+00:00",
+    "coverage": 0.6161616161616161,
+    "author": "cline"
+   },
+   "2103167720087077317": {
+    "pairs": 36,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-24T17:00:34.092000+00:00",
+    "coverage": 0.6176470588235294,
+    "author": "Lovable"
+   },
+   "2103213117576556996": {
+    "pairs": 20,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-24T20:00:57.697000+00:00",
+    "coverage": 1.0,
+    "author": "tldraw"
+   },
+   "2103289058772586872": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T01:02:43.489000+00:00",
+    "coverage": 0.4444444444444444,
+    "author": "zeddotdev"
+   },
+   "2103463182937244138": {
+    "pairs": 28,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T12:34:37.925000+00:00",
+    "coverage": 0.9090909090909091,
+    "author": "zeddotdev"
+   },
+   "2103500168951955718": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T15:01:36.078000+00:00",
+    "coverage": 0.41975308641975306,
+    "author": "cognition"
+   },
+   "2103501168911454222": {
+    "pairs": 7,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T15:05:34.487000+00:00",
+    "coverage": 1.0,
+    "author": "greptile"
+   },
+   "2103505487966924982": {
+    "pairs": 42,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T15:22:44.230000+00:00",
+    "coverage": 0.8115942028985508,
+    "author": "supabase"
+   },
+   "2103524371071733925": {
+    "pairs": 2,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T16:37:46.313000+00:00",
+    "coverage": 0.5,
+    "author": "PlanetScale"
+   },
+   "2103566393862136150": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-25T19:24:45.327000+00:00",
+    "coverage": 0.8717948717948718,
+    "author": "Railway"
+   },
+   "2103636639038026093": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-26T00:03:53.082000+00:00",
+    "coverage": 0.5478260869565217,
+    "author": "cline"
+   },
+   "2104091263842804168": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-27T06:10:24.082000+00:00",
+    "coverage": 0.9215686274509803,
+    "author": "bunjavascript"
+   },
+   "2104194386779046286": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-27T13:00:10.506000+00:00",
+    "coverage": 0.6355140186915887,
+    "author": "supabase"
+   },
+   "2104310921535656132": {
+    "pairs": 5,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-27T20:43:14.557000+00:00",
+    "coverage": 1.0,
+    "author": "pnpmjs"
+   },
+   "2104320882550415734": {
+    "pairs": 20,
+    "split": "dev",
+    "week": 1,
+    "root_created_at": "2026-09-27T21:22:49.448000+00:00",
+    "coverage": 1.0,
+    "author": "upstash"
+   },
+   "2104572401468199274": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-28T14:02:16.231000+00:00",
+    "coverage": 0.7536231884057971,
+    "author": "Railway"
+   },
+   "2104597797672784234": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-28T15:43:11.158000+00:00",
+    "coverage": 0.6116504854368932,
+    "author": "cognition"
+   },
+   "2104633216145436831": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-28T18:03:55.580000+00:00",
+    "coverage": 0.6666666666666666,
+    "author": "cognition"
+   },
+   "2104646075051102680": {
+    "pairs": 42,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-28T18:55:01.382000+00:00",
+    "coverage": 0.9583333333333334,
+    "author": "kirodotdev"
+   },
+   "2104653657216012791": {
+    "pairs": 48,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-28T19:25:09.111000+00:00",
+    "coverage": 0.6136363636363636,
+    "author": "vercel"
+   },
+   "2104666044220821594": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-28T20:14:22.403000+00:00",
+    "coverage": 0.4383561643835616,
+    "author": "cursor_ai"
+   },
+   "2104958085492081025": {
+    "pairs": 36,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T15:34:50.468000+00:00",
+    "coverage": 0.9523809523809523,
+    "author": "tursodatabase"
+   },
+   "2104958820959351060": {
+    "pairs": 4,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T15:37:45.817000+00:00",
+    "coverage": 1.0,
+    "author": "expo"
+   },
+   "2104988938817413583": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T17:37:26.474000+00:00",
+    "coverage": 0.8367346938775511,
+    "author": "cognition"
+   },
+   "2104990331788038569": {
+    "pairs": 7,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T17:42:58.584000+00:00",
+    "coverage": 1.0,
+    "author": "depotdev"
+   },
+   "2104996240190792029": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T18:06:27.257000+00:00",
+    "coverage": 0.5688073394495413,
+    "author": "cognition"
+   },
+   "2104997515905102118": {
+    "pairs": 33,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T18:11:31.411000+00:00",
+    "coverage": 1.0,
+    "author": "v0"
+   },
+   "2105003566351908892": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T18:35:33.950000+00:00",
+    "coverage": 0.19373219373219372,
+    "author": "tldraw"
+   },
+   "2105012114200887434": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T19:09:31.916000+00:00",
+    "coverage": 0.32338308457711445,
+    "author": "cursor_ai"
+   },
+   "2105022757121790184": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-29T19:51:49.386000+00:00",
+    "coverage": 0.6868686868686869,
+    "author": "supabase"
+   },
+   "2105152056382345544": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T04:25:36.732000+00:00",
+    "coverage": 0.42441860465116277,
+    "author": "ollama"
+   },
+   "2105178613763207269": {
+    "pairs": 9,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T06:11:08.505000+00:00",
+    "coverage": 1.0,
+    "author": "AmpCode"
+   },
+   "2105345363813286280": {
+    "pairs": 11,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T17:13:44.815000+00:00",
+    "coverage": 0.8823529411764706,
+    "author": "e2b"
+   },
+   "2105348951079571871": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T17:28:00.086000+00:00",
+    "coverage": 0.9111111111111111,
+    "author": "cognition"
+   },
+   "2105373097004249116": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T19:03:56.923000+00:00",
+    "coverage": 0.9583333333333334,
+    "author": "expo"
+   },
+   "2105406306966511773": {
+    "pairs": 47,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T21:15:54.795000+00:00",
+    "coverage": 0.6067415730337079,
+    "author": "cursor_ai"
+   },
+   "2105408461701824732": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-09-30T21:24:28.524000+00:00",
+    "coverage": 0.9,
+    "author": "cognition"
+   },
+   "2105563147801370649": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-01T07:39:08.564000+00:00",
+    "coverage": 0.33004926108374383,
+    "author": "bunjavascript"
+   },
+   "2105780792559595666": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-01T22:03:59.118000+00:00",
+    "coverage": 0.7659574468085106,
+    "author": "CloudflareDev"
+   },
+   "2105787358557999585": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-01T22:30:04.574000+00:00",
+    "coverage": 0.3,
+    "author": "cursor_ai"
+   },
+   "2106054567125532976": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-02T16:11:52.061000+00:00",
+    "coverage": 0.4782608695652174,
+    "author": "tursodatabase"
+   },
+   "2106071822307319915": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-02T17:20:26.017000+00:00",
+    "coverage": 0.7471264367816092,
+    "author": "supabase"
+   },
+   "2106080270432764386": {
+    "pairs": 16,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-02T17:54:00.207000+00:00",
+    "coverage": 1.0,
+    "author": "supabase"
+   },
+   "2106080773711319498": {
+    "pairs": 43,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-02T17:56:00.198000+00:00",
+    "coverage": 0.8947368421052632,
+    "author": "CloudflareDev"
+   },
+   "2106186667543666841": {
+    "pairs": 42,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-03T00:56:47.255000+00:00",
+    "coverage": 0.6756756756756757,
+    "author": "ollama"
+   },
+   "2106828852353974713": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 2,
+    "root_created_at": "2026-10-04T19:28:36.045000+00:00",
+    "coverage": 0.8253968253968254,
+    "author": "cline"
+   },
+   "2107105089957859761": {
+    "pairs": 12,
+    "split": "dev",
+    "week": 3,
+    "root_created_at": "2026-10-05T13:46:16.222000+00:00",
+    "coverage": 0.9285714285714286,
+    "author": "expo"
+   },
+   "2107165034463867001": {
+    "pairs": 50,
+    "split": "dev",
+    "week": 3,
+    "root_created_at": "2026-10-05T17:44:28.106000+00:00",
+    "coverage": 0.46258503401360546,
+    "author": "cognition"
+   },
+   "2107268310236795023": {
+    "pairs": 23,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-06T00:34:50.969000+00:00",
+    "coverage": 1.0,
+    "author": "cognition"
+   },
+   "2107468131841331475": {
+    "pairs": 21,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-06T13:48:52.152000+00:00",
+    "coverage": 0.9285714285714286,
+    "author": "prisma"
+   },
+   "2107560647525548116": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-06T19:56:29.610000+00:00",
+    "coverage": 0.8260869565217391,
+    "author": "bunjavascript"
+   },
+   "2107561157787824347": {
+    "pairs": 36,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-06T19:58:31.266000+00:00",
+    "coverage": 0.8775510204081632,
+    "author": "cline"
+   },
+   "2107618653701296162": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-06T23:46:59.360000+00:00",
+    "coverage": 0.23432343234323433,
+    "author": "cursor_ai"
+   },
+   "2107719897115463877": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T06:29:17.671000+00:00",
+    "coverage": 0.8260869565217391,
+    "author": "zeddotdev"
+   },
+   "2107846455180288289": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T14:52:11.465000+00:00",
+    "coverage": 0.6956521739130435,
+    "author": "boltdotnew"
+   },
+   "2107856309651747196": {
+    "pairs": 16,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T15:31:20.954000+00:00",
+    "coverage": 0.9444444444444444,
+    "author": "bunjavascript"
+   },
+   "2107893301420654769": {
+    "pairs": 14,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T17:58:20.479000+00:00",
+    "coverage": 0.7692307692307693,
+    "author": "Lovable"
+   },
+   "2107897245282799864": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T18:14:00.769000+00:00",
+    "coverage": 0.34831460674157305,
+    "author": "cursor_ai"
+   },
+   "2107901444246413755": {
+    "pairs": 8,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T18:30:41.880000+00:00",
+    "coverage": 0.8125,
+    "author": "zeddotdev"
+   },
+   "2107913945424269785": {
+    "pairs": 4,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T19:20:22.393000+00:00",
+    "coverage": 0.8571428571428571,
+    "author": "FactoryAI"
+   },
+   "2107934535749140841": {
+    "pairs": 8,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-07T20:42:11.509000+00:00",
+    "coverage": 0.8571428571428571,
+    "author": "vllm_project"
+   },
+   "2108183987768246295": {
+    "pairs": 21,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-08T13:13:25.505000+00:00",
+    "coverage": 0.9583333333333334,
+    "author": "polar_sh"
+   },
+   "2108193743132348661": {
+    "pairs": 9,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-08T13:52:11.365000+00:00",
+    "coverage": 1.0,
+    "author": "expo"
+   },
+   "2108198833167462472": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-08T14:12:24.924000+00:00",
+    "coverage": 0.9743589743589743,
+    "author": "polar_sh"
+   },
+   "2108234615638884769": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-08T16:34:36.130000+00:00",
+    "coverage": 0.8695652173913043,
+    "author": "PlanetScale"
+   },
+   "2108280639187546176": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-08T19:37:28.999000+00:00",
+    "coverage": 0.9642857142857143,
+    "author": "bunjavascript"
+   },
+   "2108437101897478389": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T05:59:12.616000+00:00",
+    "coverage": 1.0,
+    "author": "bunjavascript"
+   },
+   "2108441841498804715": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T06:18:02.625000+00:00",
+    "coverage": 0.8378378378378378,
+    "author": "bunjavascript"
+   },
+   "2108543342862610912": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T13:01:22.436000+00:00",
+    "coverage": 0.7647058823529411,
+    "author": "CloudflareDev"
+   },
+   "2108543358197207048": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T13:01:26.092000+00:00",
+    "coverage": 0.22413793103448276,
+    "author": "deno_land"
+   },
+   "2108573385269879117": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T15:00:45.104000+00:00",
+    "coverage": 0.9583333333333334,
+    "author": "daytonaio"
+   },
+   "2108636435507269725": {
+    "pairs": 26,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T19:11:17.452000+00:00",
+    "coverage": 0.6,
+    "author": "vercel"
+   },
+   "2108641490633433437": {
+    "pairs": 13,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T19:31:22.688000+00:00",
+    "coverage": 1.0,
+    "author": "zeddotdev"
+   },
+   "2108692010056188048": {
+    "pairs": 50,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-09T22:52:07.457000+00:00",
+    "coverage": 0.4064516129032258,
+    "author": "cognition"
+   },
+   "2108793934256525570": {
+    "pairs": 35,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-10T05:37:08.080000+00:00",
+    "coverage": 1.0,
+    "author": "bunjavascript"
+   },
+   "2109290802174472425": {
+    "pairs": 32,
+    "split": "test",
+    "week": 3,
+    "root_created_at": "2026-10-11T14:31:30.623000+00:00",
+    "coverage": 0.782608695652174,
+    "author": "supabase"
+   },
+   "2109630227085168640": {
+    "pairs": 14,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-12T13:00:15.828000+00:00",
+    "coverage": 0.9047619047619048,
+    "author": "supabase"
+   },
+   "2109706421919248499": {
+    "pairs": 27,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-12T18:03:02.092000+00:00",
+    "coverage": 1.0,
+    "author": "posthog"
+   },
+   "2109723187563184493": {
+    "pairs": 50,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-12T19:09:39.333000+00:00",
+    "coverage": 1.0,
+    "author": "FactoryAI"
+   },
+   "2109783879490191502": {
+    "pairs": 50,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-12T23:10:49.416000+00:00",
+    "coverage": 0.1113013698630137,
+    "author": "cursor_ai"
+   },
+   "2109861465100632567": {
+    "pairs": 50,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T04:19:07.267000+00:00",
+    "coverage": 0.5765765765765766,
+    "author": "bunjavascript"
+   },
+   "2109985000447746381": {
+    "pairs": 17,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T12:30:00.389000+00:00",
+    "coverage": 0.8125,
+    "author": "expo"
+   },
+   "2110039683829031125": {
+    "pairs": 32,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T16:07:17.923000+00:00",
+    "coverage": 0.8823529411764706,
+    "author": "PlanetScale"
+   },
+   "2110047099580535131": {
+    "pairs": 6,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T16:36:45.976000+00:00",
+    "coverage": 0.9230769230769231,
+    "author": "zeddotdev"
+   },
+   "2110061433417281897": {
+    "pairs": 5,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T17:33:43.429000+00:00",
+    "coverage": 0.8461538461538461,
+    "author": "CloudflareDev"
+   },
+   "2110074623337677046": {
+    "pairs": 15,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T18:26:08.151000+00:00",
+    "coverage": 0.8666666666666667,
+    "author": "modal"
+   },
+   "2110075611633074295": {
+    "pairs": 50,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T18:30:03.779000+00:00",
+    "coverage": 0.38961038961038963,
+    "author": "cursor_ai"
+   },
+   "2110087611763368271": {
+    "pairs": 50,
+    "split": "test",
+    "week": 4,
+    "root_created_at": "2026-10-13T19:17:44.833000+00:00",
+    "coverage": 0.23134328358208955,
+    "author": "cursor_ai"
+   }
+  }
+ },
+ "posts": {
+  "rule": "an account's own mature originals in the window, no thread tails, boost_suspect excluded; winner has >= 10 engagement and >= 3.0x the loser's",
+  "split": "seeded 50/50 by author (author_split)",
+  "max_pairs_per_author": 50,
+  "pairs": 2233,
+  "authors": {
+   "ampcode": {
+    "pairs": 1,
+    "split": "test"
+   },
+   "astrodotbuild": {
+    "pairs": 6,
+    "split": "test"
+   },
+   "augmentcode": {
+    "pairs": 7,
+    "split": "test"
+   },
+   "biomejs": {
+    "pairs": 2,
+    "split": "test"
+   },
+   "boltdotnew": {
+    "pairs": 13,
+    "split": "dev"
+   },
+   "browserbase": {
+    "pairs": 15,
+    "split": "dev"
+   },
+   "bunjavascript": {
+    "pairs": 36,
+    "split": "test"
+   },
+   "charmcli": {
+    "pairs": 3,
+    "split": "test"
+   },
+   "checklyhq": {
+    "pairs": 20,
+    "split": "dev"
+   },
+   "clickhousedb": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "cline": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "cloudflaredev": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "cockroachdb": {
+    "pairs": 14,
+    "split": "test"
+   },
+   "coderabbitai": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "coderhq": {
+    "pairs": 11,
+    "split": "test"
+   },
+   "cognition": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "convex": {
+    "pairs": 18,
+    "split": "dev"
+   },
+   "cursor_ai": {
+    "pairs": 22,
+    "split": "dev"
+   },
+   "daytonaio": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "deno_land": {
+    "pairs": 1,
+    "split": "dev"
+   },
+   "depotdev": {
+    "pairs": 36,
+    "split": "test"
+   },
+   "descopeinc": {
+    "pairs": 26,
+    "split": "test"
+   },
+   "drizzleorm": {
+    "pairs": 1,
+    "split": "dev"
+   },
+   "e2b": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "expo": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "factoryai": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "flydotio": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "getpostman": {
+    "pairs": 2,
+    "split": "dev"
+   },
+   "grafana": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "greptile": {
+    "pairs": 30,
+    "split": "test"
+   },
+   "infisical": {
+    "pairs": 7,
+    "split": "test"
+   },
+   "inngest": {
+    "pairs": 3,
+    "split": "dev"
+   },
+   "kilocode": {
+    "pairs": 45,
+    "split": "test"
+   },
+   "kirodotdev": {
+    "pairs": 25,
+    "split": "test"
+   },
+   "linear": {
+    "pairs": 38,
+    "split": "dev"
+   },
+   "llama_index": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "lovable": {
+    "pairs": 16,
+    "split": "dev"
+   },
+   "mintlify": {
+    "pairs": 13,
+    "split": "test"
+   },
+   "modal": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "motherduck": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "n8n_io": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "neondatabase": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "netlify": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "nuxt_js": {
+    "pairs": 1,
+    "split": "dev"
+   },
+   "nxdevtools": {
+    "pairs": 19,
+    "split": "test"
+   },
+   "ollama": {
+    "pairs": 9,
+    "split": "test"
+   },
+   "openstatushq": {
+    "pairs": 3,
+    "split": "dev"
+   },
+   "payloadcms": {
+    "pairs": 2,
+    "split": "dev"
+   },
+   "planetscale": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "pnpmjs": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "polar_sh": {
+    "pairs": 3,
+    "split": "dev"
+   },
+   "posthog": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "prisma": {
+    "pairs": 44,
+    "split": "dev"
+   },
+   "qodoai": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "railway": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "remix_run": {
+    "pairs": 4,
+    "split": "test"
+   },
+   "replit": {
+    "pairs": 7,
+    "split": "dev"
+   },
+   "resend": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "retool": {
+    "pairs": 9,
+    "split": "dev"
+   },
+   "sanity_io": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "sourcegraph": {
+    "pairs": 5,
+    "split": "test"
+   },
+   "speakeasydev": {
+    "pairs": 15,
+    "split": "test"
+   },
+   "storybookjs": {
+    "pairs": 1,
+    "split": "test"
+   },
+   "strapijs": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "supabase": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "temporalio": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "timescaledb": {
+    "pairs": 19,
+    "split": "dev"
+   },
+   "tldraw": {
+    "pairs": 50,
+    "split": "dev"
+   },
+   "tooljet": {
+    "pairs": 25,
+    "split": "dev"
+   },
+   "triggerdotdev": {
+    "pairs": 5,
+    "split": "dev"
+   },
+   "tursodatabase": {
+    "pairs": 25,
+    "split": "dev"
+   },
+   "unkeydev": {
+    "pairs": 1,
+    "split": "dev"
+   },
+   "upstash": {
+    "pairs": 16,
+    "split": "dev"
+   },
+   "v0": {
+    "pairs": 20,
+    "split": "test"
+   },
+   "vercel": {
+    "pairs": 16,
+    "split": "dev"
+   },
+   "vite_js": {
+    "pairs": 1,
+    "split": "dev"
+   },
+   "vllm_project": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "warpdotdev": {
+    "pairs": 16,
+    "split": "dev"
+   },
+   "windmilldev": {
+    "pairs": 6,
+    "split": "test"
+   },
+   "workos": {
+    "pairs": 50,
+    "split": "test"
+   },
+   "zeddotdev": {
+    "pairs": 50,
+    "split": "dev"
+   }
+  }
+ }
+}
