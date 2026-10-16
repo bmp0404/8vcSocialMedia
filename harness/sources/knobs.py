@@ -73,6 +73,9 @@ class ObserveKnobs:
     giant_max_replies: int = 50
     # Several fast replies to one account look like reply spam to X's fast_reply_spam_post check.
     max_per_author: int = 2
+    # Direct replies attached to each emitted target, most-liked first. Each target costs one
+    # fxtwitter request, and that 1/s budget is shared with the context worker's tracker.
+    thread_replies: int = 15
 
     @classmethod
     def from_dict(cls, overrides: dict) -> "ObserveKnobs":

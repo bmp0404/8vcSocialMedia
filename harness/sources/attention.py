@@ -66,10 +66,13 @@ class AttentionSource(Source):
         start = now - timedelta(days=cfg.baseline_days) - RECENT
         signals = []
         for term in cfg.terms:
-            for series in attention(term, start, now).values():
+            errors: dict[str, str] = {}
+            for series in attention(term, start, now, errors=errors).values():
                 s = attention_signal(series, now, cfg.baseline_days)
                 if s:
                     signals.append(s)
+            for source, reason in errors.items():
+                print(f"[observe] attention: {source} for {term!r} failed: {reason}")
         if not signals:
             raise SourceError(f"attention: no collector returned usable data for {cfg.terms}")
         return signals

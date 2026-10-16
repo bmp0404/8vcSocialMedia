@@ -110,3 +110,21 @@ def verify_counts(posts: list[XPost], reader=None) -> list[XPost]:
             continue
         out.append(replace(fresh, text=fresh.text or p.text))
     return out
+
+
+def thread_replies(reader, post_id: str, limit: int) -> list[dict]:
+    """The `limit` most-liked direct replies to `post_id`, from fxtwitter's first conversation page.
+
+    fxtwitter returns about 35 replies in X's relevance order and ignores the page cursor, so
+    this is a sample of the visible thread, not all of it.
+    """
+    try:
+        replies = reader.conversation(post_id)
+    except RuntimeError as e:
+        raise SourceError(f"fxtwitter conversation for {post_id}: {e}") from e
+    direct = [r for r in replies if r.replying_to_status in (None, post_id) and r.id != post_id]
+    direct.sort(key=lambda r: r.likes, reverse=True)
+    return [
+        {"author": r.author_handle, "text": r.text, "likes": r.likes, "followers": r.author_followers}
+        for r in direct[:limit]
+    ]

@@ -17,6 +17,9 @@ class Signal:
     # What the item is: "news", "game", "post", "reply_target", "own_post" or "mention".
     # Orient uses it to pick a velocity formula and to keep reply targets apart from news.
     kind: str = ""
+    # For an X post: its most-liked direct replies, each {author, text, likes, followers}. Filled
+    # for reply targets so the reply minds can see the thread they are joining without refetching.
+    thread: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -36,7 +39,7 @@ class Narrative:
     # X posts in this narrative that a reply or quote can target, hottest first. Each dict has
     # url, author, text, created_at, age_minutes and engagement_per_hour (null when X gave no
     # counts), plus likes, reposts, replies, quotes, views, author_followers and views_per_hour
-    # when the source reported them.
+    # when the source reported them, and `thread`, the post's top replies (see Signal.thread).
     reply_targets: list[dict] = field(default_factory=list)
 
 

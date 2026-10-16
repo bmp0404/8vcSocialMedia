@@ -149,6 +149,8 @@ def reply_targets(members: list[Signal], now: datetime, limit: int = 5, k: Obser
         }
         # Raw counts, when the source had them, so a UI can render the post the way X shows it.
         row.update({key: s.metrics[key] for key in TARGET_COUNTS if key in s.metrics})
+        if s.thread:
+            row["thread"] = s.thread  # not "replies": that key is the reply count
         rows.append(row)
     rows.sort(key=lambda r: r["engagement_per_hour"] or 0, reverse=True)
     return rows[:limit]

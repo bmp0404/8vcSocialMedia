@@ -28,7 +28,7 @@ from harness.sources.common import SourceError, iso_utc, now_utc, parse_time
 from harness.sources.knobs import ObserveKnobs, current
 from harness.sources.watch import load_watch
 from harness.sources.x_common import XAccessError, XPost, get_backend
-from harness.sources.x_fx import verify_counts
+from harness.sources.x_fx import FxXBackend, _reader, thread_replies, verify_counts
 
 # Storage housekeeping, not a tunable: snapshots older than this can't give a useful delta.
 SNAPSHOT_TTL = timedelta(days=2)
@@ -208,6 +208,7 @@ class ReplyTargetSource(Source):
         errors: list[str] = []
 
         handles = [(h, False) for h in cfg.accounts] + [(h, True) for h in cfg.broad_accounts]
+        timelines = None
         if handles:
             try:
                 timelines = get_backend("user_posts")
@@ -239,6 +240,23 @@ class ReplyTargetSource(Source):
         path = snapshot_path()
         snaps = load_snapshots(path, now)
         exclude = {watch.brand_handle} if watch.brand_handle else set()
-        ranked = rank_targets(posts, now, snaps, cfg.max_age_minutes, exclude)
+        k = current()
+        ranked = rank_targets(posts, now, snaps, cfg.max_age_minutes, exclude, k)
         save_snapshots(path, snaps, posts, now)
-        return [target_signal(t) for t in ranked[: cfg.limit]]
+        signals = [target_signal(t) for t in ranked[: cfg.limit]]
+        if k.thread_replies and signals:
+            self._attach_threads(signals, timelines if isinstance(timelines, FxXBackend) else None, k.thread_replies)
+        return signals
+
+    def _attach_threads(self, signals: list[Signal], fx: FxXBackend | None, limit: int) -> None:
+        """Give each target its thread's top replies. A failure leaves that target's thread empty."""
+        try:
+            reader = fx.reader if fx else _reader()
+        except XAccessError as e:
+            print(f"[observe] {self.name}: threads skipped: {e}")
+            return
+        for s in signals:
+            try:
+                s.thread = thread_replies(reader, s.url.rsplit("/", 1)[-1], limit)
+            except SourceError as e:
+                print(f"[observe] {self.name}: no thread for {s.url}: {e}")

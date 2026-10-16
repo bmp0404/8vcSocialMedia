@@ -369,3 +369,36 @@ def test_verify_counts_swaps_model_counts_for_fxtwitter_ones():
     got = verify_counts(posts, StatusReader())
     assert [p.id for p in got] == ["ok", "g1"]
     assert got[1].likes == 7 and got[1].metrics_verified and got[1].views == 8903
+
+
+class ConversationReader:
+    def __init__(self, replies=None, error=None):
+        self.replies, self.error = replies or [], error
+
+    def conversation(self, status_id):
+        if self.error:
+            raise self.error
+        return self.replies
+
+
+def test_thread_replies_keep_direct_replies_most_liked_first():
+    from harness.sources.x_fx import thread_replies
+
+    replies = [
+        fx_post("r1", 5, likes=3, author_handle="fan1", replying_to_status="100", author_followers=12),
+        fx_post("r2", 5, likes=40, author_handle="fan2", replying_to_status="100", author_followers=900),
+        fx_post("r3", 5, likes=99, author_handle="deep", replying_to_status="r2"),  # reply to a reply
+    ]
+    got = thread_replies(ConversationReader(replies), "100", limit=5)
+    assert got == [
+        {"author": "fan2", "text": "fx r2", "likes": 40, "followers": 900},
+        {"author": "fan1", "text": "fx r1", "likes": 3, "followers": 12},
+    ]
+    assert len(thread_replies(ConversationReader(replies), "100", limit=1)) == 1
+
+
+def test_thread_replies_raise_source_error():
+    from harness.sources.x_fx import thread_replies
+
+    with pytest.raises(SourceError, match="fxtwitter conversation for 100: HTTP 404"):
+        thread_replies(ConversationReader(error=RuntimeError("HTTP 404")), "100", 5)

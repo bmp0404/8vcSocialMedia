@@ -104,7 +104,10 @@ def test_reply_target_rows_carry_raw_counts_when_present():
     s = sig("reply_target", 0.5, url="https://x.com/a/status/1", likes=10, views=900, author_followers=50_000, size_band=1.0)
     (row,) = o.reply_targets([s], NOW)
     assert (row["likes"], row["views"], row["author_followers"]) == (10, 900, 50_000)
-    assert "size_band" not in row and "reposts" not in row
+    assert "size_band" not in row and "reposts" not in row and "thread" not in row
+    s.thread = [{"author": "fan", "text": "same", "likes": 2, "followers": 10}]
+    (row,) = o.reply_targets([s], NOW)
+    assert row["thread"] == s.thread
 
 
 def test_member_heats_count_each_author_once_and_collapse_duplicate_text():
