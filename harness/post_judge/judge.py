@@ -14,6 +14,10 @@ DEFAULT_DATASET = Path(__file__).resolve().parents[2] / "data/devtools_virality_
 CRITERIA = ("relevance", "clarity", "specificity", "engagement_potential", "grounding")
 
 
+class InvalidGradeError(ValueError):
+    """The model returned a grade that failed evidence validation."""
+
+
 class Evaluation(BaseModel):
     schema_version: str = "1"
     rubric_version: str = "1"
@@ -30,15 +34,15 @@ def validate_grade(grade: PostGrade, references: list[ReferencePost]) -> int:
     """Reject invalid scores and invented citations rather than silently repairing them."""
     scores = [getattr(grade, name).score for name in CRITERIA]
     if any(not 0 <= score <= 5 for score in scores):
-        raise ValueError("Judge returned a rubric score outside 0..5")
+        raise InvalidGradeError("Judge returned a rubric score outside 0..5")
     by_id = {p.id: p for p in references}
     cited_labels = set()
     for comparison in grade.comparisons:
         if comparison.reference_id not in by_id:
-            raise ValueError(f"Judge cited an unknown reference: {comparison.reference_id}")
+            raise InvalidGradeError("Judge cited an unknown reference")
         cited_labels.add(by_id[comparison.reference_id].performance)
     if cited_labels != set(Performance):
-        raise ValueError("Judge must compare against both successful and poor references")
+        raise InvalidGradeError("Judge must compare against both successful and poor references")
     return sum(scores) * 4
 
 
@@ -67,8 +71,14 @@ def grade_with_references(candidate: CandidatePost, references: list[ReferencePo
     if any(normalized_text(p.text) == normalized_text(candidate.text) for p in references):
         raise ValueError("Candidate text must not appear in the reference pool")
     provider, model = judge_settings()
-    grade = GradePost(candidate, references, provider=provider, model=model)
-    score = validate_grade(grade, references)
+    for attempt in range(2):
+        grade = GradePost(candidate, references, provider=provider, model=model)
+        try:
+            score = validate_grade(grade, references)
+            break
+        except InvalidGradeError:
+            if attempt == 1:
+                raise
     return Evaluation(judge_provider=provider, judge_model=model,
                       dataset_sha256=dataset_sha256, candidate=candidate,
                       references=references, grade=grade, score_100=score)

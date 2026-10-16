@@ -11,6 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).parent
+JOB_TIMEOUT_SECONDS = 300
 
 
 class Queue:
@@ -42,7 +43,7 @@ class Queue:
             self.worker_seen = time.time()
             db.execute("DELETE FROM jobs WHERE created < ?", (time.time() - 86400,))
             db.execute("UPDATE jobs SET status='failed',result=? WHERE status='running' AND claimed < ?",
-                       (json.dumps({"error": "The judge timed out. Please submit again."}), time.time() - 180))
+                       (json.dumps({"error": "The judge timed out. Please submit again."}), time.time() - JOB_TIMEOUT_SECONDS))
             row = db.execute("SELECT * FROM jobs WHERE status='queued' ORDER BY created LIMIT 1").fetchone()
             if not row:
                 return None
@@ -59,14 +60,14 @@ class Queue:
 
     def online(self):
         with self.connect() as db:
-            running = db.execute("SELECT count(*) FROM jobs WHERE status='running' AND claimed > ?", (time.time() - 180,)).fetchone()[0]
+            running = db.execute("SELECT count(*) FROM jobs WHERE status='running' AND claimed > ?", (time.time() - JOB_TIMEOUT_SECONDS,)).fetchone()[0]
         return time.time() - self.worker_seen < 30 or running > 0
 
     def get(self, job_id):
         with self.connect() as db:
             db.execute("DELETE FROM jobs WHERE created < ?", (time.time() - 86400,))
             db.execute("UPDATE jobs SET status='failed',result=? WHERE status='running' AND claimed < ?",
-                       (json.dumps({"error": "The judge timed out. Please submit again."}), time.time() - 180))
+                       (json.dumps({"error": "The judge timed out. Please submit again."}), time.time() - JOB_TIMEOUT_SECONDS))
             row = db.execute("SELECT id,status,result FROM jobs WHERE id=?", (job_id,)).fetchone()
         if row is None:
             return None

@@ -3,12 +3,13 @@
 import json
 import os
 import time
+import traceback
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 from baml_sdk import CandidatePost
-from harness.post_judge.judge import grade_post
+from harness.post_judge.judge import InvalidGradeError, grade_post
 
 
 def request(base: str, token: str, path: str, payload: dict):
@@ -39,7 +40,9 @@ def main():
         except Exception as exc:
             failed = True
             result = {'error': 'The judge could not finish this evaluation. Please try again.', 'error_type': type(exc).__name__}
-            print(f'[worker] Judge failed: {type(exc).__name__}', flush=True)
+            detail = str(exc) if isinstance(exc, InvalidGradeError) else type(exc).__name__
+            print(f'[worker] Job {job["id"]} failed: {detail}', flush=True)
+            traceback.print_tb(exc.__traceback__)
         # Retrying completion uses the same lease; it never repeats the model request.
         for attempt in range(3):
             try:

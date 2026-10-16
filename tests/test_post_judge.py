@@ -114,6 +114,20 @@ class GradeTests(unittest.TestCase):
         judge.assert_called_once_with(self.candidate, self.refs, provider="openai", model="gpt-4.1-mini")
         self.assertEqual(result.references, self.refs)
 
+    def test_invalid_grade_is_retried_once_without_changing_evidence(self):
+        invalid = grade(self.refs[:1])
+        with patch("harness.post_judge.judge.GradePost", side_effect=[invalid, grade(self.refs)]) as judge:
+            result = grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
+        self.assertEqual(result.score_100, 60)
+        self.assertEqual(judge.call_count, 2)
+        self.assertEqual(judge.call_args_list[0], judge.call_args_list[1])
+
+    def test_repeated_invalid_grade_still_fails(self):
+        with patch("harness.post_judge.judge.GradePost", return_value=grade(self.refs[:1])) as judge:
+            with self.assertRaisesRegex(ValueError, "both successful and poor"):
+                grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
+        self.assertEqual(judge.call_count, 2)
+
     def test_leaked_candidate_rejected_before_model_call(self):
         self.candidate.text = " release FEATURE 1 "
         with patch("harness.post_judge.judge.GradePost") as judge:
