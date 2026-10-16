@@ -187,10 +187,11 @@ def comparisons(posts: list[Post], all_preds: dict[str, dict[str, Prediction]], 
     against = [b for b in COMPARE_AGAINST if b in all_preds] + [n for n in all_preds if n.startswith("reader")]
     out = {}
     for name in all_preds:
-        if name in BASELINES or name.startswith("reader"):
+        if name in BASELINES or name.startswith("reader") or name.endswith("_memory_shuffled"):
             continue
         refs = against + (["post_judge_refs_only"] if name == "post_judge" and "post_judge_refs_only" in all_preds
                           else [])
+        refs += [f"{name}_memory_shuffled"] if f"{name}_memory_shuffled" in all_preds else []
         out[name] = {f"minus_{b}": paired_difference(posts, all_preds[name], all_preds[b], n_boot, seed,
                                                      relative=name in relative)
                      for b in refs}
