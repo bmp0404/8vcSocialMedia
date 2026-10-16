@@ -9,6 +9,7 @@ load_dotenv(ROOT / ".env")
 
 # Brand-specific text lives in files, not Python (see CONTRIBUTING.md).
 MISSION_PATH = ROOT / "mission" / "mission.md"
+CREATIVE_PATH = ROOT / "mission" / "creative.md"
 CONTACTS_PATH = ROOT / "mission" / "contacts.json"
 SWAG_PATH = ROOT / "mission" / "swag.json"
 MEDIA_PATH = ROOT / "mission" / "media.json"
@@ -36,7 +37,11 @@ def _read(path: Path, default: str) -> str:
 
 
 def mission() -> str:
-    return MISSION_PATH.read_text(encoding="utf-8")
+    """The mission plus the account owner's creative brief, so every stage that reads one reads both."""
+    text = MISSION_PATH.read_text(encoding="utf-8")
+    if CREATIVE_PATH.exists():
+        text += "\n\n" + CREATIVE_PATH.read_text(encoding="utf-8")
+    return text
 
 
 def lessons() -> str:

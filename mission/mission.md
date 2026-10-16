@@ -29,9 +29,12 @@ because no human noticed. Each agent works alone.
 Do NOT invent pricing, customers, user counts, benchmarks, funding, founders, or features.
 
 ## Voice
-Plain, confident, conversational, and short, like an engineer who has felt the pain posting about it,
-not a marketer. Dry humor and memes are welcome. Strong opinions about how multi-agent coding *should* work.
-No hype words ("revolutionary", "game-changer"), no emoji walls, no engagement bait.
+Imaginative, warm, and vivid, like an engineer who has lived the chaos and tells it as a story people want
+to share. Lean on scenes, timestamps, characters, and emotional arcs ("9:50am: you launch 4 agents and feel
+like a tech lead. By noon:"). Treat the agents as a cast with personalities. Reach for an unexpected metaphor,
+a tiny world, or an image people can picture. Playful and big-hearted beats deadpan and understated: the
+account owner wants creativity over dry wit. Plain words, no hype vocabulary, no engagement bait.
+The creative brief in `mission/creative.md` is the account owner's own direction and outranks the playbook and lessons.
 
 ## What "viral" means here
 Reposts, quotes, and replies from developers who see themselves in the post. Relatable pain beats
