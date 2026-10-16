@@ -45,6 +45,7 @@ NO_SGU_POSTS = "_sgu_ replies by hand and posts no originals yet, so there is no
 LINEUP_SIZE = 5
 MAX_BATCH = 12  # replies one lane-veto call judges together, and other replies shown as a thread's context
 RESULTS = BENCH_DIR / "results"
+_FITTED: dict[str, object] = {}  # reply ranker models by version and cutoff: one fit per process
 
 
 def fingerprint(*parts) -> str:
@@ -198,7 +199,11 @@ class ReplyRanker:
         if self._model is None:
             from harness.rank import reply
 
-            self._model = reply.fit(self.fit_before(ev.frozen_pairs), self.blocks, ev.frozen, pairs=ev.frozen_pairs)
+            before = self.fit_before(ev.frozen_pairs)
+            key = f"{self.version()}:{before.isoformat()}"
+            if key not in _FITTED:
+                _FITTED[key] = reply.fit(before, self.blocks, ev.frozen, pairs=ev.frozen_pairs)
+            self._model = _FITTED[key]
         return self._model
 
     def _input(self, ev: Evidence, sid: str, root):

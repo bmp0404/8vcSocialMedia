@@ -41,6 +41,9 @@ REPORT_HOUR = 11  # UTC: 6 a.m. in Austin, 7 a.m. in New York
 # Which instruments each fitness measures with: a report-only primary holds the fitness, and a report-only
 # guardrail instrument stops blocking (harness/improve/instruments.py has the rule).
 RULERS = {"action_lineup": {"primary": "lineup_detector", "guardrails": {"veto_pass_rate": "action_veto"}}}
+# Promotions the loop made on its own: a queue spec's confirmation, or an engine confirmation. A stack check
+# may revert these; anything a person started is put to a person instead.
+LOOP_KINDS = {"queue", "confirmation"}
 STALE_AFTER = timedelta(days=21)  # a candidate waiting this long for confirmation items goes to "needs a person"
 MAX_PENDING = 3  # a phase that recorded this many unrun attempts stops retrying
 SCHEMA = """
@@ -449,31 +452,39 @@ class Scheduler:
                      if led.get(name, {}).get("status") == instrument_ledger.REPORT_ONLY}
         return hold, untrusted
 
-    def _finish_stack_reverts(self, directory: Path, records: list[dict], out: dict) -> None:
-        """Revert any loop-made promotion a stack check failed and nobody reverted yet: the revert may have
-        been lost to a crash between the two writes. A person's promotion or a revert goes to a person."""
-        _, history = ledger.champion(directory)
+    def _finish_stack_reverts(self, directory: Path, records: list[dict], out: dict,
+                              only: set[str] | None = None) -> None:
+        """Act on failed stack checks whose target nobody reverted. The loop reverts a promotion it made
+        (proposer kind `queue` or `confirmation`) while the champion still holds that promotion's values,
+        which also finishes a revert a crash lost between two writes. Anything else (a person's run, a
+        revert, a value changed since) is put to a person, on the day the check failed only, so the report
+        doesn't repeat it forever. `only` limits this to the given stack records."""
+        champion, history = ledger.champion(directory)
         by_id = {r["id"]: r for r in records}
         reverted = {r["proposer"].get("source") for r in records if r["proposer"].get("kind") == "revert"}
+        now = self.clock()
         for r in records:
             target = by_id.get(r["proposer"].get("source"))
-            if r["decision"]["status"] != "stack_failed" or target is None or target["id"] not in history:
+            if (r["decision"]["status"] != "stack_failed" or (only is not None and r["id"] not in only)
+                    or target is None or target["id"] not in history or target["id"] in reverted):
                 continue
-            if target["id"] in reverted:
-                continue
-            if target["decision"].get("by") == "auto" and target["proposer"].get("kind") != "revert":
+            in_force = all(champion.values[k] == knobs_value(v["to"]) for k, v in target["change"]["params"].items())
+            loop_made = target["proposer"].get("kind") in LOOP_KINDS
+            entry = {"fitness": r["eval"].get("fitness"), "latest": target["id"], "record": r["id"]}
+            if loop_made and in_force:
                 rev = ledger.revert_record(directory, target["id"], f"Stack check {r['id']} showed the promotions "
                                                                     "together worse than without this one.", by="auto",
-                                           at=iso(self.clock()))
+                                           at=iso(now))
                 ledger.write(directory, [rev])
-                out["stacks"].append({"fitness": r["eval"].get("fitness"), "latest": target["id"], "action": "reverted",
-                                      "record": r["id"], "reverted": rev["id"]})
-            else:
-                out["stacks"].append({"fitness": r["eval"].get("fitness"), "latest": target["id"],
-                                      "action": "needs a person", "record": r["id"],
+                reverted.add(target["id"])
+                out["stacks"].append({**entry, "action": "reverted", "reverted": rev["id"]})
+            elif now - campaign.decided_at(r) <= timedelta(days=1):
+                why = ("its values have changed since" if not in_force
+                       else "a revert" if target["proposer"].get("kind") == "revert" else "started by a person")
+                out["stacks"].append({**entry, "action": "needs a person",
                                       "note": f"stack check {r['id']} found the promotions together worse; {target['id']} "
-                                              f"was {'a revert' if target['proposer'].get('kind') == 'revert' else 'made by a person'}, "
-                                              "so the loop won't undo it"})
+                                              f"is {why}, so the loop won't undo it. Revert it with `harness iterate "
+                                              f"revert {target['id']} --reason ...`, or leave it in force"})
 
     def experiments(self) -> dict:
         directory = self.cfg.ledger_dir
@@ -483,28 +494,30 @@ class Scheduler:
         self._finish_stack_reverts(directory, ledger.records(directory), out)
         records, configs = ledger.records(directory), ledger.configs(directory)
         champion, _ = ledger.champion(directory)
-        blocked = set()
+        blocked: dict[str, str] = {}  # fitness -> why its specs can't run this cycle
         for s in campaign.unmeasured(records, configs, {n: c.knobs for n, c in self.catalog.items()}, champion):
             latest = next(r for r in records if r["id"] == s.latest)
             profile = latest["proposer"].get("profile") or config.profile_name()
             hold, untrusted = self.rulers(s.fitness)
             entry = {"fitness": s.fitness, "latest": s.latest}
             if hold:
-                blocked.add(s.fitness)
+                blocked[s.fitness] = f"a stack check is due and held: {hold}"
                 out["stacks"].append({**entry, "action": "deferred", "note": hold})
                 continue
+            changes = _diff(s.baseline, s.champion)
             with profile_env(profile):
-                fit = campaign.Restricted(self._build(s.fitness, profile), untrusted=untrusted)
-                changes = _diff(s.baseline, s.champion)
-                needed = self.needed_models(fit, [s.baseline, s.champion])
+                base = campaign.Restricted(self._build(s.fitness, profile), untrusted=untrusted)
+                needed = self.needed_models(base, [s.baseline, s.champion])
                 probes = len(needed) if self.cfg.provider != "mock" else 0
-                est = self._estimate(fit, s.baseline, changes, len(fit.items()))
-                waiting = f"needs about {est} calls, {left - probes} left this cycle" if est > left - probes else None
+                fit = self._sized(base, dict(untrusted=untrusted, earliest=False), queue.CONFIRM_CLUSTERS, 1,
+                                  left - probes, s.baseline, changes)
+                waiting = (f"even its smallest set needs more than the {left - probes} calls left this cycle"
+                           if fit is None else None)
                 if not waiting:
                     waiting = self._probe_note(needed)
                     left, out["llm_calls"] = left - probes, out["llm_calls"] + probes
                 if waiting:
-                    blocked.add(s.fitness)
+                    blocked[s.fitness] = f"a stack check is due and waiting: {waiting}"
                     out["stacks"].append({**entry, "action": "deferred", "note": waiting})
                     continue
                 prop = Proposal(s.fitness, changes, f"The promotions in force, measured together on {s.fitness}.",
@@ -514,11 +527,11 @@ class Scheduler:
             out["llm_calls"] += calls
             status = recs[0]["decision"]["status"]
             entry.update(action=status, record=recs[0]["id"])
-            if status == "stack_failed":
-                self._finish_stack_reverts(directory, ledger.records(directory), out)
-            elif status != "stack_ok":
-                blocked.add(s.fitness)
             out["stacks"].append(entry)
+            if status == "stack_failed":
+                self._finish_stack_reverts(directory, ledger.records(directory), out, only={recs[0]["id"]})
+            elif status != "stack_ok":
+                blocked[s.fitness] = f"its stack check didn't run: {recs[0]['decision']['reason'][:160]}"
 
         specs, errors = queue.load(self.cfg.queue_dir, self.catalog, now=now)
         out["errors"] = errors
@@ -526,7 +539,7 @@ class Scheduler:
             entry = {"spec": spec.id, "fitness": spec.fitness, "profile": spec.profile}
             out["specs"].append(entry)
             if spec.fitness in blocked:
-                entry.update(state="blocked", note="a stack check on its instrument is due and didn't run")
+                entry.update(state="blocked", note=blocked[spec.fitness])
                 continue
             left, calls = self._spec(spec, entry, now, left)
             out["llm_calls"] += calls
@@ -543,8 +556,9 @@ class Scheduler:
             return left, 0
         pending = [r for r in (ph.screen if ph.next == "screen" else ph.confirm) if r["decision"]["status"] == "pending"]
         if len(pending) >= MAX_PENDING:
-            entry.update(state="stale", note=f"the {ph.next} phase didn't run {len(pending)} times; "
-                                             f"last reason: {pending[-1]['decision']['reason'][:160]}")
+            entry.update(state="stale", note=f"the {ph.next} phase didn't run {len(pending)} times (last reason: "
+                                             f"{pending[-1]['decision']['reason'][:140]}); change what the spec tests "
+                                             "or give it a new id to try again")
             return left, 0
         champion, _ = ledger.champion(directory)
         if champion.with_changes(spec.knobs).hash == champion.hash:
@@ -559,17 +573,17 @@ class Scheduler:
         screen = ph.next == "screen"
         waited = now - (first_seen if screen else campaign.decided_at(ph.screen[-1]))
         with profile_env(spec.profile):
-            restricted = campaign.Restricted(
-                self._build(spec.fitness, spec.profile, spec.threads),
-                **({"by": cutoff, "max_clusters": queue.SCREEN_CLUSTERS} if screen
-                   else {"after": cutoff, "max_clusters": queue.CONFIRM_CLUSTERS}),
-                guardrails=spec.guardrails, untrusted=untrusted)
-            items = restricted.items()
-            clusters = len({it.cluster for it in items})
+            built = self._build(spec.fitness, spec.profile, spec.threads)
+            # A screen always keeps the fixture threads its spec names; the cap applies to the watcher's.
+            keep = frozenset(it.id for it in self.catalog[spec.fitness](list(spec.threads)).items()) \
+                if screen and spec.threads else frozenset()
+            window = {"by": cutoff} if screen else {"after": cutoff}
+            base = campaign.Restricted(built, **window, guardrails=spec.guardrails, untrusted=untrusted)
             if not screen:
+                clusters = len({it.cluster for it in base.items()})
                 if clusters < queue.MIN_CONFIRM_CLUSTERS:
                     entry.update(state="stale" if waited > STALE_AFTER else "waiting",
-                                 note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {restricted.cluster_unit}s "
+                                 note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {base.cluster_unit}s "
                                       f"rooted after {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
                     return left, 0
                 cap = campaign.weekly_cap(ledger.records(directory), now)
@@ -580,20 +594,24 @@ class Scheduler:
             else:
                 from harness.iterate.propose import is_settled
 
-                sha = {spec.fitness: restricted.instrument().get("dataset_sha256")}
-                if is_settled(prop, champion, ledger.records(directory), {spec.fitness: restricted.knobs},
-                              ledger.configs(directory), sha):
+                # Another spec version's candidate isn't a decision: its confirmation never ran.
+                decided = [r for r in ledger.records(directory)
+                           if not (r["proposer"].get("kind") == "queue" and r["decision"]["status"] == "candidate")]
+                sha = {spec.fitness: base.instrument().get("dataset_sha256")}
+                if is_settled(prop, champion, decided, {spec.fitness: base.knobs}, ledger.configs(directory), sha):
                     entry.update(state="done", note="the ledger already decided this change against an equivalent "
                                                     "champion on the same items; screening it again would test them twice")
                     return left, 0
-            needed = self.needed_models(restricted, [champion, champion.with_changes(spec.knobs)])
+            needed = self.needed_models(base, [champion, champion.with_changes(spec.knobs)])
             probes = len(needed) if self.cfg.provider != "mock" else 0
             budget = min(spec.screen_calls if screen else spec.confirm_calls, left) - probes
-            est = self._estimate(restricted, champion, spec.knobs, len(items))
-            if est > budget:
-                stale = waited > STALE_AFTER
-                entry.update(state="stale" if stale else "deferred",
-                             note=f"needs about {est} calls; {budget} available to it this cycle")
+            restricted = self._sized(base, dict(**window, guardrails=spec.guardrails, untrusted=untrusted, keep=keep),
+                                     queue.SCREEN_CLUSTERS if screen else queue.CONFIRM_CLUSTERS,
+                                     1 if screen else queue.MIN_CONFIRM_CLUSTERS, budget, champion, spec.knobs)
+            if restricted is None:
+                entry.update(state="stale" if waited > STALE_AFTER else "deferred",
+                             note=f"even its smallest set of items needs more than the {budget} calls available "
+                                  "to it this cycle")
                 return left, 0
             waiting = self._probe_note(needed)
             if waiting:
@@ -603,6 +621,19 @@ class Scheduler:
         entry.update(state="ran", phase=ph.next, record=recs[0]["id"], decision=recs[0]["decision"]["status"],
                      note=recs[0]["decision"]["reason"][:200])
         return left - probes - calls, probes + calls
+
+    def _sized(self, base: campaign.Restricted, kwargs: dict, cap: int, floor: int, budget: int, champion,
+               changes: dict) -> campaign.Restricted | None:
+        """The instrument limited to the most clusters, up to `cap` and at least `floor`, whose run fits
+        `budget`; None when even `floor` doesn't. Items are read once; the cut is a pure function of them."""
+        items = base.items()
+        earliest = kwargs.get("earliest", "after" in kwargs)
+        keep = kwargs.get("keep", frozenset())
+        for k in range(cap, floor - 1, -1):
+            chosen = campaign.limit_clusters(items, k, earliest=earliest, keep=keep)
+            if self._estimate(base, champion, changes, len(chosen)) <= budget:
+                return campaign.Restricted(base.fit, **{**kwargs, "max_clusters": k, "earliest": earliest})
+        return None
 
     def write_report(self) -> dict:
         now = self.clock()
@@ -645,6 +676,11 @@ class Scheduler:
         path.write_text(report.render(data), encoding="utf-8")
         self.state.save_report(now.date().isoformat(), path, now)
         return {"path": str(path)}
+
+
+def knobs_value(v):
+    """A ledger value in the form Config stores it: lists become sorted tuples."""
+    return tuple(sorted(v)) if isinstance(v, list) else v
 
 
 def api_error(e: Exception) -> str:

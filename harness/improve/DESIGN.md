@@ -74,14 +74,16 @@ An agent or a person writes `eval/experiments/queue/<id>.toml`. `queue.py`'s doc
 
 The spec then goes through two phases, both recorded in the ledger with the spec's id and a digest of what it tests (fitness, profile, knobs, guardrails, commit, thread files):
 
-1. **Screen** on the 40 clusters rooted closest before the cutoff. A pass under the paired gate makes the record a `candidate`, which never touches the champion.
-2. **Confirm** on the first 30 clusters rooted after the cutoff, once there are at least 20 (threads or accounts). A pass here is a promotion, subject to the weekly cap. Fixing the set keeps a confirmation's cost from growing while a candidate waits.
+1. **Screen** on the fixture threads the spec names plus up to 40 more clusters rooted closest before the cutoff. A pass under the paired gate makes the record a `candidate`, which never touches the champion.
+2. **Confirm** on up to the first 30 clusters rooted after the cutoff, once there are at least 20 (threads or accounts). A pass here is a promotion, subject to the weekly cap.
+
+Each phase uses as many clusters, up to its cap, as its call budget covers, so its cost stops growing while the watcher keeps adding threads. A confirmation that can't afford 20 clusters waits.
 
 The cutoff is the later of `proposed_at` and when the loop first saw this version of the file, so a backdated spec can't confirm on items its author had seen, and a `proposed_at` in the future is refused. Editing what a spec tests changes its digest, and the edited spec is screened from scratch rather than confirmed on the old screen. Before either phase the loop sends every model it needs (the detectors, the veto, the model knobs) a five-token request, and waits if one refuses: on 2026-10-16 the GPT detector's pool answered 429, and a screen would have spent its budget on retries. It also skips a screen the ledger already decided on the same items.
 
 A candidate that waits more than 21 days, a phase that can't fit its budget for that long, or a phase that fails to run three times goes to "needs a person". So does every refused spec file.
 
-**Stack checks.** Before any queued phase, the loop measures any combination of promotions that no run scored together (`campaign.unmeasured`, in `eval/experiments/DESIGN.md`). When a check fails, the loop reverts the later promotion only if the loop made it and it isn't itself a revert; a person's promotion, or a revert, goes to "needs a person". A failed check whose revert was lost to a crash is finished at the start of the next cycle.
+**Stack checks.** Before any queued phase, the loop measures any combination of promotions that no run scored together (`campaign.unmeasured`, in `eval/experiments/DESIGN.md`), on up to 30 of the newest clusters its budget covers. When a check fails, the loop reverts the later promotion only if the loop made it (a queue confirmation or an engine confirmation) and the champion still holds its values. A promotion from a run a person started, a revert, or a value that has changed since goes to "needs a person" in that day's report. A failed check whose revert a crash lost is finished at the start of the next cycle.
 
 The action lineup instrument confirms on the watcher's threads, which `ActionLineup(extra_threads=...)` now accepts beside fixture files. The qualify instrument's items are the dataset's posts, all from before any proposal, so a qualify candidate can't be confirmed until fresh posts get tier labels. That gap is listed below.
 

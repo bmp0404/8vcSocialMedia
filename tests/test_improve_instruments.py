@@ -300,3 +300,17 @@ def test_rescore_writes_every_instrument_and_reports_failures(tmp_path, monkeypa
                                           instruments=(scorers.SlopGate, scorers.Panel))
     assert set(led["instruments"]) == {"slop_gate"} and errors == {"panel": "RuntimeError: panel file gone"}
     assert {e["event"] for e in events} == {"first seen", "status"}
+
+
+def test_the_lineup_detector_scores_only_sgu_replies_after_its_cutoff(tmp_path):
+    from watch_threads import sid
+
+    texts = [f"reply number {i} with words" for i in range(6)]
+    ev = _evidence(tmp_path, [texts], [30, 12, 6, 3, 1, 0])
+    root = ev.rolling[0].group
+    before = SguReply("a-old", sid(CUT - timedelta(hours=1)), root, "my take on it here", "", 3.0, 10, 0.9, 24, None, None)
+    after = SguReply("a-new", sid(CUT + timedelta(days=4)), root, "my take on it here", "", 3.0, 10, 0.4, 24, None, None)
+    ev.sgu = [before, after]
+    llm = FixedLLM({"ai_reply": 1})
+    s = scorers.LineupDetector().score(ev, CUT, _fixed_ctx(tmp_path, llm))["sgu"]
+    assert s.n == 1 and llm.calls == 2  # one thread lineup, one _sgu_ lineup; the old reply never asked about

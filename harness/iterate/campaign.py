@@ -95,18 +95,22 @@ def rooted_by(items: list[Item], cutoff: datetime) -> list[Item]:
     return [it for it in items if it.root_at <= cutoff]
 
 
-def limit_clusters(items: list[Item], k: int, *, earliest: bool) -> list[Item]:
-    """The items of the `k` clusters whose first item was rooted earliest (or latest), ties by cluster name.
-    A confirmation keeps the first clusters after its cutoff, so the set it is judged on stops growing; a
-    screen keeps the ones closest to the proposal."""
+def limit_clusters(items: list[Item], k: int, *, earliest: bool, keep: frozenset = frozenset()) -> list[Item]:
+    """Every item in `keep` (by id), plus the items of the `k` other clusters whose first item was rooted
+    earliest (or latest), ties by cluster name. A confirmation keeps the first clusters after its cutoff, so
+    the set it is judged on stops growing; a screen keeps the ones closest to the proposal and always the
+    fixture threads its spec names."""
     _need_times(items)
+    kept_clusters = {it.cluster for it in items if it.id in keep}
     first: dict = {}
     for it in items:
+        if it.cluster in kept_clusters:
+            continue
         if it.cluster not in first or it.root_at < first[it.cluster]:
             first[it.cluster] = it.root_at
     ordered = sorted(first, key=lambda c: (first[c], repr(c)), reverse=not earliest)
-    keep = set(ordered[:k])
-    return [it for it in items if it.cluster in keep]
+    chosen = kept_clusters | set(ordered[:k])
+    return [it for it in items if it.cluster in chosen]
 
 
 class Restricted:
@@ -119,15 +123,19 @@ class Restricted:
 
     def __init__(self, fit, *, after: datetime | None = None, by: datetime | None = None,
                  guardrails: dict[str, float] | None = None, max_clusters: int | None = None,
+                 earliest: bool | None = None, keep: frozenset = frozenset(),
                  untrusted: dict[str, str] | None = None):
-        """`untrusted` maps a guardrail metric to why its instrument may not gate (the instrument ledger
-        made it report-only); that metric is still reported but no longer blocks a promotion."""
+        """`max_clusters` caps the clusters used besides the `keep` item ids, the earliest ones when
+        `earliest` (default: earliest for a confirmation, latest otherwise). `untrusted` maps a guardrail
+        metric to why its instrument may not gate (the instrument ledger made it report-only); that metric
+        is still reported but no longer blocks a promotion."""
         if after is not None and by is not None:
             raise ValueError("pass after= (a confirmation) or by= (a screen), not both")
         self.fit = fit
         self.after = _aware(after, "after") if after is not None else None
         self.by = _aware(by, "by") if by is not None else None
-        self.max_clusters = max_clusters
+        self.max_clusters, self.keep = max_clusters, frozenset(keep)
+        self.earliest = (after is not None) if earliest is None else earliest
         for attr in ("name", "stage", "unit", "cluster_unit", "primary", "knobs", "llm_opinion"):
             setattr(self, attr, getattr(fit, attr))
         self.guardrails = dict(guardrails or {})
@@ -157,7 +165,7 @@ class Restricted:
         elif self.by is not None:
             items = rooted_by(items, self.by)
         if self.max_clusters is not None:
-            items = limit_clusters(items, self.max_clusters, earliest=self.by is None)
+            items = limit_clusters(items, self.max_clusters, earliest=self.earliest, keep=self.keep)
         return items
 
     def instrument(self) -> dict:

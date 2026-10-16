@@ -92,14 +92,17 @@ class Spec:
     summary: str | None = None
     guardrails: dict[str, float] = field(default_factory=dict)
     threads: tuple[Path, ...] = ()  # fixture thread files, for instruments that take them
+    thread_names: tuple[str, ...] = ()  # the same files as the spec names them, relative to the repository
     screen_calls: int = DEFAULT_CALLS
     confirm_calls: int = DEFAULT_CALLS
 
     @property
     def digest(self) -> str:
         """A hash of everything that decides what the spec tests, but not its prose."""
+        files = [[name, hashlib.sha256(path.read_bytes()).hexdigest()[:12]]
+                 for name, path in zip(self.thread_names, self.threads)]
         what = {"fitness": self.fitness, "profile": self.profile, "knobs": self.knobs, "kind": self.kind,
-                "commit": self.commit, "guardrails": self.guardrails, "threads": [p.name for p in self.threads]}
+                "commit": self.commit, "guardrails": self.guardrails, "threads": files}
         return hashlib.sha256(json.dumps(what, sort_keys=True).encode()).hexdigest()[:12]
 
     def proposer(self, phase: str, cutoff: datetime) -> dict:
@@ -238,7 +241,7 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT, now
                 profile=data["profile"], fitness=data["fitness"], hypothesis=data["hypothesis"].strip(),
                 knobs=dict(knob_values), kind=kind, source=data.get("source"), label=data.get("label", ""),
                 commit=commit, summary=summary, guardrails={k: float(v) for k, v in guardrails.items()},
-                threads=tuple(repo / t for t in threads), screen_calls=calls["screen_calls"],
+                threads=tuple(repo / t for t in threads), thread_names=tuple(threads), screen_calls=calls["screen_calls"],
                 confirm_calls=calls["confirm_calls"])
 
 

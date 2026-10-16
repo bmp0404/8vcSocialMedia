@@ -335,16 +335,109 @@ def test_a_failed_stack_check_on_a_persons_promotion_asks_a_person(setup):
 
     cfg, make, _, clock = setup
     (cfg.queue_dir / "reader.toml").unlink()
-    (prom,) = run_batch([Proposal("fake", {"qualify.panel": "single_reader"}, "promoted by hand", {"kind": "manual"})],
-                        {"fake": FakeFit()}, provider="mock", max_calls=1000, directory=cfg.ledger_dir, now=clock.t)
-    rec = ledger.records(cfg.ledger_dir)[0]
-    rec["decision"]["by"] = "human"
-    (cfg.ledger_dir / f"{rec['id']}.json").write_text(__import__("json").dumps(rec), encoding="utf-8")
+    # `harness iterate run` by hand: the gate decides ("by": "auto"), but a person started the run.
+    (rec,) = run_batch([Proposal("fake", {"qualify.panel": "single_reader"}, "promoted by hand", {"kind": "manual"})],
+                       {"fake": FakeFit()}, provider="mock", max_calls=1000, directory=cfg.ledger_dir, now=clock.t)
+    assert rec["decision"]["by"] == "auto"
     stack = {**rec, "id": "exp-stack-y", "proposer": {"kind": "stack", "source": rec["id"]},
              "decision": {"status": "stack_failed", "by": "auto", "at": (clock.t + timedelta(minutes=1)).isoformat(),
                           "reason": "worse together"}}
     ledger.write(cfg.ledger_dir, [stack])
     s = make()
     out = s.experiments()
-    assert out["stacks"][0]["action"] == "needs a person" and "made by a person" in out["stacks"][0]["note"]
+    assert out["stacks"][0]["action"] == "needs a person" and "started by a person" in out["stacks"][0]["note"]
     assert ledger.champion(cfg.ledger_dir)[0].get("qualify.panel") == "single_reader"
+    clock.t += timedelta(days=2)
+    assert make().experiments()["stacks"] == []  # asked on the day it failed, not every day after
+
+
+class Many(FakeFit):
+    """300 items in 150 clusters rooted around T0: more than any phase may use."""
+
+    def items(self):
+        return [Item(f"m{n}", f"k{n // 2:03d}", None, root_at=T0 + timedelta(hours=n - 150)) for n in range(300)]
+
+
+def test_a_phase_uses_at_most_its_cluster_cap_and_shrinks_to_fit_its_budget(setup):
+    from harness.improve import queue as q
+
+    cfg, make, _, clock = setup
+    s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok", catalog={"fake": FakeFit},
+                      build=lambda fitness, profile, threads=(): Many())
+    s.experiments()
+    (screen,) = _records(cfg)
+    assert screen["eval"]["clusters"] == q.SCREEN_CLUSTERS  # FakeFit costs 1 call per item, 2 items a cluster
+    assert screen["eval"]["instrument"]["max_clusters"] == q.SCREEN_CLUSTERS
+    clock.t += timedelta(hours=1)
+    small = SPEC.replace("[change]", '[budget]\nconfirm_calls = 150\n\n[change]')
+    (cfg.queue_dir / "reader.toml").write_text(small, encoding="utf-8")  # a new digest: screened again first
+    s.experiments()
+    s.experiments()
+    confirm = [r for r in _records(cfg) if r["proposer"]["phase"] == "confirm"][-1]
+    # 150 calls cover 25 clusters (3 arms x 2 items x 25); the first ones rooted after the cutoff.
+    assert confirm["eval"]["clusters"] == 25 and confirm["eval"]["instrument"]["max_clusters"] == 25
+
+
+def test_an_edited_spec_gets_its_own_first_seen(setup):
+    cfg, make, _, clock = setup
+    s = make()
+    s.experiments()
+    clock.t += timedelta(hours=3)
+    edited = SPEC.replace('"qualify.panel" = "single_reader"', '"qualify.batch" = 1')
+    (cfg.queue_dir / "reader.toml").write_text(edited, encoding="utf-8")
+    s.experiments()
+    second = _records(cfg)[-1]
+    assert second["eval"]["instrument"]["items_rooted_by"] == clock.t.isoformat()
+
+
+def test_a_report_only_primary_also_holds_a_due_stack_check(setup, monkeypatch):
+    from harness.improve import instruments as led
+    from harness.iterate.runner import Proposal, run_batch
+
+    cfg, make, _, clock = setup
+    (cfg.queue_dir / "reader.toml").unlink()
+    monkeypatch.setattr(sch, "RULERS", {"fake": {"primary": "detector"}})
+    led.save({"instruments": {"detector": {"status": "report_only", "reason": "includes chance"}}}, cfg.instruments_path)
+
+    class Other(FakeFit):
+        name, knobs = "other", ("qualify.panel",)
+
+    run_batch([Proposal("other", {"qualify.panel": "single_reader"}, "moves a shared knob", {"kind": "queue"})],
+              {"other": Other()}, provider="mock", max_calls=1000, directory=cfg.ledger_dir, now=clock.t)
+    s = sch.Scheduler(cfg, clock=clock, echo=False, facts_runner=lambda p, x: "ok",
+                      catalog={"fake": FakeFit, "other": Other}, build=lambda fitness, profile, threads=(): FakeFit())
+    out = s.experiments()
+    assert [st["action"] for st in out["stacks"]] == ["deferred"] and "detector is report-only" in out["stacks"][0]["note"]
+    assert [r["proposer"]["kind"] for r in _records(cfg)] == ["queue"]
+
+
+def test_a_crash_revert_is_put_to_a_person_once_the_value_has_changed(setup):
+    from harness.iterate.runner import Proposal, run_batch
+
+    cfg, make, _, clock = setup
+    (cfg.queue_dir / "reader.toml").unlink()
+    (prom,) = run_batch([Proposal("fake", {"qualify.panel": "single_reader"}, "by the loop", {"kind": "queue"})],
+                        {"fake": FakeFit()}, provider="mock", max_calls=1000, directory=cfg.ledger_dir, now=clock.t)
+    stack = {**prom, "id": "exp-stack-z", "proposer": {"kind": "stack", "source": prom["id"]},
+             "decision": {"status": "stack_failed", "by": "auto", "at": (clock.t + timedelta(minutes=1)).isoformat(),
+                          "reason": "worse together"}}
+    ledger.write(cfg.ledger_dir, [stack])
+    # Before the restart, a person set the same knob to a third value.
+    later = {**prom, "id": "exp-later", "proposer": {"kind": "manual"},
+             "change": {**prom["change"], "params": {"qualify.panel": {"from": "single_reader", "to": "personas"}}},
+             "decision": {**prom["decision"], "at": (clock.t + timedelta(minutes=2)).isoformat()}}
+    ledger.write(cfg.ledger_dir, [later])
+    out = make().experiments()
+    assert out["stacks"][0]["action"] == "needs a person" and "changed since" in out["stacks"][0]["note"]
+
+
+def test_rulers_name_real_instruments_and_real_guardrails():
+    from harness.improve import scorers
+    from harness.iterate.fitness.action import ActionLineup
+
+    names = {c.name for c in scorers.ALL}
+    guards = {m.name for m in ActionLineup.secondaries if m.guardrail}
+    for fitness, spec in sch.RULERS.items():
+        assert fitness in sch.default_catalog()
+        assert spec["primary"] in names
+        assert set(spec["guardrails"]) <= guards and set(spec["guardrails"].values()) <= names

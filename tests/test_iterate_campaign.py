@@ -302,3 +302,9 @@ def test_a_stack_check_fails_when_the_combination_fails_on_more_items(tmp_path):
     (rec,) = run_batch([P(changes, kind="stack", source=s.latest)], {"fake": fake}, provider="mock",
                        max_calls=1000, directory=tmp_path, champion=s.baseline, mode="stack")
     assert rec["decision"]["status"] == "stack_failed" and "failed on 8 more items" in rec["decision"]["reason"]
+
+
+def test_limit_clusters_always_keeps_the_named_items_and_caps_the_rest():
+    items = Fake().items()
+    kept = campaign.limit_clusters(items, 2, earliest=False, keep=frozenset({"i0"}))
+    assert sorted({it.cluster for it in kept}) == ["c0", "c8", "c9"]
