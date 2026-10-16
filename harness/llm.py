@@ -16,6 +16,13 @@ MAX_TOKENS = int(os.getenv("HARNESS_MAX_TOKENS", "16000"))
 
 
 class LLM:
+    # Read by harness/baml_adapter.py, which builds a BAML function's client from them:
+    # - `provider` ("anthropic", "openai", "xai" or "mock") and `model`, set by each backend below.
+    # - `on_baml_event`, optional: it receives every BAML ai.events.Event. A BAML call skips
+    #   self.client, so a meter that counts tokens there has to read a BAML call's tokens from these.
+    # They are deliberately not class attributes here: a wrapper that forwards unknown attributes to
+    # the LLM it wraps through __getattr__ would find base-class defaults instead of forwarding.
+
     def complete(self, system: str, prompt: str) -> str:
         raise NotImplementedError
 
@@ -34,6 +41,8 @@ class LLM:
 
 
 class AnthropicLLM(LLM):
+    provider = "anthropic"
+
     def __init__(self, model: str):
         import anthropic
 
@@ -51,11 +60,12 @@ class AnthropicLLM(LLM):
 
 
 class OpenAICompatLLM(LLM):
-    def __init__(self, model: str, api_key: str | None, base_url: str | None):
+    def __init__(self, model: str, api_key: str | None, base_url: str | None, provider: str = "openai"):
         from openai import OpenAI
 
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model = model
+        self.provider = provider
 
     def complete(self, system: str, prompt: str) -> str:
         resp = self.client.chat.completions.create(
@@ -71,6 +81,7 @@ class MockLLM(LLM):
     # Mock detection has to survive wrappers: a tracing proxy fails isinstance(llm, MockLLM), and a
     # mock run then fetched live data and spent the real budget. Callers read this attribute instead.
     is_mock = True
+    provider = "mock"
 
     def complete(self, system: str, prompt: str) -> str:
         return "(mock completion)"
@@ -103,7 +114,7 @@ def get_llm(provider: str | None = None) -> LLM:
     if provider == "anthropic":
         return AnthropicLLM(model)
     if provider == "xai":
-        return OpenAICompatLLM(model, os.getenv("XAI_API_KEY"), "https://api.x.ai/v1")
+        return OpenAICompatLLM(model, os.getenv("XAI_API_KEY"), "https://api.x.ai/v1", provider="xai")
     if provider == "openai":
         return OpenAICompatLLM(model, os.getenv("OPENAI_API_KEY"), os.getenv("OPENAI_BASE_URL") or None)
     raise SystemExit(f"Unknown HARNESS_PROVIDER '{provider}'.")
