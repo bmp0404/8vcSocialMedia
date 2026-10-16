@@ -97,14 +97,22 @@ class Guard:
         self.budget_left -= 1
 
     def seed(self, calls_dir: Path = CALLS_DIR) -> None:
-        """Start each model's window from its logged calls, so a restart doesn't forget a failing streak."""
+        """Start each model's window from its last logged calls, so a restart doesn't forget a failing
+        streak. Only the latest window counts: a model that failed an hour ago and has answered its
+        last 200 calls is not stopped."""
         rows = []
         if calls_dir.is_dir():
             for path in calls_dir.glob("*.jsonl"):
                 with path.open(encoding="utf-8") as f:
                     rows += [(r["at"], r["model"], bool(r.get("ok"))) for r in map(json.loads, f)]
+        latest = {}
         for _, model, ok in sorted(rows):
-            self.record(ok, model)
+            latest.setdefault(model, deque(maxlen=FAIL_WINDOW)).append(ok)
+        for model, window in latest.items():
+            self.recent[model] = deque(window, maxlen=FAIL_WINDOW)
+            failed = window.count(False)
+            if len(window) == FAIL_WINDOW and failed > FAIL_SHARE * FAIL_WINDOW:
+                self.stopped_models[model] = f"{failed} of its last {FAIL_WINDOW} calls failed"
 
     def record(self, ok: bool, model: str = "") -> None:
         window = self.recent.setdefault(model, deque(maxlen=FAIL_WINDOW))

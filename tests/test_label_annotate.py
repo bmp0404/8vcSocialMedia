@@ -219,3 +219,12 @@ def test_rationales_from_ref_reads_a_local_branch(tmp_path, monkeypatch):
     assert rationales_from_ref("backup", tmp_path / "why") == {"r.jsonl": 1}
     assert json.loads((tmp_path / "why" / "r.jsonl").read_text(encoding="utf-8")) == {
         "item_id": "x:1", "run_id": "r", "at": "t", "rationale": "because"}
+
+
+def test_guard_seed_forgets_a_streak_the_model_has_recovered_from(tmp_path):
+    old = [{"at": f"2026-10-16T08:{i // 60:02d}:{i % 60:02d}", "model": "gpt", "ok": False} for i in range(200)]
+    new = [{"at": f"2026-10-16T10:{i // 60:02d}:{i % 60:02d}", "model": "gpt", "ok": i % 10 != 0} for i in range(200)]
+    (tmp_path / "run.jsonl").write_text("".join(json.dumps(r) + "\n" for r in old + new), encoding="utf-8")
+    g = annotate.Guard(budget_left=10)
+    g.seed(tmp_path)
+    assert g.stopped is None and g.recent["gpt"].count(False) == 20
