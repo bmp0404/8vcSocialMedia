@@ -229,6 +229,9 @@ export function toast(message, { kind = "info", ms = 4200 } = {}) {
 
 const GLOBAL_KEYS = [
   ["g q", "Queue"],
+  ["g l", "Loop"],
+  ["g e", "Experiments"],
+  ["g m", "Memory"],
   ["?", "This sheet"],
 ];
 
@@ -263,7 +266,7 @@ export function setModal(on) {
 
 // --- Keyboard -------------------------------------------------------------------------------
 
-const GO = { q: "queue" };
+const GO = { q: "queue", l: "loop", e: "experiments", m: "memory" };
 
 function onKey(e) {
   // ⌘↵ / Ctrl+↵ reach the view (clear from the editor); other ⌘ chords stay the browser's.
@@ -320,6 +323,7 @@ export async function boot() {
   });
   setHints([
     ["?", "shortcuts"],
+    ["g", "then q l e m to switch"],
   ]);
   await route();
 }

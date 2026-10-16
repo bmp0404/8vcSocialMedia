@@ -329,7 +329,8 @@ function renderList() {
       html`<div class="state">
         <span class="label">Empty board</span>
         <h2>No runs to review yet</h2>
-        <p>A round writes its drafts here. Run <code>uv run python -m harness run --narratives 2 --per-mind 1</code> to start one.</p>
+        <p>A round writes its drafts here. Start one from the Loop view, or run <code>uv run python -m harness run --narratives 2 --per-mind 1</code>.</p>
+        <a class="btn btn-quiet" href="#/loop">Open the Loop</a>
       </div>`,
     );
     return;

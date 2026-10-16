@@ -1,14 +1,19 @@
 """The review server: the original API keeps its shapes, POSTs only come from the page itself,
-static files can't escape their folder, and overrules and takes land in the hand-off file."""
+static files can't escape their folder, overrules and takes land in the hand-off file, and a round
+started from the page always runs the same command."""
 
 import io
 import json
+import os
+import queue
+import signal
+import sys
 
 import pytest
 
 from harness import config, memory
 from harness.models import Action
-from harness.review import Handler, checkpoint
+from harness.review import Handler, checkpoint, rounds
 
 PORT = 8765
 HELD = "https://x.com/WNBA/status/9"
@@ -230,6 +235,81 @@ def test_decision_log_problems_are_named(port, store):
     assert code == 500 and f"not {store}" in res["error"]
 
 
+class FakeRound:
+    """Stands in for a round's child process. It records how it was started, replays the lines a
+    test feeds it, and exits when the test or the runner's stop says so. Nothing runs."""
+
+    pid = 2**22 + 1  # above every OS's pid limit; the `child` fixture swaps os.killpg out anyway
+
+    def __init__(self, argv, **kwargs):
+        self.argv, self.kwargs = argv, kwargs
+        self.feed = queue.SimpleQueue()
+        self.stdout = iter(self.feed.get, None)
+        self.code = None
+
+    def say(self, *lines):
+        for line in lines:
+            self.feed.put(line + "\n")
+
+    def exit(self, code):
+        self.code = code
+        self.feed.put(None)
+
+    def wait(self):
+        return self.code
+
+
+@pytest.fixture
+def child(port, monkeypatch):
+    """A fresh runner whose rounds are FakeRounds; yields the ones started. Its stop reaches them
+    through a stand-in os.killpg, so no test signals a real process."""
+    started = []
+
+    def popen(argv, **kwargs):
+        started.append(FakeRound(argv, **kwargs))
+        return started[-1]
+
+    def killpg(pid, sig):
+        next(p for p in started if p.pid == pid).exit(-sig)
+
+    monkeypatch.setattr(rounds, "RUNNER", rounds.Runner())
+    monkeypatch.setattr(rounds.subprocess, "Popen", popen)
+    monkeypatch.setattr(rounds.os, "killpg", killpg, raising=False)
+    yield started
+    for p in started:
+        p.exit(0)
+    if rounds.RUNNER.pump:  # let the pump save into tmp_path before monkeypatch restores OUT_DIR
+        rounds.RUNNER.pump.join(timeout=5)
+
+
+def test_request_data_never_reaches_a_rounds_command(port, child):
+    # The page can start a round but never shape its command line (lead's requirement).
+    code, rnd = request(port, "POST", "/api/rounds", {"provider": "openai", "argv": ["--top", "99"]})
+    assert code == 200 and rnd["status"] == "running", rnd
+    (proc,) = child
+    assert proc.argv == [sys.executable, *rounds.ARGV]
+    assert proc.kwargs["env"] == {**os.environ, "PYTHONUNBUFFERED": "1"} and "shell" not in proc.kwargs
+    assert request(port, "POST", "/api/rounds", {})[0] == 409  # one round at a time
+    proc.say("[observe] sample: 4 signals", "[decide] 5 minds proposed 5 actions", "Top 1 recommendations (run 3) -> x")
+    proc.exit(0)
+    rounds.RUNNER.pump.join(timeout=5)
+    assert not rounds.RUNNER.pump.is_alive()
+    snap = rounds.RUNNER.snapshot()
+    assert (snap["status"], snap["run_id"], snap["exit_code"]) == ("done", 3, 0)
+    assert [ln["stage"] for ln in snap["lines"]] == ["observe", "decide", None]
+
+
+def test_a_stopped_round_stays_stopped_after_it_exits(port, child):
+    assert rounds.last_saved() is None  # no out/rounds/ yet
+    request(port, "POST", "/api/rounds", {})
+    code, rnd = request(port, "POST", "/api/rounds/stop", {})
+    assert code == 200 and rnd["status"] == "stopped", rnd
+    rounds.RUNNER.pump.join(timeout=5)
+    assert not rounds.RUNNER.pump.is_alive()
+    assert (rounds.RUNNER.snapshot()["exit_code"], rounds.last_saved()["status"]) == (-signal.SIGTERM, "stopped")
+    assert request(port, "POST", "/api/rounds/stop", {})[0] == 409
+
+
 def test_gate_route_says_why_when_the_gate_is_missing(port):
     code, res = request(port, "POST", "/api/gate", {"text": "hello", "kind": "reply"})
     assert code == 200
@@ -239,6 +319,11 @@ def test_gate_route_says_why_when_the_gate_is_missing(port):
         assert res["available"] is False and "harness.minds.gate" in res["reason"]
     else:
         assert res["available"] is True and "passed" in res
+
+
+def test_notes_refuse_more_than_fifty_ids(port):
+    code, res = request(port, "GET", "/api/memory/notes?ids=" + ",".join(f"n{i}" for i in range(51)))
+    assert code == 400 and "at most 50" in res["error"], res
 
 
 def test_meta_lists_kill_reasons_matching_memory():

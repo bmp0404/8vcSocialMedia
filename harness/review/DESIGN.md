@@ -1,21 +1,22 @@
 # Clearance: the operator console
 
-Clearance is the local console that `python -m harness review` serves. A person uses it for the human half of 8VC's loop. They pick which drafts ship and edit them. They kill the off-message ones, overrule what the harness held back, and answer the questions it asks a person. This file is for teammates deciding what to build next in `harness/review/`.
+Clearance is the local console that `python -m harness review` serves. A person uses it for the human half of 8VC's loop. They pick which drafts ship and edit them. They kill the off-message ones, overrule what the harness held back, and answer the questions it asks a person. They also read what the loop, its experiments and its memory are doing. This file is for teammates deciding what to build next in `harness/review/`.
 
 ## What was here
 
 - `harness/review/index.html` on `main` was one page: a run picker, five filter tabs, one card per action with a textarea, a "Why this?" disclosure (rationale, critique, panel bars), and Approve and Kill buttons. Its keys were j, k, a, x, u and e.
 - `harness/review/__init__.py` served it with five routes. Any web page could POST an approval to it, because it read every body as JSON and checked neither Host nor Origin.
-- Nothing showed the post a reply answers, the drafts the harness considered and dropped, or its abstentions.
+- Nothing showed the post a reply answers, the drafts the harness considered and dropped, its abstentions, a live round, the self-iteration ledger or memory.
 
 ## What others built that this uses
 
 | Who | What | How Clearance uses it |
 | --- | --- | --- |
-| Will (`will/ui`, PR #11) | `harness/trace.py` writes `out/trace-live.json` during a run and `out/trace-run<id>.json` after it. `/console` is his observability page. | The Queue reads signals and narratives from the trace to show a reply's target post and the story behind a draft. Without a trace it says so and shows what the run's own records hold. Clearance carries none of Will's commits. |
+| Will (`will/ui`, PR #11) | `harness/trace.py` writes `out/trace-live.json` during a run and `out/trace-run<id>.json` after it. `/console` is his observability page. | The Queue reads signals and narratives from the trace to show a reply's target post and the story behind a draft. The Loop reads the live snapshot. Neither file exists until PR #11 lands, and both views say so and fall back to the round's own log. Clearance carries none of Will's commits. |
 | sam/action | `out/decisions-run<id>.json` (every opportunity: shipped, abstained with a reason code, or asked a person), `draft_meta.target`, `draft_meta.judge` (a veto, not a ranker), and `harness.minds.gate` with span offsets | The Held bay, overrules, the Your take bay, veto evidence, candidate drafts and the live slop underlines |
 | sam/observe | `reply_targets` with counts, followers and the top replies | The X preview and "Already in the replies" |
-| sam/memory | `memory.set_review(reasons=...)` | Kill reasons |
+| sam/memory | `memory.set_review(reasons=...)` and `harness.learning.views` | Kill reasons and the Memory view |
+| sam/iterate | `eval/experiments/<id>.json` (`iterate.experiment/v1`) | The Experiments view |
 | Dhilan (PR #9) | A hosted demo dashboard on Fly (`engine/demo/`) with isolated per-browser workspaces and mock rounds | Separate on purpose. His dashboard shows each subsystem to visitors on demo data. Clearance works on the real local store and writes the real hand-off file. |
 
 ## What each part is for
@@ -24,16 +25,19 @@ Sam asked that every addition earn its place. Each row says what the operator ca
 
 | Part | What the operator can now do | Checkpoint | Lines | Call |
 | --- | --- | --- | --- | --- |
-| Server hardening and routes | Nothing new to do. Other web pages can no longer approve drafts or frame the page through the operator's browser. Before, any site could POST an approval. | Deploy (the hand-off file) | 196 py | Keep |
-| Shell and design system | Move between views by key or rail, read what the console just did in the readback bar, and load fixture states. Every view builds on it, and Will's views can register in it. | All | 806 js, 1,514 css, 50 html | Keep |
-| Queue: the post as it looks on X | See the target post (author, followers, age, velocity, the replies already there) with the draft where it would land, instead of a bare URL and a textarea. | Qualify, Create | 1,502 js, 911 css, 357 py for every Queue row | Keep |
+| Server hardening and routes | Nothing new to do. Other web pages can no longer approve drafts, start paid rounds or frame the page through the operator's browser. Before, any site could POST an approval. | Deploy (the hand-off file) | 200 py | Keep |
+| Shell and design system | Move between views by key or rail, read what the console just did in the readback bar, and load fixture states. Every view builds on it, and Will's views can register in it. | All | 869 js, 1,688 css, 50 html | Keep |
+| Queue: the post as it looks on X | See the target post (author, followers, age, velocity, the replies already there) with the draft where it would land, instead of a bare URL and a textarea. | Qualify, Create | 1,503 js, 911 css, 357 py for every Queue row | Keep |
 | Queue: inline edit with the live slop gate | Edit in place with X's weighted character count, and see the gate underline the exact words it flags as you type, checked against the post being answered. | Create (the final edit) | in Queue | Keep |
 | Queue: Held bay and overrule | See every opportunity the harness held back and why, then release one of its drafts or write your own. Before, abstentions were invisible. | Qualify, Deploy | in Queue | Keep |
 | Queue: Your take bay | Answer the post lane's question in your own words. The answer ships verbatim. | Create (faces and stories) | in Queue | Keep |
 | Queue: evidence and candidates | See why the harness chose a draft: the story, the veto model's verdict in both orders, the panel's spread, the critic, and every other draft it wrote, with one button to swap one in. | Qualify | in Queue | Keep |
 | Queue: kill reasons, undo, keyboard flow | Strike with a reason in one extra key, undo the last verdict, and triage without the mouse. | Qualify | in Queue | Keep |
+| Loop | Start a small round from the page, watch each stage report in, then jump to its drafts. The brief asks for a live view of the loop. | Map, Plan (seeing what the loop picked) | 946 js, 795 css, 270 py | Keep. Reconcile it with Will's live view once PR #11 lands, because his trace is its data. |
+| Experiments | Read the self-iteration ledger: what is in force, what was promoted and reverted, and each effect with its interval against the noise floor. | Learn | 939 js, 858 css, 69 py | Keep. It shows "not on this branch" until sam/iterate's ledger merges. |
+| Memory | See what the harness believes, each belief's held-out evidence sentence, and when it must be retested. | Learn (interpret outcomes) | 1,027 js, 963 css, 74 py | Keep. It shows `lessons.md` until sam/memory merges. |
 | Eval reports | Backtest AUCs and fault verdicts | Learn | was about 1,200 | Cut. Will owns eval views, and the code is on `sam/ui` for him to take. |
-| Fixtures | Demo and test states a live run can't produce on demand: realistic, empty, error, and a stress scenario the tab generates | None (testing) | 679 json | Keep. The stress scenario is generated, not committed. |
+| Fixtures | Demo and test states a live run can't produce on demand: realistic, empty, error, and a stress scenario the tab generates | None (testing) | 923 json | Keep. The stress scenario is generated, not committed. |
 
 ```sh
 cd harness/review
@@ -45,6 +49,15 @@ n index.html                                                                  # 
 n static/js/views/queue.js static/js/components/xpost.js                      # Queue js
 n static/css/views/queue.css static/css/xpost.css                             # Queue css
 n checkpoint.py                                                               # Queue py
+n static/js/views/loop.js static/js/lib/rounds.js                             # Loop js
+n static/css/views/loop.css                                                   # Loop css
+n rounds.py                                                                   # Loop py
+n static/js/views/experiments.js static/js/components/ci.js                   # Experiments js
+n static/css/views/experiments.css                                            # Experiments css
+n experiments_api.py                                                          # Experiments py
+n static/js/views/memory.js                                                   # Memory js
+n static/css/views/memory.css                                                 # Memory css
+n memory_api.py                                                               # Memory py
 n static/fixtures/*.json                                                      # Fixtures
 ```
 
@@ -75,7 +88,7 @@ Colour carries meaning only: the two lane colours, green and red for a controlle
 | Create | Supply the faces and the final edit | Inline editing on the X preview, with X's weighted character count, the gate's per-type cap, and the slop gate underlining exact spans as you type. "Use this text" swaps in any other draft the harness wrote. A take is posted verbatim. |
 | Qualify | Kill anything off-message | Strike with a reason (keys 1 to 7 right after striking). Numbers and superlatives in a draft are flagged "Check before clearing". The critic's veto and the veto model's verdict are on the strip, and a person can clear over them. |
 | Deploy | Approve and own relationships | Clearing writes `out/approved-run<id>.json`. Follows render as the profile being followed, and mentions show who gets tagged. |
-| Learn | Interpret outcomes | Kill reasons, notes and edits feed sam/memory's learning. |
+| Learn | Interpret outcomes | Memory shows what the harness believes, each belief's held-out evidence sentence, and when it must be retested. Kill reasons, notes and edits feed sam/memory's learning. |
 
 ## How the Queue works
 
@@ -93,13 +106,13 @@ The page is plain ES modules served by the existing stdlib server, with no build
 
 Most of the console renders read-only data. The one stateful region, the editor, gets targeted updates so typing never loses the caret. A build step would cost every teammate a Node toolchain to change a label, for gains this console doesn't need. `lib/dom.js` provides an `html` tagged template that escapes every interpolated value, and `safeUrl` admits only http and https links from run data. Together they cover the injection risk a framework would otherwise handle. A view with heavy state shared across many components would change this call, and nothing here has one yet.
 
-Server routes live in modules that register through `routes.py` (`@route("GET", r"/api/...")`), so each view's API is its own file. Every request must carry a `127.0.0.1` or `localhost` Host header, which defeats DNS rebinding. Every POST must be `application/json`, and an Origin header, when the browser sends one, must be local. A web page can't send JSON across origins without a CORS preflight, which this server never answers. No other site can therefore approve drafts through the operator's browser. Static files resolve inside `static/` or return 404.
+Server routes live in modules that register through `routes.py` (`@route("GET", r"/api/...")`), so each view's API is its own file. Every request must carry a `127.0.0.1` or `localhost` Host header, which defeats DNS rebinding. Every POST must be `application/json`, and an Origin header, when the browser sends one, must be local. A web page can't send JSON across origins without a CORS preflight, which this server never answers. No other site can therefore approve drafts or start paid rounds through the operator's browser. Static files resolve inside `static/` or return 404.
 
 ## Fixtures
 
-`?fixture=realistic`, `empty` or `error` serves GETs from `static/fixtures/<name>.json` and keeps POSTs in the tab, for states a live run can't produce on demand. `?fixture=stress` builds itself in the tab from the realistic fixture (`static/js/lib/stress.js`): 160 strips, long and unbreakable text, mixed scripts, missing fields and unknown codes. A route a fixture doesn't list comes from the live server, so a fixture can stage one view while the others show what the branch really has. A run's hand-off (`/approved`) is built from the fixture's own verdicts. `?delay=1500` slows every response, to show loading states.
+`?fixture=realistic`, `empty` or `error` serves GETs from `static/fixtures/<name>.json` and keeps POSTs in the tab, for states a live run can't produce on demand. `?fixture=stress` builds itself in the tab from the realistic fixture (`static/js/lib/stress.js`): 160 strips, long and unbreakable text, mixed scripts, missing fields and unknown codes. A route a fixture doesn't list comes from the live server, so one fixture can stage the Queue and the Loop while the other views show what the branch really has. A run's hand-off (`/approved`) is built from the fixture's own verdicts. `?delay=1500` slows every response, to show loading states.
 
-The realistic fixture is built from real output. The Queue's run 31 comes from the integration worktree's runs 22 and 31 (real veto verdicts and decision logs), live run 5 (ESPN and Google News through anthropic), and sam/action's `x_threads.json` (real X posts and replies from 2026-10-15). A few reply drafts are written by hand to cover states no real run reached yet, and the real gate produced their findings. Timestamps written as `@now-38m` resolve at load, so post ages read as they did when captured.
+The realistic fixture is built from real output. The Queue's run 31 comes from the integration worktree's runs 22 and 31 (real veto verdicts and decision logs), live run 5 (ESPN and Google News through anthropic), and sam/action's `x_threads.json` (real X posts and replies from 2026-10-15). The Loop's round is the log of a real round, saved as run 14. A few reply drafts are written by hand to cover states no real run reached yet, and the real gate produced their findings. Timestamps written as `@now-38m` resolve at load, so post ages read as they did when captured.
 
 ## API routes
 
@@ -118,12 +131,17 @@ The first five routes are the original dashboard's and keep their shapes.
 | `POST /api/runs/<id>/overrule` | Release a hold: `{decision, candidate?, text, note?}` |
 | `POST /api/runs/<id>/takes` | Clear a person's answer to `ask_human`: `{decision, text, note?}` |
 | `POST /api/gate` | The slop gate on `{text, kind?, context?}`. `kind` defaults to `post`. |
+| `GET /api/loop` | The Loop view's board, round log and recent runs |
+| `POST /api/rounds`, `POST /api/rounds/stop` | Start or stop a round. A round runs a fixed small argv with the server's own provider, and stop ends its whole process group. |
+| `GET /api/experiments` | The self-iteration ledger |
+| `GET /api/memory`, `GET /api/memory/notes?ids=` | Beliefs, reflections, edit procedures and outcomes; notes by id, at most 50 at a time |
 
 ## Ruled out
 
 - **Porting the slop gate to JavaScript** for zero-latency checks. Two copies of the rules would drift, and the round trip to localhost takes a few milliseconds.
 - **A React or Preact build.** See Stack.
 - **Animating verdicts.** A strike line that draws for 200ms before the next strip appears would slow the one flow that has to be fast.
+- **Letting the page choose the round's provider.** The lead asked that no request data reach the command line. Start the server with `HARNESS_PROVIDER=...` instead.
 - **Saving draft edits before a verdict.** The store records an edit only with its verdict, so unsaved edits live in the tab until then.
 
 ## Open questions

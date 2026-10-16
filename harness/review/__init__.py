@@ -1,11 +1,12 @@
 """Human checkpoint: a local console to approve, edit or kill recommendations, overrule what the
-harness held back, and answer the questions it asks a person.
+harness held back, and watch the loop, its experiments and its memory.
 
 Every verdict rewrites out/approved-run<id>.json, the hand-off file for the posting bot.
 The page is plain ES modules under static/ with no build step; see DESIGN.md for why.
-API routes live in modules such as checkpoint.py, registered through routes.py.
+API routes live in checkpoint.py, rounds.py and the *_api.py modules, registered through routes.py.
 """
 
+import contextlib
 import json
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -13,7 +14,7 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
 # Importing the API modules registers their routes.
-from harness.review import checkpoint  # noqa: F401
+from harness.review import checkpoint, experiments_api, memory_api, rounds  # noqa: F401
 # sam/integration's harness/integration/handoff.py imports export_approved from here.
 from harness.review.checkpoint import export_approved  # noqa: F401
 from harness.review.routes import HTTPError, Request, path_exists, resolve
@@ -58,7 +59,7 @@ class Handler(BaseHTTPRequestHandler):
     def _same_origin_post(self) -> str | None:
         """Why a POST is refused, or None. Other sites can't send JSON here without a CORS
         preflight, which this server never answers, so requiring JSON plus a local Origin keeps
-        a web page from approving drafts behind the operator's back."""
+        a web page from approving drafts or starting paid rounds behind the operator's back."""
         if not self.headers.get("Content-Type", "").startswith("application/json"):
             return "POST bodies must be application/json"
         origin = self.headers.get("Origin")
@@ -131,4 +132,7 @@ def serve(port: int = 8765, open_browser: bool = True) -> None:
     try:
         server.serve_forever()
     except KeyboardInterrupt:
+        # A round runs in its own process group, so Ctrl+C here doesn't reach it.
+        with contextlib.suppress(HTTPError):
+            rounds.RUNNER.stop()
         print("\n[review] stopped")

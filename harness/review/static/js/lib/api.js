@@ -61,8 +61,8 @@ async function fixtureGet(path) {
   const approved = /^GET \/api\/runs\/(\d+)\/approved$/.exec(key);
   if (approved && fixture.routes[`GET /api/runs/${approved[1]}`]) return approvedActions(fixture.routes[`GET /api/runs/${approved[1]}`]);
   if (key in fixture.routes) return clone(fixture.routes[key]);
-  // A route the fixture doesn't cover comes from the live server, so a fixture can stage one view
-  // while the others show whatever this branch really has.
+  // A route the fixture doesn't cover comes from the live server, so one fixture can stage the
+  // Queue and Loop while the other views show whatever this branch really has.
   return liveGet(path);
 }
 
@@ -135,6 +135,8 @@ const fixturePosts = [
     },
   ],
   [/^\/api\/gate$/, (m, body) => realOrDemoGate(body.text || "", body.kind || "post")],
+  [/^\/api\/rounds$/, () => simulateRound()],
+  [/^\/api\/rounds\/stop$/, () => stopSimulatedRound()],
 ];
 
 async function fixturePost(path, body) {
@@ -210,4 +212,52 @@ function simulatedGate(text, kind) {
   const limit = DEMO_LIMITS[kind] ?? 280;
   if ([...text].length > limit) findings.push({ rule: "length", detail: `${[...text].length} chars (max ${limit} for ${kind})`, start: null, end: null });
   return { available: true, simulated: true, passed: findings.length === 0, limit, findings };
+}
+
+let roundTimers = [];
+function stopSimulatedRound() {
+  const loop = fixture.routes["GET /api/loop"];
+  if (!loop?.round || loop.round.status !== "running") throw new ApiError(409, "No round is running.", "/api/rounds/stop");
+  roundTimers.forEach(clearTimeout);
+  roundTimers = [];
+  Object.assign(loop.round, { status: "stopped", exit_code: -15, finished_at: new Date().toISOString() });
+  if (loop.live) loop.live.status = "stopped";
+  return clone(loop.round);
+}
+
+function simulateRound() {
+  const loop = fixture.routes["GET /api/loop"];
+  if (!loop) throw new ApiError(404, "this fixture has no loop data", "/api/rounds");
+  if (loop.round?.status === "running") throw new ApiError(409, "A round is already running. Wait for it or stop it first.", "/api/rounds");
+  const script = [
+    [400, "observe", "[observe] espn_news: 27 signals"],
+    [900, "observe", "[observe] google_news: 41 signals"],
+    [1700, "observe", "[observe] x_targets: 9 signals"],
+    [4200, "orient", "[orient] 2 narratives: wnba-finals-tipoff, boston-knee-surgery-support"],
+    [7400, "decide", "[decide] 5 minds proposed 6 actions"],
+    [10200, "qualify", "[qualify] kept 5/6 drafts"],
+    [10800, null, "Top 5 recommendations (run 15) -> out/recommendations-20261015-221210.json"],
+  ];
+  const started = new Date().toISOString();
+  loop.round = { id: "round-demo", started_at: started, provider: loop.provider, sources: loop.sources, command: loop.command, status: "running", lines: [], run_id: null, exit_code: null, finished_at: null };
+  loop.live = { status: "running", stage: "observe", started_at: started, elapsed_ms: 0, done: [], llm_calls: 0 };
+  roundTimers.forEach(clearTimeout);
+  const t0 = Date.now();
+  roundTimers = script.map(([at, stage, text], i) =>
+    setTimeout(() => {
+      const r = loop.round;
+      r.lines.push({ t: at / 1000, stage, text });
+      loop.live.stage = stage || loop.live.stage;
+      loop.live.elapsed_ms = Date.now() - t0;
+      loop.live.llm_calls = Math.max(loop.live.llm_calls, i * 3 - 3);
+      if (i === script.length - 1) {
+        r.status = "done";
+        r.run_id = 15;
+        r.exit_code = 0;
+        r.finished_at = new Date().toISOString();
+        loop.live.status = "done";
+      }
+    }, at),
+  );
+  return clone(loop.round);
 }
