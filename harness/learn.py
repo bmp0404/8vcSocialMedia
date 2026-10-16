@@ -1,31 +1,47 @@
-"""Learn: compare predicted vs. actual performance and rewrite the lessons file the minds read."""
+"""Learn: turn review verdicts, edits and recorded outcomes into tested lessons, then rewrite memory/lessons.md.
 
-import json
+Edits become procedure notes, one per mind. Approved and killed drafts become labeled episodes, and the
+reflection job contrasts them within each narrative. memory/lessons.md lists the lessons that passed a held-out
+test, so the minds keep reading the same file they read today.
+"""
 
 from harness import config, memory
+from harness.learning import reviews
+from harness.learning.kinds import save
+from harness.learning.ranking import HOME, render_lessons, today_utc
+from harness.learning.reflect import reflect
+from harness.learning.settings import load_settings
+from harness.learning.store import flush, get_store
 from harness.llm import LLM
 
-SYSTEM = """You are the account's performance analyst. Compare what we predicted would work with what
-actually happened. Write concise, actionable lessons (max 15 bullets) for the content minds:
-which minds, formats, narratives, and timing worked; what to stop doing; where the audience-panel
-predictions were miscalibrated. Keep any still-valid lessons from the previous version."""
-
-PROMPT = """PREVIOUS LESSONS:
-{lessons}
-
-HISTORY (recommendation + actual metrics):
-{history}
-
-Write the new lessons file as markdown."""
+REVIEW_DEFINITION = (
+    "success = a human reviewer approved the draft, possibly after editing it, or recorded metrics say it "
+    "succeeded; failure = the reviewer killed it, or recorded metrics say it failed"
+)
 
 
-def learn(llm: LLM) -> str | None:
-    history = memory.scored_history()
-    if not history:
-        print("[learn] no outcomes recorded yet; run `python -m harness record <file>` first")
+def learn(llm: LLM, store=None) -> str | None:
+    store = store or get_store()
+    rows = memory.run_log()
+    summaries = reviews.summarize(memory.review_history())
+    procedures = reviews.procedures(summaries, rows)
+    for procedure in procedures:
+        save(store, procedure)
+    n_edits = sum(len(p.pairs) for p in procedures)
+    # A critic veto is the model grading itself, so it never labels an episode for reflection.
+    episodes = [e for e in reviews.run_episodes(rows, summaries) if e.outcome() and e.outcome().source != "eval"]
+    if not episodes and not n_edits:
+        print("[learn] no reviews or labeled outcomes yet: review drafts with `python -m harness review` first")
         return None
-    text = llm.complete(SYSTEM, PROMPT.format(lessons=config.lessons(), history=json.dumps(history, indent=1)))
-    config.LESSONS_PATH.parent.mkdir(exist_ok=True)
+    print(f"[learn] {len(episodes)} labeled drafts, {n_edits} edits in {len(procedures)} procedure notes")
+    # Our own drafts carry no boost flags: nothing pays to push a draft that was never posted.
+    settings = load_settings()
+    settings.reflect.require_boost_flags = False
+    reflect(episodes, llm, store, definition=REVIEW_DEFINITION, domain=HOME, settings=settings.reflect,
+            key=reviews.by_narrative)
+    text = render_lessons(store, today_utc(), settings.recall)
+    config.LESSONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     config.LESSONS_PATH.write_text(text, encoding="utf-8")
-    print(f"[learn] updated {config.LESSONS_PATH} from {len(history)} outcomes")
+    flush(store)
+    print(f"[learn] wrote {config.LESSONS_PATH}")
     return text
