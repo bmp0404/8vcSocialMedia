@@ -1,13 +1,372 @@
 {
- "at": "2026-10-15T20:32:56",
+ "at": "2026-10-15T20:40:10",
  "provider": "anthropic",
  "model": "claude-sonnet-5-5",
- "panel_path": "/Users/samgu/Programming Projects/8vcSocialMedia-worktrees/eval/eval/panels/devtools.json",
+ "panel_path": "/tmp/eval-runs/aarav_panel.json",
  "holdout_from": "2026-10-06",
  "n_train": 1066,
  "n_holdout_scorable": 471,
  "n_holdout_dropped_unscorable": 128,
  "n_sampled": 357,
+ "sample_ids": [
+  "https://x.com/CircleCI/status/2108652533799350402",
+  "https://x.com/CircleCI/status/2110796169748111612",
+  "https://x.com/CircleCI/status/2110401530402631981",
+  "https://x.com/CircleCI/status/2110060587421991086",
+  "https://x.com/CircleCI/status/2107503680811372998",
+  "https://x.com/CircleCI/status/2108252401459138858",
+  "https://x.com/ClickHouseDB/status/2110808321758204332",
+  "https://x.com/ClickHouseDB/status/2110675247049359552",
+  "https://x.com/ClickHouseDB/status/2110083392104497578",
+  "https://x.com/ClickHouseDB/status/2110808320533573681",
+  "https://x.com/ClickHouseDB/status/2110764103916736691",
+  "https://x.com/ClickHouseDB/status/2108935838239195635",
+  "https://x.com/CloudflareDev/status/2110061433417281897",
+  "https://x.com/CloudflareDev/status/2108834278897275195",
+  "https://x.com/CloudflareDev/status/2108543342862610912",
+  "https://x.com/CloudflareDev/status/2110461480080654845",
+  "https://x.com/CloudflareDev/status/2108255488030941665",
+  "https://x.com/CloudflareDev/status/2110776295067910303",
+  "https://x.com/CloudflareDev/status/2108643431644103115",
+  "https://x.com/CloudflareDev/status/2110255975798280435",
+  "https://x.com/CockroachDB/status/2110016967339802940",
+  "https://x.com/CockroachDB/status/2107949104684748942",
+  "https://x.com/FactoryAI/status/2110403273903808988",
+  "https://x.com/FactoryAI/status/2109723187563184493",
+  "https://x.com/FactoryAI/status/2110865824278016116",
+  "https://x.com/FactoryAI/status/2110037841967493258",
+  "https://x.com/FactoryAI/status/2110077479599894840",
+  "https://x.com/FactoryAI/status/2110765256402473416",
+  "https://x.com/FactoryAI/status/2107913957369643172",
+  "https://x.com/FactoryAI/status/2110077467180580980",
+  "https://x.com/Lovable/status/2110355248237928857",
+  "https://x.com/Lovable/status/2108572224617902408",
+  "https://x.com/Lovable/status/2107893301420654769",
+  "https://x.com/Lovable/status/2110787701167509655",
+  "https://x.com/Lovable/status/2108210970917314599",
+  "https://x.com/Lovable/status/2107532501103391069",
+  "https://x.com/Netlify/status/2110762972234850582",
+  "https://x.com/Netlify/status/2107506305984241950",
+  "https://x.com/Netlify/status/2107896840092013050",
+  "https://x.com/Netlify/status/2110056430082429279",
+  "https://x.com/Netlify/status/2110460204106088704",
+  "https://x.com/Netlify/status/2110789499747996023",
+  "https://x.com/Netlify/status/2110714410696147090",
+  "https://x.com/Netlify/status/2107839921839038509",
+  "https://x.com/NxDevTools/status/2108209136009879598",
+  "https://x.com/NxDevTools/status/2108209238690676884",
+  "https://x.com/NxDevTools/status/2108209250422157748",
+  "https://x.com/NxDevTools/status/2108209159510589662",
+  "https://x.com/NxDevTools/status/2108209274052813113",
+  "https://x.com/NxDevTools/status/2108209147837878618",
+  "https://x.com/NxDevTools/status/2108209226569109619",
+  "https://x.com/PlanetScale/status/2107858620725473653",
+  "https://x.com/PlanetScale/status/2110826971064365272",
+  "https://x.com/PlanetScale/status/2108943317727617332",
+  "https://x.com/PlanetScale/status/2107509405881163985",
+  "https://x.com/PlanetScale/status/2108234615638884769",
+  "https://x.com/PulumiCorp/status/2110473170339705240",
+  "https://x.com/PulumiCorp/status/2110377475054420020",
+  "https://x.com/PulumiCorp/status/2107841423961968881",
+  "https://x.com/PulumiCorp/status/2107932520667087264",
+  "https://x.com/PulumiCorp/status/2110786275296838025",
+  "https://x.com/PulumiCorp/status/2110016633796534561",
+  "https://x.com/QodoAI/status/2110460962486501543",
+  "https://x.com/QodoAI/status/2110830074857439406",
+  "https://x.com/QodoAI/status/2110830076224819677",
+  "https://x.com/QodoAI/status/2108166420370428186",
+  "https://x.com/QodoAI/status/2108184149894787143",
+  "https://x.com/QodoAI/status/2108166418940199269",
+  "https://x.com/QodoAI/status/2108184148510699957",
+  "https://x.com/QodoAI/status/2110460964076240934",
+  "https://x.com/Railway/status/2110038855932157970",
+  "https://x.com/Replit/status/2110093275684352234",
+  "https://x.com/Replit/status/2108612014964904428",
+  "https://x.com/Replit/status/2107896848044437766",
+  "https://x.com/Replit/status/2108316518907892218",
+  "https://x.com/Replit/status/2108612016352932151",
+  "https://x.com/Replit/status/2108612018391708136",
+  "https://x.com/Replit/status/2108612020748816709",
+  "https://x.com/Sourcegraph/status/2109697832085275101",
+  "https://x.com/Sourcegraph/status/2108197473122734242",
+  "https://x.com/Sourcegraph/status/2110824172721201192",
+  "https://x.com/TimescaleDB/status/2107810339295248653",
+  "https://x.com/TimescaleDB/status/2108569942996267346",
+  "https://x.com/ToolJet/status/2108510918850281671",
+  "https://x.com/ToolJet/status/2107453499642650802",
+  "https://x.com/ToolJet/status/2108430902951051357",
+  "https://x.com/ToolJet/status/2110782970445611227",
+  "https://x.com/ToolJet/status/2107456158776836465",
+  "https://x.com/WindmillDev/status/2107863599205032184",
+  "https://x.com/WindmillDev/status/2110762727509504471",
+  "https://x.com/WindmillDev/status/2107501204196491568",
+  "https://x.com/WorkOS/status/2107911053439054218",
+  "https://x.com/WorkOS/status/2107524761676841029",
+  "https://x.com/WorkOS/status/2110063353750335597",
+  "https://x.com/WorkOS/status/2107881038924173610",
+  "https://x.com/WorkOS/status/2107899792823369778",
+  "https://x.com/WorkOS/status/2107900608535798045",
+  "https://x.com/WorkOS/status/2107891258752680336",
+  "https://x.com/WorkOS/status/2107944364672696693",
+  "https://x.com/astrodotbuild/status/2110799502479159721",
+  "https://x.com/astrodotbuild/status/2110334527469924613",
+  "https://x.com/biomejs/status/2110015673296400420",
+  "https://x.com/boltdotnew/status/2107846455180288289",
+  "https://x.com/boltdotnew/status/2110059335833317584",
+  "https://x.com/boltdotnew/status/2110415341998191027",
+  "https://x.com/boltdotnew/status/2108242330037661739",
+  "https://x.com/browserbase/status/2110415570684580054",
+  "https://x.com/buildkite/status/2107894544486568178",
+  "https://x.com/buildkite/status/2110890759201452067",
+  "https://x.com/buildkite/status/2110137489608560681",
+  "https://x.com/buildkite/status/2110472660249657768",
+  "https://x.com/bunjavascript/status/2107560647525548116",
+  "https://x.com/bunjavascript/status/2110727863339225586",
+  "https://x.com/bunjavascript/status/2110692261508079721",
+  "https://x.com/bunjavascript/status/2108100798572040331",
+  "https://x.com/bunjavascript/status/2108441841498804715",
+  "https://x.com/bunjavascript/status/2107561125042946129",
+  "https://x.com/bunjavascript/status/2108793934256525570",
+  "https://x.com/bunjavascript/status/2109870225156104494",
+  "https://x.com/charmcli/status/2108629047966109871",
+  "https://x.com/charmcli/status/2109670621693300741",
+  "https://x.com/checklyHQ/status/2110370231600156998",
+  "https://x.com/checklyHQ/status/2110007805629374962",
+  "https://x.com/checklyHQ/status/2108203325174817137",
+  "https://x.com/checklyHQ/status/2110740033317503368",
+  "https://x.com/checklyHQ/status/2107493719725195546",
+  "https://x.com/checklyHQ/status/2107803127009210801",
+  "https://x.com/checklyHQ/status/2109630331871510716",
+  "https://x.com/clerk/status/2110870842834063681",
+  "https://x.com/clerk/status/2110785421437460801",
+  "https://x.com/clerk/status/2110762908401729727",
+  "https://x.com/clerk/status/2110421070763421886",
+  "https://x.com/cline/status/2107561157787824347",
+  "https://x.com/cline/status/2110495085049835940",
+  "https://x.com/cline/status/2108630304059752837",
+  "https://x.com/cline/status/2109755052227490281",
+  "https://x.com/cline/status/2110808327458615303",
+  "https://x.com/cline/status/2108249633789263917",
+  "https://x.com/cline/status/2110086076635508794",
+  "https://x.com/cline/status/2110086075096154399",
+  "https://x.com/coderabbitai/status/2108211047966384185",
+  "https://x.com/coderabbitai/status/2110830580795670813",
+  "https://x.com/coderabbitai/status/2108211050835296577",
+  "https://x.com/coderhq/status/2110406144967454739",
+  "https://x.com/coderhq/status/2108271276020109373",
+  "https://x.com/coderhq/status/2108367385879367757",
+  "https://x.com/coderhq/status/2109684776999199024",
+  "https://x.com/coderhq/status/2107863631618539929",
+  "https://x.com/coderhq/status/2110412832730751084",
+  "https://x.com/cognition/status/2108692010056188048",
+  "https://x.com/cognition/status/2110068304383725720",
+  "https://x.com/cognition/status/2110790097369010292",
+  "https://x.com/cognition/status/2110408060799963471",
+  "https://x.com/cognition/status/2109729058745725037",
+  "https://x.com/cognition/status/2107942832921075726",
+  "https://x.com/cognition/status/2107268310236795023",
+  "https://x.com/cognition/status/2110043605528408110",
+  "https://x.com/convex/status/2108273573534306427",
+  "https://x.com/cursor_ai/status/2110087611763368271",
+  "https://x.com/cursor_ai/status/2107897257651769464",
+  "https://x.com/cursor_ai/status/2110075611633074295",
+  "https://x.com/cursor_ai/status/2110075624253751796",
+  "https://x.com/cursor_ai/status/2109783879490191502",
+  "https://x.com/cursor_ai/status/2107618665751576970",
+  "https://x.com/cursor_ai/status/2107897245282799864",
+  "https://x.com/cursor_ai/status/2110867556693430293",
+  "https://x.com/daytonaio/status/2110737723615322586",
+  "https://x.com/daytonaio/status/2110069107530072120",
+  "https://x.com/daytonaio/status/2110416795320377812",
+  "https://x.com/deno_land/status/2108543358197207048",
+  "https://x.com/depotdev/status/2107867753260708207",
+  "https://x.com/depotdev/status/2107517138504475025",
+  "https://x.com/depotdev/status/2108617162252578934",
+  "https://x.com/descopeinc/status/2109523600545837456",
+  "https://x.com/descopeinc/status/2107914106669826375",
+  "https://x.com/descopeinc/status/2108311259904934357",
+  "https://x.com/descopeinc/status/2110224901831266666",
+  "https://x.com/descopeinc/status/2109523603142197344",
+  "https://x.com/descopeinc/status/2110804058806313429",
+  "https://x.com/descopeinc/status/2110804061708534048",
+  "https://x.com/descopeinc/status/2110064067721232486",
+  "https://x.com/e2b/status/2108233328143053130",
+  "https://x.com/e2b/status/2108233329741066728",
+  "https://x.com/e2b/status/2108253718013759752",
+  "https://x.com/expo/status/2109985000447746381",
+  "https://x.com/expo/status/2108193743132348661",
+  "https://x.com/expo/status/2108193744529092709",
+  "https://x.com/expo/status/2108589139235082681",
+  "https://x.com/expo/status/2108193748110995714",
+  "https://x.com/expo/status/2110370987871227977",
+  "https://x.com/expo/status/2108193749847470586",
+  "https://x.com/expo/status/2109237727367426405",
+  "https://x.com/getpostman/status/2107597898854842812",
+  "https://x.com/getpostman/status/2107554917095555493",
+  "https://x.com/grafana/status/2108268062394974236",
+  "https://x.com/grafana/status/2107425641297752257",
+  "https://x.com/grafana/status/2109977452441407899",
+  "https://x.com/grafana/status/2108665914422096010",
+  "https://x.com/grafana/status/2109977453372522956",
+  "https://x.com/grafana/status/2109977451577454601",
+  "https://x.com/grafana/status/2107313071353954439",
+  "https://x.com/grafana/status/2107425640932851844",
+  "https://x.com/greptile/status/2108623827760775515",
+  "https://x.com/greptile/status/2108623832622018691",
+  "https://x.com/infisical/status/2108218859912347996",
+  "https://x.com/inngest/status/2110047342032253024",
+  "https://x.com/inngest/status/2107893962820264004",
+  "https://x.com/inngest/status/2107893953571774853",
+  "https://x.com/inngest/status/2107893956050645347",
+  "https://x.com/inngest/status/2110806064840974755",
+  "https://x.com/inngest/status/2107893960286810393",
+  "https://x.com/kilocode/status/2107462795516313992",
+  "https://x.com/kirodotdev/status/2110797922359026152",
+  "https://x.com/linear/status/2110391930169512250",
+  "https://x.com/linear/status/2108599715478851601",
+  "https://x.com/linear/status/2108598795487633821",
+  "https://x.com/linear/status/2108261980310265911",
+  "https://x.com/linear/status/2110068941364318514",
+  "https://x.com/linear/status/2107879412775444749",
+  "https://x.com/llama_index/status/2108238298938573023",
+  "https://x.com/llama_index/status/2107863919536595237",
+  "https://x.com/modal/status/2110379972502139213",
+  "https://x.com/modal/status/2107556185490731322",
+  "https://x.com/modal/status/2110792219921936647",
+  "https://x.com/modal/status/2110074623337677046",
+  "https://x.com/modal/status/2107869014055911856",
+  "https://x.com/modal/status/2110819178957676891",
+  "https://x.com/modal/status/2109749450117730403",
+  "https://x.com/modal/status/2110802540002672819",
+  "https://x.com/motherduck/status/2110770604463071349",
+  "https://x.com/motherduck/status/2108226035653431664",
+  "https://x.com/motherduck/status/2108926774562234667",
+  "https://x.com/motherduck/status/2110036161297055898",
+  "https://x.com/motherduck/status/2108530920315654264",
+  "https://x.com/motherduck/status/2107478490308083950",
+  "https://x.com/motherduck/status/2110385355476066470",
+  "https://x.com/motherduck/status/2110744132511547815",
+  "https://x.com/n8n_io/status/2107386304199565762",
+  "https://x.com/n8n_io/status/2107386299581653024",
+  "https://x.com/n8n_io/status/2108560485381460192",
+  "https://x.com/n8n_io/status/2107386302249476218",
+  "https://x.com/n8n_io/status/2110264448271450198",
+  "https://x.com/neondatabase/status/2110758792954581464",
+  "https://x.com/nuxt_js/status/2109287168757940324",
+  "https://x.com/nuxt_js/status/2109287216149406101",
+  "https://x.com/ollama/status/2110781259635212688",
+  "https://x.com/ollama/status/2110833609829695718",
+  "https://x.com/ollama/status/2107584722465616123",
+  "https://x.com/openstatushq/status/2109012087875973149",
+  "https://x.com/openstatushq/status/2110000103847313760",
+  "https://x.com/pnpmjs/status/2109633147789066607",
+  "https://x.com/pnpmjs/status/2108646891902640466",
+  "https://x.com/polar_sh/status/2108198833167462472",
+  "https://x.com/posthog/status/2109706421919248499",
+  "https://x.com/posthog/status/2109706445549945051",
+  "https://x.com/posthog/status/2110781140055531967",
+  "https://x.com/posthog/status/2109706433893961788",
+  "https://x.com/posthog/status/2109706830649917727",
+  "https://x.com/posthog/status/2107530217078362301",
+  "https://x.com/posthog/status/2110781172477501818",
+  "https://x.com/posthog/status/2107530135448760403",
+  "https://x.com/prisma/status/2107468131841331475",
+  "https://x.com/remix_run/status/2108225049937211645",
+  "https://x.com/remix_run/status/2108225057126285327",
+  "https://x.com/remix_run/status/2108225052709929008",
+  "https://x.com/render/status/2110605668109688929",
+  "https://x.com/render/status/2110489075111374988",
+  "https://x.com/resend/status/2110742035766616567",
+  "https://x.com/resend/status/2110439990463512757",
+  "https://x.com/resend/status/2109705935098892758",
+  "https://x.com/resend/status/2110742159997702258",
+  "https://x.com/resend/status/2110010458568892908",
+  "https://x.com/resend/status/2110742183754318113",
+  "https://x.com/resend/status/2107471470763155585",
+  "https://x.com/resend/status/2110793885366771884",
+  "https://x.com/retool/status/2110388017613717518",
+  "https://x.com/retool/status/2110725236119552485",
+  "https://x.com/retool/status/2108212687578472946",
+  "https://x.com/retool/status/2107859428732997669",
+  "https://x.com/retool/status/2108212684663685274",
+  "https://x.com/retool/status/2108212690879406136",
+  "https://x.com/retool/status/2107859431455404228",
+  "https://x.com/retool/status/2108212689197555785",
+  "https://x.com/sanity_io/status/2108203511636988390",
+  "https://x.com/sanity_io/status/2110397719361851638",
+  "https://x.com/sanity_io/status/2110047364102705341",
+  "https://x.com/sanity_io/status/2107818224784146866",
+  "https://x.com/sanity_io/status/2107839109918257252",
+  "https://x.com/speakeasydev/status/2110808098105377193",
+  "https://x.com/storybookjs/status/2107515955534508142",
+  "https://x.com/strapijs/status/2107395441188819035",
+  "https://x.com/strapijs/status/2108120466976121101",
+  "https://x.com/strapijs/status/2109949254085079536",
+  "https://x.com/strapijs/status/2107474530163679626",
+  "https://x.com/strapijs/status/2110360595279057240",
+  "https://x.com/strapijs/status/2109569764850868427",
+  "https://x.com/strapijs/status/2108211161594249365",
+  "https://x.com/strapijs/status/2107841062798512244",
+  "https://x.com/supabase/status/2109290802174472425",
+  "https://x.com/supabase/status/2110815570580889896",
+  "https://x.com/supabase/status/2110040855360741868",
+  "https://x.com/supabase/status/2110857277494169647",
+  "https://x.com/supabase/status/2109630227085168640",
+  "https://x.com/supabase/status/2108290689184243777",
+  "https://x.com/supabase/status/2110116200705642687",
+  "https://x.com/supabase/status/2110105984706257231",
+  "https://x.com/temporalio/status/2107980512182898716",
+  "https://x.com/temporalio/status/2109826799618142581",
+  "https://x.com/temporalio/status/2109698214710690091",
+  "https://x.com/temporalio/status/2108196097143218486",
+  "https://x.com/temporalio/status/2110068088788165076",
+  "https://x.com/temporalio/status/2110056246141129127",
+  "https://x.com/tldraw/status/2108225407812305166",
+  "https://x.com/tldraw/status/2110783586928599342",
+  "https://x.com/tursodatabase/status/2107837308011765891",
+  "https://x.com/tursodatabase/status/2107837305562276127",
+  "https://x.com/tursodatabase/status/2108210104419922065",
+  "https://x.com/tursodatabase/status/2107837309487886688",
+  "https://x.com/tursodatabase/status/2107837312415703289",
+  "https://x.com/tursodatabase/status/2107837302999224623",
+  "https://x.com/upstash/status/2107532184341156080",
+  "https://x.com/upstash/status/2108368797946315060",
+  "https://x.com/upstash/status/2110098341120098652",
+  "https://x.com/useblacksmith/status/2110370297979240801",
+  "https://x.com/v0/status/2107571659842769322",
+  "https://x.com/vercel/status/2110509321939509421",
+  "https://x.com/vercel/status/2110808586389766404",
+  "https://x.com/vercel/status/2110803382239945130",
+  "https://x.com/vercel/status/2110786348131258456",
+  "https://x.com/vercel/status/2110803363269058578",
+  "https://x.com/vercel/status/2110766047842476111",
+  "https://x.com/vercel/status/2110803345309053144",
+  "https://x.com/vercel/status/2110788459803938944",
+  "https://x.com/vite_js/status/2109573811465023661",
+  "https://x.com/vllm_project/status/2109210324985622960",
+  "https://x.com/vllm_project/status/2108441335044997468",
+  "https://x.com/vllm_project/status/2110573123636695245",
+  "https://x.com/vllm_project/status/2107934535749140841",
+  "https://x.com/vllm_project/status/2110719764771537370",
+  "https://x.com/vllm_project/status/2110651698847093121",
+  "https://x.com/vllm_project/status/2110745184141193630",
+  "https://x.com/vllm_project/status/2107690067619930450",
+  "https://x.com/warpdotdev/status/2110792621279093150",
+  "https://x.com/warpdotdev/status/2110792638609961441",
+  "https://x.com/warpdotdev/status/2110792650991525939",
+  "https://x.com/warpdotdev/status/2110792609174282287",
+  "https://x.com/warpdotdev/status/2110469311769055496",
+  "https://x.com/xata/status/2110023162096488779",
+  "https://x.com/xata/status/2110747919959941523",
+  "https://x.com/zeddotdev/status/2108641490633433437",
+  "https://x.com/zeddotdev/status/2110744595898192003",
+  "https://x.com/zeddotdev/status/2107901447144714645",
+  "https://x.com/zeddotdev/status/2107901444246413755",
+  "https://x.com/zeddotdev/status/2110418785500815689",
+  "https://x.com/zeddotdev/status/2109050287654600950",
+  "https://x.com/zeddotdev/status/2110777206339170587",
+  "https://x.com/zeddotdev/status/2110418782141243766"
+ ],
  "sampled_categories": {
   "Super Viral": 27,
   "Medium Viral": 96,
@@ -26,8 +385,8 @@
      "pairwise_accuracy": {
       "value": 0.5179856115107914,
       "ci95": [
-       0.4706766917293233,
-       0.568904593639576
+       0.46935933147632314,
+       0.5663716814159292
       ],
       "n_pairs": 834,
       "chance": 0.5
@@ -35,8 +394,8 @@
      "top_pick_beats_median": {
       "value": 0.53125,
       "ci95": [
-       0.4166666666666667,
-       0.6439393939393939
+       0.41935483870967744,
+       0.6428571428571429
       ],
       "n_accounts": 64,
       "chance": 0.5091424851190476
@@ -44,8 +403,8 @@
      "spearman_vs_target": {
       "value": 0.03835113328189836,
       "ci95": [
-       -0.06442529940696713,
-       0.13489203644081804
+       -0.061137960486484226,
+       0.1347729044709474
       ]
      }
     },
@@ -53,15 +412,15 @@
      "spearman_vs_log_engagement": {
       "value": -0.03279148751797174,
       "ci95": [
-       -0.14078641002374767,
-       0.07594189424916481
+       -0.138863621610486,
+       0.07495453825661962
       ]
      },
      "super_viral_auc": {
       "value": 0.46273849607182943,
       "ci95": [
-       0.3679403541472507,
-       0.553582554517134
+       0.3672115384615385,
+       0.5519259818731118
       ],
       "n_super_viral": 27
      },
@@ -86,6 +445,22 @@
     "calibration": null
    },
    "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 7,
+    "draws": 500,
+    "cross_account_spearman_median": 0.10981158913338761,
+    "cross_account_spearman_range95": [
+     -0.17673817896024516,
+     0.3358233369712514
+    ],
+    "within_account_pair_accuracy_same_pool": 0.4558139534883721,
+    "n_pairs": 215,
+    "n_pool": 95
+   },
    "predictions": {
     "https://x.com/CircleCI/status/2108652533799350402": {
      "score": 0.7644612881561249,
@@ -1527,8 +1902,8 @@
      "pairwise_accuracy": {
       "value": 0.5815347721822542,
       "ci95": [
-       0.5276211950394588,
-       0.6415929203539823
+       0.5242872228088701,
+       0.6344238975817923
       ],
       "n_pairs": 834,
       "chance": 0.5
@@ -1536,8 +1911,8 @@
      "top_pick_beats_median": {
       "value": 0.6089843750000001,
       "ci95": [
-       0.5351694915254238,
-       0.6841269841269841
+       0.5309941520467836,
+       0.6840909090909092
       ],
       "n_accounts": 64,
       "chance": 0.5091424851190476
@@ -1545,8 +1920,8 @@
      "spearman_vs_target": {
       "value": 0.27919348839081937,
       "ci95": [
-       0.15676621597282583,
-       0.3980621456270133
+       0.15171564478996521,
+       0.39520370165454705
       ]
      }
     },
@@ -1554,15 +1929,15 @@
      "spearman_vs_log_engagement": {
       "value": 0.16787596845815506,
       "ci95": [
-       0.009692059458493269,
-       0.32506941348554563
+       0.012832336594690111,
+       0.3203645304313569
       ]
      },
      "super_viral_auc": {
       "value": 0.5703703703703704,
       "ci95": [
-       0.4505313765182186,
-       0.6956119337979094
+       0.4493865030674847,
+       0.6927639964702422
       ],
       "n_super_viral": 27
      },
@@ -1571,15 +1946,15 @@
       "10": {
        "value": 0.11111111111111112,
        "ci95": [
-        0.04054054054054054,
-        0.1839080459770115
+        0.0404040404040404,
+        0.18604651162790697
        ]
       },
       "25": {
        "value": 0.1111111111111111,
        "ci95": [
-        0.04054054054054054,
-        0.1839080459770115
+        0.04040404040404041,
+        0.18604651162790697
        ]
       }
      }
@@ -1587,6 +1962,22 @@
     "calibration": null
    },
    "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 7,
+    "draws": 500,
+    "cross_account_spearman_median": 0.4642843745961609,
+    "cross_account_spearman_range95": [
+     0.2124485199887892,
+     0.6380659965150515
+    ],
+    "within_account_pair_accuracy_same_pool": 0.6441860465116279,
+    "n_pairs": 215,
+    "n_pool": 95
+   },
    "predictions": {
     "https://x.com/CircleCI/status/2108652533799350402": {
      "score": 2.0,
@@ -3028,8 +3419,8 @@
      "pairwise_accuracy": {
       "value": 0.6001199040767387,
       "ci95": [
-       0.54644412191582,
-       0.6493598862019915
+       0.5458768873403019,
+       0.6469864698646987
       ],
       "n_pairs": 834,
       "chance": 0.5
@@ -3037,7 +3428,7 @@
      "top_pick_beats_median": {
       "value": 0.6484375,
       "ci95": [
-       0.5384615384615384,
+       0.5352112676056338,
        0.75
       ],
       "n_accounts": 64,
@@ -3046,8 +3437,8 @@
      "spearman_vs_target": {
       "value": 0.22591263960729357,
       "ci95": [
-       0.10419909624124406,
-       0.3496468514685
+       0.10189098487359124,
+       0.3473287952168218
       ]
      }
     },
@@ -3055,15 +3446,15 @@
      "spearman_vs_log_engagement": {
       "value": 0.048765984971896076,
       "ci95": [
-       -0.07647826041312927,
-       0.18345934035450406
+       -0.08303215807014391,
+       0.17984510613125843
       ]
      },
      "super_viral_auc": {
       "value": 0.4612794612794613,
       "ci95": [
-       0.3342685166292593,
-       0.5999004975124378
+       0.33705621301775146,
+       0.5916568047337278
       ],
       "n_super_viral": 27
      },
@@ -3080,7 +3471,7 @@
        "value": 0.14,
        "ci95": [
         0.0,
-        0.32
+        0.31
        ]
       }
      }
@@ -3088,6 +3479,22 @@
     "calibration": null
    },
    "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 7,
+    "draws": 500,
+    "cross_account_spearman_median": 0.3402665113070937,
+    "cross_account_spearman_range95": [
+     0.02602472899549811,
+     0.6196358907672301
+    ],
+    "within_account_pair_accuracy_same_pool": 0.6581395348837209,
+    "n_pairs": 215,
+    "n_pool": 95
+   },
    "predictions": {
     "https://x.com/CircleCI/status/2108652533799350402": {
      "score": 161.0,
@@ -4521,67 +4928,69 @@
   },
   "panel": {
    "probabilistic": true,
-   "seconds": 46.6,
+   "seconds": 52.3,
+   "llm_calls": 80,
+   "approx_input_tokens": 28007,
    "all": {
     "n_posts": 357,
     "n_accounts": 80,
     "within_account": {
      "pairwise_accuracy": {
-      "value": 0.5851318944844125,
+      "value": 0.5959232613908872,
       "ci95": [
-       0.5282258064516129,
-       0.6401308615049073
+       0.5338874680306905,
+       0.6497867803837953
       ],
       "n_pairs": 834,
       "chance": 0.5
      },
      "top_pick_beats_median": {
-      "value": 0.60546875,
+      "value": 0.59765625,
       "ci95": [
-       0.5,
-       0.7115384615384616
+       0.49264705882352944,
+       0.7063492063492064
       ],
       "n_accounts": 64,
       "chance": 0.5091424851190476
      },
      "spearman_vs_target": {
-      "value": 0.23949530924020154,
+      "value": 0.20060405231209072,
       "ci95": [
-       0.11970111020431783,
-       0.35521974059480416
+       0.05993957492810669,
+       0.3348737609093501
       ]
      }
     },
     "cross_account": {
      "spearman_vs_log_engagement": {
-      "value": 0.458124842382101,
+      "value": 0.3455904980409506,
       "ci95": [
-       0.3171726968661202,
-       0.5824631063894224
+       0.1980001434870877,
+       0.47884540282278665
       ]
      },
      "super_viral_auc": {
-      "value": 0.8303030303030303,
+      "value": 0.7595398428731762,
       "ci95": [
-       0.6988161559888579,
-       0.9160597572362278
+       0.6169230769230769,
+       0.8548803495184192
       ],
       "n_super_viral": 27
      },
      "super_viral_base_rate": 0.07563025210084033,
      "precision_at_k": {
       "10": {
-       "value": 0.7333333333333333,
+       "value": 0.4,
        "ci95": [
-        0.3,
-        1.0
+        0.0,
+        0.7
        ]
       },
       "25": {
-       "value": 0.45333333333333337,
+       "value": 0.24,
        "ci95": [
-        0.16,
-        0.72
+        0.04,
+        0.48
        ]
       }
      }
@@ -4589,37 +4998,37 @@
     "calibration": {
      "event": "engagement strictly above the account's median",
      "base_rate": 0.4677871148459384,
-     "brier": 0.34257331372549016,
+     "brier": 0.38343680672268904,
      "brier_constant_base_rate": 0.24896233003005122,
-     "ece": 0.32734173669467787,
+     "ece": 0.3782464985994398,
      "reliability": [
       {
        "lo": 0.0,
        "hi": 0.2,
-       "n": 270,
-       "mean_pred": 0.09481851851851851,
-       "observed": 0.4222222222222222
+       "n": 323,
+       "mean_pred": 0.0701671826625387,
+       "observed": 0.44891640866873067
       },
       {
        "lo": 0.2,
        "hi": 0.4,
-       "n": 78,
-       "mean_pred": 0.2599358974358974,
-       "observed": 0.5641025641025641
+       "n": 34,
+       "mean_pred": 0.27358823529411763,
+       "observed": 0.6470588235294118
       },
       {
        "lo": 0.4,
        "hi": 0.6,
-       "n": 8,
-       "mean_pred": 0.4485,
-       "observed": 1.0
+       "n": 0,
+       "mean_pred": null,
+       "observed": null
       },
       {
        "lo": 0.6,
        "hi": 0.8,
-       "n": 1,
-       "mean_pred": 0.675,
-       "observed": 1.0
+       "n": 0,
+       "mean_pred": null,
+       "observed": null
       },
       {
        "lo": 0.8,
@@ -4632,704 +5041,776 @@
     }
    },
    "without_boost_suspect": "boost_suspect flags not loaded; see data/context/devtools_enriched.csv",
-   "llm_calls": 80,
-   "approx_input_tokens": 25107,
-   "retest": {
-    "n_posts": 60,
-    "spearman_between_runs": 0.9721681772296031,
-    "mean_abs_diff": 0.015183333333333333
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 7,
+    "draws": 500,
+    "cross_account_spearman_median": 0.6846379055468065,
+    "cross_account_spearman_range95": [
+     0.5027642542277357,
+     0.8120936280884266
+    ],
+    "within_account_pair_accuracy_same_pool": 0.6883720930232559,
+    "n_pairs": 215,
+    "n_pool": 95
    },
    "predictions": {
     "https://x.com/CircleCI/status/2108652533799350402": {
-     "score": 0.045,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.03
+       "agent_power_user": 0.06,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/CircleCI/status/2110796169748111612": {
-     "score": 0.033,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.02
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/CircleCI/status/2110401530402631981": {
-     "score": 0.048,
+     "score": 0.042,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.06,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.08,
        "skeptical_senior": 0.02,
-       "tech_media": 0.06
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/CircleCI/status/2110060587421991086": {
-     "score": 0.25,
+     "score": 0.106,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.2
+       "agent_power_user": 0.1,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/CircleCI/status/2107503680811372998": {
-     "score": 0.048,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.05
+       "agent_power_user": 0.05,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/CircleCI/status/2108252401459138858": {
-     "score": 0.23,
+     "score": 0.25,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.28,
-       "skeptical_senior": 0.22,
-       "tech_media": 0.12
+       "agent_power_user": 0.4,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/ClickHouseDB/status/2110808321758204332": {
-     "score": 0.095,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.07
+       "agent_power_user": 0.04,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/ClickHouseDB/status/2110675247049359552": {
-     "score": 0.14,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.17,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.15
+       "agent_power_user": 0.02,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/ClickHouseDB/status/2110083392104497578": {
-     "score": 0.133,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.14,
-       "tech_media": 0.09
+       "agent_power_user": 0.02,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/ClickHouseDB/status/2110808320533573681": {
-     "score": 0.062,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/ClickHouseDB/status/2110764103916736691": {
-     "score": 0.143,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.13,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.14
+       "agent_power_user": 0.1,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/ClickHouseDB/status/2108935838239195635": {
-     "score": 0.062,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.05
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/CloudflareDev/status/2110061433417281897": {
-     "score": 0.3,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.3
+       "agent_power_user": 0.04,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/CloudflareDev/status/2108834278897275195": {
-     "score": 0.188,
+     "score": 0.248,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.3,
+       "agent_power_user": 0.3,
+       "eng_lead": 0.14,
        "skeptical_senior": 0.1,
-       "tech_media": 0.2
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.4
       }
      }
     },
     "https://x.com/CloudflareDev/status/2108543342862610912": {
-     "score": 0.475,
+     "score": 0.13,
      "detail": {
       "panelists": {
-       "working_dev": 0.45,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.7
+       "agent_power_user": 0.05,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.25,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/CloudflareDev/status/2110461480080654845": {
-     "score": 0.122,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.12
+       "agent_power_user": 0.1,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/CloudflareDev/status/2108255488030941665": {
-     "score": 0.17,
+     "score": 0.092,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "agent_power_user": 0.14,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/CloudflareDev/status/2110776295067910303": {
-     "score": 0.04,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.03
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/CloudflareDev/status/2108643431644103115": {
-     "score": 0.19,
+     "score": 0.086,
      "detail": {
       "panelists": {
-       "working_dev": 0.18,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.15
+       "agent_power_user": 0.1,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/CloudflareDev/status/2110255975798280435": {
-     "score": 0.207,
+     "score": 0.086,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.3
+       "agent_power_user": 0.14,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/CockroachDB/status/2110016967339802940": {
-     "score": 0.065,
+     "score": 0.072,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.07
+       "agent_power_user": 0.05,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/CockroachDB/status/2107949104684748942": {
-     "score": 0.055,
+     "score": 0.042,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.07,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.1,
        "skeptical_senior": 0.04,
-       "tech_media": 0.06
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/FactoryAI/status/2110403273903808988": {
-     "score": 0.212,
+     "score": 0.204,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.15
+       "agent_power_user": 0.2,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/FactoryAI/status/2109723187563184493": {
-     "score": 0.1,
+     "score": 0.144,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.1
+       "agent_power_user": 0.15,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/FactoryAI/status/2110865824278016116": {
-     "score": 0.125,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.12
+       "agent_power_user": 0.07,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/FactoryAI/status/2110037841967493258": {
-     "score": 0.125,
+     "score": 0.17,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.2,
+       "agent_power_user": 0.25,
+       "eng_lead": 0.22,
        "skeptical_senior": 0.08,
-       "tech_media": 0.1
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/FactoryAI/status/2110077479599894840": {
-     "score": 0.16,
+     "score": 0.088,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.15
+       "agent_power_user": 0.12,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/FactoryAI/status/2110765256402473416": {
-     "score": 0.143,
+     "score": 0.092,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.3
+       "agent_power_user": 0.05,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/FactoryAI/status/2107913957369643172": {
-     "score": 0.105,
+     "score": 0.098,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.05
+       "agent_power_user": 0.12,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/FactoryAI/status/2110077467180580980": {
-     "score": 0.193,
+     "score": 0.12,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.15
+       "agent_power_user": 0.2,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.18,
+       "multi_agent_researcher": 0.07
       }
      }
     },
     "https://x.com/Lovable/status/2110355248237928857": {
-     "score": 0.168,
+     "score": 0.062,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.2
+       "agent_power_user": 0.06,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Lovable/status/2108572224617902408": {
-     "score": 0.113,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.05
+       "agent_power_user": 0.12,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/Lovable/status/2107893301420654769": {
-     "score": 0.233,
+     "score": 0.078,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.2
+       "agent_power_user": 0.1,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.14,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/Lovable/status/2110787701167509655": {
-     "score": 0.188,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.2
+       "agent_power_user": 0.07,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Lovable/status/2108210970917314599": {
-     "score": 0.105,
+     "score": 0.102,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.05
+       "agent_power_user": 0.15,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.14,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/Lovable/status/2107532501103391069": {
-     "score": 0.172,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.3
+       "agent_power_user": 0.08,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Netlify/status/2110762972234850582": {
-     "score": 0.062,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.12,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.02,
-       "tech_media": 0.03
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Netlify/status/2107506305984241950": {
-     "score": 0.058,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.07
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Netlify/status/2107896840092013050": {
-     "score": 0.065,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.04
+       "agent_power_user": 0.04,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/Netlify/status/2110056430082429279": {
-     "score": 0.09,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.14,
+       "agent_power_user": 0.12,
+       "eng_lead": 0.07,
        "skeptical_senior": 0.05,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/Netlify/status/2110460204106088704": {
-     "score": 0.03,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
        "skeptical_senior": 0.01,
-       "tech_media": 0.03
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/Netlify/status/2110789499747996023": {
-     "score": 0.085,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.05
+       "agent_power_user": 0.07,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/Netlify/status/2110714410696147090": {
-     "score": 0.2,
+     "score": 0.126,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.15
+       "agent_power_user": 0.2,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/Netlify/status/2107839921839038509": {
-     "score": 0.098,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.04
+       "agent_power_user": 0.1,
+       "eng_lead": 0.13,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209136009879598": {
-     "score": 0.263,
+     "score": 0.184,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.1
+       "agent_power_user": 0.12,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.35,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209238690676884": {
-     "score": 0.125,
+     "score": 0.084,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.08
+       "agent_power_user": 0.05,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209250422157748": {
-     "score": 0.122,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.07
+       "agent_power_user": 0.03,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209159510589662": {
-     "score": 0.275,
+     "score": 0.146,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.1
+       "agent_power_user": 0.1,
+       "eng_lead": 0.22,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209274052813113": {
-     "score": 0.08,
+     "score": 0.088,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.15
+       "agent_power_user": 0.1,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209147837878618": {
-     "score": 0.173,
+     "score": 0.09,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.2,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.15,
        "skeptical_senior": 0.2,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/NxDevTools/status/2108209226569109619": {
-     "score": 0.263,
+     "score": 0.31,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.38,
-       "skeptical_senior": 0.22,
-       "tech_media": 0.15
+       "agent_power_user": 0.5,
+       "eng_lead": 0.4,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/PlanetScale/status/2107858620725473653": {
-     "score": 0.073,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.1,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.08,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.07
       }
      }
     },
     "https://x.com/PlanetScale/status/2110826971064365272": {
-     "score": 0.07,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.07
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/PlanetScale/status/2108943317727617332": {
-     "score": 0.263,
+     "score": 0.136,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.18,
-       "skeptical_senior": 0.42,
-       "tech_media": 0.15
+       "agent_power_user": 0.06,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.35,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/PlanetScale/status/2107509405881163985": {
-     "score": 0.26,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.32,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.25
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/PlanetScale/status/2108234615638884769": {
-     "score": 0.105,
+     "score": 0.042,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.06
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/PulumiCorp/status/2110473170339705240": {
-     "score": 0.133,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.06
+       "agent_power_user": 0.03,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/PulumiCorp/status/2110377475054420020": {
-     "score": 0.043,
+     "score": 0.042,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/PulumiCorp/status/2107841423961968881": {
-     "score": 0.105,
+     "score": 0.096,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.07
+       "agent_power_user": 0.12,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/PulumiCorp/status/2107932520667087264": {
-     "score": 0.065,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.03
+       "agent_power_user": 0.02,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/PulumiCorp/status/2110786275296838025": {
-     "score": 0.175,
+     "score": 0.114,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.18,
-       "tech_media": 0.1
+       "agent_power_user": 0.12,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/PulumiCorp/status/2110016633796534561": {
-     "score": 0.055,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.04
+       "agent_power_user": 0.05,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/QodoAI/status/2110460962486501543": {
-     "score": 0.11,
+     "score": 0.144,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.16,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.1
       }
      }
     },
@@ -5337,923 +5818,1007 @@
      "score": 0.068,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.09,
-       "tech_media": 0.04
+       "agent_power_user": 0.04,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/QodoAI/status/2110830076224819677": {
-     "score": 0.028,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.02,
-       "tech_media": 0.02
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/QodoAI/status/2108166420370428186": {
-     "score": 0.028,
+     "score": 0.034,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.02,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.07,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/QodoAI/status/2108184149894787143": {
-     "score": 0.03,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.02,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "agent_power_user": 0.02,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/QodoAI/status/2108166418940199269": {
-     "score": 0.098,
+     "score": 0.132,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.12
+       "agent_power_user": 0.06,
+       "eng_lead": 0.28,
+       "skeptical_senior": 0.14,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/QodoAI/status/2108184148510699957": {
-     "score": 0.085,
+     "score": 0.15,
      "detail": {
       "panelists": {
-       "working_dev": 0.09,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.14,
-       "tech_media": 0.07
+       "agent_power_user": 0.1,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/QodoAI/status/2110460964076240934": {
-     "score": 0.03,
+     "score": 0.04,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.02,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.08,
        "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/Railway/status/2110038855932157970": {
-     "score": 0.175,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.12
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Replit/status/2110093275684352234": {
-     "score": 0.045,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Replit/status/2108612014964904428": {
-     "score": 0.048,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.03,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Replit/status/2107896848044437766": {
-     "score": 0.35,
+     "score": 0.176,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.45,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.5
+       "agent_power_user": 0.22,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/Replit/status/2108316518907892218": {
-     "score": 0.09,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.05
+       "agent_power_user": 0.1,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Replit/status/2108612016352932151": {
-     "score": 0.033,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.02,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.04
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Replit/status/2108612018391708136": {
-     "score": 0.028,
+     "score": 0.018,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.02,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.03
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Replit/status/2108612020748816709": {
-     "score": 0.018,
+     "score": 0.014,
      "detail": {
       "panelists": {
-       "working_dev": 0.01,
-       "early_adopter": 0.02,
+       "agent_power_user": 0.01,
+       "eng_lead": 0.01,
        "skeptical_senior": 0.02,
-       "tech_media": 0.02
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/Sourcegraph/status/2109697832085275101": {
-     "score": 0.025,
+     "score": 0.026,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.01,
-       "tech_media": 0.02
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/Sourcegraph/status/2108197473122734242": {
-     "score": 0.06,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.03
+       "agent_power_user": 0.08,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/Sourcegraph/status/2110824172721201192": {
-     "score": 0.015,
+     "score": 0.016,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.02,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.02,
        "skeptical_senior": 0.01,
-       "tech_media": 0.01
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/TimescaleDB/status/2107810339295248653": {
-     "score": 0.107,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.22,
-       "tech_media": 0.04
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/TimescaleDB/status/2108569942996267346": {
-     "score": 0.158,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.05
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/ToolJet/status/2108510918850281671": {
-     "score": 0.085,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.05
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/ToolJet/status/2107453499642650802": {
-     "score": 0.123,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/ToolJet/status/2108430902951051357": {
-     "score": 0.075,
+     "score": 0.026,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.08
+       "agent_power_user": 0.04,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/ToolJet/status/2110782970445611227": {
-     "score": 0.052,
+     "score": 0.026,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.02,
-       "tech_media": 0.03
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/ToolJet/status/2107456158776836465": {
-     "score": 0.09,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.05
+       "agent_power_user": 0.04,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/WindmillDev/status/2107863599205032184": {
-     "score": 0.245,
+     "score": 0.264,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.2,
+       "agent_power_user": 0.3,
+       "eng_lead": 0.3,
        "skeptical_senior": 0.4,
-       "tech_media": 0.08
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/WindmillDev/status/2110762727509504471": {
-     "score": 0.2,
+     "score": 0.12,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.1
+       "agent_power_user": 0.12,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/WindmillDev/status/2107501204196491568": {
-     "score": 0.107,
+     "score": 0.062,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "agent_power_user": 0.03,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/WorkOS/status/2107911053439054218": {
-     "score": 0.043,
+     "score": 0.034,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.02,
-       "tech_media": 0.08
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/WorkOS/status/2107524761676841029": {
-     "score": 0.108,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.03
+       "agent_power_user": 0.03,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/WorkOS/status/2110063353750335597": {
-     "score": 0.077,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.15
+       "agent_power_user": 0.03,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/WorkOS/status/2107881038924173610": {
-     "score": 0.113,
+     "score": 0.112,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.18,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/WorkOS/status/2107899792823369778": {
-     "score": 0.04,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.06,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/WorkOS/status/2107900608535798045": {
-     "score": 0.18,
+     "score": 0.27,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.1
+       "agent_power_user": 0.3,
+       "eng_lead": 0.35,
+       "skeptical_senior": 0.25,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.25
       }
      }
     },
     "https://x.com/WorkOS/status/2107891258752680336": {
-     "score": 0.053,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.03
+       "agent_power_user": 0.02,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/WorkOS/status/2107944364672696693": {
-     "score": 0.098,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.07,
+       "agent_power_user": 0.1,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.12,
-       "tech_media": 0.1
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.07
       }
      }
     },
     "https://x.com/astrodotbuild/status/2110799502479159721": {
-     "score": 0.217,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.15
+       "agent_power_user": 0.05,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/astrodotbuild/status/2110334527469924613": {
-     "score": 0.018,
+     "score": 0.012,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.02,
-       "skeptical_senior": 0.01,
-       "tech_media": 0.02
+       "agent_power_user": 0.01,
+       "eng_lead": 0.01,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/biomejs/status/2110015673296400420": {
-     "score": 0.242,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.3
+       "agent_power_user": 0.04,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/boltdotnew/status/2107846455180288289": {
-     "score": 0.233,
+     "score": 0.108,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.15
+       "agent_power_user": 0.12,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/boltdotnew/status/2110059335833317584": {
-     "score": 0.188,
+     "score": 0.058,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.05
+       "agent_power_user": 0.1,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/boltdotnew/status/2110415341998191027": {
-     "score": 0.205,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.15
+       "agent_power_user": 0.08,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/boltdotnew/status/2108242330037661739": {
-     "score": 0.17,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.28,
-       "early_adopter": 0.28,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.04
+       "agent_power_user": 0.09,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/browserbase/status/2110415570684580054": {
-     "score": 0.113,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.18,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.1
+       "agent_power_user": 0.12,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/buildkite/status/2107894544486568178": {
-     "score": 0.048,
+     "score": 0.04,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.08
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/buildkite/status/2110890759201452067": {
-     "score": 0.133,
+     "score": 0.084,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.07
+       "agent_power_user": 0.08,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/buildkite/status/2110137489608560681": {
-     "score": 0.188,
+     "score": 0.174,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.3
+       "agent_power_user": 0.2,
+       "eng_lead": 0.22,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/buildkite/status/2110472660249657768": {
-     "score": 0.05,
+     "score": 0.062,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.03
+       "agent_power_user": 0.1,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/bunjavascript/status/2107560647525548116": {
-     "score": 0.675,
+     "score": 0.376,
      "detail": {
       "panelists": {
-       "working_dev": 0.7,
-       "early_adopter": 0.8,
+       "agent_power_user": 0.45,
+       "eng_lead": 0.3,
        "skeptical_senior": 0.5,
-       "tech_media": 0.7
+       "ai_tooling_influencer": 0.55,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/bunjavascript/status/2110727863339225586": {
-     "score": 0.287,
+     "score": 0.156,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.4,
+       "agent_power_user": 0.15,
+       "eng_lead": 0.2,
        "skeptical_senior": 0.2,
-       "tech_media": 0.2
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/bunjavascript/status/2110692261508079721": {
-     "score": 0.562,
+     "score": 0.33,
      "detail": {
       "panelists": {
-       "working_dev": 0.6,
-       "early_adopter": 0.7,
-       "skeptical_senior": 0.45,
-       "tech_media": 0.5
+       "agent_power_user": 0.4,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.4,
+       "ai_tooling_influencer": 0.5,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/bunjavascript/status/2108100798572040331": {
-     "score": 0.287,
+     "score": 0.152,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.4,
+       "agent_power_user": 0.2,
+       "eng_lead": 0.12,
        "skeptical_senior": 0.2,
-       "tech_media": 0.2
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/bunjavascript/status/2108441841498804715": {
-     "score": 0.263,
+     "score": 0.17,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.15
+       "agent_power_user": 0.15,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.35,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/bunjavascript/status/2107561125042946129": {
-     "score": 0.133,
+     "score": 0.088,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/bunjavascript/status/2108793934256525570": {
-     "score": 0.463,
+     "score": 0.258,
      "detail": {
       "panelists": {
-       "working_dev": 0.5,
-       "early_adopter": 0.6,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.5
+       "agent_power_user": 0.3,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.4,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/bunjavascript/status/2109870225156104494": {
-     "score": 0.312,
+     "score": 0.166,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.4,
-       "tech_media": 0.3
+       "agent_power_user": 0.15,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.35,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/charmcli/status/2108629047966109871": {
-     "score": 0.115,
+     "score": 0.108,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.05
+       "agent_power_user": 0.2,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/charmcli/status/2109670621693300741": {
-     "score": 0.145,
+     "score": 0.162,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.06
+       "agent_power_user": 0.35,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/checklyHQ/status/2110370231600156998": {
-     "score": 0.237,
+     "score": 0.078,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.15
+       "agent_power_user": 0.12,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/checklyHQ/status/2110007805629374962": {
-     "score": 0.143,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.1
+       "agent_power_user": 0.04,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/checklyHQ/status/2108203325174817137": {
-     "score": 0.225,
+     "score": 0.092,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.1
+       "agent_power_user": 0.05,
+       "eng_lead": 0.16,
+       "skeptical_senior": 0.17,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/checklyHQ/status/2110740033317503368": {
-     "score": 0.08,
+     "score": 0.064,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.05
+       "agent_power_user": 0.03,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/checklyHQ/status/2107493719725195546": {
-     "score": 0.075,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.05
+       "agent_power_user": 0.03,
+       "eng_lead": 0.13,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/checklyHQ/status/2107803127009210801": {
-     "score": 0.28,
+     "score": 0.174,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.4,
-       "tech_media": 0.12
+       "agent_power_user": 0.3,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/checklyHQ/status/2109630331871510716": {
-     "score": 0.175,
+     "score": 0.112,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.15
+       "agent_power_user": 0.17,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.07
       }
      }
     },
     "https://x.com/clerk/status/2110870842834063681": {
-     "score": 0.16,
+     "score": 0.084,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.08
+       "agent_power_user": 0.15,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/clerk/status/2110785421437460801": {
-     "score": 0.105,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.08
+       "agent_power_user": 0.03,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/clerk/status/2110762908401729727": {
-     "score": 0.045,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.06,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/clerk/status/2110421070763421886": {
-     "score": 0.18,
+     "score": 0.094,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.08
+       "agent_power_user": 0.2,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/cline/status/2107561157787824347": {
-     "score": 0.375,
+     "score": 0.39,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.35,
+       "agent_power_user": 0.45,
+       "eng_lead": 0.3,
        "skeptical_senior": 0.4,
-       "tech_media": 0.45
+       "ai_tooling_influencer": 0.5,
+       "multi_agent_researcher": 0.3
       }
      }
     },
     "https://x.com/cline/status/2110495085049835940": {
-     "score": 0.3,
+     "score": 0.274,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.3
+       "agent_power_user": 0.4,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.4,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/cline/status/2108630304059752837": {
-     "score": 0.08,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "agent_power_user": 0.1,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cline/status/2109755052227490281": {
-     "score": 0.325,
+     "score": 0.29,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.35,
+       "agent_power_user": 0.35,
+       "eng_lead": 0.2,
        "skeptical_senior": 0.2,
-       "tech_media": 0.5
+       "ai_tooling_influencer": 0.5,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/cline/status/2110808327458615303": {
-     "score": 0.08,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "agent_power_user": 0.1,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cline/status/2108249633789263917": {
-     "score": 0.275,
+     "score": 0.24,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.4,
+       "agent_power_user": 0.4,
+       "eng_lead": 0.2,
        "skeptical_senior": 0.15,
-       "tech_media": 0.2
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/cline/status/2110086076635508794": {
-     "score": 0.08,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "agent_power_user": 0.1,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cline/status/2110086075096154399": {
-     "score": 0.438,
+     "score": 0.38,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.45,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.6
+       "agent_power_user": 0.5,
+       "eng_lead": 0.4,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.55,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/coderabbitai/status/2108211047966384185": {
-     "score": 0.1,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.12
+       "agent_power_user": 0.06,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/coderabbitai/status/2110830580795670813": {
-     "score": 0.055,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.1
+       "agent_power_user": 0.02,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/coderabbitai/status/2108211050835296577": {
-     "score": 0.147,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.22
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/coderhq/status/2110406144967454739": {
-     "score": 0.205,
+     "score": 0.194,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.2
+       "agent_power_user": 0.3,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/coderhq/status/2108271276020109373": {
-     "score": 0.053,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.07
+       "agent_power_user": 0.04,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/coderhq/status/2108367385879367757": {
-     "score": 0.095,
+     "score": 0.098,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.04
+       "agent_power_user": 0.2,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/coderhq/status/2109684776999199024": {
-     "score": 0.095,
+     "score": 0.09,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "agent_power_user": 0.1,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.12
       }
      }
     },
@@ -6261,274 +6826,299 @@
      "score": 0.13,
      "detail": {
       "panelists": {
-       "working_dev": 0.17,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.08
+       "agent_power_user": 0.15,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/coderhq/status/2110412832730751084": {
-     "score": 0.075,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.07
+       "agent_power_user": 0.1,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.07
       }
      }
     },
     "https://x.com/cognition/status/2108692010056188048": {
-     "score": 0.21,
+     "score": 0.124,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.12
+       "agent_power_user": 0.3,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/cognition/status/2110068304383725720": {
-     "score": 0.075,
+     "score": 0.052,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.12
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cognition/status/2110790097369010292": {
-     "score": 0.263,
+     "score": 0.2,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.3
+       "agent_power_user": 0.2,
+       "eng_lead": 0.35,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/cognition/status/2110408060799963471": {
-     "score": 0.06,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.08
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cognition/status/2109729058745725037": {
-     "score": 0.263,
+     "score": 0.21,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.3
+       "agent_power_user": 0.2,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.25,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/cognition/status/2107942832921075726": {
-     "score": 0.3,
+     "score": 0.214,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.3
+       "agent_power_user": 0.35,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/cognition/status/2107268310236795023": {
-     "score": 0.09,
+     "score": 0.062,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.06
+       "agent_power_user": 0.08,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cognition/status/2110043605528408110": {
-     "score": 0.265,
+     "score": 0.17,
      "detail": {
       "panelists": {
-       "working_dev": 0.28,
-       "early_adopter": 0.38,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.25
+       "agent_power_user": 0.3,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/convex/status/2108273573534306427": {
-     "score": 0.09,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.06
+       "agent_power_user": 0.12,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/cursor_ai/status/2110087611763368271": {
-     "score": 0.325,
+     "score": 0.166,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.5,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.3
+       "agent_power_user": 0.3,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/cursor_ai/status/2107897257651769464": {
-     "score": 0.217,
+     "score": 0.166,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.2
+       "agent_power_user": 0.3,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.22,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/cursor_ai/status/2110075611633074295": {
-     "score": 0.2,
+     "score": 0.126,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.25,
+       "agent_power_user": 0.1,
+       "eng_lead": 0.25,
        "skeptical_senior": 0.1,
-       "tech_media": 0.25
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/cursor_ai/status/2110075624253751796": {
-     "score": 0.1,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.1
+       "agent_power_user": 0.06,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/cursor_ai/status/2109783879490191502": {
-     "score": 0.45,
+     "score": 0.24,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.7
+       "agent_power_user": 0.3,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.25,
+       "ai_tooling_influencer": 0.4,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/cursor_ai/status/2107618665751576970": {
-     "score": 0.113,
+     "score": 0.14,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.15,
+       "agent_power_user": 0.3,
+       "eng_lead": 0.1,
        "skeptical_senior": 0.1,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/cursor_ai/status/2107897245282799864": {
-     "score": 0.312,
+     "score": 0.178,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.45,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.25
+       "agent_power_user": 0.35,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/cursor_ai/status/2110867556693430293": {
-     "score": 0.237,
+     "score": 0.12,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.3
+       "agent_power_user": 0.15,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/daytonaio/status/2110737723615322586": {
-     "score": 0.037,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.03,
        "skeptical_senior": 0.02,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/daytonaio/status/2110069107530072120": {
-     "score": 0.04,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.06,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.03,
        "skeptical_senior": 0.02,
-       "tech_media": 0.03
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/daytonaio/status/2110416795320377812": {
-     "score": 0.068,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.06
+       "agent_power_user": 0.05,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/deno_land/status/2108543358197207048": {
-     "score": 0.325,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.5
+       "agent_power_user": 0.04,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/depotdev/status/2107867753260708207": {
-     "score": 0.2,
+     "score": 0.146,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.1
+       "agent_power_user": 0.1,
+       "eng_lead": 0.22,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/depotdev/status/2107517138504475025": {
-     "score": 0.158,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.2,
+       "agent_power_user": 0.06,
+       "eng_lead": 0.18,
        "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
@@ -6536,890 +7126,971 @@
      "score": 0.068,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.04
+       "agent_power_user": 0.08,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/descopeinc/status/2109523600545837456": {
-     "score": 0.177,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.04
+       "agent_power_user": 0.06,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.18,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/descopeinc/status/2107914106669826375": {
-     "score": 0.037,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
        "skeptical_senior": 0.02,
-       "tech_media": 0.06
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/descopeinc/status/2108311259904934357": {
-     "score": 0.035,
+     "score": 0.026,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.03,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.02,
-       "tech_media": 0.07
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/descopeinc/status/2110224901831266666": {
-     "score": 0.07,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.06
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/descopeinc/status/2109523603142197344": {
-     "score": 0.043,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.02
+       "agent_power_user": 0.03,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/descopeinc/status/2110804058806313429": {
-     "score": 0.143,
+     "score": 0.124,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.2
+       "agent_power_user": 0.1,
+       "eng_lead": 0.22,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.14
       }
      }
     },
     "https://x.com/descopeinc/status/2110804061708534048": {
-     "score": 0.113,
+     "score": 0.07,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.1
+       "agent_power_user": 0.05,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/descopeinc/status/2110064067721232486": {
-     "score": 0.168,
+     "score": 0.134,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.18,
-       "tech_media": 0.15
+       "agent_power_user": 0.14,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.16
       }
      }
     },
     "https://x.com/e2b/status/2108233328143053130": {
-     "score": 0.043,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.06,
+       "agent_power_user": 0.06,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/e2b/status/2108233329741066728": {
-     "score": 0.062,
+     "score": 0.052,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.05
+       "agent_power_user": 0.05,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/e2b/status/2108253718013759752": {
-     "score": 0.043,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.06,
+       "agent_power_user": 0.06,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/expo/status/2109985000447746381": {
-     "score": 0.175,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.14
+       "agent_power_user": 0.03,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/expo/status/2108193743132348661": {
-     "score": 0.268,
+     "score": 0.284,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.35,
+       "agent_power_user": 0.4,
+       "eng_lead": 0.3,
        "skeptical_senior": 0.2,
-       "tech_media": 0.22
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.22
       }
      }
     },
     "https://x.com/expo/status/2108193744529092709": {
-     "score": 0.282,
+     "score": 0.29,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.08
+       "agent_power_user": 0.5,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/expo/status/2108589139235082681": {
-     "score": 0.04,
+     "score": 0.024,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/expo/status/2108193748110995714": {
-     "score": 0.343,
+     "score": 0.34,
      "detail": {
       "panelists": {
-       "working_dev": 0.45,
-       "early_adopter": 0.45,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.12
+       "agent_power_user": 0.55,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.3
       }
      }
     },
     "https://x.com/expo/status/2110370987871227977": {
-     "score": 0.212,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.25
+       "agent_power_user": 0.06,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/expo/status/2108193749847470586": {
-     "score": 0.263,
+     "score": 0.292,
      "detail": {
       "panelists": {
-       "working_dev": 0.38,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.07
+       "agent_power_user": 0.5,
+       "eng_lead": 0.28,
+       "skeptical_senior": 0.28,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.25
       }
      }
     },
     "https://x.com/expo/status/2109237727367426405": {
-     "score": 0.09,
+     "score": 0.034,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.06
+       "agent_power_user": 0.05,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/getpostman/status/2107597898854842812": {
-     "score": 0.05,
+     "score": 0.04,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.08,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.02,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/getpostman/status/2107554917095555493": {
-     "score": 0.033,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.02,
-       "tech_media": 0.03
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/grafana/status/2108268062394974236": {
-     "score": 0.062,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.08
+       "agent_power_user": 0.02,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/grafana/status/2107425641297752257": {
-     "score": 0.125,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.14,
-       "tech_media": 0.06
+       "agent_power_user": 0.02,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/grafana/status/2109977452441407899": {
-     "score": 0.033,
+     "score": 0.018,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.03,
+       "agent_power_user": 0.01,
+       "eng_lead": 0.03,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/grafana/status/2108665914422096010": {
-     "score": 0.07,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.07,
+       "agent_power_user": 0.05,
+       "eng_lead": 0.1,
        "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/grafana/status/2109977453372522956": {
-     "score": 0.053,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.06,
        "skeptical_senior": 0.04,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/grafana/status/2109977451577454601": {
-     "score": 0.04,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.07,
        "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/grafana/status/2107313071353954439": {
-     "score": 0.055,
+     "score": 0.024,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.05
+       "agent_power_user": 0.01,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/grafana/status/2107425640932851844": {
-     "score": 0.113,
+     "score": 0.042,
      "detail": {
       "panelists": {
-       "working_dev": 0.17,
-       "early_adopter": 0.09,
-       "skeptical_senior": 0.13,
-       "tech_media": 0.06
+       "agent_power_user": 0.02,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.09,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/greptile/status/2108623827760775515": {
-     "score": 0.113,
+     "score": 0.1,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.18,
-       "tech_media": 0.05
+       "agent_power_user": 0.12,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/greptile/status/2108623832622018691": {
-     "score": 0.08,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.04
+       "agent_power_user": 0.04,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/infisical/status/2108218859912347996": {
-     "score": 0.088,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.06
+       "agent_power_user": 0.12,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/inngest/status/2110047342032253024": {
-     "score": 0.165,
+     "score": 0.098,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.1
+       "agent_power_user": 0.2,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/inngest/status/2107893962820264004": {
-     "score": 0.107,
+     "score": 0.052,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.06
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/inngest/status/2107893953571774853": {
-     "score": 0.07,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.04
+       "agent_power_user": 0.03,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/inngest/status/2107893956050645347": {
-     "score": 0.075,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.03
+       "agent_power_user": 0.06,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/inngest/status/2110806064840974755": {
-     "score": 0.175,
+     "score": 0.09,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.28,
-       "tech_media": 0.12
+       "agent_power_user": 0.03,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/inngest/status/2107893960286810393": {
-     "score": 0.08,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.03
+       "agent_power_user": 0.04,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/kilocode/status/2107462795516313992": {
-     "score": 0.12,
+     "score": 0.078,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.22,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "agent_power_user": 0.12,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/kirodotdev/status/2110797922359026152": {
-     "score": 0.12,
+     "score": 0.052,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.22,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "agent_power_user": 0.07,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/linear/status/2110391930169512250": {
-     "score": 0.083,
+     "score": 0.068,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.14
+       "agent_power_user": 0.05,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/linear/status/2108599715478851601": {
-     "score": 0.068,
+     "score": 0.04,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.03
+       "agent_power_user": 0.03,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/linear/status/2108598795487633821": {
-     "score": 0.138,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.18,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.1
+       "agent_power_user": 0.06,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/linear/status/2108261980310265911": {
-     "score": 0.145,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.18,
+       "agent_power_user": 0.06,
+       "eng_lead": 0.12,
        "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/linear/status/2110068941364318514": {
-     "score": 0.145,
+     "score": 0.184,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.14,
-       "tech_media": 0.1
+       "agent_power_user": 0.25,
+       "eng_lead": 0.22,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/linear/status/2107879412775444749": {
-     "score": 0.1,
+     "score": 0.098,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.17,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.05
+       "agent_power_user": 0.1,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/llama_index/status/2108238298938573023": {
-     "score": 0.143,
+     "score": 0.086,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.05
+       "agent_power_user": 0.12,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/llama_index/status/2107863919536595237": {
-     "score": 0.165,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.18
+       "agent_power_user": 0.05,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/modal/status/2110379972502139213": {
-     "score": 0.4,
+     "score": 0.18,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.75
+       "agent_power_user": 0.12,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/modal/status/2107556185490731322": {
-     "score": 0.163,
+     "score": 0.136,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.15
+       "agent_power_user": 0.1,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.3
       }
      }
     },
     "https://x.com/modal/status/2110792219921936647": {
-     "score": 0.08,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.08
+       "agent_power_user": 0.04,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/modal/status/2110074623337677046": {
-     "score": 0.225,
+     "score": 0.144,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.15
+       "agent_power_user": 0.07,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.3
       }
      }
     },
     "https://x.com/modal/status/2107869014055911856": {
-     "score": 0.312,
+     "score": 0.124,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.35
+       "agent_power_user": 0.12,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/modal/status/2110819178957676891": {
-     "score": 0.08,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.08
+       "agent_power_user": 0.04,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/modal/status/2109749450117730403": {
-     "score": 0.267,
+     "score": 0.156,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.12
+       "agent_power_user": 0.1,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.15,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/modal/status/2110802540002672819": {
-     "score": 0.092,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/motherduck/status/2110770604463071349": {
-     "score": 0.08,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.05
+       "agent_power_user": 0.06,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/motherduck/status/2108226035653431664": {
-     "score": 0.065,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.04
+       "agent_power_user": 0.03,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/motherduck/status/2108926774562234667": {
-     "score": 0.107,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.06
+       "agent_power_user": 0.1,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/motherduck/status/2110036161297055898": {
-     "score": 0.062,
+     "score": 0.024,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.08
+       "agent_power_user": 0.03,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/motherduck/status/2108530920315654264": {
-     "score": 0.172,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.22,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.12
+       "agent_power_user": 0.06,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/motherduck/status/2107478490308083950": {
-     "score": 0.085,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.08
+       "agent_power_user": 0.04,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/motherduck/status/2110385355476066470": {
-     "score": 0.095,
+     "score": 0.064,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.04
+       "agent_power_user": 0.1,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/motherduck/status/2110744132511547815": {
-     "score": 0.06,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "agent_power_user": 0.03,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/n8n_io/status/2107386304199565762": {
-     "score": 0.103,
+     "score": 0.058,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.05
+       "agent_power_user": 0.12,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/n8n_io/status/2107386299581653024": {
-     "score": 0.163,
+     "score": 0.152,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.08
+       "agent_power_user": 0.25,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/n8n_io/status/2108560485381460192": {
-     "score": 0.042,
+     "score": 0.04,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/n8n_io/status/2107386302249476218": {
-     "score": 0.208,
+     "score": 0.16,
      "detail": {
       "panelists": {
-       "working_dev": 0.18,
-       "early_adopter": 0.28,
-       "skeptical_senior": 0.22,
-       "tech_media": 0.15
+       "agent_power_user": 0.15,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.14,
+       "multi_agent_researcher": 0.25
       }
      }
     },
     "https://x.com/n8n_io/status/2110264448271450198": {
-     "score": 0.072,
+     "score": 0.046,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.02,
-       "tech_media": 0.12
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/neondatabase/status/2110758792954581464": {
-     "score": 0.255,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.2
+       "agent_power_user": 0.08,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/nuxt_js/status/2109287168757940324": {
-     "score": 0.28,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.45,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.12
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/nuxt_js/status/2109287216149406101": {
-     "score": 0.04,
+     "score": 0.018,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.02,
        "skeptical_senior": 0.02,
-       "tech_media": 0.03
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/ollama/status/2110781259635212688": {
-     "score": 0.175,
+     "score": 0.102,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.22
+       "agent_power_user": 0.12,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/ollama/status/2110833609829695718": {
-     "score": 0.375,
+     "score": 0.22,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.6,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.35
+       "agent_power_user": 0.4,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/ollama/status/2107584722465616123": {
-     "score": 0.25,
+     "score": 0.096,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.42,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.18
+       "agent_power_user": 0.08,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/openstatushq/status/2109012087875973149": {
-     "score": 0.083,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.03
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/openstatushq/status/2110000103847313760": {
-     "score": 0.077,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.12,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.05,
        "skeptical_senior": 0.04,
-       "tech_media": 0.08
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/pnpmjs/status/2109633147789066607": {
-     "score": 0.287,
+     "score": 0.12,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.2
+       "agent_power_user": 0.08,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.3,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/pnpmjs/status/2108646891902640466": {
-     "score": 0.125,
+     "score": 0.16,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.1
+       "agent_power_user": 0.3,
+       "eng_lead": 0.15,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/polar_sh/status/2108198833167462472": {
-     "score": 0.12,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.1
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.02
       }
      }
     },
@@ -7427,1146 +8098,1277 @@
      "score": 0.2,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.25,
+       "agent_power_user": 0.2,
+       "eng_lead": 0.3,
        "skeptical_senior": 0.15,
-       "tech_media": 0.2
+       "ai_tooling_influencer": 0.25,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/posthog/status/2109706445549945051": {
-     "score": 0.338,
+     "score": 0.33,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.35,
+       "agent_power_user": 0.4,
+       "eng_lead": 0.35,
        "skeptical_senior": 0.4,
-       "tech_media": 0.25
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/posthog/status/2110781140055531967": {
-     "score": 0.098,
+     "score": 0.058,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
+       "agent_power_user": 0.05,
+       "eng_lead": 0.08,
        "skeptical_senior": 0.1,
-       "tech_media": 0.07
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/posthog/status/2109706433893961788": {
-     "score": 0.23,
+     "score": 0.27,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.35,
-       "tech_media": 0.12
+       "agent_power_user": 0.3,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.45,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/posthog/status/2109706830649917727": {
-     "score": 0.282,
+     "score": 0.35,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.4,
-       "tech_media": 0.18
+       "agent_power_user": 0.4,
+       "eng_lead": 0.4,
+       "skeptical_senior": 0.35,
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.3
       }
      }
     },
     "https://x.com/posthog/status/2107530217078362301": {
-     "score": 0.138,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.1
+       "agent_power_user": 0.1,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/posthog/status/2110781172477501818": {
-     "score": 0.087,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.05
+       "agent_power_user": 0.03,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/posthog/status/2107530135448760403": {
-     "score": 0.208,
+     "score": 0.24,
      "detail": {
       "panelists": {
-       "working_dev": 0.28,
-       "early_adopter": 0.25,
+       "agent_power_user": 0.3,
+       "eng_lead": 0.4,
        "skeptical_senior": 0.2,
-       "tech_media": 0.1
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/prisma/status/2107468131841331475": {
-     "score": 0.065,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.09,
-       "tech_media": 0.04
+       "agent_power_user": 0.04,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/remix_run/status/2108225049937211645": {
-     "score": 0.072,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.08,
+       "agent_power_user": 0.03,
+       "eng_lead": 0.03,
        "skeptical_senior": 0.05,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/remix_run/status/2108225057126285327": {
-     "score": 0.058,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.03
+       "agent_power_user": 0.03,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/remix_run/status/2108225052709929008": {
-     "score": 0.077,
+     "score": 0.07,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.05
+       "agent_power_user": 0.1,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.07
       }
      }
     },
     "https://x.com/render/status/2110605668109688929": {
-     "score": 0.028,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.02,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.02
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/render/status/2110489075111374988": {
-     "score": 0.052,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.09,
-       "early_adopter": 0.03,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.04
+       "agent_power_user": 0.03,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/resend/status/2110742035766616567": {
-     "score": 0.2,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.12
+       "agent_power_user": 0.04,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/resend/status/2110439990463512757": {
-     "score": 0.213,
+     "score": 0.098,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.2
+       "agent_power_user": 0.12,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.09,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/resend/status/2109705935098892758": {
-     "score": 0.16,
+     "score": 0.096,
      "detail": {
       "panelists": {
-       "working_dev": 0.18,
-       "early_adopter": 0.28,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "agent_power_user": 0.2,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/resend/status/2110742159997702258": {
-     "score": 0.037,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.02
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/resend/status/2110010458568892908": {
-     "score": 0.035,
+     "score": 0.012,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.02,
-       "tech_media": 0.04
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/resend/status/2110742183754318113": {
-     "score": 0.08,
+     "score": 0.024,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.06
+       "agent_power_user": 0.03,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/resend/status/2107471470763155585": {
-     "score": 0.02,
+     "score": 0.012,
      "detail": {
       "panelists": {
-       "working_dev": 0.02,
-       "early_adopter": 0.03,
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
        "skeptical_senior": 0.01,
-       "tech_media": 0.02
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/resend/status/2110793885366771884": {
-     "score": 0.035,
+     "score": 0.012,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.03,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/retool/status/2110388017613717518": {
-     "score": 0.105,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.14,
-       "tech_media": 0.06
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/retool/status/2110725236119552485": {
-     "score": 0.092,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.08
+       "agent_power_user": 0.07,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/retool/status/2108212687578472946": {
-     "score": 0.115,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "agent_power_user": 0.05,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/retool/status/2107859428732997669": {
-     "score": 0.037,
+     "score": 0.016,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.03,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "agent_power_user": 0.01,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/retool/status/2108212684663685274": {
-     "score": 0.06,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.03
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/retool/status/2108212690879406136": {
-     "score": 0.035,
+     "score": 0.014,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.02,
-       "tech_media": 0.03
+       "agent_power_user": 0.01,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.01,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/retool/status/2107859431455404228": {
-     "score": 0.04,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.03,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.03
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/retool/status/2108212689197555785": {
-     "score": 0.065,
+     "score": 0.018,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.03
+       "agent_power_user": 0.01,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.01,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/sanity_io/status/2108203511636988390": {
-     "score": 0.055,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "agent_power_user": 0.04,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/sanity_io/status/2110397719361851638": {
-     "score": 0.105,
+     "score": 0.086,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.07
+       "agent_power_user": 0.1,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/sanity_io/status/2110047364102705341": {
-     "score": 0.09,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.12
+       "agent_power_user": 0.07,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/sanity_io/status/2107818224784146866": {
-     "score": 0.15,
+     "score": 0.094,
      "detail": {
       "panelists": {
-       "working_dev": 0.18,
-       "early_adopter": 0.22,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.09,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/sanity_io/status/2107839109918257252": {
-     "score": 0.11,
+     "score": 0.128,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.05
+       "agent_power_user": 0.14,
+       "eng_lead": 0.11,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.09,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/speakeasydev/status/2110808098105377193": {
-     "score": 0.043,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.05,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.1,
        "skeptical_senior": 0.02,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/storybookjs/status/2107515955534508142": {
-     "score": 0.045,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.03
+       "agent_power_user": 0.06,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/strapijs/status/2107395441188819035": {
-     "score": 0.037,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.02,
-       "tech_media": 0.06
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/strapijs/status/2108120466976121101": {
-     "score": 0.113,
+     "score": 0.054,
      "detail": {
       "panelists": {
-       "working_dev": 0.14,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.07
+       "agent_power_user": 0.07,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/strapijs/status/2109949254085079536": {
-     "score": 0.088,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.04
+       "agent_power_user": 0.07,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/strapijs/status/2107474530163679626": {
-     "score": 0.118,
+     "score": 0.06,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.07
+       "agent_power_user": 0.08,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.09,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/strapijs/status/2110360595279057240": {
-     "score": 0.075,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.1
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/strapijs/status/2109569764850868427": {
-     "score": 0.068,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.04
+       "agent_power_user": 0.02,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/strapijs/status/2108211161594249365": {
-     "score": 0.06,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.09,
-       "early_adopter": 0.06,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.05
+       "agent_power_user": 0.01,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/strapijs/status/2107841062798512244": {
-     "score": 0.06,
+     "score": 0.02,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.07,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "agent_power_user": 0.01,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/supabase/status/2109290802174472425": {
-     "score": 0.1,
+     "score": 0.062,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.08,
+       "agent_power_user": 0.05,
+       "eng_lead": 0.06,
        "skeptical_senior": 0.12,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/supabase/status/2110815570580889896": {
-     "score": 0.325,
+     "score": 0.098,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.35
+       "agent_power_user": 0.08,
+       "eng_lead": 0.18,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/supabase/status/2110040855360741868": {
-     "score": 0.212,
+     "score": 0.134,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.15
+       "agent_power_user": 0.2,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.22,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/supabase/status/2110857277494169647": {
-     "score": 0.4,
+     "score": 0.33,
      "detail": {
       "panelists": {
-       "working_dev": 0.55,
-       "early_adopter": 0.5,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.25
+       "agent_power_user": 0.62,
+       "eng_lead": 0.3,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.18
       }
      }
     },
     "https://x.com/supabase/status/2109630227085168640": {
-     "score": 0.318,
+     "score": 0.102,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.4,
-       "tech_media": 0.45
+       "agent_power_user": 0.06,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/supabase/status/2108290689184243777": {
-     "score": 0.163,
+     "score": 0.068,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.2
+       "agent_power_user": 0.07,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/supabase/status/2110116200705642687": {
-     "score": 0.077,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.1
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/supabase/status/2110105984706257231": {
-     "score": 0.25,
+     "score": 0.138,
      "detail": {
       "panelists": {
-       "working_dev": 0.4,
-       "early_adopter": 0.22,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.25,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/temporalio/status/2107980512182898716": {
-     "score": 0.095,
+     "score": 0.058,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.04
+       "agent_power_user": 0.04,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/temporalio/status/2109826799618142581": {
-     "score": 0.055,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.05,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.04
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/temporalio/status/2109698214710690091": {
-     "score": 0.03,
+     "score": 0.022,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.02,
        "skeptical_senior": 0.02,
-       "tech_media": 0.02
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/temporalio/status/2108196097143218486": {
-     "score": 0.185,
+     "score": 0.084,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.12
+       "agent_power_user": 0.07,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.14,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/temporalio/status/2110068088788165076": {
-     "score": 0.125,
+     "score": 0.058,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.14,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.04
+       "agent_power_user": 0.05,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/temporalio/status/2110056246141129127": {
-     "score": 0.037,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/tldraw/status/2108225407812305166": {
-     "score": 0.147,
+     "score": 0.052,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.05
+       "agent_power_user": 0.03,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/tldraw/status/2110783586928599342": {
-     "score": 0.095,
+     "score": 0.052,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.12,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.1
+       "agent_power_user": 0.03,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/tursodatabase/status/2107837308011765891": {
-     "score": 0.1,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.15,
+       "agent_power_user": 0.06,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.08,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/tursodatabase/status/2107837305562276127": {
-     "score": 0.145,
+     "score": 0.062,
      "detail": {
       "panelists": {
-       "working_dev": 0.18,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.05
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.14,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/tursodatabase/status/2108210104419922065": {
-     "score": 0.068,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.06,
-       "early_adopter": 0.14,
+       "agent_power_user": 0.1,
+       "eng_lead": 0.06,
        "skeptical_senior": 0.03,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/tursodatabase/status/2107837309487886688": {
-     "score": 0.115,
+     "score": 0.048,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.14,
+       "agent_power_user": 0.04,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.1,
-       "tech_media": 0.1
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/tursodatabase/status/2107837312415703289": {
-     "score": 0.068,
+     "score": 0.032,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.08
+       "agent_power_user": 0.03,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/tursodatabase/status/2107837302999224623": {
-     "score": 0.17,
+     "score": 0.076,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.22,
-       "skeptical_senior": 0.18,
-       "tech_media": 0.08
+       "agent_power_user": 0.07,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.16,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/upstash/status/2107532184341156080": {
-     "score": 0.235,
+     "score": 0.138,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.42,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.12
+       "agent_power_user": 0.3,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/upstash/status/2108368797946315060": {
-     "score": 0.17,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.1
+       "agent_power_user": 0.1,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/upstash/status/2110098341120098652": {
-     "score": 0.07,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.06
+       "agent_power_user": 0.04,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/useblacksmith/status/2110370297979240801": {
-     "score": 0.052,
+     "score": 0.03,
      "detail": {
       "panelists": {
-       "working_dev": 0.03,
-       "early_adopter": 0.04,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.04,
        "skeptical_senior": 0.02,
-       "tech_media": 0.12
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/v0/status/2107571659842769322": {
-     "score": 0.185,
+     "score": 0.05,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.15
+       "agent_power_user": 0.06,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/vercel/status/2110509321939509421": {
-     "score": 0.4,
+     "score": 0.3,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.35,
+       "agent_power_user": 0.3,
+       "eng_lead": 0.25,
        "skeptical_senior": 0.4,
-       "tech_media": 0.55
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/vercel/status/2110808586389766404": {
-     "score": 0.073,
+     "score": 0.036,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.04,
-       "tech_media": 0.1
+       "agent_power_user": 0.03,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/vercel/status/2110803382239945130": {
-     "score": 0.238,
+     "score": 0.22,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.4
+       "agent_power_user": 0.2,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.25,
+       "ai_tooling_influencer": 0.3,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/vercel/status/2110786348131258456": {
-     "score": 0.375,
+     "score": 0.154,
      "detail": {
       "panelists": {
-       "working_dev": 0.45,
-       "early_adopter": 0.45,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.35
+       "agent_power_user": 0.15,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.2,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/vercel/status/2110803363269058578": {
-     "score": 0.212,
+     "score": 0.234,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.35
+       "agent_power_user": 0.3,
+       "eng_lead": 0.2,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/vercel/status/2110766047842476111": {
-     "score": 0.12,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.05,
-       "tech_media": 0.2
+       "agent_power_user": 0.05,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.04,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/vercel/status/2110803345309053144": {
-     "score": 0.133,
+     "score": 0.108,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.2,
+       "agent_power_user": 0.12,
+       "eng_lead": 0.1,
        "skeptical_senior": 0.08,
-       "tech_media": 0.15
+       "ai_tooling_influencer": 0.18,
+       "multi_agent_researcher": 0.06
       }
      }
     },
     "https://x.com/vercel/status/2110788459803938944": {
-     "score": 0.275,
+     "score": 0.244,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.3
+       "agent_power_user": 0.3,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.35,
+       "multi_agent_researcher": 0.2
       }
      }
     },
     "https://x.com/vite_js/status/2109573811465023661": {
-     "score": 0.25,
+     "score": 0.104,
      "detail": {
       "panelists": {
-       "working_dev": 0.35,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.3,
-       "tech_media": 0.2
+       "agent_power_user": 0.12,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.18,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/vllm_project/status/2109210324985622960": {
-     "score": 0.06,
+     "score": 0.038,
      "detail": {
       "panelists": {
-       "working_dev": 0.05,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.03,
-       "tech_media": 0.06
+       "agent_power_user": 0.03,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.02,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.05
       }
      }
     },
     "https://x.com/vllm_project/status/2108441335044997468": {
-     "score": 0.113,
+     "score": 0.074,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.15,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.08
+       "agent_power_user": 0.05,
+       "eng_lead": 0.07,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/vllm_project/status/2110573123636695245": {
-     "score": 0.207,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.15
+       "agent_power_user": 0.04,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/vllm_project/status/2107934535749140841": {
-     "score": 0.312,
+     "score": 0.104,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.4,
-       "skeptical_senior": 0.25,
-       "tech_media": 0.3
+       "agent_power_user": 0.1,
+       "eng_lead": 0.08,
+       "skeptical_senior": 0.09,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/vllm_project/status/2110719764771537370": {
-     "score": 0.207,
+     "score": 0.056,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.35,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.15
+       "agent_power_user": 0.04,
+       "eng_lead": 0.03,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/vllm_project/status/2110651698847093121": {
-     "score": 0.16,
+     "score": 0.04,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.3,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.12
+       "agent_power_user": 0.03,
+       "eng_lead": 0.02,
+       "skeptical_senior": 0.03,
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/vllm_project/status/2110745184141193630": {
-     "score": 0.152,
+     "score": 0.084,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.18,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.08
+       "agent_power_user": 0.06,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.15
       }
      }
     },
     "https://x.com/vllm_project/status/2107690067619930450": {
-     "score": 0.155,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.12
+       "agent_power_user": 0.04,
+       "eng_lead": 0.06,
+       "skeptical_senior": 0.05,
+       "ai_tooling_influencer": 0.09,
+       "multi_agent_researcher": 0.09
       }
      }
     },
     "https://x.com/warpdotdev/status/2110792621279093150": {
-     "score": 0.105,
+     "score": 0.21,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.18,
-       "skeptical_senior": 0.07,
-       "tech_media": 0.05
+       "agent_power_user": 0.3,
+       "eng_lead": 0.25,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.3
       }
      }
     },
     "https://x.com/warpdotdev/status/2110792638609961441": {
-     "score": 0.072,
+     "score": 0.116,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.12,
+       "agent_power_user": 0.15,
+       "eng_lead": 0.2,
        "skeptical_senior": 0.05,
-       "tech_media": 0.04
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.08
       }
      }
     },
     "https://x.com/warpdotdev/status/2110792650991525939": {
-     "score": 0.075,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.08,
-       "early_adopter": 0.14,
+       "agent_power_user": 0.1,
+       "eng_lead": 0.1,
        "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/warpdotdev/status/2110792609174282287": {
-     "score": 0.145,
+     "score": 0.184,
      "detail": {
       "panelists": {
-       "working_dev": 0.2,
-       "early_adopter": 0.22,
+       "agent_power_user": 0.3,
+       "eng_lead": 0.3,
        "skeptical_senior": 0.1,
-       "tech_media": 0.06
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/warpdotdev/status/2110469311769055496": {
-     "score": 0.068,
+     "score": 0.066,
      "detail": {
       "panelists": {
-       "working_dev": 0.07,
-       "early_adopter": 0.12,
+       "agent_power_user": 0.1,
+       "eng_lead": 0.08,
        "skeptical_senior": 0.03,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.08,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/xata/status/2110023162096488779": {
-     "score": 0.175,
+     "score": 0.082,
      "detail": {
       "panelists": {
-       "working_dev": 0.22,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.08
+       "agent_power_user": 0.12,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.08,
+       "ai_tooling_influencer": 0.07,
+       "multi_agent_researcher": 0.04
       }
      }
     },
     "https://x.com/xata/status/2110747919959941523": {
-     "score": 0.225,
+     "score": 0.09,
      "detail": {
       "panelists": {
-       "working_dev": 0.3,
-       "early_adopter": 0.28,
-       "skeptical_senior": 0.2,
-       "tech_media": 0.12
+       "agent_power_user": 0.1,
+       "eng_lead": 0.14,
+       "skeptical_senior": 0.12,
+       "ai_tooling_influencer": 0.06,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/zeddotdev/status/2108641490633433437": {
-     "score": 0.105,
+     "score": 0.07,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.1,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.05
+       "agent_power_user": 0.05,
+       "eng_lead": 0.04,
+       "skeptical_senior": 0.18,
+       "ai_tooling_influencer": 0.05,
+       "multi_agent_researcher": 0.03
       }
      }
     },
     "https://x.com/zeddotdev/status/2110744595898192003": {
-     "score": 0.168,
+     "score": 0.116,
      "detail": {
       "panelists": {
-       "working_dev": 0.15,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.12,
-       "tech_media": 0.2
+       "agent_power_user": 0.12,
+       "eng_lead": 0.1,
+       "skeptical_senior": 0.1,
+       "ai_tooling_influencer": 0.12,
+       "multi_agent_researcher": 0.14
       }
      }
     },
     "https://x.com/zeddotdev/status/2107901447144714645": {
-     "score": 0.048,
+     "score": 0.018,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.08,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.02,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/zeddotdev/status/2107901444246413755": {
-     "score": 0.152,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.25,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.08,
-       "tech_media": 0.08
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.06,
+       "ai_tooling_influencer": 0.04,
+       "multi_agent_researcher": 0.02
       }
      }
     },
     "https://x.com/zeddotdev/status/2110418785500815689": {
-     "score": 0.048,
+     "score": 0.018,
      "detail": {
       "panelists": {
-       "working_dev": 0.04,
-       "early_adopter": 0.08,
+       "agent_power_user": 0.02,
+       "eng_lead": 0.02,
        "skeptical_senior": 0.02,
-       "tech_media": 0.05
+       "ai_tooling_influencer": 0.02,
+       "multi_agent_researcher": 0.01
       }
      }
     },
     "https://x.com/zeddotdev/status/2109050287654600950": {
-     "score": 0.138,
+     "score": 0.148,
      "detail": {
       "panelists": {
-       "working_dev": 0.12,
-       "early_adopter": 0.25,
-       "skeptical_senior": 0.06,
-       "tech_media": 0.12
+       "agent_power_user": 0.2,
+       "eng_lead": 0.22,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.15,
+       "multi_agent_researcher": 0.1
       }
      }
     },
     "https://x.com/zeddotdev/status/2110777206339170587": {
-     "score": 0.095,
+     "score": 0.158,
      "detail": {
       "panelists": {
-       "working_dev": 0.1,
-       "early_adopter": 0.08,
-       "skeptical_senior": 0.15,
-       "tech_media": 0.05
+       "agent_power_user": 0.25,
+       "eng_lead": 0.12,
+       "skeptical_senior": 0.2,
+       "ai_tooling_influencer": 0.1,
+       "multi_agent_researcher": 0.12
       }
      }
     },
     "https://x.com/zeddotdev/status/2110418782141243766": {
-     "score": 0.163,
+     "score": 0.044,
      "detail": {
       "panelists": {
-       "working_dev": 0.28,
-       "early_adopter": 0.2,
-       "skeptical_senior": 0.1,
-       "tech_media": 0.07
+       "agent_power_user": 0.05,
+       "eng_lead": 0.05,
+       "skeptical_senior": 0.07,
+       "ai_tooling_influencer": 0.03,
+       "multi_agent_researcher": 0.02
       }
      }
     }
+   }
+  }
+ },
+ "versus_baselines": {
+  "panel": {
+   "minus_length": {
+    "value": -0.004196642685851404,
+    "ci95": [
+     -0.05932203389830515,
+     0.045031055900621064
+    ]
+   },
+   "minus_media": {
+    "value": 0.014388489208633004,
+    "ci95": [
+     -0.05351437699680517,
+     0.08059384941675507
+    ]
+   },
+   "length_plus_media": 0.6360911270983214,
+   "length_plus_media_plus_this": 0.632494004796163,
+   "gain_over_length_plus_media": {
+    "value": -0.003597122302158362,
+    "ci95": [
+     -0.0347322720694645,
+     0.025423728813559365
+    ]
    }
   }
  }

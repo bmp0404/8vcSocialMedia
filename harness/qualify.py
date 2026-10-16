@@ -7,6 +7,7 @@ eval/panels/devtools.json to score the data team's dev-tool posts.
 
 import json
 import os
+import random
 from pathlib import Path
 
 from harness import config
@@ -68,6 +69,25 @@ def panel_scores(llm: LLM, actions: list[Action], panel: dict[str, str]) -> dict
     ).get("scores", {})
 
 
+def panel_scores_two_orders(llm: LLM, actions: list[Action], panel: dict[str, str]) -> dict[str, dict[str, float]]:
+    """Score the drafts in a shuffled order and in reverse, then average each panelist's score.
+
+    A model scoring several posts in one call drifts toward its neighbours: on real dev-tool posts the
+    panel's within-account AUC was 0.696 with viral posts first and 0.821 with them last
+    (8vc-context/research/eval.md, finding 1). Averaging the two orders cancels most of that for one
+    extra call. The shuffle uses Python's default random; order only needs to vary, not repeat.
+    """
+    order = list(actions)
+    random.shuffle(order)
+    runs = [panel_scores(llm, order, panel), panel_scores(llm, order[::-1], panel)]
+    out = {}
+    for a in actions:
+        per = [r.get(a.id, {}) for r in runs]
+        names = set.intersection(*(set(x) for x in per)) if all(per) else set()
+        out[a.id] = {n: sum(float(x[n]) for x in per) / len(per) for n in names}
+    return out
+
+
 def panel_mean(scores: dict[str, float]) -> float:
     return round(sum(scores.values()) / len(scores), 3) if scores else 0.0
 
@@ -76,7 +96,7 @@ def qualify(llm: LLM, mission: str, actions: list[Action], panel: dict[str, str]
     if not actions:
         return []
     panel = panel or load_panel()
-    scores = panel_scores(llm, actions, panel)
+    scores = panel_scores_two_orders(llm, actions, panel)
 
     verdicts = llm.complete_json(
         CRITIC_SYSTEM,
