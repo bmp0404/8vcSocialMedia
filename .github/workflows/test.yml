@@ -1,0 +1,21 @@
+name: test
+
+# Runs on pushes to main too, because two PRs that pass alone can still break main together.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run --locked pytest
+      # The mock run needs no API key or network.
+      - run: uv run --locked python -m harness run --provider mock
