@@ -15,7 +15,7 @@
 //   });
 
 import * as api from "./lib/api.js";
-import { $, esc, html, isTyping, loadCSS, setHTML } from "./lib/dom.js";
+import { $, esc, html, isTyping, loadCSS, raw, setHTML } from "./lib/dom.js";
 
 const views = new Map();
 const GROUPS = [
@@ -45,7 +45,7 @@ export const ctx = {
   setParams,
   toast,
   readback,
-  refreshNav: renderNav,
+  refreshNav,
 };
 
 // --- Routing --------------------------------------------------------------------------------
@@ -80,6 +80,7 @@ async function route() {
   el.dataset.view = def.id;
   if (def.css) loadCSS(def.css);
   document.title = `${def.title} · Clearance`;
+  const navigated = current != null; // not the first load
   current = { def, el, params };
   renderNav();
   $("#main").scrollTop = 0;
@@ -87,6 +88,15 @@ async function route() {
     await def.mount(el, ctx, params);
   } catch (e) {
     showError(el, e);
+  }
+  // After an in-app route change, move focus to the new view's heading so screen readers announce
+  // it and Tab starts inside the view (better-accessibility: SPA route changes).
+  if (navigated && current?.def === def) {
+    const h1 = el.querySelector("h1");
+    if (h1) {
+      h1.tabIndex = -1;
+      h1.focus({ preventScroll: true });
+    }
   }
 }
 
@@ -121,13 +131,36 @@ function renderNav() {
         const n = v.count?.();
         return html`<a class="nav-link" href="#/${v.id}" ${v.id === active ? html`aria-current="page"` : ""}>
           <span>${v.title}</span>
-          ${n ? html`<span class="count ${v.hot?.() ? "hot" : ""}" aria-label="${n} waiting">${n}</span>` : ""}
+          ${n ? html`<span class="count ${v.hot?.() ? "hot" : ""}">${n}<span class="sr-only"> waiting</span></span>` : ""}
         </a>`;
       })}
       ${ext.map((x) => html`<a class="nav-link" href="${x.href}" title="${x.note}"><span>${x.title}</span><span class="ext" aria-hidden="true">↗</span></a>`)}
     </div>`;
   });
   setHTML($("#nav"), html`${groups}`);
+}
+
+/** Update rail counts in place; rebuilding the rail would destroy a focused link. */
+function refreshNav() {
+  const nav = $("#nav");
+  if (!nav.children.length) return renderNav();
+  for (const v of views.values()) {
+    const link = nav.querySelector(`a[href="#/${v.id}"]`);
+    if (!link) continue;
+    const n = v.count?.() || 0;
+    let badge = link.querySelector(".count");
+    if (!n) {
+      badge?.remove();
+      continue;
+    }
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "count";
+      link.append(badge);
+    }
+    badge.classList.toggle("hot", !!v.hot?.());
+    badge.innerHTML = String(html`${n}<span class="sr-only"> waiting</span>`);
+  }
 }
 
 function renderRailFoot() {
@@ -162,12 +195,25 @@ export function toast(message, { kind = "info", ms = 4200 } = {}) {
   const el = document.createElement("div");
   el.className = `toast ${kind === "error" ? "error" : ""}`;
   el.setAttribute("role", kind === "error" ? "alert" : "status");
-  el.textContent = message;
-  $("#toasts").append(el);
-  setTimeout(() => {
+  const text = document.createElement("span");
+  text.textContent = message;
+  el.append(text);
+  const leave = () => {
     el.classList.add("leaving");
     setTimeout(() => el.remove(), 200);
-  }, ms);
+  };
+  if (kind === "error") {
+    // Errors stay until the person closes them (motion-and-zoom.md: an error toast stays).
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "toast-close";
+    close.textContent = "Close";
+    close.addEventListener("click", leave);
+    el.append(close);
+  } else {
+    setTimeout(leave, ms);
+  }
+  $("#toasts").append(el);
 }
 
 const GLOBAL_KEYS = [
@@ -179,20 +225,29 @@ const GLOBAL_KEYS = [
   ["?", "This sheet"],
 ];
 
+function keyList(title, keys) {
+  return html`<section class="keys-group"><h3>${title}</h3><dl class="keys">
+    ${keys.map(([k, label]) => html`<dt>${k.split(/ \/ | /).map((p) => html`<kbd>${p}</kbd>`)}</dt><dd>${label}</dd>`)}
+  </dl></section>`;
+}
+
 function openKeys() {
   const dlg = $("#keys-sheet");
   const viewKeys = current?.def.keys || [];
   setHTML(
     $("#keys-body"),
-    html`<dl class="keys">
-      ${viewKeys.length ? html`<h3>${current.def.title}</h3>` : ""}
-      ${viewKeys.map(([k, label]) => html`<dt>${k.split(" / ").map((p, i) => html`${i ? " " : ""}<kbd>${p}</kbd>`)}</dt><dd>${label}</dd>`)}
-      <h3>Anywhere</h3>
-      ${GLOBAL_KEYS.map(([k, label]) => html`<dt>${k.split(" ").map((p) => html`<kbd>${p}</kbd>`)}</dt><dd>${label}</dd>`)}
-    </dl>`,
+    html`${viewKeys.length ? keyList(current.def.title, viewKeys) : ""}${keyList("Anywhere", GLOBAL_KEYS)}
+      <label class="keys-switch"><input type="checkbox" id="keys-on" ${shortcutsOn() ? raw("checked") : ""}> Single-key shortcuts (turn off for speech input; <kbd>?</kbd> still opens this sheet)</label>`,
   );
+  $("#keys-on").addEventListener("change", (e) => {
+    localStorage.setItem("clearance.keys", e.target.checked ? "on" : "off");
+    readback(e.target.checked ? "Single-key shortcuts on." : "Single-key shortcuts off. Press ? to turn them back on.");
+  });
   dlg.showModal();
 }
+
+// WCAG 2.1.4: single-character shortcuts need an off switch (speech input can fire them).
+const shortcutsOn = () => localStorage.getItem("clearance.keys") !== "off";
 
 // --- Keyboard -------------------------------------------------------------------------------
 
@@ -202,13 +257,13 @@ function onKey(e) {
   if (e.defaultPrevented || e.metaKey || e.altKey) return;
   if ($("#keys-sheet").open) return;
   if (!isTyping(e.target) && !e.ctrlKey) {
-    if (gPending && Date.now() - gPending < 1200 && GO[e.key]) {
+    if (shortcutsOn() && gPending && Date.now() - gPending < 1200 && GO[e.key]) {
       gPending = 0;
       e.preventDefault();
       return navigate(GO[e.key]);
     }
     gPending = 0;
-    if (e.key === "g") {
+    if (e.key === "g" && shortcutsOn()) {
       gPending = Date.now();
       return;
     }
@@ -216,6 +271,7 @@ function onKey(e) {
       e.preventDefault();
       return openKeys();
     }
+    if (!shortcutsOn() && e.key.length === 1) return;
   }
   if (current?.def.onKey?.(e)) e.preventDefault();
 }

@@ -139,6 +139,7 @@
   min-width: 0;
   min-height: 0;
   overflow: auto;
+  overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
 
@@ -285,6 +286,11 @@
   border-left: 1px solid var(--rule);
   min-width: 2.4em;
   justify-content: center;
+}
+
+.bay:focus-visible,
+.readback-chips .chip:focus-visible {
+  outline-offset: -2px; /* the scrolling row would clip a ring drawn outside */
 }
 
 .bay[aria-selected="true"] {
@@ -766,19 +772,27 @@ button.chip[aria-pressed="true"] {
 }
 
 .skeleton {
+  position: relative;
   display: block;
   height: 12px;
   border-radius: 3px;
-  background: linear-gradient(90deg, var(--strip-inset) 0 40%, var(--rule) 50%, var(--strip-inset) 60% 100%) 0 0 / 300% 100%;
+  background: var(--strip-inset);
+  overflow: hidden;
+}
+
+/* The sweep moves with transform, so it doesn't repaint the bar every frame. */
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--rule) 70%, transparent), transparent);
+  transform: translateX(-100%);
   animation: skeleton-sweep 1.4s linear infinite;
 }
 
 @keyframes skeleton-sweep {
-  from {
-    background-position: 100% 0;
-  }
   to {
-    background-position: 0 0;
+    transform: translateX(100%);
   }
 }
 
@@ -809,8 +823,8 @@ button.chip[aria-pressed="true"] {
 
 .toasts {
   position: fixed;
-  right: var(--s4);
-  bottom: 52px;
+  right: max(var(--s4), env(safe-area-inset-right));
+  top: max(var(--s4), env(safe-area-inset-top)); /* clear of the decision bar at the bottom */
   z-index: 50;
   display: grid;
   gap: var(--s2);
@@ -836,9 +850,25 @@ button.chip[aria-pressed="true"] {
   }
 }
 
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
 .toast.error {
   background: var(--struck);
   color: #fff;
+}
+
+.toast-close {
+  min-height: 28px;
+  padding: 0 var(--s2);
+  font: 600 12px / 1 var(--font-ui);
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: var(--r-control);
 }
 
 .toast.leaving {
@@ -847,6 +877,7 @@ button.chip[aria-pressed="true"] {
   transition-duration: var(--d-fast);
 }
 
+/* The shortcut sheet opens from a key press only, so it appears without motion. */
 dialog.sheet {
   width: min(560px, calc(100vw - 32px));
   max-height: min(80dvh, 720px);
@@ -856,39 +887,14 @@ dialog.sheet {
   border: 1px solid var(--rule);
   border-radius: 8px;
   box-shadow: var(--shadow-lift);
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity var(--d-base) var(--ease-out),
-    transform var(--d-base) var(--ease-out),
-    overlay var(--d-base) allow-discrete,
-    display var(--d-base) allow-discrete;
-  @starting-style {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-}
-
-dialog.sheet:not([open]) {
-  opacity: 0;
-  transform: scale(0.97);
-  transition-duration: var(--d-fast);
 }
 
 dialog.sheet::backdrop {
   background: var(--overlay);
-  opacity: 1;
-  transition:
-    opacity var(--d-base) ease,
-    overlay var(--d-base) allow-discrete,
-    display var(--d-base) allow-discrete;
-  @starting-style {
-    opacity: 0;
-  }
 }
 
-dialog.sheet:not([open])::backdrop {
-  opacity: 0;
+.sheet-body {
+  overscroll-behavior: contain;
 }
 
 .sheet-head {
@@ -910,6 +916,29 @@ dialog.sheet:not([open])::backdrop {
   overflow-y: auto;
 }
 
+.keys-group + .keys-group {
+  margin-top: var(--s4);
+}
+
+.keys-group h3 {
+  margin-bottom: var(--s2);
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.keys-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s5);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
 .keys {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -924,18 +953,6 @@ dialog.sheet:not([open])::backdrop {
   justify-content: flex-end;
 }
 
-.keys h3 {
-  grid-column: 1 / -1;
-  margin-top: var(--s3);
-  font: 700 var(--t-label) / 1.2 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-.keys h3:first-child {
-  margin-top: 0;
-}
 
 /* --- Small screens ------------------------------------------------------------------------ */
 
@@ -955,6 +972,7 @@ dialog.sheet:not([open])::backdrop {
     gap: var(--s3);
     padding: var(--s2) var(--s3);
     padding-top: max(var(--s2), env(safe-area-inset-top));
+    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
     border-right: 0;
     border-bottom: 1px solid var(--rule);
     overflow-x: auto;
@@ -1001,6 +1019,7 @@ dialog.sheet:not([open])::backdrop {
 
   .readback {
     padding: 0 var(--s3);
+    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -1014,21 +1033,35 @@ dialog.sheet:not([open])::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeleton {
-    animation: none;
-  }
   .btn:active:not(:disabled),
   button.chip:active {
     transform: none;
   }
-  .toast,
-  dialog.sheet {
+  .toast {
     @starting-style {
       transform: none;
     }
   }
-  .toast.leaving,
-  dialog.sheet:not([open]) {
+  .toast.leaving {
     transform: none;
+  }
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+/* Touch: 44px targets and a visible press, since the tap highlight is off. */
+@media (pointer: coarse) {
+  .btn,
+  .bay,
+  .nav-link,
+  .chip,
+  .toast-close {
+    min-height: 44px;
+  }
+  .strip:active,
+  .bay:active,
+  .nav-link:active {
+    background-color: var(--strip-inset);
   }
 }

@@ -7,6 +7,8 @@ import { registerView } from "../shell.js";
 import { $, $$, html, isTyping, on, raw, setHTML } from "../lib/dom.js";
 import { clock, compact, fixed, human } from "../lib/format.js";
 
+let entered = false;
+
 const NOTES_PER_REQUEST = 50; // memory_api.get_notes answers at most 50 ids per request
 
 const BAYS = [
@@ -53,7 +55,8 @@ registerView({
     view = makeState(token, el, ctx, data, params);
     dueCount = view.lessons.filter(isDue).length;
     ctx.refreshNav();
-    render(true);
+    render(!entered); // the entrance plays once per page load, not on every return to the view
+    entered = true;
     bind(view);
   },
   unmount() {
@@ -875,7 +878,7 @@ function skeleton() {
 function bind(v) {
   const el = v.el;
   v.off.push(
-    on(el, "click", "[data-bay]", (e, b) => switchBay(b.dataset.bay)),
+    on(el, "click", "[data-bay]", (e, b) => switchBay(b.dataset.bay, true)),
     on(el, "click", "[data-filter]", (e, b) => {
       view.filter = b.dataset.filter;
       view.ctx.setParams({ filter: view.filter === "all" ? null : view.filter });

@@ -35,12 +35,15 @@ MAX_BODY = 1_000_000
 class Handler(BaseHTTPRequestHandler):
     port = 8765  # set by serve()
 
-    def _send(self, code: int, body: bytes, ctype: str = "application/json") -> None:
+    def _send(self, code: int, body: bytes, ctype: str = "application/json", cache: str = "no-cache") -> None:
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Cache-Control", cache)
         self.send_header("X-Content-Type-Options", "nosniff")
+        # No other page may frame the console and steer clicks onto Clear.
+        self.send_header("Content-Security-Policy", "frame-ancestors 'none'")
+        self.send_header("X-Frame-Options", "DENY")
         self.end_headers()
         self.wfile.write(body)
 
@@ -66,7 +69,9 @@ class Handler(BaseHTTPRequestHandler):
         target = (STATIC / rel).resolve()
         if not target.is_relative_to(STATIC) or not target.is_file():
             return self._json({"error": "not found"}, 404)
-        self._send(200, target.read_bytes(), TYPES.get(target.suffix, "application/octet-stream"))
+        # Fonts never change; everything else revalidates so edits show up on reload.
+        cache = "public, max-age=31536000, immutable" if target.suffix == ".woff2" else "no-cache"
+        self._send(200, target.read_bytes(), TYPES.get(target.suffix, "application/octet-stream"), cache)
 
     def _dispatch(self, method: str) -> None:
         if not self._local_host():

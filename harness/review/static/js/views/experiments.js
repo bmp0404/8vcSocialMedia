@@ -15,6 +15,8 @@ import { $, $$, html, isTyping, on, setHTML } from "../lib/dom.js";
 import { clock, compact, duration, human, signed } from "../lib/format.js";
 import { ciAxis, ciRow, domainOf, ticks } from "../components/ci.js";
 
+let entered = false;
+
 const STATUS = {
   promoted: { stamp: "cleared", word: "Promoted", gist: "The challenger cleared the gate and was promoted into the champion." },
   rejected: { stamp: "struck", word: "Rejected", gist: "The challenger made the primary metric worse; the champion stays." },
@@ -729,7 +731,8 @@ registerView({
   keys: [["j / k", "Next or previous experiment"]],
   async mount(el, ctx, params) {
     const token = {};
-    S = { el, ctx, token, data: null, list: [], byId: new Map(), revertedBy: new Map(), bay: "all", sel: null, first: true, off: [] };
+    S = { el, ctx, token, data: null, list: [], byId: new Map(), revertedBy: new Map(), bay: "all", sel: null, first: !entered, off: [] };
+    entered = true; // the list's entrance plays once per page load
     setHTML(el, skeleton());
     const data = await ctx.api.get("/api/experiments");
     if (S?.token !== token) return;

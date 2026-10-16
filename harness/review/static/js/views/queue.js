@@ -107,7 +107,8 @@ async function loadRun(id) {
   }
   S.contextReason = context.status === "rejected" ? context.reason.message : context.value?.reason || "";
   S.loading = false;
-  S.enter = true;
+  S.enter = !entered; // the board loads with strips once per page load, not on every return
+  entered = true;
   S.undo = [];
   S.ctx.setParams({ run: id });
   const bays = groups();
@@ -134,8 +135,10 @@ function groups() {
     else if (a.vetoed) g.held.push({ ...e, veto: true });
     else g.clear.push(e);
   }
+  const released = new Set(S.actions.filter((a) => a.origin === "overrule").map((a) => a.overrule?.decision));
   (S.decisions || []).forEach((d, i) => {
-    if (d.tool === "abstain") g.held.push({ key: `d:${i}`, kind: "abstain", d, i });
+    // A hold a person already overruled is resolved; its released draft sits in Cleared.
+    if (d.tool === "abstain" && !released.has(i)) g.held.push({ key: `d:${i}`, kind: "abstain", d, i });
     else if (d.tool === "ask_human") {
       const answer = S.actions.find((a) => a.origin === "take" && a.question === d.question);
       if (!answer) g.take.push({ key: `d:${i}`, kind: "ask", d, i });
@@ -222,7 +225,7 @@ function renderBays() {
     html`${BAYS.map(([b, label]) => {
       const n = g[b].length;
       const attn = (b === "clear" || b === "take") && n > 0;
-      return html`<button class="bay ${attn ? "attn" : ""}" role="tab" type="button" data-bay="${b}" aria-selected="${b === S.bay}" tabindex="${b === S.bay ? 0 : -1}" aria-controls="q-list">
+      return html`<button class="bay ${attn ? "attn" : ""}" role="tab" type="button" data-bay="${b}" aria-selected="${String(b === S.bay)}" tabindex="${b === S.bay ? 0 : -1}" aria-controls="q-list">
         <span>${label}</span><span class="n">${n}</span>
       </button>`;
     })}`,
@@ -246,7 +249,7 @@ function stripHtml(e) {
     const n = narrativeOf(a.narrative_id);
     const sc = scoreOf(a);
     const verdict = a.draft_meta?.judge;
-    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${lane}" data-status="${st}" ${e.veto ? raw("data-held") : ""} aria-selected="${on}" tabindex="${on ? 0 : -1}">
+    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${lane}" data-status="${st}" ${e.veto ? raw("data-held") : ""} aria-selected="${String(on)}" tabindex="${on ? 0 : -1}">
       <span class="strip-top">
         <span class="label">${a.type}</span>
         <span class="where">${human(a.mind)}${n ? ` · ${n.title}` : a.narrative_id ? ` · ${a.narrative_id}` : ""}</span>
@@ -268,7 +271,7 @@ function stripHtml(e) {
     const d = e.d;
     const n = (d.candidates || []).filter((c) => c.text).length;
     const target = isXPost(d.opportunity) ? handleFromUrl(d.opportunity) : null;
-    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${d.lane}" data-held aria-selected="${on}" tabindex="${on ? 0 : -1}">
+    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${d.lane}" data-held aria-selected="${String(on)}" tabindex="${on ? 0 : -1}">
       <span class="strip-top"><span class="label">Held · ${d.lane}</span><span class="where">${human(d.reason)}</span></span>
       <span class="strip-text">${abstainLabel(d.reason)}${d.detail ? `: ${d.detail}` : ""}</span>
       <span class="strip-foot">
@@ -279,7 +282,7 @@ function stripHtml(e) {
   }
   const d = e.d;
   const n = narrativeOf(d.opportunity);
-  return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="human" aria-selected="${on}" tabindex="${on ? 0 : -1}">
+  return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="human" aria-selected="${String(on)}" tabindex="${on ? 0 : -1}">
     <span class="strip-top"><span class="label">Your take</span><span class="where">${n?.title || d.opportunity}</span></span>
     <span class="strip-text">${d.question.split(". Got a")[0].split("? ")[0]}</span>
     <span class="strip-foot"><span>${(d.candidates || []).length} angles from the minds</span></span>
@@ -333,7 +336,15 @@ function renderDetail() {
   const box = $("#q-detail");
   const e = selected();
   const q = S.el.querySelector(".q");
+  if (S.detailOpen && !e) {
+    S.detailOpen = false;
+    setInert(false);
+  }
   q.toggleAttribute("data-detail-open", S.detailOpen && !!e);
+  const phone = matchMedia("(max-width: 860px)").matches;
+  box.toggleAttribute("aria-modal", phone && S.detailOpen);
+  if (phone) box.setAttribute("role", "dialog");
+  else box.removeAttribute("role");
   q.toggleAttribute("data-solo", !!S.error || (!S.loading && !S.runs.length));
   if (S.loading || S.error || !S.runs.length) {
     setHTML(box, "");
@@ -371,7 +382,8 @@ function editorHtml(key, text, kind, original, context = "") {
     </div>
     <div class="ed-bar">
       <span class="ed-count">${charRing(n)}<span class="num" data-count>${n}/${X_LIMIT}</span><span class="ed-cap" data-cap></span></span>
-      <span class="ed-gate" data-gate aria-live="polite"></span>
+      <span class="ed-gate" data-gate></span>
+      <span class="sr-only" data-gate-live aria-live="polite"></span>
       ${original != null ? html`<button class="btn btn-quiet btn-small" type="button" data-act="revert" ${edited ? "" : raw("hidden")}>Undo edits</button>` : ""}
     </div>
     <ul class="ed-findings" data-findings></ul>
@@ -497,7 +509,7 @@ function previewForAction(a, key, editable) {
     <div class="xbody">
       <header class="xhead">
         <span class="xname">${handle ? `@${handle}` : "Our account"}</span>
-        <span class="xmuted">· draft</span>
+        <span class="xmuted">· ${{ approved: "cleared", killed: "struck" }[a.review?.status] || "draft"}</span>
       </header>
       ${a.type === "reply" && t ? html`<p class="xmuted xreplying">Replying to <span class="xlink">@${t.author}</span></p>` : ""}
       ${editable ? editorHtml(key, text, kindForGate(a.type), a.text, t?.text || "") : html`<p class="xtext">${xText(text)}</p>`}
@@ -569,7 +581,7 @@ function reasonChips(id, set, inline = false) {
   const meta = reasonsMeta();
   return html`<div class="q-reasons ${inline ? "inline" : ""}" role="group" aria-label="Why strike it">
     ${inline ? "" : html`<span class="label">If striking, why</span>`}
-    ${Object.entries(meta).map(([code, label], i) => html`<button class="chip" type="button" data-reason="${code}" data-id="${id}" aria-pressed="${set.has(code)}"><kbd>${i + 1}</kbd>${label}</button>`)}
+    ${Object.entries(meta).map(([code, label], i) => html`<button class="chip" type="button" data-reason="${code}" data-id="${id}" aria-pressed="${String(set.has(code))}"><kbd>${i + 1}</kbd>${label}</button>`)}
   </div>`;
 }
 
@@ -591,18 +603,21 @@ function abstainDetail(e) {
       ["Drafts", `${cands.length} written, ${cands.filter((c) => c.text && !(c.gate || []).length && c.veto?.passed !== false).length} passed`],
     ])}
     <p class="notice"><b>The harness held back:</b> ${abstainLabel(d.reason)}.${d.detail ? ` ${sentence(d.detail)}` : ""} ${!canWrite ? "There was nothing to answer, so there's nothing to release." : usable.length ? "To overrule it, release one of its drafts or write your own." : "To overrule it, write the reply yourself."}</p>
-    ${t ? html`<div class="xstage">${targetCard(t, { runStartedAt: S.context?.started_at })}</div>` : ""}
     ${canWrite
-      ? html`<section class="section">
-          <div class="section-head"><h2>What you'd release</h2><span class="aside">Edit freely. The gate checks as you type.</span></div>
-          <div class="xstage"><div class="xpost ours">${avatar(handle, { ours: true })}<div class="xbody">
-            <header class="xhead"><span class="xname">${handle ? `@${handle}` : "Our account"}</span><span class="xmuted">· overrule</span></header>
-            ${t ? html`<p class="xmuted xreplying">Replying to <span class="xlink">@${t.author}</span></p>` : ""}
-            ${editorHtml(e.key, text, kind, null, t?.text || "")}
-          </div></div></div>
-          ${factsHtml(text)}
-        </section>`
-      : ""}
+      ? html`<div class="section-head q-overrule-head"><h2>What you'd release</h2><span class="aside">Edit freely. The gate checks as you type.</span></div>
+          <div class="xstage">
+            ${t ? html`${targetCard(t, { runStartedAt: S.context?.started_at })}<div class="xthread-line" aria-hidden="true"></div>` : ""}
+            <div class="xpost ours">${avatar(handle, { ours: true })}<div class="xbody">
+              <header class="xhead"><span class="xname">${handle ? `@${handle}` : "Our account"}</span><span class="xmuted">· overrule</span></header>
+              ${t ? html`<p class="xmuted xreplying">Replying to <span class="xlink">@${t.author}</span></p>` : ""}
+              ${editorHtml(e.key, text, kind, null, t?.text || "")}
+            </div></div>
+            ${t ? threadReplies(t.thread) : ""}
+          </div>
+          ${factsHtml(text)}`
+      : t
+        ? html`<div class="xstage">${targetCard(t, { runStartedAt: S.context?.started_at })}</div>`
+        : ""}
     ${cands.length ? html`<section class="section"><div class="section-head"><h2>Drafts the harness wrote</h2><span class="aside">Load one into the editor, then release it</span></div><ol class="q-cands">${cands.map((c, i) => candidateHtml(c, i, { action: canWrite ? "Load" : "" }))}</ol></section>` : ""}
   `;
   const footer = canWrite
@@ -742,6 +757,9 @@ function paintGate(ed, text, res) {
       : html`<span class="chip ok">Gate clear</span>${res.simulated ? html`<span class="muted"> (demo rules)</span>` : ""}`,
   );
   list.innerHTML = String(html`${f.map((x) => html`<li><span class="label">${human(x.rule)}</span> ${x.detail}</li>`)}`);
+  const live = ed.querySelector("[data-gate-live]");
+  const said = f.length ? `${f.length} slop flag${f.length > 1 ? "s" : ""}: ${f.map((x) => human(x.rule)).join(", ")}` : "Gate clear";
+  if (live && live.textContent !== said) live.textContent = said;
   // Underline the exact spans when the gate reports offsets; whole-text rules have none.
   const spans = f.filter((x) => Number.isInteger(x.start) && Number.isInteger(x.end) && x.end > x.start).sort((p, q) => p.start - q.start);
   let out = "";
@@ -755,6 +773,20 @@ function paintGate(ed, text, res) {
 }
 
 const escapeText = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+// --- Focus ---------------------------------------------------------------------------------
+
+/** True when keyboard focus is in this view or nowhere (on body), so a re-render may move it. */
+const focusIsOurs = () => !document.activeElement || document.activeElement === document.body || !!S.el?.contains(document.activeElement);
+
+/** After a re-render deleted the focused element, put focus on the selected strip, or on the
+    sheet's back button when the phone sheet is open, so keyboard and screen-reader users keep
+    their place (focus-and-keyboard.md: return focus to the nearest logical container). */
+function restoreFocus(had) {
+  if (!had) return;
+  const target = S.detailOpen ? $("#q-detail .q-back") : $(`#q-list [aria-selected="true"]`) || $(`#q-bays [aria-selected="true"]`);
+  target?.focus({ preventScroll: true });
+}
 
 // --- Verdicts -------------------------------------------------------------------------------
 
@@ -788,7 +820,9 @@ async function verdict(e, status) {
   S.edits.delete(e.key);
   S.sel = next;
   S.ctx.setParams({ sel: S.sel });
+  const had = focusIsOurs();
   render();
+  restoreFocus(had);
   S.undo.push({ id: a.id, key: e.key, prev, status });
   const what = a.type === "follow" ? `follow @${a.target_handle}` : `${a.type} by ${human(a.mind)}`;
   if (status === "approved") {
@@ -806,7 +840,9 @@ async function verdict(e, status) {
     a.review = prev;
     S.undo.pop();
     S.sel = e.key;
+    const hadFocus = focusIsOurs();
     render();
+    restoreFocus(hadFocus);
     S.ctx.toast(`Couldn't save the verdict: ${err.message}`, { kind: "error" });
     S.ctx.readback(html`<b class="bad">NOT SAVED</b> ${what} · ${err.message}`);
   }
@@ -847,7 +883,9 @@ async function undo() {
   S.bay = status === "approved" ? "cleared" : status === "killed" ? "struck" : a.vetoed ? "held" : "clear";
   S.sel = last.key;
   S.ctx.setParams({ bay: S.bay, sel: S.sel });
+  const had = focusIsOurs();
   render();
+  restoreFocus(had);
   S.ctx.readback(html`<b>UNDONE</b> ${a.type} by ${human(a.mind)} is back in ${BAYS.find(([b]) => b === S.bay)[1]}`);
   try {
     await S.ctx.api.post(`/api/actions/${a.id}/review`, { status, text: back.text ?? null, note: back.note || "", reasons: back.reasons || [] });
@@ -871,7 +909,9 @@ async function release(e) {
     S.edits.delete(e.key);
     S.ctx.readback(html`<b class="ok">RELEASED</b> held ${e.d.lane} draft, overruling “${human(e.d.reason)}” · hand-off updated`);
     S.sel = nextKeyAfter(e.key) || `a:${res.action.id}`;
+    const had = focusIsOurs();
     render();
+    restoreFocus(had);
   } catch (err) {
     if (btn) btn.disabled = false;
     S.ctx.toast(`Couldn't release it: ${err.message}`, { kind: "error" });
@@ -890,7 +930,9 @@ async function submitTake(e) {
     await refreshActions();
     S.ctx.readback(html`<b class="ok">CLEARED</b> your take, posted as written · hand-off updated`);
     S.sel = groups().take[0]?.key ?? null;
+    const had = focusIsOurs();
     render();
+    restoreFocus(had);
   } catch (err) {
     if (btn) btn.disabled = false;
     S.ctx.toast(`Couldn't save your take: ${err.message}`, { kind: "error" });
@@ -972,7 +1014,9 @@ function onKey(ev) {
   const e = selected();
   if (isTyping(ev.target)) {
     if (ev.key === "Escape") {
-      ev.target.blur();
+      // Leave the field for the selected strip rather than <body>, so the next key lands somewhere.
+      const strip = S.detailOpen ? $("#q-detail .q-back") : $(`#q-list [aria-selected="true"]`);
+      strip ? strip.focus({ preventScroll: true }) : ev.target.blur();
       return true;
     }
     if (ev.key === "Enter" && (ev.metaKey || ev.ctrlKey) && ev.target.closest("#q-detail")) {
@@ -983,6 +1027,7 @@ function onKey(ev) {
   }
   if (ev.ctrlKey || ev.metaKey) return false;
   const k = ev.key;
+  if (k === "Escape" && S.detailOpen) return closeSheet(), true;
   // Arrow keys move between bays while a bay tab has focus (the tablist pattern).
   if ((k === "ArrowRight" || k === "ArrowLeft") && ev.target.closest?.("#q-bays")) {
     const i = BAYS.findIndex(([b]) => b === S.bay);
@@ -1018,12 +1063,37 @@ function onKey(ev) {
     if (url) window.open(url, "_blank", "noopener");
     return !!url;
   }
-  if (k === "Enter" && matchMedia("(max-width: 860px)").matches) {
-    S.detailOpen = true;
-    renderDetail();
+  // Enter opens the phone sheet only from the strip list or nothing; on links and buttons it must
+  // keep activating them (WCAG 2.1.1).
+  const onStrip = ev.target === document.body || !!ev.target.closest?.("#q-list .strip");
+  if (k === "Enter" && onStrip && matchMedia("(max-width: 860px)").matches) {
+    openSheet({ instant: true });
     return true;
   }
   return false;
+}
+
+// --- The phone sheet: modal while open --------------------------------------------------------
+
+function openSheet({ instant = false } = {}) {
+  S.detailOpen = true;
+  const q = S.el.querySelector(".q");
+  // Keyboard-opened sheets appear without the slide (animate: never animate keyboard actions).
+  q.toggleAttribute("data-instant", instant);
+  renderDetail();
+  setInert(true);
+  $("#q-detail .q-back")?.focus({ preventScroll: true });
+}
+
+function closeSheet() {
+  S.detailOpen = false;
+  renderDetail();
+  setInert(false);
+  $(`#q-list [data-key="${CSS.escape(S.sel || "")}"]`)?.focus({ preventScroll: true });
+}
+
+function setInert(on) {
+  for (const el of [$(".rail"), $("#q-head"), $("#q-bays"), $("#q-list"), $(".readback")]) el?.toggleAttribute("inert", on);
 }
 
 // --- Events ---------------------------------------------------------------------------------
@@ -1031,11 +1101,7 @@ function onKey(ev) {
 function wire(el) {
   on(el, "click", "#q-list .strip", (ev, b) => {
     select(b.dataset.key, { scroll: false });
-    if (matchMedia("(max-width: 860px)").matches) {
-      S.detailOpen = true;
-      renderDetail();
-      $("#q-detail .q-back")?.focus();
-    }
+    if (matchMedia("(max-width: 860px)").matches) openSheet({ instant: ev.detail === 0 });
   });
   on(el, "click", "#q-bays .bay", (ev, b) => setBay(b.dataset.bay));
   on(el, "change", "#q-run", (ev, s) => {
@@ -1048,12 +1114,7 @@ function wire(el) {
     const act = b.dataset.act;
     if (act === "copy") return copyHandoff();
     if (act === "retry") return loadRuns(S.runId);
-    if (act === "back") {
-      S.detailOpen = false;
-      renderDetail();
-      $(`#q-list [data-key="${CSS.escape(S.sel || "")}"]`)?.focus();
-      return;
-    }
+    if (act === "back") return closeSheet();
     if (!e) return;
     if (act === "clear") return verdict(e, "approved");
     if (act === "strike") return verdict(e, "killed");
@@ -1092,6 +1153,7 @@ function wire(el) {
 }
 
 let unwire = null;
+let entered = false;
 
 registerView({
   id: "queue",
@@ -1142,6 +1204,7 @@ registerView({
     await loadRuns(params.run);
   },
   unmount() {
+    setInert(false);
     clearInterval(S.ageTimer);
     clearTimeout(S.gateTimer);
     unwire?.();

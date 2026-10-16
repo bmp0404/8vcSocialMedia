@@ -132,7 +132,7 @@ def test_overrule_ships_a_held_draft_once(server, store):
     code, res = request(server, "POST", f"/api/runs/{store}/overrule", body)
     assert code == 200, res
     assert res["action"]["type"] == "reply" and res["action"]["target_url"] == "https://x.com/WNBA/status/9"
-    assert res["action"]["origin"] == "overrule"
+    assert res["action"]["origin"] == "overrule" and res["action"]["target_handle"] == "WNBA"
     again = request(server, "POST", f"/api/runs/{store}/overrule", body)[1]
     assert again["action"]["id"] == res["action"]["id"]  # a double click doesn't add a second action
     handoff = json.loads((config.OUT_DIR / f"approved-run{store}.json").read_text(encoding="utf-8"))

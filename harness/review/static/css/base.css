@@ -11,6 +11,12 @@ html {
   text-size-adjust: 100%;
 }
 
+/* A pull at the top of a list must not reload the page and drop unsaved edits. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   min-height: 100dvh;
@@ -62,6 +68,20 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+/* No double-tap zoom delay on controls. */
+button,
+a,
+[role="button"],
+[role="tab"],
+[role="option"] {
+  touch-action: manipulation;
+}
+
+/* Headings take focus after a route change; the move itself is the announcement. */
+h1[tabindex="-1"]:focus {
+  outline: none;
 }
 
 ::selection {
@@ -172,6 +192,7 @@ kbd {
   border-radius: var(--r-control);
   white-space: nowrap;
   text-decoration: none;
+  -webkit-user-select: none;
   user-select: none;
   transition:
     transform var(--d-press) var(--ease-out),

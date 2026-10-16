@@ -327,11 +327,12 @@
   border-color: color-mix(in srgb, var(--x-blue) 18%, var(--x-line));
   color: var(--x-ink);
   caret-color: var(--x-blue);
-  transition: border-color var(--d-fast) ease;
 }
 
+/* A transparent outline keeps a visible ring in forced-colors mode, where shadows disappear. */
 .ed-input:focus {
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: -1px;
   border-color: var(--x-blue);
   box-shadow: 0 0 0 1px var(--x-blue);
 }

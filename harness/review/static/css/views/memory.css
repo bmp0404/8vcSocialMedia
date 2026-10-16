@@ -149,11 +149,6 @@
   z-index: 1;
 }
 
-/* The slid-out strip with its ink border is the focus mark; a ring around it as well reads as two. */
-.mem-strip[data-cur]:focus-visible {
-  outline: none;
-}
-
 .mem-main {
   display: grid;
   gap: var(--s2);
@@ -387,6 +382,7 @@
   align-items: baseline;
   gap: 2px var(--s2);
   min-width: 0;
+  row-gap: var(--s1);
 }
 
 .mem-ref {
@@ -404,6 +400,7 @@ button.mem-ref {
   text-decoration: underline;
   text-decoration-color: var(--rule-strong);
   text-underline-offset: 3px;
+  min-height: 24px; /* WCAG 2.5.8 when the refs wrap into rows */
 }
 
 @media (hover: hover) and (pointer: fine) {

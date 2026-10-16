@@ -41,6 +41,7 @@
 .q-list {
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--s3) var(--s4) var(--s5) var(--s3);
   background: var(--board-deep);
   scrollbar-gutter: stable;
@@ -109,6 +110,7 @@
 .q-scroll {
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   display: grid;
   align-content: start;
   /* max-content rows: auto rows would let overflow-clipped children (fields, the X stage)
@@ -405,16 +407,23 @@
   /* A full-screen sheet over the shell, the way a phone opens a message. */
   .q-detail {
     position: fixed;
-    inset: 0;
+    /* Ends above the readback bar, so "why?" chips and verdict readbacks stay visible. */
+    inset: 0 0 calc(36px + env(safe-area-inset-bottom)) 0;
     z-index: 30;
     padding-top: env(safe-area-inset-top);
+    padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
     border-left: 0;
+    border-bottom: 1px solid var(--rule);
     grid-template-rows: auto minmax(0, 1fr) auto;
     transform: translateX(100%);
     visibility: hidden;
     transition:
-      transform var(--d-sheet) var(--ease-drawer),
-      visibility 0s linear var(--d-sheet);
+      transform var(--d-base) var(--ease-drawer),
+      visibility 0s linear var(--d-base);
+  }
+
+  .q[data-instant] .q-detail {
+    transition: none;
   }
 
   .q[data-detail-open] .q-detail {
@@ -437,7 +446,10 @@
 
   .q-decide {
     padding: var(--s2) var(--s3);
-    padding-bottom: max(var(--s2), env(safe-area-inset-bottom));
+  }
+
+  .q-list {
+    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
   }
 
   .q-decide-row .btn {
@@ -469,4 +481,8 @@
       opacity var(--d-fast) ease,
       visibility 0s;
   }
+}
+
+.q-overrule-head {
+  margin-top: var(--s1);
 }

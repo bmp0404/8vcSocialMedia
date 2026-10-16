@@ -8,6 +8,7 @@ four routes keep the shapes the original dashboard used, so anything reading the
 import hashlib
 import json
 import os
+import re
 
 from harness import config, memory
 from harness.llm import DEFAULT_MODELS
@@ -214,6 +215,24 @@ def add_approved_action(run_id: int, action: dict, note: str) -> dict:
     return {"ok": True, "action": action, "export": str(path)}
 
 
+X_STATUS = re.compile(r"^https?://(?:www\.)?(?:x|twitter)\.com/(\w{1,15})/status/\d+")
+
+
+def handle_from_url(url: str | None) -> str | None:
+    m = X_STATUS.match(url or "")
+    return m[1] if m else None
+
+
+def narrative_for_target(run_id: int, url: str | None) -> str:
+    """The narrative whose reply targets include `url`, from the run's trace, or "" without one."""
+    if not url:
+        return ""
+    for n in (load_trace(run_id) or {}).get("narratives") or []:
+        if any(t.get("url") == url for t in n.get("reply_targets") or []):
+            return n.get("id", "")
+    return ""
+
+
 @route("POST", r"/api/runs/(\d+)/overrule")
 def post_overrule(req: Request):
     """Ship a draft the harness abstained on. The person picks one of its candidates or writes one."""
@@ -239,10 +258,10 @@ def post_overrule(req: Request):
         type=kind,
         text=text,
         mind=picked.get("mind") or f"{lane or 'unknown'}_lane",
-        narrative_id=picked.get("narrative_id") or d.get("narrative_id", ""),
+        narrative_id=picked.get("narrative_id") or d.get("narrative_id") or narrative_for_target(run_id, target_url),
         rationale=f"Overruled abstention ({reason}): {d.get('detail', '')}".strip(),
         target_url=target_url,
-        target_handle=picked.get("target_handle"),
+        target_handle=picked.get("target_handle") or handle_from_url(target_url),
         id=_stable_id("overrule", run_id, index, text),
     ).to_dict()
     action |= {"lane": lane, "origin": "overrule", "overrule": {"decision": index, "candidate": cand, "reason": reason}}

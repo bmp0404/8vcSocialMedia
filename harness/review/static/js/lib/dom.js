@@ -1,5 +1,7 @@
 // Tiny DOM helpers. `html` escapes every interpolated value unless it is wrapped in `raw()`
 // or produced by another `html` call, so data from the harness can't inject markup.
+// true, false and null render as nothing, so `${cond && html`...`}` works; an attribute that
+// needs the word, like aria-selected, must be written `${String(bool)}`.
 
 const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 
