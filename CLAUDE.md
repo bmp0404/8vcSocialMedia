@@ -23,7 +23,9 @@ Real runs spend the team's LLM credits. Test with `--narratives 2 --per-mind 1` 
 
 - Pull `main` before you start and again before you push. Teammates push often.
 - Work on a branch named `<name>/<topic>` and open a pull request. Push to `main` only when the person you work for asks.
-- If coordigent tools are available, register at session start and read your inbox before you edit a shared contract: `harness/models.py`, the schema in `harness/memory.py`, `harness/llm.py` or `harness/cli.py`. After you change one, message the project, because other branches depend on it.
+- Register with coordigent at session start, and read your inbox before each new task. Messages are how five people's agents learn what changed without reading every commit.
+- Before you start work that could collide with someone else's, message the person who owns that area and say what you plan to touch. Collisions include editing a file another session is working in, changing a shared contract (`harness/models.py`, the schema in `harness/memory.py`, `harness/llm.py`, `harness/cli.py`), or building something another team already claimed. Use `coordigent_session_list` to find their session, and ask the project if you can't tell who owns it.
+- Message the whole project when you change something every agent needs to know: a shared contract, a command, a file location, a new dependency, or a decision about how the team works. Say what changed, the commit or branch, and what others have to do about it.
 - Leave files outside your task alone. Merge conflicts across five branches cost more than any cleanup is worth.
 
 ## Code conventions
