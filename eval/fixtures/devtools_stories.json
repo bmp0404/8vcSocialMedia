@@ -1,0 +1,15 @@
+{
+  "opus-5.5": ["opus 5.5"],
+  "sonnet-5.5": ["sonnet 5.5"],
+  "haiku-5.5": ["haiku 5.5"],
+  "fable-5.1": ["fable 5.1"],
+  "gpt-6-sol": ["gpt-6 sol"],
+  "gpt-6.1-sol": ["gpt-6.1 sol"],
+  "gpt-6-luna": ["gpt-6 luna"],
+  "gpt-6-astra": ["gpt-6 astra"],
+  "gemini-4-argon": ["gemini 4 argon"],
+  "grok-4.7": ["grok 4.7"],
+  "nemotron-3.5-super": ["nemotron 3.5 super"],
+  "glm-5.3": ["glm 5.3", "glm-5.3"],
+  "qwen-3.8": ["qwen3.8", "qwen 3.8"]
+}
