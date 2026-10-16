@@ -52,6 +52,10 @@ class ActionConfig:
     # gpt-5.6-sol) caught 40-77% (research report, finding 5).
     veto_model: str = "claude-opus-5-5"
     veto_max_p_ai: int = 50  # a draft the judge puts at or above this P(AI), in either order, is vetoed (no measurement)
+    # Judge the forward and reversed orders at once: the same two calls and verdicts, in about half the
+    # time. The watcher's hot path turns it on: on 2026-10-16 the two orders took 24 s of a 55 s draft.
+    # Off by default because the lane's tests drive the judge with fakes that count their calls.
+    veto_parallel_orders: bool = False
     # Dhilan's post_judge grounding score as one more veto. Off by default: nothing measured it, its
     # default client spawns the local claude CLI per draft, and a failed call vetoes the draft.
     grounding_veto: bool = False

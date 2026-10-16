@@ -1,5 +1,6 @@
 import json
 import re
+from dataclasses import replace
 
 import pytest
 
@@ -328,3 +329,13 @@ def test_shipped_framing_files_load():
 def test_rival_thread_mode_is_validated():
     with pytest.raises(ValueError, match="rival_thread_mode must be one of"):
         ActionConfig(rival_thread_mode="cheer")
+
+
+def test_parallel_orders_give_the_same_verdicts_as_sequential_ones():
+    """The hot path's veto_parallel_orders: both orders still judged, each draft matched to its own verdicts."""
+    texts = ["fine one", "sounds ai", "a lie", "so mean", "fine two"]
+    seq = veto.veto(Judge(), CFG, texts, lane="reply", context="c", mission="m")
+    j = Judge()
+    par = veto.veto(j, replace(CFG, veto_parallel_orders=True), texts, lane="reply", context="c", mission="m")
+    assert j.calls == 2
+    assert [(r.text, r.passed, r.why, r.fwd, r.rev) for r in par] == [(r.text, r.passed, r.why, r.fwd, r.rev) for r in seq]
