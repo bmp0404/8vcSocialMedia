@@ -1,0 +1,58 @@
+{
+ "posts": [
+  {
+   "uri": "at://did:plc:uq4rl5ozgfkyujw4ejela3l7/app.bsky.feed.post/3mxrgv3vrzs24",
+   "author": {
+    "handle": "kerithburke.bsky.social",
+    "labels": []
+   },
+   "record": {
+    "text": "Hooray! The Dream will play in an arena suitable for the Finals! Just came down from the league.",
+    "createdAt": "2026-10-13T16:21:48.454Z"
+   },
+   "likeCount": 103,
+   "repostCount": 30,
+   "replyCount": 2,
+   "quoteCount": 9
+  },
+  {
+   "uri": "at://did:plc:test/app.bsky.feed.post/optout1",
+   "author": {
+    "handle": "private.bsky.social",
+    "labels": [
+     {
+      "val": "!no-unauthenticated"
+     }
+    ]
+   },
+   "record": {
+    "text": "opted out of logged-out viewing",
+    "createdAt": "2026-10-15T20:00:00Z"
+   },
+   "likeCount": 9,
+   "repostCount": 0,
+   "replyCount": 0,
+   "quoteCount": 0
+  },
+  {
+   "uri": "at://did:plc:test/app.bsky.feed.post/link1",
+   "author": {
+    "handle": "linker.bsky.social",
+    "labels": []
+   },
+   "record": {
+    "text": "",
+    "createdAt": "2026-10-15T20:00:00Z",
+    "embed": {
+     "external": {
+      "title": "Finals preview video"
+     }
+    }
+   },
+   "likeCount": 1,
+   "repostCount": 0,
+   "replyCount": 0,
+   "quoteCount": 0
+  }
+ ]
+}

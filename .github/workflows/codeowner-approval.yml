@@ -1,11 +1,10 @@
 name: codeowner-approval
 
-# Reruns on every review so an owner's approval clears the check without a new push.
+# Reviews don't trigger this workflow. codeowner-rerun.yml reruns it instead, because a separate run
+# started by a review leaves this run's failure blocking the merge.
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-  pull_request_review:
-    types: [submitted, dismissed]
 
 permissions:
   contents: read
@@ -20,9 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Read CODEOWNERS and the script from the base branch, so a pull request can't change its own rules.
+      # Use the branch's current tip. base.sha is the base as of the PR's last push and misses CODEOWNERS changes since.
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ github.event.pull_request.base.ref }}
           sparse-checkout: .github
       # The pull request that adds this check runs before main has the script, so it passes.
       - run: |

@@ -5,11 +5,19 @@ description = "Recommends X actions for a brand account; 8VC's Grok bot decides 
 requires-python = ">=3.11"
 dependencies = [
     "anthropic>=0.40",
+    "baml-bridge==0.22.2",
     "openai>=1.50",
+    "pydantic>=2,<3",
     "python-dotenv>=1.0",
 ]
 
 [dependency-groups]
 dev = [
     "pre-commit>=4.7.0",
+    "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Tests import harness from the repo root; without this, `uv run pytest` can't find it.
+pythonpath = ["."]

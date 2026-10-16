@@ -1,0 +1,46 @@
+[
+  {
+    "source": "sample",
+    "text": "SAMPLE: Fever announce offseason training camp dates; fans already arguing about the backcourt rotation.",
+    "url": "https://x.com/sample_beatwriter/status/1",
+    "author": "sample_beatwriter",
+    "metrics": {
+      "likes": 1800,
+      "reposts": 240,
+      "replies": 410
+    }
+  },
+  {
+    "source": "sample",
+    "text": "SAMPLE: Hot take thread: 'Clark vs. the rest of the 2024 draft class, three years in'. Replies are a warzone.",
+    "url": "https://x.com/sample_hottakes/status/2",
+    "author": "sample_hottakes",
+    "metrics": {
+      "likes": 5200,
+      "reposts": 900,
+      "replies": 2300
+    }
+  },
+  {
+    "source": "sample",
+    "text": "SAMPLE: Iowa women's basketball releases its season-opener hype video. Hawkeye fans getting nostalgic for the Clark era.",
+    "url": "https://x.com/sample_iowawbb/status/3",
+    "author": "sample_iowawbb",
+    "metrics": {
+      "likes": 3100,
+      "reposts": 450,
+      "replies": 160
+    }
+  },
+  {
+    "source": "sample",
+    "text": "SAMPLE: Stat nugget: logo-range three-point attempts per game, league leaders. One name is lapping the field.",
+    "url": "https://x.com/sample_statsguy/status/4",
+    "author": "sample_statsguy",
+    "metrics": {
+      "likes": 900,
+      "reposts": 120,
+      "replies": 75
+    }
+  }
+]
