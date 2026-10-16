@@ -21,7 +21,8 @@ from harness import config
 from harness.context import snowflake
 from harness.context.http import FetchError
 from harness.context.xreader import XPost
-from harness.llm import MockLLM
+from harness.learning.kinds import Fact
+from harness.llm import LLM, MockLLM
 from harness.watcher import arms, hot, ingest, loop, state as st
 from harness.watcher.watchlist import Watched, Watchlist, WatchlistError, load as load_watchlist
 
@@ -428,7 +429,7 @@ def test_each_profile_drafts_with_its_own_memory_under_one_memstore_path(tmp_pat
     (tmp_path / "stores" / "wnba").mkdir()
     seen = {}
 
-    def plan(llm, mission, lessons, targets):
+    def plan(llm, mission, lessons, targets, facts=None):
         seen[mission.splitlines()[0]] = lessons
         return {}, "plan stubbed"
 
@@ -448,6 +449,53 @@ def test_a_planned_abstention_is_written_with_its_reason(tmp_path, monkeypatch):
     record = hot.run_hot(MockLLM(), "wnba", post, reader=FakeReader(), out_dir=tmp_path, seed=arms.DEFAULT_SEED,
                          detected_at=T0 - M, clock=Clock())
     assert (record["offer"], record["abstain_reason"], record["abstain_detail"]) == ("abstain", "mute_risk", "injury news")
+
+
+BOSTON = Fact(id="fact-boston", subject="entity-aliyah-boston", question="How did Aliyah Boston play?",
+              answer="Aliyah Boston (Indiana Fever) against the Las Vegas Aces on 2026-10-15: 19 points, 10 rebounds.",
+              quote="", source_url="https://espn.test", as_of="2026-10-16", valid_until="2026-11-15")
+NEEDS_FACTS = "Boston had 19 points and 10 boards"
+
+
+@pytest.mark.parametrize("arm", ["continuation", "styled"])
+def test_live_facts_reach_the_plan_and_the_gate_on_the_hot_path(tmp_path, monkeypatch, arm):
+    """The draft names a player and two numbers the post doesn't hold; only the live fact grounds them."""
+    monkeypatch.setattr(hot.writer, "continuations", lambda *a, **k: [NEEDS_FACTS])
+    monkeypatch.setattr(hot.writer, "styled_replies", lambda *a, **k: [NEEDS_FACTS])
+    planned = []
+    real_plan = hot.lanes.plan_targets
+    monkeypatch.setattr(hot.lanes, "plan_targets", lambda *a: planned.append(a[4]) or real_plan(*a))
+    post = post_with_arm(arm, T0 - 2 * M)
+    without = hot.run_hot(MockLLM(), "wnba", post, reader=FakeReader(), out_dir=tmp_path / "a", seed=arms.DEFAULT_SEED,
+                          detected_at=T0 - M, clock=Clock())
+    assert (without["offer"], without["abstain_reason"], without["facts_live"]) == ("abstain", "gate_rejected", None)
+    with_facts = hot.run_hot(MockLLM(), "wnba", post, reader=FakeReader(), out_dir=tmp_path / "b",
+                             seed=arms.DEFAULT_SEED, detected_at=T0 - M, clock=Clock(), facts=[BOSTON])
+    assert (with_facts["offer"], with_facts["draft"], with_facts["facts_live"]) == ("draft", NEEDS_FACTS, 1)
+    assert with_facts["draft_meta"]["facts_live"] == 1
+    assert planned == [None, [BOSTON]]
+
+
+def test_a_real_run_loads_the_target_profiles_live_facts_from_its_store(tmp_path, monkeypatch):
+    class Live(LLM):
+        """Stands in for a real provider. The plan is stubbed to abstain, so nothing calls it."""
+
+    loaded = []
+    monkeypatch.setattr(hot, "load_live", lambda at: loaded.append((config.profile_name(), at)) or [BOSTON])
+    monkeypatch.setattr(hot.lanes, "plan_targets", lambda llm, mission, lessons, targets, facts: (
+        {targets[0]["url"]: {"target_url": targets[0]["url"], "tool": "abstain", "reason": "no_angle"}}, ""))
+    for profile in ("devtools", "wnba"):
+        record = hot.run_hot(Live(), profile, post_with_arm("styled", T0 - 2 * M), reader=FakeReader(), out_dir=tmp_path,
+                             seed=arms.DEFAULT_SEED, detected_at=T0 - M, clock=Clock())
+        assert record["facts_live"] == 1
+    assert loaded == [("devtools", T0), ("wnba", T0)]
+
+
+def test_a_mock_run_reads_no_facts_from_any_store(tmp_path, monkeypatch):
+    monkeypatch.setattr(hot, "load_live", lambda at: pytest.fail("a mock run read the memory store's facts"))
+    record = hot.run_hot(MockLLM(), "wnba", post_with_arm("styled", T0 - 2 * M), reader=FakeReader(), out_dir=tmp_path,
+                         seed=arms.DEFAULT_SEED, detected_at=T0 - M, clock=Clock())
+    assert record["facts_live"] is None and record["offer"] == "draft"
 
 
 def test_the_thread_is_read_through_the_watchers_reader():

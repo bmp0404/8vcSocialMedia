@@ -16,8 +16,11 @@ Two inputs are adapted rather than reused:
 - The same copy sets `veto_parallel_orders`, so the veto's forward and reversed passes run at once.
 
 There is no orient narrative, so the facts block the gate and veto read is the mission plus this
-post. The human arm runs the plan, so an off-mission post is still abstained on, and then asks the
-operator for a one-liner without showing any draft.
+post. Live facts (harness/facts/) come from the target profile's memory store, loaded per job as
+`lanes.run` loads them per round, and go to the plan and to `answer_target(live_facts=)`, so the
+gate grounds names and numbers on them. A mock run reads none, as in `lanes.run`. The human arm runs
+the plan, so an off-mission post is still abstained on, and then asks the operator for a one-liner
+without showing any draft.
 """
 
 import json
@@ -28,6 +31,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from harness import config
+from harness.facts.store import load_live
+from harness.learning.kinds import Fact
 from harness.llm import LLM
 from harness.minds import lanes, routing, thread, veto, writer
 from harness.minds.settings import ActionConfig
@@ -87,8 +92,10 @@ def _human_prompt(author: str, intent: str, account: str) -> str:
 
 
 def run_hot(llm: LLM, profile: str, post, *, reader, out_dir: Path, cfg: ActionConfig | None = None,
-            seed: str, detected_at: datetime, clock=lambda: datetime.now(timezone.utc)) -> dict:
-    """Plan, write, gate and veto one post under `profile`; write out_dir/<status_id>.json and return its content."""
+            seed: str, detected_at: datetime, clock=lambda: datetime.now(timezone.utc),
+            facts: list[Fact] | None = None) -> dict:
+    """Plan, write, gate and veto one post under `profile`; write out_dir/<status_id>.json and return its content.
+    `facts` defaults to the live facts in the profile's memory store; a mock run reads none."""
     cfg = cfg or ActionConfig()
     t0, started_at = time.monotonic(), clock()
     arm = arm_for(post.id, seed)
@@ -103,7 +110,10 @@ def run_hot(llm: LLM, profile: str, post, *, reader, out_dir: Path, cfg: ActionC
         mission, lessons, framing = config.mission(), config.lessons(), writer.load_framing()
         account, _ = account_handle()
         record["account"] = account or None  # the account the operator answers from; outcomes sync checks it
-        plans, plan_error = lanes.plan_targets(llm, mission, lessons, [target])
+        if facts is None and not routing.is_mock(llm):
+            facts = load_live(started_at)
+        record["facts_live"] = None if facts is None else len(facts)
+        plans, plan_error = lanes.plan_targets(llm, mission, lessons, [target], facts)
         t_plan = time.monotonic()
         plan = plans.get(post.url)
         record.update(plan=plan, plan_error=plan_error)
@@ -120,7 +130,7 @@ def run_hot(llm: LLM, profile: str, post, *, reader, out_dir: Path, cfg: ActionC
             decision, action = lanes.answer_target(
                 llm, mission, lanes.facts_block(mission, [narrative]), {**target, "narrative": narrative}, arm_cfg,
                 reader_fetch(reader), plan.get("intent", ""), grounding, side=plan.get("side", "neutral"),
-                framing=framing)
+                framing=framing, live_facts=facts)
             record["decision"] = asdict(decision)
             if action is None:
                 record.update(abstain_reason=decision.reason, abstain_detail=decision.detail)
