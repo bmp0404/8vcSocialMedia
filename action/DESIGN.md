@@ -142,7 +142,7 @@ The gate's grounding rules reject a name, number or handle that the post, the th
 - **wnba:** ESPN's keyless site API (`harness/facts/espn.py`). It writes each team's roster, its most recent game (the result and one line per player who played), its next game, and the league's injury list. A newer game replaces the older game's facts.
 - **devtools:** the recent posts of each account in `[reply_targets]` (`harness/facts/posts.py`). The thread under a target becomes a fact at draft time, covering replies past the page's dozen.
 
-The reply lane loads the live facts once per run. The gate then counts a capitalized name as grounded when it appears as a whole word in a live fact. A number has to pass a stricter test. A live fact about something the draft, the post or the target's handle names must hold the same number with the same unit, meaning the word after it with stat synonyms folded together. A hyphenated pair such as a score or a record matches without a unit, but only as written; game facts write the score both ways round. The planning call sees up to five facts about each post's author or the names in it. The writer's page never sees them, because a page header with counts made the model write hype and invent stats (see above).
+The reply lane loads the live facts once per run, and the watcher's hot path once per job (`harness/watcher/hot.py`). The gate then counts a capitalized name as grounded when it appears as a whole word in a live fact. A number has to pass a stricter test. A live fact about something the draft, the post or the target's handle names must hold the same number with the same unit, meaning the word after it with stat synonyms folded together. A hyphenated pair such as a score or a record matches without a unit, but only as written; game facts write the score both ways round. The planning call sees up to five facts about each post's author or the names in it. The writer's page never sees them, because a page header with counts made the model write hype and invent stats (see above).
 
 Measured with `uv run python -m harness.minds.lab.fact_grounding --invent` (report in `action/experiments/fact_grounding.json`). Facts for each thread are what daily refreshes would have left in the store when its post went out: each team's and player's most recent game from the month before, and nothing that ended later. One game's box score (an ESPN 404) was skipped. Intervals resample threads, 2,000 draws.
 
@@ -167,8 +167,34 @@ Readings:
 - **About 4 in 761 invented numbers now pass that a person would call wrong.** The held-out batches were drawn after the unit rule was fixed. The changes since came from a code review, not from those drafts.
 - **Many remaining name rejections aren't names.** They include weekdays and months (Saturday, January), ordinary words capitalized for emphasis (Kidding, Queen, Phenomenal) and misspellings (Caitlyn, Valkeries). A list of weekday and month names would clear a few; nothing here measures that.
 - **Rosters were measured only on recent threads.** ESPN serves today's roster only, so the main row leaves rosters out. The roster row dates today's rosters back to threads from the last week, which assumes no roster moved during the playoffs.
-- **The veto doesn't see the facts.** A draft the facts ground can still be vetoed as "unsupported". Giving the veto the same facts is the obvious next step, and it is unmeasured.
-- **The watcher's hot path doesn't pass facts yet.** `lanes.answer_target` takes them as `live_facts=`; without it the gate grounds on context alone, as before.
+
+### The veto sees the facts the gate leaned on
+
+Before this, a draft the facts grounded could still be vetoed as "unsupported", because the veto never saw the facts. `lanes.answer_target` now appends a LIVE FACTS block to the veto's context (`lanes.veto_facts`): for each name or number in a gate-passing draft that the context lacks, the facts that backed it (`gate.facts_used`), the ones about that name first, then the newest, at most 2 per name or number and 8 per target. A thread fact shows only the replies that hold the name. The gate's own context stays without the block, because its substring check would accept any number in it. When the gate leaned on no fact, the veto's input is unchanged. qualify's critic reads the same context through `veto_context`.
+
+Measured with `uv run python -m harness.minds.lab.veto_facts` (report in `action/experiments/veto_facts.json`) on the sets above, the production veto (`claude-opus-5-5`, both orders, 410 calls) with and without the block. The gate ran with facts in both arms, so only drafts it passed reached the veto. Intervals resample threads, 2,000 draws.
+
+| Real replies the gate passed only by leaning on a fact | Veto rejects, without the block | With it | Change in rate, 95% CI |
+| --- | --- | --- | --- |
+| wnba (22 replies, 12 threads) | 22 | 20 | −9.1 points [−20.0, 0.0] |
+| devtools (72 replies, 60 threads) | 61 | 58 | −4.2 points [−10.6, +1.4] |
+
+The "unsupported" flag fell more than the rejections did: wnba 17 to 11 (−27.3 points [−45.8, −10.5]), devtools 42 to 36 (−8.3 [−16.7, −1.3]).
+
+| Invented-stat drafts | With a number | Gate rejects | Reach the veto | Caught in total, without the block | With it |
+| --- | --- | --- | --- | --- | --- |
+| wnba, design batch | 143 | 123 | 20 | 143 | 142 |
+| wnba, held-out batch | 144 | 119 | 25 | 142 | 142 |
+| devtools, design batch | 235 | 208 | 27 | 235 | 235 |
+| devtools, held-out batch | 239 | 206 | 33 | 239 | 239 |
+
+Readings:
+
+- **False rejections didn't rise, and catches fell by at most one per batch**, the bar for keeping the change. The one lost catch is "the 14 assists in one game still lives rent free in my head", and the facts back its number: Clark had 14 assists the day before (the invented-stat table above).
+- **The veto still rejects almost every real reply that needs an outside fact**: 20 of 22 wnba and 58 of 72 devtools with the block, mostly for reading as AI, off mission or mute risk. The block removes only the "unsupported" reason.
+- **Only drafts the gate passed by leaning on a fact can change.** Six invented-stat batches had a block; the rest had identical input in both arms and were judged once.
+- **One sample per arm**, at the API's default temperature. The intervals cover which threads were drawn, not the judge's own randomness.
+- **The context differs a little from production.** The measurement shows the veto every other reply in the thread; production shows at most 12 and indexes the rest as a thread fact.
 
 ## The typed actions
 
@@ -213,6 +239,7 @@ uv run python -m harness.minds.lab.fetch_x_threads IndianaFever WNBA CaitlinClar
 uv run python -m harness.minds.lab.reply_dynamics
 uv run python -m harness.minds.lab.gate_calibration
 uv run python -m harness.minds.lab.fact_grounding          # add --invent for the invented-stat drafts (LLM calls)
+HARNESS_PROVIDER=anthropic uv run python -m harness.minds.lab.veto_facts --context-dir <corpus jsonl dir> --drafts <drafts cache>
 HARNESS_PROVIDER=anthropic uv run python -m harness.facts refresh   # live facts for the active profile
 HARNESS_PROVIDER=anthropic uv run python -m harness.minds.lab.reply_experiment --threads 19
 HARNESS_PROVIDER=anthropic uv run python -m harness.minds.lab.live_decide CaitlinClark22 IndianaFever espnW --max-age 30
