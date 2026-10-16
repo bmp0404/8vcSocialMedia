@@ -36,6 +36,10 @@ class Handler(BaseHTTPRequestHandler):
         self._send(code, json.dumps(data).encode())
 
     def do_GET(self) -> None:
+        from harness.review import console  # observability console at /console, kept out of this page
+
+        if hit := console.get(self.path):
+            return self._send(*hit)
         if self.path == "/":
             return self._send(200, INDEX.read_bytes(), "text/html; charset=utf-8")
         if self.path == "/api/runs":
