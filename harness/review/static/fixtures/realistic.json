@@ -615,29 +615,6 @@
    ],
    "signals": []
   },
-  "GET /api/runs/31/approved": [
-   {
-    "type": "reply",
-    "text": "Ballhalla awaits. Meanwhile Fever Twitter has a fully formed opinion on this series and zero players in it. Sophie Cunningham already got hers on the record, so the discourse is ready for tip-off.",
-    "mind": "reply_sniper",
-    "narrative_id": "wnba-finals-dream-valkyries",
-    "rationale": "This is the only real X post in the narratives, and it's a high-engagement, fast-moving Finals post (about 254 engagements per hour at 62 minutes old). The reply ties in the Cunningham/Finals discourse narrative with a light joke that makes no stat claims and doesn't attack anyone, so it stays accurate and rivalry-flavored.",
-    "target_url": "https://x.com/valkyries/status/2110896237490942447",
-    "target_handle": "valkyries",
-    "predicted_score": 0.06,
-    "panel": {"iowa_diehard": 0.06, "casual_wnba_fan": 0.05, "rival_fan": 0.08, "sports_media": 0.05},
-    "vetoed": true,
-    "critique": "The reply is vague and leans on claims I can't verify. I can't confirm which series the target tweet covers, whether the Fever really have no players in it, or what Sophie Cunningham supposedly 'got on the record'. 'Ballhalla awaits' is also confusing without the tweet's context. It risks being inaccurate or irrelevant, and the mission says 'never inaccurate.' The joke isn't sharp enough to justify that risk.",
-    "id": "beef0004",
-    "lane": "reply",
-    "review": {
-     "status": "approved",
-     "text": "Ballhalla awaits and Fever Twitter has a fully formed opinion on a series with zero of our players in it. We'll be watching anyway.",
-     "note": "Cut the Cunningham line: she's not in this series.",
-     "reviewed_at": "@now-12m"
-    }
-   }
-  ],
   "GET /api/loop": {
    "provider": "anthropic",
    "sources": ["espn_news", "google_news", "x_targets"],
@@ -649,7 +626,6 @@
     "sources": ["espn_news", "google_news", "x_targets"],
     "command": "python -m harness run --narratives 2 --per-mind 1 --retries 1",
     "status": "done",
-    "stage": "review",
     "lines": [
      {"t": 0.98, "stage": "observe", "text": "[observe] espn_news: 52 signals"},
      {"t": 3.32, "stage": "observe", "text": "[observe] google_news: 51 signals"},

@@ -3,7 +3,7 @@
 // draft the way a reader will meet it.
 
 import { compact, handleFromUrl, hostOf, hueOf, minutesSince, xAge, X_LIMIT } from "../lib/format.js";
-import { esc, html, raw } from "../lib/dom.js";
+import { html, raw, safeUrl } from "../lib/dom.js";
 
 const ICON = {
   reply: "M4 5.6A2.6 2.6 0 0 1 6.6 3h6.8A2.6 2.6 0 0 1 16 5.6v4.8a2.6 2.6 0 0 1-2.6 2.6H9.2L6 15.8V13a2.6 2.6 0 0 1-2-2.6z",
@@ -24,15 +24,11 @@ export function avatar(handle, { ours = false } = {}) {
 /** Post text with @mentions, #tags and links coloured the way X shows them. */
 export function xText(text) {
   const parts = String(text ?? "").split(/(https?:\/\/[^\s]+|@\w{1,15}|#\w+)/g);
-  return raw(
-    parts
-      .map((p, i) => {
-        if (i % 2 === 0) return esc(p);
-        if (p.startsWith("http")) return `<span class="xlink">${esc(hostOf(p) || p)}${p.length > 30 ? "…" : ""}</span>`;
-        return `<span class="xlink">${esc(p)}</span>`;
-      })
-      .join(""),
-  );
+  return html`${parts.map((p, i) => {
+    if (i % 2 === 0) return p;
+    if (p.startsWith("http")) return html`<span class="xlink">${hostOf(p) || p}${p.length > 30 ? "…" : ""}</span>`;
+    return html`<span class="xlink">${p}</span>`;
+  })}`;
 }
 
 export function metricsRow(m = {}) {
@@ -45,7 +41,7 @@ export function metricsRow(m = {}) {
 }
 
 // Some recorders write counts as strings ("152"); the preview does arithmetic on them.
-const n = (v) => (v == null || v === "" || Number.isNaN(+v) ? null : +v);
+const num = (v) => (v == null || v === "" || Number.isNaN(+v) ? null : +v);
 
 /** A normalised target: whatever the run recorded about the post a reply or quote answers. */
 export function targetOf(action, context) {
@@ -61,11 +57,11 @@ export function targetOf(action, context) {
     author: (base.author || action.target_handle || handleFromUrl(url) || "").replace(/^@/, ""),
     text: text || null,
     created_at: base.created_at || null,
-    age_minutes: n(base.age_minutes),
-    followers: n(base.author_followers),
-    metrics: { likes: n(base.likes), reposts: n(base.reposts), replies: n(base.replies), quotes: n(base.quotes), views: n(base.views) },
-    engagement_per_hour: n(base.engagement_per_hour),
-    views_per_hour: n(base.views_per_hour),
+    age_minutes: num(base.age_minutes),
+    followers: num(base.author_followers),
+    metrics: { likes: num(base.likes), reposts: num(base.reposts), replies: num(base.replies), quotes: num(base.quotes), views: num(base.views) },
+    engagement_per_hour: num(base.engagement_per_hour),
+    views_per_hour: num(base.views_per_hour),
     thread: base.thread || [],
     thread_attached: base.thread_attached ?? null,
     verified: base.metrics_verified !== false && base.metrics_unverified !== 1,
@@ -78,16 +74,19 @@ function stripPosted(t) {
   return String(t).replace(/^@\w+ posted:\n/, "").replace(/\n\(quoting https?:\/\/\S+\)$/, "");
 }
 
-/** Age now: from created_at if known, else the age observe saw plus the time since the run. */
-export function liveAge(t, runStartedAt) {
-  if (t.created_at) return minutesSince(t.created_at);
-  if (t.age_minutes != null && runStartedAt) return t.age_minutes + (minutesSince(runStartedAt) ?? 0);
-  return t.age_minutes;
+/** When the post went up: created_at if the run recorded it, else the age observe saw counted
+ *  back from the run's start. Null when neither is known. */
+export function postedAt(t, runStartedAt) {
+  if (t.created_at) return t.created_at;
+  const start = Date.parse(runStartedAt);
+  if (t.age_minutes == null || Number.isNaN(start)) return null;
+  return new Date(start - t.age_minutes * 60000).toISOString();
 }
 
 export function targetCard(t, { runStartedAt, quoted = false } = {}) {
-  const age = liveAge(t, runStartedAt);
-  const ageText = xAge(age, t.created_at);
+  const posted = postedAt(t, runStartedAt);
+  const ageText = posted ? xAge(minutesSince(posted), posted) : xAge(t.age_minutes);
+  const url = safeUrl(t.url);
   const rate = t.views_per_hour != null ? `${compact(Math.round(t.views_per_hour))} views/h` : t.engagement_per_hour != null ? `${compact(Math.round(t.engagement_per_hour))} engagements/h` : null;
   return html`<article class="xpost ${quoted ? "quoted" : ""}" aria-label="Post by @${t.author}">
     ${quoted ? "" : avatar(t.author)}
@@ -96,10 +95,10 @@ export function targetCard(t, { runStartedAt, quoted = false } = {}) {
         ${quoted ? avatar(t.author) : ""}
         <span class="xname">@${t.author}</span>
         ${t.followers != null ? html`<span class="xmuted">${compact(t.followers)} followers</span>` : ""}
-        ${ageText ? html`<span class="xmuted" data-age-from="${t.created_at || ""}">· ${ageText}</span>` : ""}
-        ${t.isX && !quoted ? html`<a class="xopen" href="${t.url}" target="_blank" rel="noopener noreferrer" title="Open on X">Open on X<span aria-hidden="true"> ↗</span></a>` : ""}
+        ${ageText ? html`<span class="xmuted" ${posted ? html`data-age-from="${posted}"` : ""}>· ${ageText}</span>` : ""}
+        ${t.isX && !quoted && url ? html`<a class="xopen" href="${url}" target="_blank" rel="noopener noreferrer" title="Open on X">Open on X<span aria-hidden="true"> ↗</span></a>` : ""}
       </header>
-      ${t.text ? html`<p class="xtext">${xText(t.text)}</p>` : html`<p class="xtext xmissing">The run didn't capture this post's text. <a href="${t.url}" target="_blank" rel="noopener noreferrer">Read it on ${t.isX ? "X" : hostOf(t.url)}</a>.</p>`}
+      ${t.text ? html`<p class="xtext">${xText(t.text)}</p>` : html`<p class="xtext xmissing">The run didn't capture this post's text.${url ? html` <a href="${url}" target="_blank" rel="noopener noreferrer">Read it on ${t.isX ? "X" : hostOf(url)}</a>.` : ""}</p>`}
       ${quoted || Object.values(t.metrics).every((v) => v == null) ? "" : metricsRow(t.metrics)}
       ${rate && !quoted ? html`<p class="xvel"><span class="label">Velocity</span> ${rate} when observed${t.verified ? "" : " (counts read by a model, not X)"}</p>` : ""}
     </div>
@@ -117,10 +116,10 @@ export function threadReplies(thread, limit = 3) {
         <div class="xbody">
           <header class="xhead">
             <span class="xname">${r.author ? `@${r.author}` : "reply"}</span>
-            ${n(r.followers) != null ? html`<span class="xmuted">${compact(n(r.followers))} followers</span>` : ""}
+            ${num(r.followers) != null ? html`<span class="xmuted">${compact(num(r.followers))} followers</span>` : ""}
           </header>
           <p class="xtext">${xText(r.text)}</p>
-          <div class="xmetrics small"><span class="xm">${icon("like")}<span>${compact(n(r.likes) ?? 0)}</span><span class="sr-only">likes</span></span></div>
+          <div class="xmetrics small"><span class="xm">${icon("like")}<span>${num(r.likes) == null ? "" : compact(num(r.likes))}</span><span class="sr-only">likes</span></span></div>
         </div>
       </div>`,
     )}

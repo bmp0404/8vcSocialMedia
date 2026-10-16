@@ -6,8 +6,8 @@
 // request puts it back and says why. Keyboard actions never animate.
 
 import { registerView, setHints } from "../shell.js";
-import { $, $$, html, isTyping, on, raw, setHTML } from "../lib/dom.js";
-import { ago, clock, compact, fixed, handleFromUrl, human, isXPost, stampTime, X_LIMIT, xLength } from "../lib/format.js";
+import { $, $$, html, isTyping, on, safeUrl, setHTML } from "../lib/dom.js";
+import { ago, clock, compact, fixed, handleFromUrl, human, isXPost, minutesSince, stampTime, X_LIMIT, xAge, xLength } from "../lib/format.js";
 import { avatar, charRing, profileCard, targetCard, targetOf, threadReplies, xText } from "../components/xpost.js";
 
 // Mirrors harness/minds/schema.py ABSTAIN_REASONS (sam/action) for branches where the server
@@ -32,6 +32,8 @@ const BAYS = [
   ["struck", "Struck"],
 ];
 const TEXT_KINDS = new Set(["reply", "quote", "post", "mention"]);
+// The detail becomes a modal sheet below this width. It must match the breakpoint in queue.css.
+const PHONE = "(max-width: 860px)";
 
 const S = {
   el: null,
@@ -48,10 +50,11 @@ const S = {
   bay: "clear",
   sel: null,
   edits: new Map(), // entry key -> text the person is editing
-  notes: new Map(), // action id -> note
+  notes: new Map(), // entry key -> note
   reasons: new Map(), // action id -> Set of kill reason codes
-  undo: [],
-  lastStruck: null,
+  reasonTimers: new Map(), // action id -> pending save of its kill reasons
+  undo: [], // [{ id, key, prev, status, edit }], newest last
+  lastStruck: null, // the action struck most recently, which number keys tag until another is selected
   gateCache: new Map(),
   gateTimer: 0,
   ageTimer: 0,
@@ -59,14 +62,17 @@ const S = {
   enter: false, // play the strip entrance once per loaded run
   bayExplicit: false, // the URL named a bay; keep it even when empty
 };
+let entered = false; // the strips' entrance plays once per page load
+let unwire = null;
 
-const reasonsMeta = () => S.ctx.meta?.kill_reasons || { off_message: "off-message", factually_shaky: "shaky fact", stale_story: "stale story", wrong_target: "wrong target", slop: "reads as AI", tone: "wrong tone", other: "other" };
+const reasonsMeta = () => S.ctx.meta?.kill_reasons || {};
 const abstainLabel = (code) => S.ctx.meta?.abstain_reasons?.[code] || ABSTAIN[code] || human(code);
 
 // --- Data -----------------------------------------------------------------------------------
 
 async function loadRuns(preferred) {
   S.runs = await S.ctx.api.get("/api/runs");
+  if (!S.el) return;
   const id = S.runs.some((r) => r.id === +preferred) ? +preferred : S.runs[0]?.id ?? null;
   if (id != null) await loadRun(id);
   else {
@@ -86,13 +92,15 @@ async function loadRun(id) {
     api.get(`/api/runs/${id}/decisions`),
     api.get(`/api/runs/${id}/context`),
   ]);
+  // The person left the view or picked another run while this one loaded.
+  if (S.runId !== id || !S.el) return;
   if (actions.status === "rejected") {
     S.loading = false;
     S.error = actions.reason;
     return render();
   }
   S.actions = actions.value;
-  S.decisions = decisions.status === "fulfilled" && decisions.value.available ? decisions.value.decisions : null;
+  S.decisions = decisions.status === "fulfilled" && decisions.value.available ? decisions.value.decisions.map(withFindings) : null;
   S.decisionsReason = decisions.status === "rejected" ? decisions.reason.message : decisions.value.reason || "";
   S.context = null;
   if (context.status === "fulfilled" && context.value.available) {
@@ -111,6 +119,7 @@ async function loadRun(id) {
   S.enter = !entered; // the board loads with strips once per page load, not on every return
   entered = true;
   S.undo = [];
+  S.lastStruck = null;
   S.ctx.setParams({ run: id });
   const bays = groups();
   // A bay named in the URL stays, empty or not; otherwise open the first bay with work in it.
@@ -120,18 +129,28 @@ async function loadRun(id) {
   render();
 }
 
+/** Older decision logs list a candidate's gate findings as rule names; newer ones as objects. */
+function withFindings(d) {
+  if (!d.candidates) return d;
+  const one = (f) => (typeof f === "string" ? { rule: f, detail: "" } : f);
+  return { ...d, candidates: d.candidates.map((c) => (c.gate ? { ...c, gate: c.gate.map(one) } : c)) };
+}
+
 // --- Entries and bays -----------------------------------------------------------------------
 
 const sentence = (t) => (/[.!?]$/.test(t.trim()) ? t.trim() : `${t.trim()}.`);
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
-const laneOf = (a) => a.lane || (a.mind === "human" ? "human" : ["reply", "quote"].includes(a.type) && a.mind === "reply_lane" ? "reply" : a.type === "reply" ? "reply" : "post");
+const laneOf = (a) => a.lane || (a.mind === "human" ? "human" : a.type === "reply" || (a.type === "quote" && a.mind === "reply_lane") ? "reply" : "post");
 const textOf = (a) => a.review?.text ?? a.text;
+const statusOf = (a) => a.review?.status || "pending";
+/** A draft that passed both the gate and the veto: the only kind the editor may start with. */
+const clean = (c) => c.text && !(c.gate || []).length && !vetoProblem(c.veto);
 
 function groups() {
   const g = { clear: [], held: [], take: [], cleared: [], struck: [] };
   for (const a of S.actions) {
-    const st = a.review?.status || "pending";
+    const st = statusOf(a);
     const e = { key: `a:${a.id}`, kind: "action", a };
     if (st === "approved") g.cleared.push(e);
     else if (st === "killed") g.struck.push(e);
@@ -139,12 +158,14 @@ function groups() {
     else g.clear.push(e);
   }
   const released = new Set(S.actions.filter((a) => a.origin === "overrule").map((a) => a.overrule?.decision));
+  // Keys carry the run, so an unsaved edit or note never follows the person into another run.
   (S.decisions || []).forEach((d, i) => {
+    const key = `d:${S.runId}:${i}`;
     // A hold a person already overruled is resolved; its released draft sits in Cleared.
-    if (d.tool === "abstain" && !released.has(i)) g.held.push({ key: `d:${i}`, kind: "abstain", d, i });
+    if (d.tool === "abstain" && !released.has(i)) g.held.push({ key, kind: "abstain", d, i });
     else if (d.tool === "ask_human") {
       const answer = S.actions.find((a) => a.origin === "take" && a.question === d.question);
-      if (!answer) g.take.push({ key: `d:${i}`, kind: "ask", d, i });
+      if (!answer) g.take.push({ key, kind: "ask", d, i });
     }
   });
   // Releasable holds first: a vetoed draft or an abstention with drafts to pick from.
@@ -210,7 +231,7 @@ function renderHead() {
           ? html`<label class="sr-only" for="q-run">Run</label>
               <select id="q-run" class="select">
                 ${S.runs.map(
-                  (r) => html`<option value="${r.id}" ${r.id === S.runId ? raw("selected") : ""}>
+                  (r) => html`<option value="${r.id}" ${r.id === S.runId ? "selected" : ""}>
                     Run ${r.id} · ${clock(r.started_at, true)} · ${plural(r.n_actions, "draft")}${r.n_approved ? ` · ${r.n_approved} cleared` : ""}
                   </option>`,
                 )}
@@ -243,16 +264,16 @@ function scoreOf(a) {
 }
 
 function stripHtml(e) {
-  const on = e.key === S.sel;
+  const isSel = e.key === S.sel;
   if (e.kind === "action") {
     const a = e.a;
-    const st = a.review?.status || "pending";
+    const st = statusOf(a);
     const lane = laneOf(a);
-    const t = a.target_url || a.target_handle ? targetOf(a, S.context) : null;
+    const t = a.target_url ? targetOf(a, S.context) : null;
     const n = narrativeOf(a.narrative_id);
     const sc = scoreOf(a);
     const verdict = a.draft_meta?.judge;
-    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${lane}" data-status="${st}" ${e.veto ? raw("data-held") : ""} aria-selected="${String(on)}" tabindex="${on ? 0 : -1}">
+    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${lane}" data-status="${st}" ${e.veto ? "data-held" : ""} aria-selected="${String(isSel)}" tabindex="${isSel ? 0 : -1}">
       <span class="strip-top">
         <span class="label">${a.type}</span>
         <span class="where">${human(a.mind)}${n ? ` · ${n.title}` : a.narrative_id ? ` · ${a.narrative_id}` : ""}</span>
@@ -274,18 +295,18 @@ function stripHtml(e) {
     const d = e.d;
     const n = (d.candidates || []).filter((c) => c.text).length;
     const target = isXPost(d.opportunity) ? handleFromUrl(d.opportunity) : null;
-    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${d.lane}" data-held aria-selected="${String(on)}" tabindex="${on ? 0 : -1}">
+    return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="${d.lane}" data-held aria-selected="${String(isSel)}" tabindex="${isSel ? 0 : -1}">
       <span class="strip-top"><span class="label">Held · ${d.lane}</span><span class="where">${human(d.reason)}</span></span>
       <span class="strip-text">${abstainLabel(d.reason)}${d.detail ? `: ${d.detail}` : ""}</span>
       <span class="strip-foot">
         ${target ? html`<span>↳ @${target}</span>` : ""}
-        <span>${n ? `${n} draft${n > 1 ? "s" : ""} to choose from` : "no drafts"}</span>
+        <span>${n ? `${plural(n, "draft")} to choose from` : "no drafts"}</span>
       </span>
     </button>`;
   }
   const d = e.d;
   const n = narrativeOf(d.opportunity);
-  return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="human" aria-selected="${String(on)}" tabindex="${on ? 0 : -1}">
+  return html`<button class="strip" type="button" role="option" data-key="${e.key}" data-lane="human" aria-selected="${String(isSel)}" tabindex="${isSel ? 0 : -1}">
     <span class="strip-top"><span class="label">Your take</span><span class="where">${n?.title || d.opportunity}</span></span>
     <span class="strip-text">${d.question.split(". Got a")[0].split("? ")[0]}</span>
     <span class="strip-foot"><span>${(d.candidates || []).length} angles from the minds</span></span>
@@ -314,18 +335,18 @@ function renderList() {
     );
     return;
   }
-  const items = visible();
+  const g = groups();
+  const items = g[S.bay];
   const notices = [];
   if (S.bay === "held" && !S.decisions && S.decisionsReason) notices.push(S.decisionsReason);
   if (!items.length) {
     const empty = {
-      clear: ["Nothing waiting", groups().cleared.length || groups().struck.length ? "Every draft in this run has a verdict. The hand-off file has the cleared ones." : "This run produced no drafts to clear."],
+      clear: ["Nothing waiting", g.cleared.length || g.struck.length ? "Every draft in this run has a verdict. The hand-off file has the cleared ones." : "This run produced no drafts to clear."],
       held: ["Nothing held back", S.decisions ? "The harness acted on every opportunity it had, and the critic vetoed nothing." : "No critic vetoes in this run."],
       take: ["No questions for you", S.decisions ? "The post lane shipped a draft this run, so it didn't ask for your take." : "This run's decide stage doesn't ask for takes."],
       cleared: ["Nothing cleared yet", "Clear a strip with A, or the Clear button."],
       struck: ["Nothing struck", "Strike a strip with X when it's off-message, shaky or reads as AI."],
     }[S.bay];
-    const g = groups();
     const next =
       S.bay === "clear" && (g.held.length || g.take.length)
         ? html`<div class="q-next">
@@ -353,7 +374,7 @@ function renderDetail() {
     setInert(false);
   }
   q.toggleAttribute("data-detail-open", S.detailOpen && !!e);
-  const phone = matchMedia("(max-width: 860px)").matches;
+  const phone = matchMedia(PHONE).matches;
   box.toggleAttribute("aria-modal", phone && S.detailOpen);
   if (phone) box.setAttribute("role", "dialog");
   else box.removeAttribute("role");
@@ -409,7 +430,7 @@ function editorHtml(key, text, kind, original, context = "") {
       <span class="ed-count">${charRing(n)}<span class="num" data-count>${n}/${X_LIMIT}</span><span class="ed-cap" data-cap></span></span>
       <span class="ed-gate" data-gate></span>
       <span class="sr-only" data-gate-live aria-live="polite"></span>
-      ${original != null ? html`<button class="btn btn-quiet btn-small" type="button" data-act="revert" ${edited ? "" : raw("hidden")}>Undo edits</button>` : ""}
+      ${original != null ? html`<button class="btn btn-quiet btn-small" type="button" data-act="revert" ${edited ? "" : "hidden"}>Undo edits</button>` : ""}
     </div>
     <ul class="ed-findings" data-findings></ul>
   </div>`;
@@ -420,7 +441,7 @@ function editorHtml(key, text, kind, original, context = "") {
 const factRe = /(\b\d+(?:[.,]\d+)?\s?(?:%|percent|points?|assists?|rebounds?|steals?|blocks?|wins?|losses|seasons?|years?|threes?|3-pointers?|minutes|million)\b|\b\d{2,}(?:[-–]\d+)?\b|\b(?:single-season|all-time|career-high|first-ever|franchise) record\b|\brecord\b)/gi;
 
 function factsHtml(text) {
-  const hits = [...new Set([...String(text).matchAll(factRe)].map((m) => m[0].trim()).filter((x) => x.length > 0))].slice(0, 8);
+  const hits = [...new Set([...String(text).matchAll(factRe)].map((m) => m[0].trim()))].slice(0, 8);
   if (!hits.length) return "";
   return html`<div class="q-facts"><span class="label">Check before clearing</span>${hits.map((h) => html`<span class="chip flag">${h}</span>`)}<span class="muted">Numbers and superlatives in the draft. The harness can't verify them.</span></div>`;
 }
@@ -448,7 +469,7 @@ function whySection(a) {
       ${a.rationale ? html`<dt>Rationale</dt><dd>${a.rationale}</dd>` : ""}
       ${dm.intent ? html`<dt>Intent</dt><dd>${dm.intent}</dd>` : ""}
       ${dm.writer_model ? html`<dt>Writer</dt><dd class="mono">${dm.writer_model}${dm.samples ? ` · ${dm.samples} samples` : ""}${dm.page_replies != null ? ` · saw ${dm.page_replies} replies` : ""}</dd>` : ""}
-      ${dm.source_url ? html`<dt>Source</dt><dd><a href="${dm.source_url}" target="_blank" rel="noopener noreferrer">${dm.source_url}</a></dd>` : ""}
+      ${dm.source_url ? html`<dt>Source</dt><dd>${safeUrl(dm.source_url) ? html`<a href="${safeUrl(dm.source_url)}" target="_blank" rel="noopener noreferrer">${dm.source_url}</a>` : dm.source_url}</dd>` : ""}
     </dl>
   </section>`;
 }
@@ -457,7 +478,7 @@ function vetoSide(label, s) {
   if (!s) return "";
   return html`<div class="q-veto-side">
     <span class="label">${label}</span>
-    <span class="num ${s.p_ai >= 50 ? "bad-text" : ""}">${s.p_ai ?? "–"}%</span><span class="muted">reads as AI</span>
+    <span class="num ${s.p_ai >= 50 ? "bad-text" : ""}">${s.p_ai == null ? "–" : `${s.p_ai}%`}</span><span class="muted">reads as AI</span>
     ${s.unsupported ? html`<span class="chip flag">unsupported claim</span>` : ""}${s.risk ? html`<span class="chip bad">brand risk</span>` : ""}
     ${s.reason ? html`<p class="q-veto-reason">${s.reason}</p>` : ""}
   </div>`;
@@ -509,8 +530,7 @@ function vetoProblem(v) {
   if (v.orders_agree === false) return v.why && /split/i.test(v.why) ? v.why : `split verdict${v.why ? `: ${v.why}` : ""}`;
   if (v.passed !== false) return null;
   const sides = [v.fwd, v.rev].filter(Boolean);
-  const why = v.why || (sides.some((x) => x.unsupported) ? "unsupported claim" : sides.some((x) => x.risk) ? "brand risk" : "reads as AI");
-  return why;
+  return v.why || (sides.some((x) => x.unsupported) ? "unsupported claim" : sides.some((x) => x.risk) ? "brand risk" : "reads as AI");
 }
 
 function candidateHtml(c, i, { shippedText, action } = {}) {
@@ -525,7 +545,7 @@ function candidateHtml(c, i, { shippedText, action } = {}) {
     <div class="q-cand-head">
       <span class="label">${c.mind ? human(c.mind) : `Draft ${i + 1}`}${c.type ? ` · ${c.type}` : ""}</span>
       ${shipped ? html`<span class="stamp cleared">Shipped</span>` : ""}
-      ${gate.length ? html`<span class="chip flag">${gate.length} gate flag${gate.length > 1 ? "s" : ""}</span>` : html`<span class="chip ok">gate clear</span>`}
+      ${gate.length ? html`<span class="chip flag">${plural(gate.length, "gate flag")}</span>` : html`<span class="chip ok">gate clear</span>`}
       ${v ? html`<span class="chip ${problem ? "bad" : "ok"}">${problem ? `vetoed: ${problem}` : "veto passed"}</span>` : ""}
       ${v?.fwd ? html`<span class="num muted">AI-like ${v.fwd.p_ai}% / ${v.rev?.p_ai ?? "–"}%</span>` : ""}
       ${c.grounding ? html`<span class="num muted">grounding ${fixed(c.grounding.score)}</span>` : ""}
@@ -533,7 +553,7 @@ function candidateHtml(c, i, { shippedText, action } = {}) {
     </div>
     <p class="q-cand-text">${c.text}</p>
     ${problem && (v.fwd?.reason || v.rev?.reason) ? html`<p class="q-cand-veto">${[v.fwd?.reason, v.rev?.reason].filter(Boolean).map((r, k) => html`<span><span class="label">${k ? "Reversed" : "Forward"}</span> ${r}</span>`)}</p>` : ""}
-    ${gate.length ? html`<p class="q-cand-gate">${gate.map((f) => html`<span class="mono">${typeof f === "string" ? f : `${f.rule}: ${f.detail}`}</span>`)}</p>` : ""}
+    ${gate.length ? html`<p class="q-cand-gate">${gate.map((f) => html`<span class="mono">${f.rule}${f.detail ? `: ${f.detail}` : ""}</span>`)}</p>` : ""}
   </li>`;
 }
 
@@ -546,17 +566,14 @@ function previewForAction(a, key, editable) {
     <div class="xbody">
       <header class="xhead">
         <span class="xname">${handle ? `@${handle}` : "Our account"}</span>
-        <span class="xmuted">· ${{ approved: "cleared", killed: "struck" }[a.review?.status] || "draft"}</span>
+        <span class="xmuted">· ${{ approved: "cleared", killed: "struck" }[statusOf(a)] || "draft"}</span>
       </header>
       ${a.type === "reply" && t ? html`<p class="xmuted xreplying">Replying to <span class="xlink">@${t.author}</span></p>` : ""}
       ${editable ? editorHtml(key, text, kindForGate(a.type), a.text, t?.text || "") : html`<p class="xtext">${xText(text)}</p>`}
       ${a.type === "quote" && t ? targetCard(t, { quoted: true, runStartedAt: S.context?.started_at }) : ""}
     </div>
   </div>`;
-  if (a.type === "follow") {
-    const fol = t?.followers ?? null;
-    return html`<div class="xstage">${profileCard(a.target_handle, { followers: fol, note: "The account would follow this profile." })}</div>`;
-  }
+  if (a.type === "follow") return html`<div class="xstage">${profileCard(a.target_handle, { note: "The account would follow this profile." })}</div>`;
   if (a.type === "reply" && t) {
     return html`<div class="xstage">
       ${targetCard(t, { runStartedAt: S.context?.started_at })}
@@ -571,7 +588,7 @@ function previewForAction(a, key, editable) {
 
 function actionDetail(e) {
   const a = e.a;
-  const st = a.review?.status || "pending";
+  const st = statusOf(a);
   const editable = st === "pending" && a.type !== "follow";
   const sc = scoreOf(a);
   const n = narrativeOf(a.narrative_id);
@@ -599,14 +616,14 @@ function actionDetail(e) {
     footer = html`
       <div class="q-decide-row">
         <label class="sr-only" for="q-note">Note for learning</label>
-        <input id="q-note" class="input q-note" placeholder="Note for learning (optional)" value="${S.notes.get(a.id) ?? a.review?.note ?? ""}">
+        <input id="q-note" class="input q-note" placeholder="Note for learning (optional)" value="${S.notes.get(e.key) ?? a.review?.note ?? ""}">
         <button class="btn btn-strike" type="button" data-act="strike">Strike <kbd>x</kbd></button>
         <button class="btn btn-clear" type="button" data-act="clear">${e.veto ? "Clear anyway" : "Clear"} <kbd>a</kbd></button>
       </div>`;
   } else {
     footer = html`<div class="q-decide-row">
       <span class="stamp ${st === "approved" ? "cleared" : "struck"}" title="${clock(a.review.reviewed_at, true)}">${st === "approved" ? "Cleared" : "Struck"} ${stampTime(a.review.reviewed_at)}</span>
-      ${st === "killed" ? reasonChips(a.id, reasons, true) : ""}
+      ${st === "killed" ? reasonChips(a.id, reasons) : ""}
       ${a.review.note ? html`<span class="muted q-note-text">“${a.review.note}”</span>` : ""}
       <button class="btn btn-quiet" type="button" data-act="reset">Return to queue <kbd>u</kbd></button>
     </div>`;
@@ -614,10 +631,9 @@ function actionDetail(e) {
   return { main, footer };
 }
 
-function reasonChips(id, set, inline = false) {
+function reasonChips(id, set) {
   const meta = reasonsMeta();
-  return html`<div class="q-reasons ${inline ? "inline" : ""}" role="group" aria-label="Why strike it">
-    ${inline ? "" : html`<span class="label">If striking, why</span>`}
+  return html`<div class="q-reasons inline" role="group" aria-label="Why strike it">
     ${Object.entries(meta).map(([code, label], i) => html`<button class="chip" type="button" data-reason="${code}" data-id="${id}" aria-pressed="${String(set.has(code))}"><kbd>${i + 1}</kbd>${label}</button>`)}
   </div>`;
 }
@@ -628,15 +644,17 @@ function abstainDetail(e) {
   const usable = cands.filter((c) => c.text);
   // Pre-fill only a draft that passed both the gate and the veto. A vetoed draft can be loaded on
   // purpose, but the editor never starts with one: a clean gate badge beside it would read as safe.
-  const best = usable.find((c) => !(c.gate || []).length && !vetoProblem(c.veto));
+  const best = usable.find(clean);
   // An action in the same run may already carry what observe saw of this post.
   const sibling = S.actions.find((a) => a.target_url && a.target_url === d.opportunity);
   const fakeAction = { target_url: isXPost(d.opportunity) ? d.opportunity : null, target_text: sibling?.target_text || "", draft_meta: { target: sibling?.draft_meta?.target } };
   const t = fakeAction.target_url ? targetOf(fakeAction, S.context) : null;
   const text = S.edits.get(e.key) ?? best?.text ?? "";
-  // Mirrors post_overrule in checkpoint.py: the reply lane answers the post; in the post lane an X post
-  // as the opportunity is quoted, anything else becomes a plain post.
-  const kind = usable[0]?.type && TEXT_KINDS.has(usable[0].type) ? usable[0].type : d.lane === "reply" ? "reply" : t ? "quote" : "post";
+  // The same rule as post_overrule in checkpoint.py: a draft the harness wrote keeps its type when
+  // released unchanged. Otherwise the reply lane answers the post, and in the post lane an X post
+  // as the opportunity is quoted and anything else becomes a plain post.
+  const picked = usable.find((c) => c.text.trim() === text.trim());
+  const kind = TEXT_KINDS.has(picked?.type) ? picked.type : d.lane === "reply" ? "reply" : t ? "quote" : "post";
   const handle = S.ctx.meta?.account_handle;
   const canWrite = d.lane !== "reply" || !!t;
   const ours = html`<div class="xpost ours">${avatar(handle, { ours: true })}<div class="xbody">
@@ -649,7 +667,7 @@ function abstainDetail(e) {
     ${fieldsHtml([
       ["Held", d.lane + " lane"],
       ["Reason", human(d.reason), "grow"],
-      ["Drafts", `${cands.length} written, ${cands.filter((c) => c.text && !(c.gate || []).length && !vetoProblem(c.veto)).length} passed`],
+      ["Drafts", `${cands.length} written, ${cands.filter(clean).length} passed`],
     ])}
     <p class="notice"><b>The harness held back:</b> ${abstainLabel(d.reason)}.${d.detail ? ` ${sentence(d.detail)}` : ""} ${!canWrite ? "There was nothing to answer, so there's nothing to release." : usable.length ? "To overrule it, release one of its drafts or write your own." : `To overrule it, write the ${kind} yourself.`}</p>
     ${canWrite
@@ -669,7 +687,7 @@ function abstainDetail(e) {
     ? html`<div class="q-decide-row">
         <label class="sr-only" for="q-note">Note for learning</label>
         <input id="q-note" class="input q-note" placeholder="Why overrule? (optional, goes to learning)" value="${S.notes.get(e.key) ?? ""}">
-        <button class="btn btn-ink" type="button" data-act="release" ${text.trim() ? "" : raw("disabled")}><span data-label>Release</span> <kbd>a</kbd></button>
+        <button class="btn btn-ink" type="button" data-act="release" ${text.trim() ? "" : "disabled"}><span data-label>Release</span> <kbd>a</kbd></button>
       </div>`
     : html`<div class="q-decide-row"><span class="muted">Nothing to release for this hold.</span></div>`;
   return { main, footer };
@@ -700,7 +718,7 @@ function askDetail(e) {
   `;
   const footer = html`<div class="q-decide-row">
     <span class="muted q-grow">⌘↵ clears from the editor</span>
-    <button class="btn btn-clear" type="button" data-act="take" ${text.trim() ? "" : raw("disabled")}>Clear your take <kbd>a</kbd></button>
+    <button class="btn btn-clear" type="button" data-act="take" ${text.trim() ? "" : "disabled"}>Clear your take <kbd>a</kbd></button>
   </div>`;
   return { main, footer };
 }
@@ -715,8 +733,10 @@ function diffHtml(a, b) {
   const out = [];
   let i = 0, j = 0;
   while (i < m && j < n) {
-    if (A[i] === B[j]) out.push(html`${A[i++]}`), j++;
-    else if (L[i + 1][j] >= L[i][j + 1]) out.push(html`<del>${A[i++]}</del>`);
+    if (A[i] === B[j]) {
+      out.push(html`${A[i++]}`);
+      j++;
+    } else if (L[i + 1][j] >= L[i][j + 1]) out.push(html`<del>${A[i++]}</del>`);
     else out.push(html`<ins>${B[j++]}</ins>`);
   }
   while (i < m) out.push(html`<del>${A[i++]}</del>`);
@@ -762,15 +782,15 @@ function updateEditor(ed, typed) {
   const kind = ed.dataset.kind;
   const context = ed.dataset.context || "";
   if (!text.trim()) {
-    ed.querySelector("[data-gate]").innerHTML = `<span class="muted">The gate checks as you type.</span>`;
-    ed.querySelector("[data-findings]").innerHTML = "";
-    ed.querySelector(".ed-mirror").innerHTML = "";
+    setHTML(ed.querySelector("[data-gate]"), html`<span class="muted">The gate checks as you type.</span>`);
+    setHTML(ed.querySelector("[data-findings]"), "");
+    setHTML(ed.querySelector(".ed-mirror"), "");
     return;
   }
   const cacheKey = `${kind}\u0000${context}\u0000${text}`;
   const cached = S.gateCache.get(cacheKey);
   if (cached) return paintGate(ed, text, cached);
-  ed.querySelector("[data-gate]").innerHTML = `<span class="muted">checking…</span>`;
+  setHTML(ed.querySelector("[data-gate]"), html`<span class="muted">checking…</span>`);
   S.gateTimer = setTimeout(() => runGate(ed, text, kind, context, cacheKey), typed ? 180 : 0);
 }
 
@@ -778,10 +798,10 @@ async function runGate(ed, text, kind, context, cacheKey) {
   let res;
   try {
     res = await S.ctx.api.post("/api/gate", context ? { text, kind, context } : { text, kind });
+    S.gateCache.set(cacheKey, res); // a failed request isn't cached, so the next keystroke retries
   } catch (err) {
     res = { available: false, reason: err.message };
   }
-  S.gateCache.set(cacheKey, res);
   if (ed.isConnected && ed.querySelector("textarea").value === text) paintGate(ed, text, res);
 }
 
@@ -791,32 +811,34 @@ function paintGate(ed, text, res) {
   const mirror = ed.querySelector(".ed-mirror");
   const cap = ed.querySelector("[data-cap]");
   if (!res.available) {
-    gate.innerHTML = String(html`<span class="muted" title="${res.reason}">Slop gate not connected</span>`);
-    list.innerHTML = "";
-    mirror.innerHTML = "";
+    setHTML(gate, html`<span class="muted" title="${res.reason}">Slop gate not connected</span>`);
+    setHTML(list, "");
+    setHTML(mirror, "");
     cap.textContent = "";
     return;
   }
   cap.textContent = res.limit && res.limit < X_LIMIT ? ` · gate cap ${res.limit}` : "";
   const f = res.findings || [];
   const vetoed = vetoForText(ed.dataset.editor, text);
-  gate.innerHTML = String(
-    html`${f.length ? html`<span class="chip flag">${f.length} slop flag${f.length > 1 ? "s" : ""}</span>` : html`<span class="chip ok">Gate clear</span>`}${vetoed ? html`<span class="chip bad">veto failed: ${vetoed}</span>` : ""}${res.simulated ? html`<span class="muted"> (demo rules)</span>` : ""}`,
+  setHTML(
+    gate,
+    html`${f.length ? html`<span class="chip flag">${plural(f.length, "slop flag")}</span>` : html`<span class="chip ok">Gate clear</span>`}${vetoed ? html`<span class="chip bad">veto failed: ${vetoed}</span>` : ""}${res.simulated ? html`<span class="muted"> (demo rules)</span>` : ""}`,
   );
-  list.innerHTML = String(html`${f.map((x) => html`<li><span class="label">${human(x.rule)}</span> ${x.detail}</li>`)}`);
+  setHTML(list, html`${f.map((x) => html`<li><span class="label">${human(x.rule)}</span> ${x.detail}</li>`)}`);
   const live = ed.querySelector("[data-gate-live]");
-  const said = (f.length ? `${f.length} slop flag${f.length > 1 ? "s" : ""}: ${f.map((x) => human(x.rule)).join(", ")}` : "Gate clear") + (vetoed ? `. Veto failed: ${vetoed}` : "");
+  const said = (f.length ? `${plural(f.length, "slop flag")}: ${f.map((x) => human(x.rule)).join(", ")}` : "Gate clear") + (vetoed ? `. Veto failed: ${vetoed}` : "");
   if (live && live.textContent !== said) live.textContent = said;
   // Underline the exact spans when the gate reports offsets; whole-text rules have none.
   const spans = f.filter((x) => Number.isInteger(x.start) && Number.isInteger(x.end) && x.end > x.start).sort((p, q) => p.start - q.start);
-  let out = "";
+  const out = [];
   let at = 0;
-  for (const s of spans) {
-    if (s.start < at) continue;
-    out += escapeText(text.slice(at, s.start)) + `<mark title="${escapeText(s.rule)}">${escapeText(text.slice(s.start, s.end))}</mark>`;
-    at = s.end;
+  for (const x of spans) {
+    if (x.start < at) continue;
+    out.push(text.slice(at, x.start), html`<mark title="${x.rule}">${text.slice(x.start, x.end)}</mark>`);
+    at = x.end;
   }
-  mirror.innerHTML = spans.length ? out + escapeText(text.slice(at)) + "​" : "";
+  // The zero-width space keeps a trailing newline in the mirror the same height as in the textarea.
+  setHTML(mirror, spans.length ? html`${out}${text.slice(at)}${"\u200B"}` : "");
 }
 
 /** If the editor holds a draft the veto already rejected, say why; the gate can't see that. */
@@ -828,8 +850,6 @@ function vetoForText(key, text) {
   return c ? vetoProblem(c.veto) : null;
 }
 
-const escapeText = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-
 // --- Focus ---------------------------------------------------------------------------------
 
 /** True when keyboard focus is in this view or nowhere (on body), so a re-render may move it. */
@@ -837,7 +857,7 @@ const focusIsOurs = () => !document.activeElement || document.activeElement === 
 
 /** After a re-render deleted the focused element, put focus on the selected strip, or on the
     sheet's back button when the phone sheet is open, so keyboard and screen-reader users keep
-    their place (focus-and-keyboard.md: return focus to the nearest logical container). */
+    their place. */
 function restoreFocus(had) {
   if (!had) return;
   const target = S.detailOpen ? $("#q-detail .q-back") : $(`#q-list [aria-selected="true"]`) || $(`#q-bays [aria-selected="true"]`);
@@ -869,17 +889,21 @@ async function verdict(e, status) {
     if (text !== a.text.trim()) edited = text;
   }
   const reasons = status === "killed" ? [...(S.reasons.get(a.id) || [])] : [];
-  let note = $("#q-note")?.value ?? S.notes.get(a.id) ?? "";
+  let note = $("#q-note")?.value ?? S.notes.get(e.key) ?? "";
   if (status === "approved" && e.veto && !note) note = "Cleared over the critic's veto.";
   const next = status === "pending" ? e.key : nextKeyAfter(e.key);
+  const draft = S.edits.get(e.key);
   a.review = { status, text: status === "pending" ? null : edited, note: status === "pending" ? "" : note, reasons, reviewed_at: new Date().toISOString() };
   S.edits.delete(e.key);
+  if (S.lastStruck === a.id) S.lastStruck = null;
   S.sel = next;
   S.ctx.setParams({ sel: S.sel });
   const had = focusIsOurs();
   render();
   restoreFocus(had);
-  S.undo.push({ id: a.id, key: e.key, prev, status });
+  // The entry keeps the person's unsaved text, so undoing a clear brings their edit back too.
+  const entry = { id: a.id, key: e.key, prev, status, edit: draft };
+  S.undo.push(entry);
   const what = a.type === "follow" ? `follow @${a.target_handle}` : `${a.type} by ${human(a.mind)}`;
   if (status === "approved") {
     S.ctx.readback(html`<b class="ok">CLEARED</b> ${what}${edited ? " with your edit" : ""} · hand-off out/approved-run${S.runId}.json · <kbd>z</kbd> undo`);
@@ -895,7 +919,11 @@ async function verdict(e, status) {
     refreshRunCounts();
   } catch (err) {
     a.review = prev;
-    S.undo.pop();
+    if (draft != null) S.edits.set(e.key, draft);
+    // Remove this verdict's own entry; a later verdict may have been pushed while this one was in flight.
+    const at = S.undo.indexOf(entry);
+    if (at >= 0) S.undo.splice(at, 1);
+    if (S.lastStruck === a.id) S.lastStruck = null;
     S.sel = e.key;
     const hadFocus = focusIsOurs();
     render();
@@ -907,24 +935,42 @@ async function verdict(e, status) {
 
 function readbackStrike(a) {
   const set = S.reasons.get(a.id) || new Set();
+  const codes = Object.keys(reasonsMeta());
   const chips = Object.entries(reasonsMeta()).map(([code, label], i) => ({ key: String(i + 1), label, on: set.has(code) }));
-  S.ctx.readback(html`<b class="bad">STRUCK</b> ${a.type} by ${human(a.mind)} · why?`, { chips });
+  const onChip = (key) => {
+    const code = codes[+key - 1];
+    if (code && S.lastStruck === a.id && statusOf(a) === "killed") toggleReason(a.id, code);
+  };
+  S.ctx.readback(html`<b class="bad">STRUCK</b> ${a.type} by ${human(a.mind)} · why?`, { chips, onChip });
 }
 
-let reasonTimer = 0;
+/** Which struck strip number keys tag: the selected one if it's struck, else the one just struck. */
+function reasonTarget(e) {
+  if (e?.kind === "action" && statusOf(e.a) === "killed") return e.a.id;
+  const last = S.actions.find((a) => a.id === S.lastStruck);
+  return last && statusOf(last) === "killed" ? last.id : null;
+}
+
 function toggleReason(id, code) {
   const set = S.reasons.get(id) || new Set();
-  set.has(code) ? set.delete(code) : set.add(code);
+  if (set.has(code)) set.delete(code);
+  else set.add(code);
   S.reasons.set(id, set);
   const a = S.actions.find((x) => x.id === id);
   if (!a) return;
-  if (a.review?.status === "killed") {
+  if (statusOf(a) === "killed") {
     a.review.reasons = [...set];
     if (S.lastStruck === id) readbackStrike(a);
-    clearTimeout(reasonTimer);
-    reasonTimer = setTimeout(() => {
-      S.ctx.api.post(`/api/actions/${id}/review`, { status: "killed", text: null, note: a.review.note || "", reasons: [...set] }).catch((err) => S.ctx.toast(`Couldn't save the reasons: ${err.message}`, { kind: "error" }));
-    }, 350);
+    // Several quick taps save once; each strip has its own timer so tagging another doesn't drop this save.
+    clearTimeout(S.reasonTimers.get(id));
+    S.reasonTimers.set(
+      id,
+      setTimeout(() => {
+        S.reasonTimers.delete(id);
+        if (statusOf(a) !== "killed") return; // undone or returned since: saving would strike it again
+        S.ctx.api.post(`/api/actions/${id}/review`, { status: "killed", text: null, note: a.review.note || "", reasons: [...set] }).catch((err) => S.ctx.toast(`Couldn't save the reasons: ${err.message}`, { kind: "error" }));
+      }, 350),
+    );
   }
   for (const b of $$(`[data-reason][data-id="${id}"]`)) b.setAttribute("aria-pressed", String(set.has(b.dataset.reason)));
 }
@@ -934,20 +980,31 @@ async function undo() {
   if (!last) return S.ctx.readback("Nothing to undo.");
   const a = S.actions.find((x) => x.id === last.id);
   if (!a) return;
+  const undone = a.review;
   const back = last.prev;
   const status = back.status || "pending";
   a.review = { ...back, status };
-  S.bay = status === "approved" ? "cleared" : status === "killed" ? "struck" : a.vetoed ? "held" : "clear";
-  S.sel = last.key;
-  S.ctx.setParams({ bay: S.bay, sel: S.sel });
-  const had = focusIsOurs();
-  render();
-  restoreFocus(had);
+  if (status === "pending" && last.edit != null) S.edits.set(last.key, last.edit);
+  if (S.lastStruck === a.id && status !== "killed") S.lastStruck = null;
+  const show = () => {
+    S.bay = statusOf(a) === "approved" ? "cleared" : statusOf(a) === "killed" ? "struck" : a.vetoed ? "held" : "clear";
+    S.sel = last.key;
+    S.ctx.setParams({ bay: S.bay, sel: S.sel });
+    const had = focusIsOurs();
+    render();
+    restoreFocus(had);
+  };
+  show();
   S.ctx.readback(html`<b>UNDONE</b> ${a.type} by ${human(a.mind)} is back in ${BAYS.find(([b]) => b === S.bay)[1]}`);
   try {
     await S.ctx.api.post(`/api/actions/${a.id}/review`, { status, text: back.text ?? null, note: back.note || "", reasons: back.reasons || [] });
   } catch (err) {
+    // The server still holds the verdict, so the page shows it again and the undo stays available.
+    a.review = undone;
+    S.undo.push(last);
+    show();
     S.ctx.toast(`Couldn't undo: ${err.message}`, { kind: "error" });
+    S.ctx.readback(html`<b class="bad">NOT UNDONE</b> ${a.type} by ${human(a.mind)} · ${err.message}`);
   }
 }
 
@@ -956,16 +1013,18 @@ async function release(e) {
   if (!text) return;
   if (xLength(text) > X_LIMIT) return S.ctx.readback(html`<b class="bad">Not released</b> · ${xLength(text)} characters is over X's ${X_LIMIT}`);
   const cands = e.d.candidates || [];
-  const ci = cands.findIndex((c) => c.text === text);
+  const ci = cands.findIndex((c) => c.text?.trim() === text);
   const note = $("#q-note")?.value || "";
   const btn = $("#q-decide [data-act=release]");
   if (btn) btn.disabled = true;
+  // The hold leaves Held once the overrule is stored, so find the strip after it first.
+  const next = nextKeyAfter(e.key);
   try {
-    const res = await S.ctx.api.post(`/api/runs/${S.runId}/overrule`, { decision: e.i, candidate: ci >= 0 ? ci : null, text, note: note || undefined });
+    await S.ctx.api.post(`/api/runs/${S.runId}/overrule`, { decision: e.i, candidate: ci >= 0 ? ci : null, text, note: note || undefined });
     await refreshActions();
     S.edits.delete(e.key);
     S.ctx.readback(html`<b class="ok">RELEASED</b> held ${e.d.lane} draft, overruling “${human(e.d.reason)}” · hand-off updated`);
-    S.sel = nextKeyAfter(e.key) || `a:${res.action.id}`;
+    S.sel = next;
     const had = focusIsOurs();
     render();
     restoreFocus(had);
@@ -1016,7 +1075,7 @@ async function copyHandoff() {
   try {
     const data = await S.ctx.api.get(`/api/runs/${S.runId}/approved`);
     await navigator.clipboard.writeText(JSON.stringify({ run_id: S.runId, actions: data }, null, 2));
-    S.ctx.readback(html`<b>COPIED</b> ${data.length} cleared action${data.length === 1 ? "" : "s"} · also in out/approved-run${S.runId}.json`);
+    S.ctx.readback(html`<b>COPIED</b> ${plural(data.length, "cleared action")} · also in out/approved-run${S.runId}.json`);
   } catch (err) {
     S.ctx.readback(html`<b class="bad">NOT COPIED</b> ${err.message || "clipboard blocked"} · the file is out/approved-run${S.runId}.json`);
   }
@@ -1074,7 +1133,7 @@ function focusEditor() {
 
 function primary(e) {
   if (!e) return;
-  if (e.kind === "action") return e.a.review?.status === "pending" || !e.a.review ? verdict(e, "approved") : null;
+  if (e.kind === "action") return statusOf(e.a) === "pending" ? verdict(e, "approved") : null;
   if (e.kind === "abstain") return release(e);
   if (e.kind === "ask") return (S.edits.get(e.key) || "").trim() ? submitTake(e) : focusEditor();
 }
@@ -1085,7 +1144,8 @@ function onKey(ev) {
     if (ev.key === "Escape") {
       // Leave the field for the selected strip rather than <body>, so the next key lands somewhere.
       const strip = S.detailOpen ? $("#q-detail .q-back") : $(`#q-list [aria-selected="true"]`);
-      strip ? strip.focus({ preventScroll: true }) : ev.target.blur();
+      if (strip) strip.focus({ preventScroll: true });
+      else ev.target.blur();
       return true;
     }
     if (ev.key === "Enter" && (ev.metaKey || ev.ctrlKey) && ev.target.closest("#q-detail")) {
@@ -1096,7 +1156,10 @@ function onKey(ev) {
   }
   if (ev.ctrlKey || ev.metaKey) return false;
   const k = ev.key;
-  if (k === "Escape" && S.detailOpen) return closeSheet(), true;
+  if (k === "Escape" && S.detailOpen) {
+    closeSheet({ instant: true });
+    return true;
+  }
   // Arrow keys move between bays while a bay tab has focus (the tablist pattern).
   if (["ArrowRight", "ArrowLeft", "Home", "End"].includes(k) && ev.target.closest?.("#q-bays")) {
     const i = BAYS.findIndex(([b]) => b === S.bay);
@@ -1112,9 +1175,8 @@ function onKey(ev) {
     return true;
   }
   if (/^[1-9]$/.test(k)) {
-    const codes = Object.keys(reasonsMeta());
-    const code = codes[+k - 1];
-    const id = S.lastStruck || (e?.kind === "action" ? e.a.id : null);
+    const code = Object.keys(reasonsMeta())[+k - 1];
+    const id = reasonTarget(e);
     if (code && id) {
       toggleReason(id, code);
       return true;
@@ -1123,20 +1185,20 @@ function onKey(ev) {
   }
   if (!e) return false;
   if (k === "a") return primary(e), true;
-  if (k === "x" && e.kind === "action" && (e.a.review?.status || "pending") === "pending") return verdict(e, "killed"), true;
+  if (k === "x" && e.kind === "action" && statusOf(e.a) === "pending") return verdict(e, "killed"), true;
   if (k === "e") return focusEditor();
-  if (k === "u" && e.kind === "action" && e.a.review?.status !== "pending") return verdict(e, "pending"), true;
+  if (k === "u" && e.kind === "action" && statusOf(e.a) !== "pending") return verdict(e, "pending"), true;
   if (k === "z") return undo(), true;
   if (k === "n") return $("#q-note")?.focus(), true;
   if (k === "o") {
-    const url = e.a?.target_url || (isXPost(e.d?.opportunity) ? e.d.opportunity : null);
+    const url = safeUrl(e.a?.target_url || (isXPost(e.d?.opportunity) ? e.d.opportunity : null));
     if (url) window.open(url, "_blank", "noopener");
     return !!url;
   }
   // Enter opens the phone sheet only from the strip list or nothing; on links and buttons it must
   // keep activating them (WCAG 2.1.1).
   const onStrip = ev.target === document.body || !!ev.target.closest?.("#q-list .strip");
-  if (k === "Enter" && onStrip && matchMedia("(max-width: 860px)").matches) {
+  if (k === "Enter" && onStrip && matchMedia(PHONE).matches) {
     openSheet({ instant: true });
     return true;
   }
@@ -1145,93 +1207,98 @@ function onKey(ev) {
 
 // --- The phone sheet: modal while open --------------------------------------------------------
 
+// The sheet slides only when a tap opened or closed it; keyboard actions never animate.
 function openSheet({ instant = false } = {}) {
   S.detailOpen = true;
-  const q = S.el.querySelector(".q");
-  // Keyboard-opened sheets appear without the slide (animate: never animate keyboard actions).
-  q.toggleAttribute("data-instant", instant);
+  S.el.querySelector(".q").toggleAttribute("data-instant", instant);
   renderDetail();
   setInert(true);
   $("#q-detail .q-back")?.focus({ preventScroll: true });
 }
 
-function closeSheet() {
+function closeSheet({ instant = false } = {}) {
   S.detailOpen = false;
+  S.el.querySelector(".q").toggleAttribute("data-instant", instant);
   renderDetail();
   setInert(false);
   $(`#q-list [data-key="${CSS.escape(S.sel || "")}"]`)?.focus({ preventScroll: true });
 }
 
-function setInert(on) {
-  for (const el of [$(".rail"), $("#q-head"), $("#q-bays"), $("#q-list"), $(".readback")]) el?.toggleAttribute("inert", on);
+function setInert(inert) {
+  S.ctx.setModal(inert);
+  for (const el of [$("#q-head"), $("#q-bays"), $("#q-list")]) el?.toggleAttribute("inert", inert);
 }
 
 // --- Events ---------------------------------------------------------------------------------
 
+/** Listeners go on the shell's #view element, which outlives this view, so unmount must remove
+ *  them; otherwise each visit adds another set and one click clears two strips. */
 function wire(el) {
-  on(el, "click", "#q-list .strip", (ev, b) => {
-    select(b.dataset.key, { scroll: false });
-    if (matchMedia("(max-width: 860px)").matches) openSheet({ instant: ev.detail === 0 });
-  });
-  on(el, "click", "#q-bays .bay", (ev, b) => setBay(b.dataset.bay));
-  on(el, "click", "[data-goto]", (ev, b) => setBay(b.dataset.goto));
-  on(el, "change", "#q-run", (ev, s) => {
-    S.sel = null;
-    loadRun(+s.value).catch((err) => S.ctx.toast(err.message, { kind: "error" }));
-  });
-  on(el, "click", "[data-reason]", (ev, b) => toggleReason(b.dataset.id, b.dataset.reason));
-  on(el, "click", "[data-act]", (ev, b) => {
-    const e = selected();
-    const act = b.dataset.act;
-    if (act === "copy") return copyHandoff();
-    if (act === "retry") return loadRuns(S.runId);
-    if (act === "back") return closeSheet();
-    if (!e) return;
-    if (act === "clear") return verdict(e, "approved");
-    if (act === "strike") return verdict(e, "killed");
-    if (act === "reset") return verdict(e, "pending");
-    if (act === "release") return release(e);
-    if (act === "take") return submitTake(e);
-    if (act === "revert") {
-      S.edits.delete(e.key);
-      const ta = $("#q-detail textarea");
-      ta.value = e.a.text;
-      updateEditor(ta.closest(".editor"), false);
-      return;
-    }
-    if (act === "use") {
-      S.edits.set(e.key, b.dataset.text);
-      renderDetail();
-      focusEditor();
-      S.ctx.readback(html`<b>LOADED</b> a draft into the editor`);
-    }
-  });
-  on(el, "input", "#q-detail textarea", (ev, ta) => updateEditor(ta.closest(".editor"), true));
-  on(el, "input", "#q-note", (ev, inp) => {
-    const e = selected();
-    if (e) S.notes.set(e.kind === "action" ? e.a.id : e.key, inp.value);
-  });
-  // Clicking a readback reason chip works like its number key.
-  const chips = $("#readback-chips");
-  const onChip = (ev) => {
-    const b = ev.target.closest("[data-chip]");
-    if (!b || !S.lastStruck) return;
-    const code = Object.keys(reasonsMeta())[+b.dataset.chip - 1];
-    if (code) toggleReason(S.lastStruck, code);
-  };
-  chips.addEventListener("click", onChip);
-  return () => chips.removeEventListener("click", onChip);
+  const offs = [
+    on(el, "click", "#q-list .strip", (ev, b) => {
+      select(b.dataset.key, { scroll: false });
+      if (matchMedia(PHONE).matches) openSheet({ instant: ev.detail === 0 });
+    }),
+    on(el, "click", "#q-bays .bay", (ev, b) => setBay(b.dataset.bay)),
+    on(el, "click", "[data-goto]", (ev, b) => setBay(b.dataset.goto)),
+    on(el, "change", "#q-run", (ev, s) => {
+      S.sel = null;
+      loadRun(+s.value).catch((err) => S.ctx.toast(err.message, { kind: "error" }));
+    }),
+    on(el, "click", "[data-reason]", (ev, b) => toggleReason(b.dataset.id, b.dataset.reason)),
+    on(el, "click", "[data-act]", (ev, b) => onAct(ev, b)),
+    on(el, "input", "#q-detail textarea", (ev, ta) => updateEditor(ta.closest(".editor"), true)),
+    on(el, "input", "#q-note", () => {
+      const e = selected();
+      if (e) S.notes.set(e.key, $("#q-note").value);
+    }),
+  ];
+  return () => offs.forEach((off) => off());
 }
 
-let unwire = null;
-let entered = false;
+function onAct(ev, b) {
+  const e = selected();
+  const act = b.dataset.act;
+  if (act === "copy") return copyHandoff();
+  if (act === "retry") {
+    return loadRuns(S.runId).catch((err) => {
+      S.error = err;
+      S.loading = false;
+      render();
+    });
+  }
+  if (act === "back") return closeSheet({ instant: ev.detail === 0 });
+  if (!e) return;
+  if (act === "clear") return verdict(e, "approved");
+  if (act === "strike") return verdict(e, "killed");
+  if (act === "reset") return verdict(e, "pending");
+  if (act === "release") return release(e);
+  if (act === "take") return submitTake(e);
+  if (act === "revert") {
+    S.edits.delete(e.key);
+    const ta = $("#q-detail textarea");
+    ta.value = e.a.text;
+    updateEditor(ta.closest(".editor"), false);
+    return;
+  }
+  if (act === "use") {
+    S.edits.set(e.key, b.dataset.text);
+    renderDetail();
+    focusEditor();
+    S.ctx.readback(html`<b>LOADED</b> a draft into the editor`);
+  }
+}
 
 registerView({
   id: "queue",
   title: "Queue",
   group: "checkpoint",
   css: "/static/css/views/queue.css",
-  count: () => (S.actions.length ? groups().clear.length + groups().take.length : 0),
+  count: () => {
+    if (!S.actions.length) return 0;
+    const g = groups();
+    return g.clear.length + g.take.length;
+  },
   hot: () => true,
   keys: [
     ["j / k", "Next or previous strip"],
@@ -1266,12 +1333,7 @@ registerView({
     ]);
     S.ageTimer = setInterval(() => {
       // Post ages tick like X's do; only the age labels change.
-      for (const span of $$("[data-age-from]", el)) {
-        const iso = span.dataset.ageFrom;
-        if (!iso) continue;
-        const m = (Date.now() - Date.parse(iso)) / 60000;
-        span.textContent = `· ${m < 60 ? `${Math.floor(m)}m` : m < 1440 ? `${Math.floor(m / 60)}h` : new Date(iso).toLocaleDateString("en", { month: "short", day: "numeric" })}`;
-      }
+      for (const span of $$("[data-age-from]", el)) span.textContent = `· ${xAge(minutesSince(span.dataset.ageFrom), span.dataset.ageFrom)}`;
     }, 30_000);
     await loadRuns(params.run);
   },
@@ -1280,6 +1342,7 @@ registerView({
     clearInterval(S.ageTimer);
     clearTimeout(S.gateTimer);
     unwire?.();
+    unwire = null;
     S.el = null;
   },
   onKey,

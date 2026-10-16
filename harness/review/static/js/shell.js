@@ -8,6 +8,7 @@
 //     group: "loop",              // rail group: checkpoint | loop | learn
 //     css: "/static/css/views/signals.css",   // optional, loaded on first mount
 //     count: () => 3,             // optional badge in the rail
+//     hot: () => true,            // optional: draw the badge as work waiting for a person
 //     keys: [["j / k", "Move"]],  // optional, listed in the shortcut sheet
 //     mount(el, ctx, params) {},  // render into el; params come from the hash query
 //     unmount() {},               // stop timers
@@ -15,7 +16,7 @@
 //   });
 
 import * as api from "./lib/api.js";
-import { $, esc, html, isTyping, loadCSS, raw, setHTML } from "./lib/dom.js";
+import { $, html, isTyping, loadCSS, setHTML } from "./lib/dom.js";
 
 const views = new Map();
 const GROUPS = [
@@ -27,9 +28,10 @@ const GROUPS = [
 // Will's /console (PR #11) can add itself here.
 const EXTERNAL = [];
 
-let current = null; // { def, el, params }
+let current = null; // { def, query }: the mounted view and the hash query it was mounted with
 let meta = null;
 let gPending = 0;
+let onChip = null; // the current readback's chip handler
 
 export function registerView(def) {
   if (!def?.id || typeof def.mount !== "function") throw new Error(`registerView needs an id and a mount(); got ${def?.id}`);
@@ -47,13 +49,14 @@ export const ctx = {
   toast,
   readback,
   refreshNav,
+  setModal,
 };
 
 // --- Routing --------------------------------------------------------------------------------
 
 function parseHash() {
-  const raw = location.hash.replace(/^#\/?/, "");
-  const [id, query = ""] = raw.split("?");
+  const body = location.hash.replace(/^#\/?/, "");
+  const [id, query = ""] = body.split("?");
   return { id: id || "queue", params: Object.fromEntries(new URLSearchParams(query)) };
 }
 
@@ -64,8 +67,8 @@ export function navigate(id, params = {}) {
 
 /** Update the hash's query without remounting the view (for selection, filters, bays). */
 export function setParams(params) {
-  const { id } = parseHash();
-  const merged = { ...parseHash().params, ...params };
+  const { id, params: now } = parseHash();
+  const merged = { ...now, ...params };
   for (const k of Object.keys(merged)) if (merged[k] == null || merged[k] === "") delete merged[k];
   const q = new URLSearchParams(merged).toString();
   history.replaceState(null, "", `#/${id}${q ? `?${q}` : ""}`);
@@ -86,7 +89,7 @@ async function route() {
   if (def.css) loadCSS(def.css);
   document.title = `${def.title} · Clearance`;
   const navigated = current != null; // not the first load
-  current = { def, el, params, query };
+  current = { def, query };
   renderNav();
   $("#main").scrollTop = 0;
   try {
@@ -95,7 +98,7 @@ async function route() {
     showError(el, e);
   }
   // After an in-app route change, move focus to the new view's heading so screen readers announce
-  // it and Tab starts inside the view (better-accessibility: SPA route changes).
+  // it and Tab starts inside the view.
   if (navigated && current?.def === def) {
     const h1 = el.querySelector("h1");
     if (h1) {
@@ -115,10 +118,11 @@ export function showError(el, e) {
       <button class="btn btn-quiet" type="button" data-retry>Try again</button>
     </div>`,
   );
+  // Forget the query so route() remounts, unmounting the failed view first: its mount may have
+  // attached listeners and timers before it threw.
   el.querySelector("[data-retry]")?.addEventListener("click", () => {
-    const def = current?.def;
-    current = null;
-    if (def) route();
+    if (current) current.query = null;
+    route();
   });
 }
 
@@ -127,7 +131,7 @@ export function showError(el, e) {
 function renderNav() {
   const active = current?.def.id;
   const groups = GROUPS.map(([g, label]) => {
-    const items = [...views.values()].filter((v) => v.group === g && v.nav !== false);
+    const items = [...views.values()].filter((v) => v.group === g);
     const ext = EXTERNAL.filter((x) => x.group === g);
     if (!items.length && !ext.length) return "";
     return html`<div class="nav-group" role="group" aria-label="${label}">
@@ -164,7 +168,7 @@ function refreshNav() {
       link.append(badge);
     }
     badge.classList.toggle("hot", !!v.hot?.());
-    badge.innerHTML = String(html`${n}<span class="sr-only"> waiting</span>`);
+    setHTML(badge, html`${n}<span class="sr-only"> waiting</span>`);
   }
 }
 
@@ -183,8 +187,10 @@ function renderRailFoot() {
 
 // --- Readback, toasts, shortcut sheet --------------------------------------------------------
 
-/** Say what the console just did. `chips` are [{label, key}] offered for a few seconds. */
-export function readback(markup, { chips = [] } = {}) {
+/** Say what the console just did. `chips` are [{label, key, on}], shown until the next readback;
+ *  clicking one calls `onChip(key)`. */
+export function readback(markup, { chips = [], onChip: handler = null } = {}) {
+  onChip = handler;
   setHTML($("#readback-text"), markup);
   setHTML(
     $("#readback-chips"),
@@ -208,7 +214,7 @@ export function toast(message, { kind = "info", ms = 4200 } = {}) {
     setTimeout(() => el.remove(), 200);
   };
   if (kind === "error") {
-    // Errors stay until the person closes them (motion-and-zoom.md: an error toast stays).
+    // Errors stay until the person closes them, so nobody misses one.
     const close = document.createElement("button");
     close.type = "button";
     close.className = "toast-close";
@@ -241,7 +247,7 @@ function openKeys() {
   setHTML(
     $("#keys-body"),
     html`${viewKeys.length ? keyList(current.def.title, viewKeys) : ""}${keyList("Anywhere", GLOBAL_KEYS)}
-      <label class="keys-switch"><input type="checkbox" id="keys-on" ${shortcutsOn() ? raw("checked") : ""}> Single-key shortcuts (turn off for speech input; <kbd>?</kbd> still opens this sheet)</label>`,
+      <label class="keys-switch"><input type="checkbox" id="keys-on" ${shortcutsOn() ? "checked" : ""}> Single-key shortcuts (turn off for speech input; <kbd>?</kbd> still opens this sheet)</label>`,
   );
   $("#keys-on").addEventListener("change", (e) => {
     localStorage.setItem("clearance.keys", e.target.checked ? "on" : "off");
@@ -252,6 +258,11 @@ function openKeys() {
 
 // WCAG 2.1.4: single-character shortcuts need an off switch (speech input can fire them).
 const shortcutsOn = () => localStorage.getItem("clearance.keys") !== "off";
+
+/** While a view shows a modal (the Queue's phone sheet), the rail and readback can't be reached. */
+export function setModal(on) {
+  for (const el of [$(".rail"), $(".readback")]) el?.toggleAttribute("inert", on);
+}
 
 // --- Keyboard -------------------------------------------------------------------------------
 
@@ -297,11 +308,15 @@ export async function boot() {
   try {
     meta = await api.get("/api/meta");
   } catch (e) {
-    meta = null;
+    toast(`Couldn't load the server's settings (${e.message}). Kill reasons and the provider line stay empty until you reload.`, { kind: "error" });
   }
   renderRailFoot();
   window.addEventListener("hashchange", route);
   document.addEventListener("keydown", onKey);
+  $("#readback-chips").addEventListener("click", (e) => {
+    const chip = e.target.closest("[data-chip]");
+    if (chip && onChip) onChip(chip.dataset.chip);
+  });
   $("#keys-close").addEventListener("click", () => $("#keys-sheet").close());
   $("#keys-sheet").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) e.currentTarget.close();
@@ -312,5 +327,3 @@ export async function boot() {
   ]);
   await route();
 }
-
-export { esc };

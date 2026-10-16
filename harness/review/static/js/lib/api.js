@@ -1,3 +1,5 @@
+import { handleFromUrl } from "./format.js";
+
 // HTTP client for the review server, with a fixture mode for states the harness can't produce
 // on demand: an empty store, a broken server, slow loads, very long text, hundreds of drafts.
 //
@@ -17,9 +19,7 @@ const params = new URLSearchParams(location.search);
 const delayMs = Math.min(10_000, Math.max(0, +(params.get("delay") || 0)));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-let fixture = null; // { name, routes, errors, posts }
-
-export const fixtureName = () => fixture?.name ?? null;
+let fixture = null; // { name, routes, errors }
 
 export async function initFixture() {
   const name = params.get("fixture");
@@ -36,7 +36,7 @@ export async function initFixture() {
   return fixture;
 }
 
-const clone = (x) => (x == null ? x : structuredClone(x));
+const clone = structuredClone;
 
 // Fixture timestamps can be written relative to page load ("@now-38m", "@now-2h", "@now-3d"),
 // so post ages read the way they did when the data was captured.
@@ -58,10 +58,24 @@ async function fixtureGet(path) {
     const e = fixture.errors[key];
     throw new ApiError(e.status || 500, e.error || "fixture error", path);
   }
+  const approved = /^GET \/api\/runs\/(\d+)\/approved$/.exec(key);
+  if (approved && fixture.routes[`GET /api/runs/${approved[1]}`]) return approvedActions(fixture.routes[`GET /api/runs/${approved[1]}`]);
   if (key in fixture.routes) return clone(fixture.routes[key]);
   // A route the fixture doesn't cover comes from the live server, so one fixture can stage the
   // Queue and Loop while the other views show whatever this branch really has.
   return liveGet(path);
+}
+
+/** The hand-off shape memory.approved_actions builds, from the fixture's own verdicts. */
+function approvedActions(actions) {
+  return actions
+    .filter((a) => a.review?.status === "approved")
+    .map(({ review, ...a }) => ({
+      ...a,
+      ...(review.text ? { original_text: a.text, text: review.text } : {}),
+      review_note: review.note,
+      approved_at: review.reviewed_at,
+    }));
 }
 
 // POSTs in fixture mode change the fixture's own data, so the page behaves as if the server took them.
@@ -90,25 +104,30 @@ const fixturePosts = [
       const d = decisions[body.decision];
       if (!d) throw new ApiError(400, "unknown decision", m[0]);
       const take = m[2] === "takes";
+      const cand = body.candidate == null ? {} : d.candidates?.[body.candidate];
+      if (!cand) throw new ApiError(400, "unknown candidate", m[0]);
+      // The same rule as post_overrule in checkpoint.py.
+      const type = take ? "post" : cand.type || (d.lane === "reply" ? "reply" : handleFromUrl(d.opportunity) ? "quote" : "post");
       const id = `${take ? "take" : "ovr"}${m[1]}${body.decision}`;
       const existing = list.findIndex((a) => a.id === id);
+      const target = type === "reply" || type === "quote" ? d.opportunity : null;
       const action = {
         id,
-        type: take ? "post" : d.lane === "reply" ? "reply" : "post",
+        type,
         text: body.text,
-        mind: take ? "human" : (d.candidates?.[body.candidate]?.mind ?? `${d.lane}_lane`),
+        mind: take ? "human" : (cand.mind ?? `${d.lane}_lane`),
         narrative_id: take ? d.opportunity : "",
         rationale: take ? `A person's answer to: ${d.question}` : `Overruled abstention (${d.reason}): ${d.detail}`,
-        target_url: !take && d.lane === "reply" ? d.opportunity : null,
-        target_handle: null,
+        target_url: target,
+        target_handle: handleFromUrl(target),
         predicted_score: 0,
         panel: {},
         vetoed: false,
         critique: "",
-        lane: d.lane,
+        lane: take ? "post" : d.lane,
         origin: take ? "take" : "overrule",
-        question: d.question,
-        review: { status: "approved", text: null, note: take ? "Written by a person." : "Overruled.", reviewed_at: new Date().toISOString() },
+        ...(take ? { question: d.question } : { overrule: { decision: body.decision, candidate: body.candidate ?? null, reason: d.reason } }),
+        review: { status: "approved", text: null, note: body.note || (take ? "Written by a person." : "Overruled."), reasons: [], reviewed_at: new Date().toISOString() },
       };
       if (existing >= 0) list[existing] = action;
       else list.push(action);
@@ -134,29 +153,23 @@ export async function get(path) {
   return liveGet(path);
 }
 
-async function liveGet(path) {
-  let res;
-  try {
-    res = await fetch(path, { headers: { Accept: "application/json" } });
-  } catch (e) {
-    throw new ApiError(0, "Can't reach the review server. Is `python -m harness review` still running?", path);
-  }
-  const data = await res.json().catch(() => null);
-  if (!res.ok) throw new ApiError(res.status, data?.error || `${res.status} ${res.statusText}`, path);
-  return data;
+export async function post(path, body = {}) {
+  if (delayMs) await sleep(delayMs);
+  if (fixture) return fixturePost(path, body);
+  return request(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(body),
+  });
 }
 
-export async function post(path, body = {}) {
-  if (delayMs) await sleep(Math.min(delayMs, 800));
-  if (fixture) return fixturePost(path, body);
+const liveGet = (path) => request(path, { headers: { Accept: "application/json" } });
+
+async function request(path, init) {
   let res;
   try {
-    res = await fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(body),
-    });
-  } catch (e) {
+    res = await fetch(path, init);
+  } catch {
     throw new ApiError(0, "Can't reach the review server. Is `python -m harness review` still running?", path);
   }
   const data = await res.json().catch(() => null);
@@ -226,7 +239,7 @@ function simulateRound() {
     [10800, null, "Top 5 recommendations (run 15) -> out/recommendations-20261015-221210.json"],
   ];
   const started = new Date().toISOString();
-  loop.round = { id: "round-demo", started_at: started, provider: loop.provider, sources: loop.sources, command: loop.command, status: "running", stage: "observe", lines: [], run_id: null, exit_code: null, finished_at: null };
+  loop.round = { id: "round-demo", started_at: started, provider: loop.provider, sources: loop.sources, command: loop.command, status: "running", lines: [], run_id: null, exit_code: null, finished_at: null };
   loop.live = { status: "running", stage: "observe", started_at: started, elapsed_ms: 0, done: [], llm_calls: 0 };
   roundTimers.forEach(clearTimeout);
   const t0 = Date.now();
@@ -234,13 +247,11 @@ function simulateRound() {
     setTimeout(() => {
       const r = loop.round;
       r.lines.push({ t: at / 1000, stage, text });
-      if (stage) r.stage = stage;
       loop.live.stage = stage || loop.live.stage;
       loop.live.elapsed_ms = Date.now() - t0;
       loop.live.llm_calls = Math.max(loop.live.llm_calls, i * 3 - 3);
       if (i === script.length - 1) {
         r.status = "done";
-        r.stage = "review";
         r.run_id = 15;
         r.exit_code = 0;
         r.finished_at = new Date().toISOString();

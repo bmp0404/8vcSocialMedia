@@ -55,10 +55,19 @@ export function isTyping(target = document.activeElement) {
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }
 
-export const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+/** A link target from run data, or null unless it is http(s). `html` escapes markup but not URL
+ *  schemes, and a recorded `javascript:` URL would run on this origin. */
+export function safeUrl(url) {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" || u.protocol === "http:" ? u.href : null;
+  } catch {
+    return null;
+  }
+}
 
-/** Load a view's stylesheet once. */
 const loaded = new Set();
+/** Load a view's stylesheet once. */
 export function loadCSS(href) {
   if (loaded.has(href)) return;
   loaded.add(href);

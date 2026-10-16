@@ -8,6 +8,12 @@ export const ROUND = STAGES.slice(0, 4); // what `python -m harness run` does; r
 // measured; the slowest call in out/trace-run5.json took 8.5 s, so a snapshot silent for three
 // minutes is taken to belong to a killed run rather than one still working.
 export const STALE_LIVE_MS = 180_000;
+// trace-live.json's start is stamped by the child once Python is up, a moment after the server
+// stamps the round, and the round's times are whole seconds. Two seconds of slack either side is
+// a guess that covers both; nobody has measured the gap.
+const SAME_RUN_SLACK_MS = 2000;
+// `python -m harness run`'s --retries default (harness/cli.py), for a command that doesn't set it.
+const DEFAULT_RETRIES = 2;
 // trace.py's later ranking stages, on branches that have them, count toward the Qualify bay's time.
 const FOLD = { tournament: "qualify", sharpen_hooks: "qualify" };
 
@@ -46,12 +52,16 @@ export function readLines(lines = []) {
     let m;
     if ((m = RX.source.exec(text))) f.sources[m[1]] = +m[2];
     else if ((m = RX.sourceFailed.exec(text))) f.failed[m[1]] = m[2];
-    else if ((m = RX.sent.exec(text))) [f.sent, f.total] = [+m[1], +m[2]];
+    else if ((m = RX.sent.exec(text))) {
+      f.sent = +m[1];
+      f.total = +m[2];
+    }
     else if ((m = RX.stale.exec(text))) {
       f.staleH = +m[1];
       for (const c of m[2].matchAll(/:\s*(\d+)/g)) f.staleN += +c[1];
     } else if ((m = RX.picked.exec(text))) {
-      [f.picked, f.end.orient] = [+m[1], ln.t];
+      f.picked = +m[1];
+      f.end.orient = ln.t;
       f.ids = m[2].split(",").map((x) => x.trim()).filter(Boolean);
     } else if (RX.mindFailed.test(text)) f.mindsFailed++;
     else if ((m = RX.drafted.exec(text))) {
@@ -97,7 +107,7 @@ const sum = (xs) => xs.reduce((a, b) => a + b, 0);
 function belongs(live, r) {
   const ls = ts(live?.started_at);
   if (!r || Number.isNaN(ls)) return false;
-  return ls >= ts(r.started_at) - 2000 && (!r.finished_at || ls <= ts(r.finished_at) + 2000);
+  return ls >= ts(r.started_at) - SAME_RUN_SLACK_MS && (!r.finished_at || ls <= ts(r.finished_at) + SAME_RUN_SLACK_MS);
 }
 
 function fresh(live, now) {
@@ -146,7 +156,7 @@ export function boardOf(d, now = Date.now()) {
   let current = null;
   if (kind === "round" && status !== "done") {
     const liveDone = new Set((lv?.done || []).map((e) => e.name));
-    const retries = +(/--retries (\d+)/.exec(r.command || "")?.[1] ?? 2);
+    const retries = +(/--retries (\d+)/.exec(r.command || "")?.[1] ?? DEFAULT_RETRIES);
     // All four reported: a running round is saving its drafts; a failed one broke while saving.
     current = stageFromLines(f, liveDone, retries) ?? (status === "running" ? "qualify" : "review");
   } else if (kind === "terminal") {
@@ -216,8 +226,7 @@ export function stageCount(b, s, state) {
 
 /** Seconds into the round when stage `s` started, from the log. */
 function lineStart(f, s) {
-  const prev = { observe: 0, orient: f.end.observe, decide: f.end.orient, qualify: f.end.decide }[s];
-  return prev ?? null;
+  return { observe: 0, orient: f.end.observe, decide: f.end.orient, qualify: f.end.decide }[s] ?? null;
 }
 
 function lineMs(f, s) {
