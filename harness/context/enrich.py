@@ -24,6 +24,7 @@ from datetime import datetime, timedelta
 from harness.context import boost, snowflake
 from harness.context.backfill import CONTEXT_DIR, TIMELINES, X_METRICS, load_dataset, read_jsonl
 from harness.context.features import audience_tz, text_features, time_features
+from harness.context.settings import DEFAULT, ContextConfig
 
 ENRICHED = CONTEXT_DIR / "devtools_enriched.csv"
 ACCOUNTS = CONTEXT_DIR / "accounts.csv"
@@ -33,11 +34,6 @@ ORIGINAL_COLUMNS = [
     "Category", "Account", "Post Content", "Media", "Likes", "Replies",
     "Retweets", "Engagement", "Post URL", "Date", "Segment",
 ]
-DOMAIN = "devtools"
-THREAD_GAP_S = 180  # eval research: 27% of posts follow the same account's previous post within 3 minutes
-MATURE_H = 48
-TIMELINE_MIN_POSTS = 10
-BIG_ACCOUNT = 10_000
 
 
 def _median(values):
@@ -83,15 +79,16 @@ def _account_stats(rows, timelines, window_start, window_end):
     return out
 
 
-def _reply_features(sample: list[dict], created: datetime, account_terms: list[str]) -> dict:
+def _reply_features(sample: list[dict], created: datetime, account_terms: list[str], cfg: ContextConfig) -> dict:
     replies = [r for r in sample if "error" not in r]
     feats = boost.reply_signals(
         [{"text": r.get("text"), "author_followers": r.get("author_followers"),
-          "created_unix": datetime.fromisoformat(r["created_at"]).timestamp()} for r in replies]
+          "created_unix": datetime.fromisoformat(r["created_at"]).timestamp()} for r in replies],
+        cfg.boost,
     )
     if replies:
         delays = sorted((datetime.fromisoformat(r["created_at"]) - created).total_seconds() / 60 for r in replies)
-        big = [r for r in replies if (r.get("author_followers") or 0) >= BIG_ACCOUNT]
+        big = [r for r in replies if (r.get("author_followers") or 0) >= cfg.enrich.big_account]
         terms = [t.lower() for t in account_terms if t]
         insiders = [
             r for r in replies
@@ -142,7 +139,7 @@ def _context_features(ctx: dict, acct: str, created: datetime) -> dict:
     return out
 
 
-def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
+def build(scrape_time: datetime | None = None, cfg: ContextConfig = DEFAULT) -> tuple[list[dict], list[dict]]:
     rows = load_dataset()
     xm = {r["id"]: r for r in read_jsonl(X_METRICS)}
     timelines = read_jsonl(TIMELINES)
@@ -150,7 +147,8 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
     for r in read_jsonl(REPLY_SAMPLES):
         samples[r["reply_to_post"]].append(r)
     ctx = json.loads(CONTEXT_SIGNALS.read_text(encoding="utf-8")) if CONTEXT_SIGNALS.exists() else {}
-    tz = audience_tz(DOMAIN)
+    ep = cfg.enrich
+    tz = audience_tz(ep.domain)
 
     created = {r["Post URL"]: snowflake.to_datetime(snowflake.status_id_from_url(r["Post URL"])) for r in rows}
     # David's scrape time is not recorded; the newest post in the file is a lower bound for it.
@@ -190,7 +188,7 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
         tl_prev = [t for t in st["timeline_times"] if t < c]
         row["seconds_since_prev_post"] = round(prev_gap, 1) if prev_gap is not None else None
         row["seconds_since_prev_post_timeline"] = round((c - tl_prev[-1]).total_seconds(), 1) if tl_prev else None
-        row["is_thread_continuation"] = prev_gap is not None and prev_gap < THREAD_GAP_S
+        row["is_thread_continuation"] = prev_gap is not None and prev_gap < ep.thread_gap_s
         day = c.strftime("%Y-%m-%d")
         row["author_posts_same_day"] = sum(1 for t in times if t.strftime("%Y-%m-%d") == day)
         row["author_post_rank_in_day"] = sum(1 for t in times if t.strftime("%Y-%m-%d") == day and t <= c)
@@ -198,9 +196,9 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
         row["other_accounts_super_viral_same_day"] = len(sv_day[day] - {acct})
         row["scrape_time_est"] = scrape.isoformat(timespec="seconds")
         row["age_at_scrape_hours"] = round((scrape - c).total_seconds() / 3600, 2)
-        row["label_mature"] = row["age_at_scrape_hours"] >= MATURE_H
+        row["label_mature"] = row["age_at_scrape_hours"] >= ep.mature_h
 
-        row.update(text_features(r["Post Content"], r["Media"], DOMAIN))
+        row.update(text_features(r["Post Content"], r["Media"], ep.domain))
         row["quotes_implied"] = eng - likes - replies - rts  # verified = X's quote count on sampled posts
         row["log_engagement"] = round(math.log1p(eng), 4)
 
@@ -230,7 +228,7 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
             row["x_error"] = x["error"][:120]
 
         med_tl, med_ds = st["median_eng_timeline"], st["median_eng_dataset"]
-        use_tl = st["timeline_n"] >= TIMELINE_MIN_POSTS and med_tl is not None
+        use_tl = st["timeline_n"] >= ep.timeline_min_posts and med_tl is not None
         med = med_tl if use_tl else med_ds
         row["author_median_eng_dataset"] = med_ds
         row["author_median_eng_timeline"] = med_tl
@@ -241,7 +239,7 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
         row["above_author_median"] = (eng > med_tl) if use_tl else None
 
         terms = [acct.lstrip("@")] + ([ctx.get("accounts", {}).get(acct, {}).get("name")] if ctx else [])
-        row.update(_reply_features(samples.get(pid, []), c, terms))
+        row.update(_reply_features(samples.get(pid, []), c, terms, cfg))
         if ctx:
             cf = _context_features(ctx, acct, c)
             trends = cf.pop("_trends_for_overlap")
@@ -254,7 +252,7 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
         {"likes": rr.get("x_likes"), "reposts": rr.get("x_reposts"), "replies": rr.get("x_replies"),
          "bookmarks": rr.get("x_bookmarks"), "views": rr.get("x_views")}
         for rr in out_rows if rr.get("x_likes") is not None
-    ])
+    ], cfg.boost)
     for rr in out_rows:
         rr.update(boost.score(
             {"likes": rr.get("x_likes"), "reposts": rr.get("x_reposts"), "replies": rr.get("x_replies"),
@@ -263,6 +261,7 @@ def build(scrape_time: datetime | None = None) -> tuple[list[dict], list[dict]]:
              "reply_low_follower_share": rr.get("reply_low_follower_share"),
              "reply_dup_share": rr.get("reply_dup_share"), "reply_burst_share": rr.get("reply_burst_share")},
             cut,
+            p=cfg.boost,
         ))
 
     accounts = []
