@@ -2,7 +2,26 @@
 
 Generated from the `exp-*.json` records in this folder by `harness/iterate/ledger.py`. Newest first. Every number is from the run named in its record; brackets are 95% intervals from resampling the cluster unit (accounts or threads). DESIGN.md explains the gate.
 
-Current champion: `cfg-46f3a9fd716b`, shaped by 1 promotion(s): `exp-20261016-action-7ea3e0`.
+Current champion: `cfg-35c9ee1e8e13`, shaped by 2 promotion(s): `exp-20261016-action-7ea3e0`, `exp-20261016T023744-revert-7ea3e0`.
+
+## exp-20261016T023744-revert-7ea3e0: promoted
+
+- **Change:** `action.reply.generation` 'pipeline' → 'persona_json', `action.samples` 4 → 1
+- **Hypothesis:** Revert exp-20261016-action-7ea3e0.
+- **Proposed by:** revert (exp-20261016-action-7ea3e0)
+- **Decision:** Confirmation exp-20261016-action-d71d3a didn't promote it again: improvement lower bound +0.444 at 0.975 clears the noise floor 0.000; blocked: not shown non-inferior on veto_pass_rate (95% lower bound -0.556, margin -0.1) (auto, 2026-10-16T02:37:44+00:00)
+- **Cost:** 0 calls on the challenger arm
+
+## exp-20261016-action-d71d3a: inconclusive
+
+- **Change:** `action.reply.generation` 'persona_json' → 'pipeline', `action.samples` 1 → 4
+- **Hypothesis:** The promoted reply lane stays non-inferior on the veto once the veto also checks mission fit and content-free drafts (instrument v3).
+- **Proposed by:** confirmation (exp-20261016-action-7ea3e0)
+- **ai_detection_rate** (lower is better), 27 threads: champion 1.000 [1.000, 1.000], challenger 0.370 [0.185, 0.556], difference -0.630 [-0.815, -0.444]
+- **Noise floor** (champion rerun with new lineups or seeds): 0.000
+- **Correction:** Benjamini-Hochberg q=0.1 over 1 comparison(s); p=0.0005, adjusted 0.0005
+- **Decision:** improvement lower bound +0.444 at 0.975 clears the noise floor 0.000; blocked: not shown non-inferior on veto_pass_rate (95% lower bound -0.556, margin -0.1) (auto, 2026-10-16T02:37:44+00:00)
+- **Cost:** 25 calls on the challenger arm, plus shared champion arms (51 calls)
 
 ## exp-20261016-action-7ea3e0: promoted
 

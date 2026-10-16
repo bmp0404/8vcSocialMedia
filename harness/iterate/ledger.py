@@ -145,8 +145,9 @@ def changelog(recs: list[dict], cfg: Config, history: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def revert_record(directory: Path, experiment_id: str, reason: str) -> dict[str, Any]:
-    """A record that undoes a promoted experiment's knob changes, decided by a person."""
+def revert_record(directory: Path, experiment_id: str, reason: str, by: str = "human") -> dict[str, Any]:
+    """A record that undoes a promoted experiment's knob changes. `by` is "human" from the CLI, "auto"
+    when a confirmation run fails."""
     target = next((r for r in records(directory) if r["id"] == experiment_id), None)
     if target is None:
         raise KeyError(f"no experiment {experiment_id} in {directory}")
@@ -168,6 +169,6 @@ def revert_record(directory: Path, experiment_id: str, reason: str) -> dict[str,
         "challenger": {"ref": after.ref, "label": "champion after the revert", "config_hash": after.hash},
         "eval": {"dataset": None, "n": 0, "unit": None, "clusters": 0, "cluster_unit": None, "seed": None,
                  "report": None, "metrics": []},
-        "decision": {"status": "promoted", "by": "human", "at": ts, "reason": reason},
+        "decision": {"status": "promoted", "by": by, "at": ts, "reason": reason},
         "cost": {"llm_calls": 0, "usd": None, "seconds": 0.0, "input_tokens": 0, "output_tokens": 0, "by_arm": {}},
     }

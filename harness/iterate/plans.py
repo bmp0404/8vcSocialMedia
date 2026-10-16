@@ -53,10 +53,17 @@ QUALIFY_MEMORY_SHUFFLED = Proposal(
     "comes from seeing examples, not from their outcomes.",
     {**RESEARCH, "source": "research/memory.md, finding 11"}, "memory shuffled (control)")
 
+CONFIRM_PIPELINE = Proposal(
+    "action_lineup", {"action.reply.generation": "pipeline", "action.samples": 4},
+    "The promoted reply lane stays non-inferior on the veto once the veto also checks mission fit and "
+    "content-free drafts (instrument v3).",
+    {"kind": "confirmation", "source": "exp-20261016-action-7ea3e0"}, "sam/action reply lane, 4 samples (v3 retest)")
+
 PLANS = {
     "first": [ACTION_CONTINUATION],
     "action": [ACTION_CONTINUATION, ACTION_STYLED],
     "pipeline": [ACTION_PIPELINE],
+    "confirm_pipeline": [CONFIRM_PIPELINE],
     "qualify": [QUALIFY_BATCH1, QUALIFY_READER, QUALIFY_MEMORY, QUALIFY_MEMORY_SHUFFLED],
     "qualify_gpt": [QUALIFY_GPT],
 }

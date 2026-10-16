@@ -1,7 +1,7 @@
 {
  "note": "derived from the exp-*.json records by harness/iterate/ledger.py; do not edit",
- "ref": "cfg-46f3a9fd716b",
- "config_hash": "46f3a9fd716b664b062edfdf2c0e15efe0a30cc1bddbfb69bc1822583df3176a",
+ "ref": "cfg-35c9ee1e8e13",
+ "config_hash": "35c9ee1e8e13324df08c783aa88dd571197ebb131c249e6f2985b06097519d05",
  "config": {
   "action.continuation.model": "claude-opus-4-5-20251101",
   "action.gate": "off",
@@ -18,10 +18,10 @@
   ],
   "action.page_replies": 12,
   "action.per_mind": 3,
-  "action.reply.generation": "pipeline",
+  "action.reply.generation": "persona_json",
   "action.reply.model": "claude-sonnet-5-5",
   "action.retries": 2,
-  "action.samples": 4,
+  "action.samples": 1,
   "action.ship_rule": "critic_pass",
   "action.top": 10,
   "action.veto.max_p_ai": 50,
@@ -55,6 +55,7 @@
   "qualify.panel": "personas"
  },
  "history": [
-  "exp-20261016-action-7ea3e0"
+  "exp-20261016-action-7ea3e0",
+  "exp-20261016T023744-revert-7ea3e0"
  ]
 }

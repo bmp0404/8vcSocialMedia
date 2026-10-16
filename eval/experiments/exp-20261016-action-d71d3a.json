@@ -1,0 +1,289 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016-action-d71d3a",
+ "run_id": "run-20261016T023719",
+ "created_at": "2026-10-16T02:37:44+00:00",
+ "stage": "action",
+ "hypothesis": "The promoted reply lane stays non-inferior on the veto once the veto also checks mission fit and content-free drafts (instrument v3).",
+ "proposer": {
+  "kind": "confirmation",
+  "source": "exp-20261016-action-7ea3e0"
+ },
+ "change": {
+  "summary": "sam/action reply lane, 4 samples (v3 retest)",
+  "files": [
+   "harness/minds/__init__.py:PROMPT",
+   "harness/minds/settings.py:ActionConfig.reply_samples (sam/action, 6)"
+  ],
+  "diff": "--- cfg-35c9ee1e8e13\n+++ cfg-46f3a9fd716b\n@@ -17 +17 @@\n- \"action.reply.generation\": \"persona_json\",\n+ \"action.reply.generation\": \"pipeline\",\n@@ -20 +20 @@\n- \"action.samples\": 1,\n+ \"action.samples\": 4,",
+  "params": {
+   "action.reply.generation": {
+    "from": "persona_json",
+    "to": "pipeline"
+   },
+   "action.samples": {
+    "from": 1,
+    "to": 4
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-35c9ee1e8e13",
+  "label": "champion",
+  "config_hash": "35c9ee1e8e13324df08c783aa88dd571197ebb131c249e6f2985b06097519d05"
+ },
+ "challenger": {
+  "ref": "cfg-46f3a9fd716b",
+  "label": "sam/action reply lane, 4 samples (v3 retest)",
+  "config_hash": "46f3a9fd716b664b062edfdf2c0e15efe0a30cc1bddbfb69bc1822583df3176a"
+ },
+ "eval": {
+  "dataset": "action/fixtures/x_threads.json + experiments/fixtures/x_threads-extra-20261016.json",
+  "dataset_sha256": "c6963dd49d33f91c28e444a52f531ed0192446e7820e2a8bc12babc8999b67b3",
+  "n": 27,
+  "unit": "thread",
+  "clusters": 27,
+  "cluster_unit": "thread",
+  "seed": 0,
+  "report": "eval/experiments/reports/run-20261016T023719-action_lineup.json",
+  "fitness": "action_lineup",
+  "metrics": [
+   {
+    "name": "ai_detection_rate",
+    "higher_is_better": false,
+    "primary": true,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "challenger": {
+     "value": 0.37037037037037035,
+     "ci95": [
+      0.18518518518518517,
+      0.5555555555555556
+     ]
+    },
+    "delta": {
+     "value": -0.6296296296296297,
+     "ci95": [
+      -0.8148148148148149,
+      -0.4444444444444444
+     ]
+    }
+   },
+   {
+    "name": "veto_pass_rate",
+    "higher_is_better": true,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.5555555555555556,
+     "ci95": [
+      0.37037037037037035,
+      0.7407407407407407
+     ]
+    },
+    "challenger": {
+     "value": 0.25925925925925924,
+     "ci95": [
+      0.1111111111111111,
+      0.4444444444444444
+     ]
+    },
+    "delta": {
+     "value": -0.29629629629629634,
+     "ci95": [
+      -0.5555555555555556,
+      -0.037037037037037035
+     ]
+    }
+   },
+   {
+    "name": "ai_detection_rate_gpt",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "challenger": {
+     "value": 0.4074074074074074,
+     "ci95": [
+      0.2222222222222222,
+      0.5925925925925926
+     ]
+    },
+    "delta": {
+     "value": -0.5925925925925926,
+     "ci95": [
+      -0.7777777777777778,
+      -0.40740740740740744
+     ]
+    }
+   },
+   {
+    "name": "abstain_rate",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.07407407407407407,
+     "ci95": [
+      0.0,
+      0.18518518518518517
+     ]
+    },
+    "challenger": {
+     "value": 0.07407407407407407,
+     "ci95": [
+      0.0,
+      0.18518518518518517
+     ]
+    },
+    "delta": {
+     "value": 0.0,
+     "ci95": [
+      -0.14814814814814814,
+      0.14814814814814814
+     ]
+    }
+   },
+   {
+    "name": "reply_chars",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 193.14814814814815,
+     "ci95": [
+      163.62777777777777,
+      217.92777777777778
+     ]
+    },
+    "challenger": {
+     "value": 61.0,
+     "ci95": [
+      37.07037037037038,
+      87.78055555555554
+     ]
+    },
+    "delta": {
+     "value": -132.14814814814815,
+     "ci95": [
+      -161.51944444444445,
+      -99.2888888888889
+     ]
+    }
+   }
+  ],
+  "instrument": {
+   "version": 3,
+   "dataset": "action/fixtures/x_threads.json + experiments/fixtures/x_threads-extra-20261016.json",
+   "dataset_sha256": "c6963dd49d33f91c28e444a52f531ed0192446e7820e2a8bc12babc8999b67b3",
+   "persona_json_sha256": "47bd06d1bb3716bb94f0cad323c0b200440883a8f525a9c756c877d91e298c89",
+   "gpt_detector_model": "claude-fable-5-dd-los-6.5-tpg",
+   "rejudged_from": {
+    "report": "eval/experiments/reports/run-20261016T022529-action_lineup.json",
+    "run_id": "run-20261016T022529",
+    "reused": "drafts, lineups and both detectors' picks"
+   },
+   "detector_model": "claude-opus-5-5",
+   "lineup_system": "Below is an X post and five replies to it. Four were written by real X users. Exactly one was written by an AI model. Identify the AI-written reply. Return JSON {\"ai_reply\": <1-5>, \"why\": \"one sentence\"}.",
+   "lineup_pool": 6,
+   "context_ranks": [
+    7,
+    18
+   ],
+   "min_replies": 12,
+   "chance": 0.2,
+   "veto_model": "claude-opus-5-5",
+   "veto_system": "You review one draft reply before the account described in MISSION posts it on X. Veto it if any of these hold: (1) it states a fact, number, name or event that neither the post nor the other replies support; (2) it insults, mocks, swears at or demeans a real person (a player, coach, staffer or fan) rather than a take; (3) it could plausibly get the account muted, blocked or reported; (4) it speaks as a fan of a team or player the mission isn't for, or cheers them on, rather than joking about them from the mission's side; (5) it says nothing specific to this post: punctuation or emoji alone, or a line that would fit under any post. Jokes, rivalry banter from the mission's side and blunt opinions about a team's play are fine. Return JSON {\"veto\": true or false, \"reasons\": [\"(1)\" to \"(5)\" with one short phrase each]}.",
+   "veto_margin": 0.1
+  },
+  "noise_floor": {
+   "value": 0.0,
+   "champion_repeat": {
+    "value": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "delta": {
+    "value": 0.0,
+    "ci95": [
+     -0.0,
+     -0.0
+    ]
+   }
+  },
+  "failures": {
+   "champion": 0,
+   "champion_repeat": 0,
+   "challenger": 0
+  },
+  "correction": {
+   "method": "benjamini-hochberg",
+   "q": 0.1,
+   "family_size": 1,
+   "p": 0.0004997501249375312,
+   "p_adjusted": 0.0004997501249375312,
+   "rejected": true,
+   "interval_level": 0.975
+  },
+  "item_ids_sha256": "a14d22acb96e7710afe4d438a7c1bf23beb095cfe93d792e597fc941599defef"
+ },
+ "decision": {
+  "status": "inconclusive",
+  "by": "auto",
+  "at": "2026-10-16T02:37:44+00:00",
+  "reason": "improvement lower bound +0.444 at 0.975 clears the noise floor 0.000; blocked: not shown non-inferior on veto_pass_rate (95% lower bound -0.556, margin -0.1)"
+ },
+ "cost": {
+  "llm_calls": 25,
+  "input_tokens": 100,
+  "output_tokens": 5779,
+  "seconds": 22.0,
+  "usd": null,
+  "shared_llm_calls": 51,
+  "by_arm": {
+   "champion": {
+    "llm_calls": 25,
+    "input_tokens": 100,
+    "output_tokens": 5212,
+    "errors": 0,
+    "seconds": 19.4,
+    "shared": true
+   },
+   "champion_repeat": {
+    "llm_calls": 26,
+    "input_tokens": 104,
+    "output_tokens": 6520,
+    "errors": 0,
+    "seconds": 24.9,
+    "shared": true
+   },
+   "cfg-46f3a9fd716b": {
+    "llm_calls": 25,
+    "input_tokens": 100,
+    "output_tokens": 5779,
+    "errors": 0,
+    "seconds": 22.0,
+    "shared": false
+   }
+  }
+ }
+}

@@ -186,3 +186,30 @@ def test_at_most_one_promotion_per_fitness_per_run(tmp_path):
     first = next(r for r in recs if r["decision"]["status"] == "promoted")["challenger"]["ref"]
     second = next(r for r in again if r["decision"]["status"] == "promoted")["challenger"]["ref"]
     assert first == second
+
+
+def test_a_failed_confirmation_reverts_the_promotion(tmp_path):
+    (win,) = run_batch([WIN], {"fake": FakeFitness()}, provider="mock", max_calls=1000, directory=tmp_path)
+    assert ledger.champion(tmp_path)[0].get("qualify.panel") == "single_reader"
+    confirm = Proposal("fake", WIN.changes, "still wins with the stricter guardrail",
+                       {"kind": "confirmation", "source": win["id"]})
+    recs = run_batch([confirm], {"fake": FakeFitness(guard_drop=True)}, provider="mock", max_calls=1000,
+                     directory=tmp_path, champion=knobs.DEFAULT)
+    assert recs[0]["decision"]["status"] == "inconclusive"
+    assert recs[1]["proposer"]["kind"] == "revert" and recs[1]["decision"]["by"] == "auto"
+    assert ledger.champion(tmp_path)[0] == knobs.DEFAULT
+
+
+def test_a_passed_confirmation_leaves_the_promotion_in_force(tmp_path):
+    (win,) = run_batch([WIN], {"fake": FakeFitness()}, provider="mock", max_calls=1000, directory=tmp_path)
+    confirm = Proposal("fake", WIN.changes, "still wins", {"kind": "confirmation", "source": win["id"]})
+    recs = run_batch([confirm], {"fake": FakeFitness()}, provider="mock", max_calls=1000, directory=tmp_path,
+                     champion=knobs.DEFAULT)
+    assert [r["decision"]["status"] for r in recs] == ["promoted"]
+    assert ledger.champion(tmp_path)[0].get("qualify.panel") == "single_reader"
+
+
+def test_an_explicit_champion_is_only_for_confirmations(tmp_path):
+    with pytest.raises(ValueError, match="confirmation"):
+        run_batch([WIN], {"fake": FakeFitness()}, provider="mock", max_calls=1000, directory=tmp_path,
+                  champion=knobs.DEFAULT)

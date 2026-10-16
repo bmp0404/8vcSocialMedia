@@ -16,7 +16,9 @@ def _fitnesses(args, provider: str) -> dict:
     if missing:  # the default fixture lands with sam/action
         print(f"[iterate] action_lineup unavailable: {', '.join(map(str, missing))} not found; pass --threads")
     else:
-        out["action_lineup"] = ActionLineup(paths, limit=getattr(args, "limit", None))
+        rejudge = getattr(args, "rejudge_report", None)
+        out["action_lineup"] = ActionLineup(paths, limit=getattr(args, "limit", None),
+                                            rejudge_report=Path(rejudge) if rejudge else None)
     try:
         from harness.iterate.fitness.qualify import QualifyAUC
     except ImportError as e:  # harness.evals lands with sam/eval
@@ -39,8 +41,14 @@ def run(args) -> None:
     provider = (args.provider or "mock").lower()
     if provider not in ("mock", "anthropic"):
         raise SystemExit("iterate runs on --provider mock or anthropic (the gateway serves every model it tests)")
-    recs = run_batch(PLANS[args.plan], _fitnesses(args, provider), provider=provider, max_calls=args.max_calls, seed=args.seed,
-                     directory=Path(args.ledger_dir) if args.ledger_dir else None, run_note=args.note or f"plan {args.plan}")
+    directory = Path(args.ledger_dir) if args.ledger_dir else ledger.ledger_dir(provider)
+    champ = None
+    if args.champion_ref:
+        champ = ledger.configs(directory).get(args.champion_ref)
+        if champ is None:
+            raise SystemExit(f"no saved config {args.champion_ref} in {directory / 'configs'}")
+    recs = run_batch(PLANS[args.plan], _fitnesses(args, provider), provider=provider, max_calls=args.max_calls,
+                     seed=args.seed, directory=directory, run_note=args.note or f"plan {args.plan}", champion=champ)
     for r in recs:
         m = next((x for x in r["eval"]["metrics"] if x.get("primary")), None)
         line = f"{r['id']}: {r['decision']['status']}"
@@ -125,6 +133,8 @@ def register(sub: argparse._SubParsersAction) -> None:
     r.add_argument("--threads", action="append",
                    help="thread fixture for action_lineup; repeat to combine (default action/fixtures/x_threads.json)")
     r.add_argument("--ledger-dir", help="write records here instead of eval/experiments/ (or out/iterate/ on mock)")
+    r.add_argument("--champion-ref", help="confirmation runs: test against this saved config, not the current champion")
+    r.add_argument("--rejudge-report", help="action_lineup: re-judge this saved run's drafts with the current veto")
     r.add_argument("--limit", type=int, help="use only the first N threads")
     r.add_argument("--per-tier", type=int, default=4, help="qualify_auc: posts per tier per account")
     r.add_argument("--note")

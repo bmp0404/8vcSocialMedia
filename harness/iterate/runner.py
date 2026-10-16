@@ -3,6 +3,11 @@ call budget, then gate every comparison together and write the ledger.
 
 A batch is one Benjamini-Hochberg family. Proposals that don't fit the budget are recorded as
 `pending` with the reason, so the ledger shows what was planned and not run.
+
+A confirmation retests a promotion against the champion it replaced, usually under a stricter
+instrument: pass `champion` (the old config) and a proposal with proposer kind "confirmation" whose
+source is the promoted record. If the confirmation isn't promoted again, the run appends an automatic
+revert of that record, so a promotion that fails its retest doesn't stay in force.
 """
 
 import hashlib
@@ -101,11 +106,16 @@ def _common(items: list[Item], *arms: ArmResult, metric_names: list[str]) -> lis
 
 
 def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provider: str, max_calls: int,
-              seed: int = 0, directory: Path | None = None, run_note: str = "") -> list[dict]:
+              seed: int = 0, directory: Path | None = None, run_note: str = "",
+              champion: Config | None = None) -> list[dict]:
     directory = directory or ledger.ledger_dir(provider)
     started_at = ledger.now()
     run_id = f"run-{started_at[:19].replace('-', '').replace(':', '')}"
-    champion, _ = ledger.champion(directory)
+    current, _ = ledger.champion(directory)
+    if champion is None:
+        champion = current
+    elif any(p.proposer.get("kind") != "confirmation" for p in proposals):
+        raise ValueError("an explicit champion is only for confirmation runs")
     meter = Meter(max_calls)
     print(f"[iterate] {run_id}: champion {champion.ref}, {len(proposals)} proposal(s), cap {max_calls} calls, "
           f"provider {provider}")
@@ -252,6 +262,18 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
         ledger.save_config(directory, cfg)
     ledger.write(directory, recs, run)
     print(f"[iterate] {run_id}: {meter.calls} calls; wrote {len(recs)} record(s) to {directory}")
+    for prop, rec in zip([r[0] for r in results] + [p[0] for p in pending], recs):
+        source = prop.proposer.get("source")
+        if prop.proposer.get("kind") != "confirmation" or rec["decision"]["status"] == "promoted":
+            continue
+        if rec["decision"]["status"] == "pending":
+            print(f"[iterate] confirmation of {source} didn't run; leaving it in force")
+            continue
+        rev = ledger.revert_record(directory, source, f"Confirmation {rec['id']} didn't promote it again: "
+                                                      f"{rec['decision']['reason']}", by="auto")
+        ledger.write(directory, [rev])
+        recs.append(rev)
+        print(f"[iterate] reverted {source}: {rev['id']}")
     return recs
 
 

@@ -89,6 +89,8 @@ class MockMeteredLLM(LLM):
     """Offline stand-in. `respond(system, prompt)` returns canned text; calls still count, so a mock
     run exercises the budget path. Mock numbers are fake and never reach eval/experiments/."""
 
+    is_mock = True  # the flag harness.llm.MockLLM carries; check it with getattr, not isinstance
+
     def __init__(self, meter: Meter, arm: str, respond: Callable[[str, str], Any], model: str = "mock"):
         self.meter, self.arm, self.respond, self.model = meter, arm, respond, model
 
