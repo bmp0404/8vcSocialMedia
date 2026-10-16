@@ -46,18 +46,35 @@ A snapshot taken at age `a` belongs to checkpoint T when `T <= a < 2T`: +1h cove
 
 ### Labels
 
-Each snapshot gets a label from `label.py`:
+Posts and quotes are labeled against the account's own norm. Replies are not: see the next section.
+
+Each post or quote snapshot gets a label from `label.py`:
 
 - `success`: engagement (likes + reposts + replies + quotes) above the median of the account's earlier posts at the same checkpoint.
 - `failure`: at or below that median, matching memory's definition.
 - `insufficient_baseline`: fewer than 10 earlier posts at that checkpoint.
 - `not_posted`: see the next section.
 
-The baseline comes from the timeline reads. Every read stores each own post's counts under the checkpoint its age falls in, keeping the first reading in each window. Replies are compared only with replies, and posts and quotes with each other. Thread continuations (self-replies) are left out, as the context worker does. The baseline uses at most the 30 most recent earlier posts, so the norm follows the account as it grows. That cap is a guess. A success or failure label is final. `insufficient_baseline` is recomputed on every sync.
+The baseline comes from the timeline reads. Every read stores each own post's counts under the checkpoint its age falls in, keeping the first reading in each window. Posts and quotes are compared with each other. Thread continuations (self-replies) are left out, as the context worker does. The baseline uses at most the 30 most recent earlier posts, so the norm follows the account as it grows. That cap is a guess. A success or failure label is final. `insufficient_baseline` is recomputed on every sync.
 
 For an established account, +48h has a baseline from the first read, because every older post on the page is already past 48 hours. The earlier checkpoints only fill as sync keeps running: a post's +1h reading exists only if a read happened while it was 1 to 2 hours old. A new account will show `insufficient_baseline` for a while, which is the honest answer.
 
 The +48h baseline is biased toward older posts. A post read at 300 hours has had longer to collect engagement than one read at 49 hours, so the bar for success is slightly higher than "at 48 hours". On the dev-tool dataset the context worker saw mature posts' counts barely move over an hour (median change 0, `data/context/DESIGN.md:23`), but that is one hour on one dataset, not a growth curve.
+
+### Replies: rank in the thread
+
+A reply is labeled by where it sits among the other replies to the same post, never against the account's median. A new account's median is 0, so every reply would beat it, and a reply's likes depend on the thread it joined far more than on the account's other replies. `rank.py` computes `rank_in_thread` when the reply is 1 to 2 hours old (+1h) and 24 to 48 hours old (+24h), the same windows as the snapshots. Each costs two requests: the parent's conversation in X's likes order (`XReader.conversation`, about 35 replies) and the parent's status for its reply counter.
+
+- `rank` is the reply's position among the direct replies on that page, the order a reader scrolls. `likes_rank` is 1 plus the number of replies on the page with more likes.
+- `percentile` is `1 - (rank - 1) / n`, where n is the parent's reply counter, or the page if that is longer: 1.0 is the top reply.
+- A reply missing from the page ranks below everything on it, so only `percentile_max`, `1 - page / n`, is known.
+- `success` means a percentile of 0.5 or more. `failure` means under 0.5, or off the page with `percentile_max` under 0.5, which includes a reply X hid from a thread whose other replies all fit on the page. `unranked` means off the page of a thread too long to tell. `insufficient_thread` means fewer than 5 replies, ours included. Both numbers are guesses; no real reply had been ranked when they were set.
+
+`reply_matches` also records, once, at match time: the arm (for a hot target), the minutes between the parent and the reply from their Snowflake IDs, and the account's follower count from the timeline read that found the reply.
+
+### Hot targets
+
+`harness watch` writes `out/hot/<status_id>.json` for each fresh post it drafts for (`harness/watcher/DESIGN.md`). The operator answers by hand from `_sgu_`, sometimes with their own words (the human arm has no draft at all), so `sync --hot-dir` (default `out/hot`) loads each file that offered a draft or a prompt as a reply action `hot-<status_id>` that matches only a reply to that status, whatever its text. A file that abstained offered nothing and is skipped. The clock starts when the file was written. Hot targets have no row in memory's `actions` table, so their outcomes stay in the ledger: `harness outcomes status` shows each one's arm and rank, and `--json` gives the rows for analysis by arm.
 
 ### Not posted
 
@@ -81,12 +98,13 @@ The clock starts at an action's first approval. `memory.set_review` restamps `ap
 - `baseline`: every own post, from the timeline, one per checkpoint.
 - `reads`: each timeline read and how far it reached.
 - `labels`, and `meta`, which holds the handle the ledger belongs to.
+- `hot_targets` (the arm per hot target), `reply_matches` and `ranks`. All three are new tables, so an existing ledger picks them up.
 
 Primary keys make a rerun harmless: a second insert of the same snapshot is ignored. A sync reads the timeline only when an action is still open and the last read is at least 30 minutes old. That gap is half of the +1h window, so syncing every half hour reads each new post inside that window. Before recording, `sync` compares each payload with what `outcomes` already holds and writes only the ones that changed. If someone deletes `data/harness.db`, the next sync writes the rows again. A ledger refuses a second handle, so a stand-in account can't leak into the brand's baseline.
 
 ### What memory receives
 
-One row per action. The top level describes the latest checkpoint that has a success or failure label, or else the latest snapshot. `history` keeps every checkpoint, because the table holds one row per action. Real output from the @IowaWBB dry run:
+One row per action, except hot targets. The top level describes the latest checkpoint that has a success or failure label, or else the latest snapshot. For a reply, the top level holds the latest snapshot's counts and the outcome of the latest rank with a success or failure label, plus `label_basis: "rank_in_thread"`, every rank in `rank_in_thread`, `parent_status`, `arm`, `minutes_after_parent` and `followers_at_match`. `history` keeps every checkpoint, because the table holds one row per action. Real output from the @IowaWBB dry run:
 
 ```json
 {"checkpoint": "+48h", "age_hours": 58.89, "likes": 220, "reposts": 12, "replies": 4, "quotes": 0,

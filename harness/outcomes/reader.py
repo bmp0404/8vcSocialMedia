@@ -106,12 +106,13 @@ def own_timeline(feed: list, handle: str, read_at: str) -> Timeline:
 
 
 class FxOutcomeReader:
-    """`timeline` and `status` over an XReader, counting the calls it makes."""
+    """`timeline`, `status` and `conversation` over an XReader, counting the calls it makes."""
 
     def __init__(self, reader):
         self.reader = reader
         self.timeline_reads = 0
         self.status_reads = 0
+        self.conversation_reads = 0
 
     def timeline(self, handle: str, limit: int) -> Timeline:
         """The newest `limit` entries of the account's posts-and-replies feed, about 20 per request."""
@@ -122,3 +123,8 @@ class FxOutcomeReader:
     def status(self, status_id: str) -> Counts:
         self.status_reads += 1
         return _counts(self.reader.status(status_id))
+
+    def conversation(self, status_id: str) -> list:
+        """The first page of replies to `status_id` in X's likes order, as xreader XPosts."""
+        self.conversation_reads += 1
+        return self.reader.conversation(status_id, "likes")
