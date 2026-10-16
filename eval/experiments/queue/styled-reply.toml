@@ -1,0 +1,19 @@
+# The reply lane falls back to the styled prompt when a thread has too few replies to continue as a page
+# (harness/minds/lanes.py). No ledger run has measured that prompt; this one does, against the persona call.
+id = "styled-reply"
+proposed_at = 2026-10-16T13:47:34Z
+proposed_by = "agent:B5a builder"
+profile = "wnba"
+fitness = "action_lineup"
+hypothesis = "Short style rules on Sonnet 5.5 read less like AI than the persona JSON call, and pass the veto and the GPT-family detector no worse."
+source = "research/action.md (8vc-context): forced-choice detection 81% for styled against 100% for the persona prompt"
+label = "styled prompt (sonnet)"
+threads = ["action/fixtures/x_threads.json"]
+
+[change]
+kind = "knobs"
+knobs = { "action.reply.generation" = "styled" }
+
+[budget]
+screen_calls = 400
+confirm_calls = 400

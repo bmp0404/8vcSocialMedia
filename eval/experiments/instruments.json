@@ -1,0 +1,680 @@
+{
+ "note": "written by harness/improve/instruments.py each cycle of `harness improve`; do not edit. harness/improve/DESIGN.md explains the rule.",
+ "rule": {
+  "min_n": 20,
+  "sources_in_order": [
+   "sgu",
+   "threads"
+  ]
+ },
+ "instruments": {
+  "reply_ranker": {
+   "role": "gate",
+   "what": "pairwise logistic on a reply's timing, reach and text (harness/rank/reply.py), trained on the whole frozen reply benchmark",
+   "version": "5dc65874493d",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-13T19:17:45.833000+00:00",
+   "cutoff_basis": "trained on every frozen benchmark thread, roots up to 2026-10-13T19:17:44.833000+00:00",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no reply pairs rooted after the cutoff"
+     }
+    },
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no ranked _sgu_ replies after the cutoff yet"
+     }
+    }
+   },
+   "fit_evidence": {
+    "source": "data/bench/results/replies.json, ranker_pooled_test (fitted per cutoff, not this fit)",
+    "test_accuracy": 0.7718,
+    "ci95": [
+     0.7198,
+     0.8235
+    ],
+    "note": "the test split was seen once while choosing the feature blocks, so it never decides status"
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "5dc65874493d",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "5dc65874493d",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "5dc65874493d",
+     "cutoff": "2026-10-13T19:17:45.833000+00:00",
+     "why": "trained on every frozen benchmark thread, roots up to 2026-10-13T19:17:44.833000+00:00"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "tfidf_post_ranker": {
+   "role": "gate",
+   "what": "TF-IDF ridge on a post's words, target engagement within the account (harness/rank/post.py)",
+   "version": "0460408fbe00",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-14T01:33:10.011000+00:00",
+   "cutoff_basis": "fitted on every dev-tool account's posts up to 2026-10-14T01:33:09.011000+00:00",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "_sgu_ replies by hand and posts no originals yet, so there is nothing for a post ranker to rank"
+     }
+    },
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no within-account post pairs after the cutoff"
+     }
+    }
+   },
+   "fit_evidence": {
+    "source": "data/bench/results/judges-posts.json (cross-fitted by account)",
+    "test_accuracy": 0.7114,
+    "ci95": [
+     0.6498,
+     0.7724
+    ]
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "0460408fbe00",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "0460408fbe00",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "0460408fbe00",
+     "cutoff": "2026-10-14T01:33:10.011000+00:00",
+     "why": "fitted on every dev-tool account's posts up to 2026-10-14T01:33:09.011000+00:00"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "label_model": {
+   "role": "gate",
+   "what": "logistic on Claude Sonnet 5.5's labels of a post (harness/label), fitted on dev-author post pairs",
+   "version": "6ee8a5a85227",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-14T01:06:57.697000+00:00",
+   "cutoff_basis": "fitted on dev-author post pairs with posts up to 2026-10-14T01:06:56.697000+00:00",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "_sgu_ replies by hand and posts no originals yet, so there is nothing for a post ranker to rank"
+     }
+    },
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no within-account post pairs after the cutoff"
+     }
+    }
+   },
+   "fit_evidence": {
+    "source": "data/bench/results/judges-posts.json (test authors)",
+    "test_accuracy": 0.7303,
+    "ci95": [
+     0.6672,
+     0.783
+    ]
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "6ee8a5a85227",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "6ee8a5a85227",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "6ee8a5a85227",
+     "cutoff": "2026-10-14T01:06:57.697000+00:00",
+     "why": "fitted on dev-author post pairs with posts up to 2026-10-14T01:06:56.697000+00:00"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "lineup_detector": {
+   "role": "gate",
+   "what": "Opus 5.5 names the AI-written reply among five, the action lineup's primary (harness/iterate/fitness/action.py)",
+   "version": "a30ed14fc1b7",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-16T14:52:41+00:00",
+   "cutoff_basis": "a prompt: scored only on outcomes after the ledger first saw this version",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "lineups": 0,
+      "lineups_named": 0,
+      "deferred": 0,
+      "note": "no pairs after the cutoff"
+     }
+    },
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no ranked _sgu_ replies after the cutoff yet"
+     }
+    }
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "a30ed14fc1b7",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "a30ed14fc1b7",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "a30ed14fc1b7",
+     "cutoff": "2026-10-16T14:52:41.077391+00:00",
+     "why": "a prompt: scored only on outcomes after the ledger first saw this version"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "action_veto": {
+   "role": "gate",
+   "what": "the action lineup's veto guardrail, Opus 5.5 on one draft (harness/iterate/fitness/action.py)",
+   "version": "79a0e430e647",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-16T14:52:41+00:00",
+   "cutoff_basis": "a prompt: scored only on outcomes after the ledger first saw this version",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "pass_rate_on_real_replies": null,
+      "replies_judged": 0,
+      "discordant_pairs": 0,
+      "deferred": 0,
+      "origins": {},
+      "note": "no pair where one reply passed and the other failed"
+     }
+    },
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no ranked _sgu_ replies after the cutoff yet"
+     }
+    }
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "79a0e430e647",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "79a0e430e647",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "79a0e430e647",
+     "cutoff": "2026-10-16T14:52:41.077391+00:00",
+     "why": "a prompt: scored only on outcomes after the ledger first saw this version"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "lane_veto": {
+   "role": "gate",
+   "what": "the reply lane's production veto, Opus 5.5 in two orders (harness/minds/veto.py); no experiment reads it, so its status tells a person whether to keep trusting it",
+   "version": "fa9e2a39e94d",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-16T14:52:41+00:00",
+   "cutoff_basis": "a prompt: scored only on outcomes after the ledger first saw this version",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "pass_rate_on_real_replies": null,
+      "replies_judged": 0,
+      "discordant_pairs": 0,
+      "deferred": 0,
+      "origins": {},
+      "note": "no pair where one reply passed and the other failed"
+     }
+    },
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no ranked _sgu_ replies after the cutoff yet"
+     }
+    }
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "fa9e2a39e94d",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "fa9e2a39e94d",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "fa9e2a39e94d",
+     "cutoff": "2026-10-16T14:52:41.077391+00:00",
+     "why": "a prompt: scored only on outcomes after the ledger first saw this version"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "slop_gate": {
+   "role": "gate",
+   "what": "the deterministic slop and grounding gate (harness/minds/gate.py)",
+   "version": "dab43a28a4e1",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-16T14:52:41+00:00",
+   "cutoff_basis": "rules tuned by hand: scored only on outcomes after the ledger first saw this version",
+   "status": "gates",
+   "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "pass_rate_on_real_replies": null,
+      "replies_judged": 0,
+      "discordant_pairs": 0,
+      "deferred": 0,
+      "origins": {},
+      "note": "no pair where one reply passed and the other failed"
+     }
+    },
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no ranked _sgu_ replies after the cutoff yet"
+     }
+    }
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "dab43a28a4e1",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "dab43a28a4e1",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "dab43a28a4e1",
+     "cutoff": "2026-10-16T14:52:41.077391+00:00",
+     "why": "rules tuned by hand: scored only on outcomes after the ledger first saw this version"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "gates",
+     "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    }
+   ]
+  },
+  "panel": {
+   "role": "report",
+   "what": "the audience panel's mean engagement guess for a post (harness/qualify.py)",
+   "version": "2684a922c5c8",
+   "version_since": "2026-10-16T14:52:41+00:00",
+   "cutoff": "2026-10-16T14:52:41+00:00",
+   "cutoff_basis": "a prompt: scored only on posts after the ledger first saw this version",
+   "status": "report_only",
+   "reason": "report-only by design; its numbers are recorded but never gate a promotion",
+   "status_since": "2026-10-16T14:52:41+00:00",
+   "scores": {
+    "sgu": {
+     "source": "sgu",
+     "metric": "spearman",
+     "chance": 0.0,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "_sgu_ replies by hand and posts no originals yet, so there is nothing for a post ranker to rank"
+     }
+    },
+    "threads": {
+     "source": "threads",
+     "metric": "pairwise_accuracy",
+     "chance": 0.5,
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null,
+     "coverage": null,
+     "ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "detail": {
+      "note": "no within-account post pairs after the cutoff"
+     }
+    }
+   },
+   "fit_evidence": {
+    "source": "data/bench/results/judges-posts.json (test authors)",
+    "test_accuracy": 0.7229,
+    "ci95": [
+     0.6696,
+     0.7812
+    ]
+   },
+   "history": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "2684a922c5c8",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "version": "2684a922c5c8",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    }
+   ],
+   "events": [
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "first seen",
+     "version": "2684a922c5c8",
+     "cutoff": "2026-10-16T14:52:41.077391+00:00",
+     "why": "a prompt: scored only on posts after the ledger first saw this version"
+    },
+    {
+     "at": "2026-10-16T14:52:41+00:00",
+     "event": "status",
+     "from": null,
+     "to": "report_only",
+     "why": "report-only by design; its numbers are recorded but never gate a promotion"
+    }
+   ]
+  }
+ },
+ "updated_at": "2026-10-16T15:29:25+00:00"
+}

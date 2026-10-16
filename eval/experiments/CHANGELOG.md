@@ -4,6 +4,17 @@ Generated from the `exp-*.json` records in this folder by `harness/iterate/ledge
 
 Current champion: `cfg-35c9ee1e8e13`, shaped by 2 promotion(s): `exp-20261016-action-7ea3e0`, `exp-20261016T023744-revert-7ea3e0`.
 
+## exp-20261016-action-ba22f4: inconclusive
+
+- **Change:** `action.reply.generation` 'persona_json' → 'styled'
+- **Hypothesis:** Short style rules on Sonnet 5.5 read less like AI than the persona JSON call, and pass the veto and the GPT-family detector no worse.
+- **Proposed by:** queue (research/action.md (8vc-context): forced-choice detection 81% for styled against 100% for the persona prompt)
+- **ai_detection_rate** (lower is better), 20 threads: champion 0.950 [0.850, 1.000], challenger 0.800 [0.600, 0.950], difference -0.150 [-0.300, -0.000]
+- **Noise floor** (champion rerun with new lineups or seeds): 0.050
+- **Correction:** Benjamini-Hochberg q=0.1 over 1 comparison(s); p=0.0440, adjusted 0.0440
+- **Decision:** significant after BH, but the lower bound +0.000 does not clear the noise floor 0.050 (auto, 2026-10-16T15:24:29+00:00)
+- **Cost:** 95 calls on the challenger arm, plus shared champion arms (185 calls)
+
 ## exp-20261016T023744-revert-7ea3e0: promoted
 
 - **Change:** `action.reply.generation` 'pipeline' → 'persona_json', `action.samples` 4 → 1

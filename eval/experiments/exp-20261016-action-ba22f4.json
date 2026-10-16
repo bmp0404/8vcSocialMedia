@@ -1,0 +1,295 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016-action-ba22f4",
+ "run_id": "run-20261016T152429",
+ "created_at": "2026-10-16T15:24:29+00:00",
+ "stage": "action",
+ "hypothesis": "Short style rules on Sonnet 5.5 read less like AI than the persona JSON call, and pass the veto and the GPT-family detector no worse.",
+ "proposer": {
+  "kind": "queue",
+  "spec": "styled-reply",
+  "spec_digest": "d3c8696e6fde",
+  "phase": "screen",
+  "source": "research/action.md (8vc-context): forced-choice detection 81% for styled against 100% for the persona prompt",
+  "by": "agent:B5a builder",
+  "proposed_at": "2026-10-16T14:52:42+00:00",
+  "profile": "wnba"
+ },
+ "change": {
+  "summary": "styled prompt (sonnet)",
+  "files": [
+   "harness/minds/__init__.py:PROMPT"
+  ],
+  "diff": "--- cfg-35c9ee1e8e13\n+++ cfg-bb5e4669dafa\n@@ -17 +17 @@\n- \"action.reply.generation\": \"persona_json\",\n+ \"action.reply.generation\": \"styled\",",
+  "params": {
+   "action.reply.generation": {
+    "from": "persona_json",
+    "to": "styled"
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-35c9ee1e8e13",
+  "label": "champion",
+  "config_hash": "35c9ee1e8e13324df08c783aa88dd571197ebb131c249e6f2985b06097519d05"
+ },
+ "challenger": {
+  "ref": "cfg-bb5e4669dafa",
+  "label": "styled prompt (sonnet)",
+  "config_hash": "bb5e4669dafa75d1d88d76690df141f3000dd683d4efc4418fa59383c687f2eb"
+ },
+ "eval": {
+  "dataset": "action/fixtures/x_threads.json + watcher threads (13 threads)",
+  "dataset_sha256": "8d9e579c4c0821d798daeb5de76e976c3d621fe6fd1e94f8f0d88e3d2a86e7dd",
+  "n": 20,
+  "unit": "thread",
+  "clusters": 20,
+  "cluster_unit": "thread",
+  "seed": 0,
+  "report": "eval/experiments/reports/run-20261016T152429-action_lineup.json",
+  "fitness": "action_lineup",
+  "metrics": [
+   {
+    "name": "ai_detection_rate",
+    "higher_is_better": false,
+    "primary": true,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.95,
+     "ci95": [
+      0.85,
+      1.0
+     ]
+    },
+    "challenger": {
+     "value": 0.8,
+     "ci95": [
+      0.6,
+      0.95
+     ]
+    },
+    "delta": {
+     "value": -0.1499999999999999,
+     "ci95": [
+      -0.30000000000000004,
+      -0.0
+     ]
+    }
+   },
+   {
+    "name": "veto_pass_rate",
+    "higher_is_better": true,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.65,
+     "ci95": [
+      0.45,
+      0.85
+     ]
+    },
+    "challenger": {
+     "value": 0.85,
+     "ci95": [
+      0.7,
+      1.0
+     ]
+    },
+    "delta": {
+     "value": 0.19999999999999996,
+     "ci95": [
+      -0.050000000000000044,
+      0.44999999999999996
+     ]
+    }
+   },
+   {
+    "name": "ai_detection_rate_gpt",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.75,
+     "ci95": [
+      0.55,
+      0.9
+     ]
+    },
+    "challenger": {
+     "value": 0.3,
+     "ci95": [
+      0.1,
+      0.5
+     ]
+    },
+    "delta": {
+     "value": -0.45,
+     "ci95": [
+      -0.65,
+      -0.25
+     ]
+    }
+   },
+   {
+    "name": "abstain_rate",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "challenger": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "delta": {
+     "value": 0.0,
+     "ci95": [
+      -0.0,
+      -0.0
+     ]
+    }
+   },
+   {
+    "name": "reply_chars",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 214.65,
+     "ci95": [
+      197.245,
+      232.65125
+     ]
+    },
+    "challenger": {
+     "value": 67.1,
+     "ci95": [
+      62.6,
+      71.3
+     ]
+    },
+    "delta": {
+     "value": -147.55,
+     "ci95": [
+      -166.10250000000002,
+      -129.25
+     ]
+    }
+   }
+  ],
+  "instrument": {
+   "version": 4,
+   "dataset": "action/fixtures/x_threads.json + watcher threads (13 threads)",
+   "dataset_sha256": "8d9e579c4c0821d798daeb5de76e976c3d621fe6fd1e94f8f0d88e3d2a86e7dd",
+   "persona_json_sha256": "47bd06d1bb3716bb94f0cad323c0b200440883a8f525a9c756c877d91e298c89",
+   "gpt_detector_model": "claude-fable-5-dd-los-6.5-tpg",
+   "rejudged_from": null,
+   "detector_model": "claude-opus-5-5",
+   "lineup_system": "Below is an X post and five replies to it. Four were written by real X users. Exactly one was written by an AI model. Identify the AI-written reply. Return JSON {\"ai_reply\": <1-5>, \"why\": \"one sentence\"}.",
+   "lineup_pool": 6,
+   "context_ranks": [
+    7,
+    18
+   ],
+   "min_replies": 12,
+   "chance": 0.2,
+   "veto_model": "claude-opus-5-5",
+   "veto_system": "You review one draft reply before the account described in MISSION posts it on X. Veto it if any of these hold: (1) it states a fact, number, name or event that neither the post nor the other replies support; (2) it insults, mocks, swears at or demeans a real person (a player, coach, staffer or fan) rather than a take; (3) it could plausibly get the account muted, blocked or reported; (4) it speaks as a fan of a team or player the mission isn't for, or cheers them on, rather than joking about them from the mission's side; (5) it says nothing specific to this post: punctuation or emoji alone, or a line that would fit under any post. Jokes, rivalry banter from the mission's side and blunt opinions about a team's play are fine. Return JSON {\"veto\": true or false, \"reasons\": [\"(1)\" to \"(5)\" with one short phrase each]}.",
+   "veto_margin": 0.1,
+   "gpt_detection_margin": 0.1,
+   "items_rooted_after": null,
+   "items_rooted_by": "2026-10-16T14:52:42+00:00",
+   "max_clusters": 40,
+   "guardrails": {
+    "veto_pass_rate": 0.1,
+    "ai_detection_rate_gpt": 0.1
+   },
+   "guardrails_dropped": {}
+  },
+  "noise_floor": {
+   "value": 0.050000000000000044,
+   "champion_repeat": {
+    "value": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "delta": {
+    "value": 0.050000000000000044,
+    "ci95": [
+     -0.0,
+     0.15000000000000002
+    ]
+   }
+  },
+  "failures": {
+   "champion": 0,
+   "champion_repeat": 0,
+   "challenger": 0
+  },
+  "correction": {
+   "method": "benjamini-hochberg",
+   "q": 0.1,
+   "family_size": 1,
+   "p": 0.04397801099450275,
+   "p_adjusted": 0.04397801099450275,
+   "rejected": true,
+   "interval_level": 0.975
+  },
+  "item_ids_sha256": "cb66649ffbe877521412ad5afbf0bd6e265be7f250d9f0f929b823240205977e"
+ },
+ "decision": {
+  "status": "inconclusive",
+  "by": "auto",
+  "at": "2026-10-16T15:24:29+00:00",
+  "reason": "significant after BH, but the lower bound +0.000 does not clear the noise floor 0.050"
+ },
+ "cost": {
+  "llm_calls": 95,
+  "input_tokens": 18417,
+  "output_tokens": 16929,
+  "seconds": 166.4,
+  "usd": null,
+  "shared_llm_calls": 185,
+  "by_arm": {
+   "champion": {
+    "llm_calls": 94,
+    "input_tokens": 19059,
+    "output_tokens": 22846,
+    "errors": 14,
+    "seconds": 229.4,
+    "shared": true
+   },
+   "champion_repeat": {
+    "llm_calls": 91,
+    "input_tokens": 18949,
+    "output_tokens": 22898,
+    "errors": 11,
+    "seconds": 182.1,
+    "shared": true
+   },
+   "cfg-bb5e4669dafa": {
+    "llm_calls": 95,
+    "input_tokens": 18417,
+    "output_tokens": 16929,
+    "errors": 15,
+    "seconds": 166.4,
+    "shared": false
+   }
+  }
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "schema": "iterate.config/v1",
+ "hash": "bb5e4669dafa75d1d88d76690df141f3000dd683d4efc4418fa59383c687f2eb",
+ "values": {
+  "action.continuation.model": "claude-opus-4-5-20251101",
+  "action.gate": "off",
+  "action.lanes": [
+   "post",
+   "reply"
+  ],
+  "action.minds": [
+   "community_builder",
+   "meme_lord",
+   "reply_sniper",
+   "rivalry_banterer",
+   "stat_nerd"
+  ],
+  "action.page_replies": 12,
+  "action.per_mind": 3,
+  "action.reply.generation": "styled",
+  "action.reply.model": "claude-sonnet-5-5",
+  "action.retries": 2,
+  "action.samples": 1,
+  "action.ship_rule": "critic_pass",
+  "action.top": 10,
+  "action.veto.max_p_ai": 50,
+  "action.veto.model": "claude-opus-5-5",
+  "judge.model": "claude-sonnet-5-5",
+  "judge.orders": 1,
+  "judge.role": "rank_and_veto",
+  "judge.veto_criteria": [
+   "factual",
+   "harassment",
+   "no_target",
+   "off_mission"
+  ],
+  "memory.lessons": "on",
+  "memory.prompt_chars": 6000,
+  "memory.recall": "on",
+  "memory.retrieval_k": 5,
+  "observe.news_max_age_hours": 72,
+  "observe.reply_target.max_age_minutes": 90,
+  "observe.reply_target.size_band": "10k-250k",
+  "observe.sources": [
+   "sample"
+  ],
+  "orient.budget_chars": 60000,
+  "orient.explore": 1,
+  "orient.focus": 2,
+  "orient.narratives": 5,
+  "qualify.batch": 0,
+  "qualify.memory": "off",
+  "qualify.model": "claude-sonnet-5-5",
+  "qualify.panel": "personas"
+ }
+}
