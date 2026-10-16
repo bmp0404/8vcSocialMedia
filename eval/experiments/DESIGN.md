@@ -65,8 +65,23 @@ Each step exists because something measured tonight, or in the research, showed 
 5. **Guardrails need non-inferiority.** "Not significantly worse" passes any challenger on a small sample. A guardrail that can't be computed blocks promotion. So does a challenger that failed on noticeably more items than the champion.
 6. **At most one promotion per fitness per run.** Two winners were never measured together. Ties break on the bound, then the p-value, then the config hash, so proposal order can't decide.
 7. **Confirmations.** A retest against the champion a promotion replaced reverts that promotion automatically if it fails.
+8. **One promotion per rolling 7 days, across every fitness.** See "Across runs" below.
 
 An independent reviewer in a fresh context checked these functions against brute-force versions and seeded broken variants. Items 5 and 6, a float tolerance in BH, and five stronger tests came from that review. `tests/test_iterate_stats.py` and `tests/test_iterate_loop.py` hold the hand-worked cases.
+
+### Across runs
+
+Steps 1 to 7 decide one run. An unattended loop runs daily, and each run is its own Benjamini-Hochberg family, so without a rule that spans runs it would spend a fresh 10% false-discovery budget every day on the same frozen items. `harness/iterate/campaign.py` adds three rules, each a pure function over the records with strict tests in `tests/test_iterate_campaign.py`.
+
+**One promotion per rolling 7 days.** A run decided while any promotion from the previous 7 days stands records its gate pass as inconclusive, with the date the window reopens. Within one run, if two fitnesses both clear the gate, the smaller adjusted p-value wins, because p-values compare across fitnesses where bounds in different units don't. A promotion counts when replaying the ledger shows it changed the champion. Reverts never count, and neither does a confirmation of a change still in force; a confirmation that re-applies a reverted change does.
+
+The brief offered Benjamini-Hochberg across the week's families instead. I chose the cap. BH over a family that keeps growing isn't stable: adding Thursday's p-values can turn Monday's rejection into an acceptance, so either every decision waits for the week to close or decisions get revoked. Under the cap a decision is final when it is made. The cap also matches how fresh data arrives: a confirmation needs threads posted after the proposal, which takes days anyway, so one promotion a week costs little power. The cost is a real second winner waiting up to a week; it is recorded as inconclusive and retested against the new champion.
+
+**Confirmation only on items rooted after the proposal.** Every `Item` now carries `root_at`, when its root post went out. `campaign.rooted_after` keeps only items rooted strictly after a cutoff, and refuses an instrument whose items aren't dated. `run_batch(mode="screen")` records a gate pass as `candidate`, which never touches the champion. The experiment queue (`harness/improve/queue.py`) screens a spec on items rooted at or before its proposal and promotes it only through a second run on items rooted after, so neither the proposer nor the screen saw the items that decide it. `action_lineup` gets fresh items from the watcher's threads through `ActionLineup(extra_threads=...)`. `qualify_auc`'s items are the dataset's posts, all older than any proposal, so a qualify candidate waits until fresh posts get tier labels.
+
+**Stacked promotions are measured together.** `campaign.unmeasured` reports any fitness whose knobs the champion sets to a combination that no decided run on that fitness scored as an arm, with a baseline: the champion with that fitness's knobs as they were before the last promotion that moved them. `run_batch(mode="stack")` measures the combination against that baseline and records `stack_ok`, or `stack_failed` when the combination is shown worse or fails a guardrail. `harness improve` runs due stack checks before any queued experiment on that fitness. On `stack_failed` it reverts the later promotion only if the loop made it (proposer kind `queue` or `confirmation`; every gate decision says `by: auto`, so that field can't tell) and the champion still holds its values; otherwise it asks a person. A failed check whose revert a crash lost is finished at the start of the next cycle. A combination that fails on noticeably more items than the baseline also counts as failed, because it was graded on an easier set. Under the queue a promotion is always confirmed against the current champion, so this fires only for promotions on another fitness that share a knob, for human promotions and reverts, and for promotions made before the queue.
+
+The lineup's GPT-family detector is a guardrail since instrument v4, so B3's guard holds on every action promotion: a challenger the other family's detector finds 10 points more often (policy, not measured) is not promoted.
 
 ### Proposers
 
@@ -91,6 +106,8 @@ The one live LLM call proposed the GPT panel (research/eval.md, finding 14), and
 | `runs/run-*.json` | One run: call cap, calls by arm, the BH family |
 | `reports/run-*-<fitness>.json` | Every draft, lineup pick, veto reason and panel score behind a run's numbers |
 | `proposals/*.json` | What each proposer suggested and why each rejection happened |
+| `queue/*.toml` | Experiments an agent or a person asked `harness improve` to run; format in `harness/improve/queue.py` |
+| `instruments.json` | Each instrument scored against outcomes after its cutoff, and whether it may gate (`harness/improve/DESIGN.md`) |
 | `fixtures/` | The persona prompt snapshot and 18 threads fetched read-only through fxtwitter |
 
 Mock runs write to `out/iterate/`, which git ignores, and never import real cached scores.
@@ -129,8 +146,8 @@ His pieces fit this loop as proposers or allocators:
 
 - **No instrument measures whether a reply is worth posting.** v3 catches side-taking and empty lines, not whether anyone would care.
 - **The v3 retest re-judged saved drafts.** It isolates the veto change, but it doesn't re-measure drafting variance.
-- **Promotions on different fitnesses are applied together without being measured together.** The next run's champion arm is the first measurement of the combination.
-- **q = 0.1, the 10-point veto margin and the failure slack are policy, with no calibration behind them.**
+- **A stack check reverts only the most recent promotion.** If the older promotion is the one that stopped working, reverting the newer one is the wrong fix; the record names both, and a person can revert the other.
+- **q = 0.1, the 10-point veto and GPT-detector margins, the 7-day window and the failure slack are policy, with no calibration behind them.**
 - For Sam: should a confirmation under a stricter instrument be required before any action promotion counts? Tonight it was required by hand.
 - For Sam: should the qualify instrument grow past 27 accounts so the single reader can be decided? That needs the data team's backfill.
 
@@ -149,6 +166,7 @@ uv run python -m harness iterate run --plan qualify          # mock by default; 
 uv run python -m harness iterate propose --llm               # next experiments; add --run to run them
 uv run python -m harness iterate champion
 uv run python -m harness iterate revert <experiment id> --reason "..."
+uv run python -m harness improve --once --provider anthropic   # the unattended loop: harness/improve/DESIGN.md
 uv run python -m pytest tests/test_iterate_*.py
 ```
 

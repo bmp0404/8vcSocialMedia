@@ -8,3 +8,5 @@ out/*
 memory/store/
 # The watcher's thread reads hold real people's replies; the repo is public.
 data/threads/
+# Pairs folded from those reads (harness/improve/fold.py); they point at replies only data/threads/ holds.
+data/bench/rolling/

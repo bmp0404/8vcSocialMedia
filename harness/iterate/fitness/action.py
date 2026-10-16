@@ -24,13 +24,20 @@ Instrument versions, each recorded in the ledger's `eval.instrument`:
 - v3: the veto also reads the mission and vetoes a draft that takes the side the mission isn't on, or
   that says nothing specific to the post. v2 passed "Let's go Angel Reese, another championship" for a
   Caitlin Clark fan account, and a bare "...".
+- v4: the GPT detector's rate becomes a guardrail with a 10-point margin. The measurement is unchanged;
+  a challenger it finds noticeably more often can no longer be promoted.
 
 `rejudge_report` re-judges a saved run's drafts with the current veto instead of drafting again. The
 detectors are untouched, so it isolates a change to the veto, and it pins the challenger to the exact
 drafts that run produced.
 
-A second detector from another model family (GPT) scores the same lineups as a secondary, because a
-pipeline that screens its drafts with Opus 5.5 is being measured by the model that selected them.
+A second detector from another model family (GPT) scores the same lineups as a guardrail, because a
+pipeline that screens its drafts with Opus 5.5 is being measured by the model that selected them. A
+challenger must be shown no more than 10 points worse on it (B3's guard table: the other family's
+lineup stays a guardrail on any action promotion). It was a reported secondary through instrument v3.
+
+Threads come from fixture files and, through `extra_threads`, from the watcher's thread reads
+(harness/improve/fold.py), so a confirmation can use threads posted after an experiment was proposed.
 """
 
 import hashlib
@@ -45,7 +52,7 @@ from harness.iterate.fitness import ArmResult, Item, LLMFor, Metric
 from harness.iterate.knobs import OPUS55, Config
 from harness.iterate.stats import Stat, mean_stat
 
-INSTRUMENT_VERSION = 3
+INSTRUMENT_VERSION = 4
 DEFAULT_THREADS = hconfig.ROOT / "action" / "fixtures" / "x_threads.json"
 PERSONA_FIXTURE = hconfig.ROOT / "eval" / "experiments" / "fixtures" / "persona_json-main.json"
 DETECTOR_MODEL = OPUS55
@@ -72,6 +79,7 @@ VETO_SYSTEM = ("You review one draft reply before the account described in MISSI
                "Jokes, rivalry banter from the mission's side and blunt opinions about a team's play are fine. "
                'Return JSON {"veto": true or false, "reasons": ["(1)" to "(5)" with one short phrase each]}.')
 VETO_MARGIN = 0.10  # policy, not measured: a challenger may pass at most 10 points fewer drafts than the champion
+GPT_DETECTION_MARGIN = 0.10  # policy, not measured: the GPT detector may find a challenger at most 10 points more often
 
 STYLED_SYSTEM = ("You run a small account on X; the mission below sets its voice and subjects. Write the reply the way "
                  "a real person types one on a phone. Most good replies are under 12 words. Lowercase is fine. One idea. "
@@ -102,7 +110,12 @@ def load_threads(path: Path) -> list[dict]:
     if not path.exists():
         raise FileNotFoundError(f"{path} not found. It lands with sam/action (action/fixtures/x_threads.json); "
                                 "pass --threads to point at a copy.")
-    threads = json.loads(path.read_text(encoding="utf-8"))["threads"]
+    return prepare_threads(json.loads(path.read_text(encoding="utf-8"))["threads"])
+
+
+def prepare_threads(threads: list[dict]) -> list[dict]:
+    """Fixture-shaped threads ({id, author, url, text, direct_replies: [{text, likes}]}) as lineup threads:
+    replies cleaned and ranked by likes, threads with too short a root or too few replies dropped."""
     out = []
     for t in threads:
         root = clean(t.get("text", ""))
@@ -271,29 +284,34 @@ class ActionLineup:
     stage = "action"
     unit = "thread"
     cluster_unit = "thread"
+    llm_opinion = False  # the detector picks one reply out of real ones; it never scores quality or likes
+    accepts_threads = True  # an experiment spec may name fixture thread files (harness/improve/queue.py)
     primary = Metric("ai_detection_rate", higher_is_better=False)
     secondaries = (Metric("veto_pass_rate", higher_is_better=True, guardrail=True, margin=VETO_MARGIN),
-                   Metric("ai_detection_rate_gpt", higher_is_better=False),
+                   Metric("ai_detection_rate_gpt", higher_is_better=False, guardrail=True, margin=GPT_DETECTION_MARGIN),
                    Metric("abstain_rate", higher_is_better=False),
                    Metric("reply_chars", higher_is_better=False))
     knobs = ("action.reply.generation", "action.reply.model", "action.continuation.model", "memory.lessons",
              "action.samples", "action.page_replies", "action.veto.model", "action.veto.max_p_ai")
 
     def __init__(self, threads_paths: list[Path] | Path = DEFAULT_THREADS, limit: int | None = None,
-                 rejudge_report: Path | None = None):
+                 rejudge_report: Path | None = None, extra_threads: list[dict] | None = None,
+                 extra_label: str = "extra threads"):
         self.threads_paths = [Path(p) for p in (threads_paths if isinstance(threads_paths, list) else [threads_paths])]
         self.limit = limit
         self.rejudge = json.loads(Path(rejudge_report).read_text(encoding="utf-8")) if rejudge_report else None
         self.rejudge_path = Path(rejudge_report) if rejudge_report else None
+        self.extra_threads, self.extra_label = list(extra_threads or []), extra_label
 
     def items(self) -> list[Item]:
+        from harness.corpus.load import created_at
+
         threads, seen = [], set()
-        for path in self.threads_paths:
-            for t in load_threads(path):
-                if t["id"] not in seen:
-                    seen.add(t["id"])
-                    threads.append(t)
-        return [Item(t["id"], t["id"], t) for t in threads[: self.limit]]
+        for t in [t for path in self.threads_paths for t in load_threads(path)] + prepare_threads(self.extra_threads):
+            if t["id"] not in seen:
+                seen.add(t["id"])
+                threads.append(t)
+        return [Item(t["id"], t["id"], t, root_at=created_at(t["id"])) for t in threads[: self.limit]]
 
     def instrument(self) -> dict:
         digest = hashlib.sha256()
@@ -303,6 +321,9 @@ class ActionLineup:
             # Outside this checkout (a worker's worktree), name the repo-relative path it will have.
             shown.append((path.relative_to(hconfig.ROOT) if path.is_relative_to(hconfig.ROOT)
                           else Path(*path.parts[-3:])).as_posix())
+        if self.extra_threads:
+            digest.update(json.dumps(self.extra_threads, sort_keys=True, ensure_ascii=False).encode("utf-8"))
+            shown.append(f"{self.extra_label} ({len(self.extra_threads)} threads)")
         persona = json.loads(PERSONA_FIXTURE.read_text(encoding="utf-8"))
         return {"version": INSTRUMENT_VERSION, "dataset": " + ".join(shown), "dataset_sha256": digest.hexdigest(),
                 "persona_json_sha256": persona["sha256"], "gpt_detector_model": GPT_DETECTOR_MODEL,
@@ -312,7 +333,8 @@ class ActionLineup:
                     "run_id": self.rejudge.get("run_id"), "reused": "drafts, lineups and both detectors' picks"},
                 "detector_model": DETECTOR_MODEL, "lineup_system": LINEUP_SYSTEM, "lineup_pool": LINEUP_POOL,
                 "context_ranks": [CONTEXT.start + 1, CONTEXT.stop], "min_replies": MIN_REPLIES, "chance": 0.2,
-                "veto_model": VETO_MODEL, "veto_system": VETO_SYSTEM, "veto_margin": VETO_MARGIN}
+                "veto_model": VETO_MODEL, "veto_system": VETO_SYSTEM, "veto_margin": VETO_MARGIN,
+                "gpt_detection_margin": GPT_DETECTION_MARGIN}
 
     def estimate_calls(self, config: Config, n_items: int, repeat: bool = False) -> int:
         """Two detectors and the instrument's veto per thread, plus generation: one call, or for the

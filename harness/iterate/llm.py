@@ -14,6 +14,11 @@ from typing import Any
 from harness.llm import LLM, check_stop, parse_json
 
 
+# Seconds one request may take before it counts as failed and is retried. The SDK's default is 600.
+# Gateway answers measured on 2026-10-16 took 1 to 11 seconds; 120 leaves room for a long veto answer.
+CALL_TIMEOUT_S = 120.0
+
+
 class BudgetExceeded(RuntimeError):
     """The run hit its call cap. The arm in progress stops; finished arms keep their results."""
 
@@ -54,7 +59,10 @@ class MeteredLLM(LLM):
     def __init__(self, model: str, meter: Meter, arm: str, max_tokens: int = 2000, retries: int = 3):
         import anthropic
 
-        self.client = anthropic.Anthropic()
+        # MeteredLLM retries on its own, below, and counts each attempt. The SDK's own retries would run
+        # inside each of those uncounted: on 2026-10-16, with the GPT pool answering 429, one detector
+        # call became a dozen requests with backoff sleeps and held a screen for over 20 minutes.
+        self.client = anthropic.Anthropic(timeout=CALL_TIMEOUT_S, max_retries=0)
         self.model, self.meter, self.arm, self.max_tokens, self.retries = model, meter, arm, max_tokens, retries
 
     def _create(self, **kw) -> str:
@@ -139,7 +147,7 @@ def metered_anthropic_class(meter: Meter, arm: str) -> type:
 
     class MeteredAnthropicLLM(AnthropicLLM):
         def __init__(self, model: str):
-            client = anthropic.Anthropic()
+            client = anthropic.Anthropic(timeout=CALL_TIMEOUT_S)
             client.messages = _MeteredMessages(client.messages, meter, arm)
             self.client, self.model = client, model
 

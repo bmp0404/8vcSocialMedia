@@ -9,8 +9,10 @@
   unknown fitness or knob, sets a value outside a knob's domain, changes a knob its fitness can't
   measure, or repeats a settled experiment. Rejections are kept with their reasons.
 
-Settled means decided as promoted, rejected or inconclusive against a champion that agrees on every
-knob the fitness reads. Pending and superseded records don't count, so unrun proposals come back.
+Settled means decided as promoted, rejected, inconclusive or candidate against a champion that agrees on
+every knob the fitness reads. Pending and superseded records don't count, so unrun proposals come back. A
+candidate counts as settled because screening it again on the same items is the overfitting a confirmation
+on later items exists to avoid.
 """
 
 import json
@@ -22,7 +24,7 @@ from harness.iterate import knobs
 from harness.iterate.knobs import BY_PATH, Config, KnobError
 from harness.iterate.runner import Proposal
 
-SETTLED = {"promoted", "rejected", "inconclusive"}
+SETTLED = {"promoted", "rejected", "inconclusive", "candidate"}
 DEFAULT_MAX = 3  # research/eval.md finding 13 and the eval worker: spend the BH family on few comparisons
 
 

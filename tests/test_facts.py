@@ -282,8 +282,31 @@ def test_refresh_skips_a_timeline_it_cant_read_and_keeps_the_others(capsys):
     counts = store.refresh("devtools", at=AT, reader=FlakyReader({handles[0]}), store=s)
     assert set(counts) == {f"posts:{h}" for h in handles[1:]}
     assert f"[facts] skipped @{handles[0]}: HTTP 404" in capsys.readouterr().out
-    with pytest.raises(store.FactsError, match="every timeline read failed"):
+    with pytest.raises(store.FactsError, match="no account's timeline"):
         store.refresh("devtools", at=AT, reader=FlakyReader(set(handles)), store=FakeStore())
+
+
+def test_refresh_skips_an_unreadable_account_and_fails_only_when_none_can_be_read():
+    from harness.context.http import FetchError
+
+    class Flaky(FakeReader):
+        def __init__(self, bad):
+            self.bad = bad
+
+        def profile_statuses(self, handle, limit=20):
+            if handle in self.bad or self.bad == "all":
+                raise FetchError(f"HTTP 404 from api.fxtwitter.com for /2/profile/{handle}/statuses")
+            return super().profile_statuses(handle, limit)
+
+    with config.use_profile("devtools"):
+        from harness.sources.watch import load_watch
+        handles = load_watch().reply_targets.accounts
+    skipped = {}
+    counts = store.refresh("devtools", at=AT, reader=Flaky({handles[0]}), store=FakeStore(), skipped=skipped)
+    assert f"posts:{handles[0]}" not in counts and len(counts) == len(handles) - 1
+    assert list(skipped) == [handles[0]] and "404" in skipped[handles[0]]
+    with pytest.raises(store.FactsError, match="no account's timeline"):
+        store.refresh("devtools", at=AT, reader=Flaky("all"), store=FakeStore())
 
 
 def test_refresh_refuses_the_mock_providers_throwaway_store(monkeypatch):

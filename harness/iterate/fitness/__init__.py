@@ -10,6 +10,7 @@ scored and turns those results into a metric with `stat()`.
 
 from collections.abc import Callable, Hashable
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, Protocol
 
 from harness.iterate.knobs import Config
@@ -24,6 +25,9 @@ class Item:
     id: str
     cluster: Hashable  # the resampling unit: an account, a thread
     payload: Any = field(compare=False, hash=False, repr=False)
+    # When the item's root post went out. A confirmation uses only items rooted after the experiment
+    # was proposed (harness/iterate/campaign.py); an instrument whose items have no time can't confirm.
+    root_at: datetime | None = field(default=None, compare=False, hash=False)
 
 
 @dataclass
@@ -45,6 +49,9 @@ class Metric:
 class Fitness(Protocol):
     name: str
     stage: str
+    # True when the primary metric is a model's opinion of quality or likes rather than a comparison
+    # with real outcomes. The experiment queue refuses such a fitness (eval/experiments/DESIGN.md).
+    llm_opinion: bool
     unit: str  # what an item is: "post", "thread"
     cluster_unit: str  # what gets resampled: "account", "thread"
     primary: Metric
