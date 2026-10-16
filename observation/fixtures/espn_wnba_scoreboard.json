@@ -1,0 +1,94 @@
+{
+ "events": [
+  {
+   "id": "401918305",
+   "date": "2026-10-17T19:30Z",
+   "name": "Atlanta Dream at Golden State Valkyries",
+   "status": {
+    "type": {
+     "state": "pre",
+     "completed": false,
+     "detail": "Sat, October 17th at 3:30 PM EDT"
+    }
+   },
+   "links": [
+    {
+     "href": "https://www.espn.com/wnba/game/_/gameId/401918305/dream-valkyries"
+    }
+   ],
+   "competitions": [
+    {
+     "notes": [
+      {
+       "type": "event",
+       "headline": "WNBA Finals - Game 1"
+      }
+     ],
+     "competitors": [
+      {
+       "score": "0",
+       "team": {
+        "id": "129689",
+        "abbreviation": "GS",
+        "displayName": "Golden State Valkyries"
+       }
+      },
+      {
+       "score": "0",
+       "team": {
+        "id": "20",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Dream"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401918306",
+   "date": "2026-10-19T19:30Z",
+   "name": "Golden State Valkyries at Atlanta Dream",
+   "status": {
+    "type": {
+     "state": "in",
+     "completed": false,
+     "detail": "3rd Quarter 4:12"
+    }
+   },
+   "links": [
+    {
+     "href": "https://www.espn.com/wnba/game/_/gameId/401918306"
+    }
+   ],
+   "competitions": [
+    {
+     "notes": [
+      {
+       "type": "event",
+       "headline": "WNBA Finals - Game 2 (synthetic live game for tests)"
+      }
+     ],
+     "competitors": [
+      {
+       "score": "61",
+       "team": {
+        "id": "129689",
+        "abbreviation": "GS",
+        "displayName": "Golden State Valkyries"
+       }
+      },
+      {
+       "score": "58",
+       "team": {
+        "id": "20",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Dream"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
