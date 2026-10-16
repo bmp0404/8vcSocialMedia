@@ -11,9 +11,10 @@ from datetime import datetime
 from pathlib import Path
 
 from harness import config
-from harness.outcomes.handoff import ApprovedAction
+from harness.outcomes.handoff import HOT_SOURCE, ApprovedAction, HotTarget
 from harness.outcomes.label import BaselinePoint, Label
 from harness.outcomes.match import Match
+from harness.outcomes.rank import Rank
 from harness.outcomes.reader import Counts, OwnPost, Timeline
 
 DEFAULT_PATH = config.ROOT / "data" / "outcomes.db"
@@ -47,6 +48,21 @@ CREATE TABLE IF NOT EXISTS labels (
 );
 -- reach: the oldest creation time the read provably covered (see reader.own_timeline).
 CREATE TABLE IF NOT EXISTS reads (id INTEGER PRIMARY KEY, at TEXT, n_posts INTEGER, reach TEXT);
+-- The watcher's hot targets: which arm the coin gave each one (harness/watcher/arms.py).
+CREATE TABLE IF NOT EXISTS hot_targets (
+    action_id TEXT PRIMARY KEY, status_id TEXT, arm TEXT, profile TEXT, method TEXT
+);
+-- One row per matched reply, written once, at match time.
+CREATE TABLE IF NOT EXISTS reply_matches (
+    action_id TEXT PRIMARY KEY, status_id TEXT, parent_status TEXT, arm TEXT, minutes_after_parent REAL,
+    followers_at_match INTEGER, matched_at TEXT
+);
+-- rank_in_thread at +1h and +24h after the reply (rank.py). Replaces the median label for replies.
+CREATE TABLE IF NOT EXISTS ranks (
+    action_id TEXT, checkpoint INTEGER, fetched_at TEXT, age_hours REAL, rank INTEGER, likes_rank INTEGER,
+    page_replies INTEGER, thread_replies INTEGER, percentile REAL, percentile_max REAL, likes INTEGER,
+    followers INTEGER, outcome TEXT, PRIMARY KEY (action_id, checkpoint)
+);
 """
 
 
@@ -100,7 +116,8 @@ def actions(conn) -> list[sqlite3.Row]:
 
 def to_action(row) -> ApprovedAction:
     return ApprovedAction(row["action_id"], row["run_id"], row["type"], row["text"], row["original_text"],
-                          row["target_status"], datetime.fromisoformat(row["approved_at"]), row["source"])
+                          row["target_status"], datetime.fromisoformat(row["approved_at"]), row["source"],
+                          anchor_only=(row["source"] or "").startswith(HOT_SOURCE))
 
 
 def to_post(row) -> OwnPost:
@@ -166,7 +183,7 @@ def save_matches(conn, matches: list[Match], at: datetime) -> None:
 def matched(conn) -> list[sqlite3.Row]:
     """Matched actions joined to their posts."""
     return conn.execute(
-        """SELECT m.*, p.created_at, p.kind, p.text AS posted_text FROM matches m
+        """SELECT m.*, p.created_at, p.kind, p.text AS posted_text, p.replying_to_status FROM matches m
            JOIN posts p ON p.status_id = m.status_id ORDER BY p.created_at"""
     ).fetchall()
 
@@ -206,3 +223,44 @@ def save_label(conn, action_id: str, cp: int, lab: Label, at: datetime) -> None:
         (action_id, cp, lab.outcome, lab.engagement, lab.baseline_n, lab.baseline_median, lab.baseline_p10,
          lab.baseline_p90, iso(at)),
     )
+
+
+def save_hot_targets(conn, targets: list[HotTarget]) -> None:
+    conn.executemany(
+        """INSERT INTO hot_targets VALUES (?, ?, ?, ?, ?)
+           ON CONFLICT (action_id) DO UPDATE SET arm = excluded.arm, profile = excluded.profile,
+               method = excluded.method""",
+        [(t.action_id, t.status_id, t.arm, t.profile, t.method) for t in targets],
+    )
+
+
+def hot_targets(conn) -> dict[str, sqlite3.Row]:
+    return {r["action_id"]: r for r in conn.execute("SELECT * FROM hot_targets").fetchall()}
+
+
+def save_reply_match(conn, action_id: str, status_id: str, parent_status: str, arm: str | None,
+                     minutes_after_parent: float, followers: int | None, at: datetime) -> None:
+    conn.execute("INSERT OR IGNORE INTO reply_matches VALUES (?, ?, ?, ?, ?, ?, ?)",
+                 (action_id, status_id, parent_status, arm, minutes_after_parent, followers, iso(at)))
+
+
+def reply_match(conn, action_id: str) -> sqlite3.Row | None:
+    return conn.execute("SELECT * FROM reply_matches WHERE action_id = ?", (action_id,)).fetchone()
+
+
+def save_rank(conn, action_id: str, cp: int, fetched_at: str, age: float, r: Rank) -> bool:
+    cur = conn.execute(
+        "INSERT OR IGNORE INTO ranks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (action_id, cp, fetched_at, round(age, 2), r.rank, r.likes_rank, r.page_replies, r.thread_replies,
+         r.percentile, r.percentile_max, r.likes, r.followers, r.outcome),
+    )
+    return cur.rowcount == 1
+
+
+def has_rank(conn, action_id: str, cp: int) -> bool:
+    return conn.execute("SELECT 1 FROM ranks WHERE action_id = ? AND checkpoint = ?",
+                        (action_id, cp)).fetchone() is not None
+
+
+def ranks(conn, action_id: str) -> list[sqlite3.Row]:
+    return conn.execute("SELECT * FROM ranks WHERE action_id = ? ORDER BY checkpoint", (action_id,)).fetchall()

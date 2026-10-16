@@ -1,6 +1,5 @@
-# Observe settings for the devtools profile (HARNESS_PROFILE=devtools). Watched accounts come from
-# data/devtools_virality_30d.csv: the ten with the most total engagement over 2026-09-15 to
-# 2026-10-16, plus the review-bot companies the team named.
+# Observe settings for the devtools profile (HARNESS_PROFILE=devtools). [reply_targets] below is also
+# the watch list `harness watch` polls for this profile (harness/watcher/DESIGN.md).
 # Enable with HARNESS_SOURCES=google_news,bluesky,x_targets,attention (ESPN has nothing for this brand).
 
 [brand]
@@ -28,13 +27,31 @@ terms = ["code review", "coding agent", "Cursor"]
 baseline_days = 14
 
 [reply_targets]
-# Everything these accounts post is about their own product, so all of it is on topic.
+# Everything these accounts post is about their own product, so all of it is on topic. Chosen
+# 2026-10-16 from data/context/accounts.csv (timeline_posts_per_day) and the corpus reply samples
+# (sam/corpus data/corpus/raw): for each account's sampled threads, the share of the three most-liked
+# replies written by accounts under 1,000 followers, the openness measure in harness/rank/target.py.
+# Rule: posts at least 0.4 times a day and that share is 0.5 or more over 3+ sampled threads; or
+# posts at least 0.6 a day with 1-2 sampled threads, all of them open (thin evidence); or a
+# coding-agent or review account the team named that posts at least 0.45 a day with no clear closed
+# signal. Together they posted about 25 original posts a day in the window.
+#   share and threads, posts/day: supabase .64/22 2.9, zeddotdev .69/18 2.1, resend .83/2 2.0,
+#   expo .69/12 1.6, Netlify 1.0/1 1.5, WorkOS .67/1 1.5, vllm_project .63/9 1.5, CloudflareDev .67/7 1.4,
+#   cline .62/16 1.1, coderabbitai -/0 1.1, posthog .78/3 0.9, FactoryAI .53/10 0.8, neondatabase .67/1 0.8,
+#   QodoAI -/0 0.8, Lovable .67/12 0.7, browserbase .67/1 0.7, llama_index .67/2 0.7, vercel .67/7 0.6,
+#   warpdotdev .67/1 0.6, bunjavascript .72/12 0.6, cursor_ai .77/16 0.5, kirodotdev .83/2 0.5,
+#   Replit .50/4 0.4, ollama .50/6 0.4.
+# Left out as closed (share under 0.5 over 3+ threads): cognition .42/19 (top replies a median 14
+# minutes in), tldraw .38/7, modal .46/8, PlanetScale .40/5, Railway .28/6, boltdotnew .22/3,
+# linear .48/7. Left out as quiet: greptile 0.5/day with share .17/2, Sourcegraph 0.2/day.
 accounts = [
-  "cursor_ai", "supabase", "zeddotdev", "cognition", "cline", "bunjavascript", "tldraw", "ollama",
-  "Lovable", "CloudflareDev", "coderabbitai", "greptile", "QodoAI", "Sourcegraph",
+  "supabase", "zeddotdev", "resend", "expo", "Netlify", "WorkOS", "vllm_project", "CloudflareDev",
+  "cline", "coderabbitai", "posthog", "FactoryAI", "neondatabase", "QodoAI", "Lovable", "browserbase",
+  "llama_index", "vercel", "warpdotdev", "bunjavascript", "cursor_ai", "kirodotdev", "Replit", "ollama",
 ]
-# Bigger platforms that post about many things; only keyword matches count.
-broad_accounts = ["vercel"]
+# Bigger platforms that post about many things; only keyword matches count. Vercel moved to
+# accounts: its sampled threads are open (.67 over 7) and its posts are about developer tooling.
+broad_accounts = []
 # Matched as case-insensitive substrings, so avoid short words like "PR" that hide inside others.
 keywords = ["code review", "coding agent", "devtools", "open source", "pull request", "launch"]
 include_search = true

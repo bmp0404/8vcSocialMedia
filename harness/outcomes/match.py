@@ -91,6 +91,8 @@ def score(action: ApprovedAction, post: OwnPost) -> float:
 
 
 def accepts(action: ApprovedAction, post: OwnPost, is_anchored: bool, s: float) -> bool:
+    if action.anchor_only:  # a hot target: the operator's own words are expected, so only the reply link counts
+        return is_anchored
     if is_anchored:
         return s >= ANCHORED_MIN
     strip = action.type == "reply"

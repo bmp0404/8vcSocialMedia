@@ -75,10 +75,13 @@ def _counts(post) -> Counts:
                   post.author_followers)
 
 
-def _kind(post, handle: str) -> str:
+def _kind(post, handle: str, own_ids: set[str]) -> str:
     if not (post.replying_to or post.replying_to_status):
         return "original"
-    return "self_reply" if (post.replying_to or "").lower() == handle.lower() else "reply"
+    # fxtwitter can drop `replying_to` and keep the parent's status id, so a reply to one of the
+    # account's own posts in the same feed is a thread continuation too.
+    own_parent = post.replying_to_status in own_ids
+    return "self_reply" if (post.replying_to or "").lower() == handle.lower() or own_parent else "reply"
 
 
 def own_timeline(feed: list, handle: str, read_at: str) -> Timeline:
@@ -93,12 +96,13 @@ def own_timeline(feed: list, handle: str, read_at: str) -> Timeline:
     # makes `reach` later, which can delay a not_posted verdict but never invent one.
     parents = {p.replying_to_status for p in feed if p.replying_to_status}
     reached = [p.created_at for p in own if p.id not in parents]
+    own_ids = {p.id for p in own}
     posts, seen = [], set()
     for p in own:
         if p.id in seen:  # a post can come back on two pages (@greptile, 2026-10-16)
             continue
         seen.add(p.id)
-        posts.append(OwnPost(p.id, p.created_at, _kind(p, handle), p.text, p.replying_to_status, p.quoted_id,
+        posts.append(OwnPost(p.id, p.created_at, _kind(p, handle, own_ids), p.text, p.replying_to_status, p.quoted_id,
                              _counts(p)))
     posts.sort(key=lambda p: p.created_at, reverse=True)
     fetched_at = max((p.fetched_at for p in feed), default=read_at)
@@ -106,12 +110,13 @@ def own_timeline(feed: list, handle: str, read_at: str) -> Timeline:
 
 
 class FxOutcomeReader:
-    """`timeline` and `status` over an XReader, counting the calls it makes."""
+    """`timeline`, `status` and `conversation` over an XReader, counting the calls it makes."""
 
     def __init__(self, reader):
         self.reader = reader
         self.timeline_reads = 0
         self.status_reads = 0
+        self.conversation_reads = 0
 
     def timeline(self, handle: str, limit: int) -> Timeline:
         """The newest `limit` entries of the account's posts-and-replies feed, about 20 per request."""
@@ -122,3 +127,8 @@ class FxOutcomeReader:
     def status(self, status_id: str) -> Counts:
         self.status_reads += 1
         return _counts(self.reader.status(status_id))
+
+    def conversation(self, status_id: str) -> list:
+        """The first page of replies to `status_id` in X's likes order, as xreader XPosts."""
+        self.conversation_reads += 1
+        return self.reader.conversation(status_id, "likes")

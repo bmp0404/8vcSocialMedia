@@ -57,7 +57,8 @@ accounts = [
   "WNBA", "IndianaFever", "CaitlinClark22", "IowaWBB", "AtlantaDream", "valkyries", "HerHoopStats",
   "CClarkReport",
   # Women's basketball writers: The Athletic (21k, 34k) and Power Plays (29k).
-  "AnnieCostabile", "ChantelJennings", "linzsports",
+  "AnnieCostabile", "linzsports",
+  # ChantelJennings was dropped on 2026-10-16: the account is protected, so every read fails.
 ]
 # Big general outlets and writers who cover other sports too. Their posts count only when the
 # text matches a keyword below. Fever and Pacers beat: Scott Agness (34k), Tony East (23k),

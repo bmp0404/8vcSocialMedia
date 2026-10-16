@@ -6,3 +6,5 @@ data/*.db
 out/*
 !out/.gitkeep
 memory/store/
+# The watcher's thread reads hold real people's replies; the repo is public.
+data/threads/

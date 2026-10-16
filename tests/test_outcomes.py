@@ -10,11 +10,13 @@ from types import SimpleNamespace
 import pytest
 
 from harness import config, memory
+from harness.context import snowflake
 from harness.outcomes import ledger
 from harness.outcomes.cli import _positive
 from harness.outcomes.handoff import ApprovedAction, HandleError, HandoffError, load_approved, resolve_handle
 from harness.outcomes.label import BASELINE_MIN, BaselinePoint, baseline, checkpoint_for, label
-from harness.outcomes.match import match, normalize
+from harness.outcomes.match import Match, match, normalize
+from harness.outcomes.rank import FAILURE, INSUFFICIENT_THREAD, SUCCESS, UNRANKED, rank_in_thread
 from harness.outcomes.reader import Counts, FxOutcomeReader, OwnPost, ReaderMissing, fx_reader, own_timeline
 from harness.outcomes.sync import TRACK_FOR, status_rows, sync
 
@@ -44,12 +46,20 @@ def xpost(pid, created, text="", author="brand", reply_to=None, reply_status=Non
 
 
 class FakeReader:
-    """Serves posts created by `now` as a with-replies feed, counts stamped at `now`. Counts its calls."""
+    """Serves posts created by `now` as a with-replies feed, counts stamped at `now`. Counts its calls.
 
-    def __init__(self, posts=()):
+    `threads` maps another account's status id to its likes-ordered replies, and `parents` to its counts.
+    """
+
+    def __init__(self, posts=(), threads=None, parents=None):
         self.posts, self.now = list(posts), T0
-        self.timeline_reads, self.status_reads, self.status_calls = 0, 0, []
+        self.timeline_reads, self.status_reads, self.conversation_reads, self.status_calls = 0, 0, 0, []
+        self.threads, self.parents = dict(threads or {}), dict(parents or {})
         self.gone: set[str] = set()  # deleted posts: status raises like the reader's FetchError
+
+    def conversation(self, status_id):
+        self.conversation_reads += 1
+        return list(self.threads[status_id])
 
     def timeline(self, handle, limit):
         self.timeline_reads += 1
@@ -66,6 +76,8 @@ class FakeReader:
         self.status_calls.append(status_id)
         if status_id in self.gone:
             raise RuntimeError(f"fxtwitter /status/{status_id} returned code 404: not found")
+        if status_id in self.parents:
+            return replace(self.parents[status_id], fetched_at=self.now.isoformat())
         p = next(p for p in self.posts if p.id == status_id)
         return replace(p.counts, fetched_at=self.now.isoformat())
 
@@ -446,3 +458,153 @@ def test_ledger_refuses_a_second_account(env):
     run(env, FakeReader(), T0)
     with pytest.raises(ledger.LedgerHandleError, match="--ledger"):
         sync("otherbrand", env.out, env.ledger, reader_factory=FakeReader, now=T0)
+
+
+# ---------------------------------------------------------------------------- rank_in_thread and hot targets
+
+PARENT = str(snowflake.floor_id(T0))  # another account's post, made at T0
+MIN = timedelta(minutes=1)
+
+
+def on_page(rid, likes, parent=PARENT, followers=100):
+    """One reply on the parent's likes-ordered conversation page, as xreader returns it."""
+    return SimpleNamespace(id=rid, replying_to_status=parent, likes=likes, author_followers=followers)
+
+
+def made_at(t: datetime) -> str:
+    return str(snowflake.floor_id(t))
+
+
+def test_rank_is_the_position_on_the_likes_page_and_its_percentile_of_the_parents_replies():
+    page = [on_page(f"r{i}", 50 - i) for i in range(10)]
+    r = rank_in_thread(page, PARENT, "r2", parent_replies=40)
+    assert (r.rank, r.likes_rank, r.page_replies, r.thread_replies, r.likes) == (3, 3, 10, 40, 48)
+    assert (r.percentile, r.percentile_max, r.outcome) == (0.95, None, SUCCESS)  # 1 - 2/40
+    r = rank_in_thread(page, PARENT, "r9", parent_replies=12)
+    assert (r.percentile, r.outcome) == (0.25, FAILURE)  # 1 - 9/12
+
+
+def test_likes_rank_counts_replies_with_more_likes_whatever_order_x_shows():
+    r = rank_in_thread([on_page("a", 5), on_page("b", 9), on_page("c", 5)], PARENT, "c", parent_replies=6)
+    assert (r.rank, r.likes_rank) == (3, 2)
+
+
+def test_a_reply_off_the_page_gets_only_an_upper_bound_on_its_percentile():
+    page = [on_page(f"r{i}", 50 - i) for i in range(35)]
+    r = rank_in_thread(page, PARENT, "ours", parent_replies=40)
+    assert (r.rank, r.percentile, r.percentile_max, r.outcome) == (None, None, 0.125, FAILURE)  # 1 - 35/40
+    assert rank_in_thread(page, PARENT, "ours", parent_replies=200).outcome == UNRANKED  # at most 0.825
+    # Every other reply is on the page and ours isn't, so X hid it: it ranks last.
+    r = rank_in_thread(page[:6], PARENT, "ours", parent_replies=6)
+    assert (r.thread_replies, r.percentile_max, r.outcome) == (7, round(1 - 6 / 7, 4), FAILURE)
+
+
+def test_a_small_thread_is_insufficient_and_only_direct_replies_count():
+    page = [on_page("r0", 3), on_page("nested", 99, parent="r0"), on_page("r1", 1, parent=None)]
+    r = rank_in_thread(page, PARENT, "r1", parent_replies=3)
+    assert (r.rank, r.page_replies, r.outcome) == (2, 2, INSUFFICIENT_THREAD)  # a dropped parent link counts as direct
+
+
+def write_hot(out, status_id, arm="human", offer="human_prompt", draft=None, finished=T0 + MIN):
+    hot_dir = out / "hot"
+    hot_dir.mkdir(exist_ok=True)
+    record = {"status_id": status_id, "offer": offer, "arm": arm, "profile": "wnba", "draft": draft,
+              "finished_at": finished.isoformat(), "method": None if arm == "human" else arm}
+    (hot_dir / f"{status_id}.json").write_text(json.dumps(record), encoding="utf-8")
+    return hot_dir
+
+
+def hot_sync(env, reader, now, hot_dir):
+    reader.now = now
+    return sync("brand", env.out, env.ledger, reader_factory=lambda: reader, now=now, hot_dir=hot_dir)
+
+
+def thread_page(ours_id, ours_likes, others):
+    """`others` replies with descending likes, ours placed by its likes, as X's likes order would."""
+    page = [on_page(str(int(made_at(T0 + (i + 1) * MIN)) + 1), 40 - 3 * i, followers=10) for i in range(others)]
+    page.append(on_page(ours_id, ours_likes, followers=2))
+    return sorted(page, key=lambda r: -r.likes)
+
+
+def test_a_hot_target_matches_the_reply_link_alone_and_is_ranked_at_1h_and_24h(env):
+    hot_dir = write_hot(env.out, PARENT)
+    ours_id, decoy_id = made_at(T0 + 12 * MIN), made_at(T0 + 13 * MIN)
+    ours = own(ours_id, snowflake.to_datetime(ours_id), "@WNBA words of my own", kind="reply", reply_to=PARENT)
+    decoy = own(decoy_id, snowflake.to_datetime(decoy_id), "@WNBA words of my own", kind="reply", reply_to="999")
+    reader = FakeReader([ours, decoy], threads={PARENT: thread_page(ours_id, 32, 9)},
+                        parents={PARENT: Counts("", 0, 0, 20, 0)})
+
+    first = hot_sync(env, reader, T0 + 20 * MIN, hot_dir)
+    assert first.hot_targets == 1 and first.matched == [Match(f"hot-{PARENT}", ours_id, 0.0, True)]
+    with closing(ledger.connect(env.ledger)) as conn:
+        rm = dict(ledger.reply_match(conn, f"hot-{PARENT}"))
+    assert (rm["arm"], rm["minutes_after_parent"], rm["followers_at_match"]) == ("human", 12.0, 2)
+    assert first.ranks == [] and reader.conversation_reads == 0  # under an hour old: nothing due
+
+    ours_at = snowflake.to_datetime(ours_id)
+    at_1h = hot_sync(env, reader, ours_at + 1.5 * H, hot_dir)
+    assert at_1h.ranks == [f"hot-{PARENT} +1h: rank 4 of 20, success"]  # 1 - 3/20 = 0.85
+    assert reader.conversation_reads == 1
+    hot_sync(env, reader, ours_at + 1.6 * H, hot_dir)
+    assert reader.conversation_reads == 1  # +1h is ranked once
+    reader.threads[PARENT] = thread_page(ours_id, 1, 12)  # by +24h it has sunk
+    at_24h = hot_sync(env, reader, ours_at + 25 * H, hot_dir)
+    assert at_24h.ranks == [f"hot-{PARENT} +24h: rank 13 of 20, failure"]  # 1 - 12/20 = 0.4
+
+    assert f"hot-{PARENT}" not in stored_outcomes()  # a hot target has no row in memory's actions table
+    _, rows_ = status_rows(env.ledger, now=ours_at + 25 * H)
+    (row,) = [r for r in rows_ if r["action_id"] == f"hot-{PARENT}"]
+    assert (row["arm"], row["state"], row["label"]["outcome"], row["label"]["basis"]) == (
+        "human", "posted", FAILURE, "rank_in_thread")
+    assert (row["rank"]["checkpoint"], row["rank"]["rank"], row["rank"]["percentile"]) == ("+24h", 13, 0.4)
+    assert row["reply"] == {"parent_status": PARENT, "minutes_after_parent": 12.0, "followers_at_match": 2}
+
+
+def test_an_abstained_hot_file_offers_nothing_to_match(env):
+    hot_dir = write_hot(env.out, PARENT, offer="abstain")
+    ours_id = made_at(T0 + 5 * MIN)
+    reader = FakeReader([own(ours_id, snowflake.to_datetime(ours_id), "@WNBA hi", kind="reply", reply_to=PARENT)])
+    report = hot_sync(env, reader, T0 + 20 * MIN, hot_dir)
+    assert (report.hot_targets, report.matched) == (0, [])
+
+
+def test_a_reply_to_the_accounts_own_post_is_a_thread_continuation_even_without_replying_to():
+    feed = [xpost("2", T0 + H, "and another thing", reply_status="1"),  # fxtwitter dropped replying_to
+            xpost("1", T0, "first post"),
+            xpost("3", T0 + 2 * H, "@fan nice", reply_to="fan", reply_status="9")]
+    tl = own_timeline(feed, "brand", T0.isoformat())
+    assert {p.id: p.kind for p in tl.posts} == {"1": "original", "2": "self_reply", "3": "reply"}
+
+
+def test_a_hot_file_made_for_another_account_is_refused(env):
+    hot_dir = write_hot(env.out, PARENT)
+    path = hot_dir / f"{PARENT}.json"
+    path.write_text(json.dumps(json.loads(path.read_text(encoding="utf-8")) | {"account": "someone_else"}),
+                    encoding="utf-8")
+    with pytest.raises(HandoffError, match="is for @someone_else but sync reads @brand"):
+        hot_sync(env, FakeReader(), T0, hot_dir)
+
+
+def test_a_hot_file_missing_its_arm_fails_loudly(env):
+    hot_dir = env.out / "hot"
+    hot_dir.mkdir()
+    (hot_dir / f"{PARENT}.json").write_text(json.dumps({"status_id": PARENT, "offer": "draft"}), encoding="utf-8")
+    with pytest.raises(HandoffError, match="has no arm, profile, finished_at"):
+        hot_sync(env, FakeReader(), T0, hot_dir)
+
+
+def test_an_approved_reply_is_labeled_by_its_rank_never_the_accounts_median(env):
+    write_approved(env.out, [approved("a1", "the fever bench was loud tonight", kind="reply", at=T0, target=PARENT)])
+    ours_id = made_at(T0 + 5 * MIN)
+    ours = own(ours_id, snowflake.to_datetime(ours_id), "@WNBA the fever bench was loud tonight", kind="reply",
+               reply_to=PARENT)
+    earlier = [own(made_at(T0 - (i + 2) * H), T0 - (i + 2) * H, f"older reply {i}", kind="reply", reply_to="555",
+                   eng=(100, 0, 0, 0)) for i in range(12)]
+    reader = FakeReader([ours] + earlier, threads={PARENT: thread_page(ours_id, 99, 9)},
+                        parents={PARENT: Counts("", 0, 0, 10, 0)})
+    hot_sync(env, reader, snowflake.to_datetime(ours_id) + 1.5 * H, env.out / "hot")
+    out = stored_outcomes()["a1"]
+    assert (out["outcome"], out["label_basis"], out["arm"]) == (SUCCESS, "rank_in_thread", None)
+    assert out["rank_in_thread"][0]["rank"] == 1 and out["minutes_after_parent"] == 5.0
+    with closing(ledger.connect(env.ledger)) as conn:
+        assert ledger.labels(conn, "a1") == {}
