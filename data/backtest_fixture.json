@@ -1,0 +1,413 @@
+{
+ "_note": "SYNTHETIC backtest fixture: invented posts from fictional accounts with hand-assigned, plausible relative engagement (incl. deliberate noise: a strong post that underperformed, bait that drew replies, a media-driven post). NOT real X data; validates plumbing and gross sanity only. Real backtest data: data/devtools_virality_30d.csv.",
+ "data": [
+  {
+   "id": "synthetic-001",
+   "text": "two agents both \"fixed\" the flaky auth test last night. one deleted the test. the other deleted the retry. CI is green. i am scared.",
+   "user": {
+    "username": "mergeconflict_mia",
+    "followers_count": 4200
+   },
+   "public_metrics": {
+    "like_count": 410,
+    "reply_count": 38,
+    "retweet_count": 41,
+    "quote_count": 9,
+    "impression_count": 21000
+   },
+   "synthetic": true,
+   "_why_engagement": "sharp, specific, relatable pain; strong"
+  },
+  {
+   "id": "synthetic-002",
+   "text": "Excited to share that we've been thinking a lot about the future of AI-assisted development and collaboration. More soon!",
+   "user": {
+    "username": "mergeconflict_mia",
+    "followers_count": 4200
+   },
+   "public_metrics": {
+    "like_count": 14,
+    "reply_count": 1,
+    "retweet_count": 0,
+    "quote_count": 0,
+    "impression_count": 6800
+   },
+   "synthetic": true,
+   "_why_engagement": "vague teaser, corporate"
+  },
+  {
+   "id": "synthetic-003",
+   "text": "tip: give each agent its own git worktree AND its own dev server port. otherwise agent #2 kills agent #1's server and both spend 20 minutes debugging the wrong thing.",
+   "user": {
+    "username": "mergeconflict_mia",
+    "followers_count": 4200
+   },
+   "public_metrics": {
+    "like_count": 260,
+    "reply_count": 22,
+    "retweet_count": 48,
+    "quote_count": 4,
+    "impression_count": 15500
+   },
+   "synthetic": true,
+   "_why_engagement": "concrete tip; strong saves/reposts"
+  },
+  {
+   "id": "synthetic-004",
+   "text": "what's your parallel agent setup right now? how many sessions, what tools, worktrees or not?",
+   "user": {
+    "username": "mergeconflict_mia",
+    "followers_count": 4200
+   },
+   "public_metrics": {
+    "like_count": 90,
+    "reply_count": 71,
+    "retweet_count": 3,
+    "quote_count": 1,
+    "impression_count": 12000
+   },
+   "synthetic": true,
+   "_why_engagement": "question bait that actually draws replies; medium"
+  },
+  {
+   "id": "synthetic-005",
+   "text": "🚀 Introducing AgentFlow 2.0 — the #1 platform for AI agent orchestration! 10x your productivity. Link in bio. #AI #DevTools #Agents",
+   "user": {
+    "username": "devtool_dan",
+    "followers_count": 18000
+   },
+   "public_metrics": {
+    "like_count": 45,
+    "reply_count": 6,
+    "retweet_count": 7,
+    "quote_count": 1,
+    "impression_count": 30000
+   },
+   "synthetic": true,
+   "_why_engagement": "hype ad copy; weak"
+  },
+  {
+   "id": "synthetic-006",
+   "text": "we read 400 agent transcripts from our own team. the most common failure wasn't bad code. it was the agent confidently editing a file another agent had already rewritten.",
+   "user": {
+    "username": "devtool_dan",
+    "followers_count": 18000
+   },
+   "public_metrics": {
+    "like_count": 620,
+    "reply_count": 55,
+    "retweet_count": 97,
+    "quote_count": 21,
+    "impression_count": 44000
+   },
+   "synthetic": true,
+   "_why_engagement": "specific first-party finding; strong"
+  },
+  {
+   "id": "synthetic-007",
+   "text": "AI agents are changing how we build software. The future is collaborative.",
+   "user": {
+    "username": "devtool_dan",
+    "followers_count": 18000
+   },
+   "public_metrics": {
+    "like_count": 11,
+    "reply_count": 0,
+    "retweet_count": 1,
+    "quote_count": 0,
+    "impression_count": 9000
+   },
+   "synthetic": true,
+   "_why_engagement": "generic platitude"
+  },
+  {
+   "id": "synthetic-008",
+   "text": "Great thread! Totally agree with all of this.",
+   "user": {
+    "username": "devtool_dan",
+    "followers_count": 18000
+   },
+   "public_metrics": {
+    "like_count": 2,
+    "reply_count": 0,
+    "retweet_count": 0,
+    "quote_count": 0,
+    "impression_count": 3000
+   },
+   "synthetic": true,
+   "_why_engagement": "filler"
+  },
+  {
+   "id": "synthetic-009",
+   "text": "my code review queue after giving everyone on the team claude code: 📈📈📈\nmy will to live: 📉",
+   "user": {
+    "username": "ship_it_sasha",
+    "followers_count": 900
+   },
+   "public_metrics": {
+    "like_count": 160,
+    "reply_count": 14,
+    "retweet_count": 12,
+    "quote_count": 3,
+    "impression_count": 7400
+   },
+   "synthetic": true,
+   "_why_engagement": "short relatable joke; good for a tiny account"
+  },
+  {
+   "id": "synthetic-010",
+   "text": "Thread 🧵 on why multi-agent coding is the future (1/14): Over the past several months I have been exploring a variety of approaches to orchestrating multiple autonomous coding agents across distributed teams, and I want to share some lessons.",
+   "user": {
+    "username": "ship_it_sasha",
+    "followers_count": 900
+   },
+   "public_metrics": {
+    "like_count": 9,
+    "reply_count": 2,
+    "retweet_count": 1,
+    "quote_count": 0,
+    "impression_count": 2600
+   },
+   "synthetic": true,
+   "_why_engagement": "long, slow hook; weak"
+  },
+  {
+   "id": "synthetic-011",
+   "text": "hot take: \"agent orchestration\" is mostly a fancy word for a bash loop and a prayer",
+   "user": {
+    "username": "ship_it_sasha",
+    "followers_count": 900
+   },
+   "public_metrics": {
+    "like_count": 85,
+    "reply_count": 33,
+    "retweet_count": 6,
+    "quote_count": 5,
+    "impression_count": 6100
+   },
+   "synthetic": true,
+   "_why_engagement": "spicy one-liner; replies; medium-strong"
+  },
+  {
+   "id": "synthetic-012",
+   "text": "shipped a tiny MCP server today that tells my agent which files my teammate's agent has open. 40 lines. already saved me one very dumb merge.",
+   "user": {
+    "username": "ship_it_sasha",
+    "followers_count": 900
+   },
+   "public_metrics": {
+    "like_count": 98,
+    "reply_count": 11,
+    "retweet_count": 14,
+    "quote_count": 2,
+    "impression_count": 5200
+   },
+   "synthetic": true,
+   "_why_engagement": "concrete build-in-public; good"
+  },
+  {
+   "id": "synthetic-013",
+   "text": "RT if you love AI coding agents! 🔥🔥",
+   "user": {
+    "username": "parallelpete",
+    "followers_count": 61000
+   },
+   "public_metrics": {
+    "like_count": 120,
+    "reply_count": 9,
+    "retweet_count": 30,
+    "quote_count": 0,
+    "impression_count": 52000
+   },
+   "synthetic": true,
+   "_why_engagement": "engagement bait; low rate on a big account"
+  },
+  {
+   "id": "synthetic-014",
+   "text": "the real cost of 6 parallel agents isn't tokens. it's the 45 minutes you spend at 5pm figuring out which of them touched the migration file.",
+   "user": {
+    "username": "parallelpete",
+    "followers_count": 61000
+   },
+   "public_metrics": {
+    "like_count": 1900,
+    "reply_count": 140,
+    "retweet_count": 260,
+    "quote_count": 44,
+    "impression_count": 120000
+   },
+   "synthetic": true,
+   "_why_engagement": "specific, relatable; strong"
+  },
+  {
+   "id": "synthetic-015",
+   "text": "We are pleased to announce a strategic partnership that will deliver best-in-class AI capabilities to developers worldwide.",
+   "user": {
+    "username": "parallelpete",
+    "followers_count": 61000
+   },
+   "public_metrics": {
+    "like_count": 60,
+    "reply_count": 4,
+    "retweet_count": 6,
+    "quote_count": 1,
+    "impression_count": 40000
+   },
+   "synthetic": true,
+   "_why_engagement": "press-release voice"
+  },
+  {
+   "id": "synthetic-016",
+   "text": "claude code subagents are great until two of them decide to \"clean up\" the same utils.ts",
+   "user": {
+    "username": "parallelpete",
+    "followers_count": 61000
+   },
+   "public_metrics": {
+    "like_count": 980,
+    "reply_count": 61,
+    "retweet_count": 70,
+    "quote_count": 12,
+    "impression_count": 88000
+   },
+   "synthetic": true,
+   "_why_engagement": "good relatable joke, but posted 2am per notes: slightly under its quality"
+  },
+  {
+   "id": "synthetic-017",
+   "text": "Our benchmarks show our agent is 47% faster than every competitor. Trust us.",
+   "user": {
+    "username": "parallelpete",
+    "followers_count": 61000
+   },
+   "public_metrics": {
+    "like_count": 70,
+    "reply_count": 38,
+    "retweet_count": 4,
+    "quote_count": 9,
+    "impression_count": 47000
+   },
+   "synthetic": true,
+   "_why_engagement": "unverifiable stat; quotes are dunks"
+  },
+  {
+   "id": "synthetic-018",
+   "text": "PSA: `git worktree add ../feat-x feat-x` then point a second agent at it. separate checkout, shared history. the rest of your team still has no idea what either agent is doing though.",
+   "user": {
+    "username": "worktree_wren",
+    "followers_count": 2300
+   },
+   "public_metrics": {
+    "like_count": 120,
+    "reply_count": 9,
+    "retweet_count": 21,
+    "quote_count": 2,
+    "impression_count": 9800
+   },
+   "synthetic": true,
+   "_why_engagement": "concrete tip + insight; good"
+  },
+  {
+   "id": "synthetic-019",
+   "text": "Check out our new product! coordinate your agents today -> link",
+   "user": {
+    "username": "worktree_wren",
+    "followers_count": 2300
+   },
+   "public_metrics": {
+    "like_count": 4,
+    "reply_count": 0,
+    "retweet_count": 0,
+    "quote_count": 0,
+    "impression_count": 3100
+   },
+   "synthetic": true,
+   "_why_engagement": "bare plug"
+  },
+  {
+   "id": "synthetic-020",
+   "text": "handoff note my agent left for my teammate's agent: \"refactored auth, should be fine\". it was not fine.",
+   "user": {
+    "username": "worktree_wren",
+    "followers_count": 2300
+   },
+   "public_metrics": {
+    "like_count": 150,
+    "reply_count": 17,
+    "retweet_count": 13,
+    "quote_count": 4,
+    "impression_count": 8800
+   },
+   "synthetic": true,
+   "_why_engagement": "funny + specific; strong for size"
+  },
+  {
+   "id": "synthetic-021",
+   "text": "Some thoughts on code review in the age of AI. Review is important. Agents write code. We need to review it. Let's discuss.",
+   "user": {
+    "username": "worktree_wren",
+    "followers_count": 2300
+   },
+   "public_metrics": {
+    "like_count": 6,
+    "reply_count": 3,
+    "retweet_count": 0,
+    "quote_count": 0,
+    "impression_count": 2900
+   },
+   "synthetic": true,
+   "_why_engagement": "empty"
+  },
+  {
+   "id": "synthetic-022",
+   "text": "honestly the best agent workflow tool is still a shared slack channel where everyone yells \"don't touch payments.ts\"",
+   "user": {
+    "username": "cursorcarl",
+    "followers_count": 7600
+   },
+   "public_metrics": {
+    "like_count": 310,
+    "reply_count": 44,
+    "retweet_count": 30,
+    "quote_count": 6,
+    "impression_count": 26000
+   },
+   "synthetic": true,
+   "_why_engagement": "relatable joke; strong, but a great post can still underperform"
+  },
+  {
+   "id": "synthetic-023",
+   "text": "proposal: every agent's context should start with a manifest of files other agents changed in the last hour. path, agent, owner, one-line summary. cheap to build, kills a whole class of conflicts.",
+   "user": {
+    "username": "cursorcarl",
+    "followers_count": 7600
+   },
+   "public_metrics": {
+    "like_count": 40,
+    "reply_count": 4,
+    "retweet_count": 8,
+    "quote_count": 0,
+    "impression_count": 6000
+   },
+   "synthetic": true,
+   "_why_engagement": "high-quality but dry/abstract; posted during a big launch day; underperformed (noise)"
+  },
+  {
+   "id": "synthetic-024",
+   "text": "new video: I tried running 12 coding agents on one repo for a week. here's what broke (spoiler: everything, in the funniest order)",
+   "user": {
+    "username": "cursorcarl",
+    "followers_count": 7600
+   },
+   "public_metrics": {
+    "like_count": 330,
+    "reply_count": 29,
+    "retweet_count": 51,
+    "quote_count": 8,
+    "impression_count": 31000
+   },
+   "synthetic": true,
+   "_why_engagement": "video post; media drives part of it"
+  }
+ ]
+}
