@@ -106,5 +106,10 @@ def main() -> None:
 
     register_iterate(sub)
 
+    # Watcher (sam/watch): `python -m harness watch`, plus `watch status` and `watch stop`.
+    from harness.watcher.cli import add_commands as add_watch_commands
+
+    add_watch_commands(sub)
+
     args = parser.parse_args()
     args.func(args)
