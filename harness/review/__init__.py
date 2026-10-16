@@ -36,6 +36,10 @@ class Handler(BaseHTTPRequestHandler):
         self._send(code, json.dumps(data).encode())
 
     def do_GET(self) -> None:
+        from harness.review import console  # observability console at /console, kept out of this page
+
+        if hit := console.get(self.path):
+            return self._send(*hit)
         if self.path == "/":
             return self._send(200, INDEX.read_bytes(), "text/html; charset=utf-8")
         if self.path == "/api/runs":
@@ -47,6 +51,15 @@ class Handler(BaseHTTPRequestHandler):
         self._json({"error": "not found"}, 404)
 
     def do_POST(self) -> None:
+        from harness.review import console
+
+        if self.path.startswith("/api/console/"):
+            # JSON only: a cross-site form can't send it without a CORS preflight, so other pages can't start runs.
+            if self.headers.get("Content-Type", "").split(";")[0] != "application/json":
+                return self._json({"error": "expected application/json"}, 415)
+            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            code, data = console.post(self.path, body) or (404, {"error": "not found"})
+            return self._json(data, code)
         m = re.fullmatch(r"/api/actions/(\w+)/review", self.path)
         if not m:
             return self._json({"error": "not found"}, 404)
