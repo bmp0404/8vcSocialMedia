@@ -188,3 +188,25 @@ def test_orient_mock_ranks_by_relevance_times_measured_velocity_and_hides_own_po
 @pytest.mark.parametrize("ratio, expected", [(1.0, 0.0), (0.5, 0.0), (2.0, 0.5), (4.0, 1.0), (16.0, 1.0)])
 def test_attention_heat_from_spike_ratio(ratio, expected):
     assert o.signal_heat(sig("attention", 20, spike_ratio=ratio), NOW) == pytest.approx(expected)
+
+
+def test_replay_now_keeps_wall_clock_for_live_signals():
+    from harness.sources.knobs import ObserveKnobs
+
+    signals = [sig("news", 2), sig("news", 100)]
+    assert o.replay_now(signals, NOW, ObserveKnobs()) == NOW
+
+
+def test_replay_now_moves_to_newest_signal_when_all_are_stale(capsys):
+    from harness.sources.knobs import ObserveKnobs
+
+    signals = [sig("news", 24 * 30), sig("news", 24 * 31), Signal(source="sample", text="no time")]
+    got = o.replay_now(signals, NOW, ObserveKnobs())
+    assert got == NOW - timedelta(days=30)
+    assert "Pass now= to orient() for a replay" in capsys.readouterr().out
+
+
+def test_orient_on_old_signals_without_now_keeps_them():
+    signals = [sig("news", 24 * 30, url="https://n/a"), sig("news", 24 * 30 + 1, url="https://n/b")]
+    narratives = o.orient(MockLLM(), "m", signals, top=5)
+    assert {u for n in narratives for u in n.signal_urls} == {"https://n/a", "https://n/b"}

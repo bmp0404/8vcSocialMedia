@@ -269,6 +269,19 @@ def uncited_targets(
     )
 
 
+def replay_now(signals: list[Signal], wall_clock: datetime, k: ObserveKnobs) -> datetime:
+    """`wall_clock`, unless every timestamped signal is past the staleness cut; then the newest signal's time."""
+    times = [t for t in (_when(s) for s in signals) if t is not None and t <= wall_clock]
+    if not times or (wall_clock - max(times)).total_seconds() / 3600 <= k.max_signal_age_h:
+        return wall_clock
+    newest = max(times)
+    print(
+        f"[orient] every signal is older than {k.max_signal_age_h:.0f}h; measuring ages from the newest one "
+        f"({newest:%Y-%m-%dT%H:%MZ}). Pass now= to orient() for a replay."
+    )
+    return newest
+
+
 def orient(
     llm: LLM,
     mission: str,
@@ -277,9 +290,16 @@ def orient(
     now: datetime | None = None,
     knobs: ObserveKnobs | None = None,
 ) -> list[Narrative]:
-    """Narratives ranked by relevance x velocity. `knobs` defaults to harness.sources.knobs.current()."""
+    """Narratives ranked by relevance x velocity.
+
+    `now` is the moment ages are measured from. Leave it out for a live run. For a replay or
+    backtest, pass the replay cutoff: ages, velocity and the staleness cut all depend on it. If
+    `now` is left out and every timestamped signal is older than `max_signal_age_h`, orient
+    assumes a replay, measures from the newest signal's time instead, and says so, rather than
+    dropping everything as stale. `knobs` defaults to harness.sources.knobs.current().
+    """
     k = knobs or current()
-    now = now or now_utc()
+    now = now or replay_now(signals, now_utc(), k)
     ordered, stale = order_signals(signals, now, k)
     chosen, payload, dropped = fit_payload(ordered, now, k)
     print(f"[orient] sending {len(chosen)} of {len(signals)} signals ({len(payload):,} chars)")
