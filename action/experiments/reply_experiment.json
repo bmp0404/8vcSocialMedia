@@ -4,8 +4,22 @@
   "continuation": "claude-opus-4-5-20251101",
   "selection": "claude-sonnet-5-5",
   "rubric_selection": "claude-sonnet-5-5",
-  "judge": "claude-fable-5-dd-los-6.5-tpg",
-  "judge2": "claude-fable-5-dd-artsa-6-tpg"
+  "judges": {
+   "claude-fable-5-dd-los-6.5-tpg": {
+    "requested": "claude-fable-5-dd-los-6.5-tpg",
+    "gateway_reports": "gpt-5.6-sol"
+   },
+   "claude-fable-5-dd-artsa-6-tpg": {
+    "requested": "claude-fable-5-dd-artsa-6-tpg",
+    "gateway_reports": "gpt-6-astra"
+   },
+   "claude-opus-5-5": {
+    "requested": "claude-opus-5-5",
+    "gateway_reports": "claude-opus-5-5"
+   }
+  },
+  "note": "gateway_reports is the response's model field, probed 2026-10-15; calls made before that probe didn't record it. Nothing verifies which model serves an alias.",
+  "served_models_recorded": {}
  },
  "test_threads": [
   "https://x.com/CaitlinClark22/status/2099247457473339402",
@@ -40,6 +54,12 @@
     "n": 19,
     "rate": 1.0
    },
+   "lineup_detected_opus": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 38,
     "n": 38,
@@ -51,9 +71,9 @@
     "rate": 0.211
    },
    "gate_pass": {
-    "k": 2,
+    "k": 19,
     "n": 19,
-    "rate": 0.105
+    "rate": 1.0
    },
    "median_chars": 203,
    "errors": 0,
@@ -70,6 +90,12 @@
     "n": 19,
     "rate": 1.0
    },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 34,
     "n": 38,
@@ -100,6 +126,12 @@
     "n": 19,
     "rate": 1.0
    },
+   "lineup_detected_opus": {
+    "k": 19,
+    "n": 19,
+    "rate": 1.0
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 31,
     "n": 38,
@@ -130,6 +162,12 @@
     "n": 19,
     "rate": 0.895
    },
+   "lineup_detected_opus": {
+    "k": 17,
+    "n": 19,
+    "rate": 0.895
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 33,
     "n": 38,
@@ -141,9 +179,9 @@
     "rate": 0.316
    },
    "gate_pass": {
-    "k": 8,
+    "k": 16,
     "n": 19,
-    "rate": 0.421
+    "rate": 0.842
    },
    "median_chars": 111,
    "errors": 0,
@@ -160,6 +198,12 @@
     "n": 19,
     "rate": 0.947
    },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 26,
     "n": 38,
@@ -190,6 +234,12 @@
     "n": 19,
     "rate": 0.947
    },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 27,
     "n": 38,
@@ -212,32 +262,110 @@
   "bestof_rubric": {
    "lineup_detected": {
     "k": 8,
-    "n": 11,
-    "rate": 0.727
+    "n": 13,
+    "rate": 0.615
    },
    "lineup_detected_judge2": {
-    "k": 11,
-    "n": 11,
+    "k": 13,
+    "n": 13,
     "rate": 1.0
    },
+   "lineup_detected_opus": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
-    "k": 19,
-    "n": 22,
-    "rate": 0.864
+    "k": 21,
+    "n": 26,
+    "rate": 0.808
    },
    "beat_top_human_reply": {
-    "k": 6,
-    "n": 11,
-    "rate": 0.545
+    "k": 7,
+    "n": 13,
+    "rate": 0.538
    },
    "gate_pass": {
-    "k": 11,
-    "n": 11,
+    "k": 13,
+    "n": 13,
     "rate": 1.0
    },
-   "median_chars": 69,
-   "errors": 8,
+   "median_chars": 70,
+   "errors": 6,
    "pooled_detection_vs_human_raw_fisher_p": 0.0
+  },
+  "cont_real": {
+   "lineup_detected": {
+    "k": 8,
+    "n": 19,
+    "rate": 0.421
+   },
+   "lineup_detected_judge2": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "lineup_detected_opus": {
+    "k": 6,
+    "n": 19,
+    "rate": 0.316
+   },
+   "abstained": 0,
+   "lineup_detected_both_judges_pooled": {
+    "k": 14,
+    "n": 38,
+    "rate": 0.368
+   },
+   "beat_top_human_reply": {
+    "k": 2,
+    "n": 19,
+    "rate": 0.105
+   },
+   "gate_pass": {
+    "k": 16,
+    "n": 19,
+    "rate": 0.842
+   },
+   "median_chars": 51,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.4596
+  },
+  "pipeline": {
+   "lineup_detected": {
+    "k": 6,
+    "n": 18,
+    "rate": 0.333
+   },
+   "lineup_detected_judge2": {
+    "k": 5,
+    "n": 18,
+    "rate": 0.278
+   },
+   "lineup_detected_opus": {
+    "k": 4,
+    "n": 18,
+    "rate": 0.222
+   },
+   "abstained": 1,
+   "lineup_detected_both_judges_pooled": {
+    "k": 11,
+    "n": 36,
+    "rate": 0.306
+   },
+   "beat_top_human_reply": {
+    "k": 4,
+    "n": 18,
+    "rate": 0.222
+   },
+   "gate_pass": {
+    "k": 18,
+    "n": 18,
+    "rate": 1.0
+   },
+   "median_chars": 30.5,
+   "errors": 0,
+   "pooled_detection_vs_human_raw_fisher_p": 0.798
   },
   "human_raw": {
    "lineup_detected": {
@@ -250,6 +378,12 @@
     "n": 19,
     "rate": 0.211
    },
+   "lineup_detected_opus": {
+    "k": 4,
+    "n": 19,
+    "rate": 0.211
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 10,
     "n": 38,
@@ -261,9 +395,9 @@
     "rate": 0.316
    },
    "gate_pass": {
-    "k": 14,
+    "k": 16,
     "n": 19,
-    "rate": 0.737
+    "rate": 0.842
    },
    "median_chars": 46,
    "errors": 0,
@@ -280,6 +414,12 @@
     "n": 19,
     "rate": 1.0
    },
+   "lineup_detected_opus": {
+    "k": 18,
+    "n": 19,
+    "rate": 0.947
+   },
+   "abstained": 0,
    "lineup_detected_both_judges_pooled": {
     "k": 38,
     "n": 38,
@@ -291,16 +431,17 @@
     "rate": 0.421
    },
    "gate_pass": {
-    "k": 11,
+    "k": 15,
     "n": 19,
-    "rate": 0.579
+    "rate": 0.789
    },
    "median_chars": 103,
    "errors": 0,
    "pooled_detection_vs_human_raw_fisher_p": 0.0
   }
  },
- "judge_calibration": {
+ "judge_calibration_most_vs_least_liked": {
+  "judge": "claude-fable-5-dd-los-6.5-tpg",
   "picked_the_more_liked_real_reply": {
    "k": 31,
    "n": 40,
@@ -312,5 +453,29 @@
    "rate": 0.475
   },
   "pairs": 20
+ },
+ "adjacent_top5_calibration_claude-fable-5-dd-los-6.5-tpg": {
+  "picked_more_liked": {
+   "k": 76,
+   "n": 138,
+   "rate": 0.551
+  },
+  "consistent_in_both_orders": {
+   "k": 32,
+   "n": 69,
+   "rate": 0.464
+  }
+ },
+ "adjacent_top5_calibration_claude-opus-5-5": {
+  "picked_more_liked": {
+   "k": 78,
+   "n": 138,
+   "rate": 0.565
+  },
+  "consistent_in_both_orders": {
+   "k": 34,
+   "n": 69,
+   "rate": 0.493
+  }
  }
 }

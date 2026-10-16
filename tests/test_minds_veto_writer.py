@@ -65,8 +65,9 @@ def test_mock_judge_passes():
 
 
 def test_judge_model_is_opus_for_the_gateway(monkeypatch):
+    llm = fake_anthropic("x")
     monkeypatch.setattr(AnthropicLLM, "__init__", lambda self, model: setattr(self, "model", model))
-    assert veto._judge_llm(AnthropicLLM("claude-sonnet-5-5"), CFG).model == "claude-opus-5-5"
+    assert veto._judge_llm(llm, CFG).model == "claude-opus-5-5"
 
 
 # ---- writer
@@ -164,3 +165,59 @@ def test_config_round_trips_and_rejects_unknown_fields(tmp_path, monkeypatch):
     path.write_text(json.dumps({"reply_max_age_minutes": 45}), encoding="utf-8")
     monkeypatch.setenv("HARNESS_ACTION_CONFIG", str(path))
     assert settings.load().reply_max_age_minutes == 45
+
+
+# ---- routing survives wrappers (the tracing console wraps the LLM in a proxy)
+
+
+class Proxy:
+    """Forwards attributes to the wrapped LLM, the way harness/trace.py's TracingLLM does."""
+
+    def __init__(self, inner):
+        self.inner = inner
+
+    def __getattr__(self, name):
+        return getattr(self.inner, name)
+
+    def complete_json(self, system, prompt, mock=None):
+        return self.inner.complete_json(system, prompt, mock=mock)
+
+
+class Opaque:
+    """A wrapper that forwards nothing but calls. Routing can't see a client through it."""
+
+    def __init__(self, inner):
+        self._inner = inner
+
+    def complete_json(self, system, prompt, mock=None):
+        return self._inner.complete_json(system, prompt, mock=mock)
+
+
+def test_continuation_through_a_proxy_still_uses_opus_4_5():
+    llm = fake_anthropic("loud for real")
+    assert writer.continue_page(Proxy(llm), "PAGE", "kaymarie", CFG) == "loud for real"
+    assert llm.client.kwargs[0]["model"] == "claude-opus-4-5-20251101"
+
+
+def test_veto_through_a_proxy_still_uses_opus_5_5(monkeypatch):
+    llm = fake_anthropic("x")
+    monkeypatch.setattr(AnthropicLLM, "__init__", lambda self, model: setattr(self, "model", model))
+    assert veto._judge_llm(Proxy(llm), CFG).model == "claude-opus-5-5"
+
+
+def test_mock_through_a_proxy_is_still_mock():
+    from harness.minds import routing
+
+    assert routing.is_mock(Proxy(MockLLM())) and routing.is_mock(Proxy(Proxy(MockLLM())))
+    assert writer.continue_page(Proxy(MockLLM()), "PAGE", "h", CFG) == "mock continuation 1"
+
+
+def test_fallback_to_the_run_model_is_loud(capsys):
+    from harness.minds import routing
+
+    routing._warned.clear()
+    opaque = Opaque(fake_anthropic("x"))
+    assert veto._judge_llm(opaque, CFG) is opaque
+    assert "the veto judge wants claude-opus-5-5" in capsys.readouterr().out
+    with pytest.raises(writer.WriterUnavailable):
+        writer.continue_page(opaque, "PAGE", "h", CFG)
