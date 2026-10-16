@@ -1,0 +1,6 @@
+{
+  "text": "Our CLI now caches unchanged build steps. See which steps ran, which were reused, and why in the build log.",
+  "mission": "Explain developer tooling improvements with concrete, useful examples.",
+  "context": "Product release notes: the CLI caches unchanged build steps. The build log identifies executed and reused steps and explains cache decisions. No speed benchmarks are available.",
+  "lane": "post"
+}
