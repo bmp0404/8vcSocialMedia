@@ -28,12 +28,15 @@ def score(source="threads", n=30, ci=(0.55, 0.7), chance=0.5, ids="a"):
 
 
 @pytest.mark.parametrize("scores, status, says", [
-    ({}, GATES, "fewer than 20"),
-    ({"threads": score(n=MIN_N - 1, ci=(0.3, 0.9))}, GATES, "fewer than 20"),
+    ({}, GATES, "no source with 20"),
+    ({"threads": score(n=MIN_N - 1, ci=(0.3, 0.9))}, GATES, "no source with 20"),
     ({"threads": score(n=MIN_N, ci=(0.45, 0.6))}, REPORT_ONLY, "includes chance"),
     ({"threads": score(n=25, ci=(0.55, 0.7))}, GATES, "above chance"),
     ({"threads": score(n=25, ci=(0.30, 0.45))}, REPORT_ONLY, "below chance"),
-    ({"threads": score(n=25, ci=None)}, REPORT_ONLY, "undefined"),
+    ({"threads": score(n=25, ci=None)}, GATES, "can't judge"),
+    # A screen passes every shipped _sgu_ reply, so _sgu_ can't judge it; the threads decide.
+    ({"sgu": score("sgu", 25, None, 0.0), "threads": score(n=30, ci=(0.6, 0.8))}, GATES, "threads"),
+    ({"sgu": score("sgu", 25, None, 0.0), "threads": score(n=30, ci=(0.4, 0.55))}, REPORT_ONLY, "threads"),
     # Real _sgu_ results decide once they reach 20, whatever the threads say.
     ({"sgu": score("sgu", 20, (-0.1, 0.3), 0.0), "threads": score(n=50, ci=(0.6, 0.7))}, REPORT_ONLY, "sgu"),
     ({"sgu": score("sgu", 20, (0.1, 0.5), 0.0), "threads": score(n=50, ci=(0.4, 0.55))}, GATES, "sgu"),
@@ -173,38 +176,120 @@ def _ctx(tmp_path, budget=1000, respond=None):
     return scorers.Ctx(llm_for, meter, tmp_path / "cache", log=lambda m: None), meter
 
 
-def test_the_gate_credits_discordant_pairs_and_reports_its_pass_rate(tmp_path):
-    # The most-liked reply passes; the em dash and the hashtag stack fail. 1-like vs 0-like isn't a pair.
-    texts = ["faster builds are the whole pitch for me", "this is great — truly a new era", "#ship #it #now #go"]
-    ev = _evidence(tmp_path, [texts] * 3, [20, 1, 0])
+class FixedLLM:
+    """A model that answers every call with `answer` (or raises it), counting calls; it ignores mock=."""
+
+    is_mock = False
+
+    def __init__(self, answer, meter=None):
+        self.answer, self.calls, self.meter = answer, 0, meter
+
+    def complete_json(self, system, prompt, mock=None):
+        if self.meter is not None:
+            self.meter.reserve("test")
+        self.calls += 1
+        if isinstance(self.answer, Exception):
+            raise self.answer
+        return self.answer(prompt) if callable(self.answer) else self.answer
+
+
+def _fixed_ctx(tmp_path, llm, meter=None):
+    return scorers.Ctx(lambda model, name: llm, meter or Meter(1000), tmp_path / "cache", log=lambda m: None)
+
+
+def test_the_gate_credits_only_discordant_pairs_and_reports_its_pass_rate(tmp_path):
+    # Likes 20, 9, 1, 0, 2: the 20 and 9 replies and the 2-like one pass; the em dash and the hashtag stack
+    # fail. Per thread six pairs clear the margin: four discordant (20 and 9 each beat 1 and 0, and the
+    # passing reply won each time) and two concordant (20 and 9 each beat the passing 2), which must not count.
+    texts = ["faster builds are the whole pitch for me", "preview deploys from the cli finally",
+             "this is great — truly a new era", "#ship #it #now #go", "the cli bit is what i wanted"]
+    ev = _evidence(tmp_path, [texts] * 3, [20, 9, 1, 0, 2])
+    assert len(ev.rolling) == 18
     s = scorers.SlopGate().score(ev, CUT, _ctx(tmp_path)[0])["threads"]
-    assert s.detail["pass_rate_on_real_replies"] == pytest.approx(1 / 3, abs=1e-4)
-    assert s.items == 6 and s.estimate == 1.0 and s.n == 3
+    assert s.detail["pass_rate_on_real_replies"] == pytest.approx(0.6)
+    assert s.detail["discordant_pairs"] == 12 and s.items == 12 and s.estimate == 1.0 and s.n == 3
 
 
-def test_llm_verdicts_are_cached_and_a_spent_budget_defers_instead_of_abstaining(tmp_path):
+def test_the_lane_veto_caches_answers_and_defers_when_the_budget_runs_out(tmp_path):
     texts = ["faster builds are the whole pitch for me", "preview deploys from the cli finally", "nice work team here"]
     ev = _evidence(tmp_path, [texts] * 3, [20, 1, 0])
-    cut = CUT
     ctx, meter = _ctx(tmp_path, budget=2)  # one thread's two veto orders, then the budget is gone
-    s = scorers.ActionVeto().score(ev, cut, ctx)["threads"]
+    s = scorers.LaneVeto().score(ev, CUT, ctx)["threads"]
     # Each thread has three replies in pairs (20 beats 1 and 0): one thread judged, two deferred.
     assert meter.calls == 2 and s.detail["deferred"] == 6 and s.detail["replies_judged"] == 3
     ctx2, meter2 = _ctx(tmp_path, budget=100)
-    s2 = scorers.ActionVeto().score(ev, cut, ctx2)["threads"]
+    s2 = scorers.LaneVeto().score(ev, CUT, ctx2)["threads"]
     assert meter2.calls == 4 and s2.detail["deferred"] == 0 and s2.detail["replies_judged"] == 9
     ctx3, meter3 = _ctx(tmp_path, budget=100)
-    scorers.ActionVeto().score(ev, cut, ctx3)
+    scorers.LaneVeto().score(ev, CUT, ctx3)
     assert meter3.calls == 0  # every verdict came from the cache
 
 
-def test_the_lineup_detector_pairs_the_named_reply_with_the_others(tmp_path):
+def test_the_action_veto_judges_one_reply_per_call_and_never_caches_a_failed_call(tmp_path):
+    texts = ["faster builds are the whole pitch for me", "preview deploys from the cli finally", "nice work team here"]
+    ev = _evidence(tmp_path, [texts], [20, 1, 0])
+    down = FixedLLM(RuntimeError("HTTP 429 cooling down"))
+    s = scorers.ActionVeto().score(ev, CUT, _fixed_ctx(tmp_path, down))["threads"]
+    assert down.calls == 3 and s.detail["deferred"] == 3 and s.detail["replies_judged"] == 0
+    # The most-liked reply passes, the others are vetoed: every pair is discordant and the screen is right.
+    up = FixedLLM(lambda prompt: {"veto": "faster builds" not in prompt.split("DRAFT REPLY:")[1]})
+    s = scorers.ActionVeto().score(ev, CUT, _fixed_ctx(tmp_path, up))["threads"]
+    assert up.calls == 3 and s.estimate == 1.0 and s.items == 2 and s.coverage == 1.0
+    assert scorers.ActionVeto().score(ev, CUT, _fixed_ctx(tmp_path, FixedLLM({})))["threads"].items == 2  # cached
+
+
+def test_an_unusable_veto_answer_is_an_abstention_that_counts_as_vetoed(tmp_path):
+    texts = ["faster builds are the whole pitch for me", "preview deploys from the cli finally", "nice work team here"]
+    ev = _evidence(tmp_path, [texts], [20, 1, 0])
+    vague = FixedLLM(lambda prompt: {"veto": "maybe"} if "faster builds" in prompt.split("DRAFT REPLY:")[1]
+                     else {"veto": False})
+    s = scorers.ActionVeto().score(ev, CUT, _fixed_ctx(tmp_path, vague))["threads"]
+    assert s.estimate == 0.0 and s.coverage == pytest.approx(2 / 3)  # the winner abstained, so it "failed"
+
+
+def test_the_lineup_detector_credits_the_named_reply_losing(tmp_path):
     texts = [f"reply number {i} with words" for i in range(6)]
-    ev = _evidence(tmp_path, [texts], [30, 12, 6, 3, 1, 0])
-    ctx, meter = _ctx(tmp_path, respond=lambda s, p: {"ai_reply": 1})
-    s = scorers.LineupDetector().score(ev, CUT, ctx)["threads"]
-    assert meter.calls == 1 and s.detail["lineups_named"] == 1
-    assert s.items == 4  # the named reply against each of the other four, none tied in likes
+    likes = [30, 12, 6, 3, 1, 0]
+    ev = _evidence(tmp_path, [texts], likes)
+
+    def name_least_liked(prompt):
+        shown = [line.split(". ", 1)[1] for line in prompt.split("REPLIES:\n")[1].splitlines()]
+        return {"ai_reply": 1 + min(range(5), key=lambda i: likes[int(shown[i].split()[2])])}
+
+    good = FixedLLM(name_least_liked)
+    s = scorers.LineupDetector().score(ev, CUT, _fixed_ctx(tmp_path / "good", good))["threads"]
+    assert good.calls == 1 and s.items == 4 and s.estimate == 1.0 and s.coverage == 1.0
+
+    def name_most_liked(prompt):
+        shown = [line.split(". ", 1)[1] for line in prompt.split("REPLIES:\n")[1].splitlines()]
+        return {"ai_reply": 1 + max(range(5), key=lambda i: likes[int(shown[i].split()[2])])}
+
+    s = scorers.LineupDetector().score(ev, CUT, _fixed_ctx(tmp_path / "bad", FixedLLM(name_most_liked)))["threads"]
+    assert s.estimate == 0.0
+    abstains = FixedLLM({"ai_reply": 9})  # names no reply: scored as naming the most-liked one
+    s = scorers.LineupDetector().score(ev, CUT, _fixed_ctx(tmp_path / "none", abstains))["threads"]
+    assert s.estimate == 0.0 and s.coverage == 0.0 and s.detail["lineups_named"] == 0
+
+
+def test_a_failed_lineup_call_is_retried_next_cycle_not_cached(tmp_path):
+    ev = _evidence(tmp_path, [[f"reply number {i} with words" for i in range(6)]], [30, 12, 6, 3, 1, 0])
+    s = scorers.LineupDetector().score(ev, CUT, _fixed_ctx(tmp_path, FixedLLM(TimeoutError("read timed out"))))
+    assert s["threads"].detail["deferred"] == 1 and s["threads"].detail["lineups"] == 0
+    retry = FixedLLM({"ai_reply": 2})
+    scorers.LineupDetector().score(ev, CUT, _fixed_ctx(tmp_path, retry))
+    assert retry.calls == 1
+
+
+def test_sgu_replies_before_the_cutoff_are_left_out(tmp_path):
+    ev = _evidence(tmp_path, [["a reply with words in it"] * 3], [20, 1, 0])
+    from watch_threads import sid
+
+    old = SguReply("a-old", sid(CUT - timedelta(days=1)), "p", "great point", "post", 3.0, 10, 0.9, 24, "devtools", None)
+    new = SguReply("a-new", sid(CUT + timedelta(days=1)), "p", "great point", "post", 3.0, 10, 0.4, 24, "devtools", None)
+    ev.sgu = [old, new]
+    assert [r.action_id for r in ev.sgu_after(CUT)] == ["a-new"]
+    s = scorers.SlopGate().score(ev, CUT, _ctx(tmp_path)[0])["sgu"]
+    assert s.n == 1
 
 
 def test_rescore_writes_every_instrument_and_reports_failures(tmp_path, monkeypatch):

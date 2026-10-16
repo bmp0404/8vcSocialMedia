@@ -145,9 +145,11 @@ def changelog(recs: list[dict], cfg: Config, history: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def revert_record(directory: Path, experiment_id: str, reason: str, by: str = "human") -> dict[str, Any]:
+def revert_record(directory: Path, experiment_id: str, reason: str, by: str = "human",
+                  at: str | None = None) -> dict[str, Any]:
     """A record that undoes a promoted experiment's knob changes. `by` is "human" from the CLI, "auto"
-    when a confirmation run fails."""
+    when a confirmation run or a stack check fails. `at` stamps it (default now), so a run working on a
+    simulated clock files its revert after the promotion it undoes."""
     target = next((r for r in records(directory) if r["id"] == experiment_id), None)
     if target is None:
         raise KeyError(f"no experiment {experiment_id} in {directory}")
@@ -158,7 +160,7 @@ def revert_record(directory: Path, experiment_id: str, reason: str, by: str = "h
     after = current.with_changes(undo)
     from harness.iterate.knobs import diff, readers, unified_diff
     params = diff(current, after)
-    ts = now()
+    ts = at or now()
     return {
         "schema": SCHEMA, "id": f"exp-{ts[:19].replace('-', '').replace(':', '')}-revert-{experiment_id[-6:]}",
         "run_id": None, "created_at": ts, "stage": target["stage"],

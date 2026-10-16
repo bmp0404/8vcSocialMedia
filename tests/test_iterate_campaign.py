@@ -56,6 +56,7 @@ def P(changes, why="test", kind="manual", fitness="fake", source="test"):
 
 READER = {"qualify.panel": "single_reader"}
 BATCH = {"qualify.batch": 1}
+BATCH_CHANGE = {"qualify.batch": (0, 1)}
 
 
 def BATCH_ONLY(c):
@@ -65,22 +66,39 @@ def BATCH_ONLY(c):
 # ---------------------------------------------------------------- the weekly cap
 
 
+def _rec(rid, kind, changes, status="promoted", at=T0):
+    return {"id": rid, "created_at": at.isoformat(), "proposer": {"kind": kind},
+            "change": {"params": {k: {"from": f, "to": t} for k, (f, t) in changes.items()}},
+            "decision": {"status": status, "at": at.isoformat()}}
+
+
+PANEL_ON = {"qualify.panel": ("personas", "single_reader")}
+PANEL_OFF = {"qualify.panel": ("single_reader", "personas")}
+
+
 def test_cap_is_open_with_no_promotions_and_closes_for_exactly_seven_days():
     assert campaign.weekly_cap([], T0) == campaign.Cap(True)
-    rec = {"id": "exp-a", "created_at": T0.isoformat(), "proposer": {"kind": "manual"},
-           "decision": {"status": "promoted", "at": T0.isoformat()}}
+    rec = _rec("exp-a", "manual", PANEL_ON)
     assert campaign.weekly_cap([rec], T0 + timedelta(days=6, hours=23)) == campaign.Cap(False, "exp-a", T0 + timedelta(days=7))
     assert campaign.weekly_cap([rec], T0 + timedelta(days=7)).open
     with pytest.raises(ValueError, match="timezone"):
         campaign.weekly_cap([rec], datetime(2026, 10, 20))
 
 
-def test_reverts_and_confirmations_never_close_the_window():
-    def rec(kind, status="promoted"):
-        return {"id": f"exp-{kind}", "created_at": T0.isoformat(), "proposer": {"kind": kind},
-                "decision": {"status": status, "at": T0.isoformat()}}
-    assert campaign.weekly_cap([rec("revert"), rec("confirmation"), rec("manual", "inconclusive"),
-                                rec("queue", "candidate")], T0 + timedelta(hours=1)).open
+def test_reverts_and_confirmations_of_changes_in_force_never_close_the_window():
+    early = T0 - timedelta(days=10)
+    recs = [_rec("exp-a", "manual", PANEL_ON, at=early), _rec("exp-conf", "confirmation", PANEL_ON),
+            _rec("exp-rev", "revert", PANEL_OFF, at=T0 + timedelta(minutes=1)),
+            _rec("exp-inc", "manual", BATCH_CHANGE, "inconclusive"), _rec("exp-cand", "queue", BATCH_CHANGE, "candidate")]
+    assert campaign.weekly_cap(recs, T0 + timedelta(hours=1)).open
+
+
+def test_a_confirmation_that_reapplies_a_reverted_change_counts():
+    early = T0 - timedelta(days=10)
+    recs = [_rec("exp-a", "manual", PANEL_ON, at=early), _rec("exp-rev", "revert", PANEL_OFF, at=early),
+            _rec("exp-conf", "confirmation", PANEL_ON)]
+    assert [r["id"] for r in campaign.counted_promotions(recs)] == ["exp-a", "exp-conf"]
+    assert campaign.weekly_cap(recs, T0 + timedelta(hours=1)).holder == "exp-conf"
 
 
 def test_a_second_winner_within_the_week_is_held_and_promoted_after_it(tmp_path):
@@ -106,14 +124,18 @@ def test_a_confirmation_inside_the_window_is_not_held(tmp_path):
     assert [r["decision"]["status"] for r in recs] == ["promoted"]
 
 
-def test_two_fitnesses_winning_in_one_run_promote_only_one(tmp_path):
-    fits = {"fake": Fake(), "other": Fake("other", ("qualify.batch",), BATCH_ONLY)}
-    recs = run_batch([P(READER), P(BATCH, fitness="other")], fits, provider="mock", max_calls=1000,
-                     directory=tmp_path)
-    statuses = sorted(r["decision"]["status"] for r in recs)
-    assert statuses == ["inconclusive", "promoted"]
-    loser = next(r for r in recs if r["decision"]["status"] == "inconclusive")
-    assert "one change per rolling week" in loser["decision"]["reason"]
+def test_two_fitnesses_winning_in_one_run_promote_only_the_smaller_p_value(tmp_path):
+    # "other" wins on 6 of 10 clusters, "fake" on all 10, so fake's p-value is smaller whatever the order.
+    partial = Fake("other", ("qualify.batch",), BATCH_ONLY)
+    partial.run_arm = lambda config, items, llm_for, *, seed, repeat: ArmResult(
+        values={it.id: float(BATCH_ONLY(config) and int(it.cluster[1:]) < 6) for it in items},
+        secondary={"safety": {it.id: 1.0 for it in items}, "length": {it.id: 1.0 for it in items}})
+    for order in ([P(READER), P(BATCH, fitness="other")], [P(BATCH, fitness="other"), P(READER)]):
+        d = tmp_path / str(len(list(tmp_path.iterdir())))
+        recs = run_batch(order, {"fake": Fake(), "other": partial}, provider="mock", max_calls=1000, directory=d)
+        by = {r["eval"]["fitness"]: r["decision"] for r in recs}
+        assert by["fake"]["status"] == "promoted" and by["other"]["status"] == "inconclusive"
+        assert "one change per rolling week" in by["other"]["reason"]
 
 
 # ---------------------------------------------------------------- confirmation on later items
@@ -236,3 +258,47 @@ def test_a_single_promotion_measured_on_its_own_fitness_is_not_a_stack(tmp_path)
     run_batch([P(READER)], {"fake": fake}, provider="mock", max_calls=1000, directory=tmp_path)
     champ, _ = ledger.champion(tmp_path)
     assert campaign.unmeasured(ledger.records(tmp_path), ledger.configs(tmp_path), _fit_knobs(fake), champ) == []
+
+
+def test_limit_clusters_keeps_the_earliest_or_latest_whole_clusters():
+    items = Fake().items()  # clusters c0..c9, two items each, rooted in order
+    early = campaign.limit_clusters(items, 3, earliest=True)
+    late = campaign.limit_clusters(items, 3, earliest=False)
+    assert sorted({it.cluster for it in early}) == ["c0", "c1", "c2"] and len(early) == 6
+    assert sorted({it.cluster for it in late}) == ["c7", "c8", "c9"]
+    r = campaign.Restricted(Fake(), after=T0, max_clusters=2)
+    assert sorted({it.cluster for it in r.items()}) == ["c5", "c6"]
+
+
+def test_a_guardrail_whose_instrument_is_report_only_stops_blocking(tmp_path):
+    unsafe = Fake(safety=lambda c: 0.0 if c.get("qualify.panel") == "single_reader" else 1.0)
+    (blocked,) = run_batch([P(READER)], {"fake": unsafe}, provider="mock", max_calls=1000, directory=tmp_path / "a")
+    assert blocked["decision"]["status"] == "inconclusive" and "safety" in blocked["decision"]["reason"]
+    loose = campaign.Restricted(unsafe, untrusted={"safety": "its instrument is report-only"})
+    (passed,) = run_batch([P(READER)], {"fake": loose}, provider="mock", max_calls=1000, directory=tmp_path / "b")
+    assert passed["decision"]["status"] == "promoted"
+    assert passed["eval"]["instrument"]["guardrails_dropped"] == {"safety": "its instrument is report-only"}
+    with pytest.raises(ValueError, match="no secondary metric"):
+        campaign.Restricted(unsafe, untrusted={"likes": "x"})
+
+
+def test_a_stack_check_fails_when_the_combination_fails_on_more_items(tmp_path):
+    class Flaky(Fake):
+        def run_arm(self, config, items, llm_for, *, seed, repeat):
+            res = super().run_arm(config, items, llm_for, seed=seed, repeat=repeat)
+            if config.get("qualify.batch") == 1 and config.get("qualify.panel") == "single_reader":
+                res.failures = {it.id: "crashed" for it in items[:8]}
+                for k in list(res.values)[:8]:
+                    res.values.pop(k)
+                    for m in res.secondary.values():
+                        m.pop(k)
+            return res
+
+    fake, other = Flaky(), Fake("other", ("qualify.batch",), BATCH_ONLY)
+    _stacked_ledger(tmp_path, fake)
+    champ, _ = ledger.champion(tmp_path)
+    (s,) = campaign.unmeasured(ledger.records(tmp_path), ledger.configs(tmp_path), _fit_knobs(fake, other), champ)
+    changes = {k: v["to"] for k, v in knobs.diff(s.baseline, s.champion).items()}
+    (rec,) = run_batch([P(changes, kind="stack", source=s.latest)], {"fake": fake}, provider="mock",
+                       max_calls=1000, directory=tmp_path, champion=s.baseline, mode="stack")
+    assert rec["decision"]["status"] == "stack_failed" and "failed on 8 more items" in rec["decision"]["reason"]

@@ -38,6 +38,9 @@ from harness.iterate.runner import Proposal, run_batch
 OUT_DIR = config.OUT_DIR / "improve"
 DEFAULT_EVERY_S = 6 * 3600
 REPORT_HOUR = 11  # UTC: 6 a.m. in Austin, 7 a.m. in New York
+# Which instruments each fitness measures with: a report-only primary holds the fitness, and a report-only
+# guardrail instrument stops blocking (harness/improve/instruments.py has the rule).
+RULERS = {"action_lineup": {"primary": "lineup_detector", "guardrails": {"veto_pass_rate": "action_veto"}}}
 STALE_AFTER = timedelta(days=21)  # a candidate waiting this long for confirmation items goes to "needs a person"
 MAX_PENDING = 3  # a phase that recorded this many unrun attempts stops retrying
 SCHEMA = """
@@ -90,8 +93,9 @@ class State:
         return datetime.fromisoformat(row) if row else None
 
     def last_finished(self) -> datetime | None:
+        """When the last cycle that ran every step ended; a cycle a signal cut short doesn't count."""
         with self._conn() as c:
-            row = c.execute("SELECT MAX(finished_at) FROM cycles").fetchone()[0]
+            row = c.execute("SELECT MAX(finished_at) FROM cycles WHERE stop_reason = 'done'").fetchone()[0]
         return datetime.fromisoformat(row) if row else None
 
     def done(self, key: str) -> bool:
@@ -328,18 +332,21 @@ class Scheduler:
         except FileNotFoundError:
             return f"fold:missing:{now.date()}"
 
-    def fitted_before(self) -> list[datetime]:
+    @staticmethod
+    def fitted_before(frozen_pairs) -> list[datetime]:
+        """Every fitted ranker's training cutoff: the corpus benchmark's own fits and the instrument ranker."""
         from harness.corpus.bench import DEV_CUTOFFS, TEST_CUTOFFS
         from harness.improve.scorers import ReplyRanker
 
-        return [*DEV_CUTOFFS, *TEST_CUTOFFS, ReplyRanker().fit_before]
+        return [*DEV_CUTOFFS, *TEST_CUTOFFS, ReplyRanker.fit_before(frozen_pairs)]
 
     def fold(self) -> dict:
         from harness.corpus import load
         from harness.corpus.bench import load_pairs
 
         snap = fold.snapshot(self.cfg.threads_dir, self.snapshot_dir)
-        result = fold.fold(load(snap), load_pairs("replies"), self.fitted_before())
+        frozen = load_pairs("replies")
+        result = fold.fold(load(snap), frozen, self.fitted_before(frozen))
         fold.write(result, self.cfg.rolling_dir)
         return result.manifest()
 
@@ -411,12 +418,10 @@ class Scheduler:
                 bad[model] = api_error(e)
         return bad
 
-    def _preflight(self, fit, configs) -> tuple[str | None, int]:
-        """(why the phase must wait, or None; probe calls spent)."""
-        needed = self.needed_models(fit, configs)
+    def _probe_note(self, needed: set[str]) -> str | None:
+        """Why a phase must wait for a model, or None when every model answered."""
         down = self.probe(needed)
-        spent = len(needed) if self.cfg.provider != "mock" else 0
-        return ("waiting for " + "; ".join(f"{m} ({e})" for m, e in sorted(down.items())) if down else None), spent
+        return "waiting for " + "; ".join(f"{m} ({e})" for m, e in sorted(down.items())) if down else None
 
     @staticmethod
     def needed_models(fit, configs) -> set[str]:
@@ -426,29 +431,81 @@ class Scheduler:
 
     @staticmethod
     def _estimate(fit, champion, changes: dict, n: int) -> int:
-        return (2 * fit.estimate_calls(champion, n) + fit.estimate_calls(champion.with_changes(changes), n))
+        """What run_batch will budget: the champion, its repeat (never imported from a cache) and the challenger."""
+        return (fit.estimate_calls(champion, n) + fit.estimate_calls(champion, n, repeat=True)
+                + fit.estimate_calls(champion.with_changes(changes), n))
+
+    def rulers(self, fitness: str) -> tuple[str | None, dict[str, str]]:
+        """(why the fitness may not decide anything now, {guardrail metric: why it no longer blocks}) from the
+        instrument ledger: a report-only primary instrument holds the fitness, a report-only guardrail
+        instrument is still reported but stops blocking."""
+        led = instrument_ledger.load(self.cfg.instruments_path).get("instruments", {})
+        spec = RULERS.get(fitness, {})
+        primary = led.get(spec.get("primary") or "", {})
+        hold = (f"its primary instrument {spec['primary']} is report-only ({primary.get('reason')})"
+                if primary.get("status") == instrument_ledger.REPORT_ONLY else None)
+        untrusted = {metric: f"{name} is report-only ({led[name].get('reason')})"
+                     for metric, name in spec.get("guardrails", {}).items()
+                     if led.get(name, {}).get("status") == instrument_ledger.REPORT_ONLY}
+        return hold, untrusted
+
+    def _finish_stack_reverts(self, directory: Path, records: list[dict], out: dict) -> None:
+        """Revert any loop-made promotion a stack check failed and nobody reverted yet: the revert may have
+        been lost to a crash between the two writes. A person's promotion or a revert goes to a person."""
+        _, history = ledger.champion(directory)
+        by_id = {r["id"]: r for r in records}
+        reverted = {r["proposer"].get("source") for r in records if r["proposer"].get("kind") == "revert"}
+        for r in records:
+            target = by_id.get(r["proposer"].get("source"))
+            if r["decision"]["status"] != "stack_failed" or target is None or target["id"] not in history:
+                continue
+            if target["id"] in reverted:
+                continue
+            if target["decision"].get("by") == "auto" and target["proposer"].get("kind") != "revert":
+                rev = ledger.revert_record(directory, target["id"], f"Stack check {r['id']} showed the promotions "
+                                                                    "together worse than without this one.", by="auto",
+                                           at=iso(self.clock()))
+                ledger.write(directory, [rev])
+                out["stacks"].append({"fitness": r["eval"].get("fitness"), "latest": target["id"], "action": "reverted",
+                                      "record": r["id"], "reverted": rev["id"]})
+            else:
+                out["stacks"].append({"fitness": r["eval"].get("fitness"), "latest": target["id"],
+                                      "action": "needs a person", "record": r["id"],
+                                      "note": f"stack check {r['id']} found the promotions together worse; {target['id']} "
+                                              f"was {'a revert' if target['proposer'].get('kind') == 'revert' else 'made by a person'}, "
+                                              "so the loop won't undo it"})
 
     def experiments(self) -> dict:
         directory = self.cfg.ledger_dir
         directory.mkdir(parents=True, exist_ok=True)
         now, left = self.clock(), self.cfg.experiment_calls
         out = {"llm_calls": 0, "stacks": [], "specs": [], "errors": {}}
+        self._finish_stack_reverts(directory, ledger.records(directory), out)
         records, configs = ledger.records(directory), ledger.configs(directory)
         champion, _ = ledger.champion(directory)
         blocked = set()
         for s in campaign.unmeasured(records, configs, {n: c.knobs for n, c in self.catalog.items()}, champion):
             latest = next(r for r in records if r["id"] == s.latest)
             profile = latest["proposer"].get("profile") or config.profile_name()
+            hold, untrusted = self.rulers(s.fitness)
+            entry = {"fitness": s.fitness, "latest": s.latest}
+            if hold:
+                blocked.add(s.fitness)
+                out["stacks"].append({**entry, "action": "deferred", "note": hold})
+                continue
             with profile_env(profile):
-                fit = self._build(s.fitness, profile)
+                fit = campaign.Restricted(self._build(s.fitness, profile), untrusted=untrusted)
                 changes = _diff(s.baseline, s.champion)
+                needed = self.needed_models(fit, [s.baseline, s.champion])
+                probes = len(needed) if self.cfg.provider != "mock" else 0
                 est = self._estimate(fit, s.baseline, changes, len(fit.items()))
-                waiting, probes = (f"needs about {est} calls, {left} left this cycle", 0) if est > left else \
-                    self._preflight(fit, [s.baseline, s.champion])
-                left, out["llm_calls"] = left - probes, out["llm_calls"] + probes
+                waiting = f"needs about {est} calls, {left - probes} left this cycle" if est > left - probes else None
+                if not waiting:
+                    waiting = self._probe_note(needed)
+                    left, out["llm_calls"] = left - probes, out["llm_calls"] + probes
                 if waiting:
                     blocked.add(s.fitness)
-                    out["stacks"].append({"fitness": s.fitness, "latest": s.latest, "action": "deferred", "note": waiting})
+                    out["stacks"].append({**entry, "action": "deferred", "note": waiting})
                     continue
                 prop = Proposal(s.fitness, changes, f"The promotions in force, measured together on {s.fitness}.",
                                 {"kind": "stack", "source": s.latest, "profile": profile}, "stack check")
@@ -456,86 +513,96 @@ class Scheduler:
             left -= calls
             out["llm_calls"] += calls
             status = recs[0]["decision"]["status"]
-            entry = {"fitness": s.fitness, "latest": s.latest, "action": status, "record": recs[0]["id"]}
-            if status == "stack_failed" and s.latest_by == "auto":
-                rev = ledger.revert_record(directory, s.latest, f"Stack check {recs[0]['id']} showed the promotions "
-                                                                "together worse than without this one.", by="auto")
-                ledger.write(directory, [rev])
-                entry["reverted"] = rev["id"]
+            entry.update(action=status, record=recs[0]["id"])
+            if status == "stack_failed":
+                self._finish_stack_reverts(directory, ledger.records(directory), out)
             elif status != "stack_ok":
                 blocked.add(s.fitness)
             out["stacks"].append(entry)
 
-        specs, errors = queue.load(self.cfg.queue_dir, self.catalog)
+        specs, errors = queue.load(self.cfg.queue_dir, self.catalog, now=now)
         out["errors"] = errors
         for spec in sorted(specs, key=lambda x: (x.proposed_at, x.id)):
             entry = {"spec": spec.id, "fitness": spec.fitness, "profile": spec.profile}
             out["specs"].append(entry)
-            cutoff = max(spec.proposed_at, self.state.spec_seen(spec.id, now))
-            ph = queue.phase(spec.id, ledger.records(directory))
-            pending = [r for r in (ph.screen if ph.next == "screen" else ph.confirm)
-                       if r["decision"]["status"] == "pending"]
-            if ph.next == "done":
-                entry.update(state="done", note="decided")
-                continue
-            if len(pending) >= MAX_PENDING:
-                entry.update(state="stale", note=f"the {ph.next} phase didn't run {len(pending)} times; "
-                                                 f"last reason: {pending[-1]['decision']['reason'][:160]}")
-                continue
             if spec.fitness in blocked:
                 entry.update(state="blocked", note="a stack check on its instrument is due and didn't run")
                 continue
-            champion, _ = ledger.champion(directory)
-            if champion.with_changes(spec.knobs).hash == champion.hash:
-                entry.update(state="done", note="the champion already has these values")
-                continue
-            prop = Proposal(spec.fitness, spec.knobs, spec.hypothesis,
-                            {**spec.proposer(ph.next, cutoff), "profile": spec.profile}, spec.label)
-            with profile_env(spec.profile):
-                base = self._build(spec.fitness, spec.profile, spec.threads)
-                restricted = campaign.Restricted(base, **({"by": cutoff} if ph.next == "screen" else {"after": cutoff}),
-                                                 guardrails=spec.guardrails)
-                items = restricted.items()
-                clusters = len({it.cluster for it in items})
-                if ph.next == "confirm":
-                    if clusters < queue.MIN_CONFIRM_CLUSTERS:
-                        waited = now - campaign.decided_at(ph.screen[-1])
-                        entry.update(state="stale" if waited > STALE_AFTER else "waiting",
-                                     note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {base.cluster_unit}s "
-                                          f"rooted after {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
-                        continue
-                    cap = campaign.weekly_cap(ledger.records(directory), now)
-                    if not cap.open:
-                        entry.update(state="held", note=f"confirmation waits for the weekly cap ({cap.holder}) to "
-                                                        f"reopen at {cap.opens_at.isoformat(timespec='minutes')}")
-                        continue
-                else:
-                    from harness.iterate.propose import is_settled
-
-                    sha = {spec.fitness: restricted.instrument().get("dataset_sha256")}
-                    if is_settled(prop, champion, ledger.records(directory), {spec.fitness: restricted.knobs},
-                                  ledger.configs(directory), sha):
-                        entry.update(state="done", note="the ledger already decided this change against an "
-                                                        "equivalent champion on the same items; screening it again "
-                                                        "would test the same items twice")
-                        continue
-                budget = min(spec.screen_calls if ph.next == "screen" else spec.confirm_calls, left)
-                est = self._estimate(restricted, champion, spec.knobs, len(items))
-                if est > budget:
-                    entry.update(state="deferred", note=f"needs about {est} calls; {budget} available this cycle")
-                    continue
-                waiting, probes = self._preflight(restricted, [champion, champion.with_changes(spec.knobs)])
-                left, out["llm_calls"] = left - probes, out["llm_calls"] + probes
-                if waiting:
-                    entry.update(state="deferred", note=waiting)
-                    continue
-                recs, calls = self._run([prop], restricted, mode="screen" if ph.next == "screen" else "promote",
-                                        max_calls=budget - probes)
-            left -= calls
+            left, calls = self._spec(spec, entry, now, left)
             out["llm_calls"] += calls
-            entry.update(state="ran", phase=ph.next, record=recs[0]["id"], decision=recs[0]["decision"]["status"],
-                         note=recs[0]["decision"]["reason"][:200])
         return out
+
+    def _spec(self, spec: queue.Spec, entry: dict, now: datetime, left: int) -> tuple[int, int]:
+        """Run or explain one spec's next phase. Returns (calls left this cycle, calls spent)."""
+        directory = self.cfg.ledger_dir
+        first_seen = self.state.spec_seen(f"{spec.id}:{spec.digest}", now)
+        cutoff = max(spec.proposed_at, first_seen)
+        ph = queue.phase(spec, ledger.records(directory))
+        if ph.next == "done":
+            entry.update(state="done", note="decided")
+            return left, 0
+        pending = [r for r in (ph.screen if ph.next == "screen" else ph.confirm) if r["decision"]["status"] == "pending"]
+        if len(pending) >= MAX_PENDING:
+            entry.update(state="stale", note=f"the {ph.next} phase didn't run {len(pending)} times; "
+                                             f"last reason: {pending[-1]['decision']['reason'][:160]}")
+            return left, 0
+        champion, _ = ledger.champion(directory)
+        if champion.with_changes(spec.knobs).hash == champion.hash:
+            entry.update(state="done", note="the champion already has these values")
+            return left, 0
+        hold, untrusted = self.rulers(spec.fitness)
+        if hold:
+            entry.update(state="held", note=hold)
+            return left, 0
+        prop = Proposal(spec.fitness, spec.knobs, spec.hypothesis,
+                        {**spec.proposer(ph.next, cutoff), "profile": spec.profile}, spec.label)
+        screen = ph.next == "screen"
+        waited = now - (first_seen if screen else campaign.decided_at(ph.screen[-1]))
+        with profile_env(spec.profile):
+            restricted = campaign.Restricted(
+                self._build(spec.fitness, spec.profile, spec.threads),
+                **({"by": cutoff, "max_clusters": queue.SCREEN_CLUSTERS} if screen
+                   else {"after": cutoff, "max_clusters": queue.CONFIRM_CLUSTERS}),
+                guardrails=spec.guardrails, untrusted=untrusted)
+            items = restricted.items()
+            clusters = len({it.cluster for it in items})
+            if not screen:
+                if clusters < queue.MIN_CONFIRM_CLUSTERS:
+                    entry.update(state="stale" if waited > STALE_AFTER else "waiting",
+                                 note=f"a candidate waiting for {queue.MIN_CONFIRM_CLUSTERS} {restricted.cluster_unit}s "
+                                      f"rooted after {cutoff.isoformat(timespec='minutes')}; it has {clusters}")
+                    return left, 0
+                cap = campaign.weekly_cap(ledger.records(directory), now)
+                if not cap.open:
+                    entry.update(state="held", note=f"confirmation waits for the weekly cap ({cap.holder}) to "
+                                                    f"reopen at {cap.opens_at.isoformat(timespec='minutes')}")
+                    return left, 0
+            else:
+                from harness.iterate.propose import is_settled
+
+                sha = {spec.fitness: restricted.instrument().get("dataset_sha256")}
+                if is_settled(prop, champion, ledger.records(directory), {spec.fitness: restricted.knobs},
+                              ledger.configs(directory), sha):
+                    entry.update(state="done", note="the ledger already decided this change against an equivalent "
+                                                    "champion on the same items; screening it again would test them twice")
+                    return left, 0
+            needed = self.needed_models(restricted, [champion, champion.with_changes(spec.knobs)])
+            probes = len(needed) if self.cfg.provider != "mock" else 0
+            budget = min(spec.screen_calls if screen else spec.confirm_calls, left) - probes
+            est = self._estimate(restricted, champion, spec.knobs, len(items))
+            if est > budget:
+                stale = waited > STALE_AFTER
+                entry.update(state="stale" if stale else "deferred",
+                             note=f"needs about {est} calls; {budget} available to it this cycle")
+                return left, 0
+            waiting = self._probe_note(needed)
+            if waiting:
+                entry.update(state="deferred", note=waiting)
+                return left - probes, probes
+            recs, calls = self._run([prop], restricted, mode="screen" if screen else "promote", max_calls=budget)
+        entry.update(state="ran", phase=ph.next, record=recs[0]["id"], decision=recs[0]["decision"]["status"],
+                     note=recs[0]["decision"]["reason"][:200])
+        return left - probes - calls, probes + calls
 
     def write_report(self) -> dict:
         now = self.clock()
@@ -559,6 +626,8 @@ class Scheduler:
                 facts[summary.get("profile", "?")] = summary.get("result") or summary.get("skipped", "")
             elif row["step"] == "experiments":
                 queue_state, queue_errors = summary.get("specs", []), summary.get("errors", {})
+                failures += [f"Stack check on {st['fitness']} ({st['action']}): {st.get('note', st.get('record'))}"
+                             for st in summary.get("stacks", []) if st.get("action") not in ("stack_ok", "reverted")]
         manifest = self.cfg.rolling_dir / "manifest.json"
         day = watchday.read(self.cfg.watch_dir, now)
         data = report.ReportData(
@@ -570,7 +639,9 @@ class Scheduler:
             queue=queue_state, queue_errors=queue_errors, day=day,
             hot_offers={h["status_id"]: watchday.hot_offer(h["path"]) for h in (day.hot if day else [])},
             failures=failures, disk_free_gb=shutil.disk_usage("/").free / 1e9)
-        path = self.cfg.out_dir / f"report-{now.date().isoformat()}.md"
+        # A report a person forced keeps its own file, so it never overwrites the morning one.
+        name = f"report-{now.date().isoformat()}" + (f"-{now:%H%M}" if self.cfg.force_report else "")
+        path = self.cfg.out_dir / f"{name}.md"
         path.write_text(report.render(data), encoding="utf-8")
         self.state.save_report(now.date().isoformat(), path, now)
         return {"path": str(path)}

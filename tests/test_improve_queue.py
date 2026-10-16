@@ -130,8 +130,20 @@ def test_load_keeps_good_specs_and_reports_bad_ones(tmp_path):
     assert queue.load(tmp_path / "absent", CATALOG) == ([], {})
 
 
-def _rec(phase, status):
-    return {"proposer": {"kind": "queue", "spec": "styled", "phase": phase}, "decision": {"status": status}}
+def _spec():
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as d:
+        return queue.parse(write(Path(d), GOOD), CATALOG)
+
+
+SPEC = _spec()
+
+
+def _rec(phase, status, digest=SPEC.digest):
+    return {"proposer": {"kind": "queue", "spec": "styled", "spec_digest": digest, "phase": phase},
+            "decision": {"status": status}}
 
 
 @pytest.mark.parametrize("records, expected", [
@@ -146,7 +158,35 @@ def _rec(phase, status):
 ])
 def test_phase_follows_the_ledger(records, expected):
     other = {"proposer": {"kind": "queue", "spec": "else", "phase": "screen"}, "decision": {"status": "candidate"}}
-    assert queue.phase("styled", records + [other]).next == expected
+    assert queue.phase(SPEC, records + [other]).next == expected
+
+
+def test_an_edited_spec_starts_over_at_the_screen(tmp_path):
+    edited = queue.parse(write(tmp_path, GOOD.replace('"styled"', '"continuation"', 1).replace(
+        '"action.reply.generation" = "styled"', '"action.reply.generation" = "continuation"')
+        .replace('id = "continuation"', 'id = "styled"')), CATALOG)
+    assert edited.id == SPEC.id and edited.digest != SPEC.digest
+    assert queue.phase(edited, [_rec("screen", "candidate")]).next == "screen"
+    reworded = queue.parse(write(tmp_path, GOOD.replace("read less like AI", "read less machine-made")), CATALOG)
+    assert reworded.digest == SPEC.digest  # prose doesn't change what is tested
+
+
+def test_a_proposal_time_in_the_future_is_refused(tmp_path):
+    from datetime import datetime, timezone
+
+    early = datetime(2026, 10, 16, 13, tzinfo=timezone.utc)
+    with pytest.raises(queue.SpecError, match="in the future"):
+        queue.parse(write(tmp_path, GOOD), CATALOG, now=early)
+    assert queue.parse(write(tmp_path, GOOD), CATALOG, now=early.replace(hour=14)).id == "styled"
+
+
+def test_thread_files_outside_the_repository_are_refused(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (tmp_path / "secret.json").write_text("{}", encoding="utf-8")
+    spec = GOOD.replace('source = "research', 'threads = ["../secret.json"]\nsource = "research')
+    with pytest.raises(queue.SpecError, match="outside the repository"):
+        queue.parse(write(tmp_path, spec), CATALOG, repo=repo)
 
 
 def test_thread_files_must_exist_and_suit_the_instrument(tmp_path):
@@ -162,3 +202,15 @@ def test_thread_files_must_exist_and_suit_the_instrument(tmp_path):
 
     with pytest.raises(queue.SpecError, match="doesn't take thread files"):
         queue.parse(write(tmp_path, with_threads), {"action_lineup": NoThreads}, repo=tmp_path)
+
+
+def test_the_format_example_in_the_module_docstring_parses(tmp_path):
+    import textwrap
+
+    doc = queue.__doc__
+    example = textwrap.dedent(doc[doc.index("    id = "):doc.index("A code change is tested")])
+    repo = tmp_path / "repo"
+    (repo / "action" / "fixtures").mkdir(parents=True)
+    (repo / "action" / "fixtures" / "x_threads.json").write_text("{}", encoding="utf-8")
+    spec = queue.parse(write(tmp_path, example, "styled-reply.toml"), CATALOG, repo=repo)
+    assert spec.id == "styled-reply" and spec.threads and spec.guardrails == {"veto_pass_rate": 0.05}

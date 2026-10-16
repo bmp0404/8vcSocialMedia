@@ -235,7 +235,10 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
         if status == "promoted" and extra > max(2, 0.1 * len(items_by_fit[prop.fitness])):
             status, reason = "inconclusive", f"{reason}; blocked: the challenger failed on {extra} more items"
         if mode == "stack":
-            worse = dec.status == "rejected" or bool(unproven)
+            failed_more = extra > max(2, 0.1 * len(items_by_fit[prop.fitness]))
+            worse = dec.status == "rejected" or bool(unproven) or failed_more
+            if failed_more:
+                unproven.append(f"the combination failed on {extra} more items")
             status = "stack_failed" if worse else "stack_ok"
             reason = (f"the promotions together are worse than without {prop.proposer.get('source')}: {dec.reason}"
                       + (f"; not shown non-inferior on {', '.join(unproven)}" if unproven else "")
@@ -322,7 +325,7 @@ def run_batch(proposals: list[Proposal], fitnesses: dict[str, Fitness], *, provi
             print(f"[iterate] confirmation of {source} didn't run; leaving it in force")
             continue
         rev = ledger.revert_record(directory, source, f"Confirmation {rec['id']} didn't promote it again: "
-                                                      f"{rec['decision']['reason']}", by="auto")
+                                                      f"{rec['decision']['reason']}", by="auto", at=started_at)
         ledger.write(directory, [rev])
         recs.append(rev)
         print(f"[iterate] reverted {source}: {rev['id']}")

@@ -9,7 +9,8 @@ which): `_sgu_`'s real replies first, then threads rooted after the cutoff, each
 **The rule.** An instrument may gate promotions while its interval is above chance or it has fewer than
 20 outcomes. At 20 or more, an interval that includes chance (or sits below it) makes it report-only,
 and the ledger records when and why. The deciding source is the first with 20 or more outcomes, in the
-order `sgu`, `threads`: real results outrank everything else. "Outcomes" counts the resampling unit, so
+order `sgu`, `threads`: real results outrank everything else. A source whose interval is undefined (a
+screen passes every `_sgu_` reply, since each one shipped through it) can't judge, and the next decides. "Outcomes" counts the resampling unit, so
 fifty pairs from one thread are one outcome, not fifty. The status follows the current evidence, so an
 instrument whose interval later clears chance gates again, and that is recorded too. The panel is
 report-only whatever its numbers (B3: it ties the free TF-IDF ridge at one LLM call per draft).
@@ -68,20 +69,25 @@ def decide(scores: dict[str, Score], role: str = "gate") -> tuple[str, str]:
     """(status, reason) under the rule in the module docstring. Pure."""
     if role == "report":
         return REPORT_ONLY, "report-only by design; its numbers are recorded but never gate a promotion"
+    unjudged = []
     for source in SOURCES:
         s = scores.get(source)
         if s is None or s.n < MIN_N:
             continue
         where = f"{source}: {s.metric} on {s.n} outcomes"
         if s.ci95 is None:
-            return REPORT_ONLY, f"{where}, but its interval is undefined (the scores or outcomes don't vary)"
+            # Every _sgu_ reply passed the screen that shipped it, so the scores can't vary: that source
+            # can't judge the screen, and the next one decides.
+            unjudged.append(f"{source} can't judge it (its scores or outcomes don't vary)")
+            continue
         lo, hi = s.ci95
         if lo > s.chance:
             return GATES, f"{where}, {s.estimate:.3f} [{lo:.3f}, {hi:.3f}], above chance ({s.chance:g})"
         side = "below" if hi < s.chance else "includes"
         return REPORT_ONLY, f"{where}, {s.estimate:.3f} [{lo:.3f}, {hi:.3f}], {side} chance ({s.chance:g})"
     counts = ", ".join(f"{src} {scores[src].n}" for src in SOURCES if src in scores) or "none"
-    return GATES, f"fewer than {MIN_N} outcomes on every source ({counts}); it gates until there are enough to judge it"
+    return GATES, ("; ".join(unjudged + [""]) + f"no source with {MIN_N} or more outcomes can judge it ({counts}); "
+                   "it gates until one can")
 
 
 def load(path: Path = LEDGER_PATH) -> dict:

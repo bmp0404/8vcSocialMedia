@@ -22,7 +22,7 @@ from harness.iterate.knobs import DEFAULT, Config
 
 WINDOW = timedelta(days=7)
 # A revert restores values the champion already had, and a confirmation re-promotes a change already in
-# force, so neither adds a change for the cap to count.
+# force. The runner exempts both up front; `counted_promotions` checks what each record really did.
 UNCOUNTED_KINDS = frozenset({"revert", "confirmation"})
 # Statuses whose arms were really scored: a stack check counts these as measurements of a config.
 MEASURED = frozenset({"promoted", "rejected", "inconclusive", "candidate", "stack_ok", "stack_failed"})
@@ -50,9 +50,18 @@ class Cap:
 
 
 def counted_promotions(records: list[dict]) -> list[dict]:
-    """Promotions that added a change to the champion: neither reverts nor confirmations."""
-    return [r for r in records if r["decision"]["status"] == "promoted"
-            and r["proposer"].get("kind") not in UNCOUNTED_KINDS]
+    """Promotions that changed the champion when replayed in decision order, reverts excepted. A confirmation
+    of a promotion still in force changes nothing and isn't counted; one whose promotion was reverted
+    re-applies the change and is."""
+    cfg, out = DEFAULT, []
+    for r in records:
+        if r["decision"]["status"] != "promoted":
+            continue
+        after = cfg.with_changes({k: v["to"] for k, v in r["change"]["params"].items()})
+        if after != cfg and r["proposer"].get("kind") != "revert":
+            out.append(r)
+        cfg = after
+    return out
 
 
 def weekly_cap(records: list[dict], now: datetime) -> Cap:
@@ -86,6 +95,20 @@ def rooted_by(items: list[Item], cutoff: datetime) -> list[Item]:
     return [it for it in items if it.root_at <= cutoff]
 
 
+def limit_clusters(items: list[Item], k: int, *, earliest: bool) -> list[Item]:
+    """The items of the `k` clusters whose first item was rooted earliest (or latest), ties by cluster name.
+    A confirmation keeps the first clusters after its cutoff, so the set it is judged on stops growing; a
+    screen keeps the ones closest to the proposal."""
+    _need_times(items)
+    first: dict = {}
+    for it in items:
+        if it.cluster not in first or it.root_at < first[it.cluster]:
+            first[it.cluster] = it.root_at
+    ordered = sorted(first, key=lambda c: (first[c], repr(c)), reverse=not earliest)
+    keep = set(ordered[:k])
+    return [it for it in items if it.cluster in keep]
+
+
 class Restricted:
     """An instrument limited to items rooted after (or by) a time, with guardrails at least as strict as its own.
 
@@ -95,22 +118,29 @@ class Restricted:
     """
 
     def __init__(self, fit, *, after: datetime | None = None, by: datetime | None = None,
-                 guardrails: dict[str, float] | None = None):
+                 guardrails: dict[str, float] | None = None, max_clusters: int | None = None,
+                 untrusted: dict[str, str] | None = None):
+        """`untrusted` maps a guardrail metric to why its instrument may not gate (the instrument ledger
+        made it report-only); that metric is still reported but no longer blocks a promotion."""
         if after is not None and by is not None:
             raise ValueError("pass after= (a confirmation) or by= (a screen), not both")
         self.fit = fit
         self.after = _aware(after, "after") if after is not None else None
         self.by = _aware(by, "by") if by is not None else None
+        self.max_clusters = max_clusters
         for attr in ("name", "stage", "unit", "cluster_unit", "primary", "knobs", "llm_opinion"):
             setattr(self, attr, getattr(fit, attr))
         self.guardrails = dict(guardrails or {})
-        self.secondaries = tuple(self._tighten(m) for m in fit.secondaries)
-        unknown = set(self.guardrails) - {m.name for m in fit.secondaries}
+        self.untrusted = dict(untrusted or {})
+        unknown = (set(self.guardrails) | set(self.untrusted)) - {m.name for m in fit.secondaries}
         if unknown:
             raise ValueError(f"{fit.name} has no secondary metric {sorted(unknown)}; "
                              f"choose from {[m.name for m in fit.secondaries]}")
+        self.secondaries = tuple(self._tighten(m) for m in fit.secondaries)
 
     def _tighten(self, m: Metric) -> Metric:
+        if m.name in self.untrusted:
+            return replace(m, guardrail=False)
         if m.name not in self.guardrails:
             return m
         margin = float(self.guardrails[m.name])
@@ -123,16 +153,20 @@ class Restricted:
     def items(self) -> list[Item]:
         items = self.fit.items()
         if self.after is not None:
-            return rooted_after(items, self.after)
-        if self.by is not None:
-            return rooted_by(items, self.by)
+            items = rooted_after(items, self.after)
+        elif self.by is not None:
+            items = rooted_by(items, self.by)
+        if self.max_clusters is not None:
+            items = limit_clusters(items, self.max_clusters, earliest=self.by is None)
         return items
 
     def instrument(self) -> dict:
         return {**self.fit.instrument(),
                 "items_rooted_after": self.after.isoformat() if self.after else None,
                 "items_rooted_by": self.by.isoformat() if self.by else None,
-                "guardrails": {m.name: m.margin for m in self.secondaries if m.guardrail}}
+                "max_clusters": self.max_clusters,
+                "guardrails": {m.name: m.margin for m in self.secondaries if m.guardrail},
+                "guardrails_dropped": self.untrusted}
 
     def run_arm(self, *args, **kw):
         return self.fit.run_arm(*args, **kw)

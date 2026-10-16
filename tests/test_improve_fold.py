@@ -104,3 +104,16 @@ def test_lineup_threads_keep_one_profile_with_reply_text_and_likes(tmp_path):
     threads = fold.lineup_threads(load(src), fold.profiles(src), "wnba")
     assert [x["id"] for x in threads] == [wnba]
     assert sorted(r["likes"] for r in threads[0]["direct_replies"]) == [1, 3]
+
+
+def test_a_reply_from_the_roots_first_hours_counts_though_it_is_under_48h_old_at_the_read(tmp_path):
+    # Root read at +49h; replies at +2h and +2h05m are 47 hours old at that read. The frozen rule (each
+    # reply read 48h after itself) would drop them; the rolling rule keeps them.
+    from harness.corpus.bench import both_mature
+
+    t = Threads(tmp_path / "threads")
+    root = t.thread(FROZEN_LAST + timedelta(days=1), timedelta(hours=49), [12, 0], reply_delay=timedelta(hours=2))
+    corpus = load(t.write())
+    assert {p.group for p in fold.fold(corpus, FROZEN, []).pairs} == {root}
+    from harness.corpus.bench import reply_pairs
+    assert reply_pairs(corpus, settled=both_mature) == []

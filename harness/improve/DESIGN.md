@@ -35,29 +35,32 @@ Two choices differ from the frozen benchmark.
 
 ## The instrument ledger
 
-An instrument is anything the loop measures with. The seven in `eval/experiments/instruments.json`:
+An instrument is anything the loop measures with. The eight in `eval/experiments/instruments.json`:
 
 | Instrument | Scored on `_sgu_` replies | Scored on threads | Cutoff |
 | --- | --- | --- | --- |
-| reply ranker (`harness/rank/reply.py`) | its score against the rank percentile | reply pairs | its training cutoff, 2026-10-06 |
+| reply ranker (`harness/rank/reply.py`) | its score against the rank percentile | reply pairs | the frozen benchmark's newest root: it trains on every frozen thread |
 | TF-IDF post ranker (`harness/rank/post.py`) | none: `_sgu_` posts no originals | within-account post pairs | its newest training post |
 | Claude label model | none | within-account post pairs, labeled by Sonnet 5.5 | its newest training post |
-| lineup AI detector | 1 when it names another reply, 0 when ours | the reply it names against each other reply in a lineup of five | when the ledger first saw its prompt |
-| action veto (`harness/minds/veto.py`) | pass or veto | discordant reply pairs | same |
+| lineup AI detector, the action lineup's primary | 1 when it names another reply, 0 when ours | the reply it names against each other reply in a lineup of five settled replies | when the ledger first saw its prompt |
+| action veto, the action lineup's veto guardrail | pass or veto | discordant reply pairs | same |
+| lane veto (`harness/minds/veto.py`), the reply lane's production veto | pass or veto | discordant reply pairs | same |
 | slop gate (`harness/minds/gate.py`) | pass or fail | discordant reply pairs | same |
-| panel (report-only) | none | within-account post pairs | same |
+| panel (report-only by design) | none | within-account post pairs | same |
 
-"The gate" in the brief is read as the slop gate, the deterministic screen beside the veto. The paired statistical gate in `harness/iterate/stats.py` decides promotions; it isn't an instrument that measures drafts, and the confirmation rule below is what guards its errors.
+"The gate" in the brief is read as the slop gate, the deterministic screen beside the vetoes. The paired statistical gate in `harness/iterate/stats.py` decides promotions; it isn't an instrument that measures drafts, and the confirmation rule below is what guards its errors. "The action veto" is read as the veto inside the action lineup, because that is the one that gates promotions (its pass rate is a guardrail). The reply lane's own veto is scored too, as `lane_veto`, because it decides which drafts reach Sam; nothing in the engine reads its status, so it informs a person.
 
-**Sources.** `_sgu_` results are Spearman correlations between the instrument's score for each real reply and that reply's rank percentile in its thread, from `data/outcomes.db`. Threads are pairwise accuracy on pairs rooted after the instrument's cutoff, from the frozen corpus and the folded watcher threads. The two are kept apart. Every number carries n and a 95% bootstrap interval. Pairs resample by thread (or account), because pairs that share a thread are not independent, and n counts those resampling units, so fifty pairs from one thread are one outcome.
+**Sources.** `_sgu_` results are Spearman correlations between the instrument's score for each real reply and that reply's rank percentile in its thread, from `data/outcomes.db`. Threads are pairwise accuracy on pairs rooted after the instrument's cutoff, from the frozen corpus and the folded watcher threads. Both sources count only outcomes at or after the cutoff: threads rooted then, `_sgu_` replies posted then. The two are kept apart. Every number carries n and a 95% bootstrap interval. Pairs resample by thread (or account), because pairs that share a thread are not independent, and n counts those resampling units, so fifty pairs from one thread are one outcome.
 
-**Screens count only discordant pairs.** For the gate and the veto, a pair counts only when one reply passed and the other failed, and the question is whether the passing one got more likes. The pass rate on real replies sits beside it: a screen that fails real people's replies is costing the lane good drafts.
+**Screens count only discordant pairs.** For the gate and the vetoes, a pair counts only when one reply passed and the other failed, and the question is whether the passing one got more likes. The pass rate on real replies sits beside it: a screen that fails real people's replies is costing the lane good drafts.
 
-**Cutoffs.** A fitted model's cutoff is the newest root it trained on. A prompt or rule instrument's cutoff is the moment the ledger first saw its current version, because nothing records which data a person looked at while tuning a prompt. The version is a hash of what defines the instrument: prompt and model, rule source and limits, or training cutoff and feature code. A new version starts a new cutoff, and the old version's numbers stay in its history. When `sam/wire` changes the veto, the veto's evidence starts over.
+**Cutoffs.** A fitted model's cutoff is the newest root it trained on. The reply ranker now trains on the whole frozen benchmark, so only watcher threads judge it: B2's test split was looked at once while choosing its feature blocks, and its 0.772 on that split is kept as `fit_evidence` but never decides status. A prompt or rule instrument's cutoff is the moment the ledger first saw its current version, because nothing records which data a person looked at while tuning a prompt. The version is a hash of what defines the instrument: prompt and model, rule source and limits, or training data and feature code. A new version starts a new cutoff, and the old version's numbers stay in its history. When `sam/wire` changes the lane veto, its evidence starts over.
 
-**The rule.** An instrument may gate promotions while its interval is above chance or it has fewer than 20 outcomes. At 20 or more, an interval that includes chance, or sits below it, makes it report-only, and the ledger appends an event with the time and the reason. Real `_sgu_` results decide first; the threads decide only while `_sgu_` has fewer than 20. The status follows the evidence, so an instrument whose interval later clears chance gates again, which is also logged. The panel is report-only whatever its numbers. Twenty is the counsel's estimate of what confirms or demotes an instrument; no run here calibrated it.
+**The rule.** An instrument may gate promotions while its interval is above chance or it has fewer than 20 outcomes. At 20 or more, an interval that includes chance, or sits below it, makes it report-only, and the ledger appends an event with the time and the reason. Real `_sgu_` results decide first; the threads decide only while `_sgu_` has fewer than 20, or when its interval is undefined (a screen passes every `_sgu_` reply, since each one shipped through it, so `_sgu_` can't judge a screen). The status follows the evidence, so an instrument whose interval later clears chance gates again, which is also logged. The panel is report-only whatever its numbers. Twenty is the counsel's estimate of what confirms or demotes an instrument; no run here calibrated it.
 
-**Abstentions** score as the instrument's worst rank and lower its coverage, which is reported beside the number. When a cycle's call budget runs out, unjudged items wait for the next cycle instead of counting as abstentions.
+**What a status does.** `RULERS` in `scheduler.py` names the instruments each fitness measures with. When the action lineup's primary, the lineup detector, is report-only, every action screen, confirmation and stack check is held. When its veto guardrail's instrument, the action veto, is report-only, the veto pass rate is still recorded but no longer blocks; the record lists it under `guardrails_dropped` with the reason. The GPT-family detector stays a guardrail whatever happens, per B3's guard table, and isn't scored here.
+
+**Abstentions and failures.** An answer that names nothing usable is an abstention. It scores as the instrument's worst rank (for the lineup, naming the most-liked reply) and lowers coverage, which is reported beside the number. Only answers are cached. A failed call, a spent budget, or a `_sgu_` reply whose thread the watcher hasn't read yet waits for the next cycle and is counted as deferred, not as an abstention.
 
 ## From a spec to the champion
 
@@ -69,12 +72,16 @@ An agent or a person writes `eval/experiments/queue/<id>.toml`. `queue.py`'s doc
 - a guardrail margin looser than the instrument's own;
 - a code change whose commit isn't in the checkout the loop runs from. A code change runs through the knob that switches it on, because the engine compares configs it can hash, diff and revert.
 
-The spec then goes through two phases, both recorded in the ledger with the spec's id:
+The spec then goes through two phases, both recorded in the ledger with the spec's id and a digest of what it tests (fitness, profile, knobs, guardrails, commit, thread files):
 
-1. **Screen** on the instrument's items rooted at or before the cutoff. A pass under the paired gate makes the record a `candidate`, which never touches the champion.
-2. **Confirm** on items rooted after the cutoff, once there are 20 clusters of them (threads or accounts). The cutoff is the later of `proposed_at` and when the loop first saw the file, so a backdated spec can't confirm on items its author had seen. A pass here is a promotion, subject to the weekly cap.
+1. **Screen** on the 40 clusters rooted closest before the cutoff. A pass under the paired gate makes the record a `candidate`, which never touches the champion.
+2. **Confirm** on the first 30 clusters rooted after the cutoff, once there are at least 20 (threads or accounts). A pass here is a promotion, subject to the weekly cap. Fixing the set keeps a confirmation's cost from growing while a candidate waits.
 
-A candidate that waits more than 21 days for confirmation items, or a phase that fails to run three times, goes to "needs a person". So does every refused spec file.
+The cutoff is the later of `proposed_at` and when the loop first saw this version of the file, so a backdated spec can't confirm on items its author had seen, and a `proposed_at` in the future is refused. Editing what a spec tests changes its digest, and the edited spec is screened from scratch rather than confirmed on the old screen. Before either phase the loop sends every model it needs (the detectors, the veto, the model knobs) a five-token request, and waits if one refuses: on 2026-10-16 the GPT detector's pool answered 429, and a screen would have spent its budget on retries. It also skips a screen the ledger already decided on the same items.
+
+A candidate that waits more than 21 days, a phase that can't fit its budget for that long, or a phase that fails to run three times goes to "needs a person". So does every refused spec file.
+
+**Stack checks.** Before any queued phase, the loop measures any combination of promotions that no run scored together (`campaign.unmeasured`, in `eval/experiments/DESIGN.md`). When a check fails, the loop reverts the later promotion only if the loop made it and it isn't itself a revert; a person's promotion, or a revert, goes to "needs a person". A failed check whose revert was lost to a crash is finished at the start of the next cycle.
 
 The action lineup instrument confirms on the watcher's threads, which `ActionLineup(extra_threads=...)` now accepts beside fixture files. The qualify instrument's items are the dataset's posts, all from before any proposal, so a qualify candidate can't be confirmed until fresh posts get tier labels. That gap is listed below.
 
@@ -105,6 +112,7 @@ uv run python -m harness improve stop                             # SIGTERM, the
 ## Not verified
 
 - No `_sgu_` reply has been ranked yet, so every `_sgu_` scorer has run only on synthetic outcomes in the tests.
-- No watcher thread has had a +48h read yet. The fold, and every instrument scored on watcher threads, has run only on synthetic threads.
+- No watcher thread has had a +48h read yet. The fold, and every instrument scored on watcher threads, has run only on synthetic threads. Nothing has been demoted or held live.
 - The label model's live labeling call (`effort: low` through `extra_body`) has not run in this loop; only its fit on stored labels has.
-- The 24-hour reply window, the 20-outcome threshold, 21 days to stale and the 6-hour cycle are policy.
+- No action experiment ran live: the GPT detector's pool was out of quota for the whole batch, so the queued spec waited at its pre-flight.
+- The 24-hour reply window, the 20-outcome threshold, the 30 and 40 cluster caps, 21 days to stale and the 6-hour cycle are policy.

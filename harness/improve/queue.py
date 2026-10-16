@@ -10,13 +10,12 @@ One TOML file per experiment, named `<id>.toml`:
     hypothesis = "Short style rules read less like AI than the persona JSON call."
     source = "research/action.md, findings 1 and 2"   # optional
     label = "styled prompt"                           # optional
+    threads = ["action/fixtures/x_threads.json"]      # optional, action_lineup only: fixture threads to screen on
 
     [change]
     kind = "knobs"                        # or "code"
     knobs = { "action.reply.generation" = "styled" }
     # kind = "code" also needs: commit = "<sha in this checkout's history>", summary = "what it does"
-
-    threads = ["action/fixtures/x_threads.json"]  # optional, action_lineup only: fixture threads to screen on
 
     [guardrails]                          # optional; tightens the instrument's own, never loosens
     veto_pass_rate = 0.05
@@ -29,17 +28,22 @@ A code change is tested through the knob that switches it on, because the engine
 can hash, diff and revert; the commit must already be in the checkout the loop runs from, so the arm
 really runs that code. Anything else in the file is an error, so a typo can't silently drop a guardrail.
 
-Each spec goes through two phases, both recorded in the ledger with `proposer.spec` set to its id:
-a screen on items rooted at or before the proposal, then, if it passed (a `candidate`), a confirmation
-on items rooted after it. The cutoff is the later of `proposed_at` and when the loop first saw the
-file, so a backdated spec can't confirm on items its author had already seen.
+Each spec goes through two phases, both recorded in the ledger with `proposer.spec` set to its id and
+`proposer.spec_digest` to a hash of what it tests: a screen on items rooted at or before the proposal,
+then, if it passed (a `candidate`), a confirmation on items rooted after it. The cutoff is the later of
+`proposed_at` and when the loop first saw this version of the file, so a backdated spec can't confirm
+on items its author had already seen. Editing what a spec tests gives it a new digest, so the edited
+spec is screened from scratch rather than confirmed on the old screen.
 """
+
+import hashlib
+import json
 
 import re
 import subprocess
 import tomllib
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -60,6 +64,11 @@ MAX_CALLS = 2000  # one phase may not spend more than a whole batch's allowance
 # ledger demotes at n >= 20 for the same reason: with fewer clusters a bootstrap interval is too wide to
 # clear a noise floor. Policy, not measured.
 MIN_CONFIRM_CLUSTERS = 20
+# A confirmation uses the first 30 clusters rooted after the cutoff, and a screen the 40 rooted closest
+# before it, so a phase's cost stops growing with the watcher. Policy, not measured.
+CONFIRM_CLUSTERS = 30
+SCREEN_CLUSTERS = 40
+CLOCK_SKEW = timedelta(minutes=10)  # how far in the future a proposal time may be
 
 
 class SpecError(ValueError):
@@ -86,9 +95,16 @@ class Spec:
     screen_calls: int = DEFAULT_CALLS
     confirm_calls: int = DEFAULT_CALLS
 
+    @property
+    def digest(self) -> str:
+        """A hash of everything that decides what the spec tests, but not its prose."""
+        what = {"fitness": self.fitness, "profile": self.profile, "knobs": self.knobs, "kind": self.kind,
+                "commit": self.commit, "guardrails": self.guardrails, "threads": [p.name for p in self.threads]}
+        return hashlib.sha256(json.dumps(what, sort_keys=True).encode()).hexdigest()[:12]
+
     def proposer(self, phase: str, cutoff: datetime) -> dict:
-        return {"kind": "queue", "spec": self.id, "phase": phase, "source": self.source, "by": self.proposed_by,
-                "proposed_at": cutoff.isoformat(timespec="seconds"),
+        return {"kind": "queue", "spec": self.id, "spec_digest": self.digest, "phase": phase, "source": self.source,
+                "by": self.proposed_by, "proposed_at": cutoff.isoformat(timespec="seconds"),
                 **({"commit": self.commit, "summary": self.summary} if self.kind == "code" else {})}
 
 
@@ -110,7 +126,7 @@ def _in_history(commit: str, repo: Path) -> bool:
     return out.returncode == 0
 
 
-def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT) -> Spec:
+def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT, now: datetime | None = None) -> Spec:
     """Read and check one spec against the instruments in `catalog` (fitness name -> class). Raises SpecError."""
     path = Path(path)
     try:
@@ -208,10 +224,17 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT) -> 
             raise SpecError(f"{sid}: {data['fitness']} doesn't take thread files")
         if not isinstance(threads, list) or not all(isinstance(t, str) for t in threads):
             raise SpecError(f"{sid}: threads must be a list of repo-relative paths")
+        outside = [t for t in threads if not (repo / t).resolve().is_relative_to(Path(repo).resolve())]
+        if outside:
+            raise SpecError(f"{sid}: thread file(s) {outside} lie outside the repository")
         missing = [t for t in threads if not (repo / t).is_file()]
         if missing:
             raise SpecError(f"{sid}: thread file(s) {missing} not found under {repo}")
-    return Spec(id=sid, path=path, proposed_at=_datetime(data["proposed_at"]), proposed_by=data["proposed_by"].strip(),
+    proposed_at = _datetime(data["proposed_at"])
+    if proposed_at > (now or datetime.now(timezone.utc)) + CLOCK_SKEW:
+        raise SpecError(f"{sid}: proposed_at {proposed_at.isoformat()} is in the future; a screen would include "
+                        "items up to then and the confirmation couldn't start until it passed")
+    return Spec(id=sid, path=path, proposed_at=proposed_at, proposed_by=data["proposed_by"].strip(),
                 profile=data["profile"], fitness=data["fitness"], hypothesis=data["hypothesis"].strip(),
                 knobs=dict(knob_values), kind=kind, source=data.get("source"), label=data.get("label", ""),
                 commit=commit, summary=summary, guardrails={k: float(v) for k, v in guardrails.items()},
@@ -219,14 +242,15 @@ def parse(path: Path, catalog: dict[str, type], *, repo: Path = config.ROOT) -> 
                 confirm_calls=calls["confirm_calls"])
 
 
-def load(directory: Path, catalog: dict[str, type], *, repo: Path = config.ROOT) -> tuple[list[Spec], dict[str, str]]:
+def load(directory: Path, catalog: dict[str, type], *, repo: Path = config.ROOT,
+         now: datetime | None = None) -> tuple[list[Spec], dict[str, str]]:
     """Every spec in `directory`, sorted by id, and {file name: why it was refused} for the rest."""
     specs, errors = [], {}
     if not Path(directory).is_dir():
         return specs, errors
     for path in sorted(Path(directory).glob("*.toml")):
         try:
-            specs.append(parse(path, catalog, repo=repo))
+            specs.append(parse(path, catalog, repo=repo, now=now))
         except SpecError as e:
             errors[path.name] = str(e)
     return specs, errors
@@ -254,7 +278,9 @@ class Phase:
         return "done" if confirmed else "confirm"
 
 
-def phase(spec_id: str, records: list[dict]) -> Phase:
-    mine = [r for r in records if r["proposer"].get("kind") == "queue" and r["proposer"].get("spec") == spec_id]
+def phase(spec: Spec, records: list[dict]) -> Phase:
+    """The records of this version of the spec: same id and same digest."""
+    mine = [r for r in records if r["proposer"].get("kind") == "queue" and r["proposer"].get("spec") == spec.id
+            and r["proposer"].get("spec_digest") == spec.digest]
     return Phase([r for r in mine if r["proposer"].get("phase") == "screen"],
                  [r for r in mine if r["proposer"].get("phase") == "confirm"])

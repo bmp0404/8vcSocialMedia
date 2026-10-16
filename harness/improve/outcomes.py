@@ -40,6 +40,12 @@ class SguReply:
     profile: str | None
     arm: str | None
 
+    @property
+    def posted_at(self) -> datetime:
+        from harness.corpus.load import created_at
+
+        return created_at(self.status_id)
+
 
 def sgu_replies(ledger_path: Path, hot_dir: Path) -> list[SguReply]:
     """Every matched `_sgu_` reply with a usable rank, at its latest checkpoint. Read-only."""
@@ -97,6 +103,22 @@ class Evidence:
     def profile(self, root_id: str) -> str:
         """The frozen corpus is the dev-tool dataset; watched roots carry their own profile."""
         return self.profiles.get(root_id, "devtools")
+
+    def sgu_after(self, cutoff: datetime) -> list[SguReply]:
+        """`_sgu_` replies posted at or after `cutoff`: a new instrument version starts its evidence over."""
+        return [r for r in self.sgu if r.posted_at >= cutoff]
+
+    def settled_replies(self, root_id: str) -> list:
+        """The root's direct replies whose likes count under the benchmark's rule (fold.thread_settled for
+        watched roots, both read 48 hours after posting for the frozen corpus), oldest first."""
+        if not hasattr(self, "_settled"):
+            from harness.corpus.bench import eligible_replies
+            from harness.improve.fold import thread_settled
+
+            self._settled = dict(eligible_replies(self.frozen))
+            if self.watch is not None:
+                self._settled.update(eligible_replies(self.watch, thread_settled))
+        return sorted(self._settled.get(root_id, []), key=lambda it: it.created_at)
 
     def reply_pairs(self, cutoff: datetime, profiles: tuple[str, ...] | None = None) -> list[tuple[Pair, str]]:
         """(pair, origin) for every reply pair whose root went out at or after `cutoff`."""
