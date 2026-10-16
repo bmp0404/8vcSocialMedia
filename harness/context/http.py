@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import gzip
 import hashlib
+import http.client
 import json
 import os
 import threading
@@ -116,18 +117,29 @@ class PoliteClient:
                 time.sleep(wait)
             stamp.write_text(repr(time.time()), encoding="utf-8")
 
-    def get(self, url: str, max_age_s: float | None = None, headers: dict | None = None) -> CachedResponse:
-        """GET `url`, serving from cache when the cached copy is younger than `max_age_s`.
+    def get(
+        self,
+        url: str,
+        max_age_s: float | None = None,
+        headers: dict | None = None,
+        settled_after: datetime | None = None,
+    ) -> CachedResponse:
+        """GET `url`, serving a cached copy when it is still good.
 
-        `max_age_s=None` means any cached copy is good (use it for history that
-        cannot change, like a past hour of pageviews). Raises FetchError on a
-        non-2xx status after retries.
+        A cached copy is good when it is younger than `max_age_s`, or when it was
+        fetched after `settled_after`, the moment the data stopped changing (a
+        day's pageviews once published, a game once final). `max_age_s=None`
+        with no `settled_after` accepts any cached copy. A copy fetched while
+        the window was still open is not made permanent just because the window
+        has since closed. Raises FetchError on a non-2xx status after retries.
         """
         path = self._cache_path(url)
-        if path is not None and path.exists():
-            cached = json.loads(path.read_text(encoding="utf-8"))
-            age = time.time() - datetime.fromisoformat(cached["fetched_at"]).timestamp()
-            if max_age_s is None or age <= max_age_s:
+        cached = self._read_cache(path)
+        if cached is not None:
+            fetched = datetime.fromisoformat(cached["fetched_at"])
+            age = time.time() - fetched.timestamp()
+            settled = settled_after is not None and fetched >= settled_after
+            if settled or (max_age_s is None and settled_after is None) or (max_age_s is not None and age <= max_age_s):
                 return CachedResponse(cached["url"], cached["status"], cached["fetched_at"], cached["body"], True)
 
         host = urllib.parse.urlsplit(url).netloc
@@ -156,7 +168,8 @@ class PoliteClient:
                 wait = float(retry_after) if retry_after and retry_after.isdigit() else delay
                 time.sleep(min(wait, 120.0))
                 delay *= 2
-            except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
+                # URLError, timeouts, resets, SSL errors and IncompleteRead mid-body all land here.
                 last_error = f"{type(e).__name__} reaching {host}: {e}"
                 if attempt == self.max_retries:
                     raise FetchError(f"{last_error} for {url}") from e
@@ -165,17 +178,34 @@ class PoliteClient:
         else:  # pragma: no cover - loop always breaks or raises
             raise FetchError(last_error)
 
-        fetched_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        fetched_at = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
         if path is not None:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(
+            # Write then rename, so a reader in another process never sees half a file.
+            tmp = path.with_suffix(f".{os.getpid()}.tmp")
+            tmp.write_text(
                 json.dumps({"url": url, "status": status, "fetched_at": fetched_at, "body": body}),
                 encoding="utf-8",
             )
+            os.replace(tmp, path)
         return CachedResponse(url, status, fetched_at, body, False)
 
-    def get_json(self, url: str, max_age_s: float | None = None, headers: dict | None = None):
-        resp = self.get(url, max_age_s=max_age_s, headers=headers)
+    @staticmethod
+    def _read_cache(path: Path | None) -> dict | None:
+        """The cached record, or None when absent or unreadable (a truncated file is a miss)."""
+        if path is None or not path.exists():
+            return None
+        try:
+            cached = json.loads(path.read_text(encoding="utf-8"))
+            datetime.fromisoformat(cached["fetched_at"])
+            return cached
+        except (json.JSONDecodeError, KeyError, ValueError, OSError):
+            return None
+
+    def get_json(
+        self, url: str, max_age_s: float | None = None, headers: dict | None = None, settled_after: datetime | None = None
+    ):
+        resp = self.get(url, max_age_s=max_age_s, headers=headers, settled_after=settled_after)
         try:
             return resp.json()
         except json.JSONDecodeError as e:

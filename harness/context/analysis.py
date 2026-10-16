@@ -21,7 +21,7 @@ import random
 import statistics
 from collections import Counter, defaultdict
 
-from harness.context.backfill import CONTEXT_DIR
+from harness.context.backfill import CONTEXT_DIR, TIMELINES, read_jsonl
 
 ENRICHED = CONTEXT_DIR / "devtools_enriched.csv"
 TIMELINE_POSTS = CONTEXT_DIR / "timeline_posts.csv"
@@ -37,7 +37,7 @@ BINARY = [
 NUMERIC = [
     "pre_n_chars", "pre_n_words", "pre_n_lines", "pre_n_links_text", "pre_n_mentions", "pre_n_hashtags",
     "pre_n_emoji", "pre_n_exclaim", "pre_caps_ratio", "pre_hour_local", "pre_author_posts_prev2h",
-    "pre_hn_stories_prev24h", "pre_hn_500plus_stories_prev24h", "pre_wiki_prev_day_ratio",
+    "pre_hn_stories_prev24h", "pre_wiki_prev_day_ratio",
 ]
 
 
@@ -120,6 +120,82 @@ def pooled(rows: list[dict], feature: str, pos: str, neg: str) -> dict:
             "n_pos": len(a), "n_neg": len(b), "auc": round(auc(a, b), 3)}
 
 
+def timeline_prior_auc(rows: list[dict], gap_h: float = 72, min_posts: int = 5) -> dict:
+    """Leakage check for the author floor: a prior built only from timeline posts (never CSV rows,
+    which were selected on the outcome), ending `gap_h` before each post so no earlier post's
+    count can include engagement that arrived after the target was posted."""
+    from datetime import datetime, timedelta
+
+    hist = defaultdict(list)
+    for t in read_jsonl(TIMELINES):
+        if "error" in t or t.get("is_repost"):
+            continue
+        if t.get("replying_to") and t["replying_to"].lower() == t["timeline_of"].lower():
+            continue
+        eng = t["likes"] + t["reposts"] + t["replies"] + t["quotes"]
+        hist["@" + t["timeline_of"].lower()].append((datetime.fromisoformat(t["created_at"]), eng))
+
+    def prior(r):
+        c = datetime.fromisoformat(r["created_at_utc"]) - timedelta(hours=gap_h)
+        h = [e for t, e in hist.get(r["Account"].lower(), []) if t < c]
+        return statistics.median(h) if len(h) >= min_posts else None
+
+    elig = [r for r in rows if r.get("label_eligible") == "True" and r["Account"].lower() in hist]
+    out = {"gap_hours": gap_h, "accounts_with_timeline": len({r["Account"] for r in elig})}
+    for pos, neg in (("Super Viral", "Deadweight"), ("Medium Viral", "Deadweight"), ("Super Viral", "Medium Viral")):
+        a = [p for r in elig if r["Category"] == pos and (p := prior(r)) is not None]
+        b = [p for r in elig if r["Category"] == neg and (p := prior(r)) is not None]
+        out[f"{pos} vs {neg}"] = {"auc": round(auc(a, b), 3) if a and b else None, "n": [len(a), len(b)]}
+    return out
+
+
+def reply_curves(rows: list[dict], min_coverage: float = 0.8, min_replies: int = 20) -> dict:
+    """Shapes of reply-arrival curves, and per-account decay exponents, from near-complete reply samples.
+
+    Replies are not the whole of engagement (they reach few non-followers), so
+    this checks the curve model on real arrival times rather than measuring virality.
+    """
+    from datetime import datetime
+
+    from harness.context.curves import InflectionParams, classify_shape, curve_from_event_times, features, to_grid
+    from harness.context.decay import crane_sornette_class, fit_alpha, post_peak_counts
+
+    samples = defaultdict(list)
+    for r in read_jsonl(CONTEXT_DIR / "reply_samples.jsonl"):
+        if "id" in r:
+            samples[r["reply_to_post"]].append(r)
+    p = InflectionParams()
+    shapes = defaultdict(Counter)
+    per_account = defaultdict(list)
+    onsets = defaultdict(list)
+    n = 0
+    for r in rows:
+        reps = samples.get(r["post_id"])
+        if r.get("label_eligible") != "True" or not reps:
+            continue
+        cov = reps[0].get("coverage")
+        if cov is None or cov < min_coverage or len(reps) < min_replies:
+            continue
+        created = datetime.fromisoformat(r["created_at_utc"])
+        times = [datetime.fromisoformat(x["created_at"]) for x in reps]
+        end = max(datetime.fromisoformat(x["fetched_at"]) for x in reps)
+        curve = curve_from_event_times(created, times, end=end)
+        f = features(curve, p)
+        shapes[r["Category"]][classify_shape(f, p)] += 1
+        per_account[r["Account"]].append(post_peak_counts(to_grid(curve, p.dt)))
+        onsets[r["Account"]].append((f.rise_bins or 0) <= 1)
+        n += 1
+    decay = {}
+    for acct, posts in per_account.items():
+        alpha = fit_alpha(posts)
+        if alpha is None:
+            continue
+        sudden = sum(onsets[acct]) >= len(onsets[acct]) / 2
+        decay[acct] = {"alpha": round(alpha, 3), "posts": len(posts), "sudden_onset_majority": sudden,
+                       "class": crane_sornette_class(alpha, sudden)}
+    return {"posts": n, "min_coverage": min_coverage, "shapes_by_category": shapes, "decay_by_account": decay}
+
+
 def run() -> dict:
     with ENRICHED.open(encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
@@ -141,7 +217,7 @@ def run() -> dict:
     sd = [r for r in elig if r["Category"] in ("Super Viral", "Deadweight")]
     nd = [r for r in elig]
     floors = {}
-    for feat in ("pre_author_prior_median_eng", "pre_author_prior_viral_share", "pre_author_followers_at_fetch"):
+    for feat in ("pre_author_prior_median_eng", "pre_author_prior_viral_share", "outcome_author_followers_at_fetch"):
         a = [_f(r[feat]) for r in sd if r["Category"] == "Super Viral" and _f(r.get(feat)) is not None]
         b = [_f(r[feat]) for r in sd if r["Category"] == "Deadweight" and _f(r.get(feat)) is not None]
         c = [_f(r[feat]) for r in nd if r["Category"] != "Deadweight" and _f(r.get(feat)) is not None]
@@ -149,6 +225,7 @@ def run() -> dict:
         floors[feat] = {"auc_sv_vs_dw": round(auc(a, b), 3) if a and b else None, "n": [len(a), len(b)],
                         "auc_viral_vs_dw": round(auc(c, d), 3) if c and d else None, "n_viral": [len(c), len(d)]}
     res["author_floor_auc"] = floors
+    res["author_floor_timeline_only"] = timeline_prior_auc(rows)
 
     res["features"] = {}
     for feat in BINARY + NUMERIC:
@@ -156,6 +233,7 @@ def run() -> dict:
             "pooled": pooled(sd, feat, "Super Viral", "Deadweight"),
             "within_account": within_account(elig, feat, "Super Viral", "Deadweight"),
             "within_account_mv_vs_dw": within_account(elig, feat, "Medium Viral", "Deadweight"),
+            "within_account_sv_vs_mv": within_account(elig, feat, "Super Viral", "Medium Viral"),
         }
 
     lift = [r for r in elig if _f(r.get("label_lift_prior")) is not None]
@@ -187,12 +265,14 @@ def run() -> dict:
         for k, v in reach.items()
     }
 
-    amp = [r for r in elig if _f(r.get("outcome_max_reposter_followers")) is not None and _f(r.get("pre_author_followers_at_fetch"))]
+    amp = [r for r in elig if _f(r.get("outcome_max_reposter_followers")) is not None and _f(r.get("outcome_author_followers_at_fetch"))]
     res["reposter_larger_than_author"] = {
-        cat: {"n": len(v), "share": round(sum(_f(r["outcome_max_reposter_followers"]) > _f(r["pre_author_followers_at_fetch"]) for r in v) / len(v), 3)}
+        cat: {"n": len(v), "share": round(sum(_f(r["outcome_max_reposter_followers"]) > _f(r["outcome_author_followers_at_fetch"]) for r in v) / len(v), 3)}
         for cat in ("Super Viral", "Medium Viral", "Deadweight")
         if (v := [r for r in amp if r["Category"] == cat])
     }
+
+    res["reply_curves"] = reply_curves(rows)
 
     if TIMELINE_POSTS.exists():
         with TIMELINE_POSTS.open(encoding="utf-8", newline="") as f:

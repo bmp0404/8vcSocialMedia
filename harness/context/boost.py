@@ -39,17 +39,19 @@ class RatioRule:
     side: str  # "high" fires above the upper quantile, "low" below the lower one
     min_param: str  # BoostParams field holding the minimum denominator
     vote: bool  # counts toward likely_inauthentic; otherwise reported as a weak signal
+    group: str  # rules sharing a group cast one vote between them
     why: str
 
 
 RULES = (
-    RatioRule("like_rate_high", "likes", "views", "high", "like_rate_min_views", False,
+    RatioRule("like_rate_high", "likes", "views", "high", "like_rate_min_views", False, "like_rate",
               "likes per view far above peers; on this dataset it caught organic memes, so it does not vote"),
-    RatioRule("repost_heavy", "reposts", "likes", "high", "repost_min_likes", True,
+    RatioRule("repost_heavy", "reposts", "likes", "high", "repost_min_likes", True, "repost_ratio",
               "reposts outpace likes: repost rings and engagement pods inflate reposts"),
-    RatioRule("bookmarks_low", "bookmarks", "likes", "low", "bookmarks_min_likes", True,
+    # Both of these divide by likes, so one like purchase trips both: one vote between them.
+    RatioRule("bookmarks_low", "bookmarks", "likes", "low", "bookmarks_min_likes", True, "passive_likes",
               "many likes, almost no bookmarks: purchased likes never save the post"),
-    RatioRule("replies_low", "replies", "likes", "low", "replies_min_likes", True,
+    RatioRule("replies_low", "replies", "likes", "low", "replies_min_likes", True, "passive_likes",
               "many likes, almost no conversation"),
 )
 INAUTHENTIC_CURVE_FLAGS = {"drip_feed", "like_only_burst", "count_drop"}
@@ -118,9 +120,11 @@ def classify(
     views, engagement, author_median_views, author_median_eng_per_view,
     author_posts_with_views, eng_ratio_author, reply_coverage,
     reply_low_follower_share, reply_dup_share, reply_burst_share,
-    staff_share, staff_sample_n, reposter_new_account_share.
+    reposter_staff_share, reposter_sample_n, reply_insider_share, reply_sample_n,
+    reposter_new_account_share.
     """
     votes, weak, reach, coordinated = [], [], [], []
+    groups: set[str] = set()
     for r in RULES:
         if r.name not in cutoffs:
             continue
@@ -129,7 +133,13 @@ def classify(
             continue
         ratio = num / den
         if (r.side == "high" and ratio > cutoffs[r.name]) or (r.side == "low" and ratio < cutoffs[r.name]):
-            (votes if r.vote else weak).append(r.name)
+            if not r.vote:
+                weak.append(r.name)
+            elif r.group not in groups:
+                groups.add(r.group)
+                votes.append(r.name)
+            else:
+                weak.append(r.name)
 
     if (row.get("eng_ratio_author") or 0) >= p.author_outlier:
         weak.append("author_outlier")
@@ -144,8 +154,13 @@ def classify(
     ):
         reach.append("views_without_engagement")
 
-    if (row.get("staff_sample_n") or 0) >= p.staff_min_sample and (row.get("staff_share") or 0) >= p.staff_share:
-        coordinated.append("staff_amplification")
+    # Each sample is judged on its own size: one brand-bio reposter is not a share of 30 repliers.
+    for share, n, name in (
+        ("reposter_staff_share", "reposter_sample_n", "staff_reposters"),
+        ("reply_insider_share", "reply_sample_n", "staff_repliers"),
+    ):
+        if (row.get(n) or 0) >= p.staff_min_sample and (row.get(share) or 0) >= p.staff_share:
+            coordinated.append(name)
 
     covered = (row.get("reply_coverage") or 0) >= p.min_reply_coverage
     if covered and (row.get("reply_low_follower_share") or 0) >= p.low_follower_share:

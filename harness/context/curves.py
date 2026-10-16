@@ -13,8 +13,9 @@ Pipeline:
 Shape labels (exactly one per curve, checked in this order):
     insufficient     observed too briefly or too few snapshots to say anything
     stillborn        observed long enough, and almost nobody engaged
-    step_jump        one bin after the first hour carries >= 25% of the total and
-                     arrives abruptly: the usual mark of a large account quoting
+    step_jump        one bin (or two adjacent bins, when the jump straddles a
+                     grid edge) after the first hour carries >= 25% of the total
+                     and arrives abruptly: the usual mark of a large account quoting
                      or reposting the post
     circadian_echo   a second peak 20-28 h after the first: the audience waking
                      up again, not news (Kobayashi and Lambiotte 2016)
@@ -243,8 +244,16 @@ def build_curve(created_at: datetime, snapshots: list[Snapshot], metric: str = "
     return Curve(t=t, y=y, raw=raw, metric=metric)
 
 
-def curve_from_event_times(created_at: datetime, event_times: list[datetime], metric: str = "replies") -> Curve:
-    """A cumulative curve from the creation times of replies or quotes (decode their Snowflake IDs)."""
+def curve_from_event_times(
+    created_at: datetime, event_times: list[datetime], metric: str = "replies", end: datetime | None = None
+) -> Curve:
+    """A cumulative curve from the creation times of replies or quotes (decode their Snowflake IDs).
+
+    Pass `end` (the fetch time) so a post whose replies stopped still spans its
+    whole observed life; without it the curve ends at the last reply and a long
+    quiet tail disappears. Only fit shapes when the sample covers most replies:
+    X's default reply order puts early replies first.
+    """
     minutes = sorted((e - created_at).total_seconds() / 60.0 for e in event_times)
     minutes = [m for m in minutes if m >= 0]
     t, y = [0.0], [0.0]
@@ -254,6 +263,11 @@ def curve_from_event_times(created_at: datetime, event_times: list[datetime], me
         else:
             t.append(m)
             y.append(float(i))
+    if end is not None:
+        last = (end - created_at).total_seconds() / 60.0
+        if last > t[-1]:
+            t.append(last)
+            y.append(y[-1])
     return Curve(t=t, y=y, raw=list(y), metric=metric)
 
 
@@ -280,7 +294,7 @@ def to_grid(curve: Curve, dt: float) -> list[float]:
     across a long polling gap evenly over that gap, so a step only shows up as
     a step when snapshots were taken at least every `dt` minutes around it.
     """
-    n = int(curve.duration // dt + 1e-9)
+    n = int(curve.duration / dt + 1e-9)
     cum = [_interp(curve.t, curve.y, k * dt) for k in range(n + 1)]
     return [cum[k + 1] - cum[k] for k in range(n)]
 
@@ -336,16 +350,35 @@ def find_waves(v: list[float], dt: float, p: InflectionParams) -> list[int]:
 
 
 def find_steps(v: list[float], final: float, dt: float, p: InflectionParams) -> list[int]:
-    """Bins after step_min_age holding >= step_share of the total that start abruptly and do not keep rising."""
-    steps = []
+    """Start bins of jumps after step_min_age that hold >= step_share of the total, start
+    abruptly and do not keep rising.
+
+    A jump that lands between two snapshots is split by interpolation across
+    the two grid bins it straddles, so a window of two adjacent bins is tested
+    as well as single bins. Without that, whether a step is found depends on
+    where the polls fall relative to the grid.
+    """
+    if final <= 0:
+        return []
+    steps: list[int] = []
     for j in range(1, len(v)):
-        inc = v[j] * dt
-        if final <= 0 or inc < p.step_share * final or j * dt < p.step_min_age:
+        if j * dt < p.step_min_age:
             continue
-        abrupt = v[j - 1] <= p.step_onset_frac * v[j]
-        peaked = j == len(v) - 1 or v[j + 1] < v[j]
-        if abrupt and peaked:
-            steps.append(j)
+        for width in (1, 2):
+            if j + width > len(v) or (steps and j <= steps[-1] + 1):
+                continue
+            window = v[j : j + width]
+            top = max(window)
+            after = v[j + width] if j + width < len(v) else None
+            if width == 2 and min(window) <= p.step_onset_frac * top:
+                continue  # the jump sits in one of the two bins; the single-bin test owns it
+            if (
+                sum(window) * dt >= p.step_share * final
+                and v[j - 1] <= p.step_onset_frac * top
+                and (after is None or after < top)
+            ):
+                steps.append(j)
+                break
     return steps
 
 

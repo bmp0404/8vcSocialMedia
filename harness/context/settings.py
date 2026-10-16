@@ -16,7 +16,9 @@ from harness.context.curves import InflectionParams
 @dataclass(frozen=True)
 class FetchParams:
     default_interval_s: float = 1.0  # per host, shared across processes (http.THROTTLE_DIR)
-    bulk_interval_s: float = 2.0  # dataset backfill: Observe shares this IP's fxtwitter budget
+    # Dataset jobs. 2.0 s left room for Observe on the same IP before the throttle was shared across
+    # processes; with the shared timestamp file, every caller of this client together stays at 1 req/s.
+    bulk_interval_s: float = 2.0
     gdelt_interval_s: float = 6.0  # GDELT asks for >= 5 s
     trends_interval_s: float = 4.0  # Google Trends explore flow worked at 3-4 s
     timeout_s: float = 25.0
@@ -62,6 +64,9 @@ class EnrichParams:
     # David's CSV was committed at this time (git log c9f8904); its counts are from just before.
     scrape_time_iso: str = "2026-10-16T01:07:58+00:00"
     prior_min_posts: int = 5  # pre_author_prior_median_eng needs this many earlier posts
+    # Earlier posts' counts are read at fetch time; a post made 30 minutes before the target still
+    # carries the engagement it gathered afterwards. Only posts this much older count toward the prior.
+    prior_gap_h: float = 48.0
     prev_window_h: float = 2.0  # pre_author_posts_prev{h}h: X decays repeat posts by one author in a batch
     min_reply_coverage: float = 0.8  # reply timing stats only when the sample covers this share of replies
     new_account_days: int = 90  # a reposter who joined this recently counts as a new account

@@ -67,6 +67,31 @@
    ]
   }
  },
+ "author_floor_timeline_only": {
+  "gap_hours": 72,
+  "accounts_with_timeline": 42,
+  "Super Viral vs Deadweight": {
+   "auc": 0.999,
+   "n": [
+    58,
+    212
+   ]
+  },
+  "Medium Viral vs Deadweight": {
+   "auc": 0.992,
+   "n": [
+    162,
+    212
+   ]
+  },
+  "Super Viral vs Medium Viral": {
+   "auc": 0.763,
+   "n": [
+    58,
+    162
+   ]
+  }
+ },
  "features": {
   "pre_has_media": {
    "pooled": {
@@ -93,6 +118,15 @@
      0.379
     ],
     "share_accounts_pos_higher": 0.5
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.1868,
+    "ci95": [
+     0.0363,
+     0.354
+    ],
+    "share_accounts_pos_higher": 0.714
    }
   },
   "pre_hook_announce": {
@@ -120,6 +154,15 @@
      0.3548
     ],
     "share_accounts_pos_higher": 0.5
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0579,
+    "ci95": [
+     -0.2033,
+     0.1148
+    ],
+    "share_accounts_pos_higher": 0.238
    }
   },
   "pre_hook_feature_tip": {
@@ -147,6 +190,15 @@
      0.0228
     ],
     "share_accounts_pos_higher": 0.111
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0136,
+    "ci95": [
+     -0.0404,
+     0.0952
+    ],
+    "share_accounts_pos_higher": 0.143
    }
   },
   "pre_hook_funding_deal": {
@@ -174,6 +226,15 @@
      0.0
     ],
     "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0965,
+    "ci95": [
+     -0.003,
+     0.2328
+    ],
+    "share_accounts_pos_higher": 0.143
    }
   },
   "pre_hook_event": {
@@ -199,6 +260,15 @@
     "ci95": [
      -0.0984,
      -0.0218
+    ],
+    "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0209,
+    "ci95": [
+     -0.0469,
+     -0.0016
     ],
     "share_accounts_pos_higher": 0.0
    }
@@ -228,6 +298,15 @@
      0.0833
     ],
     "share_accounts_pos_higher": 0.056
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0057,
+    "ci95": [
+     -0.049,
+     0.0424
+    ],
+    "share_accounts_pos_higher": 0.095
    }
   },
   "pre_hook_humor": {
@@ -255,6 +334,15 @@
      0.0
     ],
     "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0015,
+    "ci95": [
+     -0.0134,
+     0.0179
+    ],
+    "share_accounts_pos_higher": 0.048
    }
   },
   "pre_hook_hiring": {
@@ -279,6 +367,15 @@
     "mean_diff": 0.0,
     "ci95": [
      0.0,
+     0.0
+    ],
+    "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0034,
+    "ci95": [
+     -0.0102,
      0.0
     ],
     "share_accounts_pos_higher": 0.0
@@ -309,6 +406,15 @@
      0.1222
     ],
     "share_accounts_pos_higher": 0.167
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0033,
+    "ci95": [
+     -0.0993,
+     0.1214
+    ],
+    "share_accounts_pos_higher": 0.286
    }
   },
   "pre_has_question": {
@@ -336,6 +442,15 @@
      0.0276
     ],
     "share_accounts_pos_higher": 0.111
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0187,
+    "ci95": [
+     -0.0533,
+     0.1266
+    ],
+    "share_accounts_pos_higher": 0.095
    }
   },
   "pre_has_number": {
@@ -363,6 +478,15 @@
      0.3652
     ],
     "share_accounts_pos_higher": 0.5
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0457,
+    "ci95": [
+     -0.2348,
+     0.1336
+    ],
+    "share_accounts_pos_higher": 0.286
    }
   },
   "pre_is_thread": {
@@ -390,6 +514,15 @@
      0.0
     ],
     "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0181,
+    "ci95": [
+     -0.0456,
+     0.0
+    ],
+    "share_accounts_pos_higher": 0.0
    }
   },
   "pre_has_list": {
@@ -411,6 +544,15 @@
    },
    "within_account_mv_vs_dw": {
     "n_accounts": 18,
+    "mean_diff": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
     "mean_diff": 0.0,
     "ci95": [
      0.0,
@@ -444,6 +586,15 @@
      0.0655
     ],
     "share_accounts_pos_higher": 0.111
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0077,
+    "ci95": [
+     -0.0458,
+     0.0731
+    ],
+    "share_accounts_pos_higher": 0.095
    }
   },
   "pre_first_person_plural": {
@@ -471,6 +622,15 @@
      0.2729
     ],
     "share_accounts_pos_higher": 0.389
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0247,
+    "ci95": [
+     -0.148,
+     0.2065
+    ],
+    "share_accounts_pos_higher": 0.286
    }
   },
   "pre_all_lowercase": {
@@ -498,6 +658,15 @@
      0.1674
     ],
     "share_accounts_pos_higher": 0.222
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0033,
+    "ci95": [
+     -0.0503,
+     0.0601
+    ],
+    "share_accounts_pos_higher": 0.143
    }
   },
   "pre_short_no_link": {
@@ -525,6 +694,15 @@
      0.073
     ],
     "share_accounts_pos_higher": 0.111
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0138,
+    "ci95": [
+     -0.0744,
+     0.049
+    ],
+    "share_accounts_pos_higher": 0.19
    }
   },
   "pre_round_minute": {
@@ -552,6 +730,15 @@
      0.3169
     ],
     "share_accounts_pos_higher": 0.333
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.01,
+    "ci95": [
+     -0.0784,
+     0.1252
+    ],
+    "share_accounts_pos_higher": 0.238
    }
   },
   "pre_is_weekend_local": {
@@ -579,6 +766,15 @@
      0.0618
     ],
     "share_accounts_pos_higher": 0.167
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0072,
+    "ci95": [
+     -0.042,
+     0.0688
+    ],
+    "share_accounts_pos_higher": 0.19
    }
   },
   "pre_is_quote_post": {
@@ -606,6 +802,15 @@
      -0.2164
     ],
     "share_accounts_pos_higher": 0.059
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.0412,
+    "ci95": [
+     -0.1538,
+     0.0702
+    ],
+    "share_accounts_pos_higher": 0.19
    }
   },
   "pre_starts_with_mention": {
@@ -627,6 +832,15 @@
    },
    "within_account_mv_vs_dw": {
     "n_accounts": 18,
+    "mean_diff": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
     "mean_diff": 0.0,
     "ci95": [
      0.0,
@@ -660,6 +874,15 @@
      132.5201
     ],
     "share_accounts_pos_higher": 0.722
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -3.8815,
+    "ci95": [
+     -35.4557,
+     26.6083
+    ],
+    "share_accounts_pos_higher": 0.429
    }
   },
   "pre_n_words": {
@@ -687,6 +910,15 @@
      22.257
     ],
     "share_accounts_pos_higher": 0.722
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.7366,
+    "ci95": [
+     -5.957,
+     4.3043
+    ],
+    "share_accounts_pos_higher": 0.476
    }
   },
   "pre_n_lines": {
@@ -714,6 +946,15 @@
      0.2586
     ],
     "share_accounts_pos_higher": 0.333
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0002,
+    "ci95": [
+     -0.0436,
+     0.039
+    ],
+    "share_accounts_pos_higher": 0.143
    }
   },
   "pre_n_links_text": {
@@ -741,6 +982,15 @@
      -0.0024
     ],
     "share_accounts_pos_higher": 0.167
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.1572,
+    "ci95": [
+     -0.3434,
+     0.0413
+    ],
+    "share_accounts_pos_higher": 0.238
    }
   },
   "pre_n_mentions": {
@@ -768,6 +1018,15 @@
      0.4211
     ],
     "share_accounts_pos_higher": 0.444
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.2314,
+    "ci95": [
+     -0.4399,
+     -0.071
+    ],
+    "share_accounts_pos_higher": 0.095
    }
   },
   "pre_n_hashtags": {
@@ -795,6 +1054,15 @@
      0.0167
     ],
     "share_accounts_pos_higher": 0.056
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.026,
+    "ci95": [
+     -0.0368,
+     0.1304
+    ],
+    "share_accounts_pos_higher": 0.048
    }
   },
   "pre_n_emoji": {
@@ -822,6 +1090,15 @@
      0.3065
     ],
     "share_accounts_pos_higher": 0.389
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.2427,
+    "ci95": [
+     -0.1398,
+     0.7183
+    ],
+    "share_accounts_pos_higher": 0.333
    }
   },
   "pre_n_exclaim": {
@@ -849,6 +1126,15 @@
      0.1068
     ],
     "share_accounts_pos_higher": 0.222
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0388,
+    "ci95": [
+     -0.1028,
+     0.1993
+    ],
+    "share_accounts_pos_higher": 0.19
    }
   },
   "pre_caps_ratio": {
@@ -876,6 +1162,15 @@
      0.0155
     ],
     "share_accounts_pos_higher": 0.389
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.0088,
+    "ci95": [
+     -0.0099,
+     0.0282
+    ],
+    "share_accounts_pos_higher": 0.619
    }
   },
   "pre_hour_local": {
@@ -903,6 +1198,15 @@
      -0.7028
     ],
     "share_accounts_pos_higher": 0.278
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.034,
+    "ci95": [
+     -1.5568,
+     1.2477
+    ],
+    "share_accounts_pos_higher": 0.476
    }
   },
   "pre_author_posts_prev2h": {
@@ -930,6 +1234,15 @@
      -0.1508
     ],
     "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.1442,
+    "ci95": [
+     -0.0251,
+     0.3612
+    ],
+    "share_accounts_pos_higher": 0.381
    }
   },
   "pre_hn_stories_prev24h": {
@@ -957,6 +1270,15 @@
      0.1921
     ],
     "share_accounts_pos_higher": 0.222
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": 0.1701,
+    "ci95": [
+     -0.0096,
+     0.3632
+    ],
+    "share_accounts_pos_higher": 0.286
    }
   },
   "pre_hn_500plus_stories_prev24h": {
@@ -984,6 +1306,15 @@
      0.9037
     ],
     "share_accounts_pos_higher": 0.444
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 21,
+    "mean_diff": -0.5059,
+    "ci95": [
+     -1.3837,
+     0.403
+    ],
+    "share_accounts_pos_higher": 0.333
    }
   },
   "pre_wiki_prev_day_ratio": {
@@ -1011,6 +1342,15 @@
      -0.1344
     ],
     "share_accounts_pos_higher": 0.0
+   },
+   "within_account_sv_vs_mv": {
+    "n_accounts": 6,
+    "mean_diff": -0.0331,
+    "ci95": [
+     -0.1666,
+     0.0849
+    ],
+    "share_accounts_pos_higher": 0.667
    }
   }
  },

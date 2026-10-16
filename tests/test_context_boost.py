@@ -63,9 +63,21 @@ def test_reply_timing_votes_need_coverage():
 
 
 def test_staff_amplification_is_coordinated_not_suspect():
-    out = boost.classify(base(staff_share=0.3, staff_sample_n=40), CUT, P)
+    out = boost.classify(base(reposter_staff_share=0.3, reposter_sample_n=40), CUT, P)
     assert out["boost_class"] == "coordinated_authentic"
     assert out["boost_coordinated_authentic"] and not out["boost_suspect"]
+
+
+def test_staff_share_is_judged_per_sample():
+    # One brand-bio reposter (share 1.0 of 1) next to 30 ordinary repliers is not a staff push.
+    row = base(reposter_staff_share=1.0, reposter_sample_n=1, reply_insider_share=0.0, reply_sample_n=30)
+    assert not boost.classify(row, CUT, P)["boost_coordinated_authentic"]
+
+
+def test_bookmarks_and_replies_low_share_one_vote():
+    out = boost.classify(base(likes=10_000, bookmarks=50, replies=20, views=1_000_000), CUT, P)
+    assert out["boost_inauthentic_votes"] == 1
+    assert "replies_low" in out["boost_weak_signals"]
 
 
 def test_inauthentic_outranks_paid_in_class():

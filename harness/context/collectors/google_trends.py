@@ -60,8 +60,11 @@ def _session_cookie() -> str:
     global _cookie
     if _cookie is None:
         req = urllib.request.Request(f"{BASE}/trends/?geo=US", headers={"User-Agent": USER_AGENT})
-        with urllib.request.urlopen(req, timeout=25) as resp:
-            cookies = resp.headers.get_all("Set-Cookie") or []
+        try:
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                cookies = resp.headers.get_all("Set-Cookie") or []
+        except OSError as e:  # URLError and HTTPError are OSErrors
+            raise FetchError(f"Google Trends cookie request failed: {e}") from e
         nid = next((c.split(";", 1)[0] for c in cookies if c.startswith("NID=")), None)
         if not nid:
             raise FetchError("Google Trends set no NID cookie; the explore API will refuse requests")
@@ -80,11 +83,27 @@ def interest_over_time(term: str, start: datetime, end: datetime, geo: str = "US
     """
     hourly = end - start <= timedelta(days=7)
     window = f"{start:%Y-%m-%dT%H} {end:%Y-%m-%dT%H}" if hourly else f"{start:%Y-%m-%d} {end:%Y-%m-%d}"
+    return _timeseries(term, window, geo, "1h" if hourly else "1d", settled_after=end + timedelta(days=2))
+
+
+def interest_recent(term: str, window: str = "now 1-d", geo: str = "US") -> Series:
+    """Interest over the last `window` at Google's finest grain.
+
+    On 2026-10-16 "now 1-d" returned 8-minute buckets and "now 7-d" hourly
+    ones. The resolution field is read from the response, not assumed.
+    """
+    return _timeseries(term, window, geo, None, settled_after=None)
+
+
+def _timeseries(term: str, window: str, geo: str, resolution: str | None, settled_after: datetime | None) -> Series:
+    # A relative window ("now 1-d") names a different span every day, so it never settles.
     req = {"comparisonItem": [{"keyword": term, "geo": geo, "time": window}], "category": 0, "property": ""}
     headers = {"Cookie": _session_cookie()}
     explore = _client.get(
         f"{BASE}/trends/api/explore?" + urllib.parse.urlencode({"hl": "en-US", "tz": "0", "req": json.dumps(req)}),
         headers=headers,
+        max_age_s=900,
+        settled_after=settled_after,
     )
     widgets = _strip(explore.body).get("widgets") or []
     ts = next((w for w in widgets if w.get("id") == "TIMESERIES"), None)
@@ -94,6 +113,8 @@ def interest_over_time(term: str, start: datetime, end: datetime, geo: str = "US
         f"{BASE}/trends/api/widgetdata/multiline?"
         + urllib.parse.urlencode({"hl": "en-US", "tz": "0", "req": json.dumps(ts["request"]), "token": ts["token"]}),
         headers=headers,
+        max_age_s=900,
+        settled_after=settled_after,
     )
     timeline = _strip(data.body)["default"]["timelineData"]
     points = [
@@ -101,10 +122,13 @@ def interest_over_time(term: str, start: datetime, end: datetime, geo: str = "US
         for p in timeline
         if p.get("hasData", [True])[0]
     ]
+    if resolution is None:
+        steps = sorted({int(b["time"]) - int(a["time"]) for a, b in zip(timeline, timeline[1:])})
+        resolution = f"{steps[0] // 60}min" if steps else "unknown"
     return Series(
         term=term,
         source="google_trends",
-        resolution="1h" if hourly else "1d",
+        resolution=resolution,
         points=points,
         fetched_at=data.fetched_at,
         note="0-100 relative to the window maximum; not comparable across requests",

@@ -12,7 +12,7 @@ import gzip
 import json
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from harness.context.collectors.base import Series, client
 from harness.context.http import USER_AGENT, FetchError
@@ -28,9 +28,8 @@ def pageviews(article: str, start: datetime, end: datetime, granularity: str = "
         raise ValueError("Wikimedia per-article pageviews support only daily or monthly granularity")
     title = urllib.parse.quote(article.replace(" ", "_"), safe="")
     url = f"{PAGEVIEWS}/per-article/{project}/all-access/user/{title}/{granularity}/{start:%Y%m%d00}/{end:%Y%m%d00}"
-    # Past days do not change once published; any cached copy is good unless the range reaches today.
-    recent = (datetime.now(timezone.utc) - end).days < 2
-    resp = client().get(url, max_age_s=6 * 3600 if recent else None)
+    # A day is published about a day late and does not change after that.
+    resp = client().get(url, max_age_s=6 * 3600, settled_after=end + timedelta(days=2))
     items = resp.json().get("items") or []
     if not items:
         raise FetchError(f"wikimedia returned no pageviews for {article!r} ({start:%Y-%m-%d}..{end:%Y-%m-%d})")
@@ -67,7 +66,7 @@ def hourly_from_dump(titles: list[str], hour: datetime, project: str = "en") -> 
 def top_articles(day: datetime, project: str = "en.wikipedia") -> list[tuple[str, int]]:
     """The day's most-viewed articles: what the general public was looking at."""
     url = f"{PAGEVIEWS}/top/{project}/all-access/{day:%Y/%m/%d}"
-    data = client().get_json(url)
+    data = client().get_json(url, max_age_s=6 * 3600, settled_after=day + timedelta(days=2))
     arts = (data.get("items") or [{}])[0].get("articles") or []
     skip = ("Main_Page", "Special:", "Wikipedia:", "Portal:", "File:")
     return [(a["article"], a["views"]) for a in arts if not a["article"].startswith(skip)]
