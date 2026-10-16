@@ -26,6 +26,7 @@ def news_signals(payload: dict, league: str) -> list[Signal]:
                 text=f"{headline}\n{a.get('description') or ''}".strip(),
                 url=(a.get("links") or {}).get("web", {}).get("href"),
                 author=a.get("byline") or f"ESPN {league.split('/')[-1]}",
+                publisher="ESPN",
                 created_at=iso_utc(published) if published else None,
                 metrics={},
                 kind="news",

@@ -446,3 +446,22 @@ def test_own_side_thread_continues_under_the_framing_handle(monkeypatch, tmp_pat
     actions, _ = run(MockLLM(), [narrative([target()])])
     (a,) = [a for a in actions if a.type == "reply"]
     assert (a.draft_meta["method"], a.draft_meta["side"], a.draft_meta["written_as"]) == ("continuation", "own", "me")
+
+
+def test_a_news_caption_credits_the_publisher_not_the_byline(monkeypatch):
+    # Integration run 37 credited "via Michael Voepel", the ESPN byline, instead of ESPN.
+    from harness.minds import decide
+    from harness.models import Signal
+    from harness.sources.espn import news_signals
+
+    url = "https://www.espn.com/wnba/story/_/id/50189491/boston-surgery"
+    (signal,) = news_signals({"articles": [{"headline": "Boston has knee surgery", "byline": "Michael Voepel",
+                                            "links": {"web": {"href": url}}}]}, "basketball/wnba")
+    assert (signal.author, signal.publisher) == ("Michael Voepel", "ESPN")
+    n = Narrative(id="n", title="Boston surgery", summary="Boston had knee surgery", relevance=0.9, velocity=0.9,
+                  signal_urls=[url])
+    monkeypatch.setattr("harness.minds.load_minds", lambda: {})
+    monkeypatch.setattr(lanes, "PENDING", [])  # decide queues its decisions here; keep them out of other tests
+    shipped = decide(MockLLM(), "MISSION", "", [n], per_mind=1, signals=[signal, Signal(source="x", text="t")])
+    (caption,) = [a for a in shipped if a.mind == "caption"]
+    assert caption.text.endswith(f" via ESPN {url}") and caption.draft_meta["credit"] == "ESPN"

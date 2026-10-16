@@ -378,7 +378,7 @@ REDIRECT_HOSTS = {"news.google.com"}
 
 def credit_for(url: str, sources: dict[str, str]) -> str:
     """Who to credit for a link, the way a person would: @handle for an X post, else the publisher's
-    name from the signal (Signal.author), else the bare domain."""
+    name from the signal (Signal.publisher, else Signal.author), else the bare domain."""
     host = urlparse(url).netloc.removeprefix("www.")
     if host in ("x.com", "twitter.com"):
         return "@" + urlparse(url).path.strip("/").split("/")[0]
