@@ -25,6 +25,7 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
   const lastDecided = useRef<string[]>([])
   const byKey = useRef(false) // the verdict in flight came from the keyboard, so it doesn't animate
   const focusNext = useRef<string | null>(null) // the card to focus once the list has re-rendered
+  const showReceipt = useRef<string | null>(null) // the receipt to bring into view, so Undo is on screen
   const list = useRef<HTMLDivElement>(null)
 
   const open = shown.filter((c) => !decided.has(c.id))
@@ -34,6 +35,7 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
     lastDecided.current.push(v.card.id)
     const at = open.findIndex((c) => c.id === v.card.id)
     focusNext.current = (open[at + 1] ?? open[at - 1])?.id ?? null
+    showReceipt.current = v.card.id
     setSaid(receiptText(v))
     transition(() => setDecided((m) => new Map(m).set(v.card.id, v)), !byKey.current)
     byKey.current = false
@@ -58,6 +60,12 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
   // After a verdict, focus moves to the next card instead of falling to the page; after Undo or Show, to
   // the card that came back or arrived.
   useEffect(() => {
+    if (showReceipt.current) {
+      // A decided card shrinks to its receipt; scrolled down inside a tall card, the receipt and its Undo
+      // would end up above the screen, so bring it back to the top.
+      list.current?.querySelector(`[data-slot="${CSS.escape(showReceipt.current)}"]`)?.scrollIntoView({ block: 'nearest' })
+      showReceipt.current = null
+    }
     if (!focusNext.current) return
     const el = list.current?.querySelector<HTMLElement>(`article.card[data-card="${CSS.escape(focusNext.current)}"]`)
     focusNext.current = null
@@ -132,7 +140,7 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
         const v = decided.get(card.id)
         const account = accountFor(accounts, card, status)
         return (
-          <div key={card.id} className="slot" style={{ viewTransitionName: transitionName(card.id) }}>
+          <div key={card.id} className="slot" data-slot={card.id} style={{ viewTransitionName: transitionName(card.id) }}>
             {v ? (
               <Receipt verdict={v} onUndo={() => undo(card.id)} />
             ) : (
