@@ -243,8 +243,16 @@ def build_curve(created_at: datetime, snapshots: list[Snapshot], metric: str = "
     return Curve(t=t, y=y, raw=raw, metric=metric)
 
 
-def curve_from_event_times(created_at: datetime, event_times: list[datetime], metric: str = "replies") -> Curve:
-    """A cumulative curve from the creation times of replies or quotes (decode their Snowflake IDs)."""
+def curve_from_event_times(
+    created_at: datetime, event_times: list[datetime], metric: str = "replies", end: datetime | None = None
+) -> Curve:
+    """A cumulative curve from the creation times of replies or quotes (decode their Snowflake IDs).
+
+    Pass `end` (the fetch time) so a post whose replies stopped still spans its
+    whole observed life; without it the curve ends at the last reply and a long
+    quiet tail disappears. Only fit shapes when the sample covers most replies:
+    X's default reply order puts early replies first.
+    """
     minutes = sorted((e - created_at).total_seconds() / 60.0 for e in event_times)
     minutes = [m for m in minutes if m >= 0]
     t, y = [0.0], [0.0]
@@ -254,6 +262,11 @@ def curve_from_event_times(created_at: datetime, event_times: list[datetime], me
         else:
             t.append(m)
             y.append(float(i))
+    if end is not None:
+        last = (end - created_at).total_seconds() / 60.0
+        if last > t[-1]:
+            t.append(last)
+            y.append(y[-1])
     return Curve(t=t, y=y, raw=list(y), metric=metric)
 
 

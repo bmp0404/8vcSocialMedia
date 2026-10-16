@@ -21,7 +21,7 @@ import random
 import statistics
 from collections import Counter, defaultdict
 
-from harness.context.backfill import CONTEXT_DIR
+from harness.context.backfill import CONTEXT_DIR, TIMELINES, read_jsonl
 
 ENRICHED = CONTEXT_DIR / "devtools_enriched.csv"
 TIMELINE_POSTS = CONTEXT_DIR / "timeline_posts.csv"
@@ -120,6 +120,35 @@ def pooled(rows: list[dict], feature: str, pos: str, neg: str) -> dict:
             "n_pos": len(a), "n_neg": len(b), "auc": round(auc(a, b), 3)}
 
 
+def timeline_prior_auc(rows: list[dict], gap_h: float = 72, min_posts: int = 5) -> dict:
+    """Leakage check for the author floor: a prior built only from timeline posts (never CSV rows,
+    which were selected on the outcome), ending `gap_h` before each post so no earlier post's
+    count can include engagement that arrived after the target was posted."""
+    from datetime import datetime, timedelta
+
+    hist = defaultdict(list)
+    for t in read_jsonl(TIMELINES):
+        if "error" in t or t.get("is_repost"):
+            continue
+        if t.get("replying_to") and t["replying_to"].lower() == t["timeline_of"].lower():
+            continue
+        eng = t["likes"] + t["reposts"] + t["replies"] + t["quotes"]
+        hist["@" + t["timeline_of"].lower()].append((datetime.fromisoformat(t["created_at"]), eng))
+
+    def prior(r):
+        c = datetime.fromisoformat(r["created_at_utc"]) - timedelta(hours=gap_h)
+        h = [e for t, e in hist.get(r["Account"].lower(), []) if t < c]
+        return statistics.median(h) if len(h) >= min_posts else None
+
+    elig = [r for r in rows if r.get("label_eligible") == "True" and r["Account"].lower() in hist]
+    out = {"gap_hours": gap_h, "accounts_with_timeline": len({r["Account"] for r in elig})}
+    for pos, neg in (("Super Viral", "Deadweight"), ("Medium Viral", "Deadweight"), ("Super Viral", "Medium Viral")):
+        a = [p for r in elig if r["Category"] == pos and (p := prior(r)) is not None]
+        b = [p for r in elig if r["Category"] == neg and (p := prior(r)) is not None]
+        out[f"{pos} vs {neg}"] = {"auc": round(auc(a, b), 3) if a and b else None, "n": [len(a), len(b)]}
+    return out
+
+
 def run() -> dict:
     with ENRICHED.open(encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
@@ -149,6 +178,7 @@ def run() -> dict:
         floors[feat] = {"auc_sv_vs_dw": round(auc(a, b), 3) if a and b else None, "n": [len(a), len(b)],
                         "auc_viral_vs_dw": round(auc(c, d), 3) if c and d else None, "n_viral": [len(c), len(d)]}
     res["author_floor_auc"] = floors
+    res["author_floor_timeline_only"] = timeline_prior_auc(rows)
 
     res["features"] = {}
     for feat in BINARY + NUMERIC:
@@ -156,6 +186,7 @@ def run() -> dict:
             "pooled": pooled(sd, feat, "Super Viral", "Deadweight"),
             "within_account": within_account(elig, feat, "Super Viral", "Deadweight"),
             "within_account_mv_vs_dw": within_account(elig, feat, "Medium Viral", "Deadweight"),
+            "within_account_sv_vs_mv": within_account(elig, feat, "Super Viral", "Medium Viral"),
         }
 
     lift = [r for r in elig if _f(r.get("label_lift_prior")) is not None]

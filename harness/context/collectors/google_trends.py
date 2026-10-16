@@ -80,6 +80,19 @@ def interest_over_time(term: str, start: datetime, end: datetime, geo: str = "US
     """
     hourly = end - start <= timedelta(days=7)
     window = f"{start:%Y-%m-%dT%H} {end:%Y-%m-%dT%H}" if hourly else f"{start:%Y-%m-%d} {end:%Y-%m-%d}"
+    return _timeseries(term, window, geo, "1h" if hourly else "1d")
+
+
+def interest_recent(term: str, window: str = "now 1-d", geo: str = "US") -> Series:
+    """Interest over the last `window` at Google's finest grain.
+
+    On 2026-10-16 "now 1-d" returned 8-minute buckets and "now 7-d" hourly
+    ones. The resolution field is read from the response, not assumed.
+    """
+    return _timeseries(term, window, geo, None)
+
+
+def _timeseries(term: str, window: str, geo: str, resolution: str | None) -> Series:
     req = {"comparisonItem": [{"keyword": term, "geo": geo, "time": window}], "category": 0, "property": ""}
     headers = {"Cookie": _session_cookie()}
     explore = _client.get(
@@ -101,10 +114,13 @@ def interest_over_time(term: str, start: datetime, end: datetime, geo: str = "US
         for p in timeline
         if p.get("hasData", [True])[0]
     ]
+    if resolution is None:
+        steps = sorted({int(b["time"]) - int(a["time"]) for a, b in zip(timeline, timeline[1:])})
+        resolution = f"{steps[0] // 60}min" if steps else "unknown"
     return Series(
         term=term,
         source="google_trends",
-        resolution="1h" if hourly else "1d",
+        resolution=resolution,
         points=points,
         fetched_at=data.fetched_at,
         note="0-100 relative to the window maximum; not comparable across requests",
