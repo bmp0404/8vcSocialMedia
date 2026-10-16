@@ -2,7 +2,40 @@
 
 Generated from the `exp-*.json` records in this folder by `harness/iterate/ledger.py`. Newest first. Every number is from the run named in its record; brackets are 95% intervals from resampling the cluster unit (accounts or threads). DESIGN.md explains the gate.
 
-Current champion: `cfg-35c9ee1e8e13`, shaped by 2 promotion(s): `exp-20261016-action-7ea3e0`, `exp-20261016T023744-revert-7ea3e0`.
+Current champion: `cfg-bde58d3ad867`, shaped by 2 promotion(s): `exp-20261016-action-7ea3e0`, `exp-20261016T023744-revert-7ea3e0`.
+
+## exp-20261016-action-c9a9a8: inconclusive
+
+- **Change:** `action.page_replies` 12 → 2
+- **Hypothesis:** Continuing a page of the first 2 real replies, the size the hot path continues, makes the reply no easier for the lineup detector to find than continuing the full page of up to 12.
+- **Proposed by:** queue (action/DESIGN.md (cont_real 6/19 against 17/19 with no replies) and the watcher's hot targets on sam/platform (0 to 3 replies when seen))
+- **ai_detection_rate** (lower is better), 11 threads: champion 0.636 [0.364, 0.909], challenger 0.273 [0.000, 0.545], difference -0.364 [-0.636, -0.091]
+- **Noise floor** (champion rerun with new lineups or seeds): 0.182
+- **Correction:** Benjamini-Hochberg q=0.1 over 1 comparison(s); p=0.0060, adjusted 0.0060
+- **Decision:** significant after BH, but the lower bound +0.091 does not clear the noise floor 0.182 (auto, 2026-10-16T16:37:05+00:00)
+- **Cost:** 44 calls on the challenger arm, plus shared champion arms (79 calls)
+
+## exp-20261016-action-3eed44: inconclusive
+
+- **Change:** `action.continuation.page_filter` False → True
+- **Hypothesis:** Dropping the page replies the veto judge reads as bots before continuing the page makes the reply harder for the lineup detector to find, without lowering the veto pass rate or raising the GPT detector's rate.
+- **Proposed by:** queue (harness/minds/settings.py (filter_page_bots, research finding 10) and harness/watcher/DESIGN.md (14 to 16 s per hot draft))
+- **ai_detection_rate** (lower is better), 11 threads: champion 0.182 [0.000, 0.455], challenger 0.182 [0.000, 0.455], difference 0.000 [-0.364, 0.364]
+- **Noise floor** (champion rerun with new lineups or seeds): 0.182
+- **Correction:** Benjamini-Hochberg q=0.1 over 1 comparison(s); p=0.6017, adjusted 0.6017
+- **Decision:** not significant after BH; 95% interval on the improvement [-0.364, +0.364] (auto, 2026-10-16T16:36:10+00:00)
+- **Cost:** 55 calls on the challenger arm, plus shared champion arms (79 calls)
+
+## exp-20261016-action-836102: inconclusive
+
+- **Change:** `action.continuation.framing` 'neutral' → 'profile'
+- **Hypothesis:** Continuing the page under the profile's framing handle instead of a neutral one makes the reply harder for the lineup detector to find, without lowering the veto pass rate or raising the GPT detector's rate.
+- **Proposed by:** queue (harness/minds/lab/framing_probe.py, in action/DESIGN.md: 4 of 16 veto passes under clarkfanaccount against 2 of 16 under neutral handles)
+- **ai_detection_rate** (lower is better), 20 threads: champion 0.350 [0.150, 0.550], challenger 0.150 [0.000, 0.350], difference -0.200 [-0.450, 0.050]
+- **Noise floor** (champion rerun with new lineups or seeds): 0.050
+- **Correction:** Benjamini-Hochberg q=0.1 over 1 comparison(s); p=0.1009, adjusted 0.1009
+- **Decision:** not significant after BH; 95% interval on the improvement [-0.050, +0.450] (auto, 2026-10-16T16:35:11+00:00)
+- **Cost:** 77 calls on the challenger arm, plus shared champion arms (154 calls)
 
 ## exp-20261016-action-ba22f4: inconclusive
 

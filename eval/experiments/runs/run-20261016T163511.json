@@ -1,0 +1,40 @@
+{
+ "run_id": "run-20261016T163511",
+ "started_at": "2026-10-16T16:35:11+00:00",
+ "finished_at": "2026-10-16T16:36:06+00:00",
+ "provider": "anthropic",
+ "mode": "screen",
+ "champion": "cfg-872ec1fa8934",
+ "max_calls": 697,
+ "estimated_calls": 240,
+ "llm_calls": 231,
+ "by_arm": {
+  "action_lineup:champion_repeat": {
+   "llm_calls": 77,
+   "input_tokens": 26789,
+   "output_tokens": 13380,
+   "errors": 0
+  },
+  "action_lineup:champion": {
+   "llm_calls": 77,
+   "input_tokens": 27942,
+   "output_tokens": 12717,
+   "errors": 0
+  },
+  "action_lineup:cfg-da7d2e05c406": {
+   "llm_calls": 77,
+   "input_tokens": 27493,
+   "output_tokens": 14082,
+   "errors": 0
+  }
+ },
+ "bh": {
+  "q": 0.1,
+  "family_size": 1,
+  "rejected": 0
+ },
+ "experiments": [
+  "exp-20261016-action-836102"
+ ],
+ "note": "harness improve, screen"
+}

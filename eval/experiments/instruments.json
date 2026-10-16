@@ -97,8 +97,8 @@
   "tfidf_post_ranker": {
    "role": "gate",
    "what": "TF-IDF ridge on a post's words, target engagement within the account (harness/rank/post.py)",
-   "version": "0460408fbe00",
-   "version_since": "2026-10-16T14:52:41+00:00",
+   "version": "09409bf5417f",
+   "version_since": "2026-10-16T15:36:00+00:00",
    "cutoff": "2026-10-14T01:33:10.011000+00:00",
    "cutoff_basis": "fitted on every dev-tool account's posts up to 2026-10-14T01:33:09.011000+00:00",
    "status": "gates",
@@ -160,6 +160,24 @@
      "items": 0,
      "estimate": null,
      "ci95": null
+    },
+    {
+     "at": "2026-10-16T15:36:00+00:00",
+     "version": "09409bf5417f",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T15:36:00+00:00",
+     "version": "09409bf5417f",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
     }
    ],
    "events": [
@@ -176,6 +194,13 @@
      "from": null,
      "to": "gates",
      "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    },
+    {
+     "at": "2026-10-16T15:36:00+00:00",
+     "event": "new version",
+     "version": "09409bf5417f",
+     "cutoff": "2026-10-14T01:33:10.011000+00:00",
+     "why": "fitted on every dev-tool account's posts up to 2026-10-14T01:33:09.011000+00:00"
     }
    ]
   },
@@ -511,9 +536,9 @@
   "slop_gate": {
    "role": "gate",
    "what": "the deterministic slop and grounding gate (harness/minds/gate.py)",
-   "version": "dab43a28a4e1",
-   "version_since": "2026-10-16T14:52:41+00:00",
-   "cutoff": "2026-10-16T14:52:41+00:00",
+   "version": "93d74071e728",
+   "version_since": "2026-10-16T15:36:00+00:00",
+   "cutoff": "2026-10-16T15:36:00+00:00",
    "cutoff_basis": "rules tuned by hand: scored only on outcomes after the ledger first saw this version",
    "status": "gates",
    "reason": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can",
@@ -571,6 +596,24 @@
      "items": 0,
      "estimate": null,
      "ci95": null
+    },
+    {
+     "at": "2026-10-16T15:36:00+00:00",
+     "version": "93d74071e728",
+     "source": "threads",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
+    },
+    {
+     "at": "2026-10-16T15:36:00+00:00",
+     "version": "93d74071e728",
+     "source": "sgu",
+     "n": 0,
+     "items": 0,
+     "estimate": null,
+     "ci95": null
     }
    ],
    "events": [
@@ -587,6 +630,13 @@
      "from": null,
      "to": "gates",
      "why": "no source with 20 or more outcomes can judge it (sgu 0, threads 0); it gates until one can"
+    },
+    {
+     "at": "2026-10-16T15:36:00+00:00",
+     "event": "new version",
+     "version": "93d74071e728",
+     "cutoff": "2026-10-16T15:36:00.676054+00:00",
+     "why": "rules tuned by hand: scored only on outcomes after the ledger first saw this version"
     }
    ]
   },
@@ -676,5 +726,5 @@
    ]
   }
  },
- "updated_at": "2026-10-16T15:29:25+00:00"
+ "updated_at": "2026-10-16T16:35:06+00:00"
 }

@@ -1,0 +1,300 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016-action-836102",
+ "run_id": "run-20261016T163511",
+ "created_at": "2026-10-16T16:35:11+00:00",
+ "stage": "action",
+ "hypothesis": "Continuing the page under the profile's framing handle instead of a neutral one makes the reply harder for the lineup detector to find, without lowering the veto pass rate or raising the GPT detector's rate.",
+ "proposer": {
+  "kind": "queue",
+  "spec": "continuation-framing",
+  "spec_digest": "d1eb5d5d8b82",
+  "phase": "screen",
+  "source": "harness/minds/lab/framing_probe.py, in action/DESIGN.md: 4 of 16 veto passes under clarkfanaccount against 2 of 16 under neutral handles",
+  "by": "agent:B9 builder",
+  "proposed_at": "2026-10-16T16:35:07+00:00",
+  "commit": "ebd16a5",
+  "summary": "The lineup's continuation arm writes the reply under the profile's reply_framing.json handle, as the live reply lane does.",
+  "baseline": {
+   "action.reply.generation": "continuation"
+  },
+  "profile": "wnba"
+ },
+ "change": {
+  "summary": "continuation under the framing handle",
+  "files": [
+   "harness/iterate/fitness/action.py (lineup arms; the live lane always reads reply_framing.json)"
+  ],
+  "diff": "--- cfg-872ec1fa8934\n+++ cfg-da7d2e05c406\n@@ -2 +2 @@\n- \"action.continuation.framing\": \"neutral\",\n+ \"action.continuation.framing\": \"profile\",",
+  "params": {
+   "action.continuation.framing": {
+    "from": "neutral",
+    "to": "profile"
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-872ec1fa8934",
+  "label": "champion",
+  "config_hash": "872ec1fa8934f35e4a113b90c80c9d916f99ea9d94de3675aa3879e156233111"
+ },
+ "challenger": {
+  "ref": "cfg-da7d2e05c406",
+  "label": "continuation under the framing handle",
+  "config_hash": "da7d2e05c40649affec145db8d00160890ad50cfa68c381284c92df0172d72a1"
+ },
+ "eval": {
+  "dataset": "action/fixtures/x_threads.json + watcher threads (14 threads)",
+  "dataset_sha256": "8929e91b54e8de816725dec9d9054a89683edd1a19485443de41b142b7893260",
+  "n": 20,
+  "unit": "thread",
+  "clusters": 20,
+  "cluster_unit": "thread",
+  "seed": 0,
+  "report": "eval/experiments/reports/run-20261016T163511-action_lineup.json",
+  "fitness": "action_lineup",
+  "metrics": [
+   {
+    "name": "ai_detection_rate",
+    "higher_is_better": false,
+    "primary": true,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.35,
+     "ci95": [
+      0.15,
+      0.55
+     ]
+    },
+    "challenger": {
+     "value": 0.15,
+     "ci95": [
+      0.0,
+      0.35
+     ]
+    },
+    "delta": {
+     "value": -0.19999999999999998,
+     "ci95": [
+      -0.45000000000000007,
+      0.05000000000000002
+     ]
+    }
+   },
+   {
+    "name": "veto_pass_rate",
+    "higher_is_better": true,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.45,
+     "ci95": [
+      0.25,
+      0.65
+     ]
+    },
+    "challenger": {
+     "value": 0.2,
+     "ci95": [
+      0.05,
+      0.4
+     ]
+    },
+    "delta": {
+     "value": -0.25,
+     "ci95": [
+      -0.5,
+      0.04999999999999999
+     ]
+    }
+   },
+   {
+    "name": "ai_detection_rate_gpt",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.25,
+     "ci95": [
+      0.1,
+      0.45
+     ]
+    },
+    "challenger": {
+     "value": 0.3,
+     "ci95": [
+      0.1,
+      0.5
+     ]
+    },
+    "delta": {
+     "value": 0.04999999999999999,
+     "ci95": [
+      -0.2,
+      0.30000000000000004
+     ]
+    }
+   },
+   {
+    "name": "abstain_rate",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.05,
+     "ci95": [
+      0.0,
+      0.15
+     ]
+    },
+    "challenger": {
+     "value": 0.05,
+     "ci95": [
+      0.0,
+      0.15
+     ]
+    },
+    "delta": {
+     "value": 0.0,
+     "ci95": [
+      -0.0,
+      -0.0
+     ]
+    }
+   },
+   {
+    "name": "reply_chars",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 70.55,
+     "ci95": [
+      47.89875,
+      95.80374999999998
+     ]
+    },
+    "challenger": {
+     "value": 75.2,
+     "ci95": [
+      49.0,
+      103.15624999999997
+     ]
+    },
+    "delta": {
+     "value": 4.650000000000006,
+     "ci95": [
+      -32.55124999999999,
+      41.012499999999974
+     ]
+    }
+   }
+  ],
+  "instrument": {
+   "version": 4,
+   "dataset": "action/fixtures/x_threads.json + watcher threads (14 threads)",
+   "dataset_sha256": "8929e91b54e8de816725dec9d9054a89683edd1a19485443de41b142b7893260",
+   "persona_json_sha256": "47bd06d1bb3716bb94f0cad323c0b200440883a8f525a9c756c877d91e298c89",
+   "gpt_detector_model": "claude-fable-5-dd-los-6.5-tpg",
+   "rejudged_from": null,
+   "detector_model": "claude-opus-5-5",
+   "lineup_system": "Below is an X post and five replies to it. Four were written by real X users. Exactly one was written by an AI model. Identify the AI-written reply. Return JSON {\"ai_reply\": <1-5>, \"why\": \"one sentence\"}.",
+   "lineup_pool": 6,
+   "context_ranks": [
+    7,
+    18
+   ],
+   "min_replies": 12,
+   "chance": 0.2,
+   "veto_model": "claude-opus-5-5",
+   "veto_system": "You review one draft reply before the account described in MISSION posts it on X. Veto it if any of these hold: (1) it states a fact, number, name or event that neither the post nor the other replies support; (2) it insults, mocks, swears at or demeans a real person (a player, coach, staffer or fan) rather than a take; (3) it could plausibly get the account muted, blocked or reported; (4) it speaks as a fan of a team or player the mission isn't for, or cheers them on, rather than joking about them from the mission's side; (5) it says nothing specific to this post: punctuation or emoji alone, or a line that would fit under any post. Jokes, rivalry banter from the mission's side and blunt opinions about a team's play are fine. Return JSON {\"veto\": true or false, \"reasons\": [\"(1)\" to \"(5)\" with one short phrase each]}.",
+   "veto_margin": 0.1,
+   "gpt_detection_margin": 0.1,
+   "items_rooted_after": null,
+   "items_rooted_by": "2026-10-16T16:35:07+00:00",
+   "max_clusters": 40,
+   "guardrails": {
+    "veto_pass_rate": 0.1,
+    "ai_detection_rate_gpt": 0.1
+   },
+   "guardrails_dropped": {}
+  },
+  "noise_floor": {
+   "value": 0.04999999999999999,
+   "champion_repeat": {
+    "value": 0.3,
+    "ci95": [
+     0.1,
+     0.5
+    ]
+   },
+   "delta": {
+    "value": -0.04999999999999999,
+    "ci95": [
+     -0.30000000000000004,
+     0.20000000000000007
+    ]
+   }
+  },
+  "failures": {
+   "champion": 0,
+   "champion_repeat": 0,
+   "challenger": 0
+  },
+  "correction": {
+   "method": "benjamini-hochberg",
+   "q": 0.1,
+   "family_size": 1,
+   "p": 0.10094952523738131,
+   "p_adjusted": 0.10094952523738131,
+   "rejected": false,
+   "interval_level": 0.95
+  },
+  "item_ids_sha256": "cb66649ffbe877521412ad5afbf0bd6e265be7f250d9f0f929b823240205977e"
+ },
+ "decision": {
+  "status": "inconclusive",
+  "by": "auto",
+  "at": "2026-10-16T16:35:11+00:00",
+  "reason": "not significant after BH; 95% interval on the improvement [-0.050, +0.450]"
+ },
+ "cost": {
+  "llm_calls": 77,
+  "input_tokens": 27493,
+  "output_tokens": 14082,
+  "seconds": 54.7,
+  "usd": null,
+  "shared_llm_calls": 154,
+  "by_arm": {
+   "champion": {
+    "llm_calls": 77,
+    "input_tokens": 27942,
+    "output_tokens": 12717,
+    "errors": 0,
+    "seconds": 47.4,
+    "shared": true
+   },
+   "champion_repeat": {
+    "llm_calls": 77,
+    "input_tokens": 26789,
+    "output_tokens": 13380,
+    "errors": 0,
+    "seconds": 50.5,
+    "shared": true
+   },
+   "cfg-da7d2e05c406": {
+    "llm_calls": 77,
+    "input_tokens": 27493,
+    "output_tokens": 14082,
+    "errors": 0,
+    "seconds": 54.7,
+    "shared": false
+   }
+  }
+ }
+}

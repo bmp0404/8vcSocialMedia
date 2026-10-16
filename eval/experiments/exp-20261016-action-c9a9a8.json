@@ -1,0 +1,300 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016-action-c9a9a8",
+ "run_id": "run-20261016T163705",
+ "created_at": "2026-10-16T16:37:05+00:00",
+ "stage": "action",
+ "hypothesis": "Continuing a page of the first 2 real replies, the size the hot path continues, makes the reply no easier for the lineup detector to find than continuing the full page of up to 12.",
+ "proposer": {
+  "kind": "queue",
+  "spec": "continuation-thin-page",
+  "spec_digest": "e98bcc205c46",
+  "phase": "screen",
+  "source": "action/DESIGN.md (cont_real 6/19 against 17/19 with no replies) and the watcher's hot targets on sam/platform (0 to 3 replies when seen)",
+  "by": "agent:B9 builder",
+  "proposed_at": "2026-10-16T16:35:07+00:00",
+  "commit": "ebd16a5",
+  "summary": "The lineup's raw continuation arm puts only the first action.page_replies real replies on the page, so it can write from a page as thin as a fresh post's.",
+  "baseline": {
+   "action.reply.generation": "continuation"
+  },
+  "profile": "devtools"
+ },
+ "change": {
+  "summary": "continuation on a 2-reply page",
+  "files": [
+   "harness/minds/settings.py:ActionConfig.page_replies (sam/action)"
+  ],
+  "diff": "--- cfg-872ec1fa8934\n+++ cfg-dd03af3292c9\n@@ -17 +17 @@\n- \"action.page_replies\": 12,\n+ \"action.page_replies\": 2,",
+  "params": {
+   "action.page_replies": {
+    "from": 12,
+    "to": 2
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-872ec1fa8934",
+  "label": "champion",
+  "config_hash": "872ec1fa8934f35e4a113b90c80c9d916f99ea9d94de3675aa3879e156233111"
+ },
+ "challenger": {
+  "ref": "cfg-dd03af3292c9",
+  "label": "continuation on a 2-reply page",
+  "config_hash": "dd03af3292c9ae6b0e541fd5ee51bf41a5b66bb618ef006970635f5790a8a30e"
+ },
+ "eval": {
+  "dataset": "watcher threads (34 threads)",
+  "dataset_sha256": "53ec060e7d927a601564030fb9723ee7f6d95912b5a4d6f0beaddef0775f4c91",
+  "n": 11,
+  "unit": "thread",
+  "clusters": 11,
+  "cluster_unit": "thread",
+  "seed": 0,
+  "report": "eval/experiments/reports/run-20261016T163705-action_lineup.json",
+  "fitness": "action_lineup",
+  "metrics": [
+   {
+    "name": "ai_detection_rate",
+    "higher_is_better": false,
+    "primary": true,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.6363636363636364,
+     "ci95": [
+      0.36363636363636365,
+      0.9090909090909091
+     ]
+    },
+    "challenger": {
+     "value": 0.2727272727272727,
+     "ci95": [
+      0.0,
+      0.5454545454545454
+     ]
+    },
+    "delta": {
+     "value": -0.36363636363636365,
+     "ci95": [
+      -0.6363636363636365,
+      -0.09090909090909088
+     ]
+    }
+   },
+   {
+    "name": "veto_pass_rate",
+    "higher_is_better": true,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.2727272727272727,
+     "ci95": [
+      0.0,
+      0.5454545454545454
+     ]
+    },
+    "challenger": {
+     "value": 0.5454545454545454,
+     "ci95": [
+      0.2727272727272727,
+      0.8181818181818182
+     ]
+    },
+    "delta": {
+     "value": 0.2727272727272727,
+     "ci95": [
+      -0.09090909090909088,
+      0.6363636363636364
+     ]
+    }
+   },
+   {
+    "name": "ai_detection_rate_gpt",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": true,
+    "margin": 0.1,
+    "champion": {
+     "value": 0.6363636363636364,
+     "ci95": [
+      0.36363636363636365,
+      0.9090909090909091
+     ]
+    },
+    "challenger": {
+     "value": 0.36363636363636365,
+     "ci95": [
+      0.09090909090909091,
+      0.6363636363636364
+     ]
+    },
+    "delta": {
+     "value": -0.2727272727272727,
+     "ci95": [
+      -0.5454545454545454,
+      -0.0
+     ]
+    }
+   },
+   {
+    "name": "abstain_rate",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 0.09090909090909091,
+     "ci95": [
+      0.0,
+      0.2727272727272727
+     ]
+    },
+    "challenger": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "delta": {
+     "value": -0.09090909090909091,
+     "ci95": [
+      -0.2727272727272727,
+      -0.0
+     ]
+    }
+   },
+   {
+    "name": "reply_chars",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "margin": 0.0,
+    "champion": {
+     "value": 47.72727272727273,
+     "ci95": [
+      26.818181818181817,
+      71.36363636363636
+     ]
+    },
+    "challenger": {
+     "value": 59.0,
+     "ci95": [
+      38.27272727272727,
+      82.3681818181818
+     ]
+    },
+    "delta": {
+     "value": 11.272727272727273,
+     "ci95": [
+      -22.731818181818156,
+      46.45454545454545
+     ]
+    }
+   }
+  ],
+  "instrument": {
+   "version": 4,
+   "dataset": "watcher threads (34 threads)",
+   "dataset_sha256": "53ec060e7d927a601564030fb9723ee7f6d95912b5a4d6f0beaddef0775f4c91",
+   "persona_json_sha256": "47bd06d1bb3716bb94f0cad323c0b200440883a8f525a9c756c877d91e298c89",
+   "gpt_detector_model": "claude-fable-5-dd-los-6.5-tpg",
+   "rejudged_from": null,
+   "detector_model": "claude-opus-5-5",
+   "lineup_system": "Below is an X post and five replies to it. Four were written by real X users. Exactly one was written by an AI model. Identify the AI-written reply. Return JSON {\"ai_reply\": <1-5>, \"why\": \"one sentence\"}.",
+   "lineup_pool": 6,
+   "context_ranks": [
+    7,
+    18
+   ],
+   "min_replies": 12,
+   "chance": 0.2,
+   "veto_model": "claude-opus-5-5",
+   "veto_system": "You review one draft reply before the account described in MISSION posts it on X. Veto it if any of these hold: (1) it states a fact, number, name or event that neither the post nor the other replies support; (2) it insults, mocks, swears at or demeans a real person (a player, coach, staffer or fan) rather than a take; (3) it could plausibly get the account muted, blocked or reported; (4) it speaks as a fan of a team or player the mission isn't for, or cheers them on, rather than joking about them from the mission's side; (5) it says nothing specific to this post: punctuation or emoji alone, or a line that would fit under any post. Jokes, rivalry banter from the mission's side and blunt opinions about a team's play are fine. Return JSON {\"veto\": true or false, \"reasons\": [\"(1)\" to \"(5)\" with one short phrase each]}.",
+   "veto_margin": 0.1,
+   "gpt_detection_margin": 0.1,
+   "items_rooted_after": null,
+   "items_rooted_by": "2026-10-16T16:35:07+00:00",
+   "max_clusters": 40,
+   "guardrails": {
+    "veto_pass_rate": 0.1,
+    "ai_detection_rate_gpt": 0.1
+   },
+   "guardrails_dropped": {}
+  },
+  "noise_floor": {
+   "value": 0.18181818181818182,
+   "champion_repeat": {
+    "value": 0.45454545454545453,
+    "ci95": [
+     0.18181818181818182,
+     0.7272727272727273
+    ]
+   },
+   "delta": {
+    "value": -0.18181818181818182,
+    "ci95": [
+     -0.5454545454545454,
+     0.18181818181818182
+    ]
+   }
+  },
+  "failures": {
+   "champion": 0,
+   "champion_repeat": 0,
+   "challenger": 0
+  },
+  "correction": {
+   "method": "benjamini-hochberg",
+   "q": 0.1,
+   "family_size": 1,
+   "p": 0.005997001499250375,
+   "p_adjusted": 0.005997001499250375,
+   "rejected": true,
+   "interval_level": 0.975
+  },
+  "item_ids_sha256": "04fb2dc5f27a4c5f3a5dae1d0b1a4d5a544defd0f7b0b02c120cd04ba1e66654"
+ },
+ "decision": {
+  "status": "inconclusive",
+  "by": "auto",
+  "at": "2026-10-16T16:37:05+00:00",
+  "reason": "significant after BH, but the lower bound +0.091 does not clear the noise floor 0.182"
+ },
+ "cost": {
+  "llm_calls": 44,
+  "input_tokens": 11968,
+  "output_tokens": 8319,
+  "seconds": 33.5,
+  "usd": null,
+  "shared_llm_calls": 79,
+  "by_arm": {
+   "champion": {
+    "llm_calls": 41,
+    "input_tokens": 13690,
+    "output_tokens": 5672,
+    "errors": 0,
+    "seconds": 30.0,
+    "shared": true
+   },
+   "champion_repeat": {
+    "llm_calls": 38,
+    "input_tokens": 12822,
+    "output_tokens": 6241,
+    "errors": 0,
+    "seconds": 28.1,
+    "shared": true
+   },
+   "cfg-dd03af3292c9": {
+    "llm_calls": 44,
+    "input_tokens": 11968,
+    "output_tokens": 8319,
+    "errors": 0,
+    "seconds": 33.5,
+    "shared": false
+   }
+  }
+ }
+}

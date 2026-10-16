@@ -1,9 +1,11 @@
 {
  "note": "derived from the exp-*.json records by harness/iterate/ledger.py; do not edit",
- "ref": "cfg-35c9ee1e8e13",
- "config_hash": "35c9ee1e8e13324df08c783aa88dd571197ebb131c249e6f2985b06097519d05",
+ "ref": "cfg-bde58d3ad867",
+ "config_hash": "bde58d3ad86789f8ded6d12550f2e50734acaf8e82c2598fd6d4a1130ec61264",
  "config": {
+  "action.continuation.framing": "neutral",
   "action.continuation.model": "claude-opus-4-5-20251101",
+  "action.continuation.page_filter": false,
   "action.gate": "off",
   "action.lanes": [
    "post",
@@ -52,7 +54,8 @@
   "qualify.batch": 0,
   "qualify.memory": "off",
   "qualify.model": "claude-sonnet-5-5",
-  "qualify.panel": "personas"
+  "qualify.panel": "personas",
+  "qualify.ranker": "learned"
  },
  "history": [
   "exp-20261016-action-7ea3e0",
