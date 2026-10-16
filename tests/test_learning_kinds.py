@@ -118,6 +118,20 @@ def test_real_memstore_round_trip(item, tmp_path, monkeypatch):
     assert load(back) == item
 
 
+@pytest.mark.skipif(importlib.util.find_spec("harness.memstore") is None, reason="harness.memstore not on this branch")
+def test_a_fact_quoting_a_post_with_line_breaks_reads_back_whole(tmp_path, monkeypatch):
+    monkeypatch.setenv("MEMSTORE_PATH", str(tmp_path / "store"))
+    from harness.learning.memstore_adapter import MemstoreAdapter
+
+    text = "You can do that now. 🐳\n\nPlus, every agent gets its own project.\n\nhttps://supabase.com/blog"
+    fact = replace(samples()[4], id="fact-multiline", answer=text, quote=text)
+    store = MemstoreAdapter()
+    save(store, fact)
+    [back] = [m for m in store.list_memories(Fact.KIND) if m.id == fact.id]
+    assert load(back) == fact
+    assert to_note(*fact.to_memory(), StubNote).meta["quote"] == " ".join(text.split())
+
+
 @pytest.mark.parametrize("meta,match", [
     ({"id": "Post_1", "title": "t", "aliases": ["a"], "created": "2026-10-15", "updated": "2026-10-15"}, "kebab-case"),
     ({"id": "a" * 81, "title": "t", "aliases": ["a"], "created": "2026-10-15", "updated": "2026-10-15"}, "kebab-case"),

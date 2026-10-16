@@ -58,7 +58,9 @@ def to_note(kind: str, body: str, frontmatter: dict, note_cls):
         elif isinstance(value, list):
             value = [str(v) for v in value if str(v)]
         else:
-            value = str(value)
+            # His parser reads one line per key, so a post quoted with line breaks made the note unreadable and the
+            # store skipped it on every read. `record` keeps the exact text; the plain copy only needs to parse.
+            value = " ".join(str(value).split())
         meta[key] = value
     meta["record"] = encode_record(fm)
     return note_cls(id=fm["id"], type=kind, title=_title(fm["title"]), aliases=[str(a) for a in fm["aliases"]],
