@@ -1,0 +1,86 @@
+{
+  "schema_version": "1",
+  "loop_id": "loop-20261015T2100Z",
+  "step": "stash",
+  "ts": "2026-10-15T21:00:20Z",
+  "buckets": [
+    {
+      "bucket_id": "rivalry",
+      "stats": {
+        "volume": 340,
+        "velocity_per_hr": 170.0,
+        "median_engagement_rate": 0.021,
+        "p80_engagement_rate": 0.048,
+        "small_account_breakout_rate": 0.06
+      },
+      "top_k_tweet_ids": ["1000000000000000001", "1000000000000000003"]
+    },
+    {
+      "bucket_id": "fever",
+      "stats": {
+        "volume": 120,
+        "velocity_per_hr": 60.0,
+        "median_engagement_rate": 0.018,
+        "p80_engagement_rate": 0.041,
+        "small_account_breakout_rate": 0.03
+      },
+      "top_k_tweet_ids": ["1000000000000000002"]
+    },
+    {
+      "bucket_id": "hawkeyes",
+      "stats": {
+        "volume": 45,
+        "velocity_per_hr": 22.5,
+        "median_engagement_rate": 0.034,
+        "p80_engagement_rate": 0.071,
+        "small_account_breakout_rate": 0.11
+      },
+      "top_k_tweet_ids": ["1000000000000000004"]
+    }
+  ],
+  "own_history": [
+    {
+      "loop_id": "loop-20261015T1700Z",
+      "tweet_id": "1000000000000000101",
+      "bucket_id": "fever",
+      "predicted_public_metrics": {
+        "impression_count": 600,
+        "like_count": 14,
+        "retweet_count": 1,
+        "reply_count": 2,
+        "quote_count": 0,
+        "bookmark_count": 1
+      },
+      "actual_public_metrics": {
+        "impression_count": 410,
+        "like_count": 9,
+        "retweet_count": 0,
+        "reply_count": 1,
+        "quote_count": 0,
+        "bookmark_count": 0
+      }
+    },
+    {
+      "loop_id": "loop-20261015T1900Z",
+      "tweet_id": "1000000000000000102",
+      "bucket_id": "hawkeyes",
+      "predicted_public_metrics": {
+        "impression_count": 250,
+        "like_count": 6,
+        "retweet_count": 0,
+        "reply_count": 1,
+        "quote_count": 0,
+        "bookmark_count": 0
+      },
+      "actual_public_metrics": {
+        "impression_count": 380,
+        "like_count": 12,
+        "retweet_count": 1,
+        "reply_count": 2,
+        "quote_count": 0,
+        "bookmark_count": 1
+      }
+    }
+  ],
+  "lessons": null
+}

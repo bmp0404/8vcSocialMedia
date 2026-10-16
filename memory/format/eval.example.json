@@ -1,0 +1,163 @@
+{
+  "schema_version": "1",
+  "loop_id": "loop-20261015T2100Z",
+  "step": "eval",
+  "ts": "2026-10-15T21:01:40Z",
+  "attempt": 1,
+  "results": [
+    {
+      "candidate_id": "a1-c1",
+      "neighbors": [
+        {
+          "tweet_id": "1000000000000000003",
+          "similarity": 0.81,
+          "author_followers": 85,
+          "public_metrics": {
+            "impression_count": 3100,
+            "like_count": 140,
+            "retweet_count": 9,
+            "reply_count": 12,
+            "quote_count": 2,
+            "bookmark_count": 4
+          }
+        }
+      ],
+      "predicted_public_metrics": {
+        "impression_count": 380,
+        "like_count": 11,
+        "retweet_count": 0,
+        "reply_count": 3,
+        "quote_count": 0,
+        "bookmark_count": 0
+      },
+      "predicted_engagement_rate": 0.037,
+      "bucket_percentile": 64,
+      "judge": {
+        "brand_fit": 0.55,
+        "risk_flags": ["targets_individual"],
+        "critique": "Placeholder critique: the jab reads as personal rather than playful."
+      },
+      "verdict": "veto",
+      "veto_reason": "risk"
+    },
+    {
+      "candidate_id": "a1-c2",
+      "neighbors": [
+        {
+          "tweet_id": "1000000000000000002",
+          "similarity": 0.77,
+          "author_followers": 48200,
+          "public_metrics": {
+            "impression_count": 52300,
+            "like_count": 2140,
+            "retweet_count": 260,
+            "reply_count": 190,
+            "quote_count": 75,
+            "bookmark_count": 120
+          }
+        },
+        {
+          "tweet_id": "1000000000000000101",
+          "similarity": 0.72,
+          "author_followers": 2,
+          "public_metrics": {
+            "impression_count": 410,
+            "like_count": 9,
+            "retweet_count": 0,
+            "reply_count": 1,
+            "quote_count": 0,
+            "bookmark_count": 0
+          }
+        }
+      ],
+      "predicted_public_metrics": {
+        "impression_count": 650,
+        "like_count": 18,
+        "retweet_count": 2,
+        "reply_count": 2,
+        "quote_count": 0,
+        "bookmark_count": 3
+      },
+      "predicted_engagement_rate": 0.038,
+      "bucket_percentile": 71,
+      "judge": {
+        "brand_fit": 0.86,
+        "risk_flags": [],
+        "critique": "Placeholder critique: on brand and adds something the source tweet lacks."
+      },
+      "verdict": "ship",
+      "veto_reason": null
+    },
+    {
+      "candidate_id": "a1-c3",
+      "neighbors": [
+        {
+          "tweet_id": "1000000000000000004",
+          "similarity": 0.69,
+          "author_followers": 40,
+          "public_metrics": {
+            "impression_count": 9800,
+            "like_count": 610,
+            "retweet_count": 55,
+            "reply_count": 31,
+            "quote_count": 8,
+            "bookmark_count": 22
+          }
+        }
+      ],
+      "predicted_public_metrics": {
+        "impression_count": 120,
+        "like_count": 2,
+        "retweet_count": 0,
+        "reply_count": 0,
+        "quote_count": 0,
+        "bookmark_count": 0
+      },
+      "predicted_engagement_rate": 0.017,
+      "bucket_percentile": 22,
+      "judge": {
+        "brand_fit": 0.74,
+        "risk_flags": [],
+        "critique": "Placeholder critique: generic hype with no hook."
+      },
+      "verdict": "veto",
+      "veto_reason": "below_threshold"
+    },
+    {
+      "candidate_id": "a1-c4",
+      "neighbors": [
+        {
+          "tweet_id": "1000000000000000004",
+          "similarity": 0.66,
+          "author_followers": 40,
+          "public_metrics": {
+            "impression_count": 9800,
+            "like_count": 610,
+            "retweet_count": 55,
+            "reply_count": 31,
+            "quote_count": 8,
+            "bookmark_count": 22
+          }
+        }
+      ],
+      "predicted_public_metrics": {
+        "impression_count": 200,
+        "like_count": 5,
+        "retweet_count": 0,
+        "reply_count": 1,
+        "quote_count": 0,
+        "bookmark_count": 0
+      },
+      "predicted_engagement_rate": 0.03,
+      "bucket_percentile": 55,
+      "judge": {
+        "brand_fit": 0.7,
+        "risk_flags": [],
+        "critique": "Placeholder critique: this account was mentioned in a recent loop."
+      },
+      "verdict": "veto",
+      "veto_reason": "cooldown"
+    }
+  ],
+  "selected_candidate_id": "a1-c2"
+}
