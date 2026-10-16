@@ -258,5 +258,5 @@ class ReplyTargetSource(Source):
         for s in signals:
             try:
                 s.thread = thread_replies(reader, s.url.rsplit("/", 1)[-1], limit)
-            except SourceError as e:
-                print(f"[observe] {self.name}: no thread for {s.url}: {e}")
+            except Exception as e:  # noqa: BLE001 - a thread is extra context; never lose the targets over one
+                print(f"[observe] {self.name}: no thread for {s.url}: {type(e).__name__}: {e}")
