@@ -1,0 +1,351 @@
+{
+ "x_replies": {
+  "n": 670,
+  "rejected": 64,
+  "rejected_rate": 0.096,
+  "rejected_by_style_rules_rate": 0.096,
+  "rules": {
+   "empty": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "em_dash": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "not_x_but_y": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "assistant_voice": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ai_vocab": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "emoji": {
+    "hits": 30,
+    "rate": 0.045,
+    "examples": [
+     "Credit goes to Mitchell, Boston and Refs 😐\n\nCC gave her all but she can't lead all the dead weights alone..she deserves a better team ❤️‍🩹",
+     "🤔Ain’t fooling me with this newly found Caitlin love , CC don’t sign their shitty epic contract ✨🕊️☠️🕊️✨",
+     "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯"
+    ]
+   },
+   "hashtags": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "#FireStephWhite\n#FireAmberCox"
+    ]
+   },
+   "length": {
+    "hits": 17,
+    "rate": 0.025,
+    "examples": [
+     "@CaitlinClark22, thank you for absolutely everything. You're incredible and absolute FIRE on that court. Your heart, passion and everything ",
+     "Key last 6 possessions with kelsey Mitchell smh!...fouls Gray on on a rebound, failed challenge, missed 3 didnt follow shot, gets shot on by",
+     "R U Fkn Kidding me….\n\nWTF are the Refs doing, how did they NOT call this a foul against Caitlin Clark….her tooth is nearly knocked out!!!\n\nT"
+    ]
+   },
+   "reply_sentences": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "placeholder": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "url": {
+    "hits": 16,
+    "rate": 0.024,
+    "examples": [
+     "https://x.com/Haya_tea22/status/2105370342667505719/video/1",
+     "A dream come true!!!🏀💪🏾\nhttps://x.com/DennizDream/status/2110810663618805865",
+     "A dream come true!!!🏀💪🏾\nhttps://x.com/DennizDream/status/2110810663618805865"
+    ]
+   },
+   "engagement_bait": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "wrapped_in_quotes": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "“Go play go play go play”"
+    ]
+   },
+   "unknown_handle": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ungrounded_number": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ungrounded_name": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   }
+  }
+ },
+ "x_replies_with_thread_context": {
+  "n": 670,
+  "rejected": 194,
+  "rejected_rate": 0.29,
+  "rejected_by_style_rules_rate": 0.096,
+  "rules": {
+   "empty": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "em_dash": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "not_x_but_y": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "assistant_voice": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ai_vocab": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "emoji": {
+    "hits": 30,
+    "rate": 0.045,
+    "examples": [
+     "Credit goes to Mitchell, Boston and Refs 😐\n\nCC gave her all but she can't lead all the dead weights alone..she deserves a better team ❤️‍🩹",
+     "🤔Ain’t fooling me with this newly found Caitlin love , CC don’t sign their shitty epic contract ✨🕊️☠️🕊️✨",
+     "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯"
+    ]
+   },
+   "hashtags": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "#FireStephWhite\n#FireAmberCox"
+    ]
+   },
+   "length": {
+    "hits": 17,
+    "rate": 0.025,
+    "examples": [
+     "@CaitlinClark22, thank you for absolutely everything. You're incredible and absolute FIRE on that court. Your heart, passion and everything ",
+     "Key last 6 possessions with kelsey Mitchell smh!...fouls Gray on on a rebound, failed challenge, missed 3 didnt follow shot, gets shot on by",
+     "R U Fkn Kidding me….\n\nWTF are the Refs doing, how did they NOT call this a foul against Caitlin Clark….her tooth is nearly knocked out!!!\n\nT"
+    ]
+   },
+   "reply_sentences": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "placeholder": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "url": {
+    "hits": 16,
+    "rate": 0.024,
+    "examples": [
+     "https://x.com/Haya_tea22/status/2105370342667505719/video/1",
+     "A dream come true!!!🏀💪🏾\nhttps://x.com/DennizDream/status/2110810663618805865",
+     "A dream come true!!!🏀💪🏾\nhttps://x.com/DennizDream/status/2110810663618805865"
+    ]
+   },
+   "engagement_bait": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "wrapped_in_quotes": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "“Go play go play go play”"
+    ]
+   },
+   "unknown_handle": {
+    "hits": 15,
+    "rate": 0.022,
+    "examples": [
+     "It was really tough seeing the Fever get treated like this yet again for another year. I sure hope on this off season some big changes happe",
+     "AYO FUCK THE FRONT OFFICE FOR PUTTING THIS BULLSHIT ROSTER CONSTRUCTION! @AmberLCox NEEDS TO BE FIRED AND KELLY. 800k for players that can’t",
+     "R U Fkn Kidding me….\n\nWTF are the Refs doing, how did they NOT call this a foul against Caitlin Clark….her tooth is nearly knocked out!!!\n\nT"
+    ]
+   },
+   "ungrounded_number": {
+    "hits": 54,
+    "rate": 0.081,
+    "examples": [
+     "YOU didn't!\nIt was unnecessary drama and stress every game.  95% of it started by THIS organization.",
+     "2 things that’s always a certain:\n1. Clark choking\n2. GOAT Aja giving Fever fucking belt\n\nGoodbye racist ass fan base. Leave the basketball ",
+     "Key last 6 possessions with kelsey Mitchell smh!...fouls Gray on on a rebound, failed challenge, missed 3 didnt follow shot, gets shot on by"
+    ]
+   },
+   "ungrounded_name": {
+    "hits": 124,
+    "rate": 0.185,
+    "examples": [
+     "Thank you for pissing away another year of Boston and Clark. Your defensive gurus White and January have to go. And whoever hired them needs",
+     "Which way is Cancun?",
+     "You guys need to address the issue of Gainbridge turning into a Klan rally at every home game this season."
+    ]
+   }
+  }
+ },
+ "devtools_posts": {
+  "n": 1610,
+  "rejected": 71,
+  "rejected_rate": 0.044,
+  "rejected_by_style_rules_rate": 0.044,
+  "rules": {
+   "empty": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "em_dash": {
+    "hits": 19,
+    "rate": 0.012,
+    "examples": [
+     "Jev from @typesafeai is now live on @CloudflareDev AI Gateway. Try the first System One model — send state and typed questions; get structur",
+     "Today we're introducing updates that make Devin significantly cheaper. It's now: ▪️ 30–40% cheaper in Fusion and Normal ▪️ 15–20% cheaper in",
+     "Our first ever stealth model is up on @CloudflareDev AI Gateway — Union Alpha! The sweet spot for the best price/performance ratio, this mod"
+    ]
+   },
+   "not_x_but_y": {
+    "hits": 3,
+    "rate": 0.002,
+    "examples": [
+     "AI isn't just for work. @mr_rtl built a mobile-friendly site to organize everything his son needed for a sporting event, then updated it fro",
+     "\"It's not hard to start building these experiences; it's harder to make them good.\" Kevin Green on the agent we built for the Everything *[N",
+     "2. True creator influence isn't just measured by follower counts. It also includes comment sentiment, engagement rates, and if creators are "
+    ]
+   },
+   "assistant_voice": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ai_vocab": {
+    "hits": 8,
+    "rate": 0.005,
+    "examples": [
+     "They say cockroaches will outlast us all. We'd settle for outlasting your database problems. New look, same resilience: distinct parts, adap",
+     "Runtime kicked off this morning with keynotes from @bernhardsson and @ScottWu46. Stay tuned for product announcements and recordings from th",
+     "🧠 @GoogleDeepMind sponsored the Supabase Select 2026 after party and hackathon. Here's to giving builders a reason to stay late and come bac"
+    ]
+   },
+   "emoji": {
+    "hits": 30,
+    "rate": 0.019,
+    "examples": [
+     "11M+ people build on Bolt. On Monday, we gave them open models with up to 50x usage. Which is #1 so far? The fastest, cheapest one, with pro",
+     "Nuxt 4.6 is out, alongside nuxt/cli v4 🚀 🧩 nuxt/server, our first big step to a server-agnostic Nuxt 🎯 typed $​fetch was rebuilt (no more TS",
+     "762 commits. 315 contributors. 104 first-timers. vLLM v0.30.0 is live. 🎉 Highlights: 🤖 Hybrid-attention hot paths: Kimi K3 streamlines KDA, "
+    ]
+   },
+   "hashtags": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "Proud to sponsor #PromCon EU! Don't miss our booth + talks from our team: Using Delta Temporarily in #Prometheus Metrics deserve contracts 6"
+    ]
+   },
+   "length": {
+    "hits": 7,
+    "rate": 0.004,
+    "examples": [
+     "We ran Opus 5.5 through CodeRabbit's review pipeline. &gt; On 80 known bug patterns it caught 51 vs 49 for our production mix. &gt; On 13 ha",
+     "The full Runtime agenda is live, including talks from: @ScottWu46, Co-founder &amp; CEO @cognition @CompleteSkeptic, Co-founder &amp; CEO @t",
+     "New in Cline Desktop v0.0.34: &gt; Worktrees - run multiple tasks in parallel each on its own branch in ~/.cline/worktrees/&lt;id&gt; &gt; G"
+    ]
+   },
+   "reply_sentences": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "placeholder": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "url": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "📣 @evanjconrad, CEO at @sfcompute, at init(). October 7 · SFJAZZ Registerhttps://luma.com/init-conf"
+    ]
+   },
+   "engagement_bait": {
+    "hits": 4,
+    "rate": 0.002,
+    "examples": [
+     "Native feel, wild UI, one codebase. We've started collecting builds like this so you can see how far an Expo app can go:  What should we add",
+     "AWS's own docs say gp3 volumes can drop below 90% of provisioned IOPS 1% of the time. That's 86 hours a year, per volume. Spread a database ",
+     "Sound like a fit? Tag a friend who'd love this job, or apply here: ▪️ Americas:  ▪️ Europe:"
+    ]
+   },
+   "wrapped_in_quotes": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "“The p(doom) kind of solves the permanent underclass problem”"
+    ]
+   },
+   "unknown_handle": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ungrounded_number": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ungrounded_name": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   }
+  }
+ },
+ "reply_length_chars": {
+  "all_replies": {
+   "p50": 46,
+   "p90": 179
+  },
+  "top3_replies": {
+   "p50": 43,
+   "p90": 159,
+   "mean": 60.5
+  }
+ }
+}

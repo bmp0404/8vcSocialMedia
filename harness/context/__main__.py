@@ -1,0 +1,105 @@
+"""`python -m harness.context <command>`: context collection, enrichment and tracking.
+
+Kept out of harness/cli.py so this package merges without touching a shared file.
+"""
+
+import argparse
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="python -m harness.context")
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    p = sub.add_parser("backfill-x", help="fetch current X metrics for every dataset post, then author timelines")
+    p.add_argument("--limit", type=int, help="fetch at most this many posts (testing)")
+    p.add_argument("--no-timelines", action="store_true")
+    p.add_argument("--interval", type=float, help="seconds between fxtwitter requests (default: settings bulk_interval_s)")
+
+    sub.add_parser("enrich", help="write data/context/devtools_enriched.csv and accounts.csv")
+
+    p = sub.add_parser("collect", help="collect context signals, reply samples or reposters for the dataset")
+    p.add_argument("job", choices=["context", "replies", "reposters", "all-x"])
+    p.add_argument("--gdelt-budget", type=int, default=0, help="context: at most this many GDELT calls (it 429s often)")
+    p.add_argument("--interval", type=float, help="replies/reposters: seconds between fxtwitter requests")
+
+    sub.add_parser("analyze", help="write data/context/analysis.json from the enriched dataset")
+
+    p = sub.add_parser("check", help="fetch one real data point from every keyless source")
+    p.add_argument("only", nargs="*", help="run only these checks")
+
+    p = sub.add_parser("track", help="snapshot tracker for engagement curves (read-only X calls)")
+    p.add_argument("action", choices=["add", "watch", "poll", "loop", "report", "list"])
+    p.add_argument("targets", nargs="*", help="post URLs/ids for add and report; handles for watch")
+    p.add_argument("--every-min", type=int, help="watch: minutes between timeline reads")
+    p.add_argument("--interval", type=float, default=60.0, help="loop: seconds between passes")
+    p.add_argument("--replies", action="store_true", help="also sample replies, for amplifier attribution")
+    p.add_argument("--max-passes", type=int, help="loop: stop after this many passes")
+    p.add_argument("--reposters", action="store_true", help="also snapshot the largest reposters, to time big reposts")
+    p.add_argument("--dense", action="store_true", help="poll every 5-15 min for the first day (needed to see step jumps)")
+    p.add_argument("--metric", default="engagement")
+
+    args = parser.parse_args()
+    if args.cmd == "backfill-x":
+        from harness.context import backfill
+
+        kw = {"interval_s": args.interval} if args.interval else {}
+        backfill.run(limit=args.limit, timelines=not args.no_timelines, **kw)
+    elif args.cmd == "enrich":
+        from harness.context import enrich
+
+        enrich.run()
+    elif args.cmd == "track":
+        _track(args)
+    elif args.cmd == "collect":
+        from harness.context import collect
+
+        if args.job == "context":
+            out = collect.collect_context(gdelt_budget=args.gdelt_budget)
+            print(f"[collect] context for {len(out['accounts'])} accounts, {len(out['errors'])} errors")
+        kw = {"interval_s": args.interval} if args.interval else {}
+        if args.job in ("replies", "all-x"):
+            print(f"[collect] replies for {collect.collect_replies(**kw)} posts")
+        if args.job in ("reposters", "all-x"):
+            print(f"[collect] reposters for {collect.collect_reposters(**kw)} posts")
+    elif args.cmd == "analyze":
+        from harness.context import analysis
+
+        res = analysis.run()
+        print(f"[analyze] {res['n_rows']} rows, eligible {dict(res['eligible_by_category'])} -> {analysis.OUT}")
+    elif args.cmd == "check":
+        from harness.context import live_check
+
+        live_check.run(args.only or None)
+
+
+def _track(args) -> None:
+    import json
+
+    from harness.context.tracker import Tracker
+    from harness.context.xreader import FxTwitterReader
+
+    from harness.context.settings import TrackerParams
+
+    tr = Tracker(FxTwitterReader(), params=TrackerParams(dense=args.dense))
+    if args.action == "add":
+        for t in args.targets:
+            print(f"[tracker] tracking {tr.add(t)}")
+    elif args.action == "watch":
+        tr.add_watch(args.targets, args.every_min)
+        print(f"[tracker] watching {tr.watch()['handles']}")
+    elif args.action == "poll":
+        print(f"[tracker] {tr.poll_once(with_replies=args.replies, with_reposters=args.reposters)}")
+    elif args.action == "loop":
+        tr.loop(args.interval, with_replies=args.replies, max_passes=args.max_passes, with_reposters=args.reposters)
+    elif args.action == "list":
+        snaps = tr.snapshots()
+        for pid, meta in tr.tracked().items():
+            print(f"{pid}  @{meta['author'] or '?':<16} {meta['created_at'][:16]}  {len(snaps.get(pid, []))} snapshots  {meta['reason']}")
+    elif args.action == "report":
+        for t in args.targets or list(tr.tracked()):
+            pid = tr.add(t) if "/" in t else t
+            print(json.dumps(tr.report(pid, args.metric), indent=1, default=str))
+
+
+if __name__ == "__main__":
+    main()

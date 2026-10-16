@@ -1,0 +1,33 @@
+{
+ "champion": "cfg-46f3a9fd716b",
+ "accepted": [
+  {
+   "fitness": "qualify_auc",
+   "changes": {
+    "qualify.model": "gpt-6.1-sol"
+   },
+   "hypothesis": "Running the persona panel on gpt-6.1-sol instead of claude-sonnet-5-5 raises within-account AUC above the champion's 0.794 by more than the noise floor.",
+   "proposer": {
+    "kind": "llm",
+    "model": "claude-opus-5-5",
+    "source": "research/eval.md, finding 14"
+   },
+   "label": "gpt panel"
+  },
+  {
+   "fitness": "action_lineup",
+   "changes": {
+    "action.veto.max_p_ai": 30,
+    "action.samples": 8
+   },
+   "hypothesis": "A stricter veto (P(AI) >= 30) fed by 8 drafts instead of 4 lowers ai_detection_rate below the promoted pipeline's 0.37 without raising abstain_rate, because more candidates leave survivors after the tighter cut.",
+   "proposer": {
+    "kind": "llm",
+    "model": "claude-opus-5-5",
+    "source": "exp-20261016-action-7ea3e0"
+   },
+   "label": "stricter veto, more drafts"
+  }
+ ],
+ "rejected": []
+}

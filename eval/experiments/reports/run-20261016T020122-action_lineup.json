@@ -1,0 +1,390 @@
+{
+ "run_id": "run-20261016T020122",
+ "provider": "anthropic",
+ "arms": {
+  "action_lineup:champion": {
+   "config_ref": "cfg-17e3b75195e4",
+   "repeat": false,
+   "error": "",
+   "seconds": 37.1,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Every Fever exit thread is the same: 400 people who watched every minute swear they're done forever. Tickets go on sale, and suddenly everybody's back in the arena by May. Love y'all. Hate-watching is still watching.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2106459938151145977": {
+     "draft": "\"Tipping point\" is accurate. Ratings, ticket prices, arena upgrades, and my blood pressure on every Fever possession all tipped the same night she got drafted.",
+     "position": 4,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2106399407834898501": {
+     "draft": "Exit pressers are 20 min of \"we have to be better,\" and the replies are 20 min of lineup cards. Hot take: the offseason to-do list is a real defense and a second playmaker so Caitlin isn't doing everything. Fix that and the coaching debate gets a lot quieter.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110792840989024541": {
+     "draft": "Rare W moment where Caitlin fans and Angel fans are setting the same alarm for the same game. Somebody tell both group chats to save the quote-tweets until after tip. 3:30 ET, Peacock, snacks ready.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808211347456506": {
+     "draft": "Two Dream players on the All-Defense First Team. Opposing guards reading the scouting report: \"cool, so there's nowhere to go.\" Meanwhile Fever fans are drawing up a 'yeah but we have the offense' flowchart.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110824046833348936": {
+     "draft": "10-0 since Aug 30 is a ridiculous run. The replies are still 20% basketball and 80% ref conspiracy theories. Golden State has a whole series to change the math. Win the games and the conspiracy theories write themselves.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808214048502128": {
+     "draft": "Two Valkyries on the list, and the replies are already 90% 'where's AB.' Defense awards are the only place a snub gets more screen time than the winners. Fever fans reading this like it's a scavenger hunt for our names.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2099247457473339402": {
+     "draft": "Left off the 2024 Olympic roster, back with a World Cup gold medal two years later. Best revenge arc is just winning, and she did it without a single subtweet.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2106419802117976116": {
+     "draft": "10-0 on picks. Defenses spent two years trying to stop her from the logo and now the sportsbooks have to deal with her too. Somebody check the desk for a green light.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2105382766682714299": {
+     "draft": "Nike: \"we're launching a shoe.\"",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110018728314224992": {
+     "draft": "Welcome back JuJu. Big Ten coaches spent a whole year hoping for rust. Meanwhile the WNBA draft board just got way more fun, and the rest of us just want her healthy and cooking for 40 minutes a night.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2109769353935688054": {
+     "draft": "Caitlin Clark's rookie WNBA salary was about $76K, and her endorsements dwarf it. That's the tell: women's sports pay the one superstar through sponsors and give everyone else \"exposure.\" Nobody should need to be a global brand just to afford rent.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110038076114256260": {
+     "draft": "Moving to the big building because demand is through the roof is a great problem to have. Fever fans know it well: since 2024, half the league has been 'upgrading venues' when we come to town. Enjoy the sellouts, ATL.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808408366493714": {
+     "draft": "Top three steals leaders on the same roster. Every point guard in the East just got a group text titled \"hold the ball with both hands.\" Congrats to the trio, that's a real heist crew.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2109445947881087063": {
+     "draft": "Dream front office: team bonding at an NFL game. Fever fans: cool, now explain how you plan to guard Caitlin Clark from the logo when she comes to town. Great fit though, matching the Falcons' energy is a bold choice 😄",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2108954459304763841": {
+     "draft": "Fever fan reporting in as a neutral. That lasts until the first questionable whistle, then I'm a full-time referee analyst. Saturday can't come fast enough.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2109672093403279370": {
+     "draft": "Fever fans watching Finals week with a notepad: \"oh, so THIS is what the end of the season looks like.\" Good luck, Valks ⚔️",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    }
+   },
+   "failures": {}
+  },
+  "action_lineup:champion_repeat": {
+   "config_ref": "cfg-17e3b75195e4",
+   "repeat": true,
+   "error": "",
+   "seconds": 34.5,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Fever socials posts a simple \"thank you fans ❤️\" and the replies turn into a full front-office performance review. Meanwhile the offseason hasn't even started. See everyone back here for 5 months of roster arguments.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2106459938151145977": {
+     "draft": "\"Tipping point\" is right. Every WNBA ratings chart since 2024 looks like a before/after photo. Nice to hear it said out loud. Now back it up with a healthy Caitlin, consistent whistles, and the schedule to match.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2106399407834898501": {
+     "draft": "Replies are 100% firing her, 0% saying what the front office should do next. My offseason list: a second real shot creator next to Caitlin, defense that gets stops, and a rotation that stays put for more than a week. Fix those and the coaching debate gets a lot quieter.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110792840989024541": {
+     "draft": "Finals on NBC in primetime. Whatever side you were on in 2023-24, that rivalry is a big reason the league is getting this slot. Class of 2024 built the stage. Now the rest of the league has to show up to it.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808211347456506": {
+     "draft": "Picture being a guard who has to bring the ball up against this lineup. Gabby picks you up at half court, Rhyne is waiting at the arc, and A'ja is sitting at the rim like a bouncer who's already decided. That's a hostage situation, not a defense. Congrats to all five.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110824046833348936": {
+     "draft": "10-0 is a great run, and DB deserves her flowers for it. But every Fever fan knows a hot streak and a Finals series are different sports. Golden State didn't come to be a feature in the highlight video. Saturday should be fun.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808214048502128": {
+     "draft": "Defensive team drops and the reply section has already filed three separate appeals: AB, Azzi, and JC for first team. WNBA Twitter doesn't need a voting panel, it needs a bracket.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2099247457473339402": {
+     "draft": "World Cup gold medalist now. Adding it to the résumé right under \"allegedly overrated.\" Congrats Caitlin 🥇🇺🇸",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2106419802117976116": {
+     "draft": "Calling 10-0 while games are still being played is the most logo-range move on the board today. The scary part is I trust it more than most people's final picks.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2105382766682714299": {
+     "draft": "Nike put a swoosh on the shoe. Caitlin put the logo three on the scouting report. Either way, my wallet has zero help defense tomorrow.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110018728314224992": {
+     "draft": "Biggest story in the country is a player who last played in March 2025. That's a 19-month wait. The sport didn't just miss her, it basically ran a missing-person campaign. Now everyone please be normal and let her hoop.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2109769353935688054": {
+     "draft": "Every thread like this has someone saying \"nobody watches women's sports.\" The 2024 women's title game (Iowa-South Carolina) pulled 18.9M viewers, more than the men's final. People watch. The paychecks are what's behind. Clark made $76k as the face of that boom in her rookie year.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110038076114256260": {
+     "draft": "Gateway Center to State Farm Arena for the Finals. Fever fans know the \"we need a bigger building\" arc well. Welcome to the club, Atlanta. Now sell it out so the TV crowd shots look like the playoffs and not a PTO rumor.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808408366493714": {
+     "draft": "Top three steals leaders in the league, all on one roster. Opposing point guards watching film against Atlanta aren't scouting anymore, they're filing a police report. Congrats to all three.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2109445947881087063": {
+     "draft": "Whole roster in one suite, everybody healthy enough to pose, nobody on the injury report. Fever fans are looking at this photo like it's a foreign concept. Great fits though, y'all look like a team that actually RSVP'd to the group chat.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2108954459304763841": {
+     "draft": "Finals preview rule: every neutral fan will claim they're \"just here for the basketball\" and then tweet about the refs by the second quarter. See you all in the replies, Game 1 tip-off. 🍿",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2109672093403279370": {
+     "draft": "Whole thread is \"LFG\" and \"bring it home\" and then one guy just casually selling two Game 1 tickets. Finals week energy is undefeated. Fever fan here, respectfully jealous. Go get it.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    }
+   },
+   "failures": {}
+  },
+  "action_lineup:cfg-f544f07093c8": {
+   "config_ref": "cfg-f544f07093c8",
+   "repeat": false,
+   "error": "",
+   "seconds": 21.3,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Bring Temp back and fire Christie",
+     "position": 4,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2106459938151145977": {
+     "draft": "While this is true and a great thing to highlight, I really hope you all made a good move with her new coach and that the coach will actually highlight Caitlin's strengths. Caitlin makes her teammates better when she's running the show, and that should be the focus.",
+     "position": 4,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2106399407834898501": {
+     "draft": "Get your resume ready dear....../ Simon says goodbye!",
+     "position": 4,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2110792840989024541": {
+     "draft": "is an absolute walking W",
+     "position": 2,
+     "pick": 3,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2110808211347456506": {
+     "draft": "How does DiJonai not make first team?????",
+     "position": 5,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2110824046833348936": {
+     "draft": "Imagine not being able to carry your team",
+     "position": 4,
+     "pick": 3,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2110808214048502128": {
+     "draft": "Are these people watching games?",
+     "position": 3,
+     "pick": 5,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2099247457473339402": {
+     "draft": "This year you will be ranked #1 / We're rooting for you 🔥",
+     "position": 1,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2106419802117976116": {
+     "draft": "Caitlin Clark?? She just like me 💯",
+     "position": 4,
+     "pick": 3,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2105382766682714299": {
+     "draft": "Omg is that the real Caitlin Clark 😃",
+     "position": 1,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2110018728314224992": {
+     "draft": "Look for top 5 picks in the 2028 draft: https://nba.com/mockdraft2028",
+     "position": 5,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2109769353935688054": {
+     "draft": "More money for weapons of war than for women's football. The patriarchy/military-industrial complex/oligarchs be running things.",
+     "position": 3,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2110038076114256260": {
+     "draft": "It's up!!! Atlanta Represent!!!",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2110808408366493714": {
+     "draft": "this is ours ✨💪🏾",
+     "position": 4,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2109445947881087063": {
+     "draft": "Them Falcons hoodies go hard",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0
+    },
+    "2108954459304763841": {
+     "draft": "🏀",
+     "position": 4,
+     "pick": 5,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    },
+    "2109672093403279370": {
+     "draft": "LET'S GOOOO!",
+     "position": 4,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0
+    }
+   },
+   "failures": {}
+  }
+ }
+}

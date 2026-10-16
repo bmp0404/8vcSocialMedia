@@ -1,0 +1,4622 @@
+{
+ "at": "2026-10-15T21:12:53",
+ "provider": "anthropic",
+ "models": [
+  "claude-sonnet-5-5"
+ ],
+ "panel_path": "/Users/samgu/Programming Projects/8vcSocialMedia-worktrees/eval-judge-scratch/eval/panels/devtools.json",
+ "memory": "shuffled",
+ "config": {
+  "min_chars": 40,
+  "thread_gap_minutes": 3.0,
+  "min_age_hours": 48.0,
+  "per_tier": 4,
+  "n_boot": 2000,
+  "seed": 0,
+  "models": [
+   "claude-sonnet-5-5"
+  ],
+  "batch": 1,
+  "judge_references_per_class": 3,
+  "memory": "shuffled"
+ },
+ "n_eligible": 848,
+ "dropped": {
+  "unscorable_text_or_reply": 388,
+  "thread_continuation": 316,
+  "younger_than_48h": 113
+ },
+ "rescored_at": "2026-10-15T21:29:07",
+ "enriched_csv": "/tmp/eval-ctx/enriched.csv",
+ "protocol": "v2: within-account viral vs Deadweight, one post per model call",
+ "n_sampled": 144,
+ "n_scored_by_all": 136,
+ "sample_ids": [
+  "https://x.com/zeddotdev/status/2104945383998881832",
+  "https://x.com/motherduck/status/2102077291081896307",
+  "https://x.com/QodoAI/status/2100601169458413732",
+  "https://x.com/biomejs/status/2105319094346015015",
+  "https://x.com/posthog/status/2104971969494233559",
+  "https://x.com/Replit/status/2108612014964904428",
+  "https://x.com/warpdotdev/status/2107161297024376889",
+  "https://x.com/tldraw/status/2104983011062104324",
+  "https://x.com/triggerdotdev/status/2102065355548205144",
+  "https://x.com/posthog/status/2102110133946052855",
+  "https://x.com/convex/status/2108273573534306427",
+  "https://x.com/QodoAI/status/2099924996394975675",
+  "https://x.com/Railway/status/2104978612323594461",
+  "https://x.com/upstash/status/2108368797946315060",
+  "https://x.com/e2b/status/2108233328143053130",
+  "https://x.com/resend/status/2109705935098892758",
+  "https://x.com/zeddotdev/status/2104559249854550430",
+  "https://x.com/linear/status/2110068941364318514",
+  "https://x.com/kilocode/status/2103138729154294223",
+  "https://x.com/tldraw/status/2101808371896852966",
+  "https://x.com/expo/status/2102421737073713559",
+  "https://x.com/coderabbitai/status/2108211047966384185",
+  "https://x.com/posthog/status/2107530135448760403",
+  "https://x.com/tldraw/status/2106156271485542621",
+  "https://x.com/upstash/status/2104320882550415734",
+  "https://x.com/CockroachDB/status/2107119975513080227",
+  "https://x.com/convex/status/2102094480400912753",
+  "https://x.com/prisma/status/2104603046005403857",
+  "https://x.com/Railway/status/2100267285373989020",
+  "https://x.com/Replit/status/2102828063184568709",
+  "https://x.com/coderabbitai/status/2099868543709753769",
+  "https://x.com/resend/status/2102825133283188976",
+  "https://x.com/QodoAI/status/2105647817217700085",
+  "https://x.com/posthog/status/2099894783284273290",
+  "https://x.com/QodoAI/status/2107088320543269021",
+  "https://x.com/upstash/status/2107532184341156080",
+  "https://x.com/CockroachDB/status/2100294013462929812",
+  "https://x.com/boltdotnew/status/2100988806950252683",
+  "https://x.com/posthog/status/2101024983518765242",
+  "https://x.com/resend/status/2103862323962388891",
+  "https://x.com/warpdotdev/status/2105353453815861370",
+  "https://x.com/greptile/status/2103501168911454222",
+  "https://x.com/resend/status/2103123046005678242",
+  "https://x.com/coderabbitai/status/2103499952769089633",
+  "https://x.com/warpdotdev/status/2100623731294978243",
+  "https://x.com/boltdotnew/status/2105319354606793003",
+  "https://x.com/boltdotnew/status/2108242330037661739",
+  "https://x.com/resend/status/2100228217911280071",
+  "https://x.com/linear/status/2102504412572721181",
+  "https://x.com/resend/status/2105673390556364852",
+  "https://x.com/zeddotdev/status/2106097814392783116",
+  "https://x.com/linear/status/2105372353081291121",
+  "https://x.com/tldraw/status/2105690247854272834",
+  "https://x.com/motherduck/status/2100701824936202249",
+  "https://x.com/CockroachDB/status/2099912777414369730",
+  "https://x.com/neondatabase/status/2107182156946739330",
+  "https://x.com/motherduck/status/2107478490308083950",
+  "https://x.com/neondatabase/status/2106019538924179955",
+  "https://x.com/tursodatabase/status/2105349140842791077",
+  "https://x.com/neondatabase/status/2100667636367630683",
+  "https://x.com/e2b/status/2099864565697872320",
+  "https://x.com/greptile/status/2103140056256888894",
+  "https://x.com/upstash/status/2102350503158100079",
+  "https://x.com/CockroachDB/status/2107949104684748942",
+  "https://x.com/n8n_io/status/2104488818170630389",
+  "https://x.com/expo/status/2108589139235082681",
+  "https://x.com/kilocode/status/2107462795516313992",
+  "https://x.com/boltdotnew/status/2107846455180288289",
+  "https://x.com/prisma/status/2107468131841331475",
+  "https://x.com/tldraw/status/2102367584398246284",
+  "https://x.com/tursodatabase/status/2107837302999224623",
+  "https://x.com/Replit/status/2102488104380797123",
+  "https://x.com/AmpCode/status/2105178613763207269",
+  "https://x.com/posthog/status/2109706421919248499",
+  "https://x.com/greptile/status/2100268607477273048",
+  "https://x.com/tursodatabase/status/2106054567125532976",
+  "https://x.com/prisma/status/2105327144457163238",
+  "https://x.com/Railway/status/2104572401468199274",
+  "https://x.com/n8n_io/status/2108560485381460192",
+  "https://x.com/neondatabase/status/2105736025880530995",
+  "https://x.com/coderabbitai/status/2102767517219360794",
+  "https://x.com/n8n_io/status/2102409055088312518",
+  "https://x.com/prisma/status/2105402878252953967",
+  "https://x.com/kilocode/status/2100990080739385567",
+  "https://x.com/boltdotnew/status/2100646000016716180",
+  "https://x.com/Railway/status/2105688995313176789",
+  "https://x.com/coderabbitai/status/2102437018311532862",
+  "https://x.com/motherduck/status/2102414494471188631",
+  "https://x.com/CockroachDB/status/2102834407140684058",
+  "https://x.com/convex/status/2105073497664008404",
+  "https://x.com/upstash/status/2110098341120098652",
+  "https://x.com/kilocode/status/2103510268013605147",
+  "https://x.com/resend/status/2108256629137571935",
+  "https://x.com/polar_sh/status/2105650325004951746",
+  "https://x.com/motherduck/status/2110036161297055898",
+  "https://x.com/Replit/status/2110093275684352234",
+  "https://x.com/tldraw/status/2105003566351908892",
+  "https://x.com/neondatabase/status/2104640828794941782",
+  "https://x.com/expo/status/2109237727367426405",
+  "https://x.com/e2b/status/2105345363813286280",
+  "https://x.com/neondatabase/status/2102420442527256938",
+  "https://x.com/convex/status/2105728858427412814",
+  "https://x.com/linear/status/2100971841330221306",
+  "https://x.com/motherduck/status/2105689279251063086",
+  "https://x.com/expo/status/2101368657247101436",
+  "https://x.com/polar_sh/status/2108198833167462472",
+  "https://x.com/kilocode/status/2104615440966095345",
+  "https://x.com/AmpCode/status/2103413581182361813",
+  "https://x.com/Replit/status/2108316518907892218",
+  "https://x.com/neondatabase/status/2106028700638785617",
+  "https://x.com/zeddotdev/status/2105301337881641226",
+  "https://x.com/n8n_io/status/2107386299581653024",
+  "https://x.com/warpdotdev/status/2104988839177855450",
+  "https://x.com/boltdotnew/status/2110059335833317584",
+  "https://x.com/linear/status/2108599715478851601",
+  "https://x.com/upstash/status/2100626014866956729",
+  "https://x.com/tldraw/status/2100284079866568773",
+  "https://x.com/resend/status/2107168738198057179",
+  "https://x.com/Replit/status/2107896848044437766",
+  "https://x.com/tursodatabase/status/2108210104419922065",
+  "https://x.com/upstash/status/2105695896566735281",
+  "https://x.com/CockroachDB/status/2099845821910901045",
+  "https://x.com/prisma/status/2103135542062076393",
+  "https://x.com/tursodatabase/status/2104958085492081025",
+  "https://x.com/biomejs/status/2110015673296400420",
+  "https://x.com/neondatabase/status/2105789222678634606",
+  "https://x.com/zeddotdev/status/2103319070674178473",
+  "https://x.com/convex/status/2102095624586002517",
+  "https://x.com/triggerdotdev/status/2100615804639396090",
+  "https://x.com/posthog/status/2102424081253752928",
+  "https://x.com/linear/status/2105716649714196849",
+  "https://x.com/expo/status/2106364896049061891",
+  "https://x.com/prisma/status/2104963491308433438",
+  "https://x.com/Replit/status/2105084123358568584",
+  "https://x.com/QodoAI/status/2102744822561824931",
+  "https://x.com/triggerdotdev/status/2105326971320443307",
+  "https://x.com/upstash/status/2104931792218096074",
+  "https://x.com/Railway/status/2103566393862136150",
+  "https://x.com/e2b/status/2108253718013759752",
+  "https://x.com/tldraw/status/2104630655271501951",
+  "https://x.com/posthog/status/2103140490749395097",
+  "https://x.com/n8n_io/status/2105609247111467462",
+  "https://x.com/Replit/status/2100321324170150301",
+  "https://x.com/greptile/status/2108623827760775515"
+ ],
+ "sampled_categories": {
+  "Super Viral": 9,
+  "Medium Viral": 60,
+  "Deadweight": 67
+ },
+ "boost_flags": "loaded from the context worker's enriched CSV",
+ "seed": 0,
+ "results": {
+  "random": {
+   "relative": false,
+   "seconds": 0.0,
+   "failures": [],
+   "source_run_at": "2026-10-15T21:12:53",
+   "all": {
+    "n_posts": 136,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.49411764705882355,
+     "ci95": [
+      0.36231884057971014,
+      0.6104651162790697
+     ],
+     "n_pairs": 170
+    },
+    "same_media_status": {
+     "value": 0.5079365079365079,
+     "ci95": [
+      0.3448275862068966,
+      0.6595744680851063
+     ],
+     "n_pairs": 63
+    },
+    "same_launch_type": {
+     "value": 0.5462962962962963,
+     "ci95": [
+      0.4074074074074074,
+      0.6744186046511628
+     ],
+     "n_pairs": 108
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.52,
+     "ci95": [
+      0.42045454545454547,
+      0.6363636363636364
+     ],
+     "n_pairs": 75
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.5573770491803278,
+     "ci95": [
+      0.425531914893617,
+      0.6744186046511628
+     ],
+     "n_pairs": 61
+    },
+    "top_pick_is_viral": {
+     "value": 0.5740740740740741,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5105820105820105
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": -0.026803118381583484,
+     "super_viral_vs_rest_auc": 0.5888013998250219,
+     "super_vs_medium_auc": 0.6074074074074074
+    }
+   },
+   "without_boost_suspect": {
+    "n_posts": 129,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.4935064935064935,
+     "ci95": [
+      0.3592814371257485,
+      0.6216216216216216
+     ],
+     "n_pairs": 154
+    },
+    "same_media_status": {
+     "value": 0.4909090909090909,
+     "ci95": [
+      0.3,
+      0.6818181818181818
+     ],
+     "n_pairs": 55
+    },
+    "same_launch_type": {
+     "value": 0.5480769230769231,
+     "ci95": [
+      0.4028776978417266,
+      0.6883116883116883
+     ],
+     "n_pairs": 104
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.5076923076923077,
+     "ci95": [
+      0.40963855421686746,
+      0.6226415094339622
+     ],
+     "n_pairs": 65
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.5689655172413793,
+     "ci95": [
+      0.43859649122807015,
+      0.6805555555555556
+     ],
+     "n_pairs": 58
+    },
+    "top_pick_is_viral": {
+     "value": 0.5370370370370371,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5163580246913579
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": -0.054468381070427,
+     "super_viral_vs_rest_auc": 0.5491803278688525,
+     "super_vs_medium_auc": 0.5663265306122449
+    }
+   },
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 4,
+    "draws": 500,
+    "cross_account_spearman_median": 0.3986013986013986,
+    "cross_account_spearman_range95": [
+     -0.1258741258741259,
+     0.7832167832167832
+    ]
+   },
+   "predictions": {
+    "https://x.com/zeddotdev/status/2104945383998881832": {
+     "score": 0.32809710576698314,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102077291081896307": {
+     "score": 0.6976510747275989,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2100601169458413732": {
+     "score": 0.8216014784736351,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2105319094346015015": {
+     "score": 0.1595017742354391,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2104971969494233559": {
+     "score": 0.5180952473974587,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108612014964904428": {
+     "score": 0.19539840972308054,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2107161297024376889": {
+     "score": 0.921928923655935,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104983011062104324": {
+     "score": 0.20538123731909663,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2102065355548205144": {
+     "score": 0.2773295707128327,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102110133946052855": {
+     "score": 0.48947451227942285,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2108273573534306427": {
+     "score": 0.5038536985267129,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2099924996394975675": {
+     "score": 0.8972293555008819,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104978612323594461": {
+     "score": 0.9086351663137023,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2108368797946315060": {
+     "score": 0.7925104492873335,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.3507585954731858,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2109705935098892758": {
+     "score": 0.8732371438611387,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2104559249854550430": {
+     "score": 0.1556123880487782,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2110068941364318514": {
+     "score": 0.8116702553565711,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103138729154294223": {
+     "score": 0.4441980137063606,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2101808371896852966": {
+     "score": 0.6709583856316812,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2102421737073713559": {
+     "score": 0.18682134849833043,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2108211047966384185": {
+     "score": 0.32105724847712436,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2107530135448760403": {
+     "score": 0.12882157054371568,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2106156271485542621": {
+     "score": 0.8653575615406871,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104320882550415734": {
+     "score": 0.8868583988226638,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107119975513080227": {
+     "score": 0.20906715620883543,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102094480400912753": {
+     "score": 0.9672115313776583,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104603046005403857": {
+     "score": 0.5612704573811418,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2100267285373989020": {
+     "score": 0.10424753401078024,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102828063184568709": {
+     "score": 0.0829829688409397,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2099868543709753769": {
+     "score": 0.3069545226553959,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2102825133283188976": {
+     "score": 0.9526891931351716,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2105647817217700085": {
+     "score": 0.4560544107866379,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2099894783284273290": {
+     "score": 0.8069783377893023,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2107088320543269021": {
+     "score": 0.8989475456454689,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2107532184341156080": {
+     "score": 0.2236562747954417,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2100294013462929812": {
+     "score": 0.5247354484829129,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100988806950252683": {
+     "score": 0.22778543637767235,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2101024983518765242": {
+     "score": 0.9834138986554041,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103862323962388891": {
+     "score": 0.5511719111342297,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2105353453815861370": {
+     "score": 0.9735821653784488,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103501168911454222": {
+     "score": 0.3706323630372128,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103123046005678242": {
+     "score": 0.4543325094581979,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2103499952769089633": {
+     "score": 0.45165161705520507,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2100623731294978243": {
+     "score": 0.41417712811957197,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2105319354606793003": {
+     "score": 0.9735444042160223,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2108242330037661739": {
+     "score": 0.9771036736999916,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2100228217911280071": {
+     "score": 0.5905194027989423,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2102504412572721181": {
+     "score": 0.763308173732551,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2105673390556364852": {
+     "score": 0.376761603294518,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2106097814392783116": {
+     "score": 0.8743589313771747,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105372353081291121": {
+     "score": 0.1938591827604904,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105690247854272834": {
+     "score": 0.8380273631518217,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2100701824936202249": {
+     "score": 0.1513749387441259,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099912777414369730": {
+     "score": 0.5263343137103282,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2107182156946739330": {
+     "score": 0.2246932551838856,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2107478490308083950": {
+     "score": 0.7818143741080631,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106019538924179955": {
+     "score": 0.39217799753656146,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2105349140842791077": {
+     "score": 0.033477391033493564,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2100667636367630683": {
+     "score": 0.3503894773131624,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2099864565697872320": {
+     "score": 0.46868934098493764,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103140056256888894": {
+     "score": 0.7208117618245946,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2102350503158100079": {
+     "score": 0.8439476989986235,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107949104684748942": {
+     "score": 0.984480729086581,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2104488818170630389": {
+     "score": 0.9982349890734067,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2108589139235082681": {
+     "score": 0.5681955773072855,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2107462795516313992": {
+     "score": 0.29271235711628196,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2107846455180288289": {
+     "score": 0.762276440109598,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2107468131841331475": {
+     "score": 0.25489727266080986,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2102367584398246284": {
+     "score": 0.71692762748601,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2107837302999224623": {
+     "score": 0.37947711337263734,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102488104380797123": {
+     "score": 0.9979102686428827,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2105178613763207269": {
+     "score": 0.6886451438511844,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2109706421919248499": {
+     "score": 0.7908042957966708,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2100268607477273048": {
+     "score": 0.454066369634208,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2106054567125532976": {
+     "score": 0.21606882837744368,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105327144457163238": {
+     "score": 0.9517656157328633,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104572401468199274": {
+     "score": 0.713220556836716,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 0.932731946998078,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105736025880530995": {
+     "score": 0.23953248786180947,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102767517219360794": {
+     "score": 0.8683981799234657,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2102409055088312518": {
+     "score": 0.92978472856485,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105402878252953967": {
+     "score": 0.6013095299998897,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2100990080739385567": {
+     "score": 0.4662694697351175,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100646000016716180": {
+     "score": 0.9811620530319378,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2105688995313176789": {
+     "score": 0.7068661588630897,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102437018311532862": {
+     "score": 0.1178208344112015,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102414494471188631": {
+     "score": 0.031092075508195927,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2102834407140684058": {
+     "score": 0.8804112863825612,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105073497664008404": {
+     "score": 0.2519435309336623,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2110098341120098652": {
+     "score": 0.4209834412798499,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103510268013605147": {
+     "score": 0.048798608870935234,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2108256629137571935": {
+     "score": 0.034652360803420046,
+     "detail": {}
+    },
+    "https://x.com/polar_sh/status/2105650325004951746": {
+     "score": 0.5413873791184259,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2110036161297055898": {
+     "score": 0.12453468497614506,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2110093275684352234": {
+     "score": 0.5590392256395,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105003566351908892": {
+     "score": 0.8891981473610179,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2104640828794941782": {
+     "score": 0.20824553608091112,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2109237727367426405": {
+     "score": 0.0968292344286742,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2105345363813286280": {
+     "score": 0.5093688711324728,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2102420442527256938": {
+     "score": 0.2084953979782299,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105728858427412814": {
+     "score": 0.5933823171968177,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2100971841330221306": {
+     "score": 0.27291997155127323,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2105689279251063086": {
+     "score": 0.3805964650011051,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2101368657247101436": {
+     "score": 0.9177650155947584,
+     "detail": {}
+    },
+    "https://x.com/polar_sh/status/2108198833167462472": {
+     "score": 0.9687340019839958,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2104615440966095345": {
+     "score": 0.7372101921603526,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2103413581182361813": {
+     "score": 0.12232247403572227,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108316518907892218": {
+     "score": 0.6127734563686679,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106028700638785617": {
+     "score": 0.6034636901936355,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2105301337881641226": {
+     "score": 0.40184807690755353,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.28364537977079407,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2104988839177855450": {
+     "score": 0.6798489251708464,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2110059335833317584": {
+     "score": 0.9887023511158431,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2108599715478851601": {
+     "score": 0.09327844652667039,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2100626014866956729": {
+     "score": 0.6620627589761139,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2100284079866568773": {
+     "score": 0.04588067614640834,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2107168738198057179": {
+     "score": 0.9888673707176229,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2107896848044437766": {
+     "score": 0.752120893934751,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2108210104419922065": {
+     "score": 0.45582861683387466,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2105695896566735281": {
+     "score": 0.21762549428319988,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099845821910901045": {
+     "score": 0.35737193974923176,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2103135542062076393": {
+     "score": 0.2534211226388762,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2104958085492081025": {
+     "score": 0.2898886092767621,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2110015673296400420": {
+     "score": 0.48804972554451975,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105789222678634606": {
+     "score": 0.3968671063592313,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2103319070674178473": {
+     "score": 0.7629390696645029,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102095624586002517": {
+     "score": 0.2724450148757066,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2100615804639396090": {
+     "score": 0.319850359488144,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102424081253752928": {
+     "score": 0.7557158562809884,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105716649714196849": {
+     "score": 0.1417251702939899,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2106364896049061891": {
+     "score": 0.2907564141776884,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104963491308433438": {
+     "score": 0.4874385593294873,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2105084123358568584": {
+     "score": 0.07355876789051008,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2102744822561824931": {
+     "score": 0.8620333260244727,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2105326971320443307": {
+     "score": 0.7213156962190771,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104931792218096074": {
+     "score": 0.9653992316942953,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2103566393862136150": {
+     "score": 0.6811399211534109,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.1624859954230925,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104630655271501951": {
+     "score": 0.7464343036258014,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2103140490749395097": {
+     "score": 0.7276967386368193,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2105609247111467462": {
+     "score": 0.7152766963577957,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2100321324170150301": {
+     "score": 0.516795289103483,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 0.028351832010290456,
+     "detail": {}
+    }
+   }
+  },
+  "media": {
+   "relative": false,
+   "seconds": 0.0,
+   "failures": [],
+   "source_run_at": "2026-10-15T21:12:53",
+   "all": {
+    "n_posts": 136,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.75,
+     "ci95": [
+      0.6442953020134228,
+      0.8538461538461538
+     ],
+     "n_pairs": 170
+    },
+    "same_media_status": {
+     "value": 0.626984126984127,
+     "ci95": [
+      0.5608108108108109,
+      0.7065217391304348
+     ],
+     "n_pairs": 63
+    },
+    "same_launch_type": {
+     "value": 0.7129629629629629,
+     "ci95": [
+      0.5730337078651685,
+      0.8505154639175257
+     ],
+     "n_pairs": 108
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.5466666666666666,
+     "ci95": [
+      0.47530864197530864,
+      0.6272727272727273
+     ],
+     "n_pairs": 75
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.5409836065573771,
+     "ci95": [
+      0.4305555555555556,
+      0.6545454545454545
+     ],
+     "n_pairs": 61
+    },
+    "top_pick_is_viral": {
+     "value": 0.6981481481481482,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5105820105820105
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": 0.4029218559065151,
+     "super_viral_vs_rest_auc": 0.6111111111111112,
+     "super_vs_medium_auc": 0.48148148148148145
+    }
+   },
+   "without_boost_suspect": {
+    "n_posts": 129,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.7467532467532467,
+     "ci95": [
+      0.6274509803921569,
+      0.8524229074889867
+     ],
+     "n_pairs": 154
+    },
+    "same_media_status": {
+     "value": 0.6181818181818182,
+     "ci95": [
+      0.5576923076923077,
+      0.6885245901639344
+     ],
+     "n_pairs": 55
+    },
+    "same_launch_type": {
+     "value": 0.7163461538461539,
+     "ci95": [
+      0.5675675675675675,
+      0.8461538461538461
+     ],
+     "n_pairs": 104
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.5538461538461539,
+     "ci95": [
+      0.47752808988764045,
+      0.6444444444444445
+     ],
+     "n_pairs": 65
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.5344827586206896,
+     "ci95": [
+      0.4142857142857143,
+      0.6470588235294118
+     ],
+     "n_pairs": 58
+    },
+    "top_pick_is_viral": {
+     "value": 0.7037037037037037,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5163580246913579
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": 0.3806394853309715,
+     "super_viral_vs_rest_auc": 0.5556206088992974,
+     "super_vs_medium_auc": 0.41709183673469385
+    }
+   },
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 4,
+    "draws": 500,
+    "cross_account_spearman_median": 0.5801695757248363,
+    "cross_account_spearman_range95": [
+     0.3040724239163341,
+     0.7391404949863533
+    ]
+   },
+   "predictions": {
+    "https://x.com/zeddotdev/status/2104945383998881832": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102077291081896307": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2100601169458413732": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2105319094346015015": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2104971969494233559": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108612014964904428": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2107161297024376889": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104983011062104324": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2102065355548205144": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102110133946052855": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2108273573534306427": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2099924996394975675": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104978612323594461": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2108368797946315060": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2109705935098892758": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2104559249854550430": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2110068941364318514": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103138729154294223": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2101808371896852966": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2102421737073713559": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2108211047966384185": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2107530135448760403": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2106156271485542621": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104320882550415734": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107119975513080227": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102094480400912753": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104603046005403857": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2100267285373989020": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102828063184568709": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2099868543709753769": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2102825133283188976": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2105647817217700085": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2099894783284273290": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2107088320543269021": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2107532184341156080": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2100294013462929812": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100988806950252683": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2101024983518765242": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103862323962388891": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2105353453815861370": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103501168911454222": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103123046005678242": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2103499952769089633": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2100623731294978243": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2105319354606793003": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2108242330037661739": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2100228217911280071": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2102504412572721181": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2105673390556364852": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2106097814392783116": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105372353081291121": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105690247854272834": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2100701824936202249": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099912777414369730": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2107182156946739330": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2107478490308083950": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106019538924179955": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2105349140842791077": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2100667636367630683": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2099864565697872320": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103140056256888894": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2102350503158100079": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107949104684748942": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2104488818170630389": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2108589139235082681": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2107462795516313992": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2107846455180288289": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2107468131841331475": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2102367584398246284": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2107837302999224623": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102488104380797123": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2105178613763207269": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2109706421919248499": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2100268607477273048": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2106054567125532976": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105327144457163238": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104572401468199274": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105736025880530995": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102767517219360794": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2102409055088312518": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105402878252953967": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2100990080739385567": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100646000016716180": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2105688995313176789": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102437018311532862": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102414494471188631": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2102834407140684058": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105073497664008404": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2110098341120098652": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103510268013605147": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2108256629137571935": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/polar_sh/status/2105650325004951746": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2110036161297055898": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2110093275684352234": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105003566351908892": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2104640828794941782": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2109237727367426405": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2105345363813286280": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2102420442527256938": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105728858427412814": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2100971841330221306": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2105689279251063086": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2101368657247101436": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/polar_sh/status/2108198833167462472": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2104615440966095345": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2103413581182361813": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108316518907892218": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106028700638785617": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2105301337881641226": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2104988839177855450": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2110059335833317584": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2108599715478851601": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2100626014866956729": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2100284079866568773": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2107168738198057179": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2107896848044437766": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2108210104419922065": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2105695896566735281": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2099845821910901045": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2103135542062076393": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2104958085492081025": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2110015673296400420": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105789222678634606": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2103319070674178473": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102095624586002517": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2100615804639396090": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102424081253752928": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105716649714196849": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2106364896049061891": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104963491308433438": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2105084123358568584": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2102744822561824931": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2105326971320443307": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104931792218096074": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2103566393862136150": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104630655271501951": {
+     "score": 2.0,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2103140490749395097": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2105609247111467462": {
+     "score": 0.0,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2100321324170150301": {
+     "score": 1.0,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 2.0,
+     "detail": {}
+    }
+   }
+  },
+  "post_judge": {
+   "relative": false,
+   "seconds": 690.6,
+   "failures": [
+    "https://x.com/QodoAI/status/2099924996394975675",
+    "https://x.com/coderabbitai/status/2099868543709753769",
+    "https://x.com/posthog/status/2099894783284273290",
+    "https://x.com/CockroachDB/status/2099912777414369730",
+    "https://x.com/e2b/status/2099864565697872320",
+    "https://x.com/neondatabase/status/2105736025880530995",
+    "https://x.com/resend/status/2108256629137571935",
+    "https://x.com/CockroachDB/status/2099845821910901045"
+   ],
+   "model_info": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5"
+   },
+   "source_run_at": "2026-10-15T21:12:53",
+   "all": {
+    "n_posts": 136,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.6970588235294117,
+     "ci95": [
+      0.5921787709497207,
+      0.823076923076923
+     ],
+     "n_pairs": 170
+    },
+    "same_media_status": {
+     "value": 0.7222222222222222,
+     "ci95": [
+      0.6228070175438597,
+      0.8536585365853658
+     ],
+     "n_pairs": 63
+    },
+    "same_launch_type": {
+     "value": 0.6898148148148148,
+     "ci95": [
+      0.5476190476190477,
+      0.8556701030927835
+     ],
+     "n_pairs": 108
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.5666666666666667,
+     "ci95": [
+      0.4791666666666667,
+      0.6764705882352942
+     ],
+     "n_pairs": 75
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.4918032786885246,
+     "ci95": [
+      0.35294117647058826,
+      0.6181818181818182
+     ],
+     "n_pairs": 61
+    },
+    "top_pick_is_viral": {
+     "value": 0.6481481481481481,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5105820105820105
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": 0.3063211837616944,
+     "super_viral_vs_rest_auc": 0.5818022747156606,
+     "super_vs_medium_auc": 0.44722222222222224
+    }
+   },
+   "without_boost_suspect": {
+    "n_posts": 129,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.6883116883116883,
+     "ci95": [
+      0.5688622754491018,
+      0.8178571428571428
+     ],
+     "n_pairs": 154
+    },
+    "same_media_status": {
+     "value": 0.7090909090909091,
+     "ci95": [
+      0.5983606557377049,
+      0.8372093023255814
+     ],
+     "n_pairs": 55
+    },
+    "same_launch_type": {
+     "value": 0.6875,
+     "ci95": [
+      0.5396039603960396,
+      0.8454545454545455
+     ],
+     "n_pairs": 104
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.5538461538461539,
+     "ci95": [
+      0.4431818181818182,
+      0.6578947368421053
+     ],
+     "n_pairs": 65
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.5,
+     "ci95": [
+      0.3541666666666667,
+      0.6319444444444444
+     ],
+     "n_pairs": 58
+    },
+    "top_pick_is_viral": {
+     "value": 0.6543209876543209,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5163580246913579
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": 0.30272750000124654,
+     "super_viral_vs_rest_auc": 0.6211943793911007,
+     "super_vs_medium_auc": 0.5012755102040817
+    }
+   },
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 4,
+    "draws": 500,
+    "cross_account_spearman_median": 0.2134068672260129,
+    "cross_account_spearman_range95": [
+     -0.23751441871184564,
+     0.5502722526819507
+    ]
+   },
+   "predictions": {
+    "https://x.com/zeddotdev/status/2104945383998881832": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/posthog/status/2102424241950081436",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/xata/status/2102745095800082853",
+       "https://x.com/cognition/status/2103500168951955718",
+       "https://x.com/retool/status/2103107042865218019"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/motherduck/status/2102077291081896307": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/WorkOS/status/2100283574352068828",
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/checklyHQ/status/2100582298311659576",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/posthog/status/2099894783284273290"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/QodoAI/status/2100601169458413732": {
+     "score": 0.28,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/motherduck/status/2099917412443316429",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/resend/status/2099922226791534748",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/QodoAI/status/2099924996394975675"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/biomejs/status/2105319094346015015": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2102786814633464159",
+       "https://x.com/tldraw/status/2101316180589916269",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/warpdotdev/status/2100623741898129665",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/triggerdotdev/status/2102065403019378889"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2104971969494233559": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/grafana/status/2102689178106347960",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/checklyHQ/status/2104556852054786269"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2108612014964904428": {
+     "score": 0.28,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/strapijs/status/2107395441188819035",
+       "https://x.com/cognition/status/2105408461701824732",
+       "https://x.com/tldraw/status/2101316178891218985",
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/sanity_io/status/2102415453494591808"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/warpdotdev/status/2107161297024376889": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/motherduck/status/2099917412443316429",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/resend/status/2106407433631608839",
+       "https://x.com/cline/status/2103636639038026093",
+       "https://x.com/warpdotdev/status/2105353455187443826"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2104983011062104324": {
+     "score": 0.28,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/posthog/status/2102424197180059914",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/speakeasydev/status/2103152486718586940",
+       "https://x.com/cognition/status/2104597797672784234",
+       "https://x.com/checklyHQ/status/2100932856050598126"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/triggerdotdev/status/2102065355548205144": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/WorkOS/status/2099921239770833386",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/coderhq/status/2100298761129894042",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/resend/status/2100228242875842729"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2102110133946052855": {
+     "score": 0.16,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/Netlify/status/2099864413918355734",
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/motherduck/status/2101010559487394247",
+       "https://x.com/turborepo/status/2100994064749604953",
+       "https://x.com/ClickHouseDB/status/2100616781064819054"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/convex/status/2108273573534306427": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/checklyHQ/status/2104556852054786269",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/posthog/status/2103140584592748789",
+       "https://x.com/cognition/status/2104996240190792029",
+       "https://x.com/sanity_io/status/2107818224784146866"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Railway/status/2104978612323594461": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/resend/status/2100310529046872230",
+       "https://x.com/cursor_ai/status/2102861817160904808",
+       "https://x.com/checklyHQ/status/2103446920072982896",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/tldraw/status/2101316172075459013"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2108368797946315060": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/cline/status/2105368311039160503",
+       "https://x.com/cognition/status/2107165034463867001",
+       "https://x.com/coderhq/status/2107863631618539929",
+       "https://x.com/cursor_ai/status/2106066782155157603",
+       "https://x.com/WorkOS/status/2099921239770833386"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/speakeasydev/status/2100672762092175771",
+       "https://x.com/cline/status/2103636639038026093",
+       "https://x.com/resend/status/2104571607851429988",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/ToolJet/status/2107453499642650802"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2109705935098892758": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/Netlify/status/2102771072580067446",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/resend/status/2102825133283188976",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/flydotio/status/2100237773898924430"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/zeddotdev/status/2104559249854550430": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/QodoAI/status/2099924996394975675",
+       "https://x.com/Railway/status/2103566393862136150",
+       "https://x.com/NxDevTools/status/2102765224877257001",
+       "https://x.com/zeddotdev/status/2103319070674178473",
+       "https://x.com/checklyHQ/status/2103446920072982896"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/linear/status/2110068941364318514": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/posthog/status/2109706421919248499",
+       "https://x.com/NxDevTools/status/2108209274052813113",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/strapijs/status/2104496522305896556",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/descopeinc/status/2109523600545837456"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/kilocode/status/2103138729154294223": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/tldraw/status/2102336742397497359",
+       "https://x.com/cursor_ai/status/2102861817160904808",
+       "https://x.com/resend/status/2102391570981134695",
+       "https://x.com/supabase/status/2101657667617833051",
+       "https://x.com/TimescaleDB/status/2102082971310379498"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2101808371896852966": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/Netlify/status/2099904668470022177",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/ClickHouseDB/status/2100606828686000589",
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/motherduck/status/2099917412443316429"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/expo/status/2102421737073713559": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/strapijs/status/2102057814696882352",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/retool/status/2100565587562783068",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2100228242875842729"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/coderabbitai/status/2108211047966384185": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/buildkite/status/2107218962782298261",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/tldraw/status/2105357270523724237",
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/sanity_io/status/2107818224784146866"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2107530135448760403": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2103636639038026093",
+       "https://x.com/checklyHQ/status/2103107226193871109",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/sanity_io/status/2105666548769964165",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/speakeasydev/status/2100672762092175771"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2106156271485542621": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/tldraw/status/2101808371896852966",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/Netlify/status/2099864413918355734",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/kilocode/status/2104615440966095345"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2104320882550415734": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/checklyHQ/status/2103446920072982896",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/NxDevTools/status/2099845804131594679"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/CockroachDB/status/2107119975513080227": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/CockroachDB/status/2102407070750323054",
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/WorkOS/status/2103162568575438854",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/ClickHouseDB/status/2100619936854917271"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/convex/status/2102094480400912753": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2100228242875842729",
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/WorkOS/status/2099921239770833386",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/flydotio/status/2100237773898924430"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/prisma/status/2104603046005403857": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2103500168951955718",
+       "https://x.com/speakeasydev/status/2103152486718586940",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2100646520517501294",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/n8n_io/status/2099762992292200477"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Railway/status/2100267285373989020": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/NxDevTools/status/2099845804131594679",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/QodoAI/status/2099924996394975675",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/motherduck/status/2099845987107819716"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2102828063184568709": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/posthog/status/2102424229534917033",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/CircleCI/status/2100251034845155792",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/n8n_io/status/2102066379268501955"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2102825133283188976": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2102391570981134695",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/retool/status/2100565587562783068",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/speakeasydev/status/2100276313705890026"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/QodoAI/status/2105647817217700085": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/posthog/status/2102424241950081436",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/warpdotdev/status/2100623733459185839",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/tldraw/status/2102533148101759403"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/QodoAI/status/2107088320543269021": {
+     "score": 0.28,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2102825133283188976",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/descopeinc/status/2101027504442007794",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/triggerdotdev/status/2100615816790351984"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2107532184341156080": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/checklyHQ/status/2100200536117014690",
+       "https://x.com/cognition/status/2104996240190792029",
+       "https://x.com/warpdotdev/status/2100623741898129665",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/NxDevTools/status/2099845804131594679"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/CockroachDB/status/2100294013462929812": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/posthog/status/2099894877454795165",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/motherduck/status/2099917412443316429",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/CockroachDB/status/2099846184768610648"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/boltdotnew/status/2100988806950252683": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/coderhq/status/2100298761129894042",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/astrodotbuild/status/2100266465664303495",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/WorkOS/status/2099921239770833386"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2101024983518765242": {
+     "score": 0.28,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/NxDevTools/status/2099874031348420654",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/ClickHouseDB/status/2100616543981748557"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2103862323962388891": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/resend/status/2102391570981134695",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/liveblocks/status/2102794074722124256",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/inngest/status/2103196861829886172"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/warpdotdev/status/2105353453815861370": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/checklyHQ/status/2104556852054786269",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/warpdotdev/status/2100623733459185839",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/WorkOS/status/2100283574352068828"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/greptile/status/2103501168911454222": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/CircleCI/status/2102812789093884367",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/flydotio/status/2103183771680092236"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2103123046005678242": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2102391741198565573",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/grafana/status/2102744802416582839",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/motherduck/status/2099917412443316429"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/coderabbitai/status/2103499952769089633": {
+     "score": 0.24,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/warpdotdev/status/2100623741898129665",
+       "https://x.com/supabase/status/2100570682593546310",
+       "https://x.com/descopeinc/status/2101027504442007794",
+       "https://x.com/zeddotdev/status/2100606829982011449",
+       "https://x.com/triggerdotdev/status/2102065355548205144"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/warpdotdev/status/2100623731294978243": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/posthog/status/2099894783284273290",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2100276073825292319",
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/flydotio/status/2100237773898924430"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/boltdotnew/status/2105319354606793003": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/descopeinc/status/2101027504442007794",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/checklyHQ/status/2102374883023892906",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/WorkOS/status/2102468210847252591"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/boltdotnew/status/2108242330037661739": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2105012114200887434",
+       "https://x.com/sanity_io/status/2105289062655369598",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/retool/status/2104634650497036606",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/strapijs/status/2107474530163679626"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2100228217911280071": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/resend/status/2099861596558508540",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/posthog/status/2099894877454795165",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/checklyHQ/status/2099845839967428917"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/linear/status/2102504412572721181": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/ClickHouseDB/status/2100610815518793831",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/TimescaleDB/status/2102082971310379498",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2100646520517501294"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2105673390556364852": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/warpdotdev/status/2105353455187443826",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/speakeasydev/status/2100276313705890026"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/zeddotdev/status/2106097814392783116": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2102035680432206007",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/cline/status/2105028157279703416",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/tldraw/status/2101316172075459013"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/linear/status/2105372353081291121": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/retool/status/2104634671719989545",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2100228242875842729",
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/ClickHouseDB/status/2100613435964731649"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2105690247854272834": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/tldraw/status/2105003566351908892",
+       "https://x.com/chromaticcom/status/2105363488059105633",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/warpdotdev/status/2100623739985559770",
+       "https://x.com/cognition/status/2103500168951955718",
+       "https://x.com/motherduck/status/2101010559487394247"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/motherduck/status/2100701824936202249": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/liveblocks/status/2100255388449001538",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/coderhq/status/2100298761129894042",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/motherduck/status/2099917412443316429"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2107182156946739330": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/liveblocks/status/2100255388449001538",
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/sanity_io/status/2105666548769964165",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/neondatabase/status/2105702425642639485"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/motherduck/status/2107478490308083950": {
+     "score": 0.64,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/supabase/status/2106071822307319915",
+       "https://x.com/motherduck/status/2100701824936202249",
+       "https://x.com/cognition/status/2105408461701824732",
+       "https://x.com/sanity_io/status/2105289062655369598",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/Replit/status/2103515316701798861"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2106019538924179955": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2105408461701824732",
+       "https://x.com/checklyHQ/status/2104556852054786269",
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/CockroachDB/status/2103239138086453448",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/chromaticcom/status/2105766081306730814"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tursodatabase/status/2105349140842791077": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/grafana/status/2102739507431014853",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/kilocode/status/2103510268013605147"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2100667636367630683": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/liveblocks/status/2100255388449001538",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/WorkOS/status/2099921239770833386",
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/CockroachDB/status/2099845947203227913"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/greptile/status/2103140056256888894": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/descopeinc/status/2101027504442007794",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/warpdotdev/status/2100623733459185839"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2102350503158100079": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/upstash/status/2101069664734626292",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/liveblocks/status/2100611212606349601",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/descopeinc/status/2100612549968265387"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/CockroachDB/status/2107949104684748942": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/CockroachDB/status/2103239138086453448",
+       "https://x.com/cognition/status/2104988938817413583",
+       "https://x.com/warpdotdev/status/2105353455187443826",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/Replit/status/2103515316701798861"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/n8n_io/status/2104488818170630389": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/CircleCI/status/2102812789093884367",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/checklyHQ/status/2102744883362410691"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/expo/status/2108589139235082681": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/descopeinc/status/2102858544982745347",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/Replit/status/2103515316701798861"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/kilocode/status/2107462795516313992": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2104996240190792029",
+       "https://x.com/descopeinc/status/2102858544982745347",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/liveblocks/status/2100255388449001538",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/sanity_io/status/2105666548769964165"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/boltdotnew/status/2107846455180288289": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/strapijs/status/2105976128645054652",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/ToolJet/status/2107453499642650802",
+       "https://x.com/cursor_ai/status/2107141004482793827",
+       "https://x.com/resend/status/2099922226791534748"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/prisma/status/2107468131841331475": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/CircleCI/status/2100251034845155792",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/posthog/status/2099894877454795165",
+       "https://x.com/bunjavascript/status/2105563147801370649",
+       "https://x.com/resend/status/2102502240393253373"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2102367584398246284": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/speakeasydev/status/2100276313705890026",
+       "https://x.com/supabase/status/2100570682593546310",
+       "https://x.com/strapijs/status/2100246056424308798",
+       "https://x.com/zeddotdev/status/2100606829982011449",
+       "https://x.com/CockroachDB/status/2099845821910901045"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tursodatabase/status/2107837302999224623": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/tursodatabase/status/2105349143028015155",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/tldraw/status/2105357444969091420",
+       "https://x.com/cursor_ai/status/2104666044220821594",
+       "https://x.com/NxDevTools/status/2102765224877257001"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2102488104380797123": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/posthog/status/2099894864989347910",
+       "https://x.com/turborepo/status/2100994064749604953",
+       "https://x.com/storybookjs/status/2102076831604035927",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/ClickHouseDB/status/2100614861394760141"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/AmpCode/status/2105178613763207269": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/liveblocks/status/2102794074722124256",
+       "https://x.com/cursor_ai/status/2105012114200887434",
+       "https://x.com/posthog/status/2099894832898678894",
+       "https://x.com/cognition/status/2104996240190792029",
+       "https://x.com/warpdotdev/status/2100623741898129665"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2109706421919248499": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2105406306966511773",
+       "https://x.com/buildkite/status/2107218962782298261",
+       "https://x.com/cognition/status/2103500168951955718",
+       "https://x.com/posthog/status/2099894877454795165",
+       "https://x.com/CloudflareDev/status/2108543342862610912",
+       "https://x.com/sanity_io/status/2105289062655369598"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/greptile/status/2100268607477273048": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/posthog/status/2099894783284273290",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/resend/status/2099861577319284807",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/NxDevTools/status/2099845804131594679"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tursodatabase/status/2106054567125532976": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/resend/status/2102825194394161157",
+       "https://x.com/cognition/status/2105408461701824732",
+       "https://x.com/getpostman/status/2100258584525488621",
+       "https://x.com/cursor_ai/status/2105406306966511773",
+       "https://x.com/WorkOS/status/2102468210847252591"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/prisma/status/2105327144457163238": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/prisma/status/2104963491308433438",
+       "https://x.com/cline/status/2103165327815450815",
+       "https://x.com/liveblocks/status/2100255388449001538",
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/n8n_io/status/2099762992292200477"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Railway/status/2104572401468199274": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/WorkOS/status/2103162568575438854",
+       "https://x.com/Railway/status/2103566393862136150",
+       "https://x.com/Netlify/status/2102472041865654632",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/tldraw/status/2101316172075459013"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/strapijs/status/2108211161594249365",
+       "https://x.com/cognition/status/2105408461701824732",
+       "https://x.com/kilocode/status/2103510268013605147",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/resend/status/2102825194394161157"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/coderabbitai/status/2102767517219360794": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/warpdotdev/status/2100623735447281908",
+       "https://x.com/supabase/status/2101657667617833051",
+       "https://x.com/NxDevTools/status/2102440560766447739",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/storybookjs/status/2102076831604035927"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/n8n_io/status/2102409055088312518": {
+     "score": 0.28,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/QodoAI/status/2099924997846217007",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2100646520517501294",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/checklyHQ/status/2100932856050598126"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/prisma/status/2105402878252953967": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/prisma/status/2105038985097834605",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/WorkOS/status/2102468210847252591",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/checklyHQ/status/2102374883023892906"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/kilocode/status/2100990080739385567": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/resend/status/2100310529046872230",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/ClickHouseDB/status/2100616781064819054",
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/posthog/status/2099894798996148592"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/boltdotnew/status/2100646000016716180": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/posthog/status/2099894832898678894",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/coderhq/status/2100298761129894042",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/resend/status/2100228242875842729"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Railway/status/2105688995313176789": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/warpdotdev/status/2105353455187443826",
+       "https://x.com/cognition/status/2105408461701824732",
+       "https://x.com/checklyHQ/status/2103446920072982896",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/tldraw/status/2100261347564941746"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/coderabbitai/status/2102437018311532862": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/turborepo/status/2100994064749604953",
+       "https://x.com/posthog/status/2099894783284273290",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/resend/status/2100646520517501294",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/checklyHQ/status/2101989899742179416"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/motherduck/status/2102414494471188631": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/WorkOS/status/2100283574352068828",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2101688012237328635",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/liveblocks/status/2100255388449001538"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/CockroachDB/status/2102834407140684058": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/checklyHQ/status/2102412626210770979",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/posthog/status/2102424122823414179",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/TimescaleDB/status/2102467334354919555"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/convex/status/2105073497664008404": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/Netlify/status/2102472041865654632",
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/descopeinc/status/2101918988519321887",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/resend/status/2102035644650565742"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2110098341120098652": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2105012114200887434",
+       "https://x.com/posthog/status/2099894783284273290",
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/WindmillDev/status/2104964485265952841",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/WorkOS/status/2102464173787771157"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/kilocode/status/2103510268013605147": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/posthog/status/2103140596986876354",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/CircleCI/status/2102812789093884367"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/polar_sh/status/2105650325004951746": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/ClickHouseDB/status/2100615161639813183",
+       "https://x.com/turborepo/status/2100994064749604953",
+       "https://x.com/linear/status/2103157476128325919",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/xata/status/2102745095800082853"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/motherduck/status/2110036161297055898": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/motherduck/status/2100701824936202249",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/temporalio/status/2108196097143218486",
+       "https://x.com/cursor_ai/status/2105406306966511773",
+       "https://x.com/inngest/status/2105739145192554701"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2110093275684352234": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/cursor_ai/status/2107141004482793827",
+       "https://x.com/ToolJet/status/2107453499642650802",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/sanity_io/status/2105289062655369598"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2105003566351908892": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2102391570981134695",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/liveblocks/status/2102794074722124256",
+       "https://x.com/cognition/status/2104597797672784234",
+       "https://x.com/retool/status/2104634650497036606"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2104640828794941782": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102463672224543018",
+       "https://x.com/temporalio/status/2102759883003040187",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/checklyHQ/status/2103107226193871109",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/retool/status/2100565587562783068"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/expo/status/2109237727367426405": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/Replit/status/2103515316701798861",
+       "https://x.com/cognition/status/2107165034463867001",
+       "https://x.com/posthog/status/2103140596986876354",
+       "https://x.com/cursor_ai/status/2107618653701296162",
+       "https://x.com/CircleCI/status/2102812789093884367"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/e2b/status/2105345363813286280": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/grafana/status/2102739507431014853",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2102391570981134695",
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/Netlify/status/2102422240172105944"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2102420442527256938": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/TimescaleDB/status/2102082971310379498",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/tldraw/status/2101316177175695721"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/convex/status/2105728858427412814": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/checklyHQ/status/2099845839967428917",
+       "https://x.com/cognition/status/2104996240190792029",
+       "https://x.com/ClickHouseDB/status/2100616781064819054",
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/CircleCI/status/2102061671623643232"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/linear/status/2100971841330221306": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/liveblocks/status/2100255388449001538",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/ClickHouseDB/status/2100616781064819054",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2100228242875842729"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/motherduck/status/2105689279251063086": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2105012114200887434",
+       "https://x.com/sanity_io/status/2105289062655369598",
+       "https://x.com/Railway/status/2104572401468199274",
+       "https://x.com/Replit/status/2103515316701798861",
+       "https://x.com/cline/status/2103636639038026093",
+       "https://x.com/motherduck/status/2101010559487394247"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/expo/status/2101368657247101436": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/supabase/status/2100570682593546310",
+       "https://x.com/liveblocks/status/2100611212606349601",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/warpdotdev/status/2100623735447281908",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/posthog/status/2099894783284273290"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/polar_sh/status/2108198833167462472": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/posthog/status/2099894832898678894",
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/TimescaleDB/status/2102082971310379498",
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/WorkOS/status/2103162568575438854"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/kilocode/status/2104615440966095345": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/motherduck/status/2101010559487394247",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/posthog/status/2102424229534917033",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/liveblocks/status/2100255388449001538"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/AmpCode/status/2103413581182361813": {
+     "score": 0.16,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/warpdotdev/status/2100623733459185839",
+       "https://x.com/cursor_ai/status/2102861817160904808",
+       "https://x.com/resend/status/2102035680432206007",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/posthog/status/2103140596986876354"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2108316518907892218": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/chromaticcom/status/2105766240429977921",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/WorkOS/status/2100283574352068828"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2106028700638785617": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/motherduck/status/2099845987107819716",
+       "https://x.com/cursor_ai/status/2105787358557999585",
+       "https://x.com/Netlify/status/2100278541308797197",
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/xata/status/2102745095800082853"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/zeddotdev/status/2105301337881641226": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/descopeinc/status/2102858544982745347",
+       "https://x.com/zeddotdev/status/2103319070674178473",
+       "https://x.com/resend/status/2102825194394161157",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/ClickHouseDB/status/2100609325479628909"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/resend/status/2102825194394161157",
+       "https://x.com/cognition/status/2107165034463867001",
+       "https://x.com/tldraw/status/2101316172075459013",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/WorkOS/status/2099921239770833386"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/warpdotdev/status/2104988839177855450": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2102391570981134695",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/warpdotdev/status/2100623733459185839",
+       "https://x.com/zeddotdev/status/2103319070674178473",
+       "https://x.com/checklyHQ/status/2102374883023892906"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/boltdotnew/status/2110059335833317584": {
+     "score": 0.68,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/cursor_ai/status/2109783879490191502",
+       "https://x.com/boltdotnew/status/2108242330037661739",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/sanity_io/status/2105289062655369598",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/WorkOS/status/2103162568575438854"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/linear/status/2108599715478851601": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/v0/status/2104997515905102118",
+       "https://x.com/ToolJet/status/2107453499642650802",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/cline/status/2107909398060568975",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/WindmillDev/status/2104964485265952841"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2100626014866956729": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/flydotio/status/2100237773898924430",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/WorkOS/status/2099921239770833386",
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/posthog/status/2099894783284273290"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2100284079866568773": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/Netlify/status/2099864413918355734",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/posthog/status/2099894817002229873",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/motherduck/status/2099917412443316429"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/resend/status/2107168738198057179": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2105719181866127558",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/prisma/status/2104603046005403857",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/posthog/status/2099894877454795165"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2107896848044437766": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/liveblocks/status/2107144871991775636",
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/Netlify/status/2106066217651859659",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/motherduck/status/2101010559487394247"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tursodatabase/status/2108210104419922065": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/Railway/status/2107204537924956469",
+       "https://x.com/tursodatabase/status/2104958085492081025",
+       "https://x.com/checklyHQ/status/2103492220640690520",
+       "https://x.com/cursor_ai/status/2107618653701296162",
+       "https://x.com/warpdotdev/status/2105353455187443826"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2105695896566735281": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/turborepo/status/2100994064749604953",
+       "https://x.com/coderhq/status/2100298761129894042",
+       "https://x.com/cline/status/2104654757508129113",
+       "https://x.com/retool/status/2104634671719989545",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/Netlify/status/2105310017989627997"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/prisma/status/2103135542062076393": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/posthog/status/2102424241950081436",
+       "https://x.com/boltdotnew/status/2100646000016716180",
+       "https://x.com/descopeinc/status/2100612549968265387",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/motherduck/status/2101010559487394247"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tursodatabase/status/2104958085492081025": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102463672224543018",
+       "https://x.com/WindmillDev/status/2100253427888496641",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/ClickHouseDB/status/2100619936854917271",
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/posthog/status/2103140572047483078"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/biomejs/status/2110015673296400420": {
+     "score": 0.48,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/descopeinc/status/2101027504442007794",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/posthog/status/2102424103345156453",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/flydotio/status/2103183771680092236"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/neondatabase/status/2105789222678634606": {
+     "score": 0.32,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/resend/status/2102035680432206007",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/NxDevTools/status/2102440543880180011",
+       "https://x.com/ollama/status/2105152056382345544",
+       "https://x.com/inngest/status/2102818205920026692"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/zeddotdev/status/2103319070674178473": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/triggerdotdev/status/2102065355548205144",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/descopeinc/status/2100649394332750141",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/resend/status/2100228242875842729"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/convex/status/2102095624586002517": {
+     "score": 0.36,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/resend/status/2100310529046872230",
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/ClickHouseDB/status/2100616781064819054",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/checklyHQ/status/2100932856050598126"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/triggerdotdev/status/2100615804639396090": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/PlanetScale/status/2100258072333865363",
+       "https://x.com/coderhq/status/2100298761129894042",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/posthog/status/2099894877454795165",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/speakeasydev/status/2100276313705890026"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2102424081253752928": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/warpdotdev/status/2100623735447281908",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/resend/status/2100228284281950268",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/liveblocks/status/2100611212606349601"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/linear/status/2105716649714196849": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/zeddotdev/status/2103319070674178473",
+       "https://x.com/motherduck/status/2101010559487394247",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/tldraw/status/2101316178891218985"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/expo/status/2106364896049061891": {
+     "score": 0.64,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/WindmillDev/status/2104964485265952841",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/warpdotdev/status/2100623741898129665",
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/triggerdotdev/status/2102065355548205144"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/prisma/status/2104963491308433438": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/prisma/status/2104603046005403857",
+       "https://x.com/vercel/status/2101077346203971900",
+       "https://x.com/resend/status/2102502240393253373",
+       "https://x.com/cline/status/2104654757508129113",
+       "https://x.com/Netlify/status/2100278541308797197"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2105084123358568584": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/resend/status/2100646520517501294",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/grafana/status/2102744802416582839",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/motherduck/status/2101010559487394247"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/QodoAI/status/2102744822561824931": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/tldraw/status/2102336742397497359",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/temporalio/status/2102395877033754982",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/WorkOS/status/2102468210847252591"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/triggerdotdev/status/2105326971320443307": {
+     "score": 0.56,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/CockroachDB/status/2103239138086453448",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/resend/status/2100588943611920454",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/posthog/status/2102424241950081436"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/upstash/status/2104931792218096074": {
+     "score": 0.6,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cursor_ai/status/2102448392773435706",
+       "https://x.com/grafana/status/2102689178106347960",
+       "https://x.com/cline/status/2100265266026590322",
+       "https://x.com/posthog/status/2102424241950081436",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/checklyHQ/status/2104556852054786269"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Railway/status/2103566393862136150": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/getpostman/status/2103152481161417109",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/NxDevTools/status/2099845804131594679",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/coderhq/status/2102835464973509114"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/speakeasydev/status/2100672762092175771",
+       "https://x.com/cline/status/2103165327815450815",
+       "https://x.com/resend/status/2102035680432206007",
+       "https://x.com/cognition/status/2100253548885803404",
+       "https://x.com/motherduck/status/2101010559487394247"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/tldraw/status/2104630655271501951": {
+     "score": 0.24,
+     "detail": {
+      "confidence": "Medium",
+      "references": [
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/speakeasydev/status/2100276313705890026",
+       "https://x.com/cline/status/2104329978146115998",
+       "https://x.com/posthog/status/2102424229534917033",
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/Netlify/status/2102472041865654632"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/posthog/status/2103140490749395097": {
+     "score": 0.4,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/CloudflareDev/status/2100688880798159254",
+       "https://x.com/grafana/status/2102744802416582839",
+       "https://x.com/cognition/status/2102104259219406886",
+       "https://x.com/resend/status/2102035680432206007",
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/tldraw/status/2101316172075459013"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/n8n_io/status/2105609247111467462": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/coderhq/status/2104606566406086676",
+       "https://x.com/cognition/status/2104996240190792029",
+       "https://x.com/retool/status/2105307931470389271",
+       "https://x.com/cline/status/2101056078872256935",
+       "https://x.com/grafana/status/2104757556824400319"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/Replit/status/2100321324170150301": {
+     "score": 0.52,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/cognition/status/2099887193804112190",
+       "https://x.com/resend/status/2099861577319284807",
+       "https://x.com/expo/status/2099972359721795738",
+       "https://x.com/motherduck/status/2099917412443316429",
+       "https://x.com/FactoryAI/status/2099907042123403466",
+       "https://x.com/posthog/status/2099894817002229873"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": 0.44,
+     "detail": {
+      "confidence": "Low",
+      "references": [
+       "https://x.com/zeddotdev/status/2100223348563194123",
+       "https://x.com/sanity_io/status/2108203511636988390",
+       "https://x.com/vllm_project/status/2102670270129647953",
+       "https://x.com/Netlify/status/2105310017989627997",
+       "https://x.com/CloudflareDev/status/2106080773711319498",
+       "https://x.com/liveblocks/status/2100611212606349601"
+      ],
+      "judge_provider": "anthropic",
+      "judge_model": "claude-sonnet-5-5"
+     }
+    }
+   }
+  },
+  "post_judge_refs_only": {
+   "derived": true,
+   "all": {
+    "n_posts": 136,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.6823529411764706,
+     "ci95": [
+      0.5684210526315789,
+      0.8088235294117647
+     ],
+     "n_pairs": 170
+    },
+    "same_media_status": {
+     "value": 0.7777777777777778,
+     "ci95": [
+      0.6507936507936508,
+      0.9090909090909091
+     ],
+     "n_pairs": 63
+    },
+    "same_launch_type": {
+     "value": 0.6481481481481481,
+     "ci95": [
+      0.5212765957446809,
+      0.7875
+     ],
+     "n_pairs": 108
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.4533333333333333,
+     "ci95": [
+      0.34579439252336447,
+      0.5764705882352941
+     ],
+     "n_pairs": 75
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.639344262295082,
+     "ci95": [
+      0.5185185185185185,
+      0.7682926829268293
+     ],
+     "n_pairs": 61
+    },
+    "top_pick_is_viral": {
+     "value": 0.7037037037037037,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5105820105820105
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": 0.30321385871924444,
+     "super_viral_vs_rest_auc": 0.7069116360454943,
+     "super_vs_medium_auc": 0.6592592592592592
+    }
+   },
+   "without_boost_suspect": {
+    "n_posts": 129,
+    "n_accounts": 27,
+    "headline_viral_vs_deadweight_auc": {
+     "value": 0.6558441558441559,
+     "ci95": [
+      0.5397727272727273,
+      0.7801418439716312
+     ],
+     "n_pairs": 154
+    },
+    "same_media_status": {
+     "value": 0.7636363636363637,
+     "ci95": [
+      0.640625,
+      0.90625
+     ],
+     "n_pairs": 55
+    },
+    "same_launch_type": {
+     "value": 0.6346153846153846,
+     "ci95": [
+      0.5054945054945055,
+      0.7647058823529411
+     ],
+     "n_pairs": 104
+    },
+    "viral_vs_viral_by_engagement": {
+     "value": 0.4153846153846154,
+     "ci95": [
+      0.3,
+      0.5352112676056338
+     ],
+     "n_pairs": 65
+    },
+    "deadweight_vs_deadweight_noise_check": {
+     "value": 0.6206896551724138,
+     "ci95": [
+      0.5135135135135135,
+      0.75
+     ],
+     "n_pairs": 58
+    },
+    "top_pick_is_viral": {
+     "value": 0.7037037037037037,
+     "ci95": null,
+     "n_groups": 27,
+     "chance": 0.5163580246913579
+    },
+    "confounded_by_account_size": {
+     "spearman_vs_log_engagement": 0.2825487795564227,
+     "super_viral_vs_rest_auc": 0.734192037470726,
+     "super_vs_medium_auc": 0.6989795918367347
+    }
+   },
+   "category_balanced": {
+    "segments": [
+     "Smaller/closest",
+     "Mid-size"
+    ],
+    "per_category": 4,
+    "draws": 500,
+    "cross_account_spearman_median": 0.46153846153846156,
+    "cross_account_spearman_range95": [
+     -0.05954474980875943,
+     0.8041958041958042
+    ]
+   },
+   "predictions": {
+    "https://x.com/zeddotdev/status/2104945383998881832": {
+     "score": -0.02287406930038839,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102077291081896307": {
+     "score": 0.019413515361807854,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2100601169458413732": {
+     "score": -0.03785505430242271,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2105319094346015015": {
+     "score": -0.031108509355815092,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2104971969494233559": {
+     "score": 0.026148478559207086,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108612014964904428": {
+     "score": -0.051759099730114215,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2107161297024376889": {
+     "score": -0.0526666451259291,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104983011062104324": {
+     "score": 0.005410918439952103,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2102065355548205144": {
+     "score": -0.07549405695185747,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102110133946052855": {
+     "score": -0.03700319505552064,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2108273573534306427": {
+     "score": -0.014776474196764047,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104978612323594461": {
+     "score": -0.02537696082691878,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2108368797946315060": {
+     "score": -0.041817738384535286,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108233328143053130": {
+     "score": -0.04819536296492684,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2109705935098892758": {
+     "score": -0.049117291457457996,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2104559249854550430": {
+     "score": -0.024996261852472855,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2110068941364318514": {
+     "score": -0.02281312705962668,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103138729154294223": {
+     "score": -0.039723018527366344,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2101808371896852966": {
+     "score": -0.046812020544739444,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2102421737073713559": {
+     "score": -0.03660091050682643,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2108211047966384185": {
+     "score": -0.029596081079153083,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2107530135448760403": {
+     "score": -0.02845664080788808,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2106156271485542621": {
+     "score": -0.1649553937885664,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104320882550415734": {
+     "score": 7.82065826703815e-05,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107119975513080227": {
+     "score": -0.036881356762983125,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102094480400912753": {
+     "score": 0.04114271150325868,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104603046005403857": {
+     "score": -0.06810245816430807,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2100267285373989020": {
+     "score": -0.035051232187028734,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102828063184568709": {
+     "score": -0.02295695561157901,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2102825133283188976": {
+     "score": -0.05354513659598405,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2105647817217700085": {
+     "score": -0.008619985047698175,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2107088320543269021": {
+     "score": -0.09438202723101528,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2107532184341156080": {
+     "score": -0.03403928491533943,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2100294013462929812": {
+     "score": -0.0017481767481767538,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100988806950252683": {
+     "score": 0.044711226646710525,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2101024983518765242": {
+     "score": -0.07036577858043536,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103862323962388891": {
+     "score": -0.0908275333561396,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2105353453815861370": {
+     "score": -0.03709635556614781,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103501168911454222": {
+     "score": 0.0006809128662675773,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2103123046005678242": {
+     "score": -0.04704653537826152,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2103499952769089633": {
+     "score": -0.04978205658863629,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2100623731294978243": {
+     "score": -0.012585892354724584,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2105319354606793003": {
+     "score": -0.05228984854640113,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2108242330037661739": {
+     "score": -0.014740892635629471,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2100228217911280071": {
+     "score": -0.031209778891432845,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2102504412572721181": {
+     "score": 0.052362758014931926,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2105673390556364852": {
+     "score": -0.059008364965456694,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2106097814392783116": {
+     "score": -0.039655790446590164,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105372353081291121": {
+     "score": -0.06134428602147396,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105690247854272834": {
+     "score": -0.0042817602285772915,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2100701824936202249": {
+     "score": 0.0045284967867985915,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2107182156946739330": {
+     "score": -0.006021043965545786,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2107478490308083950": {
+     "score": -0.03203430489257304,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106019538924179955": {
+     "score": -0.023384005198421126,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2105349140842791077": {
+     "score": -0.010508511785671262,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2100667636367630683": {
+     "score": 0.004696475352705065,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2103140056256888894": {
+     "score": -0.04311343714328787,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2102350503158100079": {
+     "score": -0.006874968041730323,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2107949104684748942": {
+     "score": -0.049507481843200765,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2104488818170630389": {
+     "score": -0.04747550845971772,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2108589139235082681": {
+     "score": -0.031161893661893647,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2107462795516313992": {
+     "score": -0.012561641257293435,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2107846455180288289": {
+     "score": -0.0267323971738697,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2107468131841331475": {
+     "score": -0.030653588592642327,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2102367584398246284": {
+     "score": -0.0792725587678581,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2107837302999224623": {
+     "score": 0.0439661394604841,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2102488104380797123": {
+     "score": -0.003096114399029584,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2105178613763207269": {
+     "score": -0.024658802816291236,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2109706421919248499": {
+     "score": -0.021119972793336647,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2100268607477273048": {
+     "score": -0.06256140165635271,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2106054567125532976": {
+     "score": 0.005002326005305147,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105327144457163238": {
+     "score": -0.05954027995251397,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2104572401468199274": {
+     "score": 0.013752244687270529,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2108560485381460192": {
+     "score": -0.03873929264989973,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102767517219360794": {
+     "score": 0.007500857206554079,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2102409055088312518": {
+     "score": -0.15904711976748276,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2105402878252953967": {
+     "score": -0.08022196401760996,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2100990080739385567": {
+     "score": -0.029397941914055828,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2100646000016716180": {
+     "score": 0.001054208472686724,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2105688995313176789": {
+     "score": -0.13656689470992944,
+     "detail": {}
+    },
+    "https://x.com/coderabbitai/status/2102437018311532862": {
+     "score": -0.023932539245220805,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2102414494471188631": {
+     "score": -0.022663649074939396,
+     "detail": {}
+    },
+    "https://x.com/CockroachDB/status/2102834407140684058": {
+     "score": -0.010294879301026849,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105073497664008404": {
+     "score": -0.011707395917922206,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2110098341120098652": {
+     "score": 0.011704407645374448,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2103510268013605147": {
+     "score": -0.02859144895867334,
+     "detail": {}
+    },
+    "https://x.com/polar_sh/status/2105650325004951746": {
+     "score": -0.01914197223337008,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2110036161297055898": {
+     "score": -0.0859200237539378,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2110093275684352234": {
+     "score": -0.012324567303380843,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2105003566351908892": {
+     "score": -0.014886928234671387,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2104640828794941782": {
+     "score": -0.01900889577155715,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2109237727367426405": {
+     "score": -0.021164783694057707,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2105345363813286280": {
+     "score": -0.03880809580834331,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2102420442527256938": {
+     "score": -0.017875395438608527,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2105728858427412814": {
+     "score": -0.052217076426451695,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2100971841330221306": {
+     "score": -0.054358324890239784,
+     "detail": {}
+    },
+    "https://x.com/motherduck/status/2105689279251063086": {
+     "score": -0.011200410799157914,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2101368657247101436": {
+     "score": -0.02776095764313192,
+     "detail": {}
+    },
+    "https://x.com/polar_sh/status/2108198833167462472": {
+     "score": 0.006488858741220738,
+     "detail": {}
+    },
+    "https://x.com/kilocode/status/2104615440966095345": {
+     "score": -0.021699057744276426,
+     "detail": {}
+    },
+    "https://x.com/AmpCode/status/2103413581182361813": {
+     "score": -0.0834603266492344,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2108316518907892218": {
+     "score": -0.01965539118354863,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2106028700638785617": {
+     "score": -0.04274366471734893,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2105301337881641226": {
+     "score": -0.04824679647653686,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2107386299581653024": {
+     "score": -0.023176535959419264,
+     "detail": {}
+    },
+    "https://x.com/warpdotdev/status/2104988839177855450": {
+     "score": -0.03212644177167723,
+     "detail": {}
+    },
+    "https://x.com/boltdotnew/status/2110059335833317584": {
+     "score": -0.046702170941521834,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2108599715478851601": {
+     "score": -0.04835783583542798,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2100626014866956729": {
+     "score": -0.0349903364609247,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2100284079866568773": {
+     "score": -0.030055660882742953,
+     "detail": {}
+    },
+    "https://x.com/resend/status/2107168738198057179": {
+     "score": -0.1810558872691136,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2107896848044437766": {
+     "score": -0.02169620019354397,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2108210104419922065": {
+     "score": -0.011076331076331103,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2105695896566735281": {
+     "score": 0.0281987834654125,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2103135542062076393": {
+     "score": -0.06175913547237079,
+     "detail": {}
+    },
+    "https://x.com/tursodatabase/status/2104958085492081025": {
+     "score": 0.02105871050938514,
+     "detail": {}
+    },
+    "https://x.com/biomejs/status/2110015673296400420": {
+     "score": -0.027172915376199584,
+     "detail": {}
+    },
+    "https://x.com/neondatabase/status/2105789222678634606": {
+     "score": -0.08636236186706252,
+     "detail": {}
+    },
+    "https://x.com/zeddotdev/status/2103319070674178473": {
+     "score": -0.04255868768221846,
+     "detail": {}
+    },
+    "https://x.com/convex/status/2102095624586002517": {
+     "score": 0.019615322283102324,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2100615804639396090": {
+     "score": 0.0016810056610790935,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2102424081253752928": {
+     "score": -0.051412642506765985,
+     "detail": {}
+    },
+    "https://x.com/linear/status/2105716649714196849": {
+     "score": -0.06836547444450179,
+     "detail": {}
+    },
+    "https://x.com/expo/status/2106364896049061891": {
+     "score": -0.03608400173005194,
+     "detail": {}
+    },
+    "https://x.com/prisma/status/2104963491308433438": {
+     "score": -0.03522552393169935,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2105084123358568584": {
+     "score": -0.008422817100221844,
+     "detail": {}
+    },
+    "https://x.com/QodoAI/status/2102744822561824931": {
+     "score": -0.00854037267080747,
+     "detail": {}
+    },
+    "https://x.com/triggerdotdev/status/2105326971320443307": {
+     "score": -0.020470866570357807,
+     "detail": {}
+    },
+    "https://x.com/upstash/status/2104931792218096074": {
+     "score": -0.037521510258579235,
+     "detail": {}
+    },
+    "https://x.com/Railway/status/2103566393862136150": {
+     "score": -0.025746567401664228,
+     "detail": {}
+    },
+    "https://x.com/e2b/status/2108253718013759752": {
+     "score": -0.06922760396391228,
+     "detail": {}
+    },
+    "https://x.com/tldraw/status/2104630655271501951": {
+     "score": -0.020697640758431033,
+     "detail": {}
+    },
+    "https://x.com/posthog/status/2103140490749395097": {
+     "score": -0.038790343755646176,
+     "detail": {}
+    },
+    "https://x.com/n8n_io/status/2105609247111467462": {
+     "score": -0.009236509146966457,
+     "detail": {}
+    },
+    "https://x.com/Replit/status/2100321324170150301": {
+     "score": 0.01400454006087809,
+     "detail": {}
+    },
+    "https://x.com/greptile/status/2108623827760775515": {
+     "score": -0.0062845373888659045,
+     "detail": {}
+    }
+   }
+  }
+ },
+ "comparisons": {
+  "post_judge": {
+   "minus_media": {
+    "value": -0.05294117647058827,
+    "ci95": [
+     -0.14406779661016944,
+     0.0357142857142857
+    ]
+   },
+   "minus_post_judge_refs_only": {
+    "value": 0.014705882352941124,
+    "ci95": [
+     -0.16223404255319152,
+     0.1923076923076923
+    ]
+   }
+  },
+  "post_judge_refs_only": {
+   "minus_media": {
+    "value": -0.0676470588235294,
+    "ci95": [
+     -0.2080745341614907,
+     0.08757062146892658
+    ]
+   }
+  }
+ }
+}

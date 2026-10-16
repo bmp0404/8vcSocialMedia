@@ -5,7 +5,7 @@ from datetime import datetime
 from harness import config, memory
 from harness.learn import learn
 from harness.llm import get_llm
-from harness.minds import decide
+from harness.minds import decide, write_decision_log
 from harness.orient import orient
 from harness.qualify import qualify
 from harness.review import serve
@@ -23,7 +23,7 @@ def run(args) -> None:
     narratives = orient(llm, mission, signals, top=args.narratives)
     print(f"[orient] {len(narratives)} narratives: " + ", ".join(n.id for n in narratives))
     lessons = config.lessons()
-    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind)
+    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, signals=signals)
     actions, kept = batch, qualify(llm, mission, batch)
     for _ in range(args.retries):
         if kept or not batch:
@@ -35,6 +35,7 @@ def run(args) -> None:
     ranked = kept[: args.top]
 
     run_id = memory.save_run(actions)
+    write_decision_log(run_id)  # out/decisions-run<id>.json: abstentions, rejected drafts, questions
     config.OUT_DIR.mkdir(exist_ok=True)
     out = config.OUT_DIR / f"recommendations-{datetime.now():%Y%m%d-%H%M%S}.json"
     out.write_text(
@@ -71,7 +72,7 @@ def main() -> None:
     p.add_argument("file")
     p.set_defaults(func=record)
 
-    p = sub.add_parser("learn", help="rewrite memory/lessons.md from predicted vs. actual")
+    p = sub.add_parser("learn", help="turn reviews, edits and outcomes into tested lessons; rewrite memory/lessons.md")
     p.add_argument("--provider")
     p.set_defaults(func=lambda a: learn(get_llm(a.provider)))
 
@@ -79,6 +80,21 @@ def main() -> None:
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--no-browser", action="store_true")
     p.set_defaults(func=lambda a: serve(a.port, not a.no_browser))
+
+    # Eval subcommands (sam/eval). Kept in their own block so merges stay simple.
+    from harness.evals.cli import register as register_evals
+
+    register_evals(sub)
+
+    # Memory: ingest, reflect, revalidate, exemplar-check (sam/memory).
+    from harness.learning.commands import add_commands
+
+    add_commands(sub)
+
+    # Self-iteration (sam/iterate): `python -m harness iterate ...`
+    from harness.iterate.cli import register as register_iterate
+
+    register_iterate(sub)
 
     args = parser.parse_args()
     args.func(args)

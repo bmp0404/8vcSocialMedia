@@ -1,0 +1,92 @@
+account,author_followers,author_verified,followers_fetched_at,segment,name,wikipedia_article,n_csv,n_csv_super_viral,n_csv_medium_viral,n_csv_deadweight,n_csv_thread_continuations,timeline_originals_in_window,timeline_median_eng,timeline_median_views,timeline_share_11_99,timeline_posts_per_day
+@AmpCode,28355,True,2026-10-16T01:47:45+00:00,Smaller/closest,Amp,,2,0,1,1,1,11,56,11841,0.909,0.35
+@CircleCI,39272,False,2026-10-16T02:12:03+00:00,Other,CircleCI,CircleCI,19,0,0,19,0,19,1,467,0.0,0.61
+@ClickHouseDB,20824,True,2026-10-16T02:14:50+00:00,Other,ClickHouse,ClickHouse,48,0,0,48,43,77,21,1413,0.948,2.48
+@CloudflareDev,82832,True,2026-10-16T01:37:27+00:00,Other,Cloudflare Developers,Cloudflare,20,5,14,1,0,43,87,7862,0.535,1.39
+@CockroachDB,13823,False,2026-10-16T02:06:51+00:00,Other,CockroachDB,,19,0,2,17,3,16,3.5,610.0,0.0,0.52
+@DrizzleORM,53645,False,2026-10-16T01:36:02+00:00,Other,Drizzle ORM,,1,0,1,0,0,4,59.0,6981.0,0.75,0.13
+@FactoryAI,57535,True,2026-10-16T02:12:59+00:00,Mid-size,Factory,,27,2,19,6,6,25,172,27805,0.16,0.81
+@Lovable,159320,True,2026-10-16T01:55:27+00:00,Other,Lovable,,28,1,22,5,5,23,240,18907,0.0,0.74
+@Netlify,106345,True,2026-10-16T02:11:37+00:00,Other,Netlify,Netlify,36,0,0,36,12,47,10,2810,0.489,1.52
+@NxDevTools,32521,True,2026-10-16T02:11:39+00:00,Other,Nx,,17,0,0,17,13,10,17.5,1515.5,0.6,0.32
+@PlanetScale,44260,True,2026-10-16T01:55:26+00:00,Mid-size,PlanetScale,,22,1,16,5,6,39,71,7693,0.59,1.26
+@PulumiCorp,16888,True,2026-10-16T02:13:10+00:00,Other,Pulumi,Pulumi,7,0,0,7,0,7,2,400,0.0,0.23
+@QodoAI,19772,True,2026-10-16T02:13:04+00:00,Other,Qodo,,26,0,1,25,15,24,12.5,853.5,0.542,0.77
+@Railway,43901,True,2026-10-16T02:07:09+00:00,Mid-size,Railway,,16,2,7,7,7,23,74,7209,0.609,0.74
+@Replit,239799,True,2026-10-16T02:06:59+00:00,Other,Replit ⠕,Replit,25,0,13,12,12,13,122,22059,0.0,0.42
+@Sourcegraph,29300,True,2026-10-16T02:04:08+00:00,Mid-size,Sourcegraph,,4,0,0,4,1,7,12,995,0.571,0.23
+@TimescaleDB,9174,True,2026-10-16T02:13:48+00:00,Other,TimescaleDB (by Tiger Data),TimescaleDB,11,0,0,11,0,15,6,393,0.267,0.48
+@ToolJet,2008,True,2026-10-16T01:42:33+00:00,Other,ToolJet,,7,0,0,7,0,24,14.5,329.0,0.708,0.77
+@WindmillDev,666,False,2026-10-16T02:12:42+00:00,Other,Windmill,,7,0,0,7,0,8,2.0,83.0,0.125,0.26
+@WorkOS,12774,True,2026-10-16T02:14:12+00:00,Other,WorkOS,,45,0,0,45,11,47,7,637,0.277,1.52
+@astrodotbuild,103490,True,2026-10-16T01:58:52+00:00,Other,Astro,,7,0,4,3,3,9,89,10322,0.556,0.29
+@augmentcode,22342,True,2026-10-16T01:54:14+00:00,Other,Augment Code,,1,0,0,1,1,6,17.5,2063.0,1.0,0.19
+@biomejs,9925,False,2026-10-16T01:53:27+00:00,Other,Biome,,4,0,1,3,3,3,80,4202,0.667,0.1
+@boltdotnew,123197,True,2026-10-16T01:55:19+00:00,Other,bolt.new,,7,1,3,3,3,18,62.5,4803.0,0.778,0.58
+@browserbase,21724,True,2026-10-16T02:11:25+00:00,Smaller/closest,Browserbase,,16,0,1,15,15,1,150,26973,0.0,0.03
+@buildkite,4047,True,2026-10-16T02:11:47+00:00,Other,Buildkite,,19,0,0,19,9,10,6.0,512.5,0.0,0.32
+@bunjavascript,82921,True,2026-10-16T01:36:31+00:00,Other,Bun,Bun_(software),20,10,10,0,3,17,855,50869,0.0,0.55
+@charmcli,16901,True,2026-10-16T01:56:32+00:00,Smaller/closest,Charm,,14,0,7,7,7,7,172,7495,0.0,0.23
+@checklyHQ,2496,True,2026-10-16T02:13:41+00:00,Other,Checkly,,21,0,0,21,0,21,0,82,0.0,0.68
+@chromaticcom,3871,False,2026-10-16T02:13:19+00:00,Other,Chromatic,,7,0,0,7,5,2,3.0,177.5,0.0,0.06
+@clerk,36205,True,2026-10-16T02:07:23+00:00,Mid-size,Clerk,,7,0,0,7,4,3,7,832,0.0,0.1
+@cline,81171,True,2026-10-16T01:49:41+00:00,Mid-size,Cline,Cline_(AI_agent),47,8,26,13,14,33,398,20915,0.0,1.06
+@coderabbitai,47733,True,2026-10-16T02:11:11+00:00,Mid-size,CodeRabbit,,14,0,3,11,10,4,235.0,33065.0,0.0,0.13
+@coderhq,22723,False,2026-10-16T02:11:23+00:00,Other,Coder,,16,0,0,16,0,16,2.5,412.0,0.0,0.52
+@cognition,190523,True,2026-10-16T01:41:53+00:00,Mid-size,Cognition,,38,13,21,4,8,30,670.0,101784.5,0.0,0.97
+@convex,28972,True,2026-10-16T02:07:27+00:00,Mid-size,Convex,,9,0,4,5,5,4,286.0,23579.5,0.0,0.13
+@cursor_ai,490026,True,2026-10-16T01:36:24+00:00,Other,Cursor,,23,16,7,0,7,16,3322.0,242841.0,0.0,0.52
+@daytonaio,12052,True,2026-10-16T02:07:49+00:00,Smaller/closest,Daytona,,10,0,1,9,2,8,6.5,1001.0,0.0,0.26
+@deno_land,100841,True,2026-10-16T01:33:31+00:00,Other,Deno,Deno_(software),2,1,1,0,0,2,4321.5,483419.5,0.0,0.06
+@depotdev,2700,True,2026-10-16T01:39:27+00:00,Other,Depot,,8,0,1,7,0,8,9.0,860.5,0.0,0.26
+@descopeinc,681,True,2026-10-16T02:14:18+00:00,Other,Descope,,34,0,0,34,17,17,3,111,0.0,0.55
+@e2b,15625,True,2026-10-16T01:57:24+00:00,Smaller/closest,E2B,,8,0,2,6,5,3,166,22008,0.0,0.1
+@expo,90129,True,2026-10-16T02:13:16+00:00,Other,Expo,,33,3,18,12,12,21,194,16559,0.0,0.68
+@flydotio,34375,True,2026-10-16T02:14:02+00:00,Other,Fly.io,,15,0,1,14,7,8,8.0,1420.5,0.0,0.26
+@getpostman,55325,True,2026-10-16T02:12:32+00:00,Other,Postman,,11,0,0,11,6,5,5,1537,0.0,0.16
+@grafana,72950,False,2026-10-16T02:12:07+00:00,Other,Grafana,Grafana,25,0,1,24,6,19,7,2473,0.0,0.61
+@greptile,9931,True,2026-10-16T02:12:45+00:00,Smaller/closest,Greptile,,14,0,3,11,10,4,124.0,30594.5,0.0,0.13
+@infisical,6146,True,2026-10-16T01:54:37+00:00,Other,Infisical,,3,0,0,3,3,0,,,,
+@inngest,6187,True,2026-10-16T02:07:37+00:00,Smaller/closest,Inngest,,10,0,0,10,5,5,6,405,0.0,0.16
+@kilocode,29329,True,2026-10-16T02:12:55+00:00,Smaller/closest,Kilo (acq. by Anaconda),,14,0,1,13,9,5,8,1846,0.0,0.16
+@kirodotdev,22248,True,2026-10-16T01:35:57+00:00,Mid-size,Kiro,,7,0,7,0,0,7,163,10227,0.0,0.23
+@linear,114544,True,2026-10-16T01:50:25+00:00,Other,Linear,,23,0,16,7,7,16,165.0,21094.0,0.0,0.52
+@liveblocks,8929,True,2026-10-16T01:46:31+00:00,Other,Liveblocks,,4,0,0,4,0,4,5.5,477.5,0.0,0.13
+@llama_index,121454,True,2026-10-16T02:13:07+00:00,Other,LlamaIndex 🦙,LlamaIndex,7,1,2,4,4,3,338,60347,0.0,0.1
+@mintlify,21636,True,2026-10-16T01:45:25+00:00,Mid-size,Mintlify,,3,0,1,2,2,1,268,103686,0.0,0.03
+@modal,39204,True,2026-10-16T02:14:58+00:00,Mid-size,Modal,,36,2,17,17,18,18,147.0,19093.0,0.0,0.58
+@motherduck,10618,True,2026-10-16T02:08:11+00:00,Other,MotherDuck,,25,0,2,23,1,24,6.0,671.0,0.0,0.77
+@n8n_io,84318,True,2026-10-16T01:54:03+00:00,Other,n8n.io,N8n,17,0,1,16,14,3,8,6767.5,0.0,0.1
+@neondatabase,21037,True,2026-10-16T02:00:09+00:00,Mid-size,Neon,,13,0,5,8,7,6,151.0,17456.0,0.0,0.19
+@nuxt_js,104448,True,2026-10-16T01:49:57+00:00,Other,Nuxt,Nuxt,4,0,3,1,1,3,292,11648,0.0,0.1
+@ollama,185038,True,2026-10-16T02:06:06+00:00,Other,ollama,,13,2,7,4,4,9,626,38714,0.0,0.29
+@openstatushq,1463,False,2026-10-16T01:59:08+00:00,Other,openstatus,,3,0,0,3,1,2,5.5,543.5,0.0,0.06
+@payloadcms,12851,True,2026-10-16T01:43:19+00:00,Other,Payload,,2,0,1,1,1,1,115,8568,0.0,0.03
+@pnpmjs,28533,True,2026-10-16T01:45:33+00:00,Other,pnpm,Pnpm,12,0,8,4,4,8,250.5,21489.5,0.0,0.26
+@polar_sh,31111,True,2026-10-16T01:59:11+00:00,Other,Polar,,5,0,3,2,2,3,412,29600,0.0,0.1
+@posthog,25878,True,2026-10-16T02:14:06+00:00,Other,PostHog,,49,1,7,41,40,9,224,23288,0.0,0.29
+@prisma,79361,True,2026-10-16T01:57:28+00:00,Other,Prisma,,8,1,1,6,1,7,9,3180,0.0,0.23
+@remix_run,90121,True,2026-10-16T01:49:55+00:00,Other,Remix 💿,,6,0,0,6,6,0,,,,
+@render,22006,True,2026-10-16T02:13:57+00:00,Other,Render,,3,0,0,3,2,1,6,1274,0.0,0.03
+@resend,34391,True,2026-10-16T02:15:05+00:00,Mid-size,Resend,,158,0,6,152,150,8,113.0,10369.0,0.0,0.26
+@retool,18169,True,2026-10-16T02:12:36+00:00,Other,Retool,Retool,23,0,0,23,8,15,5,693,0.0,0.48
+@sanity_io,15318,True,2026-10-16T01:59:40+00:00,Other,Sanity,,12,0,0,12,0,12,4.5,633.0,0.0,0.39
+@speakeasydev,1650,True,2026-10-16T02:11:29+00:00,Other,Speakeasy,,7,0,0,7,1,6,6.0,216.5,0.0,0.19
+@storybookjs,25666,False,2026-10-16T02:06:22+00:00,Other,Storybook,,3,0,0,3,3,0,,,,
+@strapijs,21637,True,2026-10-16T02:14:34+00:00,Other,Strapi,,37,0,0,37,3,34,2.0,721.0,0.0,1.1
+@supabase,212105,True,2026-10-16T01:44:03+00:00,Other,Supabase,,45,9,35,1,1,44,198.0,13873.5,0.0,1.42
+@temporalio,11751,True,2026-10-16T02:13:56+00:00,Other,Temporal,,16,0,0,16,4,12,6.5,651.5,0.0,0.39
+@tldraw,79982,True,2026-10-16T02:15:15+00:00,Mid-size,tldraw,,81,5,14,62,57,24,226.5,22767.5,0.0,0.77
+@triggerdotdev,9124,True,2026-10-16T02:14:04+00:00,Smaller/closest,Trigger.dev,,10,0,1,9,8,2,125.0,29905.0,0.0,0.06
+@turborepo,55868,True,2026-10-16T01:29:18+00:00,Other,Turborepo,,1,1,0,0,0,1,802,88625,0.0,0.03
+@tursodatabase,17875,True,2026-10-16T02:11:31+00:00,Other,Turso,,17,2,0,15,14,3,813,51094,0.0,0.1
+@unkeydev,3452,True,2026-10-16T02:06:41+00:00,Other,Unkey,,3,0,0,3,0,3,6,580,0.0,0.1
+@upstash,17061,True,2026-10-16T02:04:31+00:00,Smaller/closest,Upstash,,14,0,4,10,6,8,73.5,4899.5,0.0,0.26
+@useblacksmith,7428,True,2026-10-16T02:11:41+00:00,Other,Blacksmith,,4,0,0,4,4,0,,,,
+@v0,117011,True,2026-10-16T01:35:03+00:00,Other,v0,,4,1,3,0,0,4,445.5,40360.0,0.0,0.13
+@vercel,463565,True,2026-10-16T01:50:19+00:00,Other,Vercel,Vercel,21,2,15,4,4,17,258,55073,0.0,0.55
+@vite_js,143708,False,2026-10-16T01:31:14+00:00,Other,Vite ⚡,Vite,1,0,1,0,0,1,322,29173,0.0,0.03
+@vllm_project,51325,True,2026-10-16T02:14:20+00:00,Other,vLLM,,46,2,24,20,19,27,186,12797,0.037,0.87
+@warpdotdev,59043,True,2026-10-16T02:07:01+00:00,Mid-size,Warp,Warp_(terminal),17,0,3,14,12,5,106,14146,0.0,0.16
+@xata,4093,True,2026-10-16T02:04:27+00:00,Other,Xata 🦋,,7,0,0,7,1,6,3.5,11097.0,0.0,0.19
+@zeddotdev,85406,True,2026-10-16T01:52:37+00:00,Mid-size,Zed,,54,9,32,13,13,41,299,19077,0.0,1.32

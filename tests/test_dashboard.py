@@ -12,7 +12,10 @@ class DashboardTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.store = Dashboard(Path(temp.name)/'demo.db')
         self.a, self.b = 'a'*32, 'b'*32
-        self.signal = {'text': 'A sample release', 'source': 'manual', 'metrics': {'likes': 2}}
+        # A real source link: Action's post lane captions a cited source and abstains without one,
+        # so a mock round over a link-less signal ships nothing.
+        self.signal = {'text': 'A sample release', 'source': 'manual', 'url': 'https://example.com/release',
+                       'metrics': {'likes': 2}}
 
     def test_ingestion_deduplicates_with_provenance(self):
         report = self.store.ingest(self.a, [self.signal, self.signal | {'text': ' A SAMPLE  release '}])

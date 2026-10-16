@@ -1,0 +1,95 @@
+"""Every knob the Action stage has, in one typed object, so a tuning loop can change them.
+
+Defaults are tonight's values. Each comment says where the number came from, and says so plainly
+when nothing measured it. Override per run with `decide(..., config=ActionConfig(...))`, or point
+HARNESS_ACTION_CONFIG at a JSON file of field overrides.
+"""
+
+import json
+import os
+from dataclasses import asdict, dataclass, field, fields, replace
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class GateLimits:
+    # X's hard limit. The tighter 160-char reply cap rejected 12.7% of 670 real replies
+    # (action/experiments/gate_calibration.json), so length is no longer a style rule.
+    max_chars: dict = field(default_factory=lambda: {"reply": 280, "quote": 280, "post": 280, "mention": 280})
+    # None turns the rule off. A 2-sentence cap rejected 14.3% of real replies.
+    max_reply_sentences: int | None = None
+    # 4.5% of real replies use more than 2 distinct emoji; kept because the account doesn't need 3.
+    max_distinct_emoji: int = 2
+    max_hashtags: dict = field(default_factory=lambda: {"reply": 1, "quote": 1, "post": 2, "mention": 1})
+    # A draft with fewer words than this must share at least one word with the post it answers.
+    # Uncalibrated: chosen after Iterate's run shipped a bare "...". Real top replies include
+    # one-word ones ("Queen", "IKTR"), so this rejects some human-style replies on purpose.
+    min_words_without_post_reference: int = 3
+
+
+@dataclass(frozen=True)
+class ActionConfig:
+    # --- reply lane: which posts to answer
+    # Research report (8vc-context/research/action.md, finding 7): answer fresh big-account posts.
+    # Our fixture: top-3 replies landed a median 28 min after the root, 53 of 72 within 60.
+    reply_max_age_minutes: float = 30.0
+    # --- reply lane: writing
+    reply_samples: int = 6  # research report: 4 to 8; selection gains flatten past ~10 (Stroebl et al.)
+    page_replies: int = 12  # real replies shown in the continuation page; research used 12
+    min_page_replies: int = 5  # below this the page has too little to copy; use the styled fallback (no measurement)
+    continuation_model: str = "claude-opus-4-5-20251101"  # the only gateway model that accepts assistant prefill
+    styled_model: str = "claude-opus-4-5-20251101"  # research condition F, AUC 0.79 vs 0.88 for Sonnet 5.5
+    # --- veto judge
+    # Caught 90-100% of generated replies where claude-fable-5-dd-los-6.5-tpg (gateway reports
+    # gpt-5.6-sol) caught 40-77% (research report, finding 5).
+    veto_model: str = "claude-opus-5-5"
+    veto_max_p_ai: int = 50  # a draft the judge puts at or above this P(AI), in either order, is vetoed (no measurement)
+    # Dhilan's post_judge grounding score as one more veto. Off by default: nothing measured it, its
+    # default client spawns the local claude CLI per draft, and a failed call vetoes the draft.
+    grounding_veto: bool = False
+    post_judge_min_grounding: int = 3  # 0-5; below this is a veto (no measurement)
+    # --- the continuation page: drop scraped replies the judge reads as bots, so the writer doesn't
+    # copy them (research finding 10: the two most AI-looking "human" replies got 19 and 23 likes
+    # against 170-2,026 for the top replies). One single-order judge call per target; no tuning yet.
+    page_max_p_ai: int = 50
+    filter_page_bots: bool = True
+    # --- post lane
+    caption_max_chars: int = 100  # research finding 8: House of Highlights-style captions
+    caption_samples: int = 4
+    # Keep at 120 or more. In the dev-tool data, a post within 2 hours of the same account's last
+    # post is one of the clearest within-account losers (Context worker, PR #18), and X multiplies
+    # repeat posts by one author in a feed batch by 0.75*0.5^k + 0.25 (context research report).
+    post_spacing_minutes: int = 120
+    # --- budgets, by action type. Mostly unmeasured: they keep Grok's queue short and stay clear of
+    # X's burst filters, which flag fast reply bursts and several replies under one root. Quotes
+    # are capped low because quote posts were among the clearest within-account losers in the
+    # dev-tool data (Context worker, PR #18; brand accounts, not a fan account).
+    run_caps: dict = field(default_factory=lambda: {"reply": 3, "quote": 1, "post": 1, "mention": 1, "follow": 3})
+    daily_caps: dict = field(default_factory=lambda: {"reply": 12, "quote": 2, "post": 2, "mention": 2, "follow": 10})
+    gate: GateLimits = field(default_factory=GateLimits)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ActionConfig":
+        known = {f.name for f in fields(cls)}
+        unknown = set(data) - known
+        if unknown:
+            raise ValueError(f"ActionConfig: unknown field(s) {sorted(unknown)}; known: {sorted(known)}")
+        data = dict(data)
+        if isinstance(data.get("gate"), dict):
+            gate_known = {f.name for f in fields(GateLimits)}
+            bad = set(data["gate"]) - gate_known
+            if bad:
+                raise ValueError(f"GateLimits: unknown field(s) {sorted(bad)}; known: {sorted(gate_known)}")
+            data["gate"] = GateLimits(**data["gate"])
+        return replace(cls(), **data)
+
+
+def load() -> ActionConfig:
+    """Defaults, or the JSON overrides at HARNESS_ACTION_CONFIG."""
+    path = os.getenv("HARNESS_ACTION_CONFIG")
+    if not path:
+        return ActionConfig()
+    return ActionConfig.from_dict(json.loads(Path(path).read_text(encoding="utf-8")))

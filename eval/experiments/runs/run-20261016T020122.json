@@ -1,0 +1,39 @@
+{
+ "run_id": "run-20261016T020122",
+ "started_at": "2026-10-16T02:01:22+00:00",
+ "finished_at": "2026-10-16T02:01:59+00:00",
+ "provider": "anthropic",
+ "champion": "cfg-17e3b75195e4",
+ "max_calls": 150,
+ "estimated_calls": 102,
+ "llm_calls": 102,
+ "by_arm": {
+  "action_lineup:champion_repeat": {
+   "llm_calls": 34,
+   "input_tokens": 5828,
+   "output_tokens": 13738,
+   "errors": 0
+  },
+  "action_lineup:champion": {
+   "llm_calls": 34,
+   "input_tokens": 5515,
+   "output_tokens": 14823,
+   "errors": 0
+  },
+  "action_lineup:cfg-f544f07093c8": {
+   "llm_calls": 34,
+   "input_tokens": 14317,
+   "output_tokens": 5101,
+   "errors": 0
+  }
+ },
+ "bh": {
+  "q": 0.1,
+  "family_size": 1,
+  "rejected": 1
+ },
+ "experiments": [
+  "exp-20261016-action-fbb933"
+ ],
+ "note": "first real run: persona JSON vs continuation on the lineup fitness"
+}
