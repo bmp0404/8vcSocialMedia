@@ -1,0 +1,213 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016-action-fbb933",
+ "run_id": "run-20261016T020122",
+ "created_at": "2026-10-16T02:01:59+00:00",
+ "stage": "action",
+ "hypothesis": "Continuing the real thread as a document on claude-opus-4-5 reads less like AI than the persona JSON call: research measured forced-choice detection of 31% against 100%.",
+ "proposer": {
+  "kind": "manual",
+  "source": "research/action.md, finding 2"
+ },
+ "change": {
+  "summary": "continuation (claude-opus-4-5, prefill)",
+  "files": [
+   "harness/minds/__init__.py:PROMPT"
+  ],
+  "diff": "--- cfg-17e3b75195e4\n+++ cfg-f544f07093c8\n@@ -16 +16 @@\n- \"action.reply.generation\": \"persona_json\",\n+ \"action.reply.generation\": \"continuation\",",
+  "params": {
+   "action.reply.generation": {
+    "from": "persona_json",
+    "to": "continuation"
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-17e3b75195e4",
+  "label": "champion",
+  "config_hash": "17e3b75195e450db0105db3222b37c228cf5a6429c46f6b6cbd151e83dd04a22"
+ },
+ "challenger": {
+  "ref": "cfg-f544f07093c8",
+  "label": "continuation (claude-opus-4-5, prefill)",
+  "config_hash": "f544f07093c803d092efc2b7f1b05dc6bbca959ac330c612127589c31ffbb973"
+ },
+ "eval": {
+  "dataset": "x_threads.json",
+  "dataset_sha256": "1588ce7520862892b14a4a372008fac80d5e2934431330ff4d3470a33b2465bb",
+  "n": 17,
+  "unit": "thread",
+  "clusters": 17,
+  "cluster_unit": "thread",
+  "seed": 0,
+  "report": "eval/experiments/reports/run-20261016T020122-action_lineup.json",
+  "fitness": "action_lineup",
+  "metrics": [
+   {
+    "name": "ai_detection_rate",
+    "higher_is_better": false,
+    "primary": true,
+    "guardrail": false,
+    "champion": {
+     "value": 0.9411764705882353,
+     "ci95": [
+      0.8235294117647058,
+      1.0
+     ]
+    },
+    "challenger": {
+     "value": 0.11764705882352941,
+     "ci95": [
+      0.0,
+      0.29411764705882354
+     ]
+    },
+    "delta": {
+     "value": -0.8235294117647058,
+     "ci95": [
+      -1.0,
+      -0.6470588235294117
+     ]
+    }
+   },
+   {
+    "name": "generation_failure_rate",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "champion": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "challenger": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "delta": {
+     "value": 0.0,
+     "ci95": [
+      -0.0,
+      -0.0
+     ]
+    }
+   },
+   {
+    "name": "reply_chars",
+    "higher_is_better": false,
+    "primary": false,
+    "guardrail": false,
+    "champion": {
+     "value": 187.11764705882354,
+     "ci95": [
+      161.58529411764707,
+      209.4720588235294
+     ]
+    },
+    "challenger": {
+     "value": 53.05882352941177,
+     "ci95": [
+      30.64411764705883,
+      86.64999999999998
+     ]
+    },
+    "delta": {
+     "value": -134.05882352941177,
+     "ci95": [
+      -164.88382352941176,
+      -93.93235294117649
+     ]
+    }
+   }
+  ],
+  "instrument": {
+   "dataset": "x_threads.json",
+   "dataset_sha256": "1588ce7520862892b14a4a372008fac80d5e2934431330ff4d3470a33b2465bb",
+   "detector_model": "claude-opus-5-5",
+   "lineup_system": "Below is an X post and five replies to it. Four were written by real X users. Exactly one was written by an AI model. Identify the AI-written reply. Return JSON {\"ai_reply\": <1-5>, \"why\": \"one sentence\"}.",
+   "lineup_pool": 6,
+   "context_ranks": [
+    7,
+    18
+   ],
+   "min_replies": 12,
+   "chance": 0.2
+  },
+  "noise_floor": {
+   "value": 0.05882352941176472,
+   "champion_repeat": {
+    "value": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "delta": {
+    "value": 0.05882352941176472,
+    "ci95": [
+     -0.0,
+     0.17647058823529416
+    ]
+   }
+  },
+  "correction": {
+   "method": "benjamini-hochberg",
+   "q": 0.1,
+   "family_size": 1,
+   "p": 0.0004997501249375312,
+   "p_adjusted": 0.0004997501249375312,
+   "rejected": true,
+   "interval_level": 0.9
+  },
+  "item_ids_sha256": "9841a747941509c77b58286225c6ec4f84facf4d3d2ee10c94a4e00b79100f27"
+ },
+ "decision": {
+  "status": "superseded",
+  "by": "human",
+  "at": "2026-10-16T02:05:03+00:00",
+  "reason": "Ran under a gate later found too loose: with a family of one, BH at q=0.1 set a one-sided 90% bound, and there was no veto guardrail. The gate was tightened after this result was seen (97.5% floor, non-inferiority on veto pass rate), which is itself a change made after looking. exp-20261016-action-f691d2 reran the same comparison under the tightened gate.",
+  "original_status": "promoted",
+  "original_reason": "improvement lower bound +0.706 at 0.900 clears the noise floor 0.059",
+  "original_at": "2026-10-16T02:01:59+00:00",
+  "superseded_by": "exp-20261016-action-f691d2"
+ },
+ "cost": {
+  "llm_calls": 34,
+  "input_tokens": 14317,
+  "output_tokens": 5101,
+  "seconds": 21.3,
+  "usd": null,
+  "shared_llm_calls": 68,
+  "by_arm": {
+   "champion": {
+    "llm_calls": 34,
+    "input_tokens": 5515,
+    "output_tokens": 14823,
+    "errors": 0,
+    "seconds": 37.1,
+    "shared": true
+   },
+   "champion_repeat": {
+    "llm_calls": 34,
+    "input_tokens": 5828,
+    "output_tokens": 13738,
+    "errors": 0,
+    "seconds": 34.5,
+    "shared": true
+   },
+   "cfg-f544f07093c8": {
+    "llm_calls": 34,
+    "input_tokens": 14317,
+    "output_tokens": 5101,
+    "errors": 0,
+    "seconds": 21.3,
+    "shared": false
+   }
+  }
+ }
+}
