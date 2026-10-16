@@ -10,7 +10,6 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from harness import config, memory
-from harness.sources.watch import account_handle
 
 INDEX = Path(__file__).parent / "index.html"
 
@@ -19,7 +18,7 @@ def export_approved(run_id: int) -> Path:
     config.OUT_DIR.mkdir(exist_ok=True)
     path = config.OUT_DIR / f"approved-run{run_id}.json"
     path.write_text(
-        json.dumps({"run_id": run_id, "account": account_handle()[0] or None,
+        json.dumps({"run_id": run_id, "account": memory.run_account(run_id),
                     "actions": memory.approved_actions(run_id)}, indent=2),
         encoding="utf-8",
     )

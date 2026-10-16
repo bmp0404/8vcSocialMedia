@@ -20,6 +20,10 @@ CREATE TABLE IF NOT EXISTS review_events (
     id INTEGER PRIMARY KEY, action_id TEXT, run_id INTEGER, status TEXT,
     original_text TEXT, edited_text TEXT, note TEXT, reviewed_at TEXT, reasons TEXT
 );
+-- The account a run was made for. A hand-off exported later names this account, not whatever
+-- [brand] x_handle or HARNESS_ACCOUNT_HANDLE say at export time. A new table, not a runs column,
+-- because CREATE TABLE IF NOT EXISTS never adds a column to an existing data/harness.db.
+CREATE TABLE IF NOT EXISTS run_accounts (run_id INTEGER PRIMARY KEY, account TEXT);
 """
 
 REVIEW_STATUSES = {"approved", "killed", "pending"}
@@ -39,7 +43,7 @@ def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def save_run(actions: list[Action]) -> int:
+def save_run(actions: list[Action], account: str | None = None) -> int:
     with connect() as conn:
         run_id = conn.execute(
             "INSERT INTO runs (started_at, provider, sources) VALUES (?, ?, ?)",
@@ -49,7 +53,16 @@ def save_run(actions: list[Action]) -> int:
             "INSERT INTO actions VALUES (?, ?, ?, ?, ?, ?)",
             [(a.id, run_id, a.mind, a.type, a.predicted_score, json.dumps(a.to_dict())) for a in actions],
         )
+        if account:
+            conn.execute("INSERT INTO run_accounts VALUES (?, ?)", (run_id, account))
     return run_id
+
+
+def run_account(run_id: int) -> str | None:
+    """The account save_run recorded for this run; None for runs saved without one."""
+    with connect() as conn:
+        row = conn.execute("SELECT account FROM run_accounts WHERE run_id = ?", (run_id,)).fetchone()
+    return row["account"] if row else None
 
 
 def record_outcomes(outcomes: list[dict]) -> int:

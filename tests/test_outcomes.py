@@ -209,7 +209,6 @@ def test_handle_comes_from_brand_x_handle_and_the_env_overrides_it(tmp_path, mon
     toml = tmp_path / "observe.toml"
     toml.write_text('[brand]\nx_handle = ""\n', encoding="utf-8")
     monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(toml))
-    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
     with pytest.raises(HandleError, match=r"\[brand\] x_handle is empty.*HARNESS_ACCOUNT_HANDLE.*--handle"):
         resolve_handle()
     assert resolve_handle("@IowaWBB") == ("IowaWBB", "--handle")
@@ -222,7 +221,6 @@ def test_handle_comes_from_brand_x_handle_and_the_env_overrides_it(tmp_path, mon
 
 def test_handle_reports_a_missing_observe_config(tmp_path, monkeypatch):
     monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(tmp_path / "missing.toml"))
-    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
     with pytest.raises(HandleError, match="observe config not found"):
         resolve_handle()
 

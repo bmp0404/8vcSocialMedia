@@ -112,7 +112,6 @@ def test_parse_watch_strips_at_sign_from_handle():
 
 def test_repo_names_sams_test_account(monkeypatch):
     monkeypatch.delenv("HARNESS_OBSERVE_CONFIG", raising=False)
-    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
     assert account_handle() == ("_sgu_", f"{DEFAULT_PATH} [brand] x_handle")
 
 
@@ -120,7 +119,6 @@ def test_account_handle_env_overrides_brand_x_handle(tmp_path, monkeypatch):
     toml = tmp_path / "observe.toml"
     toml.write_text('[brand]\nx_handle = "_sgu_"\n', encoding="utf-8")
     monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(toml))
-    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
     assert load_watch().brand_handle == "_sgu_"
     monkeypatch.setenv("HARNESS_ACCOUNT_HANDLE", " @other ")
     assert load_watch().brand_handle == "other"

@@ -24,18 +24,21 @@ def isolated(tmp_path, monkeypatch):
 
 
 def test_learn_writes_the_run_episodes_its_reflections_cite(isolated):
-    drafts = [Action(type="post", text=f"draft {i}", mind="meme_lord", narrative_id=f"n{i % 2}") for i in range(8)]
+    # Each narrative gets approved and killed drafts, so reflection has a contrast to explain.
+    drafts = [Action(type="post", text=f"draft {i}", mind="meme_lord", narrative_id=f"n{i // 6}") for i in range(18)]
     memory.save_run(drafts)
     for i, a in enumerate(drafts):
         memory.set_review(a.id, "approved" if i % 2 else "killed")
 
     learn(get_llm("mock"), store=MemstoreAdapter())  # raised MemoryValidationError before round_end ran first
 
-    for a in drafts:
+    for i, a in enumerate(drafts):
         note = memstore.load(f"ep-{a.id}")
         assert note is not None and note.meta["source"] == "run"
-        assert note.meta["review_status"] == ("approved" if drafts.index(a) % 2 else "killed")
-    assert memstore.list_notes("reflection"), "the mock reflection was not saved"
+        assert note.meta["review_status"] == ("approved" if i % 2 else "killed")
+    ours = {f"ep-{a.id}" for a in drafts}
+    cited = [n for n in memstore.list_notes("reflection") if ours & set(n.meta.get("evidence") or [])]
+    assert cited, "no reflection citing this run's episodes was saved"
 
 
 def lesson_with_evidence() -> Lesson:

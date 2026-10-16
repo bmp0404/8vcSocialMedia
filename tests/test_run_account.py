@@ -1,4 +1,4 @@
-"""The files a round hands on name the account they are for, from [brand] x_handle or HARNESS_ACCOUNT_HANDLE."""
+"""A round's files name the account the round was made for, from [brand] x_handle or HARNESS_ACCOUNT_HANDLE."""
 
 import argparse
 import json
@@ -14,21 +14,32 @@ from harness.review import export_approved
 def isolated(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "DB_PATH", tmp_path / "h.db")
     monkeypatch.setattr(config, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setenv("MEMSTORE_PATH", str(tmp_path / "store"))
     monkeypatch.delenv("HARNESS_OBSERVE_CONFIG", raising=False)
-    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
     return tmp_path
 
 
-def test_hand_off_names_the_account(isolated, monkeypatch):
+def exported_account(run_id: int) -> str | None:
+    return json.loads(export_approved(run_id).read_text(encoding="utf-8"))["account"]
+
+
+def test_hand_off_names_the_runs_account_even_after_the_setting_changes(isolated, monkeypatch):
+    run_id = memory.save_run([Action(type="post", text="a post", mind="m", narrative_id="n1", id="a1")], account="_sgu_")
+    memory.set_review("a1", "approved")
+    monkeypatch.setenv("HARNESS_ACCOUNT_HANDLE", "other")
+    assert exported_account(run_id) == "_sgu_"
+
+
+def test_hand_off_of_a_run_saved_without_an_account_says_null(isolated):
     run_id = memory.save_run([Action(type="post", text="a post", mind="m", narrative_id="n1", id="a1")])
     memory.set_review("a1", "approved")
-    assert json.loads(export_approved(run_id).read_text(encoding="utf-8"))["account"] == "_sgu_"
+    assert exported_account(run_id) is None
+
+
+def test_mock_run_records_the_account(isolated, monkeypatch):
     monkeypatch.setenv("HARNESS_ACCOUNT_HANDLE", "@other")
-    assert json.loads(export_approved(run_id).read_text(encoding="utf-8"))["account"] == "other"
-
-
-def test_mock_run_names_the_account_in_its_recommendations(isolated):
-    args = argparse.Namespace(provider="mock", sources="sample", narratives=2, per_mind=1, top=10, retries=0)
-    cli.run(args)
+    cli.run(argparse.Namespace(provider="mock", sources="sample", narratives=2, per_mind=1, top=10, retries=0))
     (path,) = (isolated / "out").glob("recommendations-*.json")
-    assert json.loads(path.read_text(encoding="utf-8"))["account"] == "_sgu_"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["account"] == "other"
+    assert memory.run_account(data["run_id"]) == "other"

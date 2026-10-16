@@ -38,7 +38,7 @@ def run(args) -> None:
         actions = actions + batch
     ranked = kept[: args.top]
 
-    run_id = memory.save_run(actions)
+    run_id = memory.save_run(actions, account=account or None)
     write_decision_log(run_id)  # out/decisions-run<id>.json: abstentions, rejected drafts, questions
     config.OUT_DIR.mkdir(exist_ok=True)
     out = config.OUT_DIR / f"recommendations-{datetime.now():%Y%m%d-%H%M%S}.json"
