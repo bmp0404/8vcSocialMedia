@@ -89,6 +89,8 @@ class MockMeteredLLM(LLM):
     """Offline stand-in. `respond(system, prompt)` returns canned text; calls still count, so a mock
     run exercises the budget path. Mock numbers are fake and never reach eval/experiments/."""
 
+    is_mock = True  # the flag harness.llm.MockLLM carries; check it with getattr, not isinstance
+
     def __init__(self, meter: Meter, arm: str, respond: Callable[[str, str], Any], model: str = "mock"):
         self.meter, self.arm, self.respond, self.model = meter, arm, respond, model
 
@@ -106,3 +108,38 @@ class MockMeteredLLM(LLM):
 
     def continue_text(self, user: str, prefill: str, stop: list[str], max_tokens: int = 80) -> str:
         return self.complete("", prefill)
+
+
+class _MeteredMessages:
+    """`client.messages` with every `create` charged to one arm."""
+
+    def __init__(self, inner, meter: Meter, arm: str):
+        self.inner, self.meter, self.arm = inner, meter, arm
+
+    def create(self, **kw):
+        self.meter.reserve(self.arm)
+        try:
+            resp = self.inner.create(**kw)
+        except Exception:
+            self.meter.record(self.arm, error=True)
+            raise
+        usage = getattr(resp, "usage", None)
+        self.meter.record(self.arm, getattr(usage, "input_tokens", 0) or 0, getattr(usage, "output_tokens", 0) or 0)
+        return resp
+
+
+def metered_anthropic_class(meter: Meter, arm: str) -> type:
+    """A `harness.llm.AnthropicLLM` subclass whose client is metered, for code that type-checks for
+    AnthropicLLM, reaches into `llm.client`, or builds `AnthropicLLM(model)` itself (sam/action's
+    writer and veto do all three). Swap it in for the module's `AnthropicLLM` name while that code runs."""
+    import anthropic
+
+    from harness.llm import AnthropicLLM
+
+    class MeteredAnthropicLLM(AnthropicLLM):
+        def __init__(self, model: str):
+            client = anthropic.Anthropic()
+            client.messages = _MeteredMessages(client.messages, meter, arm)
+            self.client, self.model = client, model
+
+    return MeteredAnthropicLLM

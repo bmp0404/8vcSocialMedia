@@ -1,0 +1,1050 @@
+{
+ "run_id": "run-20261016T022529",
+ "provider": "anthropic",
+ "arms": {
+  "action_lineup:champion": {
+   "config_ref": "cfg-35c9ee1e8e13",
+   "repeat": false,
+   "error": "",
+   "seconds": 113.2,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Every Fever fan in these replies is furious, and every one of them will have League Pass open on opening night. That's what Caitlin does to a fanbase. The offseason is for blood pressure and for the front office to read this thread. See you in May.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) the 'See you in May' season-start timing isn't supported by the post or replies"
+     ]
+    },
+    "2106459938151145977": {
+     "draft": "\"Tipping point\" is underselling it. Opposing teams started moving home games to bigger arenas just because the Fever were in town. When the other team's front office is calling the venue to ask for more seats, you're not a tipping point, you're the whole scale.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) claims opposing teams moved games to bigger arenas, which neither the post nor the replies support"
+     ]
+    },
+    "2106399407834898501": {
+     "draft": "Every Fever exit interview, the reply section is already at a full-on coaching search before the presser even starts. Real offseason questions: a rotation that stays put, defense that doesn't need Caitlin to outscore it, and shooters to space the floor around her gravity. Fix those and the vibes fix themselves.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110792840989024541": {
+     "draft": "Whatever you think of the rivalry, it's why a Finals Game 1 is on NBC and people who never watched the W last year are asking what time tip is. Clark fans will be tuned in too. Everybody's watching now, and that's the real win for the league.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) brings in Clark and a rivalry that neither the post nor the replies mention",
+      "(1) unsupported claim that the rivalry is why Game 1 airs on NBC"
+     ]
+    },
+    "2110808211347456506": {
+     "draft": "Congrats to all five. Unofficial sixth honor goes to whoever picks up Caitlin Clark at the logo and still believes in themselves.",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) introduces Caitlin Clark, a name the post and replies never mention"
+     ]
+    },
+    "2110824046833348936": {
+     "draft": "10-0 is wild. DeWanna Bonner is the only player who can get a fanbase to say \"genuinely happy for her\" and \"please lose to Golden State\" in the same breath. Saturday's gonna be fun.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808214048502128": {
+     "draft": "Clark fan account scrolling this list out of pure habit for 2 seconds before remembering we're the \"she can shoot from the logo\" department. Congrats to Burton, Canada, Citron, Stewart and Stokes, the people who make logo threes feel like a bad idea.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2099247457473339402": {
+     "draft": "World Cup gold is now on the résumé. The \"overrated\" crowd has to explain how she's overrated and also keeps winning everything. Bold strategy, let's see how it plays out. Congrats, Caitlin 🥇",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106419802117976116": {
+     "draft": "10-0 on picks is just a logo three with a spreadsheet. Somewhere a Vegas sportsbook is saying \"she's not gonna pull from there\" and immediately regretting it.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105382766682714299": {
+     "draft": "Defenders already have to guard her from the logo. Now they have to guard the checkout page too. Sizes will be gone before the first TV timeout.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110018728314224992": {
+     "draft": "Every team on USC's schedule just looked at the calendar and felt something. A full year of ACL rehab and she's still the biggest story in the sport. Women's college hoops is better with JuJu on the floor.",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) names USC and an ACL injury, neither mentioned in the post or other replies"
+     ]
+    },
+    "2109769353935688054": {
+     "draft": "Women's sports pay problem in one stat: the No. 1 pick in the 2024 WNBA draft, Caitlin Clark, had a rookie salary of $76,535. Her sponsors reportedly paid her far more than that (the Nike deal is reportedly $28M over 8 years). When the endorsements out-earn the league, the league is the problem.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) Caitlin Clark salary and Nike deal figures not in post or replies"
+     ]
+    },
+    "2110038076114256260": {
+     "draft": "Bigger arena for the Finals is the real win here. Fever fans will be watching from the couch with snacks and strong opinions, and honestly that's the most WNBA Twitter thing possible. Fill that building, ATL.",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808408366493714": {
+     "draft": "Top three in steals league-wide, and all three play for the same team. Opposing guards didn't turn it over, they got robbed. Fever fan here, and I'll admit Atlanta games felt like a heist movie. Well-earned, all three.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109445947881087063": {
+     "draft": "Full Dream roster in one frame, everyone healthy and smiling. Fever fans are looking at this photo like it's a mythical creature. Enjoy it, Atlanta 😅",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) claims full roster, but other replies note missing players (Okot, Kone, Bonner, Pao)",
+      "(1) 'everyone healthy' and the implied Fever injury woes aren't supported by the post or replies"
+     ]
+    },
+    "2108954459304763841": {
+     "draft": "Two teams, one crown, and about 40,000 hot takes from people who haven't watched a Dream game since the Fever played them. Welcome, everybody. Bring snacks. Good luck, Atlanta.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109672093403279370": {
+     "draft": "Fever fan here, watching Finals week like it's a group project I wasn't assigned to. Rooting for a loud Bay Area crowd and a very stressed Atlanta bench. Good luck, Valkyries.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) 'Bay Area crowd' asserts a home location that neither the post nor the replies mention"
+     ]
+    },
+    "2108774446844756246": {
+     "draft": "Second-year franchise sweeping the defending champs is the kind of thing that makes every \"expansion teams need time\" take age like milk. Tip of the cap to Golden State. Aces get a long summer to think about those rebounds.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) 'second-year franchise' not supported by post or replies"
+     ]
+    },
+    "2108764830970864102": {
+     "draft": "The bucket emoji is doing real work here. Jackie Young is the one player who gets a one-word caption and a full scouting report in the same post 🪣",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109690563180347728": {
+     "draft": "",
+     "shipped": false,
+     "why": "empty draft",
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "veto_pass": 1.0,
+     "abstained": 1.0
+    },
+    "2108761838855004463": {
+     "draft": "Aces replies right now are a masterclass in what happens when you set the bar at \"championship or riot.\" Back-to-back titles will do that to a fan base. Respect the standard, but maybe take a lap before posting.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) 'back-to-back titles' is not supported by the post or replies"
+     ]
+    },
+    "2108740236503097560": {
+     "draft": "Liberty fans really read \"thank you for a great season\" and responded with a full coaching staff performance review in 40 seconds. Elite efficiency. Fever fans know this offseason discourse well, grab a seat, the snacks are in the back.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108735802100629717": {
+     "draft": "",
+     "shipped": false,
+     "why": "empty draft",
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "veto_pass": 1.0,
+     "abstained": 1.0
+    },
+    "2108714740688224359": {
+     "draft": "\"Let 'em know\" is doing a lot of work for a team that's had to hear 'em all series. Playoff basketball is just two teams taking turns telling each other to calm down, and somehow it's the best thing on my timeline.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105314897483460855": {
+     "draft": "Fever fans got swept in round one in 2024, so this is a sympathy reply from one fanbase to another. Yours just hurts premium because you were the 1 seed. Packed arena all year though. Run it back.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) Fever's 2024 first-round sweep isn't supported by the post or replies",
+      "(1) 'packed arena all year' isn't supported by the post or replies"
+     ]
+    },
+    "2108624654185185286": {
+     "draft": "The replies are mad at MVP voters for not also playing defense in the first round. The award is for the regular season. The only rookie who ever did better is Candace Parker, who won it. Pretty good list to be on.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) claims Parker won MVP and is the only rookie ever to finish higher; the post only says highest since Parker in 2008"
+     ]
+    },
+    "2109722126177452264": {
+     "draft": "Exec of the Year is a roster-building award, not a bracket award, so both sides of this thread are arguing about different things. Congrats to Reeve. Now I just want to see what she'd build around a guard who pulls up from the logo 👀",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    }
+   },
+   "failures": {}
+  },
+  "action_lineup:champion_repeat": {
+   "config_ref": "cfg-35c9ee1e8e13",
+   "repeat": true,
+   "error": "",
+   "seconds": 98.6,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "This reply section is a full-contact sport. Half the thread wants the coach fired, the other half wants to know if Caitlin's okay. That's what a fanbase that actually cares looks like. Most franchises would kill for that problem. Run it back.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) attributes the tooth-and-gums injury reply to Caitlin, but that reply never names her"
+     ]
+    },
+    "2106459938151145977": {
+     "draft": "Fever home attendance went from roughly 4K a game in 2023 to nearly 17K in 2024. 'Tipping point' might be the most understated line a front office has ever put out. The box office wrote the press release a long time ago.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) attendance figures not supported by post or replies"
+     ]
+    },
+    "2106399407834898501": {
+     "draft": "Exit interview season on Fever X: 400 replies, 0 film breakdowns. Fair to ask hard questions about the rotations and the late-game stuff. But 'fire everyone' isn't a plan. Bring me the lineup data and I'll bring the popcorn.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) '400 replies' is a number not supported by the post or replies"
+     ]
+    },
+    "2110792840989024541": {
+     "draft": "Funniest thing the Clark–Reese rivalry did: got casual fans to figure out what Peacock is and set a 3:30 ET alarm for the Finals. Rising tide, everybody. Fever fans get to watch this one with zero blood pressure risk for once.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) Clark/Fever rivalry not mentioned in post or replies",
+      "(1) implies Fever aren't in the Finals, unsupported"
+     ]
+    },
+    "2110808211347456506": {
+     "draft": "Two Dream players on the first team means Atlanta's scouting report is just \"good luck.\" Every offensive coordinator in the league reading Howard, Reese, Wilson and Gabby Williams on one list: 🫠",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110824046833348936": {
+     "draft": "Ten straight is ten straight, and Golden State is a real test. But \"it ends Saturday\" is a bold read of a team that hasn't lost since Bonner got there. Fever fans watching all this: happy for her, still a little weirded out.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808214048502128": {
+     "draft": "Fever fans watching Aliyah Boston miss this list and suddenly becoming defensive rating scholars overnight. Honestly, growth. Stokes earned her spot, but the AB snub is going to be the debate all week.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) ties Aliyah Boston to the Fever, which neither the post nor the replies mention"
+     ]
+    },
+    "2099247457473339402": {
+     "draft": "Resume check: NCAA all-time scoring leader, Rookie of the Year, World Cup gold. The \"overrated\" takes are aging like milk in a gym bag. Congrats, Caitlin 🥇",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) NCAA scoring record and Rookie of the Year are not supported by the post or other replies"
+     ]
+    },
+    "2106419802117976116": {
+     "draft": "10-0 on picks is the most confident thing said on GameDay since you pulled up from the logo with the game on the line. Receipts or it didn't happen 🧾 Mississippi State fans are already checking the tape.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105382766682714299": {
+     "draft": "Three alarms set, cart pre-loaded, wallet told to be brave. Resellers vs. Hawkeye fans vs. Fever fans is the only rivalry where everybody's one 'size sold out' screen away from a group therapy session 😭💜",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) references Hawkeye fans, a connection not supported by the post or other replies"
+     ]
+    },
+    "2110018728314224992": {
+     "draft": "Best part of JuJu being back: we can finally retire a year of \"what if\" discourse and go back to arguing about her actual game. Caitlin made women's college hoops appointment viewing, and JuJu is the one keeping it that way. USC on a Tuesday night is going to be a problem for everybody.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) names Caitlin, not in post or replies",
+      "(1) names USC, not in post or replies"
+     ]
+    },
+    "2109769353935688054": {
+     "draft": "Same story across women's sports: the players carrying the product aren't the ones getting paid for it. The #1 pick in the 2024 WNBA draft earned $76,535 as a rookie, and her endorsements dwarfed her salary. Leagues need to be the payday, not a sponsor's side hustle.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) unsupported claim about the 2024 WNBA #1 pick's $76,535 rookie salary and endorsements"
+     ]
+    },
+    "2110038076114256260": {
+     "draft": "Mandatory meetings at State Farm Arena is the most relatable Finals tradition. A packed building for Games 3 and 4 is good for the whole league. Fever fans will be watching with notes, because we want this in Indy every October 👀🏀",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808408366493714": {
+     "draft": "Top three steals leaders in the league, all on one roster. Opposing point guards aren't scouting the Dream, they're filing a group police report.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109445947881087063": {
+     "draft": "Full roster in one photo, everybody standing, nobody in a walking boot. Fever fans are looking at this like it's a nature documentary.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) claims a full roster though other replies note several players missing",
+      "(1) implies Fever injury woes that neither the post nor the replies mention"
+     ]
+    },
+    "2108954459304763841": {
+     "draft": "Fever fans watching this Finals like we're neutral. We're not. We're scouting. Whoever wins, enjoy the crown, because the league is getting deeper every year and it's great TV. Bring on Game 1.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109672093403279370": {
+     "draft": "Finals week is when the replies turn into a ticket resale market. Fever fans know this move: if a seat is open, someone has already listed it for rent money. Good luck, Bay Area. Bring the noise.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(2) jabs the fan selling tickets as needing rent money",
+      "(1) brings in Fever fans, whom neither the post nor the replies mention"
+     ]
+    },
+    "2108774446844756246": {
+     "draft": "Valkyries are basically a toddler franchise and just sent the defending champs home. Meanwhile my account has 2 followers and also feels underestimated. Respect to GSV, and the Aces will be back.",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108764830970864102": {
+     "draft": "Posting the bucket and hiding the final score is a full-time social media strategy. Admin is doing cardio out here 🪣",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109690563180347728": {
+     "draft": "",
+     "shipped": false,
+     "why": "empty draft",
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "veto_pass": 1.0,
+     "abstained": 1.0
+    },
+    "2108761838855004463": {
+     "draft": "four f's in \"tuffff\" and the social team is still the only one in Vegas putting in overtime effort. respect the grind, admin 🫡",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108740236503097560": {
+     "draft": "Liberty social team posting a thank-you graphic and the replies turning into a coaching job posting. Meanwhile the whole timeline is arguing about Sabrina and Caitlin like it's the offseason already. Basketball Twitter never takes a day off.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108735802100629717": {
+     "draft": "\"Count it\" is the unofficial WNBA Twitter slogan now. Every fanbase gets their turn, and nobody's ever calm when it's theirs. JJ's bucket deserves a better review than this timeline's.",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108714740688224359": {
+     "draft": "Halftime deficit is just the Liberty doing a suspense bit. The whole bracket is watching to see whether JJ answers with a quiet 3 or a full emotional speech to the rim.",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105314897483460855": {
+     "draft": "The fans were the only ones who showed up to every game of that series. Best fans in the W is not up for debate. The postseason, though, is a different sport than the regular season, and this one will sting all winter.",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108624654185185286": {
+     "draft": "Highest rookie MVP finish since Candace Parker is a real accomplishment, and Parker is the bar. Meanwhile this comment section is 90% people arguing about someone who isn't in the post. Congrats to her. Whatever happens in the playoffs, that finish stays on her résumé.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) '90% arguing about someone not in the post' is unsupported; most replies are about her",
+      "(1) 'whatever happens in the playoffs' contradicts replies saying the playoffs already ended in a first-round exit"
+     ]
+    },
+    "2109722126177452264": {
+     "draft": "Executive of the Year is a real flex, congrats to Reeve. Half the replies here are a different story. You can be a die-hard Caitlin fan and still not show up to a front-office award post like it's a hostage video. Win the argument with the Fever's record instead.",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) names the Fever, which neither the post nor the replies mention"
+     ]
+    }
+   },
+   "failures": {}
+  },
+  "action_lineup:cfg-46f3a9fd716b": {
+   "config_ref": "cfg-46f3a9fd716b",
+   "repeat": false,
+   "error": "",
+   "seconds": 304.5,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "I hope you fired Stephanie white,her ego and politics, stood in the way of a championship, please get a good team and coach around Caitlin this off season!!!",
+     "shipped": true,
+     "position": 4,
+     "pick": 1,
+     "pick_gpt": 3,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(2) attacks coach Stephanie White's character ('her ego and politics') rather than the team's play"
+     ]
+    },
+    "2106459938151145977": {
+     "draft": "She's the face of women's basketball..",
+     "shipped": true,
+     "position": 4,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106399407834898501": {
+     "draft": "Most coaches give credit to players for wins and blame themselves for loses. White does the opposite.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110792840989024541": {
+     "draft": "Let's go Angel Reese, another championship 🏆🏆🏆",
+     "shipped": true,
+     "position": 2,
+     "pick": 2,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808211347456506": {
+     "draft": "Gab Williams is crazy good defensively! I'm really glad to see that she made this (team). She's a menace on the defensive end 😂 💜",
+     "shipped": true,
+     "position": 5,
+     "pick": 1,
+     "pick_gpt": 5,
+     "detected": 0.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110824046833348936": {
+     "draft": "Aw we about to be sad 😢",
+     "shipped": true,
+     "position": 4,
+     "pick": 3,
+     "pick_gpt": 2,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808214048502128": {
+     "draft": "JC 🔥🔥🔥",
+     "shipped": true,
+     "position": 3,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2099247457473339402": {
+     "draft": "lmaooo YALL weird at the bottom of these replies..CONGRATULATIONS GIRL",
+     "shipped": true,
+     "position": 1,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106419802117976116": {
+     "draft": "My queen has risen, let my brethren see the glory",
+     "shipped": true,
+     "position": 4,
+     "pick": 3,
+     "pick_gpt": 4,
+     "detected": 0.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105382766682714299": {
+     "draft": "Well done, Caitlin. I hope you smash many more gender stereotypes but that won't change my opinion of you because to me you're just a great basketball player 🏀💙",
+     "shipped": true,
+     "position": 1,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110018728314224992": {
+     "draft": "How do you feel about Juju?",
+     "shipped": true,
+     "position": 5,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109769353935688054": {
+     "draft": "The problem with this take or story is that it doesn't take into account that there's not many viewers watching it. It's tough to feel sorry for people when viewer turnout is so minimal. I don't think they should be paid more because it's \"morally right\"",
+     "shipped": true,
+     "position": 3,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110038076114256260": {
+     "draft": "I'm bout to get to see Angel Reese in person!!!!! Next week I'll be in ATL 4  the Dream game  at State Farm Arena 🦋🙏🏾",
+     "shipped": true,
+     "position": 5,
+     "pick": 4,
+     "pick_gpt": 3,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808408366493714": {
+     "draft": "this team LOCKIN down the paint frfr",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109445947881087063": {
+     "draft": "Ohkayyy Angel 🥵",
+     "shipped": true,
+     "position": 5,
+     "pick": 2,
+     "pick_gpt": 3,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108954459304763841": {
+     "draft": "i'll be watching from home 😋",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109672093403279370": {
+     "draft": "WIN IT ALLLLLL! from LA 🧡",
+     "shipped": true,
+     "position": 4,
+     "pick": 1,
+     "pick_gpt": 1,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108774446844756246": {
+     "draft": "There is no game 4. Series is over",
+     "shipped": true,
+     "position": 2,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108764830970864102": {
+     "draft": "",
+     "shipped": false,
+     "why": "abstained: judge_rejected: veto: 1x split verdict between orders; 1x unsupported claim",
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "veto_pass": 1.0,
+     "abstained": 1.0
+    },
+    "2109690563180347728": {
+     "draft": "Uff you're brave 💚💚",
+     "shipped": true,
+     "position": 1,
+     "pick": 2,
+     "pick_gpt": 2,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108761838855004463": {
+     "draft": "...",
+     "shipped": true,
+     "position": 3,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108740236503097560": {
+     "draft": "",
+     "shipped": false,
+     "why": "abstained: judge_rejected: veto: 1x unsupported claim",
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "veto_pass": 1.0,
+     "abstained": 1.0
+    },
+    "2108735802100629717": {
+     "draft": "Not their year 😤😭",
+     "shipped": true,
+     "position": 5,
+     "pick": 5,
+     "pick_gpt": 5,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108714740688224359": {
+     "draft": "JJ AINT SCARED 🗣🗣🗣",
+     "shipped": true,
+     "position": 2,
+     "pick": 4,
+     "pick_gpt": 3,
+     "detected": 0.0,
+     "detected_gpt": 0.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105314897483460855": {
+     "draft": "I can't imagine having your team swept, coming on to X, and talking shit about a rookie who wasn't the reason for losing. Then again I only watch because I love basketball, not because I wanted to hate on a rookie.",
+     "shipped": true,
+     "position": 4,
+     "pick": 4,
+     "pick_gpt": 4,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108624654185185286": {
+     "draft": "Well it was well deserved 👏",
+     "shipped": true,
+     "position": 3,
+     "pick": 3,
+     "pick_gpt": 3,
+     "detected": 1.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109722126177452264": {
+     "draft": "Congratulations to Cheryl Reeve!!!",
+     "shipped": true,
+     "position": 4,
+     "pick": 2,
+     "pick_gpt": 4,
+     "detected": 0.0,
+     "detected_gpt": 1.0,
+     "abstained": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    }
+   },
+   "failures": {}
+  }
+ }
+}

@@ -9,7 +9,10 @@ The gate, in order:
 3. Benjamini-Hochberg at level q across every comparison in the run, losers included.
 4. For each comparison BH rejects, a one-sided lower confidence bound at level 1 - R*q/m, where R
    is the number of rejections and m the family size. This is the false-coverage-rate adjustment
-   of Benjamini and Yekutieli (2005), which keeps intervals for selected comparisons honest. The
+   of Benjamini and Yekutieli (2005): across the comparisons a run selects, the expected share of
+   bounds that miss the true improvement stays at or below q, provided each bootstrap bound covers at
+   its stated level. A percentile cluster bootstrap with 20 to 30 clusters tends to cover a little
+   less than stated, which is one more reason for step 5. The
    level never drops below 97.5% (alpha at most 0.025): that is the lower end of the paired 95%
    interval the eval worker requires to exclude zero, and with a family of one, R*q/m alone would
    allow a 90% bound.
@@ -134,9 +137,10 @@ def benjamini_hochberg(pvalues: Sequence[float], q: float) -> tuple[list[float],
     running = 1.0
     for rank in range(m, 0, -1):
         i = order[rank - 1]
-        running = min(running, pvalues[i] * m / rank)
-        adjusted[i] = min(1.0, running)
-    return adjusted, [adj <= q for adj in adjusted]
+        running = min(running, pvalues[i] * m / rank)  # starts at max(p) <= 1, so it never exceeds 1
+        adjusted[i] = running
+    # Tolerance for float rounding at exact boundaries: 0.05 * 6 / 3 is 0.10000000000000002.
+    return adjusted, [adj <= q * (1 + 1e-9) for adj in adjusted]
 
 
 def non_inferior(paired: Paired, margin: float, level: float = 0.95) -> bool:

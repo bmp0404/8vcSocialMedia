@@ -1,0 +1,64 @@
+{
+ "schema": "iterate.experiment/v1",
+ "id": "exp-20261016T023744-revert-7ea3e0",
+ "run_id": null,
+ "created_at": "2026-10-16T02:37:44+00:00",
+ "stage": "action",
+ "hypothesis": "Revert exp-20261016-action-7ea3e0.",
+ "proposer": {
+  "kind": "revert",
+  "source": "exp-20261016-action-7ea3e0"
+ },
+ "change": {
+  "summary": "revert exp-20261016-action-7ea3e0",
+  "files": [
+   "harness/minds/__init__.py:PROMPT",
+   "harness/minds/settings.py:ActionConfig.reply_samples (sam/action, 6)"
+  ],
+  "diff": "--- cfg-46f3a9fd716b\n+++ cfg-35c9ee1e8e13\n@@ -17 +17 @@\n- \"action.reply.generation\": \"pipeline\",\n+ \"action.reply.generation\": \"persona_json\",\n@@ -20 +20 @@\n- \"action.samples\": 4,\n+ \"action.samples\": 1,",
+  "params": {
+   "action.reply.generation": {
+    "from": "pipeline",
+    "to": "persona_json"
+   },
+   "action.samples": {
+    "from": 4,
+    "to": 1
+   }
+  }
+ },
+ "champion": {
+  "ref": "cfg-46f3a9fd716b",
+  "label": "champion before the revert",
+  "config_hash": "46f3a9fd716b664b062edfdf2c0e15efe0a30cc1bddbfb69bc1822583df3176a"
+ },
+ "challenger": {
+  "ref": "cfg-35c9ee1e8e13",
+  "label": "champion after the revert",
+  "config_hash": "35c9ee1e8e13324df08c783aa88dd571197ebb131c249e6f2985b06097519d05"
+ },
+ "eval": {
+  "dataset": null,
+  "n": 0,
+  "unit": null,
+  "clusters": 0,
+  "cluster_unit": null,
+  "seed": null,
+  "report": null,
+  "metrics": []
+ },
+ "decision": {
+  "status": "promoted",
+  "by": "auto",
+  "at": "2026-10-16T02:37:44+00:00",
+  "reason": "Confirmation exp-20261016-action-d71d3a didn't promote it again: improvement lower bound +0.444 at 0.975 clears the noise floor 0.000; blocked: not shown non-inferior on veto_pass_rate (95% lower bound -0.556, margin -0.1)"
+ },
+ "cost": {
+  "llm_calls": 0,
+  "usd": null,
+  "seconds": 0.0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "by_arm": {}
+ }
+}

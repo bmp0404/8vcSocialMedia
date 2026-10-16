@@ -1,0 +1,39 @@
+{
+ "run_id": "run-20261016T023719",
+ "started_at": "2026-10-16T02:37:19+00:00",
+ "finished_at": "2026-10-16T02:37:44+00:00",
+ "provider": "anthropic",
+ "champion": "cfg-35c9ee1e8e13",
+ "max_calls": 100,
+ "estimated_calls": 81,
+ "llm_calls": 76,
+ "by_arm": {
+  "action_lineup:champion_repeat": {
+   "llm_calls": 26,
+   "input_tokens": 104,
+   "output_tokens": 6520,
+   "errors": 0
+  },
+  "action_lineup:champion": {
+   "llm_calls": 25,
+   "input_tokens": 100,
+   "output_tokens": 5212,
+   "errors": 0
+  },
+  "action_lineup:cfg-46f3a9fd716b": {
+   "llm_calls": 25,
+   "input_tokens": 100,
+   "output_tokens": 5779,
+   "errors": 0
+  }
+ },
+ "bh": {
+  "q": 0.1,
+  "family_size": 1,
+  "rejected": 1
+ },
+ "experiments": [
+  "exp-20261016-action-d71d3a"
+ ],
+ "note": "instrument v3 retest of exp-20261016-action-7ea3e0: same drafts and detector picks, veto now checks mission fit and content-free drafts"
+}

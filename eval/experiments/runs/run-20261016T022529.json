@@ -1,0 +1,39 @@
+{
+ "run_id": "run-20261016T022529",
+ "started_at": "2026-10-16T02:25:29+00:00",
+ "finished_at": "2026-10-16T02:30:34+00:00",
+ "provider": "anthropic",
+ "champion": "cfg-35c9ee1e8e13",
+ "max_calls": 480,
+ "estimated_calls": 459,
+ "llm_calls": 444,
+ "by_arm": {
+  "action_lineup:champion": {
+   "llm_calls": 102,
+   "input_tokens": 23261,
+   "output_tokens": 29735,
+   "errors": 0
+  },
+  "action_lineup:champion_repeat": {
+   "llm_calls": 105,
+   "input_tokens": 23626,
+   "output_tokens": 29560,
+   "errors": 0
+  },
+  "action_lineup:cfg-46f3a9fd716b": {
+   "llm_calls": 237,
+   "input_tokens": 75930,
+   "output_tokens": 32315,
+   "errors": 0
+  }
+ },
+ "bh": {
+  "q": 0.1,
+  "family_size": 1,
+  "rejected": 1
+ },
+ "experiments": [
+  "exp-20261016-action-7ea3e0"
+ ],
+ "note": "sam/action reply lane (8045583) vs persona JSON; run from a scratch merge of sam/iterate and sam/action at 64f065b"
+}
