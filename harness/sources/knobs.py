@@ -84,6 +84,11 @@ class ObserveKnobs:
     restricted_min_age_min: float = 15.0
     restricted_penalty: float = 0.1
 
+    # --- google_news ---
+    # New Google News links resolved to the publisher's URL per run. Each costs two requests to
+    # news.google.com; resolved links are cached, so later runs only pay for new articles.
+    gnews_resolve_max: int = 25
+
     # --- observation agent ---
     # Planning rounds (the second reads round one's results and may dig deeper), feed calls per
     # round, and items per query or account list the agent may pass to one call.

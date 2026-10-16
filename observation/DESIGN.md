@@ -15,13 +15,15 @@ Every source reads its brand-specific settings from a TOML file, `mission/observ
 | `espn_news` | ESPN site API league and team news | none | `news` | none |
 | `espn_scores` | ESPN scoreboard, plus odds from `summary?event=` for games within 48 h | none | `schedule` | scores, live and final flags, `starts_at_unix` |
 | `espn_injuries` | ESPN league injury report | none | `news` | none |
-| `google_news` | Google News RSS search, sorted by date before the per-query cut | none | `news` | none |
+| `google_news` | Google News RSS search, sorted by date before the per-query cut, links resolved to the publisher | none | `news` | `url_resolved` |
 | `bluesky` | Bluesky public AppView search, top posts of the last 24 h | none | `social` | likes, reposts, replies, quotes |
 | `x_targets` | fresh posts from watched X accounts, plus X search when a key exists | none for timelines | `reply_target` | likes, reposts, replies, quotes, views, followers |
 | `x` | X search for the `[x]` queries | X or xAI key | `post` | as the backend reports |
 | `x_brand` | the brand's own posts and posts that mention it | handle, plus a key for mentions | `own_post`, `mention` | as above |
 | `attention` | the context worker's attention series, as a spike ratio | none | `attention` | `spike_ratio`, `level`, `baseline` |
 | `agent` | whichever of the above an LLM picks for this round, with its own queries | as the feeds need | as the feeds give | as the feeds give |
+
+Google News links are `news.google.com/rss/articles/<id>` redirects, and qualify's critic vetoed captions that used them. Following the redirect doesn't reach the publisher: it 302s to itself and serves a page whose script looks the URL up. `Resolver` in `harness/sources/google_news.py` makes the same two requests the page does (the page, for an id, timestamp and signature, then Google's `batchexecute` endpoint), caches each answer in `out/gnews_urls.json`, and resolves at most 25 new links a run (`gnews_resolve_max`), newest first. That took 29 s for 25 links on 2026-10-15. A link left unresolved keeps the Google URL with `url_resolved: False`, and the resolver stops for the run after its first failure, since Google rate-limits in bursts. The endpoint is undocumented and can change without notice; when it does, links come back unresolved rather than wrong.
 
 All five keyless sources answered live on 2026-10-15: 52 ESPN articles, 1 game with odds, 49 injury entries, 52 Google News items and 66 Bluesky posts in one run.
 
