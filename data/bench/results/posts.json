@@ -1,0 +1,261 @@
+{
+ "pairs": {
+  "dev": 1157,
+  "test": 1016
+ },
+ "authors": {
+  "dev": 43,
+  "test": 37
+ },
+ "format_logistic": {
+  "l2": 0.1,
+  "weights": {
+   "f:quote": -0.3773,
+   "f:gap_known": -0.3019,
+   "f:log_gap": 0.22,
+   "f:all_lowercase": 0.2121,
+   "f:media": 0.1688,
+   "f:log_chars": 0.0927,
+   "f:link": -0.0758
+  },
+  "test": {
+   "estimate": 0.5915,
+   "ci95": [
+    0.5262,
+    0.6541
+   ],
+   "pairs": 1016,
+   "clusters": 37
+  },
+  "single_features_test": {
+   "all_lowercase": {
+    "estimate": 0.4951,
+    "ci95": [
+     0.4707,
+     0.5164
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "link": {
+    "estimate": 0.4916,
+    "ci95": [
+     0.4457,
+     0.5393
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "log_chars": {
+    "estimate": 0.6024,
+    "ci95": [
+     0.5478,
+     0.6613
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "log_gap": {
+    "estimate": 0.5394,
+    "ci95": [
+     0.473,
+     0.6038
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "media": {
+    "estimate": 0.5753,
+    "ci95": [
+     0.5316,
+     0.6172
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "quote": {
+    "estimate": 0.563,
+    "ci95": [
+     0.5316,
+     0.5932
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "time_of_day": {
+    "estimate": 0.5266,
+    "ci95": [
+     0.4827,
+     0.5719
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "media_or_link": {
+    "estimate": 0.5797,
+    "ci95": [
+     0.5438,
+     0.6168
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "constant": {
+    "estimate": 0.5,
+    "ci95": [
+     0.5,
+     0.5
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   }
+  }
+ },
+ "tfidf_ridge": {
+  "vs_length_all": {
+   "length": {
+    "estimate": 0.5805,
+    "ci95": [
+     0.5382,
+     0.6243
+    ],
+    "pairs": 1968,
+    "clusters": 69
+   },
+   "tfidf_minus_length": {
+    "estimate": 0.1186,
+    "ci95": [
+     0.0677,
+     0.1724
+    ],
+    "pairs": 1968,
+    "clusters": 69
+   }
+  },
+  "vs_length_test": {
+   "length": {
+    "estimate": 0.595,
+    "ci95": [
+     0.5314,
+     0.6589
+    ],
+    "pairs": 932,
+    "clusters": 34
+   },
+   "tfidf_minus_length": {
+    "estimate": 0.1164,
+    "ci95": [
+     0.0379,
+     0.1998
+    ],
+    "pairs": 932,
+    "clusters": 34
+   }
+  },
+  "top_word_weights": {
+   "lift": [
+    "typesafeai",
+    "love",
+    "large",
+    "mcp",
+    "now",
+    "write",
+    "cool",
+    "than",
+    "free",
+    "gb",
+    "code",
+    "jev",
+    "is out",
+    "build",
+    "our",
+    "is now",
+    "just",
+    "works",
+    "my",
+    "postgres",
+    "all",
+    "per",
+    "we are",
+    "with",
+    "fast"
+   ],
+   "sink": [
+    "data",
+    "great",
+    "at",
+    "their",
+    "come",
+    "into",
+    "connect",
+    "sonnet",
+    "when",
+    "the",
+    "meta",
+    "week",
+    "join",
+    "right",
+    "2026",
+    "day",
+    "changes",
+    "in sf",
+    "cto",
+    "rsvp",
+    "his",
+    "not",
+    "when you",
+    "talk",
+    "october"
+   ]
+  },
+  "alpha": 10.0,
+  "folds": 5,
+  "posts_fit": 1531,
+  "accounts": 74,
+  "clean_pairs_all": {
+   "estimate": 0.6992,
+   "ci95": [
+    0.6591,
+    0.7377
+   ],
+   "pairs": 1968,
+   "clusters": 69
+  },
+  "clean_pairs_test": {
+   "estimate": 0.7114,
+   "ci95": [
+    0.6498,
+    0.7724
+   ],
+   "pairs": 932,
+   "clusters": 34
+  },
+  "viral_vs_deadweight_clean": {
+   "estimate": 0.5814,
+   "ci95": [
+    0.4951,
+    0.7734
+   ],
+   "pairs": 129,
+   "clusters": 12
+  },
+  "viral_vs_deadweight_with_thread_tails_and_immature": {
+   "estimate": 0.6644,
+   "ci95": [
+    0.5448,
+    0.7711
+   ],
+   "pairs": 4785,
+   "clusters": 38
+  },
+  "length_on_viral_vs_deadweight_clean": {
+   "estimate": 0.5116,
+   "ci95": [
+    0.2958,
+    0.8333
+   ],
+   "pairs": 129,
+   "clusters": 12
+  }
+ }
+}

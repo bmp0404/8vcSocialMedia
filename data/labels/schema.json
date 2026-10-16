@@ -1,0 +1,117 @@
+{
+  "version": 2,
+  "fields": [
+    {
+      "name": "format",
+      "kind": "enum",
+      "values": [
+        "announcement",
+        "tip_or_howto",
+        "opinion_or_take",
+        "question",
+        "joke_or_meme",
+        "praise_or_thanks",
+        "complaint_or_criticism",
+        "promo_or_event",
+        "link_or_share",
+        "other"
+      ],
+      "question": "What is this item mainly doing?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "specificity",
+      "kind": "ordinal",
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "question": "How concrete is it?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "novelty",
+      "kind": "ordinal",
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "question": "Would a typical follower of this account learn something new or see a new angle?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "humor",
+      "kind": "ordinal",
+      "values": [
+        "none",
+        "some",
+        "main_point"
+      ],
+      "question": "How much does it rely on humor?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "reads_as_ai",
+      "kind": "ordinal",
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "question": "How likely is it that a language model wrote this text?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "engagement_guess",
+      "kind": "ordinal",
+      "values": [
+        "below",
+        "typical",
+        "above",
+        "breakout"
+      ],
+      "question": "Compared with this author's usual posts or replies, how much engagement will it get?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    },
+    {
+      "name": "hostility",
+      "kind": "ordinal",
+      "values": [
+        "none",
+        "snark",
+        "insult"
+      ],
+      "question": "Is it hostile toward a person or group?",
+      "applies_to": [
+        "post",
+        "reply"
+      ]
+    }
+  ]
+}
