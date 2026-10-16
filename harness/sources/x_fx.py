@@ -120,8 +120,8 @@ def thread_replies(reader, post_id: str, limit: int) -> list[dict]:
     """
     try:
         replies = reader.conversation(post_id)
-    except RuntimeError as e:
-        raise SourceError(f"fxtwitter conversation for {post_id}: {e}") from e
+    except Exception as e:  # noqa: BLE001 - the reader raises FetchError, but a changed payload shape raises anything
+        raise SourceError(f"fxtwitter conversation for {post_id}: {type(e).__name__}: {e}") from e
     direct = [r for r in replies if r.replying_to_status in (None, post_id) and r.id != post_id]
     direct.sort(key=lambda r: r.likes, reverse=True)
     return [
