@@ -40,7 +40,8 @@ def no_network(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def no_account_settings(monkeypatch):
-    # A developer's .env can name another brand account or framing file, and config.py loads it.
-    # Unit tests read the repo's mission/observe.toml and action/reply_framing.json instead.
-    for name in ("HARNESS_ACCOUNT_HANDLE", "HARNESS_REPLY_FRAMING", "HARNESS_ACCOUNT"):
+    # A developer's .env can pick another profile, brand account or profile file, and config.py loads it.
+    # Unit tests read the repo's wnba profile files instead.
+    for name in ("HARNESS_PROFILE", "HARNESS_ACCOUNT_HANDLE", "HARNESS_OBSERVE_CONFIG", "HARNESS_PANEL",
+                 "HARNESS_REPLY_FRAMING", "HARNESS_ACCOUNT"):
         monkeypatch.delenv(name, raising=False)

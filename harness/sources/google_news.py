@@ -1,4 +1,4 @@
-"""Google News RSS search. Keyless; queries come from `mission/observe.toml`.
+"""Google News RSS search. Keyless; queries come from the profile's `observe.toml`.
 
 Every RSS link is a `news.google.com/rss/articles/<id>` redirect, which qualify's critic vetoes
 as an opaque link in a caption. Following it with GET or HEAD doesn't help: on 2026-10-15 it
@@ -173,7 +173,7 @@ class GoogleNewsSource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         watch = load_watch().google_news
         if not watch.queries:
-            raise SourceError("google_news: no queries in [google_news] of mission/observe.toml")
+            raise SourceError("google_news: no queries in [google_news] of the profile's observe.toml")
         signals: list[Signal] = []
         seen: set[str] = set()
         for query in watch.queries:

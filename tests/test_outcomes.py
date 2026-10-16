@@ -221,7 +221,7 @@ def test_handle_comes_from_brand_x_handle_and_the_env_overrides_it(tmp_path, mon
 
 def test_handle_reports_a_missing_observe_config(tmp_path, monkeypatch):
     monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(tmp_path / "missing.toml"))
-    with pytest.raises(HandleError, match="observe config not found"):
+    with pytest.raises(HandleError, match=r"observe.toml not found at .*missing.toml"):
         resolve_handle()
 
 

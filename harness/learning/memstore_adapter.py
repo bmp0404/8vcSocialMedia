@@ -127,7 +127,7 @@ class MemstoreAdapter:
 def written_by_learning(note) -> bool:
     """True for a note this package wrote, which carries `record`.
 
-    config.lessons() keeps these out of prompt_block(): memory/lessons.md already lists this package's lessons
+    config.lessons() keeps these out of prompt_block(): the profile's lessons file already lists this package's lessons
     with their held-out results, and its procedures and episodes belong to one mind or one narrative.
     """
     return bool((note.meta or {}).get("record"))

@@ -56,7 +56,7 @@ class BlueskySource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         watch = load_watch().bluesky
         if not watch.queries:
-            raise SourceError("bluesky: no queries in [bluesky] of mission/observe.toml")
+            raise SourceError("bluesky: no queries in [bluesky] of the profile's observe.toml")
         since = iso_utc(now_utc() - timedelta(hours=watch.lookback_hours))
         signals: dict[str, Signal] = {}
         for query in watch.queries:

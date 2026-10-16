@@ -3,6 +3,7 @@ import re
 
 import pytest
 
+from harness import config
 from harness.llm import LLM, AnthropicLLM, MockLLM
 from harness.minds import settings, thread, veto, writer
 from harness.minds.settings import ActionConfig, GateLimits
@@ -293,19 +294,26 @@ def test_load_framing_validates_loudly(tmp_path, monkeypatch):
     good = tmp_path / "a.json"
     good.write_text(json.dumps({"_note": "x", "framing_handle": "@me"}), encoding="utf-8")
     assert writer.load_framing(good) == writer.ReplyFraming("me")
+    neutral = tmp_path / "n.json"
+    neutral.write_text(json.dumps({"framing_handle": None}), encoding="utf-8")
+    assert writer.load_framing(neutral) is None
     for bad in ({"framing_handle": ""}, {"framing_handle": "me", "bio": "fan"}, {"handle": "me"}, {}):
         path = tmp_path / "b.json"
         path.write_text(json.dumps(bad), encoding="utf-8")
-        with pytest.raises(ValueError, match="needs exactly one non-empty 'framing_handle'"):
+        with pytest.raises(ValueError, match="needs exactly one 'framing_handle'"):
             writer.load_framing(path)
-    assert writer.load_framing(tmp_path / "missing.json") is None
+    monkeypatch.setenv("HARNESS_REPLY_FRAMING", str(tmp_path / "missing.json"))
+    with pytest.raises(config.ProfileError, match="missing.json"):
+        writer.load_framing()
     monkeypatch.setenv("HARNESS_ACCOUNT", str(good))
     with pytest.raises(ValueError, match="HARNESS_ACCOUNT is now HARNESS_REPLY_FRAMING"):
         writer.load_framing()
 
 
-def test_shipped_framing_file_loads():
-    assert writer.load_framing(writer.FRAMING_PATH) == writer.ReplyFraming("clarkfanaccount")
+def test_shipped_framing_files_load():
+    assert writer.load_framing() == writer.ReplyFraming("clarkfanaccount")
+    with config.use_profile("devtools"):
+        assert writer.load_framing() is None  # no framing measured for devtools: neutral handles
 
 
 def test_rival_thread_mode_is_validated():

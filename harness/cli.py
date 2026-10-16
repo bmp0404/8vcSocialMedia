@@ -82,7 +82,7 @@ def main() -> None:
     p.add_argument("file")
     p.set_defaults(func=record)
 
-    p = sub.add_parser("learn", help="turn reviews, edits and outcomes into tested lessons; rewrite memory/lessons.md")
+    p = sub.add_parser("learn", help="turn reviews, edits and outcomes into tested lessons; rewrite the profile's lessons file")
     p.add_argument("--provider")
     p.set_defaults(func=lambda a: learn(get_llm(a.provider)))
 

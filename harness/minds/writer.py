@@ -41,8 +41,6 @@ MISSION:
 {mission}"""
 
 
-FRAMING_PATH = config.ROOT / "action" / "reply_framing.json"
-
 BANTER_ANGLE = ("This post is about a rival of the account. Reply from the account's side with banter at the rival's "
                 "take or team: a jab, never cheering them, never insulting a person.")
 
@@ -53,10 +51,10 @@ class WriterUnavailable(RuntimeError):
 
 @dataclass(frozen=True)
 class ReplyFraming:
-    """The handle continuation replies are written under on the saved page (action/reply_framing.json).
+    """The handle continuation replies are written under on the saved page (the profile's reply_framing.json).
 
-    It sets the side a draft takes, not which account is read or measured: that is [brand] x_handle in
-    mission/observe.toml (harness/sources/watch.py account_handle). framing_probe.py measured the effect:
+    It sets the side a draft takes, not which account is read or measured: that is [brand] x_handle in the
+    profile's observe.toml (harness/sources/watch.py account_handle). framing_probe.py measured the effect:
     replying under a fan-sounding handle passed the veto 4 times in 16 drafts, neutral handles 2.
     """
 
@@ -64,19 +62,18 @@ class ReplyFraming:
 
 
 def load_framing(path: Path | None = None) -> ReplyFraming | None:
-    """The framing file at HARNESS_REPLY_FRAMING or action/reply_framing.json, or None when there is none."""
+    """The profile's reply_framing.json (config.profile_file), or `path`. A null framing_handle gives None,
+    which means neutral handles."""
     if os.getenv("HARNESS_ACCOUNT"):
-        raise ValueError("HARNESS_ACCOUNT is now HARNESS_REPLY_FRAMING (action/account.json is "
-                         "action/reply_framing.json); rename the variable")
-    path = path or Path(os.getenv("HARNESS_REPLY_FRAMING") or FRAMING_PATH)
-    if not path.exists():
-        return None
+        raise ValueError("HARNESS_ACCOUNT is now HARNESS_REPLY_FRAMING (action/account.json is the profile's "
+                         "reply_framing.json); rename the variable")
+    path = path or config.profile_file("reply_framing.json")
     raw = {k: v for k, v in json.loads(path.read_text(encoding="utf-8")).items() if not k.startswith("_")}
     handle = raw.get("framing_handle")
-    if set(raw) != {"framing_handle"} or not isinstance(handle, str) or not handle.strip("@ "):
-        raise ValueError(f"{path}: needs exactly one non-empty 'framing_handle' string (keys starting with _ are "
-                         f"notes); got keys {sorted(raw)}")
-    return ReplyFraming(handle.strip().lstrip("@"))
+    if set(raw) != {"framing_handle"} or not (handle is None or isinstance(handle, str) and handle.strip("@ ")):
+        raise ValueError(f"{path}: needs exactly one 'framing_handle', a non-empty string or null (keys starting "
+                         f"with _ are notes); got keys {sorted(raw)}")
+    return ReplyFraming(handle.strip().lstrip("@")) if handle else None
 
 
 def build_page(author: str, post_text: str, replies: list[str]) -> str:

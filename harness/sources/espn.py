@@ -1,6 +1,6 @@
 """ESPN's public site API: league and team news, the scoreboard with odds, and injuries.
 
-The endpoints need no key. Leagues and team ids come from `mission/observe.toml`.
+The endpoints need no key. Leagues and team ids come from the profile's `observe.toml`.
 """
 
 from datetime import timedelta
@@ -121,7 +121,7 @@ class EspnNewsSource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         watch = load_watch().espn
         if not watch.leagues:
-            raise SourceError("espn_news: no leagues in [espn] of mission/observe.toml")
+            raise SourceError("espn_news: no leagues in [espn] of the profile's observe.toml")
         signals: list[Signal] = []
         seen: set[str] = set()
         for league in watch.leagues:
@@ -146,7 +146,7 @@ class EspnScoresSource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         watch = load_watch().espn
         if not watch.scoreboard_leagues:
-            raise SourceError("espn_scores: no scoreboard_leagues in [espn] of mission/observe.toml")
+            raise SourceError("espn_scores: no scoreboard_leagues in [espn] of the profile's observe.toml")
         now = now_utc()
         signals: list[Signal] = []
         for league in watch.scoreboard_leagues:
@@ -171,7 +171,7 @@ class EspnInjuriesSource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         watch = load_watch().espn
         if not watch.scoreboard_leagues:
-            raise SourceError("espn_injuries: no scoreboard_leagues in [espn] of mission/observe.toml")
+            raise SourceError("espn_injuries: no scoreboard_leagues in [espn] of the profile's observe.toml")
         signals: list[Signal] = []
         for league in watch.scoreboard_leagues:
             signals.extend(injury_signals(get_json(f"{BASE}/{league}/injuries", source=self.name), league))

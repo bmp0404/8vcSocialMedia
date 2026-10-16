@@ -9,7 +9,8 @@ import pytest
 from harness.sources.common import SourceError, iso_utc, parse_time
 from harness.sources.espn import game_signals, news_signals
 from harness.sources.google_news import rss_signals
-from harness.sources.watch import DEFAULT_PATH, account_handle, load_watch, parse_watch
+from harness import config
+from harness.sources.watch import account_handle, load_watch, parse_watch
 
 FIXTURES = Path(__file__).resolve().parent.parent / "observation" / "fixtures"
 
@@ -101,7 +102,7 @@ def test_google_news_raises_on_bad_xml():
 
 
 def test_repo_observe_config_loads():
-    watch = load_watch(DEFAULT_PATH)
+    watch = load_watch(config.profile_file("observe.toml", "wnba"))
     assert "basketball/wnba" in watch.espn.leagues
     assert watch.google_news.queries and watch.x.queries and watch.reply_targets.accounts
 
@@ -110,9 +111,8 @@ def test_parse_watch_strips_at_sign_from_handle():
     assert parse_watch({"brand": {"x_handle": "@ccfan"}}).brand_handle == "ccfan"
 
 
-def test_repo_names_sams_test_account(monkeypatch):
-    monkeypatch.delenv("HARNESS_OBSERVE_CONFIG", raising=False)
-    assert account_handle() == ("_sgu_", f"{DEFAULT_PATH} [brand] x_handle")
+def test_repo_names_sams_test_account():
+    assert account_handle() == ("_sgu_", f"{config.profile_file('observe.toml', 'wnba')} [brand] x_handle")
 
 
 def test_account_handle_env_overrides_brand_x_handle(tmp_path, monkeypatch):
@@ -206,7 +206,7 @@ def test_attention_without_data_is_none():
 
 
 def test_devtools_profile_loads_and_differs():
-    devtools = load_watch(DEFAULT_PATH.with_name("observe.devtools.toml"))
+    devtools = load_watch(config.profile_file("observe.toml", "devtools"))
     assert devtools.espn.leagues == [] and "coderabbitai" in devtools.reply_targets.accounts
 
 

@@ -151,7 +151,7 @@ def add_commands(sub) -> None:
     p.set_defaults(func=_ingest_dataset)
 
     p = sub.add_parser("ingest-brand", help="fetch the brand's own pages or files, question them, store verified facts")
-    p.add_argument("sources", nargs="+", help="URLs or local files, e.g. https://resend.com mission/mission.md")
+    p.add_argument("sources", nargs="+", help="URLs or local files, e.g. https://resend.com mission/profiles/wnba/mission.md")
     p.add_argument("--name", required=True, help="the brand or account name")
     p.add_argument("--max-pages", type=int, default=6)
     p.add_argument("--provider")

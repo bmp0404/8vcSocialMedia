@@ -7,7 +7,7 @@ This package answers two questions about every action we approve. Did 8VC's bot 
 - `harness/memory.py:15` defines `outcomes (action_id PRIMARY KEY, recorded_at, metrics)`, so it holds one row per action. `record_outcomes` (`:49`) writes with `INSERT OR REPLACE`. `scored_history` (`:127`) joins it to `actions`, and `learn` (`harness/learn.py:22`) reads that join. The table had 0 rows after the 2026-10-15 demo.
 - The only writer is `harness record <file>` (`harness/cli.py:51`), which stores a JSON list someone builds by hand.
 - `export_approved` (`harness/review/__init__.py:17`) writes `out/approved-run<id>.json`. Each action carries its `id`, `type`, `text`, `target_url` and `approved_at`, plus `original_text` when a reviewer edited it (`memory.approved_actions`, `harness/memory.py:113`).
-- `mission/observe.toml` `[brand] x_handle` names the account `sync` reads: `_sgu_`, Sam's alt for testing. `HARNESS_ACCOUNT_HANDLE` overrides it (`harness/sources/watch.py` `account_handle`). `action/reply_framing.json` holds a different handle, the one reply drafts are written under, and `sync` never reads it.
+- `[brand] x_handle` in the profile's `observe.toml` (`mission/profiles/<name>/`) names the account `sync` reads: `_sgu_`, Sam's alt for testing. `HARNESS_ACCOUNT_HANDLE` overrides it (`harness/sources/watch.py` `account_handle`). The profile's `reply_framing.json` holds a different handle, the one reply drafts are written under, and `sync` never reads it.
 
 ## What other branches expect
 

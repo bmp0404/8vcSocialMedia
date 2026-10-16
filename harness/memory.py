@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS review_events (
 -- [brand] x_handle or HARNESS_ACCOUNT_HANDLE say at export time. A new table, not a runs column,
 -- because CREATE TABLE IF NOT EXISTS never adds a column to an existing data/harness.db.
 CREATE TABLE IF NOT EXISTS run_accounts (run_id INTEGER PRIMARY KEY, account TEXT);
+-- The mission profile a run was made for (config.profile_name), so learn reads one brand's runs only.
+CREATE TABLE IF NOT EXISTS run_profiles (run_id INTEGER PRIMARY KEY, profile TEXT);
 """
 
 REVIEW_STATUSES = {"approved", "killed", "pending"}
@@ -55,7 +57,19 @@ def save_run(actions: list[Action], account: str | None = None) -> int:
         )
         if account:
             conn.execute("INSERT INTO run_accounts VALUES (?, ?)", (run_id, account))
+        conn.execute("INSERT INTO run_profiles VALUES (?, ?)", (run_id, config.profile_name()))
     return run_id
+
+
+def profile_run_ids(profile: str) -> set[int]:
+    """Runs made for `profile`. Runs saved before profiles existed have no row; every one of them used the
+    Caitlin Clark mission, so they count as the default profile's."""
+    with connect() as conn:
+        tagged = conn.execute("SELECT run_id FROM run_profiles WHERE profile = ?", (profile,)).fetchall()
+        untagged = conn.execute(
+            "SELECT id FROM runs WHERE id NOT IN (SELECT run_id FROM run_profiles)").fetchall() \
+            if profile == config.DEFAULT_PROFILE else []
+    return {r[0] for r in tagged} | {r[0] for r in untagged}
 
 
 def run_account(run_id: int) -> str | None:

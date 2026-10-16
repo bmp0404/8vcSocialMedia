@@ -1,8 +1,8 @@
 """Qualify: a simulated audience panel scores drafts; a brand-safety critic can veto them.
 
-The panelists are brand-specific, so they live in a JSON file next to the mission, not in this module:
-mission/panel.json by default, or the path in HARNESS_PANEL. The backtest points the same code at
-eval/panels/devtools.json to score the data team's dev-tool posts.
+The panelists are brand-specific, so they live in the mission profile's panel.json, not in this module
+(config.profile_file; HARNESS_PANEL points it elsewhere). The backtest passes eval/panels/devtools.json
+to score the data team's dev-tool posts.
 """
 
 import json
@@ -14,7 +14,6 @@ from harness import config
 from harness.llm import LLM
 from harness.models import Action
 
-PANEL_PATH = Path(os.getenv("HARNESS_PANEL") or config.ROOT / "mission" / "panel.json")
 # A separate model for the panel. On the dev-tool backtest (eval/DESIGN.md) gpt-6.1-sol separated a
 # brand's viral posts from its flops at AUC 0.854 against claude-sonnet-5-5's 0.797 (difference inside
 # the interval), and a judge from another family avoids rating its own drafts. Unset keeps the run's LLM.
@@ -45,9 +44,9 @@ Return JSON: {{"verdicts": {{"<draft id>": {{"veto": false, "critique": "..."}}}
 
 def load_panel(path: Path | None = None) -> dict[str, str]:
     """Read {panelist name: who they are and what makes them engage} from a JSON file."""
-    path = path or PANEL_PATH
+    path = path or config.profile_file("panel.json")
     if not path.exists():
-        raise FileNotFoundError(f"no audience panel at {path}; add one next to the mission or set HARNESS_PANEL")
+        raise FileNotFoundError(f"no audience panel at {path}")
     panel = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(panel, dict) or not panel or not all(
         isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in panel.items()

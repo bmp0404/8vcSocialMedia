@@ -14,7 +14,7 @@ The command prints the output directory. Mock mode uses sample observations and 
 For real drafts with the reference judge, first complete the [judge setup](../eval/README.md), then run:
 
 ```sh
-uv run python -m engine --provider anthropic --sources sample --mission mission/mission.md --eval reference --narratives 2 --per-mind 1 --rounds 1
+uv run python -m engine --provider anthropic --sources sample --mission mission/profiles/wnba/mission.md --eval reference --narratives 2 --per-mind 1 --rounds 1
 ```
 
 The draft provider and judge provider are separate. `HARNESS_JUDGE_PROVIDER=claude_code` uses the authenticated local Claude Code client through BAML. Select a mission file that describes your account. The repository's default mission may describe a different audience.

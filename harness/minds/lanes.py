@@ -27,8 +27,6 @@ from harness.minds.schema import POST_LANE, REPLY_LANE, ActionSchemaError, Offer
 from harness.minds.settings import ActionConfig, GateLimits
 from harness.models import Action, Narrative
 
-TAKES_PATH = config.ROOT / "action" / "takes.json"
-
 PLAN_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. For each candidate post, decide whether the account should reply. Reply only where a person who follows these subjects would plausibly jump in. Abstain where any reply risks reading as cruel, opportunistic or off-mission (injury news needs care), with reason off_mission or mute_risk. In "intent", say in a few words what a good reply would do. You don't write the reply.
 
 MISSION:
@@ -329,8 +327,8 @@ def offered(narratives: list[Narrative]) -> tuple[frozenset[str], frozenset[str]
 
 
 def load_takes(path: Path | None = None) -> list[dict]:
-    """A person's own takes: action/takes.json, a list of {"text", "quote_url"?}. Never rewritten."""
-    path = path or TAKES_PATH
+    """A person's own takes: the profile's takes.json, a list of {"text", "quote_url"?}. Never rewritten."""
+    path = path or config.profile_dir() / "takes.json"
     if not path.exists():
         return []
     takes = json.loads(path.read_text(encoding="utf-8"))
@@ -476,7 +474,8 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
         decisions.append(Decision(
             POST_LANE, top.id, "ask_human",
             question=(f"{top.title}. Got a take, a clip or a detail only a real fan would know? Add it to "
-                      "action/takes.json; the harness picks the timing and posts your words as written."),
+                      f"mission/profiles/{config.profile_name()}/takes.json; the harness picks the timing and "
+                      "posts your words as written."),
             candidates=angles[:3],
         ))
     return actions, decisions

@@ -33,7 +33,7 @@ memory/
   format/        # JSON log format (raw input for ingest, not memory itself)
 ```
 
-The live store is gitignored so that five branches don't fight over generated files, and so that mock runs never pollute it. Set `MEMSTORE_PATH` to use a different folder. To share good state, promote it into `memory/seed/` and commit that. For a demo, run the whole loop on one machine.
+The live store is gitignored so that five branches don't fight over generated files, and so that mock runs never pollute it. Each mission profile has its own store, `memory/store/<profile>/`, seeded from `memory/seed/<profile>/`; the current seed is dev-tools, so it lives in `memory/seed/devtools/`. Set `MEMSTORE_PATH` to use a different folder. To share good state, promote it into the profile's seed folder and commit that. For a demo, run the whole loop on one machine.
 
 The SQLite database (`data/harness.db`) and the JSON logs in `memory/format/` are the raw record of every run. The markdown store is the distilled version that the harness actually reads.
 
@@ -82,7 +82,7 @@ All of this lives in `harness/memstore/`.
 
 Each note loads as a `Note(id, type, title, aliases, created, updated, body, meta, path)`, where `meta` holds every optional key.
 
-The minds get memory through `config.lessons()`, which returns `memory/lessons.md` plus `prompt_block()`. That keeps `decide()` unchanged.
+The minds get memory through `config.lessons()`, which returns the profile's `memory/lessons/<profile>.md` plus `prompt_block()`. That keeps `decide()` unchanged.
 
 Raw scraped text is never stored. Notes about narratives hold a title, a summary the harness wrote, and URLs.
 

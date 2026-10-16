@@ -24,7 +24,6 @@ DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 MAX_BODY = 8000
 LOCK_TIMEOUT = 5.0
 LOCK_RETRY = 0.1
-SEED_DIR = config.ROOT / "memory" / "seed"
 
 _seeded: set[Path] = set()
 
@@ -59,16 +58,18 @@ def _is_empty(root: Path) -> bool:
 
 
 def _seed(root: Path) -> None:
-    """Copy memory/seed/ into an empty store: copy to <store>.tmp, then os.replace into place."""
+    """Copy the profile's memory/seed/<profile>/ into an empty store: copy to <store>.tmp, then os.replace
+    into place. A profile without a seed directory starts empty."""
+    seed_dir = config.memory_seed_dir()
     root.mkdir(parents=True, exist_ok=True)
-    if not _is_empty(root) or not SEED_DIR.is_dir():
+    if not _is_empty(root) or not seed_dir.is_dir():
         return
     with _lock(root):
         if not _is_empty(root):  # another process seeded while we waited
             return
         tmp = root.with_name(root.name + ".tmp")
         shutil.rmtree(tmp, ignore_errors=True)
-        shutil.copytree(SEED_DIR, tmp)
+        shutil.copytree(seed_dir, tmp)
         # The store dir already holds .lock, so move the copied entries in one by one.
         for entry in tmp.iterdir():
             os.replace(entry, root / entry.name)

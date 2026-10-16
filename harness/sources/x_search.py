@@ -17,14 +17,14 @@ BRAND_LOOKBACK = timedelta(days=7)
 
 
 class XSearchSource(Source):
-    """Recent posts matching the [x] queries in mission/observe.toml."""
+    """Recent posts matching the [x] queries in the profile's observe.toml."""
 
     name = "x"
 
     def fetch(self, mission: str) -> list[Signal]:
         watch = load_watch().x
         if not watch.queries:
-            raise SourceError("x: no queries in [x] of mission/observe.toml")
+            raise SourceError("x: no queries in [x] of the profile's observe.toml")
         backend = get_backend("search")
         since = now_utc() - timedelta(hours=watch.lookback_hours)
         signals: dict[str, Signal] = {}
@@ -46,7 +46,7 @@ class BrandActivitySource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         handle = load_watch().brand_handle
         if not handle:
-            raise SourceError("x_brand: [brand] x_handle is empty in mission/observe.toml; set the account's handle")
+            raise SourceError("x_brand: [brand] x_handle is empty in the profile's observe.toml; set the account's handle")
         since = now_utc() - BRAND_LOOKBACK
         signals = [post_to_signal(p, self.name, "own_post") for p in get_backend("user_posts").user_posts(handle, since, 20)]
         try:

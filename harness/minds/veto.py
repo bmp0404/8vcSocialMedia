@@ -5,7 +5,7 @@ Why: on real top replies, judge scores tracked actual likes at Spearman 0.15 (Op
 continuation drafts more detectable, AUC 0.44 to 0.70 (8vc-context/research/action.md, finding 3). What a judge can do is
 catch what's wrong with a draft, so it answers four questions per draft: does it read as AI,
 does it state something the context doesn't support, does it work against the account's side or
-voice in mission/mission.md (sincerely cheering a rival, saying nothing), and could it get the
+voice in the profile's mission.md (sincerely cheering a rival, saying nothing), and could it get the
 account muted or reported (insults at a person, which X's FosnrAbuseInsults filter also demotes).
 Iterate's 27-thread run shipped "Let's go Angel Reese, another championship 🏆" and "talking shit
 about a rookie" before the mission check existed.

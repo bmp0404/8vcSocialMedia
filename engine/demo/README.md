@@ -50,7 +50,7 @@ The tests cover public submission and worker authentication, queue leases, faile
 The root URL opens the dashboard. The original post evaluator is at `/eval`.
 
 - **Overview** runs one actual engine round with the mock provider, then displays stage timings, narratives, and draft actions. Mock scores and drafts are labeled.
-- **Ingestion** runs the existing sample or Google News source adapter through a separate local bridge. Google News uses the checkout's `mission/observe.toml` queries. JSON imports accept up to 100 signal objects, validate their fields, and deduplicate normalized text. No feed result is fabricated when a source fails.
+- **Ingestion** runs the existing sample or Google News source adapter through a separate local bridge. Google News uses the active profile's `observe.toml` queries (`mission/profiles/<name>/`). JSON imports accept up to 100 signal objects, validate their fields, and deduplicate normalized text. No feed result is fabricated when a source fails.
 - **Memory** saves human procedures and observations, plus an episode for each completed mock round. Notes feed the next round's memory input. This is demo state, separate from `harness/memstore` and the production lessons file. Human notes stay unverified and mock scores do not become learned outcomes.
 - **Post validation** checks required fields, plain character count, `[VERIFY]` markers, missing parent context, and quantified claims requiring review. These checks do not establish factual accuracy or grant posting approval. The same view can send the draft to the existing Claude judge.
 

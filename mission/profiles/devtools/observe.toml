@@ -1,11 +1,11 @@
-# Observe settings for a dev-tool brand. Switch with HARNESS_OBSERVE_CONFIG=mission/observe.devtools.toml.
-# Nobody has decided which dev-tool account the harness speaks for; brand.x_handle stays empty
-# until someone does. Watched accounts come from data/devtools_virality_30d.csv: the ten with the
-# most total engagement over 2026-09-15 to 2026-10-16, plus the review-bot companies the team named.
+# Observe settings for the devtools profile (HARNESS_PROFILE=devtools). Watched accounts come from
+# data/devtools_virality_30d.csv: the ten with the most total engagement over 2026-09-15 to
+# 2026-10-16, plus the review-bot companies the team named.
 # Enable with HARNESS_SOURCES=google_news,bluesky,x_targets,attention (ESPN has nothing for this brand).
 
 [brand]
-x_handle = ""
+# Sam's alt, as in the wnba profile, until he picks the space it acts in. The harness never posts.
+x_handle = "_sgu_"
 
 [google_news]
 queries = ['"AI code review"', '"coding agent"', '"developer tools" launch', "Greptile OR CodeRabbit"]

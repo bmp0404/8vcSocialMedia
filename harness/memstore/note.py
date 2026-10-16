@@ -155,15 +155,16 @@ _mock_root: Path | None = None
 
 
 def store_root() -> Path:
-    """Where the live store lives. Seeding and locking are store.py's job."""
+    """Where the active mission profile's store lives: MEMSTORE_PATH when set, a temp store under mock,
+    else memory/store/<profile>/. Seeding and locking are store.py's job."""
     global _mock_root
     if os.getenv("MEMSTORE_PATH"):
         return Path(os.environ["MEMSTORE_PATH"])
     if config.PROVIDER == "mock":
         if _mock_root is None:
             _mock_root = Path(tempfile.mkdtemp(prefix="memstore-"))
-        return _mock_root
-    return config.ROOT / "memory" / "store"
+        return _mock_root / config.profile_name()
+    return config.memory_store_dir()
 
 
 def selftest_note() -> None:

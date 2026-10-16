@@ -4,7 +4,7 @@ The defaults are the values in use on 2026-10-15. None is calibrated against out
 judgment or comes from X's ranking code, as the field comments say. sam/iterate tunes them
 offline. To try other values, point HARNESS_OBSERVE_KNOBS at a JSON object of overrides; an
 unknown key raises so a typo can't silently do nothing. Brand-level settings (queries, accounts,
-the reply-target age window and count) live in mission/observe.toml instead.
+the reply-target age window and count) live in the profile's observe.toml instead.
 """
 
 import json

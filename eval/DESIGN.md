@@ -117,7 +117,7 @@ Boost flags and eligibility come from the context worker's `data/context/devtool
 
 ## The audience panel is brand-agnostic now
 
-`PANEL` used to hardcode Iowa and Clark fans in `harness/qualify.py`. Panelists now live in a JSON file next to the mission: `mission/panel.json` for the live brand, or the path in `HARNESS_PANEL`. The backtest points the same code at `eval/panels/devtools.json`. The critic prompt now reads "the account described in MISSION" instead of "a fan account".
+`PANEL` used to hardcode Iowa and Clark fans in `harness/qualify.py`. Panelists now live in a JSON file next to the mission: the profile's `panel.json` (`mission/profiles/<name>/`), or the path in `HARNESS_PANEL`. The backtest points the same code at `eval/panels/devtools.json`. The critic prompt now reads "the account described in MISSION" instead of "a fan account".
 
 The file shape is `{panelist name: description}`, the same as Aarav's `eval/panel.json`, so his file loads with `--panel`. The paths differ. I put the brand's panel under `mission/` because CLAUDE.md asks for brand text there. Whoever merges both branches has to pick one path.
 

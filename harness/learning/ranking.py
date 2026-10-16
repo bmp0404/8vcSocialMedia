@@ -252,7 +252,7 @@ def round_memory(store, narratives, s: RecallSettings, today: date | None = None
 
 
 def render_lessons(store, today: date, s: RecallSettings, limit: int = 15) -> str:
-    """memory/lessons.md: what the minds read.
+    """The profile's lessons file (config.lessons_path): what the minds read.
 
     Lessons that passed a within-account test come first, filtered by `trust` like any round. When there are
     none, the file says so. Lessons that passed only on the Category label follow, from any domain, marked

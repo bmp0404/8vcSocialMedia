@@ -1,7 +1,8 @@
-"""Learn: turn review verdicts, edits and recorded outcomes into tested lessons, then rewrite memory/lessons.md.
+"""Learn: turn review verdicts, edits and recorded outcomes into tested lessons, then rewrite the profile's lessons
+file, memory/lessons/<profile>.md.
 
 Edits become procedure notes, one per mind. Approved and killed drafts become labeled episodes, and the
-reflection job contrasts them within each narrative. memory/lessons.md lists the lessons that passed a held-out
+reflection job contrasts them within each narrative. The lessons file lists the lessons that passed a held-out
 test, so the minds keep reading the same file they read today.
 """
 
@@ -23,8 +24,10 @@ REVIEW_DEFINITION = (
 
 def learn(llm: LLM, store=None) -> str | None:
     store = store or get_store()
-    rows = memory.run_log()
-    summaries = reviews.summarize(memory.review_history())
+    # One brand's runs only: another profile's reviews would teach this profile's minds the wrong account.
+    runs = memory.profile_run_ids(config.profile_name())
+    rows = [r for r in memory.run_log() if r["run_id"] in runs]
+    summaries = reviews.summarize([h for h in memory.review_history() if h["run_id"] in runs])
     procedures = reviews.procedures(summaries, rows)
     for procedure in procedures:
         save(store, procedure)
@@ -46,8 +49,9 @@ def learn(llm: LLM, store=None) -> str | None:
     reflect(episodes, llm, store, definition=REVIEW_DEFINITION, domain=HOME, settings=settings.reflect,
             key=reviews.by_narrative)
     text = render_lessons(store, today_utc(), settings.recall)
-    config.LESSONS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    config.LESSONS_PATH.write_text(text, encoding="utf-8")
+    path = config.lessons_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
     flush(store)
-    print(f"[learn] wrote {config.LESSONS_PATH}")
+    print(f"[learn] wrote {path}")
     return text

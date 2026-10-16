@@ -37,7 +37,8 @@ continuous orchestration in `engine/` remains to be implemented.
 
 ### Run one round, then close the loop
 
-1. Set the account's mission in `mission/mission.md` and read existing lessons in `memory/lessons.md`.
+1. Pick a mission profile with `HARNESS_PROFILE` (`wnba` by default; see `mission/profiles/`), edit its
+   `mission.md`, and read its lessons in `memory/lessons/<profile>.md`.
 2. Run `python -m harness run --provider mock --sources sample` to observe sample signals,
    generate candidates, score them, and save the run and ranked recommendations.
 3. Run `python -m harness review` to approve, edit, or kill candidates. Approved actions are
@@ -67,7 +68,7 @@ python -m harness run                    # real run with the provider in .env
 | --- | --- |
 | `run` | Observe, orient, decide, and qualify, then write ranked recommendations to `out/` |
 | `record <file>` | Store real metrics: `[{"action_id": "...", "metrics": {"likes": 3}}]` |
-| `learn` | Rewrite `memory/lessons.md` from predicted vs. actual; the minds read it next run |
+| `learn` | Rewrite `memory/lessons/<profile>.md` from reviews and outcomes; the minds read it next run |
 | `review` | Open the approve/edit/kill dashboard at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
 
 ### Review dashboard
@@ -96,13 +97,13 @@ data/         # Source documents, datasets, and supporting assets
 
 | Path | Stage |
 | --- | --- |
-| `mission/mission.md` | The account's mission file (placeholder until 8VC's arrives) |
+| `mission/profiles/<name>/` | One brand: `mission.md`, `observe.toml`, `panel.json`, `reply_framing.json`; `HARNESS_PROFILE` picks it |
 | `harness/sources/` | **Observe.** One plugin per data source; register it in `sources/__init__.py` |
 | `harness/orient.py` | **Orient.** Clusters signals into narratives scored on relevance × velocity |
 | `harness/minds/prompts/*.md` | **Decide.** One persona per file; add a file to add a mind |
 | `harness/qualify.py` | **Qualify.** Simulated audience panel scores drafts; a critic vetoes |
 | `harness/memory.py` | SQLite log of runs, recommendations, and outcomes (`data/harness.db`) |
-| `harness/learn.py` | **Learn.** Writes `memory/lessons.md` |
+| `harness/learn.py` | **Learn.** Writes `memory/lessons/<profile>.md` |
 | `harness/review/` | **Human checkpoint.** Stdlib HTTP server + single-page dashboard |
 | `harness/llm.py` | Provider switch: `anthropic`, `xai`, `openai` (any OpenAI-compatible gateway), `mock` |
 
@@ -110,7 +111,7 @@ data/         # Source documents, datasets, and supporting assets
 
 - [ ] `sources/x_search.py`: wire up live X data (Grok live search, X API, or Playwright)
 - [ ] `sources/reddit.py`: needs Reddit OAuth (unauthenticated requests return 403)
-- [ ] Replace `mission/mission.md` with 8VC's mission file
+- [ ] Replace `mission/profiles/wnba/mission.md` with 8VC's mission file
 - [ ] Hand-off format/transport to 8VC's Grok bot
 - [x] Human approve/kill checkpoint (`python -m harness review`)
 - [ ] Feed review verdicts and notes into `learn`

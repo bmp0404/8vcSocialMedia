@@ -55,7 +55,7 @@ class AttentionSource(Source):
     def fetch(self, mission: str) -> list[Signal]:
         cfg = load_watch().attention
         if not cfg.terms:
-            raise SourceError("attention: no terms in [attention] of mission/observe.toml")
+            raise SourceError("attention: no terms in [attention] of the profile's observe.toml")
         try:
             from harness.context.collectors import attention
         except ImportError as e:

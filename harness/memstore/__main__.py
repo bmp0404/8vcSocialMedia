@@ -11,15 +11,15 @@ from pathlib import Path
 from harness import config
 from harness.memstore.note import TYPES
 
-SEED_DIR = config.ROOT / "memory" / "seed"
 MODULES = ("note", "store", "search", "prompt", "episodes")
 
 
 def selftest(args) -> None:
     # Every selftest runs against a seeded temp store, never memory/store/.
     root = Path(tempfile.mkdtemp(prefix="memstore-selftest-")) / "store"
-    if SEED_DIR.is_dir():
-        shutil.copytree(SEED_DIR, root)
+    seed_dir = config.memory_seed_dir()
+    if seed_dir.is_dir():
+        shutil.copytree(seed_dir, root)
     else:
         root.mkdir()
     for name in MODULES:
@@ -66,17 +66,18 @@ def round_end(args) -> None:
 
 def snapshot(args) -> None:
     # The live store, never the mock temp store: snapshotting a throwaway store would be a mistake.
-    src = Path(os.environ["MEMSTORE_PATH"]) if os.getenv("MEMSTORE_PATH") else config.ROOT / "memory" / "store"
+    src = Path(os.environ["MEMSTORE_PATH"]) if os.getenv("MEMSTORE_PATH") else config.memory_store_dir()
+    seed_dir = config.memory_seed_dir()
     if not src.is_dir():
         raise SystemExit(f"no store at {src}")
     n = 0
     for folder in TYPES.values():
         for path in sorted((src / folder).glob("*.md")):
-            dest = SEED_DIR / folder / path.name
+            dest = seed_dir / folder / path.name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, dest)
             n += 1
-    print(f"[snapshot] copied {n} notes from {src} to {SEED_DIR}; review and commit memory/seed/")
+    print(f"[snapshot] copied {n} notes from {src} to {seed_dir}; review and commit it")
 
 
 def main() -> None:

@@ -152,7 +152,7 @@ def _tree(path: Path) -> dict[str, float]:
 
 
 def selftest_episodes() -> None:
-    live = config.ROOT / "memory" / "store"
+    live = config.memory_store_dir()
     before = _tree(live)
     saved_db, saved_store = config.DB_PATH, os.environ.get("MEMSTORE_PATH")
     tmp = Path(tempfile.mkdtemp(prefix="memstore-episodes-"))

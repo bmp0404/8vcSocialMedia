@@ -34,13 +34,15 @@ The second row on the board sketches the same loop as an agent. One observation 
 
 ## Where code and files go
 
-Code lives in the `harness` package, so `python -m harness` can import it. The top-level `observation/`, `action/`, `eval/`, `memory/` and `data/` directories hold each stage's non-code files: datasets, fixtures, eval reports and memory files. `data/sample_signals.json` and `memory/lessons.md` already follow this.
+Code lives in the `harness` package, so `python -m harness` can import it. The top-level `observation/`, `action/`, `eval/`, `memory/` and `data/` directories hold each stage's non-code files: datasets, fixtures, eval reports and memory files. `data/sample_signals.json` and `memory/lessons/<profile>.md` already follow this.
 
 To add a data source, subclass `Source` in `harness/sources/`, set `name`, and return a list of `Signal`. Register the class in `REGISTRY` in `harness/sources/__init__.py`, then enable it with `HARNESS_SOURCES`. If the source can't fetch, raise an error that says why. `observe()` prints the error and skips that source, so the run keeps going.
 
 To add a media mind, add a markdown file to `harness/minds/prompts/`. The filename becomes the mind's name.
 
-Put anything about Caitlin Clark or the account in `mission/mission.md` or a prompt file, not in Python. The data team's backfill covers dev-tool launches, so the same code has to run for a different brand. `PANEL` in `harness/qualify.py` breaks this rule today.
+Put anything about Caitlin Clark or the account in its mission profile or a prompt file, not in Python. The data team's backfill covers dev-tool launches, so the same code has to run for a different brand.
+
+Each brand is a mission profile, a folder under `mission/profiles/` with four files: `mission.md`, `observe.toml` (sources, watch list and `[brand] x_handle`), `panel.json` (the simulated audience) and `reply_framing.json` (the handle reply drafts are written under). A profile may also hold `takes.json`, a person's own takes. `HARNESS_PROFILE` picks the profile and defaults to `wnba`; `devtools` is the other. Code reads these files only through `config.profile_file()`, which raises an error naming the path when one is missing. Memory follows the profile: the store starts from `memory/seed/<profile>/`, lives in `memory/store/<profile>/`, and `learn` writes `memory/lessons/<profile>.md`. To add a brand, copy a profile folder and edit its four files.
 
 ## Shared contracts
 

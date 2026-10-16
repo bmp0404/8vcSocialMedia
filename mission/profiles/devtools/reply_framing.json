@@ -1,0 +1,4 @@
+{
+ "_note": "The handle reply drafts are written under; see mission/profiles/wnba/reply_framing.json. framing_probe.py measured a framing handle only for the wnba profile, so this one is null: continuation samples use neutral handles.",
+ "framing_handle": null
+}

@@ -1,7 +1,7 @@
-"""Load the brand's observe settings from `mission/observe.toml`.
+"""Load the brand's observe settings from the active mission profile's `observe.toml`.
 
-Keeping queries, leagues and watched accounts in a TOML file keeps Python brand-agnostic: the
-dev-tool brand writes its own file and sets HARNESS_OBSERVE_CONFIG.
+Keeping queries, leagues and watched accounts in a TOML file keeps Python brand-agnostic: each
+brand has its own profile under mission/profiles/, and HARNESS_PROFILE picks one.
 """
 
 import os
@@ -14,7 +14,6 @@ from pathlib import Path
 from harness import config
 from harness.sources.common import SourceError
 
-DEFAULT_PATH = config.ROOT / "mission" / "observe.toml"
 # Names the brand account for one run or one machine without editing the shared TOML file.
 ACCOUNT_HANDLE_ENV = "HARNESS_ACCOUNT_HANDLE"
 
@@ -126,7 +125,11 @@ def use(watch: Watch):
 
 
 def config_path() -> Path:
-    return Path(os.getenv("HARNESS_OBSERVE_CONFIG") or DEFAULT_PATH)
+    """The active profile's observe.toml (config.profile_file); a missing file is a SourceError."""
+    try:
+        return config.profile_file("observe.toml")
+    except config.ProfileError as e:
+        raise SourceError(f"observe config: {e}") from e
 
 
 def _handle_override() -> str:
@@ -139,7 +142,7 @@ def load_watch(path: Path | None = None) -> Watch:
         return active
     path = path or config_path()
     if not path.exists():
-        raise SourceError(f"observe config not found at {path}; copy mission/observe.toml or set HARNESS_OBSERVE_CONFIG")
+        raise SourceError(f"observe config not found at {path}")
     try:
         raw = tomllib.loads(path.read_text(encoding="utf-8"))
     except tomllib.TOMLDecodeError as e:
@@ -155,7 +158,7 @@ def account_handle() -> tuple[str, str]:
 
     [brand] x_handle is the one place the account is named, and HARNESS_ACCOUNT_HANDLE overrides it.
     This is the account Observe reads as x_brand and `harness outcomes` measures. The reply writer's
-    framing_handle in action/reply_framing.json is a different setting: it shapes how drafts read.
+    framing_handle in the profile's reply_framing.json is a different setting: it shapes how drafts read.
     """
     if override := _handle_override():
         return override, ACCOUNT_HANDLE_ENV

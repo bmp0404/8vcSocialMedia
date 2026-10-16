@@ -16,7 +16,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run bounded observe/action/eval/memory rounds")
     parser.add_argument("--provider", default=config.PROVIDER)
     parser.add_argument("--sources", help="Comma-separated registered source names")
-    parser.add_argument("--mission", type=Path, default=config.MISSION_PATH)
+    parser.add_argument("--mission", type=Path, help="mission file; default: the HARNESS_PROFILE profile's mission.md")
     parser.add_argument("--rounds", type=int, default=1)
     parser.add_argument("--interval", type=float, default=0)
     parser.add_argument("--narratives", type=int, default=2)
@@ -40,7 +40,7 @@ def main() -> None:
         options = Options(args.rounds, args.interval, args.narratives, args.per_mind, args.top, args.retries)
     except ValueError as exc:
         parser.error(str(exc))
-    mission = args.mission.read_text(encoding="utf-8")
+    mission = args.mission.read_text(encoding="utf-8") if args.mission else config.mission()
     with runtime(provider, sources, args.state_dir) as output_dir:
         print(f"[engine] output: {output_dir}")
         components = Components(evaluate=panel_evaluate if evaluator == "panel" else reference_evaluate)

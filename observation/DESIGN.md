@@ -8,7 +8,7 @@ Observe is a set of source plugins behind one function. `observe(names, mission)
 
 ### Sources
 
-Every source reads its brand-specific settings from a TOML file, `mission/observe.toml` by default. `HARNESS_OBSERVE_CONFIG=mission/observe.devtools.toml` switches the same code to a dev-tool brand. The loader is `harness/sources/watch.py:102`, and it rejects unknown keys so a typo fails instead of silently doing nothing.
+Every source reads its brand-specific settings from the active mission profile's `observe.toml` (`mission/profiles/<name>/`). `HARNESS_PROFILE=devtools` switches the same code to a dev-tool brand. The loader is `harness/sources/watch.py:102`, and it rejects unknown keys so a typo fails instead of silently doing nothing.
 
 | Name | Reads | Key | Signal kind | Counts |
 | --- | --- | --- | --- | --- |
