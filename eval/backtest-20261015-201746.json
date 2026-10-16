@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-15T20:17:46",
+  "provider": "anthropic",
+  "panel": {
+    "n_posts": 30,
+    "spearman_unweighted": 0.704,
+    "spearman_calibrated": 0.717,
+    "per_panelist_spearman": {
+      "agent_power_user": 0.638,
+      "eng_lead": 0.466,
+      "skeptical_senior": 0.625,
+      "ai_tooling_influencer": 0.732,
+      "multi_agent_researcher": 0.419
+    },
+    "suggested_weights": {
+      "agent_power_user": 1.64,
+      "eng_lead": 1.47,
+      "skeptical_senior": 1.62,
+      "ai_tooling_influencer": 1.73,
+      "multi_agent_researcher": 1.42
+    }
+  },
+  "judge": {
+    "n_pairs": 20,
+    "accuracy": 0.9
+  },
+  "calibrated": true
+}

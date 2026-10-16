@@ -8,6 +8,11 @@ from typing import Any, Callable
 from harness import config
 
 DEFAULT_MODELS = {"anthropic": "claude-sonnet-5-5"}
+MAX_TOKENS = 8192
+
+
+class TruncatedError(RuntimeError):
+    """The model hit the output-token cap, so its answer is incomplete."""
 
 
 class LLM:
@@ -15,9 +20,16 @@ class LLM:
         raise NotImplementedError
 
     def complete_json(self, system: str, prompt: str, mock: Callable[[], Any] | None = None) -> Any:
-        """Ask for JSON and parse it. `mock` supplies canned output for the offline backend."""
-        text = self.complete(system + "\n\nRespond with JSON only, no prose.", prompt)
-        return parse_json(text)
+        """Ask for JSON and parse it, retrying once on malformed JSON. `mock` is for the offline backend."""
+        system = system + "\n\nRespond with JSON only, no prose."
+        text = self.complete(system, prompt)
+        try:
+            return parse_json(text)
+        except (ValueError, json.JSONDecodeError) as e:
+            print(f"[llm] malformed JSON ({e}); retrying once")
+            retry = (f"{prompt}\n\nYour previous reply was not valid JSON ({e}). "
+                     "Reply again with only valid JSON in the requested shape.")
+            return parse_json(self.complete(system, retry))
 
 
 class AnthropicLLM(LLM):
@@ -30,10 +42,12 @@ class AnthropicLLM(LLM):
     def complete(self, system: str, prompt: str) -> str:
         resp = self.client.messages.create(
             model=self.model,
-            max_tokens=4096,
+            max_tokens=MAX_TOKENS,
             system=system,
             messages=[{"role": "user", "content": prompt}],
         )
+        if resp.stop_reason == "max_tokens":
+            raise TruncatedError(f"{self.model} hit max_tokens={MAX_TOKENS}; ask this stage for less output")
         return "".join(b.text for b in resp.content if b.type == "text")
 
 
@@ -48,7 +62,10 @@ class OpenAICompatLLM(LLM):
         resp = self.client.chat.completions.create(
             model=self.model,
             messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+            max_tokens=MAX_TOKENS,
         )
+        if resp.choices[0].finish_reason == "length":
+            raise TruncatedError(f"{self.model} hit max_tokens={MAX_TOKENS}; ask this stage for less output")
         return resp.choices[0].message.content or ""
 
 

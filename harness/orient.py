@@ -18,6 +18,9 @@ PROMPT = """MISSION:
 SIGNALS:
 {signals}
 
+Return the {limit} narratives with the highest relevance x velocity, no more. Keep each summary to one
+sentence and list at most 3 signal_urls per narrative (the highest-traffic ones).
+
 Return JSON: {{"narratives": [{{"id": "kebab-slug", "title": "...", "summary": "...",
 "relevance": 0.0, "velocity": 0.0, "angle": "...", "signal_urls": ["..."]}}]}}"""
 
@@ -41,7 +44,7 @@ def orient(llm: LLM, mission: str, signals: list[Signal], top: int = 5) -> list[
             ]
         }
 
-    data = llm.complete_json(SYSTEM, PROMPT.format(mission=mission, signals=payload), mock=mock)
+    data = llm.complete_json(SYSTEM, PROMPT.format(mission=mission, signals=payload, limit=top * 2), mock=mock)
     narratives = [Narrative(**n) for n in data.get("narratives", [])]
     narratives.sort(key=lambda n: n.relevance * n.velocity, reverse=True)
     return narratives[:top]
