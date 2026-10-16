@@ -289,10 +289,12 @@ def checked_narratives(value, raw: str) -> dict:
 
 def ask_baml(llm: LLM, mission: str, payload: str, limit: int, mock) -> dict:
     """OrientSignals through the harness LLM's settings, asked once more if no narrative parsed."""
+    if getattr(llm, "is_mock", False):
+        return baml_adapter.call(llm, "OrientSignals", mission, payload, limit, mock=mock).value
     for attempt in range(2):
         result = baml_adapter.call(llm, "OrientSignals", mission, payload, limit, mock=mock)
-        if result.raw is None:  # mock run
-            return result.value
+        if result.raw is None:
+            raise OrientReplyError("BAML recorded no reply from the model, so orient can't count its narratives")
         data = checked_narratives(result.value, result.raw)
         if data["narratives"] or raw_array_length(result.raw, "narratives") == 0:
             return data

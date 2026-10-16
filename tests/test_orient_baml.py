@@ -124,6 +124,13 @@ def test_an_empty_list_is_an_answer(scripted):
     assert len(calls) == 1
 
 
+def test_unrecorded_reply_fails(monkeypatch):
+    monkeypatch.setenv("HARNESS_ORIENT", "baml")
+    monkeypatch.setattr(o.baml_adapter, "call", lambda *a, **k: baml_adapter.BamlResult(object(), raw=None))
+    with pytest.raises(o.OrientReplyError, match="no reply"):
+        run()
+
+
 def test_json_backend_uses_complete_json(monkeypatch):
     class JsonLLM(Gateway):
         def complete_json(self, system, prompt, mock=None):
