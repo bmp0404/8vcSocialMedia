@@ -65,5 +65,5 @@ def get_experiments(req: Request):
     champion, err = _read(d / "champion.json") if (d / "champion.json").exists() else (None, None)
     if err:
         problems.append({"file": "champion.json", "error": err})
-    return {"available": True, "experiments": experiments, "champion": champion, "runs": _runs(d, problems),
-            "problems": problems}
+    runs = _runs(d, problems)
+    return {"available": True, "experiments": experiments, "champion": champion, "runs": runs, "problems": problems}

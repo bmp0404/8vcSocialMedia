@@ -1,19 +1,27 @@
 """The human checkpoint's API: verdicts on drafts, abstentions a person can overrule, and the
 questions the post lane asks a person ("your take").
 
-Every verdict rewrites out/approved-run<id>.json, the hand-off file for the posting bot. The first
-four routes keep the shapes the original dashboard used, so anything reading them still works.
+Every verdict rewrites out/approved-run<id>.json, the hand-off file for the posting bot. The three
+GET /api/runs routes and POST /api/actions/<id>/review keep the shapes the original dashboard used,
+so anything reading them still works.
 """
 
 import hashlib
 import json
 import os
 import re
+from dataclasses import asdict
+from pathlib import Path
 
 from harness import config, memory
 from harness.llm import DEFAULT_MODELS
 from harness.models import ACTION_TYPES, Action
 from harness.review.routes import HTTPError, Request, route
+
+try:  # the slop gate and the Action stage's settings come with sam/action
+    from harness.minds import gate, settings
+except ImportError:
+    gate = settings = None
 
 # Why a person struck a draft, with the label the page shows. The codes match
 # memory.REVIEW_REASONS on sam/memory, where set_review(reasons=...) stores them in review_events.
@@ -28,7 +36,7 @@ KILL_REASONS = {
 }
 
 
-def export_approved(run_id: int):
+def export_approved(run_id: int) -> Path:
     config.OUT_DIR.mkdir(exist_ok=True)
     path = config.OUT_DIR / f"approved-run{run_id}.json"
     path.write_text(
@@ -38,15 +46,14 @@ def export_approved(run_id: int):
     return path
 
 
-def save_verdict(action_id: str, status: str, text: str | None, note: str, reasons: list) -> int:
-    """memory.set_review, passing kill reasons through when the store can keep them.
+def save_verdict(action_id: str, status: str, text: str | None, note: str, reasons: list[str]) -> int:
+    """memory.set_review, passing kill reasons (codes from KILL_REASONS) through when the store can keep them.
 
     sam/memory adds REVIEW_REASONS and a `reasons` argument. On a branch without them the reasons go
-    into the note as "Reasons: <label>, <label>." so they still reach learning. Delete the fallback
-    once sam/memory is on main.
+    into the note as "Reasons: <label>, <label>." so they still reach learning.
+
+    TODO: delete the fallback once sam/memory's set_review(reasons=) is on main.
     """
-    if not isinstance(reasons, list) or any(r not in KILL_REASONS for r in reasons):
-        raise HTTPError(400, f"reasons must be a list drawn from {sorted(KILL_REASONS)}")
     reasons = list(dict.fromkeys(reasons))
     if hasattr(memory, "REVIEW_REASONS"):
         return memory.set_review(action_id, status, text, note, reasons=reasons)
@@ -95,11 +102,16 @@ def get_approved(req: Request):
 @route("POST", r"/api/actions/(\w+)/review")
 def post_review(req: Request):
     body = req.body
-    note = body.get("note", "") or ""
+    note = body.get("note") or ""
     if not isinstance(note, str):
         raise HTTPError(400, "note must be a string")
+    reasons = body.get("reasons")
+    if reasons is None:
+        reasons = []
+    if not isinstance(reasons, list) or not all(isinstance(r, str) and r in KILL_REASONS for r in reasons):
+        raise HTTPError(400, f"reasons must be a list drawn from {sorted(KILL_REASONS)}")
     try:
-        run_id = save_verdict(req.match[1], body.get("status", ""), body.get("text"), note, body.get("reasons") or [])
+        run_id = save_verdict(req.match[1], body.get("status", ""), body.get("text"), note, reasons)
     except KeyError:
         raise HTTPError(404, "unknown action") from None
     except ValueError as e:
@@ -197,7 +209,8 @@ def _text(body: dict) -> str:
 
 
 def _stable_id(*parts) -> str:
-    """Same inputs, same id, so a double click or a resubmitted take replaces instead of duplicating."""
+    """Same inputs, same id. Callers leave the text out, so a double click, a second overrule of the
+    same abstention or a resubmitted take replaces the earlier action instead of adding one."""
     return hashlib.sha1(":".join(map(str, parts)).encode("utf-8")).hexdigest()[:8]
 
 
@@ -223,12 +236,16 @@ def handle_from_url(url: str | None) -> str | None:
     return m[1] if m else None
 
 
-def narrative_for_target(run_id: int, url: str | None) -> str:
-    """The narrative whose reply targets include `url`, from the run's trace, or "" without one."""
-    if not url:
+def narrative_for(run_id: int, opportunity: str | None) -> str:
+    """The id of the narrative a decision's opportunity came from, per the run's trace, or "".
+
+    sam/action's lanes name the opportunity by a reply target's URL, a source URL the narrative
+    cites (its signal_urls), or, for a caption with no link, the narrative's own id."""
+    if not opportunity:
         return ""
     for n in (load_trace(run_id) or {}).get("narratives") or []:
-        if any(t.get("url") == url for t in n.get("reply_targets") or []):
+        urls = {t.get("url") for t in n.get("reply_targets") or []} | set(n.get("signal_urls") or [])
+        if opportunity == n.get("id") or opportunity in urls:
             return n.get("id", "")
     return ""
 
@@ -245,8 +262,10 @@ def post_overrule(req: Request):
     text = _text(body)
     lane = d.get("lane", "")
     cands = d.get("candidates") or []
-    cand = body.get("candidate")
-    picked = cands[cand] if isinstance(cand, int) and 0 <= cand < len(cands) else {}
+    cand = body.get("candidate")  # null when the person wrote their own words
+    if cand is not None and not (isinstance(cand, int) and 0 <= cand < len(cands)):
+        raise HTTPError(400, f"candidate must be null or an index into decision {index}'s {len(cands)} candidates")
+    picked = cands[cand] if cand is not None else {}
     # The reply lane answers its post; in the post lane an X post as the opportunity is quoted
     # (the caption path), anything else becomes a plain post. queue.js mirrors this.
     kind = picked.get("type") or ("reply" if lane == "reply" else "quote" if handle_from_url(d.get("opportunity")) else "post")
@@ -260,11 +279,11 @@ def post_overrule(req: Request):
         type=kind,
         text=text,
         mind=picked.get("mind") or f"{lane or 'unknown'}_lane",
-        narrative_id=picked.get("narrative_id") or d.get("narrative_id") or narrative_for_target(run_id, target_url),
+        narrative_id=picked.get("narrative_id") or narrative_for(run_id, d.get("opportunity")),
         rationale=f"Overruled abstention ({reason}): {d.get('detail', '')}".strip(),
         target_url=target_url,
         target_handle=picked.get("target_handle") or handle_from_url(target_url),
-        id=_stable_id("overrule", run_id, index, text),
+        id=_stable_id("overrule", run_id, index),
     ).to_dict()
     released = picked.get("text") == text  # the person shipped the harness's draft unchanged
     action |= {
@@ -311,13 +330,9 @@ def post_take(req: Request):
 
 def gate_warnings(text: str, kind: str) -> list[dict]:
     """What the slop gate flags in a person's words, kept with the action; [] without the gate."""
-    try:
-        from harness.minds import gate
-    except ImportError:
+    if gate is None or kind not in gate.KINDS:
         return []
-    if kind not in gate.KINDS:
-        return []
-    return [{"rule": f.rule, "detail": f.detail, "start": f.start, "end": f.end} for f in gate.check(text, kind).findings]
+    return [asdict(f) for f in gate.check(text, kind, limits=settings.load().gate).findings]
 
 
 # --- Slop gate, as the person types ---------------------------------------------------------
@@ -330,19 +345,13 @@ def post_gate(req: Request):
     text, kind, context = req.body.get("text"), req.body.get("kind", "post"), req.body.get("context")
     if not isinstance(text, str) or (context is not None and not isinstance(context, str)):
         raise HTTPError(400, "text must be a string, and context a string when given")
-    try:
-        from harness.minds import gate
-        from harness.minds.settings import GateLimits
-    except ImportError as e:
-        return {
-            "available": False,
-            "reason": f"The slop gate (harness.minds.gate, from sam/action) isn't on this branch: {e}",
-        }
+    if gate is None:
+        return {"available": False, "reason": "The slop gate (harness.minds.gate, from sam/action) isn't on this branch."}
     if kind not in gate.KINDS:
         raise HTTPError(400, f"the gate has no rules for {kind!r}; expected one of {list(gate.KINDS)}")
-    res = gate.check(text, kind, context=context or None)
-    findings = [
-        {"rule": f.rule, "detail": f.detail, "start": f.start, "end": f.end}  # offsets are None for whole-text rules
-        for f in res.findings
-    ]
-    return {"available": True, "passed": res.passed, "limit": GateLimits().max_chars.get(kind, 280), "findings": findings}
+    # A person's words get X's per-kind limit; caption_max_chars (100) is a style rule for the post lane's captions.
+    limits = settings.load().gate
+    res = gate.check(text, kind, context=context or None, limits=limits)
+    # A finding's start and end are None for whole-text rules.
+    return {"available": True, "passed": res.passed, "limit": limits.max_chars.get(kind, 280),
+            "findings": [asdict(f) for f in res.findings]}

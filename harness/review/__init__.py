@@ -6,6 +6,7 @@ The page is plain ES modules under static/ with no build step; see DESIGN.md for
 API routes live in checkpoint.py, rounds.py and the *_api.py modules, registered through routes.py.
 """
 
+import contextlib
 import json
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -14,7 +15,8 @@ from urllib.parse import parse_qsl, urlsplit
 
 # Importing the API modules registers their routes.
 from harness.review import checkpoint, experiments_api, memory_api, rounds  # noqa: F401
-from harness.review.checkpoint import export_approved  # noqa: F401 - kept importable from here
+# sam/integration's harness/integration/handoff.py imports export_approved from here.
+from harness.review.checkpoint import export_approved  # noqa: F401
 from harness.review.routes import HTTPError, Request, path_exists, resolve
 
 HERE = Path(__file__).parent
@@ -99,8 +101,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"error": "the JSON body must be an object"}, 400)
         r, m = resolve(method, path)
         if not r:
-            code = 405 if path_exists(path) else 404
-            return self._json({"error": "method not allowed" if code == 405 else "not found"}, code)
+            if path_exists(path):
+                return self._json({"error": "method not allowed"}, 405)
+            return self._json({"error": "not found"}, 404)
         try:
             data = r.fn(Request(method, path, m, dict(parse_qsl(url.query)), body))
         except HTTPError as e:
@@ -129,4 +132,7 @@ def serve(port: int = 8765, open_browser: bool = True) -> None:
     try:
         server.serve_forever()
     except KeyboardInterrupt:
+        # A round runs in its own process group, so Ctrl+C here doesn't reach it.
+        with contextlib.suppress(HTTPError):
+            rounds.RUNNER.stop()
         print("\n[review] stopped")

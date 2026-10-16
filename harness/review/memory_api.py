@@ -11,6 +11,8 @@ from pathlib import Path
 from harness import config, memory
 from harness.review.routes import HTTPError, Request, route
 
+MAX_NOTES = 50  # static/js/views/memory.js asks in chunks of this size (NOTES_PER_REQUEST)
+
 
 def _memory():
     try:
@@ -59,9 +61,11 @@ def get_memory(req: Request):
 @route("GET", r"/api/memory/notes")
 def get_notes(req: Request):
     """Specific notes by id (?ids=a,b,c), for expanding a belief's evidence."""
-    ids = [i for i in req.query.get("ids", "").split(",") if i][:50]
+    ids = [i for i in req.query.get("ids", "").split(",") if i]
     if not ids:
         raise HTTPError(400, "pass ?ids=<id>,<id>")
+    if len(ids) > MAX_NOTES:
+        raise HTTPError(400, f"ask for at most {MAX_NOTES} notes at a time, not {len(ids)}")
     store, _, reason = _memory()
     if store is None:
         raise HTTPError(501, reason)

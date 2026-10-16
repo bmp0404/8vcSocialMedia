@@ -6,7 +6,7 @@ request reaches the command line; the provider and sources come from the server'
 is kept with the stage tag it starts with ("[observe] ...") and the round is saved to
 out/rounds/<id>.json when it ends, so the view can show the last round after a restart.
 
-The harness prints human log lines, not structured events. The page (static/js/views/loop.js)
+The harness prints human log lines, not structured events. The page (static/js/lib/rounds.js)
 reads its per-stage numbers from those lines, so the fixture mode's simulated round, which only
 appends lines, and a real round go through the same parser. Stage timings and counts for a saved
 run come from harness/trace.py's out/trace-run<id>.json, which is structured.
@@ -15,10 +15,12 @@ run come from harness/trace.py's out/trace-run<id>.json, which is structured.
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import threading
 import time
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 
@@ -26,9 +28,9 @@ from harness import config, memory
 from harness.review.checkpoint import load_decisions, load_trace
 from harness.review.routes import HTTPError, Request, route
 
-STAGES = ("observe", "orient", "decide", "qualify", "review", "learn")
 # Small on purpose: CLAUDE.md asks real runs to use 2 narratives and 1 draft per mind.
 ARGV = ["-m", "harness", "run", "--narratives", "2", "--per-mind", "1", "--retries", "1"]
+COMMAND = "python " + " ".join(ARGV)
 TAG = re.compile(r"^\[(\w+)\]\s?(.*)$")
 RUN_ID = re.compile(r"\(run (\d+)\)")
 KEEP_ROUNDS = 20
@@ -36,10 +38,6 @@ KEEP_ROUNDS = 20
 
 def rounds_dir():
     return config.OUT_DIR / "rounds"
-
-
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 @dataclass
@@ -50,7 +48,6 @@ class Round:
     sources: list[str]
     command: str
     status: str = "running"  # running, done, failed, stopped
-    stage: str = ""
     lines: list[dict] = field(default_factory=list)  # {t: seconds since start, stage, text}
     run_id: int | None = None
     exit_code: int | None = None
@@ -64,6 +61,7 @@ class Runner:
         self.lock = threading.Lock()
         self.current: Round | None = None
         self.proc: subprocess.Popen | None = None
+        self.pump: threading.Thread | None = None  # reads the current round's output until it exits
 
     def start(self) -> Round:
         with self.lock:
@@ -72,10 +70,10 @@ class Runner:
             stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
             rnd = Round(
                 id=f"round-{stamp}",
-                started_at=now(),
+                started_at=memory.now(),
                 provider=config.PROVIDER,
                 sources=list(config.SOURCES),
-                command="python " + " ".join(ARGV),
+                command=COMMAND,
             )
             env = {**os.environ, "PYTHONUNBUFFERED": "1"}
             self.proc = subprocess.Popen(
@@ -89,9 +87,11 @@ class Runner:
                 encoding="utf-8",
                 errors="replace",
                 bufsize=1,
+                start_new_session=True,  # its own process group, for stop(); POSIX only, ignored on Windows
             )
             self.current = rnd
-        threading.Thread(target=self._pump, args=(rnd, self.proc, time.monotonic()), daemon=True).start()
+            pump = self.pump = threading.Thread(target=self._pump, args=(rnd, self.proc, time.monotonic()), daemon=True)
+        pump.start()
         return rnd
 
     def _pump(self, rnd: Round, proc: subprocess.Popen, t0: float) -> None:
@@ -103,18 +103,14 @@ class Runner:
             stage = m[1] if m else None
             with self.lock:
                 rnd.lines.append({"t": round(time.monotonic() - t0, 2), "stage": stage, "text": text})
-                if stage in STAGES:
-                    rnd.stage = stage
                 if rid := RUN_ID.search(text):
                     rnd.run_id = int(rid[1])
         code = proc.wait()
         with self.lock:
             rnd.exit_code = code
-            rnd.finished_at = now()
+            rnd.finished_at = memory.now()
             if rnd.status == "running":
                 rnd.status = "done" if code == 0 else "failed"
-            if rnd.status == "done":
-                rnd.stage = "review"  # the drafts are waiting for a person now
         save(rnd)
 
     def stop(self) -> Round:
@@ -122,12 +118,19 @@ class Runner:
             if not (self.current and self.current.status == "running" and self.proc):
                 raise HTTPError(409, "No round is running.")
             self.current.status = "stopped"
-            self.proc.terminate()
+            # The whole group: a run can start child processes that would otherwise keep running and spending.
+            try:
+                if hasattr(os, "killpg"):
+                    os.killpg(self.proc.pid, signal.SIGTERM)
+                else:
+                    self.proc.terminate()
+            except ProcessLookupError:
+                pass  # it exited between the status check and the signal
             return self.current
 
     def snapshot(self) -> dict | None:
         with self.lock:
-            return json.loads(json.dumps(asdict(self.current))) if self.current else None
+            return asdict(self.current) if self.current else None
 
 
 RUNNER = Runner()
@@ -142,8 +145,7 @@ def save(rnd: Round) -> None:
 
 
 def last_saved() -> dict | None:
-    files = sorted(rounds_dir().glob("round-*.json")) if rounds_dir().exists() else []
-    for f in reversed(files):
+    for f in sorted(rounds_dir().glob("round-*.json"), reverse=True):
         try:
             return json.loads(f.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
@@ -158,9 +160,6 @@ def run_summary(run_id: int) -> dict:
     """Counts for one run from the store: what was drafted, vetoed, and what people decided."""
     actions = memory.run_actions(run_id)
     statuses = [a["review"]["status"] for a in actions]
-    by_type: dict[str, int] = {}
-    for a in actions:
-        by_type[a["type"]] = by_type.get(a["type"], 0) + 1
     out = {
         "run_id": run_id,
         "actions": len(actions),
@@ -170,7 +169,7 @@ def run_summary(run_id: int) -> dict:
         "pending": statuses.count("pending"),
         # What the Queue's "to review" bay holds: the critic's vetoed drafts wait apart from these.
         "to_review": sum(a["review"]["status"] == "pending" and not a.get("vetoed") for a in actions),
-        "by_type": by_type,
+        "by_type": dict(Counter(a["type"] for a in actions)),
         "decisions": None,
     }
     try:
@@ -179,14 +178,10 @@ def run_summary(run_id: int) -> dict:
         out["decisions_error"] = e.message
         decisions = None
     if decisions is not None:
-        abstained: dict[str, int] = {}
-        for d in decisions:
-            if d.get("tool") == "abstain":
-                abstained[d.get("reason") or "unknown"] = abstained.get(d.get("reason") or "unknown", 0) + 1
         out["decisions"] = {
             "total": len(decisions),
             "shipped": sum(bool(d.get("action_id")) for d in decisions),
-            "abstained": abstained,
+            "abstained": dict(Counter(d.get("reason") or "unknown" for d in decisions if d.get("tool") == "abstain")),
             "asks": sum(d.get("tool") == "ask_human" for d in decisions),
         }
     return out
@@ -255,7 +250,7 @@ def get_loop(req: Request):
     return {
         "provider": config.PROVIDER,
         "sources": config.SOURCES,
-        "command": "python " + " ".join(ARGV),
+        "command": COMMAND,
         "round": rnd,
         "live": trace_live(),
         "latest": run_summary(latest_id) if latest_id else None,

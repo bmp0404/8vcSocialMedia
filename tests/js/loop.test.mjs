@@ -1,10 +1,10 @@
 // node --test tests/js/  (tests/test_review_js.py runs this under pytest when node is installed)
 // The Loop view's model has one right answer per input: what a round's log says, which run the
-// board shows, and which stage is in flight. The realistic fixture's round is the real run-5 stdout.
+// board shows, and which stage is in flight. The realistic fixture's round is the real stdout of run 14.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { boardOf, coreState, readLines, sourceRows, stageCount, stageMs, stageSince } from "../../harness/review/static/js/lib/rounds.js";
+import { ROUND, boardOf, coreState, readLines, sourceRows, stageCount, stageMs, stageSince } from "../../harness/review/static/js/lib/rounds.js";
 
 const fixture = JSON.parse(readFileSync(new URL("../../harness/review/static/fixtures/realistic.json", import.meta.url), "utf8"));
 const real = fixture.routes["GET /api/loop"];
@@ -41,8 +41,8 @@ const L = {
   revised: ["decide", "[decide] 5 minds revised into 5 actions"],
 };
 
-const ROUND_COUNTS = (b) => ["observe", "orient", "decide", "qualify"].map((s) => stageCount(b, s, coreState(b, s)));
-const ROUND_MS = (b) => ["observe", "orient", "decide", "qualify"].map((s) => stageMs(b, s));
+const roundCounts = (b) => ROUND.map((s) => stageCount(b, s, coreState(b, s)));
+const roundMs = (b) => ROUND.map((s) => stageMs(b, s));
 
 const live = {
   status: "running",
@@ -56,7 +56,7 @@ const live = {
   ],
 };
 
-test("the run-5 log reads as the trace says", () => {
+test("the run-14 log reads as the trace says", () => {
   const f = readLines(real.round.lines);
   assert.deepEqual(f.sources, { espn_news: 52, google_news: 51 });
   assert.match(f.failed.x_targets, /every read failed/);
@@ -75,8 +75,8 @@ test("a decide revision adds its drafts, and qualify passes add up", () => {
 test("the realistic fixture shows its saved round, matched to its trace and store counts", () => {
   const b = boardOf(real, NOW);
   assert.deepEqual([b.kind, b.status, b.runId, b.current, Boolean(b.trace), Boolean(b.latest)], ["round", "done", 14, null, true, true]);
-  assert.deepEqual(ROUND_COUNTS(b), [103, 2, 3, 1]);
-  assert.deepEqual(ROUND_MS(b), [3322, 7815, 8505, 8697]);
+  assert.deepEqual(roundCounts(b), [103, 2, 3, 1]);
+  assert.deepEqual(roundMs(b), [3322, 7815, 8505, 8697]);
 });
 
 test("nothing run yet shows an empty board", () => {
@@ -103,7 +103,7 @@ test("a full veto sends the round back to decide, once per allowed retry", () =>
 test("a failed round marks the stage it broke in", () => {
   const b = boardOf(round([L.observe, L.picked, [null, "Traceback (most recent call last):"]], "failed"), NOW);
   assert.deepEqual([b.kind, b.status, b.current], ["round", "failed", "decide"]);
-  assert.deepEqual(["observe", "orient", "decide", "qualify"].map((s) => coreState(b, s)), ["done", "done", "failed", "waiting"]);
+  assert.deepEqual(ROUND.map((s) => coreState(b, s)), ["done", "done", "failed", "waiting"]);
   assert.equal(boardOf(round([L.observe, L.picked, L.drafted, L.keptOne], "failed"), NOW).current, "review");
 });
 
@@ -158,7 +158,7 @@ test("later ranking stages count toward qualify's time", () => {
 
 test("a run with no trace still shows drafts written and kept from the store", () => {
   const b = boardOf({ round: null, live: null, runs: [{ id: 2, started_at: run6.started_at }], latest: { run_id: 2, actions: 5, vetoed: 1, pending: 1 }, trace: null }, NOW);
-  assert.deepEqual(ROUND_COUNTS(b), [null, null, 5, 4]);
+  assert.deepEqual(roundCounts(b), [null, null, 5, 4]);
 });
 
 test("decide counts the drafts the minds wrote, not the fewer the lanes shipped", () => {
