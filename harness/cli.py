@@ -91,5 +91,10 @@ def main() -> None:
 
     add_commands(sub)
 
+    # Self-iteration (sam/iterate): `python -m harness iterate ...`
+    from harness.iterate.cli import register as register_iterate
+
+    register_iterate(sub)
+
     args = parser.parse_args()
     args.func(args)

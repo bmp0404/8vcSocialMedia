@@ -1,0 +1,534 @@
+{
+ "run_id": "run-20261016T020503",
+ "provider": "anthropic",
+ "arms": {
+  "action_lineup:champion": {
+   "config_ref": "cfg-17e3b75195e4",
+   "repeat": false,
+   "error": "",
+   "seconds": 51.5,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Fever replies after a playoff exit: 5,000 head coaches, 0 timeouts left. Meanwhile everyone swearing they're done watching will have the home opener on in May. Same time next year.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106459938151145977": {
+     "draft": "\"Tipping point\" undersells it. Fever home attendance went from roughly 4k a game in 2023 to roughly 17k in 2024. The best tribute anyone in the league office can give her is the spreadsheet, and now they have to build the team around it too.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) attendance figures not in post or replies"
+     ]
+    },
+    "2106399407834898501": {
+     "draft": "Fever fans watching an exit interview like it's a game: 40 minutes of 'fire her' before anyone says a word. Hot take for the offseason: the coach question matters, but the bigger one is who they put around Caitlin. Spacing, a real rim protector, and a second creator fix a lot of problems.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110792840989024541": {
+     "draft": "Whatever you think of the rivalry, the 2024 class made people learn WNBA Finals tip times without a marketing budget. Congrats to Angel on getting there. Now we need Caitlin healthy and in the same Finals so the group chats can finally combust.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) implies Caitlin Clark is injured, which nothing in the post or replies supports"
+     ]
+    },
+    "2110808211347456506": {
+     "draft": "Rhyne Howard and Angel Reese on the same All-Defensive First Team is the Dream's way of saying \"you can have the ball, just not for long.\" Opposing guards get a scouting report and a support group.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110824046833348936": {
+     "draft": "10-0 is a real stat and Bonner deserves the flowers. Fever fans watching it though: happy for her, but it's like seeing your ex's glow-up on Instagram. Happy for you, we're fine, why are you still posting?",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808214048502128": {
+     "draft": "This replies section is two camps: \"where's Aliyah Boston??\" and \"where's Azzi??\" The only fan base with zero complaints is the Valkyries, who got two on the list. Burton and Stokes are carrying the Bay's whole group chat tonight.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2099247457473339402": {
+     "draft": "Somewhere a \"11th best point guard\" list is quietly being edited with a very nervous intern at the keyboard. Gold looks good on you. Now bring the Fever one home.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) names the Fever, which neither the post nor the replies mention"
+     ]
+    },
+    "2106419802117976116": {
+     "draft": "\"I promise you\" is the same energy as pulling up from the logo: confidence first, receipts second. Historically the receipts show up. Somewhere a Mississippi State fan is checking the scoreboard and quietly sweating.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105382766682714299": {
+     "draft": "Nike design meeting: \"What features do you want in the Caitlin 1?\"",
+     "position": 1,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110018728314224992": {
+     "draft": "A full year away and she's still the biggest story in the sport. Every Pac-12-era scouting report on USC now has one line: \"pray.\" Also somewhere a WNBA GM just cleared their calendar for Trojans games. Welcome back, JuJu.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) USC, Trojans and Pac-12 are not mentioned in the post or replies"
+     ]
+    },
+    "2109769353935688054": {
+     "draft": "Women's sports pay in one stat: the #1 pick in the 2024 WNBA draft, Caitlin Clark, made $76,535 as a rookie while the Fever packed arenas everywhere they went. Demand isn't the problem. The revenue split is. Pay the people filling the seats.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) Caitlin Clark's $76,535 rookie salary and Fever attendance are not in the post or replies"
+     ]
+    },
+    "2110038076114256260": {
+     "draft": "Atlanta fans getting first access to Finals tickets while Fever fans watch from the couch, refreshing resale prices like it's a contact sport. Enjoy it, ATL. Make the arena loud.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808408366493714": {
+     "draft": "Top three in steals, all on one roster. That's not a defense, that's a pickpocket convention. Opposing guards need a pat-down before tip-off. Congrats to the trio.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109445947881087063": {
+     "draft": "Dream: team bonding at Sunday Night Football in matching fits.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2108954459304763841": {
+     "draft": "Fever fan reporting in as a neutral, which really means I'm eating popcorn and quietly jealous of anyone still playing in October. Good luck, Atlanta. Next year we're crashing this party.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109672093403279370": {
+     "draft": "An expansion team playing for a title while the rest of the league's front offices quietly open a doc called \"how did they do that.\" Finals week is going to be loud. Bay Area, bring the noise. 🔥",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) calls them an expansion team, which neither the post nor the replies state"
+     ]
+    }
+   },
+   "failures": {}
+  },
+  "action_lineup:champion_repeat": {
+   "config_ref": "cfg-17e3b75195e4",
+   "repeat": true,
+   "error": "",
+   "seconds": 56.8,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Fever fans really out here running \"thank you for the season\" and \"fire everyone\" in the same thread. Other fanbases can't even get people to show up to complain. Rest up, see you in May.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106459938151145977": {
+     "draft": "\"Tipping point\" is accurate. Arenas upgraded, TV windows got bigger, and every schedule release now has a Clark bump. Now do the same for the officiating. The press release has been upgraded, but the whistle crews haven't.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) unsupported claims about arena upgrades, bigger TV windows and schedule bumps"
+     ]
+    },
+    "2106399407834898501": {
+     "draft": "Reading this thread like a group chat where everyone already agreed before the meeting started. Fine, fire her. But name the replacement and what their offense looks like with Caitlin running it. \"Not her\" isn't a game plan.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110792840989024541": {
+     "draft": "Whole 2024 rookie class is why this Finals is on NBC in primetime. Respect to Angel for getting there first. Caitlin's out here taking notes and the Fever want that October slot next year. Rivalry built the ratings.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) calls it primetime, but the post says 3:30pm ET",
+      "(1) brings in Caitlin and the Fever, who appear nowhere in the post or replies"
+     ]
+    },
+    "2110808211347456506": {
+     "draft": "Two Dream on the first team plus Gabby Williams on the Valkyries. Every ball handler on those teams checks the scouting report and just sighs. Meanwhile Shakira Austin is the one nobody wants to see at the rim on a Tuesday night.",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110824046833348936": {
+     "draft": "10-0 is absurd, credit where it's due. Fever fans watching this like an ex's glow-up on Instagram: genuinely happy for her, mildly stressed. Golden State has been in the 'nobody believed us' lane all year, so this series won't be a coronation.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808214048502128": {
+     "draft": "Fever fans scrolling this list for Aliyah Boston and landing on Kiah Stokes like they walked into the wrong house. Respect to Stokes, but the AB omission is going to fuel a long offseason of arguing.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) ties Aliyah Boston to the Fever, which neither the post nor the replies state"
+     ]
+    },
+    "2099247457473339402": {
+     "draft": "World Cup gold on the résumé. Somewhere a \"best point guards\" list is quietly opening the edit tab and hoping nobody screenshotted the original. 🥇",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106419802117976116": {
+     "draft": "Every defender who said \"she won't pull from there\" went 0-for-everything too. 10-0 on picks is just the logo three of college football takes. Receipts at the final whistle, though.",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105382766682714299": {
+     "draft": "Resellers about to learn what WNBA defenders already know: you can't stop her, you can only hope to slow her down. Good luck at checkout. 💜",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110018728314224992": {
+     "draft": "College hoops is back and the offseason can finally stop being a six-month highlight replay. Welcome back JuJu. Her pull-up is scary, but USC fans holding their breath on every landing is scarier. Healthy season, please. Caitlin Clark fan here, and the sport is better with her on the floor.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) names USC, which neither the post nor the replies mention"
+     ]
+    },
+    "2109769353935688054": {
+     "draft": "The \"nobody watches\" replies miss the point. Caitlin Clark made about $76.5k as the No. 1 pick in 2024, and her reported Nike deal is far bigger than that. When one star's endorsements dwarf the league's pay scale, demand isn't the problem. Revenue sharing is.",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) Caitlin Clark's salary and Nike deal appear in neither the post nor the replies"
+     ]
+    },
+    "2110038076114256260": {
+     "draft": "Game 3 and 4 at State Farm Arena means Atlanta's group chat is about to be 90% \"who has an extra ticket\" and 10% fake doctor's notes. Fever fans will be watching from the couch with snacks and a calendar for next year. Enjoy the Finals, ATL.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808408366493714": {
+     "draft": "Top three steals leaders in the league, all on one roster. Opposing point guards aren't playing the Dream, they're filing a police report. Congrats to the trio.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109445947881087063": {
+     "draft": "Dream at Sunday Night Football, great squad photo. Now I want Caitlin Clark to throw a 40-yard no-look dime to the receiver from the logo and watch the NFL broadcast lose its mind. Quarterbacks should be nervous about the assist leaderboard.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) Brings in Caitlin Clark, who isn't on the Dream and isn't mentioned in the post or replies",
+      "(3) Dropping Clark into a Dream post can read as rivalry bait and draw blocks from Dream fans"
+     ]
+    },
+    "2108954459304763841": {
+     "draft": "Fever fans have officially entered the \"neutral Finals viewer\" phase. Totally neutral. Just here for the basketball, and definitely not thinking about what a healthy Caitlin Clark lineup looks like in October. Good luck, Atlanta.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) implies a Caitlin Clark injury that nothing in the post or replies mentions"
+     ]
+    },
+    "2109672093403279370": {
+     "draft": "Fever fans are watching Finals week with popcorn and a notepad, taking notes on how you get here. Bay Area, bring a banner home so we can steal the blueprint.",
+     "position": 2,
+     "pick": 2,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    }
+   },
+   "failures": {}
+  },
+  "action_lineup:cfg-f544f07093c8": {
+   "config_ref": "cfg-f544f07093c8",
+   "repeat": false,
+   "error": "",
+   "seconds": 35.2,
+   "detail": {
+    "2105879899399668010": {
+     "draft": "Thank you for everything. You are absolutely incredible and a star. You're amazing. Can't wait to see you in season 2.",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) 'season 2' is a season reference that neither the post nor the replies support"
+     ]
+    },
+    "2106459938151145977": {
+     "draft": "Caitlin Clark is taking the WNBA to historic heights /  / Her impact on the league's growth is undeniable. /  / The Indiana Fever are the smart ones—they recognize it. /  / Other teams? They're about to feel the financial pinch of being out of her circle. /  / Survival of the fittest",
+     "position": 4,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2106399407834898501": {
+     "draft": "Respectfully I refuse to listen to anything that woman has to say. She isn't worth my time or my money if she's the coach next season.",
+     "position": 4,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(2) dismisses the coach personally ('that woman') instead of critiquing her coaching"
+     ]
+    },
+    "2110792840989024541": {
+     "draft": "Finally a great promo from the W!!! When will @nfl  learn to market their WOMEN athletes better?",
+     "position": 2,
+     "pick": 5,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) implies the NFL has women athletes it under-markets, which nothing in the post or replies supports"
+     ]
+    },
+    "2110808211347456506": {
+     "draft": "We are stacked and well-represented! 💯🔥 / #ATLFreight #ProudDreamFan",
+     "position": 5,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110824046833348936": {
+     "draft": "Nba wnba both rigged. Basketball as a whole, rigged",
+     "position": 4,
+     "pick": 3,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110808214048502128": {
+     "draft": "Valkyries' defense is no joke",
+     "position": 3,
+     "pick": 3,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2099247457473339402": {
+     "draft": "First W 2024!  See you in 2027 🫶🏽",
+     "position": 1,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) cites years 2024 and 2027 that neither the post nor the replies support"
+     ]
+    },
+    "2106419802117976116": {
+     "draft": "What were your picks? I may have missed this 🤦🏼‍♀️",
+     "position": 4,
+     "pick": 3,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2105382766682714299": {
+     "draft": "The only thing better than a Nike shoe is a Caitlin Clark Nike shoe!",
+     "position": 1,
+     "pick": 1,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2110018728314224992": {
+     "draft": "How many NIL Deals is she gonna give up to stay in college basketball?? Should have been in the W by now",
+     "position": 5,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109769353935688054": {
+     "draft": "They want to give 500 billion to other countries but wont help their own athletes, SHAME!",
+     "position": 3,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) the '500 billion to other countries' claim appears in neither the post nor the replies"
+     ]
+    },
+    "2110038076114256260": {
+     "draft": "My son and I are flying to ATL from Cali for game 3!  Let's GO DREAM!!!",
+     "position": 5,
+     "pick": 2,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) unsupported personal claim about flying from Cali with son for Game 3"
+     ]
+    },
+    "2110808408366493714": {
+     "draft": "Amazing achievement!! CONGRATULATIONS LADIES 🙌 AND GO ATLANTA DREAM",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109445947881087063": {
+     "draft": "Love them in their sneaks keeping that basketball drip strong 🏀💫",
+     "position": 5,
+     "pick": 5,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 0.0,
+     "veto_reasons": [
+      "(1) claims they're wearing sneakers, which neither the post nor the replies support"
+     ]
+    },
+    "2108954459304763841": {
+     "draft": "LETS GO ATLANTA!!!!",
+     "position": 4,
+     "pick": 4,
+     "detected": 1.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    },
+    "2109672093403279370": {
+     "draft": "That's what I'm talking about we going to win the championship",
+     "position": 4,
+     "pick": 1,
+     "detected": 0.0,
+     "generation_failed": 0.0,
+     "veto_pass": 1.0,
+     "veto_reasons": []
+    }
+   },
+   "failures": {}
+  }
+ }
+}
