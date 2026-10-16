@@ -4,8 +4,9 @@
 shape the labeling UI reads. Each field also has a `guide`, the anchors the annotator prompt shows;
 the UI doesn't need it, so it stays out of schema.json.
 
-Version 1 is the brief's starting set plus two veto fields, to be tested in the pilot, not kept by
-default. A rewritten field gets a new name so labels under one name always answer one question.
+Version 1 was the brief's starting set plus two veto fields, tested in the pilot. Version 2 drops
+the two that showed no validity on the dev benchmarks (DESIGN.md has the numbers). A rewritten field
+gets a new name so labels under one name always answer one question.
 """
 
 import json
@@ -16,9 +17,9 @@ from harness import config
 LABELS_DIR = config.ROOT / "data" / "labels"
 SCHEMA_PATH = LABELS_DIR / "schema.json"
 
-VERSION = 1
+VERSION = 2
 
-FIELDS = [
+FIELDS_V1 = [
     {
         "name": "format",
         "kind": "enum",
@@ -115,6 +116,12 @@ FIELDS = [
     },
 ]
 
+# Dropped after the pilot (data/labels/reports/pilot-v1.json, Claude Sonnet 5.5 against GPT-6.1 Sol):
+# adds_to_parent agreed (alpha 0.75) but did not predict which reply got more likes (0.53, 95% CI 0.47
+# to 0.59, 438 dev pairs); engagement_bait was "yes" on 5 to 12 of 1,000 items, too rare to measure.
+DROPPED = ("adds_to_parent", "engagement_bait")
+FIELDS = [f for f in FIELDS_V1 if f["name"] not in DROPPED]
+SCHEMA_V1 = {"version": 1, "fields": FIELDS_V1}
 SCHEMA = {"version": VERSION, "fields": FIELDS}
 
 

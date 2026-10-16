@@ -37,9 +37,11 @@ def system_prompt(schema: dict = SCHEMA) -> str:
         "Reply with one JSON object and nothing else, in this shape:",
         json.dumps({"labels": example, "rationale": "One sentence, at most 25 words, on the deciding detail."},
                    ensure_ascii=False),
-        "Use the exact values listed above; numbers stay numbers. Leave out fields that do not apply to the "
-        "item's kind (adds_to_parent applies to replies only).",
+        "Use the exact values listed above; numbers stay numbers.",
     ]
+    reply_only = [f["name"] for f in schema["fields"] if f["applies_to"] == ["reply"]]
+    if reply_only:
+        lines[-1] += f" Leave out fields that do not apply to the item's kind ({', '.join(reply_only)} apply to replies only)."
     return "\n".join(lines)
 
 

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "fields": [
     {
       "name": "format",
@@ -85,21 +85,6 @@
       ]
     },
     {
-      "name": "adds_to_parent",
-      "kind": "ordinal",
-      "values": [
-        1,
-        2,
-        3,
-        4,
-        5
-      ],
-      "question": "How much does this reply add to the post it answers?",
-      "applies_to": [
-        "reply"
-      ]
-    },
-    {
       "name": "engagement_guess",
       "kind": "ordinal",
       "values": [
@@ -109,19 +94,6 @@
         "breakout"
       ],
       "question": "Compared with this author's usual posts or replies, how much engagement will it get?",
-      "applies_to": [
-        "post",
-        "reply"
-      ]
-    },
-    {
-      "name": "engagement_bait",
-      "kind": "enum",
-      "values": [
-        "no",
-        "yes"
-      ],
-      "question": "Does it explicitly ask for engagement or use bait phrasing?",
       "applies_to": [
         "post",
         "reply"
