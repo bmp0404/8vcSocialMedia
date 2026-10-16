@@ -8,6 +8,11 @@ from typing import Any, Callable
 from harness import config
 
 DEFAULT_MODELS = {"anthropic": "claude-sonnet-5-5"}
+# The cap covers thinking as well as the answer. On the gateway's claude-sonnet-5-5, thinking used
+# every token of the old 4,096 cap and the answer came back empty; the same memory brand-ingest
+# call used 8,248 output tokens once the cap was 16,000. Keep it under 21,333: above that the anthropic
+# SDK refuses non-streaming requests (_calculate_nonstreaming_timeout).
+MAX_TOKENS = int(os.getenv("HARNESS_MAX_TOKENS", "16000"))
 
 
 class LLM:
@@ -30,7 +35,7 @@ class AnthropicLLM(LLM):
     def complete(self, system: str, prompt: str) -> str:
         resp = self.client.messages.create(
             model=self.model,
-            max_tokens=4096,
+            max_tokens=MAX_TOKENS,
             system=system,
             messages=[{"role": "user", "content": prompt}],
         )
