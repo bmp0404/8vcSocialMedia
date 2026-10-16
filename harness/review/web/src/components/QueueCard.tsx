@@ -5,6 +5,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { api, ApiError, type Card } from '../lib/api'
+import { storyParts } from '../lib/story'
 import { ago, freshness } from '../lib/time'
 import { draftTweet, userOf, type Account } from '../lib/tweet'
 import { primaryLabel, reviewBody, VerdictError, type Decision, type Origin, type ReviewBody } from '../lib/verdict'
@@ -149,7 +150,7 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
           )}
         </div>
       ) : card.context ? (
-        <p className="story">{card.context}</p>
+        <StoryBlock text={card.context} />
       ) : null}
 
       <div className="node node-composer" data-up={card.target ? '' : undefined} data-down={card.draft ? '' : undefined}>
@@ -253,6 +254,17 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
         </p>
       ) : null}
     </article>
+  )
+}
+
+/** What a post draft is about: the story's title on its own line, then its summary and source credit. */
+function StoryBlock({ text }: { text: string }) {
+  const { title, rest } = storyParts(text)
+  return (
+    <div className="story">
+      <p className="story-title">{title}</p>
+      {rest ? <p className="story-rest">{rest}</p> : null}
+    </div>
   )
 }
 

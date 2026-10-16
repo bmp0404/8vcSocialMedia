@@ -419,10 +419,24 @@ code {
   margin: 16px var(--gutter) 0;
   padding-left: 12px;
   border-left: 3px solid var(--border);
-  color: var(--muted);
   font-size: 15px;
-  white-space: pre-line;
   overflow-wrap: anywhere;
+}
+
+.story p {
+  margin: 0;
+}
+
+.story-title {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* The summary, then the source credit on its own line, as decide wrote them. */
+.story .story-rest {
+  margin-top: 4px;
+  color: var(--muted);
+  white-space: pre-line;
 }
 
 /* ---------------------------------------------------------------- react-tweet, inside a card */
