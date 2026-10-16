@@ -120,21 +120,33 @@ class MockMeteredLLM(LLM):
 
 
 class _MeteredMessages:
-    """`client.messages` with every `create` charged to one arm."""
+    """`client.messages` with every request charged to one arm, retried the way MeteredLLM retries: each attempt
+    reserves a call, so a retry can't go past the run's cap. The client underneath must not retry on its own."""
 
-    def __init__(self, inner, meter: Meter, arm: str):
-        self.inner, self.meter, self.arm = inner, meter, arm
+    def __init__(self, inner, meter: Meter, arm: str, retries: int = 3):
+        self.inner, self.meter, self.arm, self.retries = inner, meter, arm, retries
 
     def create(self, **kw):
-        self.meter.reserve(self.arm)
-        try:
-            resp = self.inner.create(**kw)
-        except Exception:
-            self.meter.record(self.arm, error=True)
-            raise
-        usage = getattr(resp, "usage", None)
-        self.meter.record(self.arm, getattr(usage, "input_tokens", 0) or 0, getattr(usage, "output_tokens", 0) or 0)
-        return resp
+        import anthropic
+
+        for attempt in range(self.retries + 1):
+            self.meter.reserve(self.arm)
+            try:
+                resp = self.inner.create(**kw)
+            except (anthropic.APIStatusError, anthropic.APIConnectionError) as e:
+                self.meter.record(self.arm, error=True)
+                if attempt == self.retries:
+                    raise
+                print(f"[iterate] {self.arm} {kw.get('model')} retry after {type(e).__name__}: {str(e)[:100]}")
+                time.sleep(2 * (attempt + 1))
+                continue
+            except Exception:
+                self.meter.record(self.arm, error=True)
+                raise
+            usage = getattr(resp, "usage", None)
+            self.meter.record(self.arm, getattr(usage, "input_tokens", 0) or 0, getattr(usage, "output_tokens", 0) or 0)
+            return resp
+        raise AssertionError("unreachable")
 
 
 def metered_anthropic_class(meter: Meter, arm: str) -> type:
@@ -147,7 +159,8 @@ def metered_anthropic_class(meter: Meter, arm: str) -> type:
 
     class MeteredAnthropicLLM(AnthropicLLM):
         def __init__(self, model: str):
-            client = anthropic.Anthropic(timeout=CALL_TIMEOUT_S)
+            # The SDK's default two retries would run inside one metered attempt, uncounted (see MeteredLLM).
+            client = anthropic.Anthropic(timeout=CALL_TIMEOUT_S, max_retries=0)
             client.messages = _MeteredMessages(client.messages, meter, arm)
             self.client, self.model = client, model
 

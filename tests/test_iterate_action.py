@@ -215,3 +215,37 @@ def test_a_profile_framing_without_a_handle_is_refused_before_it_costs_anything(
         assert "has no handle" in fit.check_config(framed)
         # persona_json doesn't read the framing knob, so the knob can't mislead it
         assert fit.check_config(DEFAULT.with_changes({"action.continuation.framing": "profile"})) is None
+
+
+def test_the_pipeline_client_counts_every_retry_and_leaves_none_to_the_sdk(monkeypatch):
+    import types
+
+    import anthropic
+
+    from harness.iterate import llm as metered
+
+    built, sent = [], []
+
+    class Flaky:
+        def create(self, **kw):
+            sent.append(kw["model"])
+            if len(sent) < 3:
+                raise anthropic.APIConnectionError(request=None)  # the SDK's own type; the request isn't read
+            return types.SimpleNamespace(usage=types.SimpleNamespace(input_tokens=1, output_tokens=1))
+
+    def client(*a, **k):
+        built.append(k)
+        return types.SimpleNamespace(messages=Flaky())
+
+    monkeypatch.setattr(anthropic, "Anthropic", client)
+    monkeypatch.setattr(metered.time, "sleep", lambda s: None)
+    meter = Meter(10)
+    llm = metered.metered_anthropic_class(meter, "arm")("claude-opus-5-5")
+    llm.client.messages.create(model="claude-opus-5-5", max_tokens=5, messages=[])
+    assert built == [{"timeout": metered.CALL_TIMEOUT_S, "max_retries": 0}]
+    assert len(sent) == 3 and meter.calls == 3 and meter.by_arm["arm"]["errors"] == 2
+    capped = metered.metered_anthropic_class(Meter(2), "arm")("claude-opus-5-5")
+    sent.clear()
+    with pytest.raises(metered.BudgetExceeded):  # the third attempt would pass the cap, so it never goes out
+        capped.client.messages.create(model="claude-opus-5-5", max_tokens=5, messages=[])
+    assert len(sent) == 2
