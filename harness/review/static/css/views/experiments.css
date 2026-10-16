@@ -23,7 +23,7 @@
 
 .xp .field .v.mono {
   font-family: var(--font-code);
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 .xp-fields {
@@ -277,6 +277,21 @@
   padding: 0;
 }
 
+/* The selected bay opens into the well below it, as in the Queue. */
+.xp-bays .bay[aria-selected="true"] {
+  background: var(--board-deep);
+}
+
+/* The tab panel sits between the side column and the list, so it passes their flex column
+   through. As a plain block it would grow to the list's full height, and the list would stop
+   scrolling inside the sticky side column. */
+.xp-panel {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  min-height: 0;
+}
+
 .xp-list {
   display: flex;
   flex-direction: column;
@@ -299,7 +314,7 @@
   .xp-side {
     position: sticky;
     top: var(--s3);
-    max-height: calc(100dvh - 37px - var(--s3) * 2);
+    max-height: calc(100dvh - var(--readback-h) - var(--s3) * 2);
   }
   .xp-list {
     max-height: none;
@@ -307,14 +322,13 @@
   }
 }
 
-/* Under 860px the rail becomes a bar across the top, which the sticky column must clear too. */
+/* Under 860px the rail becomes a bar across the top, which the sticky column must clear too,
+   and both bars grow by the screen's safe areas. */
 @media (max-width: 860px) {
-  .xp {
-    padding: 0 var(--s3) var(--s5);
-  }
   @container xp (min-width: 760px) {
     .xp-side {
-      max-height: calc(100dvh - 37px - 52px - var(--s3) * 2);
+      max-height: calc(100dvh - var(--rail-h) - var(--readback-h) - var(--s3) * 2
+        - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     }
   }
 }
@@ -671,7 +685,7 @@
 
 .xp-mname {
   display: block;
-  font-size: 12.5px;
+  font-size: var(--t-small);
   font-weight: 700;
 }
 
@@ -686,7 +700,7 @@
 .xp-msub .chip {
   min-height: 18px;
   padding: 0 5px;
-  font-size: 10.5px;
+  font-size: var(--t-label);
 }
 
 .xp-msub.xp-fail {
@@ -789,7 +803,7 @@
 }
 
 .xp-prompt p.well {
-  font-size: 12.5px;
+  font-size: var(--t-small);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -797,10 +811,6 @@
 .xp-prompt pre.well {
   overflow-x: auto;
   font: 11.5px / 1.5 var(--font-code);
-}
-
-.xp-problems {
-  display: block;
 }
 
 .xp-problems ul {
@@ -822,14 +832,16 @@
   color: var(--ink-3);
 }
 
-/* Narrow layout: keep content clear of the notch in landscape, and give text-style controls a
-   44px touch target with visible press feedback (the tap highlight is off). */
+/* Narrow layout: tighter padding, with the shell's inline padding to clear the notch. */
 @media (max-width: 860px) {
   .xp {
-    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+    padding-bottom: var(--s5);
+    padding-inline: var(--page-x);
   }
 }
 
+/* Touch: text-style controls get a 44px target and visible press feedback, since the tap
+   highlight is off. */
 @media (pointer: coarse) {
   .xp-link:not(.xp-meta .xp-link) {
     display: inline-flex;

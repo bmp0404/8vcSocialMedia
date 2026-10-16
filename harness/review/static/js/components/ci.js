@@ -11,49 +11,9 @@
 //
 // The point is filled when the interval clears the band (or, with no band, the first reference
 // line) and hollow when it overlaps it, so a column of rows can be scanned for the ones that clear.
-// Pass `filled` to decide that yourself. The styles live here so any view can import the helper
-// without loading another stylesheet; they use only tokens.css variables.
+// Pass `filled` to decide that yourself. The styles are in components.css.
 
 import { html } from "../lib/dom.js";
-
-const CSS = `
-.ci { --ci-surface: var(--strip); position: relative; display: block; height: 22px; min-width: 48px; }
-.ci.mini { height: 14px; }
-.ci > span { position: absolute; }
-.ci-grid { top: 0; bottom: 0; width: 1px; margin-left: -0.5px; background: var(--rule); }
-.ci-band { top: 0; bottom: 0; background: color-mix(in srgb, var(--ink) 9%, transparent); }
-.ci-ref { top: -3px; bottom: -3px; width: 1px; margin-left: -0.5px; background: var(--ink-3); }
-.ci-ref.threshold { background: repeating-linear-gradient(to bottom, var(--ink-3) 0 3px, transparent 3px 5px); }
-.ci-whisker { top: 50%; height: 2px; margin-top: -1px; background: var(--ink); border-radius: 1px; }
-.ci-whisker::before, .ci-whisker::after { content: ""; position: absolute; top: -4px; width: 2px; height: 10px; background: inherit; border-radius: 1px; }
-.ci-whisker::before { left: -1px; }
-.ci-whisker::after { right: -1px; }
-.ci-whisker.open-lo::before, .ci-whisker.open-hi::after { display: none; }
-.ci-pt { top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--ci-surface); }
-.ci-pt.hollow { background: var(--ci-surface); border: 2px solid var(--ink); }
-.ci.mini .ci-whisker::before, .ci.mini .ci-whisker::after { top: -3px; height: 8px; }
-.ci.mini .ci-pt { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; }
-.ci.muted .ci-whisker { background: var(--ink-3); }
-.ci.muted .ci-pt { background: var(--ink-3); }
-.ci.muted .ci-pt.hollow { background: var(--ci-surface); border-color: var(--ink-3); }
-.ci-none { top: 50%; left: 0; right: 0; height: 0; border-top: 1px dashed var(--rule-strong); }
-.ci-axis { container-type: inline-size; position: relative; display: block; height: 14px; font: 400 10.5px / 14px var(--font-ui); font-variant-numeric: tabular-nums; color: var(--ink-3); white-space: nowrap; }
-.ci-axis.has-dir { height: 30px; }
-.ci-axis .tick { position: absolute; top: 0; transform: translateX(-50%); }
-.ci-axis .tick.start { transform: none; }
-.ci-axis .tick.end { transform: translateX(-100%); }
-@container (max-width: 260px) { .ci-axis .tick[data-l="1"] { display: none; } }
-.ci-axis .dir { position: absolute; top: 16px; letter-spacing: 0.04em; }
-.ci-axis .dir.lo { left: 0; }
-.ci-axis .dir.hi { right: 0; }
-`;
-
-if (typeof document !== "undefined" && !document.getElementById("ci-css")) {
-  const style = document.createElement("style");
-  style.id = "ci-css";
-  style.textContent = CSS;
-  document.head.append(style);
-}
 
 const finite = (v) => typeof v === "number" && Number.isFinite(v);
 

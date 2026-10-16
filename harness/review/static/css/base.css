@@ -167,7 +167,7 @@ kbd {
   display: inline-block;
   min-width: 1.6em;
   padding: 0 0.4em;
-  font: 700 10.5px / 1.6 var(--font-mono);
+  font: 700 var(--t-label) / 1.6 var(--font-mono);
   text-align: center;
   color: var(--ink-2);
   background: var(--strip);
@@ -243,28 +243,28 @@ kbd {
 .btn-small {
   min-height: 28px;
   padding: 0 var(--s3);
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 @media (prefers-color-scheme: dark) {
   .btn-clear,
   .btn-strike {
-    color: #0f1316;
+    color: var(--board);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .btn:hover:not(:disabled) {
+  .btn:hover:not(:disabled):not([aria-disabled="true"]) {
     border-color: var(--ink-3);
   }
-  .btn-quiet:hover:not(:disabled) {
+  .btn-quiet:hover:not(:disabled):not([aria-disabled="true"]) {
     background: var(--strip);
   }
-  .btn-clear:hover:not(:disabled) {
+  .btn-clear:hover:not(:disabled):not([aria-disabled="true"]) {
     background: color-mix(in srgb, var(--cleared) 88%, var(--ink));
     border-color: transparent;
   }
-  .btn-strike:hover:not(:disabled) {
+  .btn-strike:hover:not(:disabled):not([aria-disabled="true"]) {
     background: color-mix(in srgb, var(--struck) 88%, var(--ink));
     border-color: transparent;
   }
@@ -273,8 +273,7 @@ kbd {
 /* --- Inputs -------------------------------------------------------------------------------- */
 
 .input,
-.select,
-.textarea {
+.select {
   min-height: 34px;
   padding: 6px var(--s3);
   background: var(--strip);
@@ -295,29 +294,19 @@ kbd {
   background-repeat: no-repeat;
 }
 
-.textarea {
-  width: 100%;
-  resize: vertical;
-  line-height: 1.45;
+/* A placeholder can be a field's only visible label (the Queue's note), so it takes readable ink. */
+.input::placeholder {
+  color: var(--ink-3);
 }
 
-.input::placeholder,
-.textarea::placeholder {
-  color: var(--ink-faint);
-}
-
-/* Key hints mean nothing on a touch screen. */
 @media (pointer: coarse) {
+  /* Key hints mean nothing on a touch screen. */
   .btn kbd {
     display: none;
   }
-}
-
-/* Text inputs below 16px make iOS Safari zoom the page on focus. */
-@media (pointer: coarse) {
+  /* Text inputs below 16px make iOS Safari zoom the page on focus. */
   .input,
-  .select,
-  .textarea {
+  .select {
     font-size: 16px;
   }
 }

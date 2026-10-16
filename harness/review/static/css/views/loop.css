@@ -12,12 +12,6 @@
   padding-inline: var(--s5);
 }
 
-@media (max-width: 860px) {
-  .loop-pad {
-    padding-inline: var(--s3);
-  }
-}
-
 .loop .viewhead .sub {
   min-height: 1.5em;
 }
@@ -422,7 +416,9 @@
   .loop-group[data-group="memory"] {
     grid-column: 8 / 9;
   }
-  .loop-grouphead,
+  .loop-grouphead {
+    grid-column: 1 / -1;
+  }
   .loop-group[data-group] .loop-bays {
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
@@ -550,7 +546,7 @@
 
 .loop-lines .s {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: var(--t-label);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -574,10 +570,6 @@
   right: var(--s3);
   bottom: var(--s2);
   box-shadow: var(--shadow-lift);
-}
-
-.loop-jump[hidden] {
-  display: none;
 }
 
 @container loop (max-width: 520px) {
@@ -783,14 +775,14 @@
   }
 }
 
-/* Narrow layout: keep content clear of the notch in landscape, and give text-style controls a
-   44px touch target with visible press feedback (the tap highlight is off). */
+/* Narrow layout: the shell's inline padding, clear of the notch in landscape. */
 @media (max-width: 860px) {
   .loop-pad {
-    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+    padding-inline: var(--page-x);
   }
 }
 
+/* Touch: the run links get a 44px target and visible press feedback (the tap highlight is off). */
 @media (pointer: coarse) {
   .loop-runs th a {
     display: inline-flex;

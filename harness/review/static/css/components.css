@@ -3,6 +3,11 @@
 /* --- Shell --------------------------------------------------------------------------------- */
 
 .shell {
+  /* Heights of the two bars, for views that size themselves against them. The readback bar takes
+     --readback-h as its min-height and holds nothing taller. --rail-h is the rail once it becomes a
+     bar across the top under 860px: 34px links, 8px padding above and below, a 1px rule. */
+  --readback-h: 36px;
+  --rail-h: 51px;
   display: grid;
   grid-template-columns: 212px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
@@ -134,6 +139,11 @@
   white-space: nowrap;
 }
 
+/* Labels on the rail take the board's secondary ink: --ink-3 is 4.2:1 on --board-deep. */
+.rail-foot .label {
+  color: var(--ink-2);
+}
+
 .main {
   grid-area: main;
   position: relative; /* contains absolutely placed .sr-only text, which would otherwise widen the page */
@@ -183,7 +193,7 @@
   display: flex;
   align-items: center;
   gap: var(--s4);
-  min-height: 36px;
+  min-height: var(--readback-h);
   padding: 0 var(--s5);
   background: var(--board-deep);
   border-top: 1px solid var(--rule);
@@ -213,8 +223,12 @@
 }
 
 .readback-chips {
+  flex: 0 1 auto;
   display: flex;
   gap: var(--s1);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .readback-chips:not(:empty) + .readback-hints {
@@ -226,13 +240,6 @@
   padding: 0 6px;
   gap: 4px;
   font-size: 11.5px;
-}
-
-.readback-chips {
-  flex: 0 1 auto;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
 
 .readback-hints {
@@ -304,8 +311,11 @@
   border-left-color: var(--rule);
 }
 
+/* Amber on a warn-wash cell: amber alone is 4.2:1 on the board and 3.8:1 on --board-deep. */
 .bay.attn .n {
   color: var(--warn);
+  background: var(--warn-wash);
+  border-top-right-radius: calc(var(--r-strip) - 1px);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -358,10 +368,6 @@
   --holder-color: repeating-linear-gradient(-45deg, var(--held) 0 3px, transparent 3px 6px);
 }
 
-.strip[data-held]::before {
-  background: var(--holder-color);
-}
-
 /* Struck: a controller draws a line through the strip. */
 .strip[data-status="killed"] .strip-text {
   text-decoration: line-through;
@@ -398,7 +404,7 @@
 }
 
 .strip-score small {
-  font-size: 10.5px;
+  font-size: var(--t-label);
   font-weight: 400;
   color: var(--ink-3);
   margin-left: 2px;
@@ -492,7 +498,6 @@
   font: 600 13.5px / 1.2 var(--font-ui);
 }
 
-
 /* --- Stamps and chips --------------------------------------------------------------------- */
 
 .stamp {
@@ -520,10 +525,6 @@
 .stamp.held {
   color: var(--ink-3);
   border-style: dashed;
-}
-
-.stamp.ask {
-  color: var(--human);
 }
 
 .chip {
@@ -593,7 +594,7 @@ button.chip[aria-pressed="true"] {
 .section {
   display: grid;
   gap: var(--s3);
-  padding: var(--s4) var(--s4) var(--s4);
+  padding: var(--s4);
   border-top: 1px solid var(--rule);
 }
 
@@ -663,40 +664,6 @@ button.chip[aria-pressed="true"] {
   border-radius: 2px;
 }
 
-/* A range: a bar from low to high with a tick at the point estimate. */
-.range {
-  position: relative;
-  height: 14px;
-}
-
-.range::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 6px;
-  height: 2px;
-  background: var(--strip-inset);
-}
-
-.range > .span {
-  position: absolute;
-  top: 5px;
-  height: 4px;
-  background: var(--ink-faint);
-  border-radius: 2px;
-}
-
-.range > .pt {
-  position: absolute;
-  top: 1px;
-  width: 3px;
-  height: 12px;
-  margin-left: -1.5px;
-  background: var(--ink);
-  border-radius: 1px;
-}
-
 /* --- Status lamps ------------------------------------------------------------------------- */
 
 .lamp {
@@ -745,12 +712,6 @@ button.chip[aria-pressed="true"] {
 
 .state.error h2 {
   color: var(--struck);
-}
-
-.state pre {
-  max-width: 100%;
-  overflow-x: auto;
-  font: 12px / 1.5 var(--font-code);
 }
 
 .notice {
@@ -805,17 +766,13 @@ button.chip[aria-pressed="true"] {
   align-items: center;
   gap: var(--s2);
   padding: 2px var(--s2);
-  font: 700 10.5px / 1.4 var(--font-mono);
+  font: 700 var(--t-label) / 1.4 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink);
   background: var(--warn-wash);
   border: 1px solid color-mix(in srgb, var(--warn) 50%, var(--rule));
   border-radius: 3px;
-}
-
-.fixture-banner[hidden] {
-  display: none;
 }
 
 .fixture-banner a {
@@ -834,7 +791,10 @@ button.chip[aria-pressed="true"] {
 }
 
 .toast {
-  max-width: min(420px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  max-width: min(420px, calc(100vw - 2 * var(--s4)));
   padding: var(--s2) var(--s3);
   font-size: var(--t-small);
   color: var(--strip);
@@ -851,15 +811,16 @@ button.chip[aria-pressed="true"] {
   }
 }
 
-.toast {
-  display: flex;
-  align-items: center;
-  gap: var(--s3);
-}
-
 .toast.error {
   background: var(--struck);
   color: #fff;
+}
+
+/* The dark theme's red is lighter: white on it is 3.0:1, the board's near-black 6.2:1. */
+@media (prefers-color-scheme: dark) {
+  .toast.error {
+    color: var(--board);
+  }
 }
 
 .toast-close {
@@ -880,7 +841,7 @@ button.chip[aria-pressed="true"] {
 
 /* The shortcut sheet opens from a key press only, so it appears without motion. */
 dialog.sheet {
-  width: min(560px, calc(100vw - 32px));
+  width: min(560px, calc(100vw - 2 * var(--s4)));
   max-height: min(80dvh, 720px);
   padding: 0;
   color: var(--ink);
@@ -890,12 +851,14 @@ dialog.sheet {
   box-shadow: var(--shadow-lift);
 }
 
-dialog.sheet::backdrop {
-  background: var(--overlay);
+/* A column, so the body scrolls under a header that stays put. */
+dialog.sheet[open] {
+  display: flex;
+  flex-direction: column;
 }
 
-.sheet-body {
-  overscroll-behavior: contain;
+dialog.sheet::backdrop {
+  background: var(--overlay);
 }
 
 .sheet-head {
@@ -913,8 +876,10 @@ dialog.sheet::backdrop {
 }
 
 .sheet-body {
+  min-height: 0;
   padding: var(--s4);
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .keys-group + .keys-group {
@@ -954,11 +919,12 @@ dialog.sheet::backdrop {
   justify-content: flex-end;
 }
 
-
 /* --- Small screens ------------------------------------------------------------------------ */
 
 @media (max-width: 860px) {
   .shell {
+    /* Inline padding for anything that runs edge to edge: clear of the notch in landscape. */
+    --page-x: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -971,9 +937,8 @@ dialog.sheet::backdrop {
     flex-direction: row;
     align-items: center;
     gap: var(--s3);
-    padding: var(--s2) var(--s3);
-    padding-top: max(var(--s2), env(safe-area-inset-top));
-    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+    padding-block: max(var(--s2), env(safe-area-inset-top)) var(--s2);
+    padding-inline: var(--page-x);
     border-right: 0;
     border-bottom: 1px solid var(--rule);
     overflow-x: auto;
@@ -1011,17 +976,17 @@ dialog.sheet::backdrop {
   }
 
   .viewhead {
-    padding: var(--s4) var(--s3) var(--s3);
-    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+    padding-block: var(--s4) var(--s3);
+    padding-inline: var(--page-x);
   }
 
   .bays {
-    padding: 0 var(--s3);
+    padding-inline: var(--page-x);
   }
 
   .readback {
-    padding: 0 var(--s3);
-    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
+    min-height: calc(var(--readback-h) + env(safe-area-inset-bottom));
+    padding-inline: var(--page-x);
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -1035,7 +1000,7 @@ dialog.sheet::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn:active:not(:disabled),
+  .btn:active:not(:disabled):not([aria-disabled="true"]),
   button.chip:active {
     transform: none;
   }
@@ -1054,16 +1019,199 @@ dialog.sheet::backdrop {
 
 /* Touch: 44px targets and a visible press, since the tap highlight is off. */
 @media (pointer: coarse) {
+  .shell {
+    --readback-h: 45px; /* a 44px chip and the 1px rule */
+    --rail-h: 61px; /* 44px links */
+  }
   .btn,
   .bay,
   .nav-link,
-  .chip,
+  button.chip,
+  .readback-chips .chip,
   .toast-close {
     min-height: 44px;
+  }
+  .chip kbd,
+  .readback-hints {
+    display: none;
   }
   .strip:active,
   .bay:active,
   .nav-link:active {
     background-color: var(--strip-inset);
   }
+}
+
+/* --- Interval plots: a point, its 95% interval, reference lines, a band ------------------- */
+
+/* Spans on a percentage scale (js/components/ci.js), so a plot stretches with its column. */
+.ci {
+  --ci-surface: var(--strip);
+  position: relative;
+  display: block;
+  height: 22px;
+  min-width: 48px;
+}
+
+.ci.mini {
+  height: 14px;
+}
+
+.ci > span {
+  position: absolute;
+}
+
+.ci-grid {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -0.5px;
+  background: var(--rule);
+}
+
+.ci-band {
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
+.ci-ref {
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  margin-left: -0.5px;
+  background: var(--ink-3);
+}
+
+.ci-ref.threshold {
+  background: repeating-linear-gradient(to bottom, var(--ink-3) 0 3px, transparent 3px 5px);
+}
+
+.ci-whisker {
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+.ci-whisker::before,
+.ci-whisker::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 10px;
+  background: inherit;
+  border-radius: 1px;
+}
+
+.ci-whisker::before {
+  left: -1px;
+}
+
+.ci-whisker::after {
+  right: -1px;
+}
+
+.ci-whisker.open-lo::before,
+.ci-whisker.open-hi::after {
+  display: none;
+}
+
+.ci-pt {
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--ci-surface);
+}
+
+.ci-pt.hollow {
+  background: var(--ci-surface);
+  border: 2px solid var(--ink);
+}
+
+.ci.mini .ci-whisker::before,
+.ci.mini .ci-whisker::after {
+  top: -3px;
+  height: 8px;
+}
+
+.ci.mini .ci-pt {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+}
+
+.ci.muted .ci-whisker {
+  background: var(--ink-3);
+}
+
+.ci.muted .ci-pt {
+  background: var(--ink-3);
+}
+
+.ci.muted .ci-pt.hollow {
+  background: var(--ci-surface);
+  border-color: var(--ink-3);
+}
+
+.ci-none {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed var(--rule-strong);
+}
+
+.ci-axis {
+  container-type: inline-size;
+  position: relative;
+  display: block;
+  height: 14px;
+  font: 400 var(--t-label) / 14px var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.ci-axis.has-dir {
+  height: 30px;
+}
+
+.ci-axis .tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.ci-axis .tick.start {
+  transform: none;
+}
+
+.ci-axis .tick.end {
+  transform: translateX(-100%);
+}
+
+@container (max-width: 260px) {
+  .ci-axis .tick[data-l="1"] {
+    display: none;
+  }
+}
+
+.ci-axis .dir {
+  position: absolute;
+  top: 16px;
+  letter-spacing: 0.04em;
+}
+
+.ci-axis .dir.lo {
+  left: 0;
+}
+
+.ci-axis .dir.hi {
+  right: 0;
 }

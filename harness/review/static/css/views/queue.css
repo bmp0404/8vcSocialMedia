@@ -61,35 +61,53 @@
   padding: var(--s5) var(--s2);
 }
 
-.skeleton-strip {
+/* Where to go next when the bay is empty. */
+.q-next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s2);
+}
+
+.q .skeleton-strip {
   gap: 10px;
 }
 
-.warn-text {
+.q .warn-text {
   color: var(--warn);
 }
 
-.bad-text {
+.q .bad-text {
   color: var(--struck);
 }
 
 /* One-time entrance when a bay first fills: the board being loaded with strips. */
-@media (prefers-reduced-motion: no-preference) {
-  .q-strips.enter > .strip:nth-child(-n + 10) {
-    animation: strip-in var(--d-base) var(--ease-out) both;
-  }
-  .q-strips.enter > .strip:nth-child(2) { animation-delay: 35ms; }
-  .q-strips.enter > .strip:nth-child(3) { animation-delay: 70ms; }
-  .q-strips.enter > .strip:nth-child(4) { animation-delay: 105ms; }
-  .q-strips.enter > .strip:nth-child(5) { animation-delay: 140ms; }
-  .q-strips.enter > .strip:nth-child(6) { animation-delay: 175ms; }
-  .q-strips.enter > .strip:nth-child(n + 7) { animation-delay: 200ms; }
+.q-strips.enter > .strip:nth-child(-n + 10) {
+  animation: strip-in var(--d-base) var(--ease-out) backwards;
 }
+.q-strips.enter > .strip:nth-child(2) { animation-delay: 35ms; }
+.q-strips.enter > .strip:nth-child(3) { animation-delay: 70ms; }
+.q-strips.enter > .strip:nth-child(4) { animation-delay: 105ms; }
+.q-strips.enter > .strip:nth-child(5) { animation-delay: 140ms; }
+.q-strips.enter > .strip:nth-child(6) { animation-delay: 175ms; }
+.q-strips.enter > .strip:nth-child(n + 7) { animation-delay: 200ms; }
 
 @keyframes strip-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    translate: 0 6px; /* adds to the selected strip's translateX instead of replacing it */
+  }
+}
+
+@keyframes strip-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .q-strips.enter > .strip:nth-child(-n + 10) {
+    animation-name: strip-fade;
   }
 }
 
@@ -101,6 +119,15 @@
   min-height: 0;
   background: var(--strip);
   border-left: 1px solid var(--rule);
+}
+
+/* Messages on the paper sit at the top instead of spreading over the column. */
+.q-detail > .state {
+  align-content: start;
+}
+
+.q-summary .kv {
+  min-width: 220px;
 }
 
 .q-back {
@@ -133,7 +160,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 .q-facts .muted {
@@ -181,7 +208,7 @@
 }
 
 .q-basis {
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 .q-ev {
@@ -197,7 +224,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px var(--s3);
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 .q-veto {
@@ -211,7 +238,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 4px var(--s2);
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 .q-veto-side .num {
@@ -240,7 +267,7 @@
   grid-template-columns: max-content minmax(80px, 1fr) 3ch;
   align-items: center;
   gap: 5px var(--s3);
-  font-size: 12.5px;
+  font-size: var(--t-small);
 }
 
 .q-panel-name {
@@ -307,6 +334,18 @@
   color: var(--warn);
 }
 
+.q-cand-veto {
+  display: grid;
+  gap: 2px;
+  font-size: var(--t-small);
+  color: var(--struck);
+}
+
+.q-cand-veto .label {
+  color: var(--struck);
+  margin-right: 4px;
+}
+
 .q-ask {
   display: grid;
   gap: var(--s1);
@@ -322,7 +361,11 @@
 
 .q-thread-note {
   padding: 0 16px 12px;
-  font-size: 12.5px;
+  font-size: var(--t-small);
+}
+
+.q-overrule-head {
+  margin-top: var(--s1);
 }
 
 /* --- Decision bar ------------------------------------------------------------------------- */
@@ -401,14 +444,15 @@
   }
 
   .q-list {
-    padding: var(--s3);
+    padding-block: var(--s3);
+    padding-inline: var(--page-x);
   }
 
   /* A full-screen sheet over the shell, the way a phone opens a message. */
   .q-detail {
     position: fixed;
     /* Ends above the readback bar, so "why?" chips and verdict readbacks stay visible. */
-    inset: 0 0 calc(36px + env(safe-area-inset-bottom)) 0;
+    inset: 0 0 calc(var(--readback-h) + env(safe-area-inset-bottom)) 0;
     z-index: 30;
     padding-top: env(safe-area-inset-top);
     padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
@@ -448,10 +492,6 @@
     padding: var(--s2) var(--s3);
   }
 
-  .q-list {
-    padding-inline: max(var(--s3), env(safe-area-inset-left)) max(var(--s3), env(safe-area-inset-right));
-  }
-
   .q-decide-row .btn {
     flex: 1 1 auto;
     min-height: 44px;
@@ -461,7 +501,7 @@
     flex-basis: 100%;
   }
 
-  .strip[aria-selected="true"] {
+  .q .strip[aria-selected="true"] {
     transform: none;
   }
 }
@@ -481,36 +521,4 @@
       opacity var(--d-fast) ease,
       visibility 0s;
   }
-}
-
-.q-overrule-head {
-  margin-top: var(--s1);
-}
-
-.q-next {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s2);
-  margin-top: var(--s2);
-}
-
-/* Messages on the paper sit at the top instead of spreading over the column. */
-.q-detail > .state {
-  align-content: start;
-}
-
-.q-summary .kv {
-  min-width: 220px;
-}
-
-.q-cand-veto {
-  display: grid;
-  gap: 2px;
-  font-size: 12.5px;
-  color: var(--struck);
-}
-
-.q-cand-veto .label {
-  color: var(--struck);
-  margin-right: 4px;
 }
