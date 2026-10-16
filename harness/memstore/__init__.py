@@ -1,10 +1,9 @@
 """Markdown memory store. See memory/README.md and memory/IMPLEMENTATION.md.
 
-P0 ships the format (note.py) and store_root(). The other functions are stubs
-that the store, search and round-end packages replace.
+note.py holds the format and store_root(); store.py holds reads and the one
+validated write path. The remaining stubs are replaced by the search and
+round-end packages.
 """
-
-from pathlib import Path
 
 from harness.memstore.note import (
     TYPES,
@@ -15,6 +14,7 @@ from harness.memstore.note import (
     selftest_note,
     store_root,
 )
+from harness.memstore.store import delete_note, list_notes, load, selftest_store, write_note
 
 __all__ = [
     "TYPES",
@@ -30,25 +30,10 @@ __all__ = [
     "round_end",
     "search",
     "selftest_note",
+    "selftest_store",
     "store_root",
     "write_note",
 ]
-
-
-def load(id: str) -> Note | None:
-    raise NotImplementedError("load lands in P1 (store.py)")
-
-
-def list_notes(type: str | None = None) -> list[Note]:
-    raise NotImplementedError("list_notes lands in P1 (store.py)")
-
-
-def write_note(note: Note) -> Path:
-    raise NotImplementedError("write_note lands in P1 (store.py)")
-
-
-def delete_note(id: str) -> bool:
-    raise NotImplementedError("delete_note lands in P1 (store.py)")
 
 
 def search(query: str, k: int = 10, types: list[str] | None = None) -> list[dict]:
