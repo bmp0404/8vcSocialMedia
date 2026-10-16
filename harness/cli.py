@@ -22,8 +22,17 @@ def run(args) -> None:
         raise SystemExit("No signals observed; check HARNESS_SOURCES.")
     narratives = orient(llm, mission, signals, top=args.narratives)
     print(f"[orient] {len(narratives)} narratives: " + ", ".join(n.id for n in narratives))
-    actions = decide(llm, mission, config.lessons(), narratives, per_mind=args.per_mind)
-    ranked = qualify(llm, mission, actions)[: args.top]
+    lessons = config.lessons()
+    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind)
+    actions, kept = batch, qualify(llm, mission, batch)
+    for _ in range(args.retries):
+        if kept or not batch:
+            break
+        # The critic vetoed every draft, so each mind revises its own drafts against the critiques.
+        batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, vetoed=batch)
+        kept = qualify(llm, mission, batch)
+        actions = actions + batch
+    ranked = kept[: args.top]
 
     run_id = memory.save_run(actions)
     config.OUT_DIR.mkdir(exist_ok=True)
@@ -55,6 +64,7 @@ def main() -> None:
     p.add_argument("--narratives", type=int, default=5)
     p.add_argument("--per-mind", type=int, default=3)
     p.add_argument("--top", type=int, default=10)
+    p.add_argument("--retries", type=int, default=2, help="revision rounds when the critic vetoes every draft")
     p.set_defaults(func=run)
 
     p = sub.add_parser("record", help="store observed metrics: JSON list of {action_id, metrics}")
