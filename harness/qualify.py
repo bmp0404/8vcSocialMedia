@@ -1,16 +1,24 @@
-"""Qualify: a simulated audience panel scores drafts; a brand-safety critic can veto them."""
+"""Qualify: a simulated audience panel scores drafts; a brand-safety critic can veto them.
+
+The panelists are brand-specific, so they live in a JSON file next to the mission, not in this module:
+mission/panel.json by default, or the path in HARNESS_PANEL. The backtest points the same code at
+eval/panels/devtools.json to score the data team's dev-tool posts.
+"""
 
 import json
+import os
+import random
+from pathlib import Path
 
+from harness import config
 from harness.llm import LLM
 from harness.models import Action
 
-PANEL = {
-    "iowa_diehard": "Iowa Hawkeyes superfan who watched every Clark game in college.",
-    "casual_wnba_fan": "Follows the WNBA casually; scrolls fast; rewards funny and clear.",
-    "rival_fan": "Fan of a rival team; engages with banter but hates lazy hype.",
-    "sports_media": "Beat writer / aggregator account; amplifies sharp, accurate takes.",
-}
+PANEL_PATH = Path(os.getenv("HARNESS_PANEL") or config.ROOT / "mission" / "panel.json")
+# A separate model for the panel. On the dev-tool backtest (eval/DESIGN.md) gpt-6.1-sol separated a
+# brand's viral posts from its flops at AUC 0.854 against claude-sonnet-5-5's 0.797 (difference inside
+# the interval), and a judge from another family avoids rating its own drafts. Unset keeps the run's LLM.
+PANEL_MODEL = os.getenv("HARNESS_PANEL_MODEL", "")
 
 PANEL_SYSTEM = """You simulate an X audience panel. For each draft, each panelist predicts how likely
 they are to engage (like, reply, repost) on a 0-1 scale. Be harsh; most posts get ignored."""
@@ -23,8 +31,8 @@ DRAFTS:
 
 Return JSON: {{"scores": {{"<draft id>": {{"<panelist>": 0.0}}}}}}"""
 
-CRITIC_SYSTEM = """You are the brand-safety and quality critic for a fan account. Veto any draft that is
-harassing, cruel, factually shaky, off-mission, or a reply/quote with no target. Otherwise keep it."""
+CRITIC_SYSTEM = """You are the brand-safety and quality critic for the account described in MISSION. Veto any
+draft that is harassing, cruel, factually shaky, off-mission, or a reply/quote with no target. Otherwise keep it."""
 
 CRITIC_PROMPT = """MISSION:
 {mission}
@@ -35,6 +43,19 @@ DRAFTS:
 Return JSON: {{"verdicts": {{"<draft id>": {{"veto": false, "critique": "..."}}}}}}"""
 
 
+def load_panel(path: Path | None = None) -> dict[str, str]:
+    """Read {panelist name: who they are and what makes them engage} from a JSON file."""
+    path = path or PANEL_PATH
+    if not path.exists():
+        raise FileNotFoundError(f"no audience panel at {path}; add one next to the mission or set HARNESS_PANEL")
+    panel = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(panel, dict) or not panel or not all(
+        isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in panel.items()
+    ):
+        raise ValueError(f"{path} must be a non-empty JSON object of panelist name -> description")
+    return panel
+
+
 def _drafts(actions: list[Action]) -> str:
     return json.dumps(
         [{"id": a.id, "type": a.type, "text": a.text, "target_url": a.target_url, "target_handle": a.target_handle}
@@ -43,26 +64,62 @@ def _drafts(actions: list[Action]) -> str:
     )
 
 
-def qualify(llm: LLM, mission: str, actions: list[Action]) -> list[Action]:
+def panel_scores(llm: LLM, actions: list[Action], panel: dict[str, str]) -> dict[str, dict[str, float]]:
+    """{action id: {panelist: 0-1}}. The backtest calls this directly, so it measures the same prompt."""
+    return llm.complete_json(
+        PANEL_SYSTEM,
+        PANEL_PROMPT.format(panel=json.dumps(panel, indent=1), drafts=_drafts(actions)),
+        mock=lambda: {"scores": {a.id: {p: 0.5 for p in panel} for a in actions}},
+    ).get("scores", {})
+
+
+def panel_scores_two_orders(llm: LLM, actions: list[Action], panel: dict[str, str]) -> dict[str, dict[str, float]]:
+    """Score the drafts in a shuffled order and in reverse, then average each panelist's score.
+
+    A model scoring several posts in one call drifts toward its neighbours: on real dev-tool posts the
+    panel's within-account AUC was 0.696 with viral posts first and 0.821 with them last
+    (8vc-context/research/eval.md, finding 1). Averaging the two orders cancels most of that for one
+    extra call. The shuffle uses Python's default random; order only needs to vary, not repeat.
+    """
+    order = list(actions)
+    random.shuffle(order)
+    runs = [panel_scores(llm, order, panel), panel_scores(llm, order[::-1], panel)]
+    out = {}
+    for a in actions:
+        per = [r.get(a.id, {}) for r in runs]
+        names = set.intersection(*(set(x) for x in per)) if all(per) else set()
+        out[a.id] = {n: sum(float(x[n]) for x in per) / len(per) for n in names}
+    return out
+
+
+def panel_mean(scores: dict[str, float]) -> float:
+    return round(sum(scores.values()) / len(scores), 3) if scores else 0.0
+
+
+def panel_llm(llm: LLM) -> LLM:
+    """The run's LLM, or HARNESS_PANEL_MODEL on the same Anthropic-compatible gateway."""
+    from harness.llm import AnthropicLLM
+
+    if PANEL_MODEL and isinstance(llm, AnthropicLLM):
+        return AnthropicLLM(PANEL_MODEL)
+    return llm
+
+
+def qualify(llm: LLM, mission: str, actions: list[Action], panel: dict[str, str] | None = None) -> list[Action]:
     if not actions:
         return []
-    drafts = _drafts(actions)
-
-    scores = llm.complete_json(
-        PANEL_SYSTEM,
-        PANEL_PROMPT.format(panel=json.dumps(PANEL, indent=1), drafts=drafts),
-        mock=lambda: {"scores": {a.id: {p: 0.5 for p in PANEL} for a in actions}},
-    ).get("scores", {})
+    panel = panel or load_panel()
+    scores = panel_scores_two_orders(panel_llm(llm), actions, panel)
 
     verdicts = llm.complete_json(
         CRITIC_SYSTEM,
-        CRITIC_PROMPT.format(mission=mission, drafts=drafts),
+        CRITIC_PROMPT.format(mission=mission, drafts=_drafts(actions)),
         mock=lambda: {"verdicts": {a.id: {"veto": False, "critique": "mock ok"} for a in actions}},
     ).get("verdicts", {})
 
     for a in actions:
         a.panel = scores.get(a.id, {})
-        a.predicted_score = round(sum(a.panel.values()) / len(a.panel), 3) if a.panel else 0.0
+        a.predicted_score = panel_mean(a.panel)
         v = verdicts.get(a.id, {})
         a.vetoed = bool(v.get("veto"))
         a.critique = v.get("critique", "")
