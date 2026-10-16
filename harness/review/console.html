@@ -125,7 +125,7 @@
   .node:hover, .node.hot { border-color: var(--accent); }
   .node.sel { box-shadow: 0 0 0 2px var(--accent); }
   .lineage.dimmed .node:not(.hot) { opacity: .38; }
-  .node .h { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 3px; min-width: 0; }
+  .node .h { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 3px; min-width: 0; }
   .node .h b { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .node .x { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
   .node .m { font-size: 11.5px; color: var(--faint); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 10px; }
@@ -582,11 +582,14 @@ function nodeDraft(a) {
 function lineageHtml() {
   const g = graph();
   if (!state.trace) return `<div class="list">${state.actions.map(nodeDraft).join("")}</div>`;
+  const usedUrls = new Set(g.narratives.flatMap(n => n.signal_urls || []));
+  const used = g.signals.filter(x => usedUrls.has(x.url));
   const rank = Object.fromEntries((state.trace.ranked_ids || []).map((id, i) => [id, i]));
   const drafts = [...state.actions].sort((x, y) => (g.nById[x.narrative_id] ? g.narratives.indexOf(g.nById[x.narrative_id]) : 99) - (g.nById[y.narrative_id] ? g.narratives.indexOf(g.nById[y.narrative_id]) : 99) || (rank[x.id] ?? 99) - (rank[y.id] ?? 99));
   return `<div class="lineage" id="lineage">
     <svg class="edges" id="edges"></svg>
-    <div class="col"><h3>Signals · ${g.signals.length}</h3>${g.signals.map(nodeSignal).join("")}</div>
+    <div class="col"><h3>Signals · ${used.length} used of ${g.signals.length}</h3>${(state.showAllSignals ? g.signals : used).map(nodeSignal).join("")}
+      ${g.signals.length > used.length ? `<button class="ghost" id="allsig" style="font-size:12px">${state.showAllSignals ? "Hide" : "Show"} ${g.signals.length - used.length} signals no narrative used</button>` : ""}</div>
     <div class="col"><h3>Narratives · ${g.narratives.length}</h3>${g.narratives.map(nodeNarr).join("") || `<div class="muted">none</div>`}</div>
     <div class="col"><h3>Drafts · ${drafts.length}</h3>${drafts.map(nodeDraft).join("")}</div>
   </div>`;
@@ -616,6 +619,7 @@ function wireLineage() {
   requestAnimationFrame(drawEdges);
   box.addEventListener("mouseover", e => { const n = e.target.closest(".node"); if (n) highlight(n.dataset.k); });
   box.addEventListener("mouseleave", () => highlight(state.sel));
+  $("#allsig")?.addEventListener("click", e => { e.stopPropagation(); state.showAllSignals = !state.showAllSignals; renderLoop(); });
   box.addEventListener("click", e => { const n = e.target.closest(".node"); if (n) { state.sel = n.dataset.k; highlight(state.sel); inspect(n.dataset.k); } });
 }
 addEventListener("resize", () => { clearTimeout(drawEdges._h); drawEdges._h = setTimeout(drawEdges, 80); });
