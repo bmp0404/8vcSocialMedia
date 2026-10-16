@@ -8,6 +8,11 @@ from typing import Any, Callable
 from harness import config
 
 DEFAULT_MODELS = {"anthropic": "claude-sonnet-5-5"}
+# The cap covers thinking as well as the answer. On the gateway's claude-sonnet-5-5, thinking used
+# every token of the old 4,096 cap and the answer came back empty; the same memory brand-ingest
+# call used 8,248 output tokens once the cap was 16,000. Keep it under 21,333: above that the anthropic
+# SDK refuses non-streaming requests (_calculate_nonstreaming_timeout).
+MAX_TOKENS = int(os.getenv("HARNESS_MAX_TOKENS", "16000"))
 
 
 class LLM:
@@ -15,9 +20,17 @@ class LLM:
         raise NotImplementedError
 
     def complete_json(self, system: str, prompt: str, mock: Callable[[], Any] | None = None) -> Any:
-        """Ask for JSON and parse it. `mock` supplies canned output for the offline backend."""
-        text = self.complete(system + "\n\nRespond with JSON only, no prose.", prompt)
-        return parse_json(text)
+        """Ask for JSON and parse it, asking once more if the answer isn't JSON. `mock` supplies
+        canned output for the offline backend. One malformed orient answer on 2026-10-15 killed a
+        live round after four minutes of observing, so a single retry is cheaper than the rerun."""
+        system = system + "\n\nRespond with JSON only, no prose."
+        text = self.complete(system, prompt)
+        try:
+            return parse_json(text)
+        except ValueError as e:
+            print(f"[llm] answer wasn't JSON ({e}); asking once more")
+            retry = f"{prompt}\n\nYour last answer wasn't valid JSON ({e}). Answer again with only the JSON."
+            return parse_json(self.complete(system, retry))
 
 
 class AnthropicLLM(LLM):
@@ -30,7 +43,7 @@ class AnthropicLLM(LLM):
     def complete(self, system: str, prompt: str) -> str:
         resp = self.client.messages.create(
             model=self.model,
-            max_tokens=4096,
+            max_tokens=MAX_TOKENS,
             system=system,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -55,6 +68,10 @@ class OpenAICompatLLM(LLM):
 class MockLLM(LLM):
     """Offline backend so the pipeline runs end to end without any API key."""
 
+    # Mock detection has to survive wrappers: a tracing proxy fails isinstance(llm, MockLLM), and a
+    # mock run then fetched live data and spent the real budget. Callers read this attribute instead.
+    is_mock = True
+
     def complete(self, system: str, prompt: str) -> str:
         return "(mock completion)"
 
@@ -67,10 +84,13 @@ def parse_json(text: str) -> Any:
     try:
         return json.loads(text)
     except json.JSONDecodeError:
-        match = re.search(r"(\{.*\}|\[.*\])", text, re.S)
-        if not match:
+        # Take the first JSON value and ignore what follows it. A greedy {.*} match spanned two
+        # objects in one live orient answer and failed with "Extra data".
+        starts = [i for i in (text.find("{"), text.find("[")) if i >= 0]
+        if not starts:
             raise ValueError(f"LLM did not return JSON: {text[:200]}")
-        return json.loads(match.group(1))
+        value, _ = json.JSONDecoder().raw_decode(text, min(starts))
+        return value
 
 
 def get_llm(provider: str | None = None) -> LLM:
