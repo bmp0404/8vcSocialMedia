@@ -123,11 +123,13 @@ def test_poll_queues_a_hot_job_only_for_a_post_under_the_cutoff(tmp_path):
 
 def test_checkpoints_are_planned_for_the_windows_still_open_when_a_post_is_first_seen():
     H = timedelta(hours=1)
-    assert ingest.plan_checkpoints(T0, T0 + 2 * M) == ([(1, T0 + H, T0 + 2 * H), (24, T0 + 24 * H, T0 + 48 * H)], [])
+    assert ingest.plan_checkpoints(T0, T0 + 2 * M) == (
+        [(1, T0 + H, T0 + 2 * H), (24, T0 + 24 * H, T0 + 48 * H), (48, T0 + 48 * H, T0 + 96 * H)], [])
     assert ingest.plan_checkpoints(T0, T0 + 90 * M)[0][0] == (1, T0 + H, T0 + 2 * H)  # due at once, still inside
-    assert ingest.plan_checkpoints(T0, T0 + 2 * H) == ([(24, T0 + 24 * H, T0 + 48 * H)], [1])
-    assert ingest.plan_checkpoints(T0, T0 + 30 * H) == ([(24, T0 + 24 * H, T0 + 48 * H)], [1])
-    assert ingest.plan_checkpoints(T0, T0 + 48 * H) == ([], [1, 24])
+    assert ingest.plan_checkpoints(T0, T0 + 2 * H) == ([(24, T0 + 24 * H, T0 + 48 * H), (48, T0 + 48 * H, T0 + 96 * H)], [1])
+    assert ingest.plan_checkpoints(T0, T0 + 30 * H) == ([(24, T0 + 24 * H, T0 + 48 * H), (48, T0 + 48 * H, T0 + 96 * H)], [1])
+    assert ingest.plan_checkpoints(T0, T0 + 48 * H) == ([(48, T0 + 48 * H, T0 + 96 * H)], [1, 24])
+    assert ingest.plan_checkpoints(T0, T0 + 96 * H) == ([], [1, 24, 48])
 
 
 def thread_for(root: XPost, n: int, author="fan", likes=lambda i: 10 - i) -> list[XPost]:
@@ -149,10 +151,11 @@ def test_ingestion_runs_inside_each_window_and_marks_a_closed_one_missed(tmp_pat
     assert w.ingest_one()
     assert not w.ingest_one()  # +24h not open yet
     clock.t = reader.now = T0 + 49 * 60 * M  # the watcher was down through all of [24h, 48h)
+    assert w.ingest_one()  # +48h is open, so it runs
     assert not w.ingest_one()
     states = {r["checkpoint"]: r["state"] for r in rows(w.state.path, "ingest")}
-    assert states == {1: st.KEPT, 24: st.MISSED}
-    assert reader.calls["conversation:likes"] == reader.calls["conversation:recency"] == reader.calls["status"] == 1
+    assert states == {1: st.KEPT, 24: st.MISSED, 48: st.KEPT}
+    assert reader.calls["conversation:likes"] == reader.calls["conversation:recency"] == reader.calls["status"] == 2
 
 
 def test_low_coverage_and_empty_threads_are_recorded_but_not_kept(tmp_path):
@@ -351,7 +354,7 @@ def test_only_the_accounts_own_root_posts_count_and_broad_accounts_need_a_keywor
 
 def test_both_profiles_have_a_watch_list_of_the_size_the_brief_asked_for():
     wnba, devtools = load_watchlist("wnba"), load_watchlist("devtools")
-    assert len(wnba.handles) == 22 and sum(w.broad for w in wnba.handles) == 11
+    assert len(wnba.handles) == 21 and sum(w.broad for w in wnba.handles) == 11  # ChantelJennings dropped: protected
     assert 20 <= len(devtools.handles) <= 30 and not any(w.broad for w in devtools.handles)
 
 
@@ -380,7 +383,7 @@ def test_the_schedule_interleaves_profiles(tmp_path):
     w = loop.Watcher(loop.WatchConfig(watch_dir=tmp_path / "watch", sync_every_s=None), MockLLM(), FakeReader(),
                      echo=False)
     order = w.schedule()
-    assert len(order) == len(set(order)) == 46
+    assert len(order) == len(set(order)) == 45
     assert [x.profile for x in order[:4]] == ["wnba", "devtools", "wnba", "devtools"]
 
 

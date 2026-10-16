@@ -32,7 +32,9 @@ from harness.context import snowflake
 from harness.context.xreader import ReplySample
 from harness.outcomes.label import WINDOW_FACTOR, checkpoint_name
 
-CHECKPOINTS = (1, 24)  # hours after posting
+# Hours after posting. +48h exists because the corpus counts a thread as mature at 48h
+# (harness/corpus), so only that read enters the rolling reply benchmark.
+CHECKPOINTS = (1, 24, 48)
 MIN_COVERAGE = 0.8
 THREADS_DIR = config.ROOT / "data" / "threads"
 ROOTS_FILE, REPLIES_FILE = "author_timelines.jsonl.gz", "reply_samples.jsonl.gz"
