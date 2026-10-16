@@ -34,6 +34,7 @@ from harness.llm import LLM
 
 STAGES = ("evolve", "observe", "orient", "decide", "qualify", "tournament", "sharpen_hooks")
 PREVIEW = 4000
+LIVE_PATH = config.OUT_DIR / "trace-live.json"  # progress of the run in flight, for the console's Live view
 
 
 def _now() -> str:
@@ -61,9 +62,28 @@ class Trace:
         self.narratives: list = []
         self.ranked: list = []
         self.stage_name = ""
+        self._live_at = 0.0
 
     def ms(self, t: float) -> int:
         return round((t - self.t0) * 1000)
+
+    def live(self, status: str = "running", run_id: int | None = None, force: bool = False) -> None:
+        """Write a small progress snapshot. Throttled, and never raises."""
+        now = time.perf_counter()
+        if not force and now - self._live_at < 0.25:
+            return
+        self._live_at = now
+        try:
+            snap = {"status": status, "run_id": run_id, "started_at": self.started_at, "elapsed_ms": self.ms(now),
+                    "stage": self.stage_name, "done": [{k: s[k] for k in ("name", "ms", "n_out")} for s in self.stages],
+                    "sources": [{k: s[k] for k in ("name", "n", "error")} for s in self.sources],
+                    "llm_calls": len(self.calls)}
+            config.OUT_DIR.mkdir(parents=True, exist_ok=True)
+            tmp = LIVE_PATH.with_suffix(".tmp")
+            tmp.write_text(json.dumps(snap), encoding="utf-8")
+            tmp.replace(LIVE_PATH)
+        except Exception:  # noqa: BLE001 - progress is best-effort
+            pass
 
     @contextmanager
     def stage(self, name: str):
@@ -73,11 +93,13 @@ class Trace:
         self.stage_name = name
         entry = {"name": name, "start_ms": self.ms(time.perf_counter()), "ms": 0, "n_out": None}
         start = time.perf_counter()
+        self.live(force=True)
         try:
             yield entry
         finally:
             entry["ms"] = self.ms(time.perf_counter()) - self.ms(start)
             self.stages.append(entry)
+            self.live(force=True)
 
     def output(self, entry: dict, out: Any) -> None:
         if isinstance(out, list):
@@ -127,6 +149,7 @@ class Trace:
     def write(self, run_id: int, actions: list) -> None:
         try:
             self._write(run_id, actions)
+            self.live("done", run_id, force=True)
         except Exception as e:  # noqa: BLE001 - a lost trace must never fail the run
             print(f"[trace] could not write trace for run {run_id}: {e}")
 
@@ -217,6 +240,7 @@ class TracingLLM(LLM):
         }
         with self.trace._lock:
             self.trace.calls.append(call)
+        self.trace.live()
 
     def complete(self, system: str, prompt: str, *args, **kwargs) -> str:
         return self._call(self.inner.complete, system, prompt, *args, **kwargs)

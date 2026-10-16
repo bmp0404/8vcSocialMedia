@@ -110,6 +110,53 @@
   .rows .val small { font-weight: 400; color: var(--faint); margin-left: 6px; }
   .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 10px; }
   .star { color: var(--accent); }
+
+  /* ---------- Live (home) ---------- */
+  .hero { --h-bg: #0e0e0d; --h-ink: #f2f1ec; --h-muted: #8d8c86; --h-faint: #4a4a46; --h-line: #2a2a27; --h-accent: #f07a50; --h-ok: #4cc283; --h-warn: #e0a84a;
+          position: relative; background: radial-gradient(ellipse at 50% 45%, #1b1a18 0%, var(--h-bg) 62%); color: var(--h-ink);
+          border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) 300px; min-height: 640px;
+          border: 1px solid #222; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stagearea { position: relative; min-height: 640px; }
+  .slabel { position: absolute; transform: translate(-50%, -50%); text-align: center; pointer-events: none; transition: opacity .3s; width: 120px; }
+  .slabel .nm { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--h-muted); transition: color .3s; }
+  .slabel .ct { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--h-faint); transition: color .3s; }
+  .slabel .ms { font: 11px var(--mono); color: var(--h-faint); }
+  .slabel.on .nm { color: var(--h-accent); } .slabel.on .ct, .slabel.done .ct { color: var(--h-ink); } .slabel.done .nm { color: var(--h-ink); }
+  .slabel .who { font-size: 10px; color: var(--h-faint); margin-top: 1px; }
+  .slabel.human .nm { color: var(--h-warn); }
+  .core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(44%, 380px); text-align: center; pointer-events: none; }
+  .core .phase { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--h-accent); font-weight: 700; min-height: 16px; }
+  .core .verb { font-size: clamp(20px, 2.6vw, 30px); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; margin: 6px 0 10px; min-height: 2.3em; }
+  .core .flow { font: 600 13px var(--mono); color: var(--h-muted); }
+  .core .flow b { color: var(--h-ink); }
+  .core .ticker { margin-top: 14px; font-size: 13px; color: var(--h-muted); min-height: 3.2em; transition: opacity .35s; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .core .ticker b { color: var(--h-ink); font-weight: 600; }
+  .core .clock { margin-top: 12px; font: 12px var(--mono); color: var(--h-faint); }
+  .hud { position: absolute; left: 16px; top: 14px; display: flex; gap: 8px; align-items: center; z-index: 2; }
+  .hud .tag { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--h-line); color: var(--h-muted); }
+  .hud .tag.live { color: #fff; background: #c0392b; border-color: #c0392b; }
+  .hud .tag.live::before { content: "● "; animation: blink 1.2s infinite; }
+  @keyframes blink { 50% { opacity: .2; } }
+  .hud button { background: transparent; color: var(--h-muted); border: 1px solid var(--h-line); border-radius: 6px; padding: 3px 9px; font-size: 12px; }
+  .hud button:hover { color: var(--h-ink); border-color: var(--h-muted); }
+  .stream { position: relative; border-left: 1px solid var(--h-line); background: rgba(0, 0, 0, .25); display: flex; flex-direction: column; min-width: 0; }
+  .stream h4 { margin: 0; padding: 14px 16px 8px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--h-muted); }
+  .events { flex: 1; overflow: hidden; padding: 0 16px 16px; font: 11.5px/1.55 var(--mono); display: flex; flex-direction: column; justify-content: flex-end;
+            mask-image: linear-gradient(to bottom, transparent 0, #000 22%); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%); }
+  .events div { color: var(--h-muted); animation: evin .35s ease-out; overflow-wrap: anywhere; }
+  .events div span { color: var(--h-faint); }
+  .events div b { color: var(--h-ink); font-weight: 600; }
+  .events div.acc b { color: var(--h-accent); } .events div.ok b { color: var(--h-ok); } .events div.drop b { color: var(--h-warn); }
+  @keyframes evin { from { opacity: 0; transform: translateY(6px); } }
+  .below { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 10px; }
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .stream { border-left: 0; border-top: 1px solid var(--h-line); max-height: 220px; }
+    .stagearea { min-height: 560px; }
+    .core { width: 58%; }
+    .slabel { width: 90px; } .slabel .ct { font-size: 17px; } .slabel .who { display: none; }
+  }
   .funnel .drop { font-size: 11.5px; color: var(--faint); text-align: right; min-width: 6ch; }
 
   /* ---------- lineage ---------- */
@@ -286,7 +333,7 @@
 <script>
 /* ======================= state & helpers ======================= */
 const VIEWS = [
-  ["loop", "Loop"], ["review", "Review"], ["trace", "Trace"], ["market", "Market"], ["minds", "Minds"], ["eval", "Eval"], ["learning", "Learning"], ["runs", "Runs"],
+  ["live", "Live"], ["loop", "Loop"], ["review", "Review"], ["trace", "Trace"], ["market", "Market"], ["minds", "Minds"], ["eval", "Eval"], ["learning", "Learning"], ["runs", "Runs"],
 ];
 const FILTERS = {
   pending: a => a.review.status === "pending" && !a.vetoed,
@@ -361,7 +408,7 @@ function related(key, edges) {
 /* ======================= routing ======================= */
 function parseHash() {
   const [view, run] = location.hash.replace(/^#\/?/, "").split("/");
-  return { view: VIEWS.some(v => v[0] === view) ? view : "loop", run: +run || null };
+  return { view: VIEWS.some(v => v[0] === view) ? view : "live", run: +run || null };
 }
 function go(view, run = state.runId) { location.hash = `#/${view}${run ? "/" + run : ""}`; }
 addEventListener("hashchange", async () => {
@@ -429,13 +476,14 @@ function renderChrome() {
   }).join("");
 }
 function render() {
+  if (state.view !== "live") { cancelAnimationFrame(live.raf); clearInterval(live.tick); clearTimeout(live.timer); }
   renderChrome();
   const v = $("#view");
   if (!state.runs.length && !["market", "minds", "eval", "learning"].includes(state.view)) {
     v.innerHTML = `<div class="section empty">No runs yet. Start one with <code>uv run python -m harness run --provider mock</code>; this page picks it up automatically.</div>`;
     return;
   }
-  ({ loop: renderLoop, review: renderReview, trace: renderTrace, market: renderMarket, minds: renderMinds, eval: renderEval, learning: renderLearning, runs: renderRuns })[state.view]();
+  ({ live: renderLive, loop: renderLoop, review: renderReview, trace: renderTrace, market: renderMarket, minds: renderMinds, eval: renderEval, learning: renderLearning, runs: renderRuns })[state.view]();
 }
 
 /* ---------- revision rounds (critic-driven retries) ---------- */
@@ -444,6 +492,336 @@ function roundOf(id) {
   const rounds = (state.trace?.stages || []).filter(s => s.name === "decide");
   const i = rounds.findIndex(s => (s.ids || []).includes(id));
   return i < 0 ? 1 : i + 1;
+}
+
+/* ======================= Live: the loop, animated ======================= */
+// Replays the selected run from its trace (real counts, real text, timing scaled so slow stages get more
+// screen time). While a run started from the console is in flight, it follows out/trace-live.json instead.
+const VERBS = {
+  evolve: ["Evolve", "Rewriting lessons and breeding prompt variants"], observe: ["Observe", "Reading the info sphere"],
+  orient: ["Orient", "Clustering signals into narratives"], decide: ["Decide", "Media minds drafting"],
+  qualify: ["Qualify", "Audience panel and critic grading"], tournament: ["Tournament", "Drafts fight it out, pairwise"],
+  sharpen_hooks: ["Hooks", "Sharpening opening lines"], review: ["Review", "Waiting on a human"], learn: ["Learn", "Outcomes feed the next loop"],
+};
+const live = { gen: 0, raf: 0, dots: [], steps: [], t0: 0, idx: -1, mode: "replay", nodes: [], geo: null, timer: 0, tick: 0, liveSeen: 0, liveRun: false };
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Timers belong to one animation; starting another (replay or live) orphans them.
+function later(fn, ms) { const gen = live.gen; return setTimeout(() => { if (gen === live.gen) fn(); }, ms); }
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+function liveSteps() {
+  const t = state.trace, a = state.actions, run = curRun() || {};
+  const merged = t ? Object.values(t.stages.reduce((acc, s) => {
+    acc[s.name] = acc[s.name] ? { ...s, ms: acc[s.name].ms + s.ms, n_out: s.n_out ?? acc[s.name].n_out } : { ...s };
+    return acc;
+  }, {})) : [{ name: "decide", n_out: a.length, ms: 0 }, { name: "qualify", n_out: a.filter(x => !x.vetoed).length, ms: 0 }];
+  const steps = merged.map(s => ({ key: s.name, n: s.n_out ?? 0, ms: s.ms || 0 }));
+  const reviewed = a.filter(x => x.review.status !== "pending").length;
+  const approved = a.filter(x => x.review.status === "approved").length;
+  steps.push({ key: "review", n: reviewed ? approved : (t?.ranked_ids.length || a.filter(x => !x.vetoed).length), ms: 0, human: true, reviewed, approved });
+  steps.push({ key: "learn", n: run.outcomes || 0, ms: 0, vis: steps[steps.length - 1].n });  // reviewed drafts ride on to Learn
+  steps.forEach(st => { st.dur = reduceMotion ? 0 : Math.max(1500, Math.min(3400, 1100 + 900 * Math.log10(1 + st.ms / 40))); });
+  return steps;
+}
+
+function renderLive() {
+  cancelAnimationFrame(live.raf); clearTimeout(live.timer);
+  live.steps = liveSteps();
+  const t = state.trace, run = curRun() || {};
+  $("#view").innerHTML = `
+    <section class="hero" id="hero">
+      <div class="stagearea" id="stagearea">
+        <canvas id="loopcv"></canvas>
+        <div class="hud"><span class="tag" id="modetag">Replay · run ${state.runId ?? "–"}</span><button id="replay">↻ Replay</button></div>
+        ${live.steps.map((st, i) => `<div class="slabel ${st.human ? "human" : ""}" id="sl${i}"><div class="nm">${esc((VERBS[st.key] || [human(st.key)])[0])}</div>
+          <div class="ct" id="ct${i}">0</div><div class="ms" id="ms${i}"></div><div class="who">${st.human ? "human" : st.key === "learn" ? "ai + human" : "ai"}</div></div>`).join("")}
+        <div class="core">
+          <div class="phase" id="phase"></div>
+          <div class="verb" id="verb">${t ? "Starting the loop" : "No trace for this run"}</div>
+          <div class="flow" id="flow"></div>
+          <div class="ticker" id="ticker"></div>
+          <div class="clock" id="clock"></div>
+        </div>
+      </div>
+      <div class="stream"><h4>Event stream</h4><div class="events" id="events"></div></div>
+    </section>
+    <div class="below">
+      <div class="kpi"><div class="k">Loop time</div><div class="v">${t ? fmtMs(t.total_ms) : "–"}</div><div class="d">observe → ranked recommendations</div></div>
+      <div class="kpi"><div class="k">Signals → recommendations</div><div class="v">${t ? `${t.signals.length} → ${t.ranked_ids.length}` : "–"}</div><div class="d">what the loop read vs. what it proposes</div></div>
+      <div class="kpi"><div class="k">LLM calls</div><div class="v">${t ? t.llm_calls.length : "–"}</div><div class="d">${t ? `${t.llm_calls.filter(c => !c.ok).length} errors` : "no trace"}</div></div>
+      <div class="kpi"><div class="k">Time to human decision</div><div class="v">${fmtDur(run.decision_s)}</div><div class="d">median, run start → verdict</div></div>
+    </div>`;
+  $("#replay").onclick = () => startReplay();
+  layoutLive();
+  if (live.liveRun) startLiveFollow(); else startReplay();
+}
+
+function layoutLive() {
+  const area = $("#stagearea"), cv = $("#loopcv");
+  if (!area || !cv) return;
+  const w = area.clientWidth, h = area.clientHeight, dpr = devicePixelRatio || 1;
+  cv.width = w * dpr; cv.height = h * dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const R = Math.max(120, Math.min(w, h) / 2 - (w < 600 ? 70 : 96)), cx = w / 2, cy = h / 2 + 6;
+  const n = live.steps.length;
+  live.geo = { ctx, w, h, R, cx, cy };
+  live.nodes = live.steps.map((_, i) => {
+    const ang = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    const lx = cx + Math.cos(ang) * (R + (w < 600 ? 44 : 62)), ly = cy + Math.sin(ang) * (R + (w < 600 ? 40 : 52));
+    const el = $("#sl" + i); if (el) { el.style.left = lx + "px"; el.style.top = ly + "px"; }
+    return { ang, x: cx + Math.cos(ang) * R, y: cy + Math.sin(ang) * R };
+  });
+}
+addEventListener("resize", () => { if (state.view === "live") { layoutLive(); } });
+
+/* ----- particles ----- */
+const capDots = n => n <= 0 ? 0 : Math.max(1, Math.min(70, Math.round(n <= 70 ? n : 40 + Math.log2(n) * 3)));
+function dotSize(n) { return Math.max(2.8, Math.min(6.5, 14 / Math.sqrt(Math.max(n, 1)))); }
+function spawnTravel(from, to, count, size, now, span) {
+  const kept = live.dots.filter(d => d.at === from && d.state === "pile");
+  const movers = kept.slice(0, count);
+  while (movers.length < count) {   // nothing piled (first stage or a bloom): enter from the node itself
+    movers.push({ at: from, state: "pile", x: live.nodes[from]?.x ?? 0, y: live.nodes[from]?.y ?? 0, r: size, a: 0, born: now });
+    live.dots.push(movers[movers.length - 1]);
+  }
+  kept.slice(count).forEach(d => Object.assign(d, { state: "drop", t0: now, ox: d.x, oy: d.y }));
+  movers.forEach((d, i) => Object.assign(d, {
+    state: "move", from, to, t0: now + (i / Math.max(count, 1)) * span * .45, dur: span * .55,
+    lane: (Math.random() - .5) * 22, r0: d.r, r: size, a: 1,
+  }));
+}
+function settle(i, target, size, now) {
+  const here = live.dots.filter(d => d.at === i && (d.state === "pile" || d.state === "move"));
+  if (here.length > target) here.slice(target).forEach(d => Object.assign(d, { state: "drop", t0: now + 300, ox: null }));
+  for (let k = here.length; k < target; k++) {  // bloom: one input became many outputs
+    const n = live.nodes[i];
+    live.dots.push({ at: i, state: "pile", x: n.x, y: n.y, r: size, a: 0, born: now + Math.random() * 500, orbit: Math.random() * Math.PI * 2, rad: 8 + Math.random() * 26 });
+  }
+}
+function drawLive(now) {
+  const g = live.geo; if (!g) return;
+  const { ctx, w, h, R, cx, cy } = g;
+  ctx.clearRect(0, 0, w, h);
+  // ring
+  ctx.lineWidth = 1.5; ctx.strokeStyle = "#2a2a27"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+  // progress arc
+  if (live.idx >= 0) {
+    const n = live.steps.length, st = live.steps[live.idx];
+    const frac = Math.min(1, (now - live.stepStart) / Math.max(st?.dur || 1, 1));
+    const end = live.finished ? Math.PI * 1.5 : -Math.PI / 2 + ((live.idx + (live.mode === "live" ? .5 : frac)) / n) * Math.PI * 2;
+    const grad = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
+    grad.addColorStop(0, "rgba(240,122,80,.25)"); grad.addColorStop(1, "rgba(240,122,80,.9)");
+    ctx.strokeStyle = grad; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI / 2, end); ctx.stroke();
+  }
+  // dots
+  for (const d of live.dots) {
+    if (d.state === "move") {
+      const p = Math.max(0, Math.min(1, (now - d.t0) / d.dur));
+      if (p <= 0) { const n0 = live.nodes[d.from]; d.x ??= n0.x; d.y ??= n0.y; }
+      else {
+        const a0 = live.nodes[d.from].ang, a1raw = live.nodes[d.to].ang, a1 = a1raw <= a0 ? a1raw + Math.PI * 2 : a1raw;
+        const e = ease(p), ang = a0 + (a1 - a0) * e, rr = R + d.lane * Math.sin(Math.PI * e);
+        d.x = cx + Math.cos(ang) * rr; d.y = cy + Math.sin(ang) * rr; d.cur = d.r0 + (d.r - d.r0) * e;
+        if (p >= 1) Object.assign(d, { state: "pile", at: d.to, orbit: Math.random() * Math.PI * 2, rad: 8 + Math.random() * 26, born: now, settleFrom: [d.x, d.y] });
+      }
+    }
+    if (d.state === "pile") {
+      const n = live.nodes[d.at]; d.orbit = (d.orbit ?? 0) + .004;
+      const tx = n.x + Math.cos(d.orbit) * (d.rad ?? 12), ty = n.y + Math.sin(d.orbit) * (d.rad ?? 12) * .7;
+      d.x = d.x == null ? tx : d.x + (tx - d.x) * .08; d.y = d.y == null ? ty : d.y + (ty - d.y) * .08;
+      d.a = Math.min(1, (d.a ?? 0) + (now > (d.born ?? 0) ? .05 : 0)); d.cur = d.r;
+    }
+    if (d.state === "drop") {
+      const p = Math.max(0, (now - d.t0) / 900);
+      const n = live.nodes[d.at] || { x: cx, y: cy };
+      const vx = (n.x - cx) / R, vy = (n.y - cy) / R;
+      d.ox ??= d.x; d.oy ??= d.y;
+      d.x = d.ox + vx * 46 * p; d.y = d.oy + vy * 46 * p + 18 * p * p; d.a = Math.max(0, 1 - p); d.cur = d.r;
+      if (p >= 1) d.dead = true;
+    }
+    if (d.dead || d.a <= 0 && d.state !== "pile") continue;
+    const col = d.state === "drop" ? "224,168,74" : d.ok ? "76,194,131" : "240,122,80";
+    ctx.fillStyle = `rgba(${col},${(d.a ?? 1) * (d.state === "pile" ? .9 : 1)})`;
+    ctx.beginPath(); ctx.arc(d.x, d.y, d.cur || d.r, 0, Math.PI * 2); ctx.fill();
+    const glow = d.state === "move" ? .16 : d.state === "pile" ? .07 : 0;
+    if (glow) { ctx.fillStyle = `rgba(${col},${glow * (d.a ?? 1)})`; ctx.beginPath(); ctx.arc(d.x, d.y, (d.cur || d.r) * 3.2, 0, Math.PI * 2); ctx.fill(); }
+  }
+  live.dots = live.dots.filter(d => !d.dead);
+  // nodes
+  live.nodes.forEach((n, i) => {
+    const on = i === live.idx && !live.finished, done = i < live.idx || live.finished;
+    if (on) {
+      const pulse = (Math.sin(now / 260) + 1) / 2;
+      ctx.fillStyle = `rgba(240,122,80,${.10 + .12 * pulse})`; ctx.beginPath(); ctx.arc(n.x, n.y, 16 + 8 * pulse, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = on ? "#f07a50" : done ? "#f2f1ec" : "#0e0e0d";
+    ctx.strokeStyle = on ? "#f07a50" : done ? "#f2f1ec" : "#4a4a46"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(n.x, n.y, on ? 6.5 : 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  });
+}
+function frame(now) {
+  if (state.view !== "live" || !$("#loopcv")) return;
+  if (live.mode === "replay") advanceReplay(now);
+  drawLive(now);
+  const el = $("#clock");
+  if (el && live.idx >= 0) el.textContent = live.mode === "live"
+    ? `elapsed ${fmtMs(Math.round((live.elapsed || 0) + (live.snapAt ? now - live.snapAt : 0)))} · ${live.calls || 0} LLM calls`
+    : `replaying at ${live.speed} · real loop time ${fmtMs(state.trace?.total_ms)}`;
+  live.raf = requestAnimationFrame(frame);
+}
+
+/* ----- narration ----- */
+function logEvent(html, cls = "") {
+  const box = $("#events"); if (!box) return;
+  const div = document.createElement("div"); div.className = cls; div.innerHTML = html; box.appendChild(div);
+  while (box.children.length > 60) box.firstChild.remove();
+}
+const stamp = ms => `<span>+${ms < 1000 ? ms + "ms" : (ms / 1000).toFixed(1) + "s"}</span>`;
+function tickerLines(key) {
+  const t = state.trace, a = state.actions;
+  if (!t && !a.length) return [];
+  const sig = (t?.signals || []).map(x => `<b>@${esc(x.author || "?")}</b> ${esc((x.text || "").slice(0, 150))}`);
+  const narr = (t?.narratives || []).map(n => `<b>${esc(n.title)}</b>${n.angle ? " · " + esc(n.angle) : ""}`);
+  const drafts = a.map(x => `<b>${esc(x.variant || human(x.mind))}</b> ${esc((x.review.text ?? x.text ?? "").slice(0, 150))}`);
+  const top = (t?.ranked_ids || []).map(id => a.find(x => x.id === id)).filter(Boolean)
+    .map(x => `<b>#${(t.ranked_ids.indexOf(x.id)) + 1}${x.elo != null ? " · elo " + Math.round(x.elo) : ""}</b> ${esc((x.text || "").slice(0, 150))}`);
+  return { observe: sig, orient: narr, decide: drafts, qualify: drafts.filter((_, i) => !a[i]?.vetoed), tournament: top, sharpen_hooks: top, review: top.slice(0, 5) }[key] || [];
+}
+function setStage(i, now) {
+  const st = live.steps[i]; if (!st) return;
+  live.idx = i; live.stepStart = now;
+  $$(".slabel").forEach((el, k) => { el.classList.toggle("on", k === i); el.classList.toggle("done", k < i); });
+  const [name, verb] = VERBS[st.key] || [human(st.key), ""];
+  $("#phase").textContent = `${String(i + 1).padStart(2, "0")} · ${name}`;
+  $("#verb").textContent = st.key === "review" && st.reviewed ? `A human approved ${st.approved} of ${st.reviewed}` : verb;
+  if (!$("#ticker")) return;
+  const lines = live.mode === "live" ? [] : tickerLines(st.key);  // the trace with real text only exists once the run ends
+  let k = 0;
+  clearInterval(live.tick);
+  const show = () => { const el = $("#ticker"); if (!el) return; el.style.opacity = 0; later(() => { el.innerHTML = lines[k++ % Math.max(lines.length, 1)] || ""; el.style.opacity = 1; }, 180); };
+  if (lines.length) { show(); live.tick = setInterval(show, Math.max(900, st.dur / Math.min(lines.length, 4))); } else $("#ticker").innerHTML = "";
+}
+function countUp(i, to, dur) {
+  const el = $("#ct" + i); if (!el) return;
+  const start = performance.now();
+  const step = now => { const p = Math.min(1, (now - start) / Math.max(dur, 1)); el.textContent = Math.round(to * ease(p)); if (p < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function flowLine(upto) {
+  $("#flow").innerHTML = live.steps.slice(0, upto + 1).filter(s => (s.key !== "learn" || s.n) && (live.mode !== "live" || s.ms))
+    .map(s => `<b>${fmtN(s.n)}</b>`).join(" → ");
+}
+
+/* ----- replay engine ----- */
+function startReplay() {
+  live.gen++; clearTimeout(live.timer); clearInterval(live.tick);
+  live.mode = "replay"; live.finished = false; live.dots = []; live.idx = -1; live.cursor = 0;
+  live.speed = state.trace ? `${Math.max(1, Math.round(live.steps.reduce((s, x) => s + x.dur, 0) / Math.max(state.trace.total_ms, 1)))}× slower` : "–";
+  const box = $("#events"); if (box) box.innerHTML = "";
+  const tag = $("#modetag"); if (tag) { tag.className = "tag"; tag.textContent = `Replay · run ${state.runId ?? "–"}`; }
+  $$(".slabel .ct").forEach(el => el.textContent = "0"); $$(".slabel .ms").forEach(el => el.textContent = "");
+  live.t0 = performance.now() + 400;
+  cancelAnimationFrame(live.raf); live.raf = requestAnimationFrame(frame);
+}
+function advanceReplay(now) {
+  if (live.finished) { if (now - live.finishedAt > 4500) startReplay(); return; }
+  let acc = live.t0;
+  for (let i = 0; i < live.steps.length; i++) {
+    if (now >= acc && live.idx < i) enterStep(i, now);
+    acc += live.steps[i].dur;
+  }
+  if (now >= acc && !live.finished) finishLoop(now);
+}
+function enterStep(i, now) {
+  const st = live.steps[i], prev = live.steps[i - 1];
+  setStage(i, now);
+  const flow = st.vis ?? st.n, size = dotSize(flow), target = capDots(flow);
+  if (i === 0) settle(0, target, size, now + 200);
+  else spawnTravel(i - 1, i, Math.min(capDots(prev.vis ?? prev.n), Math.max(target, 1)), size, now, st.dur);
+  later(() => settle(i, target, size, performance.now()), st.dur * .8);
+  countUp(i, st.n, st.dur * .8);
+  const msEl = $("#ms" + i); if (msEl) msEl.textContent = st.ms ? fmtMs(st.ms) : "";
+  flowLine(i);
+  narrate(st, i);
+}
+function narrate(st, i) {
+  const t = state.trace; if (!t && st.key !== "review") return;
+  const stg = t?.stages.find(s => s.name === st.key); const at = stg?.start_ms ?? 0;
+  const calls = (t?.llm_calls || []).filter(c => c.stage === st.key);
+  if (st.key === "observe") t.sources.forEach(s => logEvent(`${stamp(s.start_ms)} <b>${esc(s.name)}</b> ${s.n ? `${s.n} signals` : `failed ${esc(s.error)}`}`, s.n ? "" : "drop"));
+  const shown = calls.slice(0, 6);
+  shown.forEach((c, k) => later(() => logEvent(`${stamp(c.start_ms)} llm <b>${esc(c.label)}</b> ${fmtMs(c.ms)}${c.ok ? "" : " error"}`, c.ok ? "" : "drop"), (k / Math.max(shown.length, 1)) * st.dur * .7));
+  if (calls.length > shown.length) later(() => logEvent(`${stamp(at)} … ${calls.length - shown.length} more llm calls`), st.dur * .72);
+  later(() => {
+    if (st.key === "qualify") { const v = state.actions.filter(x => x.vetoed).length; logEvent(`${stamp(at + (stg?.ms || 0))} critic kept <b>${st.n}</b>${v ? `, vetoed ${v}` : ""}`, v ? "drop" : "acc"); }
+    else if (st.key === "review") logEvent(st.reviewed ? `human <b>approved ${st.approved}</b> of ${st.reviewed}` : `<b>${st.n}</b> recommendations waiting for a human`, st.reviewed ? "ok" : "acc");
+    else if (st.key === "learn") logEvent(st.n ? `<b>${st.n}</b> outcomes recorded → next loop` : `waiting on real engagement to learn from`);
+    else if (stg) logEvent(`${stamp(at + stg.ms)} ${esc((VERBS[st.key] || [st.key])[0].toLowerCase())} → <b>${st.n}</b>`, "acc");
+  }, st.dur * .8);
+}
+function finishLoop(now) {
+  live.finished = true; live.finishedAt = now;
+  $$(".slabel").forEach(el => { el.classList.remove("on"); el.classList.add("done"); });
+  $("#phase").textContent = "Loop complete";
+  $("#verb").textContent = "Each loop is smarter than the last";
+  clearInterval(live.tick);
+  // survivors ride the arc home to Observe for the next loop
+  const last = live.steps.length - 1;
+  live.dots.filter(d => d.at === last && d.state === "pile").forEach((d, i) => Object.assign(d, { ok: true, state: "move", from: last, to: 0, t0: now + i * 40, dur: 1800, lane: 0, r0: d.r }));
+}
+
+/* ----- live follow (a run started from the console) ----- */
+async function startLiveFollow() {
+  live.gen++; clearInterval(live.tick);
+  live.mode = "live"; live.finished = false; live.dots = []; live.idx = -1; live.liveSeen = 0;
+  const tag = $("#modetag"); if (tag) { tag.className = "tag live"; tag.textContent = "Live run"; }
+  $("#verb").textContent = "Starting the loop"; $("#events").innerHTML = ""; $("#ticker").innerHTML = ""; $("#flow").innerHTML = "";
+  live.elapsed = 0; live.snapAt = performance.now(); live.calls = 0;
+  const order = ["evolve", "observe", "orient", "decide", "qualify", "tournament", "sharpen_hooks"];
+  live.steps = order.map(k => ({ key: k, n: 0, ms: 0, dur: 1600 })).concat([{ key: "review", n: 0, human: true, dur: 1600 }, { key: "learn", n: 0, dur: 1600 }]);
+  renderLiveLabels();
+  cancelAnimationFrame(live.raf); live.raf = requestAnimationFrame(frame);
+  const pollLive = async () => {
+    const snap = await api("/api/console/live").catch(() => null);
+    if (state.view !== "live" || live.mode !== "live") return;
+    if (snap && snap.status === "running" || snap?.run_id) applyLive(snap);
+    if (snap?.status === "done" && snap.run_id) {
+      live.liveRun = false; await refreshMeta(); state.latest = Math.max(state.latest, snap.run_id);
+      $("#newrun").classList.remove("show"); go("live", snap.run_id); return;
+    }
+    live.timer = later(pollLive, 400);
+  };
+  pollLive();
+}
+function renderLiveLabels() {
+  // keep only stages this harness has (unknown ones appear when they first report)
+  const area = $("#stagearea"); if (!area) return;
+  $$(".slabel").forEach(el => el.remove());
+  live.steps.forEach((st, i) => area.insertAdjacentHTML("beforeend", `<div class="slabel ${st.human ? "human" : ""}" id="sl${i}"><div class="nm">${esc((VERBS[st.key] || [human(st.key)])[0])}</div><div class="ct" id="ct${i}">${st.n || 0}</div><div class="ms" id="ms${i}">${st.ms ? fmtMs(st.ms) : ""}</div><div class="who">${st.human ? "human" : "ai"}</div></div>`));
+  layoutLive();
+}
+function applyLive(snap) {
+  live.elapsed = snap.elapsed_ms; live.snapAt = performance.now(); live.calls = snap.llm_calls;
+  const present = new Set([...snap.done.map(d => d.name), snap.stage].filter(Boolean));
+  const keep = live.steps.filter(s => present.has(s.key) || ["review", "learn"].includes(s.key) || ["observe", "orient", "decide", "qualify"].includes(s.key));
+  if (keep.length !== live.steps.length) { live.steps = keep; live.dots = []; live.liveSeen = 0; renderLiveLabels(); }
+  const now = performance.now();
+  snap.done.slice(live.liveSeen).forEach(d => {
+    const i = live.steps.findIndex(s => s.key === d.name); if (i < 0) return;
+    Object.assign(live.steps[i], { n: d.n_out ?? 0, ms: d.ms });
+    if (i === 0 || !live.dots.length) settle(i, capDots(d.n_out ?? 0), dotSize(d.n_out ?? 0), now);
+    else { spawnTravel(i - 1, i, Math.min(capDots(live.steps[i - 1].n), Math.max(capDots(d.n_out ?? 0), 1)), dotSize(d.n_out ?? 0), now, 1400); later(() => settle(i, capDots(d.n_out ?? 0), dotSize(d.n_out ?? 0), performance.now()), 1200); }
+    countUp(i, d.n_out ?? 0, 900);
+    $("#ms" + i).textContent = fmtMs(d.ms);
+    logEvent(`${stamp(snap.elapsed_ms)} ${esc((VERBS[d.name] || [d.name])[0].toLowerCase())} done → <b>${d.n_out ?? "–"}</b> in ${fmtMs(d.ms)}`, "acc");
+  });
+  if (snap.done.length > live.liveSeen && snap.done[0]?.name === "observe" && live.liveSeen === 0)
+    snap.sources.forEach(s => logEvent(`<b>${esc(s.name)}</b> ${s.n ? s.n + " signals" : "failed " + esc(s.error || "")}`, s.n ? "" : "drop"));
+  live.liveSeen = snap.done.length;
+  const i = live.steps.findIndex(s => s.key === snap.stage);
+  if (i >= 0 && i !== live.idx) setStage(i, now);
+  flowLine(Math.max(live.idx, 0));
 }
 
 /* ---------- Loop ---------- */
@@ -1069,7 +1447,7 @@ async function refreshRunCtl(watch = false) {
   btn.disabled = st.running;
   if (st.running) setTimeout(() => refreshRunCtl(true), 1500);
   else if (watch) {
-    if (st.exit_code === 0) { toast("Run finished"); await poll(); $("#newrun").classList.remove("show"); go("loop", state.latest); }
+    if (st.exit_code === 0) { toast("Run finished"); if (state.view !== "live") { await poll(); $("#newrun").classList.remove("show"); go("loop", state.latest); } }
     else openDrawer("Run failed", `<div class="note-strip">Exit code ${st.exit_code}. Output from <code>out/console-run.log</code>:</div><pre>${esc(st.log)}</pre>`);
   }
 }
@@ -1079,6 +1457,8 @@ $("#runbtn").addEventListener("click", async () => {
   const res = await fetch("/api/console/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ provider }) }).then(r => r.json());
   if (!res.ok) return toast(res.error || "Could not start run");
   toast(`Started a ${provider} run`);
+  live.liveRun = true;
+  if (state.view === "live") startLiveFollow(); else go("live");
   refreshRunCtl(true);
 });
 

@@ -37,6 +37,14 @@ def _ts(s: str | None) -> datetime | None:
         return None
 
 
+def live() -> dict | None:
+    path = config.OUT_DIR / "trace-live.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+    except (OSError, json.JSONDecodeError):
+        return None  # caught mid-write; the page polls again
+
+
 def trace(run_id: int) -> dict | None:
     path = config.OUT_DIR / f"trace-run{run_id}.json"
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
@@ -247,6 +255,7 @@ def start_run(body: dict) -> tuple[int, dict]:
         if _run["proc"] and _run["proc"].poll() is None:
             return 409, {"error": "a run is already in progress"}
         config.OUT_DIR.mkdir(parents=True, exist_ok=True)
+        (config.OUT_DIR / "trace-live.json").unlink(missing_ok=True)  # don't let the page read the last run's "done"
         log = RUN_LOG.open("w", encoding="utf-8")
         _run.update(provider=provider, started=datetime.now().isoformat(timespec="seconds"), proc=subprocess.Popen(
             [sys.executable, "-m", "harness", "run", "--provider", provider],
@@ -278,7 +287,8 @@ def get(path: str) -> tuple[int, bytes, str] | None:
     if path == "/console":
         return 200, PAGE.read_bytes(), "text/html; charset=utf-8"
     routes = {"/api/console/overview": overview, "/api/console/context": context, "/api/console/evals": evals,
-              "/api/console/market": market, "/api/console/run": run_status}
+              "/api/console/market": market, "/api/console/run": run_status,
+              "/api/console/live": live}
     if path in routes:
         data = routes[path]()
     elif m := re.fullmatch(r"/api/console/trace/(\d+)", path):
