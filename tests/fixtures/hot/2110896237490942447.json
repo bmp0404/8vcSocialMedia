@@ -1,0 +1,252 @@
+{
+ "status_id": "2110896237490942447",
+ "url": "https://x.com/valkyries/status/2110896237490942447",
+ "profile": "wnba",
+ "arm": "styled",
+ "arm_seed": "sgu-arms-1",
+ "provider": "mock",
+ "target": {
+  "url": "https://x.com/valkyries/status/2110896237490942447",
+  "author": "valkyries",
+  "text": "Ballhalla awaits. ⚔️",
+  "created_at": "2026-10-16T00:50:56+00:00",
+  "conversation_id": "2110896237490942447",
+  "age_minutes": 3.15,
+  "likes": 40,
+  "reposts": 3,
+  "replies": 0,
+  "quotes": 0,
+  "views": null,
+  "author_followers": null,
+  "thread_attached": 0
+ },
+ "plan": {
+  "target_url": "https://x.com/valkyries/status/2110896237490942447",
+  "tool": "reply",
+  "side": "own",
+  "intent": "mock"
+ },
+ "plan_error": "",
+ "offer": "draft",
+ "draft": "mock styled reply bravo",
+ "prompt": null,
+ "abstain_reason": null,
+ "abstain_detail": null,
+ "method": "styled",
+ "decision": {
+  "lane": "reply",
+  "opportunity": "https://x.com/valkyries/status/2110896237490942447",
+  "tool": "reply",
+  "reason": "",
+  "detail": "styled: 6/6 drafts passed the gate",
+  "question": "",
+  "action_id": null,
+  "candidates": [
+   {
+    "text": "mock styled reply alpha",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "mock styled reply bravo",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "mock styled reply charlie",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "mock styled reply delta",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "mock styled reply echo",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "mock styled reply foxtrot",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "mock",
+      "off_mission": false
+     }
+    }
+   }
+  ]
+ },
+ "draft_meta": {
+  "method": "styled",
+  "side": "own",
+  "intent": "mock",
+  "samples": 6,
+  "page_replies": 0,
+  "written_as": null,
+  "page_dropped_as_bots": [],
+  "writer_model": "claude-opus-4-5-20251101",
+  "target": {
+   "url": "https://x.com/valkyries/status/2110896237490942447",
+   "author": "valkyries",
+   "text": "Ballhalla awaits. ⚔️",
+   "created_at": "2026-10-16T00:50:56+00:00",
+   "conversation_id": "2110896237490942447",
+   "age_minutes": 3.15,
+   "likes": 40,
+   "reposts": 3,
+   "replies": 0,
+   "quotes": 0,
+   "views": null,
+   "author_followers": null,
+   "thread_attached": 0
+  },
+  "judge": {
+   "veto_model": "claude-opus-5-5",
+   "max_p_ai": 50,
+   "passed": true,
+   "why": "",
+   "orders_agree": true,
+   "fwd": {
+    "p_ai": 10,
+    "unsupported": false,
+    "risk": false,
+    "reason": "mock",
+    "off_mission": false
+   },
+   "rev": {
+    "p_ai": 10,
+    "unsupported": false,
+    "risk": false,
+    "reason": "mock",
+    "off_mission": false
+   },
+   "batch": {
+    "drafts": 6,
+    "gate_passed": 6,
+    "veto_passed": 6
+   },
+   "pick": "random among drafts that passed",
+   "grounding": null
+  },
+  "veto_context": "POST by @valkyries:\nBallhalla awaits. ⚔️\n\nTHREAD:\n\n\nHANDLES IN THREAD: \n\nFACTS:\n# Mission: Caitlin Clark fan account (X)\n\n> Placeholder. Replace with the mission file 8VC hands out.\n\n**Who it's for:** Caitlin Clark fans, Indiana Fever and Iowa Hawkeyes fans, and WNBA Twitter in general.\n\n**Core subjects:** Caitlin Clark's games, stats, and highlights; Fever news; Iowa women's basketball; WNBA rivalries and discourse.\n\n**Tone:** Funny and a little edgy, like a fan who's in on the joke. Rivalry banter beats generic praise. Never cruel, never harassing, never inaccurate.\n\n**Goals:** Grow from roughly 2 followers to a real audience by being early, funny, and correct in the conversations that are already happening.\n\n**Action space:** original posts, replies, quote posts, mentions, follows. X only.\n\n\nWHAT'S GOING ON:\n- @valkyries just posted: Ballhalla awaits. ⚔️"
+ },
+ "account": "_sgu_",
+ "models": [],
+ "detected_at": "2026-10-16T00:53:56+00:00",
+ "started_at": "2026-10-16T00:54:05+00:00",
+ "finished_at": "2026-10-16T00:54:14+00:00",
+ "timings": {
+  "plan_s": 0.0,
+  "draft_s": 0.0,
+  "total_s": 0.01,
+  "detected_to_finished_s": 18.0,
+  "post_age_at_detection_s": 180.0,
+  "post_age_at_finish_s": 198.0
+ }
+}

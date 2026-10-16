@@ -69,15 +69,18 @@ python -m harness run                    # real run with the provider in .env
 | `run` | Observe, orient, decide, and qualify, then write ranked recommendations to `out/` |
 | `record <file>` | Store real metrics: `[{"action_id": "...", "metrics": {"likes": 3}}]` |
 | `learn` | Rewrite `memory/lessons/<profile>.md` from reviews and outcomes; the minds read it next run |
-| `review` | Open the approve/edit/kill dashboard at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
+| `review` | Open the review page at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
 | `watch` | Poll both profiles' watch lists, draft for each post under 10 minutes old (`out/hot/<status_id>.json`) and add each thread to `data/threads/` at +1h and +24h; `watch status` and `watch stop` (see `harness/watcher/DESIGN.md`) |
 
-### Review dashboard
+### Review page
 
-`python -m harness review` lists each run's recommendations, best predicted first, with tabs for
-To review / Approved / Killed / Critic vetoed. You can edit a draft before approving it (the original
-text is kept as `original_text` in the export), override a critic veto, and leave a note.
-Keyboard: `j`/`k` move, `a` approve, `x` kill, `u` reset, `e` edit.
+`python -m harness review` has three views. The queue shows the watcher's hot targets first, then the
+pending drafts of the last day's rounds. Each card shows the post being answered as X shows it, a box for
+your own reply, and the draft. Approve, edit or kill each one; your own words post verbatim, and an
+edited draft keeps the original as `original_text` in the export. History lists past verdicts with each
+one's rank and likes once `harness outcomes sync` has found it on X. Audit labels the 200-item audit set
+and shows the models' labels after you answer. Press `?` on the page for keyboard shortcuts.
+`harness/review/DESIGN.md` explains each view and how to rebuild the page.
 
 `out/approved-run<id>.json` is the hand-off file for the posting bot.
 
@@ -105,7 +108,7 @@ data/         # Source documents, datasets, and supporting assets
 | `harness/qualify.py` | **Qualify.** A critic vetoes; the learned post ranker (`eval/rankers/`) orders the post lane's drafts |
 | `harness/memory.py` | SQLite log of runs, recommendations, and outcomes (`data/harness.db`) |
 | `harness/learn.py` | **Learn.** Writes `memory/lessons/<profile>.md` |
-| `harness/review/` | **Human checkpoint.** Stdlib HTTP server + single-page dashboard |
+| `harness/review/` | **Human checkpoint.** Stdlib HTTP server and a React page built from `web/` into `dist/` |
 | `harness/watcher/` | **Watch.** Continuous polling, the hot path for fresh posts, thread ingestion |
 | `harness/llm.py` | Provider switch: `anthropic`, `xai`, `openai` (any OpenAI-compatible gateway), `mock` |
 

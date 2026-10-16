@@ -1,0 +1,98 @@
+[
+ {
+  "text": "",
+  "weight": 0
+ },
+ {
+  "text": "hello",
+  "weight": 5
+ },
+ {
+  "text": "two days. ballhalla better be loud",
+  "weight": 34
+ },
+ {
+  "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "weight": 280
+ },
+ {
+  "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "weight": 281
+ },
+ {
+  "text": "see https://x.com/a/status/1.",
+  "weight": 28
+ },
+ {
+  "text": "https://www.espn.com/wnba/story/_/id/50189491/fever-forward-aliyah-boston-arthroscopic-knee-surgery",
+  "weight": 23
+ },
+ {
+  "text": "a link (https://example.com/path) inside",
+  "weight": 39
+ },
+ {
+  "text": "two https://a.co/1 https://b.co/2 links",
+  "weight": 57
+ },
+ {
+  "text": "fire 🔥",
+  "weight": 7
+ },
+ {
+  "text": "thumbs 👍🏽",
+  "weight": 9
+ },
+ {
+  "text": "family 👨‍👩‍👧‍👦",
+  "weight": 9
+ },
+ {
+  "text": "flag 🇺🇸 and 🇨🇦",
+  "weight": 14
+ },
+ {
+  "text": "keycap 1️⃣ and plain 1",
+  "weight": 21
+ },
+ {
+  "text": "© plain and ©️ emoji",
+  "weight": 20
+ },
+ {
+  "text": "日本語のテキスト",
+  "weight": 16
+ },
+ {
+  "text": "한국어",
+  "weight": 6
+ },
+ {
+  "text": "café",
+  "weight": 4
+ },
+ {
+  "text": "café",
+  "weight": 4
+ },
+ {
+  "text": "em — dash and ‘quotes’",
+  "weight": 22
+ },
+ {
+  "text": "⭐ star ⚔️ swords 🫶 hands",
+  "weight": 26
+ },
+ {
+  "text": "@AtlantaDream we are so back",
+  "weight": 28
+ },
+ {
+  "text": "#WNBAFinals tonight",
+  "weight": 19
+ },
+ {
+  "text": "tab\tand\nnewline",
+  "weight": 15
+ }
+]
