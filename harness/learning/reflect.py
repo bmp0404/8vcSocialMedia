@@ -422,6 +422,8 @@ def vote(lesson: Lesson, verdict: str, result: dict, test_id: str, today: str, d
     if verdict == "supported":
         lesson.support += 1
         lesson.status = "active"
+        if result.get("boost_filter") == "on":  # passed with boosted successes removed
+            lesson.caveats = [c for c in lesson.caveats if not c.startswith("boost flags were unavailable")]
         lesson.confidence = result["effect"]
         lesson.last_test = result
         lesson.valid_until = _until(today, valid_days)
@@ -570,7 +572,7 @@ def reflect(
         h = c.hypothesis
         predicate = str(h["predicate"]).strip()
         result = {**result, "verdict": verdict, "checked_by": "rule" if c.rule else "labeler", "q": s.fdr_q,
-                  "tests_in_run": n_tests}
+                  "tests_in_run": n_tests, "boost_filter": filters["boost_filter"]}
         refl = Reflection(
             id="refl-" + short_hash(str(h.get("claim", "")), ",".join(sorted(c.evidence))),
             claim=str(h.get("claim", "")).strip(),
@@ -630,7 +632,7 @@ def reflect(
 
     for lid, result, verdict in zip(voted, lesson_results, lesson_verdicts):
         result = {**result, "verdict": verdict, "checked_by": "rule" if existing[lid].rule else "labeler",
-                  "q": s.fdr_q, "tests_in_run": n_tests}
+                  "q": s.fdr_q, "tests_in_run": n_tests, "boost_filter": filters["boost_filter"]}
         save(store, vote(existing[lid], verdict, result, f"reflect-{today}-seed{seed}", today, domain,
                          labeled_count, s.valid_days))
         report.lessons_voted.append(lid)
@@ -651,7 +653,8 @@ def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: Re
     """
     s = settings or ReflectSettings()
     today = (now or datetime.now(timezone.utc)).date().isoformat()
-    pool, _ = usable(episodes, require_boost_flags=s.require_boost_flags, min_label_age_hours=s.min_label_age_hours)
+    pool, filters = usable(episodes, require_boost_flags=s.require_boost_flags,
+                           min_label_age_hours=s.min_label_age_hours)
     due = [l for l in (load(m) for m in store.list_memories("lesson"))
            if l.domain == domain and l.status != "retired"
            and (force or due_for_retest(l, len(pool), today, s.min_new_labeled))]
@@ -667,6 +670,7 @@ def revalidate(episodes: list[Episode], llm, store, *, domain: str, settings: Re
                             min_posts_with_trait=s.min_posts_with_trait) for l in due]
     out = []
     for lesson, result, verdict in zip(due, results, verdicts(results, s.fdr_q)):
+        result = {**result, "verdict": verdict, "boost_filter": filters["boost_filter"]}
         save(store, vote(lesson, verdict, result, f"revalidation-{today}", today, domain, len(pool), s.valid_days))
         out.append((lesson.id, verdict, result))
     return out

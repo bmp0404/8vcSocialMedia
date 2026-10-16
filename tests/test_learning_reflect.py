@@ -233,3 +233,11 @@ def test_reflect_tests_rules_by_code_and_votes_with_the_lessons_own_predicate():
     assert sorted(r.restates for r in reflections) == ["", "lesson-video"]
     # Cited dataset posts were written as episode notes before any lesson cited them.
     assert all(eid in store.items for r in reflections for eid in r.evidence + r.contrast)
+
+
+def test_a_supported_retest_with_boost_flags_drops_the_boost_caveat():
+    l = lesson(caveats=["boost flags were unavailable, so boosted successes were not excluded", "likely launch-confounded"])
+    l = vote(l, "supported", {**RESULT, "boost_filter": "off"}, "r1", "2026-10-15", "devtools", 120)
+    assert len(l.caveats) == 2
+    l = vote(l, "supported", {**RESULT, "boost_filter": "on"}, "r2", "2026-10-15", "devtools", 120)
+    assert l.caveats == ["likely launch-confounded"]
