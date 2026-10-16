@@ -486,3 +486,31 @@
 .q-overrule-head {
   margin-top: var(--s1);
 }
+
+.q-next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s2);
+}
+
+/* Messages on the paper sit at the top instead of spreading over the column. */
+.q-detail > .state {
+  align-content: start;
+}
+
+.q-summary .kv {
+  min-width: 220px;
+}
+
+.q-cand-veto {
+  display: grid;
+  gap: 2px;
+  font-size: 12.5px;
+  color: var(--struck);
+}
+
+.q-cand-veto .label {
+  color: var(--struck);
+  margin-right: 4px;
+}

@@ -247,7 +247,9 @@ def post_overrule(req: Request):
     cands = d.get("candidates") or []
     cand = body.get("candidate")
     picked = cands[cand] if isinstance(cand, int) and 0 <= cand < len(cands) else {}
-    kind = picked.get("type") or ("reply" if lane == "reply" else "post")
+    # The reply lane answers its post; in the post lane an X post as the opportunity is quoted
+    # (the caption path), anything else becomes a plain post. queue.js mirrors this.
+    kind = picked.get("type") or ("reply" if lane == "reply" else "quote" if handle_from_url(d.get("opportunity")) else "post")
     if kind not in ACTION_TYPES or kind == "follow":
         raise HTTPError(400, f"can't overrule into a {kind!r}; expected a text action")
     target_url = d.get("opportunity") if kind in ("reply", "quote") else None
@@ -264,7 +266,15 @@ def post_overrule(req: Request):
         target_handle=picked.get("target_handle") or handle_from_url(target_url),
         id=_stable_id("overrule", run_id, index, text),
     ).to_dict()
-    action |= {"lane": lane, "origin": "overrule", "overrule": {"decision": index, "candidate": cand, "reason": reason}}
+    released = picked.get("text") == text  # the person shipped the harness's draft unchanged
+    action |= {
+        "lane": lane,
+        "origin": "overrule",
+        "overrule": {"decision": index, "candidate": cand, "reason": reason},
+        # Learning tells a person's words from the harness's by draft_meta.method.
+        "draft_meta": {"method": "released by a person" if released else "written by a person, overruling an abstention",
+                       "gate_warnings": gate_warnings(text, kind)},
+    }
     note = body.get("note") or f"Overruled the harness's abstention ({reason})."
     return add_approved_action(run_id, action, note)
 
@@ -287,8 +297,25 @@ def post_take(req: Request):
         rationale=f"A person's answer to: {d.get('question', '')}".strip(),
         id=_stable_id("take", run_id, index),
     ).to_dict()
-    action |= {"lane": "post", "origin": "take", "question": d.get("question", "")}
+    # The same method string sam/action's lanes write for a take, so learning sees one label.
+    action |= {
+        "lane": "post",
+        "origin": "take",
+        "question": d.get("question", ""),
+        "draft_meta": {"method": "human take, verbatim", "gate_warnings": gate_warnings(text, "post")},
+    }
     return add_approved_action(run_id, action, body.get("note") or "Written by a person.")
+
+
+def gate_warnings(text: str, kind: str) -> list[dict]:
+    """What the slop gate flags in a person's words, kept with the action; [] without the gate."""
+    try:
+        from harness.minds import gate
+    except ImportError:
+        return []
+    if kind not in gate.KINDS:
+        return []
+    return [{"rule": f.rule, "detail": f.detail, "start": f.start, "end": f.end} for f in gate.check(text, kind).findings]
 
 
 # --- Slop gate, as the person types ---------------------------------------------------------

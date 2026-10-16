@@ -172,11 +172,11 @@ function renderRailFoot() {
   if (!meta) return;
   setHTML(
     $("#rail-foot"),
-    html`<div class="row" title="HARNESS_PROVIDER, the model provider rounds use">
+    html`<div class="row" title="HARNESS_PROVIDER on this server: the provider a round started here uses">
         <span class="lamp ${meta.provider === "mock" ? "busy" : "on"}" aria-hidden="true"></span>
         <span>${meta.provider}${meta.model ? ` · ${meta.model}` : ""}</span>
       </div>
-      <div class="row" title="HARNESS_SOURCES"><span class="label">Sources</span><span>${(meta.sources || []).join(", ")}</span></div>
+      <div class="row" title="HARNESS_SOURCES on this server: what a round started here reads. Each run's own sources are in the Queue header."><span class="label">Default sources</span><span>${(meta.sources || []).join(", ")}</span></div>
       <div class="row"><kbd>?</kbd><span>Shortcuts</span></div>`,
   );
 }
@@ -258,7 +258,8 @@ const shortcutsOn = () => localStorage.getItem("clearance.keys") !== "off";
 const GO = { q: "queue", l: "loop", e: "experiments", m: "memory" };
 
 function onKey(e) {
-  if (e.defaultPrevented || e.metaKey || e.altKey) return;
+  // ⌘↵ / Ctrl+↵ reach the view (clear from the editor); other ⌘ chords stay the browser's.
+  if (e.defaultPrevented || e.altKey || (e.metaKey && e.key !== "Enter")) return;
   if ($("#keys-sheet").open) return;
   if (!isTyping(e.target) && !e.ctrlKey) {
     if (shortcutsOn() && gPending && Date.now() - gPending < 1200 && GO[e.key]) {

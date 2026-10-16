@@ -137,6 +137,17 @@ def test_overrule_ships_a_held_draft_once(server, store):
     assert again["action"]["id"] == res["action"]["id"]  # a double click doesn't add a second action
     handoff = json.loads((config.OUT_DIR / f"approved-run{store}.json").read_text(encoding="utf-8"))
     assert [a["text"] for a in handoff["actions"]] == ["first try, fixed"]
+    # A post-lane hold on an X post is overruled as a quote of that post.
+    write_decisions(store, [{"lane": "post", "opportunity": "https://x.com/AtlantaDream/status/7", "tool": "abstain",
+                             "reason": "judge_rejected", "detail": "veto", "candidates": []}])
+    q = request(server, "POST", f"/api/runs/{store}/overrule", {"decision": 0, "text": "my own caption"})[1]["action"]
+    assert (q["type"], q["target_url"], q["draft_meta"]["method"]) == (
+        "quote", "https://x.com/AtlantaDream/status/7", "written by a person, overruling an abstention")
+    write_decisions(store, [
+        {"lane": "reply", "opportunity": "https://x.com/WNBA/status/9", "tool": "abstain", "reason": "gate_rejected",
+         "detail": "0/2 usable", "candidates": [{"text": "first try", "gate": [{"rule": "em_dash"}]}]},
+        {"lane": "post", "opportunity": "n1", "tool": "ask_human", "question": "Your take?", "candidates": []},
+    ])
     # Only abstentions can be overruled, and only with text.
     assert request(server, "POST", f"/api/runs/{store}/overrule", {"decision": 1, "text": "x"})[0] == 400
     assert request(server, "POST", f"/api/runs/{store}/overrule", {"decision": 0, "text": "  "})[0] == 400
@@ -149,6 +160,7 @@ def test_a_take_is_cleared_in_the_persons_words(server, store):
     assert code == 200, res
     a = res["action"]
     assert (a["type"], a["mind"], a["text"], a["origin"]) == ("post", "human", "Boston played hurt all year.", "take")
+    assert a["draft_meta"]["method"] == "human take, verbatim"  # learning tells a person's words by this
     code, res2 = request(server, "POST", f"/api/runs/{store}/takes", {"decision": 0, "text": "Changed my mind."})
     assert res2["action"]["id"] == a["id"]  # resubmitting replaces the take
     approved = memory.approved_actions(store)
