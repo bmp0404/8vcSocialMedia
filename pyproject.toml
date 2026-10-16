@@ -12,4 +12,10 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.7.0",
+    "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Tests import harness from the repo root; without this, `uv run pytest` can't find it.
+pythonpath = ["."]
