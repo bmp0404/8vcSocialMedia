@@ -124,3 +124,17 @@ def validity(runs: dict, models: list[str], schema: dict = SCHEMA) -> dict:
 def distributions(runs: dict, schema: dict = SCHEMA) -> dict:
     return {m: {f["name"]: dict(Counter(json.dumps(l[f["name"]]) for l in labels.values() if f["name"] in l))
                 for f in schema["fields"]} for m, labels in runs.items()}
+
+
+def retest(first: dict, second: dict, schema: dict = SCHEMA) -> dict:
+    """Alpha between two labelings of the same items by one model (item_id -> labels each)."""
+    out = {}
+    for f in schema["fields"]:
+        units = [[first[i][f["name"]], second[i][f["name"]]] for i in first.keys() & second.keys()
+                 if f["name"] in first[i] and f["name"] in second[i]]
+        if len(units) < 10:
+            continue
+        level, order = _level(f)
+        out[f["name"]] = {"n": len(units), "alpha": round(alpha(units, level, order), 3),
+                          "agree": round(percent_agreement(units), 3)}
+    return out

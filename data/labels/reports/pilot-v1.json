@@ -943,5 +943,42 @@
    "error:http_429": 20,
    "error:APITimeoutError": 4
   }
+ },
+ "retest_claude_sonnet_v1_vs_v2": {
+  "format": {
+   "n": 1000,
+   "alpha": 0.916,
+   "agree": 0.928
+  },
+  "specificity": {
+   "n": 1000,
+   "alpha": 0.946,
+   "agree": 0.895
+  },
+  "novelty": {
+   "n": 1000,
+   "alpha": 0.929,
+   "agree": 0.88
+  },
+  "humor": {
+   "n": 1000,
+   "alpha": 0.94,
+   "agree": 0.962
+  },
+  "reads_as_ai": {
+   "n": 1000,
+   "alpha": 0.903,
+   "agree": 0.891
+  },
+  "engagement_guess": {
+   "n": 1000,
+   "alpha": 0.753,
+   "agree": 0.813
+  },
+  "hostility": {
+   "n": 1000,
+   "alpha": 0.945,
+   "agree": 0.993
+  }
  }
 }

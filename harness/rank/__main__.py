@@ -147,7 +147,8 @@ def _pair_set(posts_by_acct: dict, min_hi: int = 100, max_lo: int = 10) -> list:
     return out
 
 
-def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False) -> dict:
+def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False,
+              label_models: tuple[str, ...] | None = None) -> dict:
     corpus = load()
     pairs = load_pairs("posts")
     test = [p for p in pairs if p.split == "test"]
@@ -155,9 +156,9 @@ def run_posts(alpha: float = 10.0, folds: int = 5, with_labels: bool = False) ->
            "authors": {"dev": len({p.group for p in pairs if p.split == "dev"}), "test": len({p.group for p in test})}}
     res["format_logistic"] = post.format_baseline(pairs, corpus)
     if with_labels:
-        from harness.label.features import reply_label_votes
-        votes, schema = reply_label_votes()
-        res["label_logistic"] = post.label_baseline(pairs, votes, schema)
+        from harness.label.features import REFERENCE_MODELS, reply_label_votes
+        votes, schema = reply_label_votes(label_models or REFERENCE_MODELS)
+        res["label_logistic"] = post.label_baseline(pairs, votes, schema) | {"models": list(label_models or REFERENCE_MODELS)}
 
     targets = post.within_account_targets(corpus)
     accounts = sorted({a for a, _ in targets.values()})
@@ -220,15 +221,17 @@ def main() -> None:
     r.add_argument("--label-models", default="", help="comma-separated annotators to average (default: both reference models)")
     ps = sub.add_parser("posts")
     ps.add_argument("--labels", action="store_true", help="add a logistic model on the LLM label fields")
+    ps.add_argument("--label-models", default="", help="comma-separated annotators to average (default: both reference models)")
     args = p.parse_args()
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    models = tuple(m for m in args.label_models.split(",") if m) or None
     if args.cmd == "posts":
-        res = run_posts(with_labels=args.labels)
-        out = RESULTS_DIR / ("posts-labels.json" if args.labels else "posts.json")
+        res = run_posts(with_labels=args.labels, label_models=models)
+        name = "posts.json" if not args.labels else f"posts-labels-{'+'.join(models)}.json" if models else "posts-labels.json"
+        out = RESULTS_DIR / name
         out.write_text(json.dumps(res, indent=1) + "\n", encoding="utf-8")
         print(json.dumps(res, indent=1))
         return
-    models = tuple(m for m in args.label_models.split(",") if m) or None
     res = run_replies(args.labels, models)
     name = "replies.json" if not args.labels else f"replies-labels-{'+'.join(models)}.json" if models else "replies-labels.json"
     out = RESULTS_DIR / name
