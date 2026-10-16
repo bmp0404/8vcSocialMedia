@@ -4,7 +4,7 @@ Memory is how the harness gets better from one round to the next. At the start o
 
 The design follows the memory system behind Instinct, as reverse-engineered by supermemory: plain markdown files, keyword search instead of embeddings, and a strict split between the stages that read memory and the one step that writes it.
 
-Status: this describes the plan. The code is being built on the `krish/memory` branch in `harness/memstore/`. Krish owns the store; ask before changing its format.
+Status: this describes the plan. The code is being built on the `krish/memory` branch in `harness/memstore/`. [IMPLEMENTATION.md](IMPLEMENTATION.md) has the exact spec and the work packages. Krish owns the store; ask before changing its format.
 
 ## Where memory sits in the loop
 
@@ -60,7 +60,7 @@ tags: [pattern]
 Required keys: `id`, `type`, `title`, `aliases`, `created`, `updated`.
 Optional keys: `evidence`, `confidence`, `source`, `supersedes`, `valid_until`, `tags`. The parser keeps keys it doesn't know, so other branches can add fields.
 
-Ids are kebab-case, unique across the store, and never renamed. Episodes use `ep-<action_id>` for the harness's own actions and `post-<status_id>` for dataset posts.
+Ids are kebab-case (`[a-z0-9-]`, at most 80 characters), unique across the store, and never renamed. Episodes use `ep-<action_id>` for the harness's own actions and `post-<status_id>` for dataset posts, and must set `source` to `run` or `dataset`.
 
 Aliases matter more than anything else in the note. Search only finds words that are spelled out, so a note about launches should list `ship`, `release` and `GA` too.
 
@@ -73,12 +73,16 @@ All of this lives in `harness/memstore/`.
 | `load(id)` | Returns one note, or `None` |
 | `list_notes(type=None)` | Lists notes, optionally of one type |
 | `search(query, k=10, types=None)` | Ranked keyword search; returns id, type, title, score and matching lines |
-| `context_for(text, k=5)` | The top matching notes for a narrative, formatted for a prompt |
+| `context_for(text, k=5, types=None)` | The top matching notes for a narrative, formatted for a prompt |
 | `prompt_block()` | All procedures plus confident lessons, capped; returns `""` if the store is empty |
 | `write_note(note)` / `delete_note(id)` | The only way to change memory; validates every write |
 | `round_end(run_id, *, provider)` | Turns a run's actions into episode notes; no LLM call, safe to rerun |
 
 `write_note` rejects a note with a missing field, a duplicate id, or a path outside the type folders. It also rejects a lesson unless its evidence cites an episode backed by something real: a dataset post, a recorded outcome, or a human review verdict. A lesson resting only on the panel's own predicted scores is refused, so the harness can't learn from itself.
+
+Each note loads as a `Note(id, type, title, aliases, created, updated, body, meta, path)`, where `meta` holds every optional key.
+
+The minds get memory through `config.lessons()`, which returns `memory/lessons.md` plus `prompt_block()`. That keeps `decide()` unchanged.
 
 Raw scraped text is never stored. Notes about narratives hold a title, a summary the harness wrote, and URLs.
 
