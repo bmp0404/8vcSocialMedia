@@ -81,6 +81,33 @@
     ],
     "pairs": 1016,
     "clusters": 37
+   },
+   "time_of_day": {
+    "estimate": 0.5266,
+    "ci95": [
+     0.4827,
+     0.5719
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "media_or_link": {
+    "estimate": 0.5797,
+    "ci95": [
+     0.5438,
+     0.6168
+    ],
+    "pairs": 1016,
+    "clusters": 37
+   },
+   "constant": {
+    "estimate": 0.5,
+    "ci95": [
+     0.5,
+     0.5
+    ],
+    "pairs": 1016,
+    "clusters": 37
    }
   }
  },

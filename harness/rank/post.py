@@ -84,6 +84,24 @@ def format_baseline(pairs: list[Pair], corpus: Corpus) -> dict:
         sign = 1.0 if sum(pair_credit(feats[p.winner][k], feats[p.loser][k]) for p in dev) / len(dev) >= 0.5 else -1.0
         single[k[2:]] = accuracy([pair_credit(sign * feats[p.winner][k], sign * feats[p.loser][k]) for p in test],
                                  [p.group for p in test]).to_dict()
+    # Time of day: dev win rate per 4-hour UTC block, as for replies.
+    wins, seen = Counter(), Counter()
+    for p in dev:
+        for sid, won in ((p.winner, 1), (p.loser, 0)):
+            b = corpus.get(sid).created_at.hour // 4
+            wins[b] += won
+            seen[b] += 1
+    rate = {b: (wins[b] + 1) / (seen[b] + 2) for b in range(6)}
+
+    def tod(sid):
+        return rate[corpus.get(sid).created_at.hour // 4]
+    single["time_of_day"] = accuracy([pair_credit(tod(p.winner), tod(p.loser)) for p in test],
+                                     [p.group for p in test]).to_dict()
+    mol = {sid: max(f["f:media"], f["f:link"]) for sid, f in feats.items()}
+    sign = 1.0 if sum(pair_credit(mol[p.winner], mol[p.loser]) for p in dev) / len(dev) >= 0.5 else -1.0
+    single["media_or_link"] = accuracy([pair_credit(sign * mol[p.winner], sign * mol[p.loser]) for p in test],
+                                       [p.group for p in test]).to_dict()
+    single["constant"] = accuracy([0.5] * len(test), [p.group for p in test]).to_dict()
     return {"l2": l2, "weights": {k: round(v, 4) for k, v in sorted(w.items(), key=lambda kv: -abs(kv[1]))},
             "test": accuracy(cr, [p.group for p in test]).to_dict(), "single_features_test": single}
 
