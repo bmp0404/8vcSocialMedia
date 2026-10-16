@@ -40,8 +40,8 @@ class DemoTests(unittest.TestCase):
                 candidate_payload(bad)
         self.assertEqual(candidate_payload(self.payload), self.payload)
 
-    def test_http_auth_separates_team_and_worker(self):
-        server = ThreadingHTTPServer(('127.0.0.1', 0), make_handler(self.queue, 'team-token', 'worker-token'))
+    def test_public_jobs_and_authenticated_worker(self):
+        server = ThreadingHTTPServer(('127.0.0.1', 0), make_handler(self.queue, 'worker-token'))
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         self.addCleanup(server.server_close)
@@ -49,16 +49,18 @@ class DemoTests(unittest.TestCase):
         base = f'http://127.0.0.1:{server.server_port}'
         with urlopen(base + '/healthz') as res:
             self.assertTrue(json.load(res)['ok'])
-        for path, token in (('/api/jobs', 'wrong'), ('/internal/claim', 'team-token')):
+        with urlopen(base + '/api/status') as res:
+            self.assertIn('worker_online', json.load(res))
+        for path, token in (('/internal/claim', ''), ('/internal/finish', 'wrong')):
             req = Request(base + path, b'{}', {'Authorization': 'Bearer ' + token})
             with self.assertRaises(HTTPError) as err:
                 urlopen(req)
             self.assertEqual(err.exception.code, 401)
-        req = Request(base + '/api/jobs', json.dumps(self.payload).encode(), {'Authorization': 'Bearer team-token'})
+        req = Request(base + '/api/jobs', json.dumps(self.payload).encode())
         with urlopen(req) as res:
             self.assertEqual(res.status, 202)
             job_id = json.load(res)['id']
-        with urlopen(Request(base + '/api/jobs/' + job_id, headers={'Authorization': 'Bearer team-token'})) as res:
+        with urlopen(Request(base + '/api/jobs/' + job_id)) as res:
             self.assertEqual(json.load(res)['status'], 'queued')
 
 

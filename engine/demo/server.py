@@ -1,4 +1,4 @@
-"""HTTP UI and authenticated job queue. No model credentials are stored here."""
+"""Public HTTP UI and worker-authenticated job queue. No model credentials are stored here."""
 
 import hmac
 import json
@@ -90,7 +90,7 @@ def candidate_payload(value: dict) -> dict:
     return result
 
 
-def make_handler(queue: Queue, access_token: str, worker_token: str):
+def make_handler(queue: Queue, worker_token: str):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, format, *args):
             # Request paths or headers can contain user-provided data.
@@ -117,8 +117,6 @@ def make_handler(queue: Queue, access_token: str, worker_token: str):
                 return self.send(200, (ROOT / 'index.html').read_text(encoding='utf-8'), 'text/html; charset=utf-8')
             if path == '/healthz':
                 return self.send(200, {'ok': True})
-            if not self.authorized(access_token):
-                return self.send(401, {'error': 'Enter the team access code.'})
             if path == '/api/status':
                 return self.send(200, {'worker_online': queue.online()})
             if path.startswith('/api/jobs/'):
@@ -128,8 +126,8 @@ def make_handler(queue: Queue, access_token: str, worker_token: str):
 
         def do_POST(self):
             internal = self.path.startswith('/internal/')
-            if not self.authorized(worker_token if internal else access_token):
-                return self.send(401, {'error': 'Invalid access code.'})
+            if internal and not self.authorized(worker_token):
+                return self.send(401, {'error': 'Invalid worker token.'})
             try:
                 length = int(self.headers.get('Content-Length', '0'))
                 if not 0 < length <= (200000 if internal else 20000):
@@ -154,11 +152,11 @@ def make_handler(queue: Queue, access_token: str, worker_token: str):
 
 
 def main():
-    access_token, worker_token = os.environ['DEMO_ACCESS_TOKEN'], os.environ['DEMO_WORKER_TOKEN']
-    if len(access_token) < 24 or len(worker_token) < 24 or access_token == worker_token:
-        raise ValueError('Use distinct demo and worker tokens of at least 24 characters.')
+    worker_token = os.environ['DEMO_WORKER_TOKEN']
+    if len(worker_token) < 24:
+        raise ValueError('Use a worker token of at least 24 characters.')
     queue = Queue(Path(os.getenv('DEMO_DB_PATH', '/tmp/post-eval-demo.sqlite')))
-    server = ThreadingHTTPServer(('0.0.0.0', int(os.getenv('PORT', '8080'))), make_handler(queue, access_token, worker_token))
+    server = ThreadingHTTPServer(('0.0.0.0', int(os.getenv('PORT', '8080'))), make_handler(queue, worker_token))
     server.serve_forever()
 
 
