@@ -9,8 +9,9 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-DB_PATH = ROOT / "data" / "harness.db"
-OUT_DIR = ROOT / "out"
+# Each can point elsewhere, so a test or a throwaway run keeps the checkout's data/ and out/ clean.
+DB_PATH = Path(os.getenv("HARNESS_DB_PATH") or ROOT / "data" / "harness.db")
+OUT_DIR = Path(os.getenv("HARNESS_OUT_DIR") or ROOT / "out")
 SAMPLE_SIGNALS_PATH = ROOT / "data" / "sample_signals.json"
 
 PROVIDER = os.getenv("HARNESS_PROVIDER", "mock").lower()

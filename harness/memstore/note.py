@@ -5,7 +5,9 @@ content (required keys, ids, dates, evidence) belongs to write_note in store.py;
 parse() only rejects text it can't read as a note.
 """
 
+import atexit
 import os
+import shutil
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -163,6 +165,8 @@ def store_root() -> Path:
     if config.PROVIDER == "mock":
         if _mock_root is None:
             _mock_root = Path(tempfile.mkdtemp(prefix="memstore-"))
+            # A mock store is throwaway, and every mock run used to leave one behind in the temp folder.
+            atexit.register(shutil.rmtree, _mock_root, True)
         return _mock_root / config.profile_name()
     return config.memory_store_dir()
 
