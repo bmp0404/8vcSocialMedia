@@ -239,7 +239,7 @@ class FakeWeb:
         self.urls.append(url)
         if url in self.redirects:
             raise site.Redirect(url, self.redirects[url])
-        if url.endswith("/robots.txt"):
+        if url.endswith("/robots.txt") and url not in self.pages:
             if self.robots is None:
                 raise FetchError(f"HTTP 404 from host for {url}")
             return self.robots, "2026-10-16T12:00:00+00:00"
@@ -276,6 +276,16 @@ def test_redirects_are_followed_only_on_the_site_and_where_robots_allow():
     assert "robots.txt disallows" in log["skipped"]["https://www.acme.dev/about"]
     assert "already read" in log["skipped"]["https://docs.acme.dev/"]
     assert not any("stripe.example" in u or "/private" in u for u in web.urls)  # never requested
+
+
+def test_robots_redirects_are_followed_only_to_another_robots_file():
+    web = FakeWeb({"https://acme.dev": HOME, "https://cdn.acme.dev/robots.txt": "User-agent: *\nDisallow: /features\n"},
+                  redirects={"https://acme.dev/robots.txt": "https://cdn.acme.dev/robots.txt",
+                             "https://docs.acme.dev/robots.txt": "https://github.com/acme/issues/1"})
+    pages, log = site.read_site("https://acme.dev", web)
+    assert "robots.txt disallows it" == log["skipped"]["https://acme.dev/features"]  # rules from the redirected file
+    assert "https://github.com/acme/issues/1" not in web.urls  # a redirect to a page that isn't robots.txt
+    assert "https://docs.acme.dev/" in web.urls  # no robots.txt there means no rules
 
 
 def test_a_homepage_that_redirects_off_the_site_is_refused():

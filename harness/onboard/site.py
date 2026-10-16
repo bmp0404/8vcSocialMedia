@@ -295,19 +295,24 @@ def same_site(url: str, home: str) -> bool:
 
 
 class _Robots:
-    """robots.txt per host, read once, following up to MAX_REDIRECTS redirects. A 4xx means no rules (RFC 9309);
-    any other failure raises SiteError."""
+    """robots.txt per host, read once. A 4xx means no rules (RFC 9309); any other failure raises SiteError.
+
+    Redirects are followed up to MAX_REDIRECTS times, but only to another /robots.txt. roadmap.vllm.ai's robots.txt
+    redirected to a GitHub issue, and the reader fetched that 400 KB page as if it were rules. A redirect anywhere
+    else now counts as no robots.txt, which RFC 9309 treats as no rules."""
 
     def __init__(self, get: Getter):
         self.get = get
         self.parsers: dict[str, urllib.robotparser.RobotFileParser | None] = {}
 
-    def _read(self, robots_url: str) -> str:
+    def _read(self, robots_url: str) -> str | None:
         url = robots_url
         for _ in range(MAX_REDIRECTS + 1):
             try:
                 return self.get(url)[0]
             except Redirect as r:
+                if urllib.parse.urlsplit(r.location).path != "/robots.txt":
+                    return None
                 url = r.location
         raise FetchError(f"{robots_url} redirected more than {MAX_REDIRECTS} times")
 
@@ -321,6 +326,8 @@ class _Robots:
             except FetchError as e:
                 if not re.search(r"HTTP 4\d\d", str(e)):
                     raise SiteError(f"can't read {robots_url} to check what it allows: {e}") from e
+                body = None
+            if body is None:
                 self.parsers[host] = None
             else:
                 rp = urllib.robotparser.RobotFileParser()
