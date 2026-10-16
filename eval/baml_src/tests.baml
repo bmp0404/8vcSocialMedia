@@ -133,8 +133,8 @@ testset "RankCandidates parser" {
 }
 
 testset "judge prompt and clients" {
-    // Instructions go in the system prompt; the candidate and references go in the user message.
-    test "candidate and references are user data" {
+    // On the anthropic and openai providers. Claude Code folds every role into one -p prompt.
+    test "API providers get candidate and references as user data" {
         let preview = anthropic.Client.new(model = "fixture", api_key = "fixture-key", base_url = "https://example.com");
         let body = GradePost@spec(fixture_candidate(), fixture_references()).build_request(client = preview).body;
         let parts = body.split("\"messages\"");

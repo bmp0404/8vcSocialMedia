@@ -61,18 +61,26 @@ function judge_client(provider: string, model: string, max_tokens: int = 8192) -
 // cap fails with FinishReasonError, so the unused room costs nothing and the cap costs the grade.
 function judge_api_client(provider: string, model: string, max_tokens: int = 8192) -> ai.Client {
     if (provider == "anthropic") {
-        let base_url = baml.env.get("ANTHROPIC_BASE_URL");
-        if let token: string = baml.env.get("ANTHROPIC_AUTH_TOKEN") {
-            return anthropic.Client.new(
-                model = model, api_key = env.ANTHROPIC_AUTH_TOKEN, base_url = base_url,
-                headers = {"Authorization": `Bearer ${token}`}, max_tokens = max_tokens,
-            );
-        }
-        return anthropic.Client.new(model = model, api_key = env.ANTHROPIC_API_KEY,
-                                    base_url = base_url, max_tokens = max_tokens);
+        // As the anthropic SDK does: an empty variable counts as unset, ANTHROPIC_API_KEY goes in
+        // x-api-key when set, and ANTHROPIC_AUTH_TOKEN adds a bearer header for the gateway.
+        let token = baml.env.get("ANTHROPIC_AUTH_TOKEN") ?? "";
+        let has_key = (baml.env.get("ANTHROPIC_API_KEY") ?? "") != "";
+        let key = if (!has_key && token != "") { env.ANTHROPIC_AUTH_TOKEN } else { env.ANTHROPIC_API_KEY };
+        let headers: map<string, string>? = if (token != "") { {"Authorization": `Bearer ${token}`} } else { null };
+        return anthropic.Client.new(model = model, api_key = key, base_url = judge_env_url("ANTHROPIC_BASE_URL"),
+                                    headers = headers, max_tokens = max_tokens);
     }
     openai.ResponsesClient.new(model = model, api_key = env.OPENAI_API_KEY,
-                              base_url = baml.env.get("OPENAI_BASE_URL"), max_output_tokens = max_tokens)
+                              base_url = judge_env_url("OPENAI_BASE_URL"), max_output_tokens = max_tokens)
+}
+
+// A base URL from the environment, null when unset or empty. The SDKs drop a trailing slash.
+function judge_env_url(name: string) -> string? {
+    let url = baml.env.get(name) ?? "";
+    while (url.ends_with("/")) {
+        url = url.slice(0, url.length() - 1);
+    }
+    if (url == "") { null } else { url }
 }
 
 function GradePost(candidate: CandidatePost, references: ReferencePost[],
