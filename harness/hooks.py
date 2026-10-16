@@ -8,8 +8,9 @@ Every alternative is kept on the action so a reviewer can swap hooks in the dash
 import json
 import random
 import re
+from dataclasses import asdict
 
-from harness.actions import is_public
+from harness.actions import is_public, text_errors
 from harness.llm import LLM
 from harness.models import Action
 from harness.qualify import critic
@@ -61,6 +62,8 @@ def sharpen_hooks(llm: LLM, mission: str, ranked: list[Action], top: int = 5,
         for h in a.hook_alternatives:
             c = Action(type=a.type, text=h + parts[a.id][1], mind=a.mind, narrative_id=a.narrative_id,
                        target_url=a.target_url, target_handle=a.target_handle, channel=a.channel, details=a.details)
+            if text_errors(asdict(c)):  # a longer hook can push a post past 280; never swap one in
+                continue
             challengers.append((a, h, c))
             pairs.append((a, c))
     winners = judge(llm, mission, pairs, rng)

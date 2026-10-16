@@ -6,6 +6,7 @@ from harness import actions as action_space
 from harness import bandit, config, dataset, memory
 from harness.backtest import backtest
 from harness.evolve import _examples, evolve, leaderboard
+from harness.export import export_csv
 from harness.hooks import sharpen_hooks
 from harness.learn import learn
 from harness.llm import get_llm
@@ -152,6 +153,11 @@ def main() -> None:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--calibrate", action="store_true", help="apply the fitted panel weights")
     p.set_defaults(func=lambda a: backtest(get_llm(a.provider), a.per_category, a.pairs, a.seed, a.calibrate))
+
+    p = sub.add_parser("export", help="write suggested X posts/replies to a CSV in out/")
+    p.add_argument("--runs", type=int, nargs="*", help="run ids (default: all)")
+    p.add_argument("--include-rejected", action="store_true", help="also include killed and vetoed drafts")
+    p.set_defaults(func=lambda a: export_csv(a.runs, a.include_rejected))
 
     p = sub.add_parser("train", help="fit the virality model on the dev-tool dataset (local, no API calls)")
     p.set_defaults(func=lambda a: train_virality())
