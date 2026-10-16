@@ -51,9 +51,11 @@ sentence and cite at most 8 signal ids per narrative.
 Return JSON: {{"narratives": [{{"id": "kebab-slug", "title": "...", "summary": "...",
 "relevance": 0.0, "velocity": 0.0, "angle": "...", "signal_ids": [0]}}]}}"""
 
-# HARNESS_ORIENT picks how orient asks the model: "baml" or "json". The BAML prompt is new and
-# unmeasured, so the default stays on the prompt eval's recall numbers were measured on.
-DEFAULT_BACKEND = "json"
+# HARNESS_ORIENT picks how orient asks the model: "baml" or "json". Time-travel recall@5 over 5 runs
+# each (observation/reports/orient-baml-recall-20261016.json): json 0.727, baml 0.709, one story fewer
+# in 55, inside the 0.545 to 0.818 spread of the json prompt alone. baml is the default for its role
+# split, retries and count checks; never surfacing the nemotron story (0/5 against 3/5) is its known miss.
+DEFAULT_BACKEND = "baml"
 BACKENDS = ("baml", "json")
 
 
