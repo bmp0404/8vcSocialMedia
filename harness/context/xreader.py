@@ -11,6 +11,7 @@ Every count on an `XPost` is the value at `fetched_at`, not at post time.
 
 from __future__ import annotations
 
+import time
 import urllib.parse
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
@@ -40,6 +41,7 @@ class XPost:
     views: int | None = None
     author_followers: int | None = None
     author_verified: bool | None = None
+    author_description: str | None = None
     replying_to: str | None = None  # handle this post replies to
     replying_to_status: str | None = None
     quoted_id: str | None = None
@@ -108,6 +110,7 @@ def _parse(raw: dict, fetched_at: str) -> XPost:
         views=raw.get("views"),
         author_followers=author.get("followers"),
         author_verified=verification.get("verified") if verification else None,
+        author_description=author.get("description"),
         replying_to=reply_to,
         replying_to_status=str(reply_status) if reply_status else None,
         quoted_id=str(quote["id"]) if quote.get("id") else None,
@@ -131,7 +134,14 @@ class FxTwitterReader:
     def _get(self, path: str, max_age_s) -> tuple[dict, str]:
         if max_age_s is _READER_DEFAULT:
             max_age_s = self.max_age_s
-        resp = self.client.get(FX_BASE + path, max_age_s=max_age_s)
+        try:
+            resp = self.client.get(FX_BASE + path, max_age_s=max_age_s)
+        except FetchError as e:
+            # Observe saw /2/profile/<h>/statuses 404 on live handles and succeed on retry.
+            if "HTTP 404" not in str(e) or not path.startswith("/2/profile/"):
+                raise
+            time.sleep(2)
+            resp = self.client.get(FX_BASE + path, max_age_s=max_age_s)
         data = resp.json()
         if data.get("code") != 200:
             raise FetchError(f"fxtwitter {path} returned code {data.get('code')}: {data.get('message')}")

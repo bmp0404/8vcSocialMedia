@@ -9,6 +9,7 @@ dependencies = [
     "openai>=1.50",
     "pydantic>=2,<3",
     "python-dotenv>=1.0",
+    "tzdata>=2026.5",
 ]
 
 [dependency-groups]

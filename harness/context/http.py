@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import threading
 import time
 import urllib.error
@@ -25,6 +26,42 @@ from harness import config
 USER_AGENT = "8vc-media-harness/0.1 (context research; github.com/bmp0404/8vcSocialMedia)"
 CACHE_DIR = config.ROOT / "data" / "context" / "cache"
 RETRY_STATUSES = {429, 500, 502, 503, 504}
+# Per-host timestamps shared by every process and worktree on this machine, so
+# two workers calling the same free API from one IP stay inside one budget.
+THROTTLE_DIR = Path(os.getenv("HARNESS_THROTTLE_DIR", Path.home() / ".cache" / "media-harness" / "throttle"))
+
+
+class _FileLock:
+    """Exclusive lock on a file, released on exit. Unix uses flock, Windows msvcrt."""
+
+    def __init__(self, path: Path):
+        self.path = path
+
+    def __enter__(self):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.f = open(self.path, "a+b")
+        if os.name == "nt":
+            import msvcrt
+
+            self.f.seek(0)
+            msvcrt.locking(self.f.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(self.f.fileno(), fcntl.LOCK_EX)
+        return self
+
+    def __exit__(self, *exc):
+        if os.name == "nt":
+            import msvcrt
+
+            self.f.seek(0)
+            msvcrt.locking(self.f.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(self.f.fileno(), fcntl.LOCK_UN)
+        self.f.close()
 
 
 class FetchError(RuntimeError):
@@ -57,7 +94,6 @@ class PoliteClient:
         self.timeout_s = timeout_s
         self.max_retries = max_retries
         self.user_agent = user_agent
-        self._last_request: dict[str, float] = {}
         self._lock = threading.Lock()
 
     def _cache_path(self, url: str) -> Path | None:
@@ -68,12 +104,16 @@ class PoliteClient:
         return self.cache_dir / host / f"{digest}.json"
 
     def _wait_turn(self, host: str) -> None:
-        with self._lock:
-            last = self._last_request.get(host)
-            now = time.monotonic()
-            if last is not None and now - last < self.min_interval_s:
-                time.sleep(self.min_interval_s - (now - last))
-            self._last_request[host] = time.monotonic()
+        stamp = THROTTLE_DIR / f"{host}.ts"
+        with self._lock, _FileLock(THROTTLE_DIR / f"{host}.lock"):
+            try:
+                last = float(stamp.read_text(encoding="utf-8"))
+            except (FileNotFoundError, ValueError):
+                last = 0.0
+            wait = last + self.min_interval_s - time.time()
+            if wait > 0:
+                time.sleep(wait)
+            stamp.write_text(repr(time.time()), encoding="utf-8")
 
     def get(self, url: str, max_age_s: float | None = None, headers: dict | None = None) -> CachedResponse:
         """GET `url`, serving from cache when the cached copy is younger than `max_age_s`.
