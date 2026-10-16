@@ -1,13 +1,21 @@
 # 8VC Media Harness
 
-An agentic harness that recommends X actions for a Caitlin Clark fan account, built for the 8VC ATX
-build session (Oct 15, 2026). It recommends actions and doesn't post anything; 8VC's Grok bot decides what
-gets posted.
+An agentic harness that recommends X actions for a brand account, built for the 8VC ATX build session
+(Oct 15, 2026). It recommends actions and doesn't post anything; 8VC's Grok bot decides what gets posted.
+The brand is whatever `HARNESS_MISSION` points at (default `mission/mission.md`, a Caitlin Clark fan
+account example).
 
 ```
-observe (sources/) -> orient -> decide (minds/) -> qualify -> ranked JSON in out/
-      ^                                                            |
-      +------------- learn: predicted vs. actual -> lessons.md <---+
+            sources/ (observe) ──> signals
+                 ┌──────────────────┴──────────────────┐
+ reply lane:  pick target posts ─> minds: reply/quote/   post lane:  orient -> narratives ─> minds:
+              mention/follow/skip ─> eval                            original posts ─> eval
+                 │        ▲                                            ▲        │
+                 │        └──── memory.recall(lane): lessons, best/worst, ─────┘│
+                 │              recent texts, engaged handles/urls              │
+                 └──> memory `actions` table (context + post + eval + status + actuals) <──┘
+                                      │                          ▲
+          out/recommendations-<run>.json -> email hand-off       │ record (X metrics) -> learn -> lessons.md
 ```
 
 ## Quickstart
@@ -16,16 +24,17 @@ observe (sources/) -> orient -> decide (minds/) -> qualify -> ranked JSON in out
 pip install -r requirements.txt
 copy .env.example .env          # then fill in a provider + key
 python -m harness run --provider mock   # offline smoke test, no key needed
-python -m harness run                    # real run with the provider in .env
+python -m harness run                    # real run, both lanes, with the provider in .env
+python -m harness run --lane reply       # or --lane post
 ```
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
-| `run` | Observe, orient, decide, and qualify, then write ranked recommendations to `out/` |
-| `record <file>` | Store real metrics: `[{"action_id": "...", "metrics": {"likes": 3}}]` |
-| `learn` | Rewrite `memory/lessons.md` from predicted vs. actual; the minds read it next run |
+| `run [--lane reply\|post\|both]` | Run the lane(s); writes `out/recommendations-<run>.json`, a JSON list of `Action.to_dict()`, best first, vetoed drafts removed. This file is the hand-off contract |
+| `record <file>` | Store real metrics: `[{"action_id": "...", "metrics": {"likes": 3}, "post_id": "..."}]` (X `public_metrics` names work too); marks rows `posted` |
+| `learn` | Rewrite the lessons file from predicted vs. actual; both lanes recall it next run |
 | `review` | Open the approve/edit/kill dashboard at `http://127.0.0.1:8765`; every verdict rewrites `out/approved-run<id>.json` |
 
 ### Review dashboard
@@ -52,13 +61,15 @@ data/         # Source documents, datasets, and supporting assets
 
 | Path | Stage |
 | --- | --- |
-| `mission/mission.md` | The account's mission file (placeholder until 8VC's arrives) |
+| `mission/*.md` | Mission files; `HARNESS_MISSION` picks one. An `**Audience panel:**` list of `- name: description` bullets sets the eval panel |
 | `harness/sources/` | **Observe.** One plugin per data source; register it in `sources/__init__.py` |
-| `harness/orient.py` | **Orient.** Clusters signals into narratives scored on relevance × velocity |
-| `harness/minds/prompts/*.md` | **Decide.** One persona per file; add a file to add a mind |
-| `harness/qualify.py` | **Qualify.** Simulated audience panel scores drafts; a critic vetoes |
-| `harness/memory.py` | SQLite log of runs, recommendations, and outcomes (`data/harness.db`) |
-| `harness/learn.py` | **Learn.** Writes `memory/lessons.md` |
+| `harness/lanes/reply.py` | **Reply lane.** Hottest not-yet-engaged posts become targets; minds pick reply / quote / mention / follow / skip |
+| `harness/lanes/post.py` | **Post lane.** `orient.py` clusters signals into narratives; minds write original posts |
+| `harness/lanes/common.py` | Shared lane context + the Eval step (score, critique, write to memory) |
+| `harness/minds/` | Persona prompts, one per file; `MIND_LANES` maps each to the reply and/or post lane |
+| `harness/qualify.py` | **Eval.** Simulated audience panel scores drafts; hard rules + a critic veto |
+| `harness/memory.py` | **Memory layer.** SQLite `actions` table (`data/harness.db`) + `recall(lane)` for the lanes |
+| `harness/learn.py` | **Learn.** Writes `memory/lessons.md` (`## General` / `## Reply lane` / `## Post lane`) |
 | `harness/review/` | **Human checkpoint.** Stdlib HTTP server + single-page dashboard |
 | `harness/llm.py` | Provider switch: `anthropic`, `xai`, `openai` (any OpenAI-compatible gateway), `mock` |
 
@@ -66,8 +77,8 @@ data/         # Source documents, datasets, and supporting assets
 
 - [ ] `sources/x_search.py`: wire up live X data (Grok live search, X API, or Playwright)
 - [ ] `sources/reddit.py`: needs Reddit OAuth (unauthenticated requests return 403)
-- [ ] Replace `mission/mission.md` with 8VC's mission file
-- [ ] Hand-off format/transport to 8VC's Grok bot
+- [ ] Point `HARNESS_MISSION` at 8VC's mission file
+- [ ] Hand-off transport to 8VC's Grok bot (email, `harness/handoff/`)
 - [x] Human approve/kill checkpoint (`python -m harness review`)
 - [ ] Feed review verdicts and notes into `learn`
 - [ ] Pull real metrics automatically instead of `record`

@@ -129,8 +129,9 @@ function cardHtml(a, i) {
   return `<article class="card ${st} ${i === state.focus ? "focus" : ""}" data-i="${i}" data-id="${a.id}">
     <div class="meta">
       <span class="score">${(a.predicted_score * 100).toFixed(0)}</span>
+      ${a.lane ? `<span class="pill">${esc(a.lane)} lane</span>` : ""}
       <span class="pill">${esc(a.type)}</span>
-      <span>${esc(a.mind.replaceAll("_", " "))}</span>
+      <span>${esc((a.mind || "").replaceAll("_", " "))}</span>
       <span>· ${esc(a.narrative_id)}</span>
       ${a.vetoed ? `<span class="veto">⚠ critic veto</span>` : ""}
       ${st !== "pending" ? `<span class="status-${st}">${st}</span>` : ""}

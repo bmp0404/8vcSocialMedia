@@ -1,5 +1,6 @@
 """Provider-agnostic LLM wrapper. Swap backends with HARNESS_PROVIDER."""
 
+import hashlib
 import json
 import os
 import re
@@ -52,14 +53,40 @@ class OpenAICompatLLM(LLM):
         return resp.choices[0].message.content or ""
 
 
+MOCK_LESSONS = """# Lessons
+
+(mock provider: canned lessons so `learn` runs offline)
+
+## General
+- Specific beats generic: drafts that name a concrete detail from the source outperform vague hype.
+- The audience panel over-predicts long drafts; keep it under ~200 characters.
+
+## Reply lane
+- Early replies on high-reply threads earn the most reach for a small account; add a joke or a fact, never just agree.
+- Follows only pay off on accounts that already reply to fans.
+
+## Post lane
+- One sharp angle per post; threads of hype underperform.
+"""
+
+
 class MockLLM(LLM):
-    """Offline backend so the pipeline runs end to end without any API key."""
+    """Offline backend so the pipeline runs end to end without any API key.
+
+    JSON calls return the caller's `mock()` fixture; free-text calls return canned lessons.
+    """
 
     def complete(self, system: str, prompt: str) -> str:
-        return "(mock completion)"
+        return MOCK_LESSONS
 
     def complete_json(self, system: str, prompt: str, mock: Callable[[], Any] | None = None) -> Any:
         return mock() if mock else {}
+
+
+def mock_score(*parts: Any, lo: float = 0.2, hi: float = 0.85) -> float:
+    """Deterministic pseudo-random score in [lo, hi] so mock rankings aren't all ties."""
+    h = int(hashlib.sha1("|".join(map(str, parts)).encode()).hexdigest()[:8], 16) / 0xFFFFFFFF
+    return round(lo + (hi - lo) * h, 2)
 
 
 def parse_json(text: str) -> Any:

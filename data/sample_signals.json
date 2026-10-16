@@ -1,26 +1,50 @@
 [
   {
+    "id": "1000000000000000001",
+    "conversation_id": "1000000000000000001",
     "text": "SAMPLE: Fever announce offseason training camp dates; fans already arguing about the backcourt rotation.",
-    "url": "https://x.com/sample_beatwriter/status/1",
+    "url": "https://x.com/sample_beatwriter/status/1000000000000000001",
     "author": "sample_beatwriter",
-    "metrics": {"likes": 1800, "reposts": 240, "replies": 410}
+    "metrics": {
+      "likes": 1800,
+      "reposts": 240,
+      "replies": 410
+    }
   },
   {
+    "id": "1000000000000000002",
+    "conversation_id": "1000000000000000002",
     "text": "SAMPLE: Hot take thread: 'Clark vs. the rest of the 2024 draft class, three years in'. Replies are a warzone.",
-    "url": "https://x.com/sample_hottakes/status/2",
+    "url": "https://x.com/sample_hottakes/status/1000000000000000002",
     "author": "sample_hottakes",
-    "metrics": {"likes": 5200, "reposts": 900, "replies": 2300}
+    "metrics": {
+      "likes": 5200,
+      "reposts": 900,
+      "replies": 2300
+    }
   },
   {
+    "id": "1000000000000000003",
+    "conversation_id": "1000000000000000003",
     "text": "SAMPLE: Iowa women's basketball releases its season-opener hype video. Hawkeye fans getting nostalgic for the Clark era.",
-    "url": "https://x.com/sample_iowawbb/status/3",
+    "url": "https://x.com/sample_iowawbb/status/1000000000000000003",
     "author": "sample_iowawbb",
-    "metrics": {"likes": 3100, "reposts": 450, "replies": 160}
+    "metrics": {
+      "likes": 3100,
+      "reposts": 450,
+      "replies": 160
+    }
   },
   {
+    "id": "1000000000000000004",
+    "conversation_id": "1000000000000000004",
     "text": "SAMPLE: Stat nugget: logo-range three-point attempts per game, league leaders. One name is lapping the field.",
-    "url": "https://x.com/sample_statsguy/status/4",
+    "url": "https://x.com/sample_statsguy/status/1000000000000000004",
     "author": "sample_statsguy",
-    "metrics": {"likes": 900, "reposts": 120, "replies": 75}
+    "metrics": {
+      "likes": 900,
+      "reposts": 120,
+      "replies": 75
+    }
   }
 ]

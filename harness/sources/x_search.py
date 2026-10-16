@@ -9,7 +9,8 @@ class XSearchSource(Source):
       - Grok (xAI) API with live X search
       - X API v2 recent search (needs a paid tier)
       - Playwright / browser use against x.com/search when no API is available
-    Must return Signal(source="x", text, url, author, created_at, metrics={likes, reposts, replies, views}).
+    Must return Signal(source="x", text, id, conversation_id, url, author, created_at,
+    metrics={likes, reposts, replies, views}) using keyword arguments.
     """
 
     name = "x"
