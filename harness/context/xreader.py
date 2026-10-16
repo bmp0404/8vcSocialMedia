@@ -159,6 +159,14 @@ def _parse(raw: dict, fetched_at: str) -> XPost:
     )
 
 
+def _status_id(status_id) -> int:
+    """The numeric id, or FetchError: callers treat an unfetchable id like any failed fetch."""
+    try:
+        return int(status_id)
+    except (TypeError, ValueError):
+        raise FetchError(f"not an X status id: {status_id!r}") from None
+
+
 class FxTwitterReader:
     """XReader backed by api.fxtwitter.com. One request per second, cached responses."""
 
@@ -184,7 +192,7 @@ class FxTwitterReader:
         return data, resp.fetched_at
 
     def status(self, status_id: str, max_age_s=_READER_DEFAULT) -> XPost:
-        data, fetched_at = self._get(f"/status/{int(status_id)}", max_age_s)
+        data, fetched_at = self._get(f"/status/{_status_id(status_id)}", max_age_s)
         return _parse(data["tweet"], fetched_at)
 
     def profile_statuses(self, handle: str, limit: int = 20, max_age_s=_READER_DEFAULT) -> list[XPost]:
@@ -219,7 +227,7 @@ class FxTwitterReader:
         """
         if ranking_mode not in ("likes", "recency"):
             raise ValueError(f"ranking_mode must be likes or recency, not {ranking_mode!r}")
-        path = f"/2/conversation/{int(status_id)}"
+        path = f"/2/conversation/{_status_id(status_id)}"
         if ranking_mode == "recency":
             path += "?ranking_mode=recency"
         data, fetched_at = self._get(path, max_age_s)
@@ -242,7 +250,7 @@ class FxTwitterReader:
         users: list[XUser] = []
         cursor = None
         for _ in range(max_pages):
-            path = f"/2/status/{int(status_id)}/reposts?count=100"
+            path = f"/2/status/{_status_id(status_id)}/reposts?count=100"
             if cursor:
                 path += "&cursor=" + urllib.parse.quote(cursor)
             data, fetched_at = self._get(path, max_age_s)
