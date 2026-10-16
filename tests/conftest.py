@@ -41,7 +41,8 @@ def no_network(monkeypatch):
 @pytest.fixture(autouse=True)
 def no_account_settings(monkeypatch):
     # A developer's .env can pick another profile, brand account or profile file, and config.py loads it.
-    # Unit tests read the repo's wnba profile files instead.
+    # Unit tests read the repo's wnba profile files instead. MEMSTORE_PATH goes too: a non-mock lanes.run
+    # loads live facts from the memory store, and a real store there would change what the gate passes.
     for name in ("HARNESS_PROFILE", "HARNESS_ACCOUNT_HANDLE", "HARNESS_OBSERVE_CONFIG", "HARNESS_PANEL",
-                 "HARNESS_REPLY_FRAMING", "HARNESS_ACCOUNT"):
+                 "HARNESS_REPLY_FRAMING", "HARNESS_ACCOUNT", "MEMSTORE_PATH"):
         monkeypatch.delenv(name, raising=False)
