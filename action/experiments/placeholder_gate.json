@@ -1,0 +1,38 @@
+{
+ "wnba_real_replies": {
+  "n": 670,
+  "rejected_before": 239,
+  "rejected_after": 239,
+  "placeholder_before": 0,
+  "placeholder_after": 0,
+  "newly_rejected": [],
+  "no_longer_rejected": []
+ },
+ "devtools_real_replies": {
+  "n": 6663,
+  "rejected_before": 1877,
+  "rejected_after": 1874,
+  "placeholder_before": 4,
+  "placeholder_after": 1,
+  "newly_rejected": 0,
+  "no_longer_rejected": 3
+ },
+ "devtools_posts": {
+  "n": 1610,
+  "rejected_before": 82,
+  "rejected_after": 82,
+  "placeholder_before": 0,
+  "placeholder_after": 0,
+  "newly_rejected": 0,
+  "no_longer_rejected": 0
+ },
+ "model_drafts": {
+  "n": 399,
+  "rejected_before": 34,
+  "rejected_after": 34,
+  "placeholder_before": 1,
+  "placeholder_after": 1,
+  "newly_rejected": [],
+  "no_longer_rejected": []
+ }
+}
