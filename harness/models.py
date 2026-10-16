@@ -45,6 +45,10 @@ class Action:
     vetoed: bool = False
     critique: str = ""
     id: str = field(default_factory=lambda: uuid.uuid4().hex[:8])
+    # Set by the decide stage's lanes (harness/minds/lanes.py); optional, so older readers ignore them.
+    lane: str = ""  # "reply" or "post"
+    target_text: str = ""  # text of the post a reply or quote answers
+    draft_meta: dict = field(default_factory=dict)  # how the draft was made and selected
 
     def to_dict(self) -> dict:
         return asdict(self)

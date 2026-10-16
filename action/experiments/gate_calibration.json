@@ -1,0 +1,179 @@
+{
+ "x_replies": {
+  "n": 670,
+  "rejected": 150,
+  "rejected_rate": 0.224,
+  "rules": {
+   "empty": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "em_dash": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "not_x_but_y": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "assistant_voice": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "Too late for me. The past week's wrestle-mania was the last straw. Players in stands. Bullies on the court. Enough was enough. For the sake "
+    ]
+   },
+   "ai_vocab": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "emoji": {
+    "hits": 30,
+    "rate": 0.045,
+    "examples": [
+     "Credit goes to Mitchell, Boston and Refs 😐\n\nCC gave her all but she can't lead all the dead weights alone..she deserves a better team ❤️‍🩹",
+     "🤔Ain’t fooling me with this newly found Caitlin love , CC don’t sign their shitty epic contract ✨🕊️☠️🕊️✨",
+     "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯"
+    ]
+   },
+   "hashtags": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "#FireStephWhite\n#FireAmberCox"
+    ]
+   },
+   "length": {
+    "hits": 85,
+    "rate": 0.127,
+    "examples": [
+     "Thank you for pissing away another year of Boston and Clark. Your defensive gurus White and January have to go. And whoever hired them needs",
+     "I will not be purchasing season tickets next year until you get Cunningham off this team. 0 production, poor defense, does nothing but post ",
+     "The stupid hub offense!? Really? That shit has never worked against any decent team and you decided to use that shit in a game three!?  Whoe"
+    ]
+   },
+   "placeholder": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "wrapped_in_quotes": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "“Go play go play go play”"
+    ]
+   },
+   "reply_sentences": {
+    "hits": 96,
+    "rate": 0.143,
+    "examples": [
+     "Thank you for pissing away another year of Boston and Clark. Your defensive gurus White and January have to go. And whoever hired them needs",
+     "The stupid hub offense!? Really? That shit has never worked against any decent team and you decided to use that shit in a game three!?  Whoe",
+     "YOU didn't!\nIt was unnecessary drama and stress every game.  95% of it started by THIS organization."
+    ]
+   }
+  }
+ },
+ "devtools_posts": {
+  "n": 1610,
+  "rejected": 66,
+  "rejected_rate": 0.041,
+  "rules": {
+   "empty": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "em_dash": {
+    "hits": 19,
+    "rate": 0.012,
+    "examples": [
+     "Jev from @typesafeai is now live on @CloudflareDev AI Gateway. Try the first System One model — send state and typed questions; get structur",
+     "Today we're introducing updates that make Devin significantly cheaper. It's now: ▪️ 30–40% cheaper in Fusion and Normal ▪️ 15–20% cheaper in",
+     "Our first ever stealth model is up on @CloudflareDev AI Gateway — Union Alpha! The sweet spot for the best price/performance ratio, this mod"
+    ]
+   },
+   "not_x_but_y": {
+    "hits": 3,
+    "rate": 0.002,
+    "examples": [
+     "AI isn't just for work. @mr_rtl built a mobile-friendly site to organize everything his son needed for a sporting event, then updated it fro",
+     "\"It's not hard to start building these experiences; it's harder to make them good.\" Kevin Green on the agent we built for the Everything *[N",
+     "2. True creator influence isn't just measured by follower counts. It also includes comment sentiment, engagement rates, and if creators are "
+    ]
+   },
+   "assistant_voice": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "ai_vocab": {
+    "hits": 8,
+    "rate": 0.005,
+    "examples": [
+     "They say cockroaches will outlast us all. We'd settle for outlasting your database problems. New look, same resilience: distinct parts, adap",
+     "Runtime kicked off this morning with keynotes from @bernhardsson and @ScottWu46. Stay tuned for product announcements and recordings from th",
+     "🧠 @GoogleDeepMind sponsored the Supabase Select 2026 after party and hackathon. Here's to giving builders a reason to stay late and come bac"
+    ]
+   },
+   "emoji": {
+    "hits": 30,
+    "rate": 0.019,
+    "examples": [
+     "11M+ people build on Bolt. On Monday, we gave them open models with up to 50x usage. Which is #1 so far? The fastest, cheapest one, with pro",
+     "Nuxt 4.6 is out, alongside nuxt/cli v4 🚀 🧩 nuxt/server, our first big step to a server-agnostic Nuxt 🎯 typed $​fetch was rebuilt (no more TS",
+     "762 commits. 315 contributors. 104 first-timers. vLLM v0.30.0 is live. 🎉 Highlights: 🤖 Hybrid-attention hot paths: Kimi K3 streamlines KDA, "
+    ]
+   },
+   "hashtags": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "Proud to sponsor #PromCon EU! Don't miss our booth + talks from our team: Using Delta Temporarily in #Prometheus Metrics deserve contracts 6"
+    ]
+   },
+   "length": {
+    "hits": 7,
+    "rate": 0.004,
+    "examples": [
+     "We ran Opus 5.5 through CodeRabbit's review pipeline. &gt; On 80 known bug patterns it caught 51 vs 49 for our production mix. &gt; On 13 ha",
+     "The full Runtime agenda is live, including talks from: @ScottWu46, Co-founder &amp; CEO @cognition @CompleteSkeptic, Co-founder &amp; CEO @t",
+     "New in Cline Desktop v0.0.34: &gt; Worktrees - run multiple tasks in parallel each on its own branch in ~/.cline/worktrees/&lt;id&gt; &gt; G"
+    ]
+   },
+   "placeholder": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   },
+   "wrapped_in_quotes": {
+    "hits": 1,
+    "rate": 0.001,
+    "examples": [
+     "“The p(doom) kind of solves the permanent underclass problem”"
+    ]
+   },
+   "reply_sentences": {
+    "hits": 0,
+    "rate": 0.0,
+    "examples": []
+   }
+  }
+ },
+ "reply_length_chars": {
+  "all_replies": {
+   "p50": 46,
+   "p90": 179
+  },
+  "top3_replies": {
+   "p50": 43,
+   "p90": 159,
+   "mean": 60.5
+  }
+ }
+}

@@ -1,4 +1,5 @@
-"""Decide: a chorus of persona "media minds" each propose actions in parallel.
+"""Decide: a chorus of persona "media minds" drafts the post lane; harness/minds/lanes.py runs the
+reply lane and screens everything through the typed schema, the slop gate and selection.
 
 Add a mind by dropping a markdown file into minds/prompts/; its filename is the mind's name.
 """
@@ -10,6 +11,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from harness.llm import LLM
+from harness.minds import lanes
 from harness.models import ACTION_TYPES, Action, Narrative
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -26,8 +28,8 @@ NARRATIVES TO WORK WITH:
 A narrative with "explore": true ranked lower and is here to test whether the ranking is right, so
 treat it like the others.
 
-Propose up to {n} X actions in your style. Allowed types: post, reply, quote, mention, follow.
-Replies and quotes need `target_url`; mentions and follows need `target_handle`.
+Propose up to {n} X actions in your style. Allowed types: post, mention, follow (the reply lane
+writes replies separately). Mentions and follows need a `target_handle` that appears in the narratives.
 Posts must be under 280 characters.
 
 Return JSON: {{"actions": [{{"type": "...", "text": "...", "narrative_id": "...",
@@ -59,10 +61,10 @@ def _run_mind(llm: LLM, name: str, persona: str, prompt: str, narratives: list[N
         return {
             "actions": [
                 {
-                    "type": "reply" if n and n.signal_urls else "post",
+                    # A post, never a reply: signal_urls hold news links nobody can reply to on X.
+                    "type": "post",
                     "text": f"[{name}] mock draft about {n.title if n else 'nothing'}",
                     "narrative_id": n.id if n else "",
-                    "target_url": n.signal_urls[0] if n and n.signal_urls else None,
                     "rationale": "mock",
                 }
             ]
@@ -98,8 +100,10 @@ def decide(
     narratives: list[Narrative],
     per_mind: int = 3,
     vetoed: list[Action] | None = None,
+    budget: lanes.Budget | None = None,
 ) -> list[Action]:
-    """Draft actions from every mind. With `vetoed`, each mind instead revises its own vetoed drafts."""
+    """Draft actions from every mind. With `vetoed`, each mind instead revises its own vetoed drafts.
+    Returns only the actions that clear the lanes; see lanes.run."""
     minds = load_minds()
     prompts = {}
     if vetoed:
@@ -124,4 +128,4 @@ def decide(
     actions = [a for batch in results for a in batch]
     verb = "revised into" if vetoed else "proposed"
     print(f"[decide] {len(prompts)} minds {verb} {len(actions)} actions")
-    return actions
+    return lanes.run(llm, mission, lessons, narratives, actions, revising=bool(vetoed), budget=budget)

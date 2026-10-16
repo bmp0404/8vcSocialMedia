@@ -1,0 +1,24 @@
+{
+ "threads": 24,
+ "direct_replies": 670,
+ "mean_within_thread_spearman_with_likes": {
+  "minutes_after_root": {
+   "mean": -0.302,
+   "threads": 24
+  },
+  "replier_followers": {
+   "mean": 0.158,
+   "threads": 24
+  },
+  "chars": {
+   "mean": 0.019,
+   "threads": 24
+  }
+ },
+ "median_minutes_after_root": {
+  "top3_replies": 27.85,
+  "other_replies": 55.7
+ },
+ "top3_replies_from_accounts_under_1000_followers": "35/72",
+ "caveat": "fxtwitter returns X's first, engagement-ranked page of replies; late low-like replies are under-sampled."
+}
