@@ -102,13 +102,25 @@ def test_out_of_range_relevance_is_dropped(scripted, capsys):
     assert "dropped a: {'relevance': 1.7} outside 0..1" in capsys.readouterr().out
 
 
-def test_truncated_spaced_array_keeps_complete_narratives(scripted, capsys):
-    queue, _ = scripted
-    queue.append(reply(narrative("a"), narrative("b"))[:-60])
-    assert [n.id for n in run()] == ["a"]
+def test_cut_off_reply_is_asked_again(scripted, capsys):
+    queue, calls = scripted
+    queue.append(reply(narrative("a"), narrative("b"))[:-60])  # spaced: the parser keeps "a"
+    queue.append(reply(narrative("c")))
+    assert [n.id for n in run()] == ["c"]
+    assert len(calls) == 2
     out = capsys.readouterr().out
-    assert "reply had 2 narratives; the parser kept 1" in out
     assert "reply was cut off before its JSON closed" in out
+    assert "asking once more" in out
+
+
+def test_reply_cut_inside_the_last_string_is_asked_again(scripted):
+    # The parser closes the cut string and keeps both narratives, so only the closure check sees it.
+    queue, calls = scripted
+    full = reply(narrative("a"), narrative("b"))
+    queue.append(full[: full.rindex('"angle"') + len('"angle": "A')])
+    queue.append(reply(narrative("c")))
+    assert [n.id for n in run()] == ["c"]
+    assert len(calls) == 2
 
 
 def test_truncated_compact_array_is_asked_again(scripted, capsys):
@@ -117,17 +129,30 @@ def test_truncated_compact_array_is_asked_again(scripted, capsys):
     queue.append(reply(narrative("c")))
     assert [n.id for n in run()] == ["c"]
     assert len(calls) == 2
-    out = capsys.readouterr().out
-    assert "reply had 2 narratives; the parser kept 0" in out
-    assert "no narrative in the reply parsed; asking once more" in out
+    assert "reply had 2 narratives; the parser kept 0" in capsys.readouterr().out
 
 
-def test_twice_unparseable_raises(scripted):
+def test_missing_list_is_asked_again(scripted):
+    queue, calls = scripted
+    queue.extend(['{"stories": [{"id": "x"}]}', reply(narrative("c"))])
+    assert [n.id for n in run()] == ["c"]
+    assert len(calls) == 2
+
+
+def test_twice_unusable_raises(scripted):
     queue, _ = scripted
     truncated = reply(narrative("a", spaced=False), spaced=False)[:-2]
     queue.extend([truncated, truncated])
-    with pytest.raises(o.OrientReplyError):
+    with pytest.raises(o.OrientReplyError, match="unusable twice; the second time the reply was cut off"):
         run()
+
+
+def test_scores_all_out_of_range_is_not_retried(scripted, capsys):
+    queue, calls = scripted
+    queue.append(reply(narrative("a", relevance=80.0), narrative("b", relevance=1.2)))
+    assert run() == []
+    assert len(calls) == 1
+    assert "dropped b: {'relevance': 1.2} outside 0..1" in capsys.readouterr().out
 
 
 def test_an_empty_list_is_an_answer(scripted):

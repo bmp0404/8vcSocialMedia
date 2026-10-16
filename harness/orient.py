@@ -66,7 +66,7 @@ REPLY_LOG_DIR = config.OUT_DIR / "orient-replies"
 
 
 class OrientReplyError(ValueError):
-    """The model's reply held narratives and none of them parsed, twice."""
+    """The model's reply was unusable twice: cut off, or holding narratives none of which parsed."""
 
 
 X_KINDS = {"post", "reply_target", "mention", "own_post"}
@@ -271,19 +271,25 @@ def build_narratives(data: dict, signals: list[Signal], now: datetime, k: Observ
     return narratives
 
 
-def checked_narratives(value, raw: str) -> dict:
-    """The parsed `Orientation` as orient's JSON shape, minus narratives with a score outside 0..1.
+def checked_narratives(value, raw: str) -> tuple[dict, str | None]:
+    """The parsed `Orientation` as orient's JSON shape, and why the reply is unusable, if it is.
 
-    Logs every narrative the parser or this check removed, since a short list otherwise looks like
-    a quiet news day. The scores are floats because BAML rounds a fraction into an int literal (0.8
-    becomes 1 in 0..10), which would be worse than an out-of-range float caught here.
+    A reply is unusable when its JSON never closed (BAML's parser keeps a narrative cut off
+    mid-string, with its later fields empty) or when it held narratives and none parsed. Short of
+    that, a narrative the parser dropped or one with a score outside 0..1 is logged and left out, and
+    the reply is saved, since a short list otherwise looks like a quiet news day. The scores are
+    floats because BAML rounds a fraction into an int literal (0.8 becomes 1 in 0..10).
     """
-    problems = []
+    problems, failure = [], None
     sent, parsed = raw_array_length(raw, "narratives"), len(value.narratives)
+    if not json_closes(raw, "narratives"):
+        failure = "reply was cut off before its JSON closed"
+    elif parsed == 0 and sent != 0:
+        failure = f"reply held {sent if sent is not None else 'no list of'} narratives and none parsed"
+    if failure:
+        problems.append(failure)
     if sent != parsed:
         problems.append(f"reply had {sent if sent is not None else 'no'} narratives; the parser kept {parsed}")
-    if not json_closes(raw, "narratives"):
-        problems.append("reply was cut off before its JSON closed")
     kept = []
     for n in value.narratives:
         bad = {f: getattr(n, f) for f in ("relevance", "velocity") if not 0 <= getattr(n, f) <= 1}
@@ -296,7 +302,7 @@ def checked_narratives(value, raw: str) -> dict:
         for problem in problems:
             print(f"[orient] {problem}")
         print(f"[orient] raw reply saved to {saved}")
-    return {"narratives": kept}
+    return {"narratives": kept}, failure
 
 
 def save_reply(raw: str) -> Path:
@@ -307,19 +313,19 @@ def save_reply(raw: str) -> Path:
 
 
 def ask_baml(llm: LLM, mission: str, payload: str, limit: int, mock) -> dict:
-    """OrientSignals through the harness LLM's settings, asked once more if no narrative parsed."""
+    """OrientSignals through the harness LLM's settings, asked once more if the reply is unusable."""
     if getattr(llm, "is_mock", False):
         return baml_adapter.call(llm, "OrientSignals", mission, payload, limit, mock=mock).value
     for attempt in range(2):
         result = baml_adapter.call(llm, "OrientSignals", mission, payload, limit, mock=mock)
         if result.raw is None:
             raise OrientReplyError("BAML recorded no reply from the model, so orient can't count its narratives")
-        data = checked_narratives(result.value, result.raw)
-        if data["narratives"] or raw_array_length(result.raw, "narratives") == 0:
+        data, failure = checked_narratives(result.value, result.raw)
+        if failure is None:
             return data
         if attempt == 0:
-            print("[orient] no narrative in the reply parsed; asking once more")
-    raise OrientReplyError("orient's reply held narratives and none parsed, twice")
+            print("[orient] asking once more")
+    raise OrientReplyError(f"orient's reply was unusable twice; the second time the {failure}")
 
 
 def ask_json(llm: LLM, mission: str, payload: str, limit: int, mock) -> dict:
