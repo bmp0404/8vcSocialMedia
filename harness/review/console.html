@@ -110,6 +110,9 @@
   .rows .val small { font-weight: 400; color: var(--faint); margin-left: 6px; }
   .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 10px; }
   .star { color: var(--accent); }
+  .ctx .hot { color: var(--accent); font-weight: 600; }
+  a.rt { display: block; text-decoration: none; color: inherit; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+  a.rt:hover { border-color: var(--accent); }
 
   /* ---------- Live (home) ---------- */
   .hero { --h-bg: #0e0e0d; --h-ink: #f2f1ec; --h-muted: #8d8c86; --h-faint: #4a4a46; --h-line: #2a2a27; --h-accent: #f07a50; --h-ok: #4cc283; --h-warn: #e0a84a;
@@ -157,6 +160,21 @@
     .core { width: 58%; }
     .slabel { width: 90px; } .slabel .ct { font-size: 17px; } .slabel .who { display: none; }
   }
+  .ci { display: grid; grid-template-columns: max-content 1fr 5ch; gap: 8px 12px; align-items: center; font-size: 13px; }
+  .ci small { font-size: 10px; color: var(--faint); text-transform: uppercase; letter-spacing: .04em; }
+  .citrack { position: relative; height: 18px; }
+  .citrack b { position: absolute; top: -4px; bottom: -4px; width: 1px; background: var(--line); }
+  .citrack i { position: absolute; top: 7px; height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .citrack em { position: absolute; top: 3px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--accent); border: 2px solid var(--card); }
+  .citrack i.base { background: color-mix(in srgb, var(--muted) 35%, transparent); } .citrack em.base { background: var(--muted); }
+  .ci .val { font-weight: 700; text-align: right; font-family: var(--mono); font-size: 12px; }
+  .ciaxis { position: relative; height: 16px; font-size: 11px; color: var(--faint); }
+  .ciaxis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+  .tunes { display: grid; gap: 12px; }
+  .tune { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+  .tit summary { font-size: 13px; color: var(--ink); }
+  .tit pre { margin-top: 6px; }
+  .status-up { color: var(--ok); font-weight: 600; } .status-down { color: var(--bad); font-weight: 600; }
   .funnel .drop { font-size: 11.5px; color: var(--faint); text-align: right; min-width: 6ch; }
 
   /* ---------- lineage ---------- */
@@ -367,6 +385,7 @@ const ago = iso => {
   const s = (Date.now() - new Date(iso)) / 1000;
   return s < 60 ? "just now" : s < 3600 ? `${Math.floor(s / 60)}m ago` : s < 86400 ? `${Math.floor(s / 3600)}h ago` : new Date(iso).toLocaleDateString();
 };
+const fmtPct = v => v == null ? "–" : `${Math.round(v * 100)}%`;
 const metricsLine = m => Object.entries(m || {}).filter(([, v]) => typeof v === "number").map(([k, v]) => `${fmtN(v)} ${esc(k)}`).join(" · ");
 
 function toast(msg) {
@@ -484,6 +503,25 @@ function render() {
     return;
   }
   ({ live: renderLive, loop: renderLoop, review: renderReview, trace: renderTrace, market: renderMarket, minds: renderMinds, eval: renderEval, learning: renderLearning, runs: renderRuns })[state.view]();
+}
+
+// Social posts have handles; news items have publishers or site URLs.
+function who(s) {
+  const a = (s.author || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  if (!a) return "unknown";
+  const isHandle = s.kind ? s.kind !== "news" : !/[\s\/]/.test(a) && !/\.(com|org|net|io|dev)$/.test(a);
+  return isHandle ? "@" + a.replace(/^@/, "") : a;
+}
+
+/* ---------- reply targets (observe) ---------- */
+function heat(r) {
+  const age = r.age_minutes != null ? (r.age_minutes < 60 ? `${Math.round(r.age_minutes)}m old` : `${(r.age_minutes / 60).toFixed(1)}h old`) : "";
+  const rate = r.engagement_per_hour != null ? `${fmtN(r.engagement_per_hour)} eng/h` : "";
+  return [age, rate].filter(Boolean).join(" · ") || "no timing";
+}
+function replyTarget(url) {
+  for (const n of state.trace?.narratives || []) for (const r of n.reply_targets || []) if (r.url === url) return r;
+  return null;
 }
 
 /* ---------- revision rounds (critic-driven retries) ---------- */
@@ -677,11 +715,12 @@ function logEvent(html, cls = "") {
   const div = document.createElement("div"); div.className = cls; div.innerHTML = html; box.appendChild(div);
   while (box.children.length > 60) box.firstChild.remove();
 }
+const srcErr = e => { const m = (e || "returned nothing").replace(/^(failed:\s*)+/i, "").replace(/^[\w_]+: /, ""); return m.length > 90 ? m.slice(0, 88) + "…" : m; };
 const stamp = ms => `<span>+${ms < 1000 ? ms + "ms" : (ms / 1000).toFixed(1) + "s"}</span>`;
 function tickerLines(key) {
   const t = state.trace, a = state.actions;
   if (!t && !a.length) return [];
-  const sig = (t?.signals || []).map(x => `<b>@${esc(x.author || "?")}</b> ${esc((x.text || "").slice(0, 150))}`);
+  const sig = (t?.signals || []).map(x => `<b>${esc(who(x))}</b> ${esc((x.text || "").slice(0, 150))}`);
   const narr = (t?.narratives || []).map(n => `<b>${esc(n.title)}</b>${n.angle ? " · " + esc(n.angle) : ""}`);
   const drafts = a.map(x => `<b>${esc(x.variant || human(x.mind))}</b> ${esc((x.review.text ?? x.text ?? "").slice(0, 150))}`);
   const top = (t?.ranked_ids || []).map(id => a.find(x => x.id === id)).filter(Boolean)
@@ -749,7 +788,7 @@ function narrate(st, i) {
   const t = state.trace; if (!t && st.key !== "review") return;
   const stg = t?.stages.find(s => s.name === st.key); const at = stg?.start_ms ?? 0;
   const calls = (t?.llm_calls || []).filter(c => c.stage === st.key);
-  if (st.key === "observe") t.sources.forEach(s => logEvent(`${stamp(s.start_ms)} <b>${esc(s.name)}</b> ${s.n ? `${s.n} signals` : `failed ${esc(s.error)}`}`, s.n ? "" : "drop"));
+  if (st.key === "observe") t.sources.forEach(s => logEvent(`${stamp(s.start_ms)} <b>${esc(s.name)}</b> ${s.n ? `${s.n} signals` : `failed: ${esc(srcErr(s.error))}`}`, s.n ? "" : "drop"));
   const shown = calls.slice(0, 6);
   shown.forEach((c, k) => later(() => logEvent(`${stamp(c.start_ms)} llm <b>${esc(c.label)}</b> ${fmtMs(c.ms)}${c.ok ? "" : " error"}`, c.ok ? "" : "drop"), (k / Math.max(shown.length, 1)) * st.dur * .7));
   if (calls.length > shown.length) later(() => logEvent(`${stamp(at)} … ${calls.length - shown.length} more llm calls`), st.dur * .72);
@@ -817,7 +856,7 @@ function applyLive(snap) {
     logEvent(`${stamp(snap.elapsed_ms)} ${esc((VERBS[d.name] || [d.name])[0].toLowerCase())} done → <b>${d.n_out ?? "–"}</b> in ${fmtMs(d.ms)}`, "acc");
   });
   if (snap.done.length > live.liveSeen && snap.done[0]?.name === "observe" && live.liveSeen === 0)
-    snap.sources.forEach(s => logEvent(`<b>${esc(s.name)}</b> ${s.n ? s.n + " signals" : "failed " + esc(s.error || "")}`, s.n ? "" : "drop"));
+    snap.sources.forEach(s => logEvent(`<b>${esc(s.name)}</b> ${s.n ? s.n + " signals" : "failed: " + esc(srcErr(s.error))}`, s.n ? "" : "drop"));
   live.liveSeen = snap.done.length;
   const i = live.steps.findIndex(s => s.key === snap.stage);
   if (i >= 0 && i !== live.idx) setStage(i, now);
@@ -937,7 +976,7 @@ function renderLoop() {
 
 function nodeSignal(s) {
   return `<button class="node" data-k="s:${esc(s.id)}">
-    <div class="h"><b>@${esc(s.author || "unknown")}</b><span>· ${esc(s.source)}</span></div>
+    <div class="h"><b>${esc(who(s))}</b><span>· ${esc(s.source)}</span>${s.kind ? `<span class="pill">${esc(human(s.kind))}</span>` : ""}</div>
     <div class="x">${esc(s.text)}</div>
     <div class="m">${metricsLine(s.metrics)}</div></button>`;
 }
@@ -946,7 +985,8 @@ function nodeNarr(n) {
     <div class="h"><b>${esc(n.title)}</b></div>
     <div class="x">${esc(n.angle ? "Angle: " + n.angle : n.summary)}</div>
     <div class="meters"><span>relevance</span><span class="meter"><i style="width:${n.relevance * 100}%"></i></span><span>${Math.round(n.relevance * 100)}</span>
-      <span>velocity</span><span class="meter"><i style="width:${n.velocity * 100}%"></i></span><span>${Math.round(n.velocity * 100)}</span></div></button>`;
+      <span title="${n.velocity_basis === "data" ? "computed from timestamps and counts" : n.velocity_basis === "llm" ? "the model's estimate; no timestamps" : ""}">velocity${n.velocity_basis === "llm" ? "*" : ""}</span><span class="meter"><i style="width:${n.velocity * 100}%"></i></span><span>${Math.round(n.velocity * 100)}</span></div>
+    ${n.reply_targets?.length ? `<div class="m">${n.reply_targets.length} reply target${n.reply_targets.length === 1 ? "" : "s"} · hottest ${heat(n.reply_targets[0])}</div>` : ""}</button>`;
 }
 function statusChip(a) {
   const s = a.review.status;
@@ -1020,24 +1060,26 @@ function inspect(key) {
   const relNarr = g.narratives.filter(n => rel.has(`n:${n.id}`) && key !== `n:${n.id}`);
   const relDrafts = state.actions.filter(a => rel.has(`a:${a.id}`) && key !== `a:${a.id}`);
   const links = (h, items) => items.length ? `<div class="dr-sec"><h4>${h}</h4><div class="links">${items.join("")}</div></div>` : "";
-  const linkSections = links("Signals", relSignals.map(s => linkBtn(`s:${s.id}`, `@${esc(s.author)} — ${esc(s.text.slice(0, 80))}`)))
+  const linkSections = links("Signals", relSignals.map(s => linkBtn(`s:${s.id}`, `${esc(who(s))} — ${esc(s.text.slice(0, 80))}`)))
     + links("Narratives", relNarr.map(n => linkBtn(`n:${n.id}`, esc(n.title))))
     + links("Drafts", relDrafts.map(a => linkBtn(`a:${a.id}`, `${esc(human(a.mind))} · ${esc(a.type)} — ${esc((a.text || "").slice(0, 70))}`)));
   let title = "", body = "";
   if (kind === "s") {
-    const s = g.signals.find(x => x.id === id); title = `Signal · @${s.author || "unknown"}`;
-    body = `<div class="ctx"><div class="who"><b>@${esc(s.author)}</b>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>` : ""}</div>${esc(s.text)}</div>
-      <dl class="kv"><dt>Source</dt><dd>${esc(s.source)}</dd><dt>Posted</dt><dd>${esc(s.created_at || "unknown")}</dd>
+    const s = g.signals.find(x => x.id === id); title = `Signal · ${who(s)}`;
+    body = `<div class="ctx"><div class="who"><b>${esc(who(s))}</b>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>` : ""}</div>${esc(s.text)}</div>
+      <dl class="kv"><dt>Source</dt><dd>${esc(s.source)}</dd>${s.kind ? `<dt>Kind</dt><dd>${esc(human(s.kind))}</dd>` : ""}<dt>Posted</dt><dd>${esc(s.created_at || "unknown")}</dd>
       ${Object.entries(s.metrics || {}).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(fmtN(v))}</dd>`).join("")}</dl>`;
   } else if (kind === "n") {
     const n = g.nById[id]; title = `Narrative · ${n.title}`;
     body = `<p style="margin:0">${esc(n.summary)}</p>
       <dl class="kv"><dt>Angle</dt><dd>${esc(n.angle || "–")}</dd><dt>Relevance</dt><dd>${Math.round(n.relevance * 100)}</dd>
-      <dt>Velocity</dt><dd>${Math.round(n.velocity * 100)}</dd><dt>Priority</dt><dd>${Math.round(n.relevance * n.velocity * 100)} <span class="muted">(relevance × velocity)</span></dd><dt>ID</dt><dd><code>${esc(n.id)}</code></dd></dl>`;
+      <dt>Velocity</dt><dd>${Math.round(n.velocity * 100)} <span class="muted">${n.velocity_basis === "data" ? "(computed from timestamps and counts)" : n.velocity_basis === "llm" ? "(model's estimate; no timestamps)" : ""}</span></dd><dt>Priority</dt><dd>${Math.round(n.relevance * n.velocity * 100)} <span class="muted">(relevance × velocity)</span></dd><dt>ID</dt><dd><code>${esc(n.id)}</code></dd></dl>
+      ${n.reply_targets?.length ? `<div class="dr-sec"><h4>Reply targets, hottest first</h4><div class="links">${n.reply_targets.map(r =>
+        `<a class="rt" href="${esc(r.url)}" target="_blank" rel="noopener"><b>@${esc(r.author)}</b> <span class="muted">${heat(r)}${r.author_followers != null ? ` · ${fmtN(r.author_followers)} followers` : ""}</span><br>${esc((r.text || "").slice(0, 160))}</a>`).join("")}</div></div>` : ""}`;
   } else if (kind === "a") {
     const a = state.actions.find(x => x.id === id); title = `Draft · ${human(a.mind)}`;
     const target = (a.target_url && g.byUrl[a.target_url]) || (a.target_text ? { author: a.target_handle || "", text: a.target_text } : null);
-    body = `${target ? `<div class="ctx"><div class="who">Replying to <b>@${esc(target.author)}</b></div>${esc(target.text)}</div>` : ""}
+    body = `${target ? `<div class="ctx"><div class="who">Replying to <b>${esc(who(target))}</b></div>${esc(target.text)}</div>` : ""}
       <pre>${esc(a.review.text ?? a.text) || "(no text)"}</pre>
       ${a.review.text ? `<div class="dr-sec"><h4>Original draft (before human edit)</h4><pre>${esc(a.text)}</pre></div>` : ""}
       ${a.pre_hook_text ? `<div class="dr-sec"><h4>Before the hook pass</h4><pre>${esc(a.pre_hook_text)}</pre></div>` : ""}
@@ -1086,7 +1128,9 @@ function panelHtml(panel) {
 }
 function targetHtml(a, sig) {
   if (!sig && a.target_text) sig = { author: a.target_handle || "", text: a.target_text };
-  if (sig) return `<div class="ctx"><div class="who">${a.type === "quote" ? "Quoting" : "Replying to"} <b>@${esc(sig.author)}</b><span>${metricsLine(sig.metrics)}</span>
+  const rt = a.target_url && replyTarget(a.target_url);
+  if (sig && rt) sig = { ...sig, heatLine: heat(rt) };
+  if (sig) return `<div class="ctx"><div class="who">${a.type === "quote" ? "Quoting" : "Replying to"} <b>${esc(who(sig))}</b><span>${metricsLine(sig.metrics)}</span>${sig.heatLine ? `<span class="hot">${sig.heatLine}</span>` : ""}
       <a href="${esc(a.target_url)}" target="_blank" rel="noopener">open ↗</a></div>${esc(sig.text)}</div>`;
   if (a.target_url) return `<div class="meta target">→ <a href="${esc(a.target_url)}" target="_blank" rel="noopener">${esc(a.target_url)}</a></div>`;
   if (a.target_handle) return `<div class="meta target">→ <a href="https://x.com/${esc(a.target_handle)}" target="_blank" rel="noopener">@${esc(a.target_handle)}</a></div>`;
@@ -1307,26 +1351,58 @@ function corrBars(obj) {
     return `<span>${esc(human(k))}</span><span class="ctrack"><b></b><i style="left:${left}%;width:${w}%"></i></span><span class="val">${v >= 0 ? "+" : ""}${v.toFixed(2)}</span>`;
   }).join("")}</div>`;
 }
+function ciChart(rows) {
+  // Within-account AUC with 95% intervals; 0.5 is a coin flip. Baselines are grey so the learned predictors stand out.
+  const lo = 0.3, hi = 1, x = v => ((Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * 100;
+  return `<div class="ci">${rows.map((r, i) => {
+    const h = r.headline || {}, ci = h.ci95 || [h.value, h.value];
+    return `<span class="${r.baseline ? "muted" : ""}">${esc(r.name)}${r.baseline ? ` <small>baseline</small>` : ""}</span>
+      <span class="citrack" data-i="${i}"><b style="left:${x(0.5)}%"></b>
+        <i style="left:${x(ci[0])}%;width:${Math.max(x(ci[1]) - x(ci[0]), .6)}%" class="${r.baseline ? "base" : ""}"></i>
+        <em style="left:${x(h.value)}%" class="${r.baseline ? "base" : ""}"></em></span>
+      <span class="val">${h.value != null ? h.value.toFixed(2) : "–"}</span>`;
+  }).join("")}<span></span><span class="ciaxis">${[0.3, 0.5, 0.7, 0.9].map(v => `<span style="left:${x(v)}%">${v === 0.5 ? "0.5 coin flip" : v}</span>`).join("")}</span><span></span></div>`;
+}
 async function renderEval() {
   if (!state.evals) state.evals = await api("/api/console/evals");
-  const reps = state.evals.filter(r => !r.error);
-  if (!reps.length) {
-    $("#view").innerHTML = `<div class="section empty">No eval reports yet.<br><br><code>uv run python -m harness backtest</code> grades the audience panel and the pairwise judge against real engagement in the dev-tool dataset and writes <code>eval/backtest-*.json</code>; reports show up here.</div>`;
+  const { backtests = [], tunes = [], predictors = [] } = state.evals;
+  const reps = backtests.filter(r => !r.error), pred = predictors.find(r => !r.error), tuned = tunes.filter(r => !r.error);
+  if (!reps.length && !pred && !tuned.length) {
+    $("#view").innerHTML = `<div class="section empty">No eval reports yet.<br><br><code>uv run python -m harness backtest</code> writes <code>eval/backtest-*.json</code>, <code>harness eval backtest</code> writes <code>eval/reports/</code>, and <code>harness tune</code> writes <code>eval/tune-*.json</code>. They show up here.</div>`;
     return;
   }
-  const r = reps[0], panel = r.panel || {}, judge = r.judge || {};
+  const r = reps[0] || {}, panel = r.panel || {}, judge = r.judge || {}, vm = r.virality_model;
   const rho = panel.spearman_calibrated ?? panel.spearman_unweighted;
   const tiles = [
-    ["Panel ↔ real engagement", rho != null ? `${rho >= 0 ? "+" : ""}${rho.toFixed(2)}` : "–",
-      `Spearman ρ over ${panel.n_posts ?? "?"} posts${panel.spearman_calibrated != null ? ` · ${panel.spearman_unweighted.toFixed(2)} before calibration` : ""}`],
-    ["Judge picks the winner", judge.accuracy != null ? `${Math.round(judge.accuracy * 100)}<small>%</small>` : "–", `${judge.n_pairs ?? "?"} viral-vs-flop pairs · 50% is chance`],
-    ["Calibrated", r.calibrated ? "yes" : "no", r.calibrated ? "fitted panel weights applied" : "weights not applied"],
-    ["Graded by", esc(r.provider || "–"), new Date(r.at).toLocaleString()],
-  ];
+    reps.length && ["Panel ↔ real engagement", rho != null ? `${rho >= 0 ? "+" : ""}${rho.toFixed(2)}` : "–", `Spearman ρ over ${panel.n_posts ?? "?"} posts`],
+    reps.length && ["Judge picks the winner", judge.accuracy != null ? `${Math.round(judge.accuracy * 100)}<small>%</small>` : "–",
+      judge.same_account ? `same-account pairs: ${Math.round(judge.same_account.no_evidence * 100)}% alone, ${Math.round(judge.same_account.with_evidence * 100)}% with retrieved examples` : `${judge.n_pairs ?? "?"} pairs · 50% is chance`],
+    vm && ["Trained virality model", `${vm.spearman >= 0 ? "+" : ""}${vm.spearman.toFixed(2)}`, `held-out ρ · ${Math.round(vm.pair_accuracy * 100)}% of same-account pairs · ${vm.n_posts} posts, ${vm.n_accounts} accounts`],
+    tuned.length && ["Judge self-tuning", `${tuned.filter(t => t.judge?.adopted).length}<small>/ ${tuned.length} adopted</small>`, "a revision ships only if it beats dev and holdout"],
+  ].filter(Boolean);
+  const best = pred?.rows.find(x => !x.baseline), bestBase = pred?.rows.find(x => x.baseline);
   $("#view").innerHTML = `
     <div class="kpis">${tiles.map(([k, v, d]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join("")}</div>
-    <div class="note-strip"><b>Why this matters:</b> the audience panel ranks every draft before a human sees it. ρ says how well its order matches what really spread; if it drops toward 0, the ranking is noise and the panel needs recalibrating.</div>
-    <div class="grid2">
+    ${pred ? `<section class="section">
+      <h2>Can it tell what will spread? <span class="sub">within the same account, how often a predictor ranks a viral post above a Deadweight one (AUC, 95% interval)</span></h2>
+      ${ciChart(pred.rows)}
+      <div class="note-strip" style="margin-top:12px">${best
+        ? `<b>${esc(best.name)}</b> scores ${best.headline.value.toFixed(2)} against the best simple rule, <b>${esc(bestBase?.name)}</b> at ${bestBase?.headline.value.toFixed(2)}. A learned predictor only earns its cost if it clears that bar.`
+        : `<b>Only baselines so far:</b> knowing whether a post has media already gets <b>${bestBase?.headline.value.toFixed(2)}</b>. That's the bar the panel and judge have to clear; run the backtest with <code>--predictors panel,post_judge</code> to place them.`}
+        ${pred.provider === "mock" ? " LLM predictors were skipped in this mock run." : ""}
+        <span class="muted">${pred.n_scored_by_all ?? "?"} posts from ${pred.rows[0]?.n_accounts ?? "?"} accounts · ${esc(pred.file)}</span></div>
+    </section>` : ""}
+    ${tuned.length ? `<section class="section">
+      <h2>Self-tuning the judge <span class="sub">the harness rewrites its own judging instructions from its misses, and keeps a rewrite only if it scores better on data it hasn't seen</span></h2>
+      <div class="tunes">${tuned.map(t => {
+        const j = t.judge || {}, its = j.iterations || [];
+        return `<div class="tune"><div class="meta"><b>${new Date(t.at).toLocaleString()}</b><span class="chip ${j.adopted ? "approved" : "killed"}">${j.adopted ? "adopted" : "not adopted"}</span>
+          <span>start dev ${fmtPct(j.start?.dev)}</span><span>→ final dev ${fmtPct(j.final?.dev)}${j.final?.holdout != null ? ` · holdout ${fmtPct(j.final.holdout)}` : ""}</span><span class="muted">${esc(t.file)}</span></div>
+          ${its.map((it, k) => `<details class="tit"><summary><span class="score">try ${k + 1}</span> dev ${fmtPct(it.dev)} <span class="${it.dev > (j.start?.dev ?? 0) ? "status-up" : "status-down"}">${it.dev > (j.start?.dev ?? 0) ? "▲" : "▼"} ${Math.abs(Math.round((it.dev - (j.start?.dev ?? 0)) * 100))} pts</span> · ${esc(it.change)}</summary><pre>${esc(it.core)}</pre></details>`).join("")}
+        </div>`;
+      }).join("")}</div>
+    </section>` : ""}
+    ${reps.length ? `<div class="grid2">
       <section class="section">
         <h2>Panelists <span class="sub">each simulated audience member's rank correlation with real engagement</span></h2>
         ${panel.per_panelist_spearman ? corrBars(panel.per_panelist_spearman) : `<div class="empty">No per-panelist scores in this report.</div>`}
@@ -1341,15 +1417,23 @@ async function renderEval() {
       </section>
     </div>
     <section class="section">
-      <h2>Report history</h2>
+      <h2>Backtest history</h2>
       <div class="tbl-wrap"><table>
-        <thead><tr><th class="l">Report</th><th class="l">When</th><th class="l">Provider</th><th>Posts</th><th>Panel ρ</th><th>Calibrated ρ</th><th>Judge pairs</th><th>Judge acc.</th></tr></thead>
-        <tbody>${state.evals.map(x => x.error ? `<tr><td class="l"><code>${esc(x.file)}</code></td><td class="l" colspan="7" style="color:var(--bad)">${esc(x.error)}</td></tr>` : `<tr>
+        <thead><tr><th class="l">Report</th><th class="l">When</th><th class="l">Provider</th><th>Posts</th><th>Panel ρ</th><th>Judge acc.</th><th>Same-account judge</th><th>Model ρ</th><th>Model pairs</th></tr></thead>
+        <tbody>${backtests.map(x => x.error ? `<tr><td class="l"><code>${esc(x.file)}</code></td><td class="l" colspan="8" style="color:var(--bad)">${esc(x.error)}</td></tr>` : `<tr>
           <td class="l"><code>${esc(x.file)}</code></td><td class="l">${new Date(x.at).toLocaleString()}</td><td class="l">${esc(x.provider)}</td>
-          <td>${x.panel?.n_posts ?? "–"}</td><td>${x.panel?.spearman_unweighted?.toFixed(2) ?? "–"}</td><td>${x.panel?.spearman_calibrated?.toFixed(2) ?? "–"}</td>
-          <td>${x.judge?.n_pairs ?? "–"}</td><td>${x.judge?.accuracy != null ? Math.round(x.judge.accuracy * 100) + "%" : "–"}</td></tr>`).join("")}</tbody>
+          <td>${x.panel?.n_posts ?? "–"}</td><td>${(x.panel?.spearman_calibrated ?? x.panel?.spearman_unweighted)?.toFixed(2) ?? "–"}</td>
+          <td>${fmtPct(x.judge?.accuracy)}</td><td>${fmtPct(x.judge?.same_account?.no_evidence)}</td>
+          <td>${x.virality_model?.spearman?.toFixed(2) ?? "–"}</td><td>${fmtPct(x.virality_model?.pair_accuracy)}</td></tr>`).join("")}</tbody>
       </table></div>
-    </section>`;
+    </section>` : ""}`;
+  const chart = $(".ci");
+  chart?.addEventListener("mousemove", e => {
+    const tr = e.target.closest(".citrack"); if (!tr) return tip(e, "");
+    const row = pred.rows[+tr.dataset.i], h = row.headline || {};
+    tip(e, `<b>${esc(row.name)}</b>${row.baseline ? " (baseline)" : ""}<br>AUC ${h.value?.toFixed(3)} · 95% ${h.ci95 ? h.ci95.map(v => v.toFixed(2)).join("–") : "n/a"} · ${h.n_pairs ?? "?"} pairs<br>top pick is viral ${fmtPct(row.top_pick?.value)} (chance ${fmtPct(row.top_pick?.chance)})`);
+  });
+  chart?.addEventListener("mouseleave", e => tip(e, ""));
 }
 
 /* ---------- Market ---------- */

@@ -166,15 +166,44 @@ def context() -> dict:
     }
 
 
-def evals() -> list[dict]:
-    """Backtest reports (eval/backtest-*.json), newest first."""
-    reports = []
-    for path in sorted(EVAL_DIR.glob("backtest-*.json"), reverse=True):
+def _reports(pattern: str, folder: Path) -> list[dict]:
+    out = []
+    for path in sorted(folder.glob(pattern), reverse=True):
         try:
-            reports.append({"file": path.name, **json.loads(path.read_text(encoding="utf-8"))})
+            out.append({"file": path.name, **json.loads(path.read_text(encoding="utf-8"))})
         except (OSError, json.JSONDecodeError) as e:
-            reports.append({"file": path.name, "error": str(e)})
-    return reports
+            out.append({"file": path.name, "error": str(e)})
+    return out
+
+
+def _predictor_rows(report: dict) -> list[dict]:
+    """One row per predictor from an eval/reports backtest, without the per-post predictions."""
+    rows = []
+    for name, r in (report.get("results") or {}).items():
+        stats = r.get("all") if isinstance(r.get("all"), dict) else {}
+        rows.append({
+            "name": name,
+            "baseline": name in ("random", "account", "media", "length", "tfidf"),
+            "headline": stats.get("headline_viral_vs_deadweight_auc"),
+            "same_media": stats.get("same_media_status"),
+            "top_pick": stats.get("top_pick_is_viral"),
+            "n_posts": stats.get("n_posts"),
+            "n_accounts": stats.get("n_accounts"),
+        })
+    return sorted(rows, key=lambda r: -((r["headline"] or {}).get("value") or 0))
+
+
+def evals() -> dict:
+    """Eval reports: backtests and judge self-tuning in eval/, predictor backtests in eval/reports/."""
+    predictors = [
+        {k: v for k, v in r.items() if k not in ("results", "sample_ids", "comparisons")} | {"rows": _predictor_rows(r)}
+        for r in _reports("backtest-*.json", EVAL_DIR / "reports")
+    ]
+    return {
+        "backtests": _reports("backtest-*.json", EVAL_DIR),
+        "tunes": _reports("tune-*.json", EVAL_DIR),
+        "predictors": predictors,
+    }
 
 
 def _median(xs: list[float]) -> float | None:
