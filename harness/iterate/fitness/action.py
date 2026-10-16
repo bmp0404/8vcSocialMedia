@@ -157,6 +157,18 @@ def gen_continuation(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> s
 _PIPELINE_LOCK = threading.Lock()
 
 
+def pipeline_mode(llm) -> str:
+    """"mock" or "metered", decided by type. Both kinds carry a meter, so anything looser than an
+    isinstance check can send a mock run to the real gateway (it did once, on 2026-10-16)."""
+    from harness.iterate.llm import MeteredLLM, MockMeteredLLM
+
+    if isinstance(llm, MockMeteredLLM):
+        return "mock"
+    if isinstance(llm, MeteredLLM):
+        return "metered"
+    raise TypeError(f"the pipeline generator needs a MeteredLLM or MockMeteredLLM, got {type(llm).__name__}")
+
+
 class Abstained(Exception):
     """The config's pipeline chose not to ship anything for this thread."""
 
@@ -191,7 +203,7 @@ def gen_pipeline(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
         raise ThreadUnavailable("offline lineup fitness: live fetching is disabled")
 
     probe = llm_for(cfg.get("action.continuation.model"))
-    if not hasattr(probe, "meter"):  # the mock provider: sam/action's code has its own mock paths
+    if pipeline_mode(probe) == "mock":  # sam/action's code has its own mock paths for harness.llm.MockLLM
         decision, action = answer_target(MockLLM(), hconfig.mission(), "", target, acfg, no_fetch)
     else:
         from harness.iterate.llm import metered_anthropic_class
