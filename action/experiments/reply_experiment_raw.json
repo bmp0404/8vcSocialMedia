@@ -1,0 +1,4178 @@
+{
+ "gen|2099247457473339402|human_raw": {
+  "text": "Congrats Team USA! Proud of you Caitlin! 🥹",
+  "likes": 289
+ },
+ "gen|2099247457473339402|human_polish": {
+  "text": "World Cup gold looks so good on you, Caitlin! So proud of you and Team USA 🥹🇺🇸",
+  "original": "Congrats Team USA! Proud of you Caitlin! 🥹"
+ },
+ "gen|2099247457473339402|naive": {
+  "text": "Those exclamation points are running a full-court press and honestly, they've earned it. World Cup gold looks good on you. 🥇🇺🇸"
+ },
+ "gen|2099247457473339402|continuation": {
+  "text": "caitlin with 30 piece in the finals carrying us home let's go CC",
+  "raw": "\ncaitlin with 30 piece in the finals carrying us home let's go CC\n\n@bball_michelle · 8,201 followers · 1,522 likes  \nFrom Iowa to Olympic champ to World Cup champ. Generational.\n\n@sarah_hoops21 · 429 followers · 987 likes\nStayed up until 3am UK time worth every second 🏀🔥\n\n---\n\nI don't have any document that you're asking me to continue. It seems like your message got cut off or the document wasn't"
+ },
+ "lineup|2099247457473339402|human_raw": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, complete congratulatory phrasing feels more generically composed than the brief, slang-heavy reactions."
+ },
+ "lineup|2099247457473339402|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It is noticeably more polished and context-rich than the other brief, spontaneous fan reactions."
+ },
+ "pairwise|2099247457473339402|naive": {
+  "better": "B",
+  "why": "It is shorter, more emotional, and sounds like an authentic fan reaction rather than a crafted joke.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2099247457473339402|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It is the only reply that adds a specific, polished game narrative rather than offering the brief celebratory reaction typical of the others."
+ },
+ "lineup|2099247457473339402|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished full-court-press wordplay and complete congratulatory phrasing are noticeably more elaborate and constructed than the brief, spontaneous human replies."
+ },
+ "pairwise|2099247457473339402|continuation": {
+  "better": "A",
+  "why": "Its specific, high-energy praise about Caitlin’s finals performance is more likely to resonate with fans and earn likes.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2099247457473339402|human_polish": {
+  "better": "A",
+  "why": "It is more specific to the achievement, celebrates Team USA, and matches the post’s enthusiastic tone.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "calib|2105879899399668010|lo_first": {
+  "better": "A",
+  "why": "Its frustrated but substantive demand for better management and coaching is more likely to resonate with Fever fans than a repetitive anti-Clark troll."
+ },
+ "pairwise|2099247457473339402|human_raw": {
+  "better": "A",
+  "why": "Its concise, emotional GOAT praise feels more native to X and is likely to attract more likes.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "calib|2106459938151145977|hi_first": {
+  "better": "B",
+  "why": "It is more concise and channels fans’ frustration into specific complaints about player safety and officiating rather than a repetitive personal attack."
+ },
+ "calib|2105879899399668010|hi_first": {
+  "better": "B",
+  "why": "A reads like hostile rival trolling, while B channels frustrated fans’ desire for organizational changes and a championship-caliber team."
+ },
+ "calib|2106399407834898501|hi_first": {
+  "better": "B",
+  "why": "It delivers the same criticism with a sharper, more memorable wordplay that is more likely to attract likes."
+ },
+ "calib|2110792840989024541|lo_first": {
+  "better": "B",
+  "why": "It’s playful, supportive, and adds a relevant Angel Reese accomplishment, making it more appealing to WNBA fans than the vague criticism in A."
+ },
+ "calib|2106399407834898501|lo_first": {
+  "better": "A",
+  "why": "It delivers the same criticism more concisely with a sharper, more memorable play on 'exit interview.'"
+ },
+ "calib|2110792840989024541|hi_first": {
+  "better": "A",
+  "why": "It adds a playful, fan-friendly correction about Reese’s Unrivaled success, making it more relevant and broadly likable than the terse criticism in B."
+ },
+ "calib|2110808211347456506|hi_first": {
+  "better": "A",
+  "why": "It enthusiastically celebrates Atlanta having two selections and is more likely to resonate with the team’s fans."
+ },
+ "calib|2110808211347456506|lo_first": {
+  "better": "B",
+  "why": "It enthusiastically celebrates Atlanta having two selections and uses playful, fan-friendly language that is more likely to attract likes."
+ },
+ "calib|2106459938151145977|lo_first": {
+  "better": "B",
+  "why": "It channels fans’ frustration more directly by accusing team leadership of failing to protect Clark and speak up sooner."
+ },
+ "calib|2110824046833348936|lo_first": {
+  "better": "A",
+  "why": "It amplifies the post’s celebratory narrative and gives Bonner credit in a punchy, fan-friendly way."
+ },
+ "calib|2110824046833348936|hi_first": {
+  "better": "B",
+  "why": "It amplifies the impressive 10-0 narrative with an energetic, memorable take that WNBA fans are more likely to endorse."
+ },
+ "calib|2099247457473339402|hi_first": {
+  "better": "A",
+  "why": "Calling Caitlin Clark the GOAT adds enthusiastic, fan-specific praise that is more likely to resonate after a gold-medal win."
+ },
+ "calib|2099247457473339402|lo_first": {
+  "better": "B",
+  "why": "Calling her the GOAT adds more celebratory enthusiasm and is likely to resonate with more fans."
+ },
+ "calib|2110808214048502128|hi_first": {
+  "better": "A",
+  "why": "A makes a clear, provocative snub argument that is more likely to attract agreement and engagement from fans than B’s contextless quote."
+ },
+ "calib|2110808214048502128|lo_first": {
+  "better": "B",
+  "why": "Calling out Azzi Fudd’s omission taps into fan outrage and player loyalty, making it more likely to earn likes than the vague reply A."
+ },
+ "calib|2067322859848925290|lo_first": {
+  "better": "B",
+  "why": "It is enthusiastic, supportive, and directly engages with Caitlin Clark’s teaser, making it more appealing to her fans."
+ },
+ "calib|2106419802117976116|lo_first": {
+  "better": "B",
+  "why": "Its concise, witty skepticism about a potential gambling sponsorship is more likely to resonate and earn likes than A’s generic praise."
+ },
+ "calib|2105382766682714299|hi_first": {
+  "better": "A",
+  "why": "It is concise, enthusiastic, and directly relevant, while B reads like an unrelated promotional plug."
+ },
+ "calib|2067322859848925290|hi_first": {
+  "better": "A",
+  "why": "Its enthusiastic, supportive tone matches the teaser post, while B is needlessly hostile and likely to draw fewer likes."
+ },
+ "calib|2106419802117976116|hi_first": {
+  "better": "A",
+  "why": "Its concise, witty skepticism about a gambling sponsorship is more likely to resonate and earn likes than the overly effusive reply."
+ },
+ "calib|2110018728314224992|hi_first": {
+  "better": "A",
+  "why": "It is more enthusiastic, directly addresses JuJu, and matches the celebratory tone of her return."
+ },
+ "calib|2110018728314224992|lo_first": {
+  "better": "B",
+  "why": "It is more energetic and directly celebrates JuJu’s return, making it more engaging to fans."
+ },
+ "calib|2105382766682714299|lo_first": {
+  "better": "B",
+  "why": "It’s a direct, enthusiastic fan response to Caitlin’s launch, while A feels like an unrelated promotional plug."
+ },
+ "calib|2109769353935688054|lo_first": {
+  "better": "B",
+  "why": "It makes a specific, provocative point about ESPNW’s choice of image, giving users more to react to than the vague one-word reply."
+ },
+ "calib|2109769353935688054|hi_first": {
+  "better": "A",
+  "why": "It directly challenges the post with a specific, provocative salary point, making it more likely to attract engagement than the vague one-word reply."
+ },
+ "calib|2110417062963081284|hi_first": {
+  "better": "A",
+  "why": "It offers specific, enthusiastic praise for Azzi’s defense and three-point shooting, making it more engaging and relatable."
+ },
+ "calib|2110038076114256260|lo_first": {
+  "better": "B",
+  "why": "Its enthusiastic, relatable commitment to buying tickets matches the promotional tone and is more likely to resonate with fans."
+ },
+ "calib|2110808408366493714|hi_first": {
+  "better": "A",
+  "why": "The concise wordplay on the Atlanta Dream’s name is more distinctive and engaging than the generic praise in B."
+ },
+ "calib|2110808408366493714|lo_first": {
+  "better": "B",
+  "why": "The clever pun on the Atlanta Dream’s name is more distinctive and engaging than a generic expression of support."
+ },
+ "calib|2110038076114256260|hi_first": {
+  "better": "A",
+  "why": "It’s enthusiastic, relatable, and directly signals strong support by committing to multiple tickets."
+ },
+ "calib|2110417062963081284|lo_first": {
+  "better": "B",
+  "why": "It celebrates Azzi with specific praise for her defense and three-point shooting, making it more substantive and broadly likable."
+ },
+ "calib|2109445947881087063|lo_first": {
+  "better": "B",
+  "why": "It is a specific, humorous, and relevant comment about the Dream using Mercedes-Benz Stadium, making it more engaging than the cryptic emoji reply."
+ },
+ "calib|2109445947881087063|hi_first": {
+  "better": "A",
+  "why": "It is a timely, humorous suggestion tied directly to the Dream and Mercedes-Benz Stadium, making it more engaging than the cryptic emoji reply."
+ },
+ "calib|2108954459304763841|hi_first": {
+  "better": "B",
+  "why": "“Dream in 4!” is punchier, more confident, and better matches the hype-driven tone fans tend to reward."
+ },
+ "calib|2108954459304763841|lo_first": {
+  "better": "B",
+  "why": "The more realistic 4-2 prediction paired with a championship emoji is likely to resonate with more fans."
+ },
+ "calib|2109672093403279370|lo_first": {
+  "better": "B",
+  "why": "The confident, team-supportive reply matches the celebratory Finals context and is more likely to resonate with Valkyries fans."
+ },
+ "calib|2110809293884907731|hi_first": {
+  "better": "A",
+  "why": "It celebrates the players and matches the upbeat tone of the post, making it more likely to earn likes from fans."
+ },
+ "calib|2109672093403279370|hi_first": {
+  "better": "A",
+  "why": "An enthusiastic, team-supportive prediction is more likely to earn likes from Valkyries followers than a dismissive jab."
+ },
+ "calib|2110809293884907731|lo_first": {
+  "better": "A",
+  "why": "Its blunt focus on beating the Dream is more timely, specific, and relatable to competitive fans."
+ },
+ "gen|2105879899399668010|constrained": {
+  "text": "we showed out all season, now heal up aliyah and run it back meaner next year"
+ },
+ "gen|2099247457473339402|constrained": {
+  "text": "that wall of exclamation points is exactly how it felt watching her win gold 🥇"
+ },
+ "gen|2099247457473339402|remix": {
+  "text": "the exclamation point key just filed for overtime and she's earned every one",
+  "move": "wry punctuation joke"
+ },
+ "gen|2105879899399668010|human_raw": {
+  "text": "Fire everyone from coaches to front office",
+  "likes": 275
+ },
+ "gen|2105879899399668010|remix": {
+  "text": "we showed out all season. now the front office can show up in the offseason",
+  "move": "blunt demand at front office"
+ },
+ "gen|2105879899399668010|naive": {
+  "text": "Fever fans in the offseason: no games, so we're just waiting on Caitlin headlining NBA 2K27 Season 2 and sending Aliyah good knee vibes. Heal up, Boston. See you next season. 💛"
+ },
+ "gen|2105879899399668010|human_polish": {
+  "text": "The fans showed up. The people running this team didn't. Fire everyone, from the coaches to the front office.",
+  "original": "Fire everyone from coaches to front office"
+ },
+ "gen|2110038076114256260|naive": {
+  "text": "Fever fans have a lot of free October evenings and strong opinions about the Finals now. Atlanta, give us a loud State Farm Arena for Games 3 and 4. We'll be watching with snacks and zero playoff stress."
+ },
+ "gen|2105879899399668010|continuation": {
+  "text": "y'all didn't deserve this fanbase tbh. Caitlin's carrying on her back and the front office did NOTHING to help",
+  "raw": "\ny'all didn't deserve this fanbase tbh. Caitlin's carrying on her back and the front office did NOTHING to help\n\n↳ @chipsahoyyyy · replying to @hoopsheadjay · 1,022 likes\nthey literally traded for 2 all stars but ok\n\n@feverfan_1976 · 39 followers · 1,612 likes\nBeen a fan since 2000. Through all the hard years. This season was special. Thank you @CaitlinClark22 for bringing the magic back 🥹\n\n@Caitl"
+ },
+ "gen|2110038076114256260|constrained": {
+  "text": "\"show all the way out\" is a sentence that sold me a ticket before i even clicked the link"
+ },
+ "gen|2110038076114256260|human_raw": {
+  "text": "THIS WHAT I WAS SAYING WHY NOT FLEX THE GAMES \n\nWHEWWW LETS WIN THIS SHIT NOW😭❤️",
+  "likes": 75
+ },
+ "gen|2110038076114256260|human_polish": {
+  "text": "THIS is what I was saying! Why not flex the games? 😭\n\nATL, let's show up and WIN THIS NOW ❤️🔥",
+  "original": "THIS WHAT I WAS SAYING WHY NOT FLEX THE GAMES \n\nWHEWWW LETS WIN THIS SHIT NOW😭❤️"
+ },
+ "gen|2110038076114256260|remix": {
+  "text": "\"show all the way out\" is the most atlanta sentence ever written and i respect it",
+  "move": "fan shorthand on wording"
+ },
+ "gen|2110038076114256260|continuation": {
+  "text": "Our girls one win away from the chip. This is HISTORY in the making. Been here since day 1. #DreamBig",
+  "raw": "\nOur girls one win away from the chip. This is HISTORY in the making. Been here since day 1. #DreamBig\n\n@bballking404 · 2.3k followers · 1,578 likes  \nFinally got my tickets!! Flying back from Jersey for this. WNBA FINALS IN ATLANTA LESGOOO\n\n@_kaylaaaaa · 889 followers · 1,203 likes\ny'all don't understand i have waited my WHOLE LIFE for this moment 😭😭😭 Dream vs Fever rematch in the finals?? CINEMA"
+ },
+ "gen|2110792840989024541|naive": {
+  "text": "Fever fans watching the Finals this year: no horse in the race, just popcorn and a strong opinion on every possession. Game 1 on NBC is going to be a lot of fun. Whoever wins, Oct 17 can't come fast enough."
+ },
+ "gen|2110792840989024541|constrained": {
+  "text": "every stage of her life is a bold line. fever fans are just watching finals from the couch this year"
+ },
+ "gen|2110792840989024541|remix": {
+  "text": "every stage of her life, and the Fever get to watch Game 1 from the couch",
+  "move": "rivalry jab at Fever"
+ },
+ "gen|2110792840989024541|human_raw": {
+  "text": "KEEP THE REESE PROP COMING",
+  "likes": 28
+ },
+ "gen|2110792840989024541|human_polish": {
+  "text": "Keep the Reese props coming 🔥 She's earned every single one. Championship next 🏆",
+  "original": "KEEP THE REESE PROP COMING"
+ },
+ "gen|2110792840989024541|continuation": {
+  "text": "Nah this is crazy look at her journey. Called her shot on the LSU championship in high school, delivered it. Got snubbed all rookie season and turned it into motivation. Now taking Chicago to the Finals in year 2. Different breed fr.",
+  "raw": "\nNah this is crazy look at her journey. Called her shot on the LSU championship in high school, delivered it. Got snubbed all rookie season and turned it into motivation. Now taking Chicago to the Finals in year 2. Different breed fr.\n\n@bayareasportsfan22 · 892 followers · 1,102 likes\nCan't deny it anymore. I was a hater but she's earned every bit of this. Her rebounding numbers this season were a"
+ },
+ "gen|2110018728314224992|constrained": {
+  "text": "a full season off and she's still the main character of the preseason top 25. rude honestly"
+ },
+ "gen|2110018728314224992|naive": {
+  "text": "College hoops back and JuJu Watkins back is perfect timing. The Fever's season is over, the Finals don't start until Oct 17, and we needed something to watch. A full year away and she's still the biggest story in the country."
+ },
+ "gen|2110018728314224992|remix": {
+  "text": "a full year off and she's still the whole preseason. rest of the top 25 just here for cardio",
+  "move": "wry reframe"
+ },
+ "gen|2105879899399668010|bestof": {
+  "text": "we showed up and showed out, the aces showed us the door in 3 games 😭",
+  "samples": [
+   "we showed up all season. a three-game series against the aces was not nearly enough",
+   "we showed up and showed out, the aces showed us the door in 3 games 😭",
+   "we showed out all season. now win a three-game series please",
+   "we showed up and showed out. front office, your turn this offseason",
+   "fans showed out. now the front office needs to show up in free agency"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 2 sounds like a real fan's rueful joke, with the 😭 and the playful 'showed us the door' line, while candidate 5 reads as the most polished, AI-style call to action."
+ },
+ "gen|2110018728314224992|human_raw": {
+  "text": "Welcome back juju ✌🏼💪🏼😎🏀🏆",
+  "likes": 3
+ },
+ "gen|2110018728314224992|human_polish": {
+  "text": "Welcome back, JuJu! ✌🏼💪🏼🏀 USC is about to be must-watch TV again. Can't wait to see her on the court.",
+  "original": "Welcome back juju ✌🏼💪🏼😎🏀🏆"
+ },
+ "gen|2099247457473339402|bestof": {
+  "text": "the exclamation points are the only thing this fall that didn't lose to the aces 🥇",
+  "samples": [
+   "ok the gold looks great, now the Aces owe us a series",
+   "the exclamation points are the only thing this fall that didn't lose to the aces 🥇",
+   "the exclamation points alone deserve a medal too 🥇",
+   "gold looks great, now bring that to Indiana. the Aces still owe us one",
+   "gold looks great on you. now go get the Aces back for us"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 2 has the snarky, fan-roast edge of the top references, while the formulaic 'deserves a medal too' compliment in 3 reads most like an AI."
+ },
+ "gen|2110018728314224992|continuation": {
+  "text": "JuJu's comeback is going to be legendary. I know she's rusty but she's exactly what we need. A true superstar willing to sacrifice everything to win at the highest level. College basketball can't contain her 🔥",
+  "raw": "\nJuJu's comeback is going to be legendary. I know she's rusty but she's exactly what we need. A true superstar willing to sacrifice everything to win at the highest level. College basketball can't contain her 🔥\n\n@collegefanatic12 · 348 followers · 1,677 likes\nTwo championships in a row for South Carolina and we're STILL getting overlooked. Dawn Staley could win 10 straight and y'all would still le"
+ },
+ "gen|2109672093403279370|constrained": {
+  "text": "swords already out in the post, dream better show up with a shield"
+ },
+ "gen|2109672093403279370|naive": {
+  "text": "Fever fans are officially neutral observers with strong opinions this week. Our season ended against the Aces, so we're borrowing yours. Go get it, Valkyries. ⚔️"
+ },
+ "gen|2109672093403279370|remix": {
+  "text": "the ⚔️ is doing all the talking, Atlanta better bring a shield",
+  "move": "Sword emoji rivalry jab"
+ },
+ "gen|2109672093403279370|human_raw": {
+  "text": "Bloodbath ⚔️🩸",
+  "likes": 1
+ },
+ "gen|2109672093403279370|human_polish": {
+  "text": "Bloodbath incoming ⚔️🩸 Valkyries want it all. Let's go!",
+  "original": "Bloodbath ⚔️🩸"
+ },
+ "gen|2109672093403279370|continuation": {
+  "text": "\"If Kelsey Plum doesn't get FMVP I'm burning down my house with TNT in the living room. Woman has been COOKING all playoffs. 27/5/8 against the Lynx in Game 4 was legendary. 🔥\"",
+  "raw": "\n\"If Kelsey Plum doesn't get FMVP I'm burning down my house with TNT in the living room. Woman has been COOKING all playoffs. 27/5/8 against the Lynx in Game 4 was legendary. 🔥\"\n\n@basketballmatt · 1,092 followers · 1,452 likes\n\"I need a full documentary about this LA Valkyries era. First year franchise, built from scratch, now in the Finals? This is the greatest sports story of the decade.\"\n\n@wnba"
+ },
+ "gen|2110038076114256260|bestof": {
+  "text": "a game 4 to sell tickets for? must be nice, our series didn't even have one",
+  "samples": [
+   "must be nice having a game 4 to sell tickets for 🥲",
+   "\"all the way out\" is also what my bank account does after the ticket fees",
+   "\"show all the way out\" is the most atlanta ticket pitch ever and i'm buying anyway",
+   "putting game 4 on sale before game 1 even tips is the most confident thing in atlanta",
+   "a game 4 to sell tickets for? must be nice, our series didn't even have one"
+  ],
+  "gate_rejected": 0,
+  "select_why": "The references are short, snarky fan jabs with rivalry context, so the candidates that read as a dry rival-fan dig (5, 1) fit best, while the polished wordplay and 'i'm buying anyway' lines (3, 2) read as AI and 4 is factually off because Games 3 and 4 follow Games 1 and 2."
+ },
+ "gen|2067322859848925290|constrained": {
+  "text": "you wrote 'details' and then gave us none, the little smirk is doing all the work"
+ },
+ "gen|2067322859848925290|naive": {
+  "text": "the 🤭 followed by the 😁 is a person who knows exactly what they just did. Posting 'details' and giving us zero details is a power move, and we're all just sitting here taking it."
+ },
+ "gen|2067322859848925290|remix": {
+  "text": "the post says details and contains zero details. we're being trolled by our own point guard 🤭",
+  "move": "call out missing details"
+ },
+ "gen|2067322859848925290|human_raw": {
+  "text": "Y'all, this! Gonna be so excited when I pop these on and see the tiny 22s materialize. 😂",
+  "likes": 52
+ },
+ "gen|2110792840989024541|bestof": {
+  "text": "a history of winning, then the word \"first\" sneaks in at the end 😭",
+  "samples": [
+   "\"every stage of her life\" and the post still ends on \"chasing\" lol",
+   "a history of winning, then the word \"first\" sneaks in at the end 😭",
+   "a history of winning, and the word 'first' in 'first WNBA championship' is doing a lot of work",
+   "history of winning with one blank spot left, saturday 3:30 fills it or doesn't",
+   "history of winning but the Valkyries didn't read the press release"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 2 has the casual lowercase snark and the 😭 that the top references use, while 4 and 5 are confusing, forced, and read like AI."
+ },
+ "gen|2067322859848925290|human_polish": {
+  "text": "The tiny 22s?! The details are everything 😂 I'm going to be so hyped when I pop these on and spot them.",
+  "original": "Y'all, this! Gonna be so excited when I pop these on and see the tiny 22s materialize. 😂"
+ },
+ "gen|2067322859848925290|continuation": {
+  "text": "This is what we've been WAITING for‼️ Can't wait to see what's next",
+  "raw": "\nThis is what we've been WAITING for‼️ Can't wait to see what's next\n\n@swiftiecaitlin22 · 318 followers · 1,023 likes\nTHE GOAT IS KEEPING US FED 🐐🔥\n\n@ballersonly99 · 1.2K followers · 876 likes\nIowa legend never stops winning\n\n@bball_analytics · 5.4K followers · 654 likes\nThe engagement numbers on this are insane. She's transcending the sport at this point.\n\n@skeptic_sports · 892 followers · 421 li"
+ },
+ "gen|2106459938151145977|naive": {
+  "text": "\"Tipping point\" is right. Her impact has gone from the arena to the league office to NBA 2K27 Season 2, where she's headlining. Even the video game version of the league needed her on the cover. Hard to argue with Amber Cox here."
+ },
+ "gen|2106459938151145977|constrained": {
+  "text": "tipping point is right. she's headlining 2K27 season 2 now, amber cox ain't wrong"
+ },
+ "gen|2106459938151145977|remix": {
+  "text": "tipping point is right. now build a roster that gets past the aces",
+  "move": "blunt demand at front office"
+ },
+ "gen|2106459938151145977|human_raw": {
+  "text": "Bullshit.  Sat idly by and watched her take shots literally and figuratively from media, league, coaches and other players.  Did nothing, said nothing.  In these prepared comments - spoke of the money and interest she generates but nothing of her generational skill set or record breaking accomplishments.  Your team has handcuffed and tried to hold her back - time to either let her go or build around her.",
+  "likes": 108
+ },
+ "gen|2110018728314224992|bestof": {
+  "text": "biggest story in the country and she hasn't played a game in a year. rude to everyone else",
+  "samples": [
+   "rest of the top 25 seeing 'biggest story' go to someone who sat out all last year 😭",
+   "biggest story in the country and she hasn't played a game in a year. rude to everyone else",
+   "sat out a whole season and she's still the biggest story in the country. that's the résumé",
+   "every other team in the top 25 reading 'biggest story in the country' 😭",
+   "sat out an entire season and she's still the biggest story in the country. that's the flex"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 2 sounds most like a casual, slightly snarky fan, while 3 and 5 are near-duplicate 'that's the flex/résumé' formulas and 1 and 4 use the formulaic 'reading X 😭' template that tends to read as generated."
+ },
+ "gen|2106459938151145977|continuation": {
+  "text": "Tipping point is an understatement. Changed basketball all around.",
+  "raw": "\nTipping point is an understatement. Changed basketball all around.\n\n@clarkkheaddd · 5,023 followers · 1,201 likes\nShe put women's basketball in a position where people are buying tickets months in advance. Numbers don't lie 🔥\n\n@skepticCCfan88 · 823 followers · 896 likes\nI wasn't even watching women's basketball two years ago.\n\n@midwestsports · 34,592 followers · 734 likes\nStill remember that Iowa"
+ },
+ "gen|2106459938151145977|human_polish": {
+  "text": "Bullshit. She took shots, literal and figurative, from the media, the league, coaches and other players, and the front office watched and said nothing. Now the prepared comments are all about the money and interest she generates, with zero mention of her generational skill or record-breaking play. Stop holding her back. Build around her or let her go.",
+  "original": "Bullshit.  Sat idly by and watched her take shots literally and figuratively from media, league, coaches and other players.  Did nothing, said nothing.  In these prepared comments - spoke of the money and interest she generates but nothing of her generational skill set or record breaking accomplishments.  Your team has handcuffed and tried to hold her back - time to either let her go or build around her."
+ },
+ "gen|2110808408366493714|remix": {
+  "text": "top three steals leaders all on one team. the rest of the league just got mugged",
+  "move": "wry reframe"
+ },
+ "gen|2110808408366493714|constrained": {
+  "text": "top 3 steals leaders all on one roster. valkyries better guard their pockets 😭"
+ },
+ "gen|2110808408366493714|naive": {
+  "text": "Top three steals leaders in the league, all on one roster, and the Finals tip off Oct 17. Golden State's ball handlers should start their film study now and keep a firm grip on the ball."
+ },
+ "gen|2110808408366493714|human_raw": {
+  "text": "YAWPP",
+  "likes": 23
+ },
+ "gen|2109672093403279370|bestof": {
+  "text": "fever season ended early so i'm adopting a finals team. you're up valkyries ⚔️",
+  "samples": [
+   "finals start the 17th and you're already calling it finals week? sword's out early",
+   "swords out, go end the dream ⚔️",
+   "fever season ended early so i'm adopting a finals team. you're up valkyries ⚔️",
+   "finals week and the valkyries are the ones who actually studied",
+   "finals week and the valkyries are the ones who actually studied"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 3 sounds like a real fan with a bit of rival-fan humor like the top references, while 4 and 5 are identical, generic, and the most AI-sounding, so they go last."
+ },
+ "gen|2110808408366493714|human_polish": {
+  "text": "YAWPP 🔥 the league's top three steals leaders all play for the Dream. Nobody is safe out there.",
+  "original": "YAWPP"
+ },
+ "gen|2110808408366493714|continuation": {
+  "text": "I started watching the Dream when they were in the bottom half of the league. The turnaround has been incredible to witness. This trio has completely redefined the franchise's defensive culture.",
+  "raw": "\nI started watching the Dream when they were in the bottom half of the league. The turnaround has been incredible to witness. This trio has completely redefined the franchise's defensive culture.\n\n@anothermiddletonacct · 8,792 followers · 1,581 likes\n3 players on the All-Defensive Team from the same squad is INSANE. Has that ever happened before in WNBA history?\n↳ @AtlantaDream: It's a league firs"
+ },
+ "gen|2110808211347456506|naive": {
+  "text": "Two Dream players and Gabby Williams on the All-Defensive First Team, and those two teams meet in the Finals on Oct 17. Whoever scores 70 deserves a medal and an apology to the scoreboard. 🏀"
+ },
+ "gen|2110808211347456506|constrained": {
+  "text": "3 of these 5 are in the finals. dream vs valkyries is gonna be ugly for whoever has the ball"
+ },
+ "gen|2067322859848925290|bestof": {
+  "text": "love how the post says details and then gives us zero details",
+  "samples": [
+   "love how the post says details and then gives us zero details",
+   "the post says details and contains zero details 😭 we need the actual details caitlin",
+   "you typed 'details' and gave us zero details 😭",
+   "the caption says details and there are zero details in this post 😭",
+   "the post says details and contains zero details 😭"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 1 reads like a casual human quip, while the others are near-duplicates with the formulaic 'zero details 😭' pattern and 2 adds an extra generic demand that makes it feel the most AI-written."
+ },
+ "gen|2110808211347456506|human_raw": {
+  "text": "We really run this league bruh",
+  "likes": 21
+ },
+ "gen|2110808211347456506|continuation": {
+  "text": "A'ja is by far the best player in the league. Why did we have to wait until now for her to get more help? Insane.  Probably the most complete 2-way player out there.  She's been doing this every year.",
+  "raw": "  \nA'ja is by far the best player in the league. Why did we have to wait until now for her to get more help? Insane.  Probably the most complete 2-way player out there.  She's been doing this every year.\n\n@AtlantaSports11 · 488 followers · 1,247 likes  \nDream building a defensive core is something else. RH and AR playing out of their minds.  Still think they need a reliable 5 though.\n\n@WNBAopinion"
+ },
+ "gen|2110808211347456506|human_polish": {
+  "text": "Defense wins championships and this list proves it. Shakira, Rhyne, Angel, Gabby and A'ja all earned this 🔒🏀 We really run this league.",
+  "original": "We really run this league bruh"
+ },
+ "gen|2110808211347456506|remix": {
+  "text": "two dream and a valkyrie on here, so the finals are just this list guarding itself",
+  "move": "wry reframe of the Finals"
+ },
+ "gen|2106459938151145977|bestof": {
+  "text": "she's the tipping point, so please surround the tipping point with healthy people",
+  "samples": [
+   "she's the tipping point, cool. now build something that can actually beat the aces",
+   "tipping point, cool. now put a real roster around her",
+   "she's the tipping point, so please surround the tipping point with healthy people",
+   "if she's the tipping point, quit tipping and build the roster around her",
+   "tipping point is nice. now build a roster that can win a playoff series around her"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 3 has a wry, human joke about injuries that matches the short, snarky references; 2 and 1 are punchy but plain; 4 and 5 sound more formulaic and wordy, so they read as AI."
+ },
+ "gen|2110808408366493714|bestof": {
+  "text": "top 3 in steals are all on one team. valkyries better check their pockets",
+  "samples": [
+   "top three in steals all on one roster. opposing guards need to file a police report",
+   "top three in steals all on one team. opposing guards were just mailing them the ball",
+   "top 3 in steals are all on one team. valkyries better check their pockets",
+   "top three steals leaders all on one roster. somebody call the cops",
+   "top three steals leaders all on one roster. bringing the ball up against atl is a cry for help"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 3 is the most natural and casual, with a specific team reference, while 5 is the most strained and sounds like an AI-written joke."
+ },
+ "gen|2110808211347456506|bestof": {
+  "text": "a'ja on this list explains why we're watching the finals from the couch",
+  "samples": [
+   "Dream have two, Valkyries have one. this Finals is gonna be a 58-55 slugfest",
+   "a'ja on this list explains why we're watching the finals from the couch",
+   "two Dream and a Valkyrie on here, so the finals is just defense with extra steps",
+   "three of these five are in the finals, so somebody has to score on purpose",
+   "three of these five are in the Finals. somebody's first team defense has to lose lol"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 2 has the snarky, fan-taking-a-shot tone of the top references, while 4 and 5 use the 'three of five' framing that reads as formulaic and AI-written."
+ },
+ "lineup|2099247457473339402|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained joke about the repeated exclamation points feels more AI-crafted than the brief, spontaneous fan reactions."
+ },
+ "lineup|2099247457473339402|bestof": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished wordplay about the Aces and the unusually specific reference to the post’s exclamation points make it stand out from the brief, spontaneous fan replies."
+ },
+ "lineup|2105879899399668010|remix": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neat mirrored phrasing ('showed out' versus 'show up') feels more deliberately crafted and polished than the blunt, specific fan reactions."
+ },
+ "lineup|2099247457473339402|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It is unusually polished and meta, explicitly interpreting the exclamation points rather than offering the brief celebratory reaction typical of the other replies."
+ },
+ "lineup|2105879899399668010|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished, context-stuffed summary that unnaturally combines multiple team storylines and promotional references in one upbeat reply."
+ },
+ "lineup|2105879899399668010|constrained": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a deliberately crafted, context-aware paraphrase of the post, combining mirrored wording, a player-specific recovery wish, and a polished forward-looking slogan."
+ },
+ "lineup|2105879899399668010|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished synthesis of common fan complaints, with generic phrasing and emphatic capitalization rather than the more specific or spontaneous tone of the other replies."
+ },
+ "lineup|2110038076114256260|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished multi-sentence structure, contextual playoff joke, and promotional phrasing feel more deliberately generated than the brief, spontaneous human replies."
+ },
+ "lineup|2105879899399668010|human_raw": {
+  "candidate_position": 4,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, slogan-like parallelism and lack of specific context make it more likely AI-generated than the other, more spontaneous replies."
+ },
+ "lineup|2105879899399668010|bestof": {
+  "candidate_position": 2,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, slogan-like phrasing feels more generically constructed than the specific, spontaneous criticism in the other replies."
+ },
+ "lineup|2105879899399668010|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It reads like a polished, generic synthesis of the surrounding criticism, with balanced phrasing and no distinctive personal detail."
+ },
+ "lineup|2110038076114256260|constrained": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, self-contained wordplay and unusually deliberate phrasing read more like generated engagement copy than a spontaneous fan reply."
+ },
+ "lineup|2110038076114256260|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It reads like a polished, self-contained observational quip engineered around the post’s phrasing, unlike the more situational and spontaneous reactions."
+ },
+ "lineup|2110038076114256260|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a generic, polished fan-hype response with broad clichés and a neatly placed hashtag, unlike the more spontaneous and context-specific replies."
+ },
+ "lineup|2110038076114256260|human_raw": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "It reads like a clean, generic restatement of the surrounding fan sentiment, lacking the distinctive slang, formatting, and spontaneity of the other replies."
+ },
+ "lineup|2110038076114256260|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It most closely mirrors the post’s promotional tone and phrasing, with a polished call-to-action and neatly composed emoji-heavy conclusion."
+ },
+ "lineup|2110038076114256260|bestof": {
+  "candidate_position": 5,
+  "pick": 3,
+  "detected": false,
+  "why": "It is the most generic and context-light response, paraphrasing the surrounding fan complaint without adding a specific personal or situational detail."
+ },
+ "lineup|2110792840989024541|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished, generic engagement response that restates the event details and adds balanced, formulaic commentary without a distinctive personal voice."
+ },
+ "lineup|2110792840989024541|remix": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "Its highly structured, repetitive statistical summary and polished promotional call-to-action read like AI-generated marketing copy rather than a spontaneous user reply."
+ },
+ "lineup|2110792840989024541|constrained": {
+  "candidate_position": 2,
+  "pick": 5,
+  "detected": false,
+  "why": "Its highly structured, repetitive, statistic-heavy promotional copy reads like an AI-generated marketing template rather than a spontaneous human reply."
+ },
+ "lineup|2110792840989024541|human_raw": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "Its highly structured, repetitive statistical summary and polished promotional call-to-action contrast sharply with the brief, colloquial human replies."
+ },
+ "lineup|2110792840989024541|bestof": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, highly structured statistical breakdown and generic promotional call-to-action contrast sharply with the casual, conversational tone of the other replies."
+ },
+ "lineup|2110018728314224992|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It is unusually polished and context-heavy, neatly synthesizing multiple basketball timelines while echoing the post’s framing."
+ },
+ "lineup|2110792840989024541|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like an AI-generated narrative recap, combining polished chronology with forced slang and the likely factual error that 2026 would be Reese’s second WNBA season."
+ },
+ "lineup|2110018728314224992|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, context-aware phrasing and manufactured witty aside feel more AI-generated than the brief, spontaneous, or provocative human replies."
+ },
+ "lineup|2110792840989024541|human_polish": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a generic, polished affirmation that simply echoes the post without the specific context, idiosyncratic phrasing, or promotional purpose found in the other replies."
+ },
+ "lineup|2110018728314224992|remix": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, context-specific wordplay and neatly structured punchline read more like AI-generated engagement bait than a spontaneous fan reply."
+ },
+ "lineup|2109672093403279370|naive": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It is unusually long, polished, and context-heavy compared with the brief, spontaneous fan reactions in the other replies."
+ },
+ "lineup|2110018728314224992|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished, generic encouragement and slightly formal phrasing feel more AI-generated than the terse, slang-heavy, or provocative human replies."
+ },
+ "lineup|2110018728314224992|bestof": {
+  "candidate_position": 5,
+  "pick": 1,
+  "detected": false,
+  "why": "It reads like a polished, generic encouragement that closely paraphrases the post without adding the idiosyncratic tone or specific reaction seen in the other replies."
+ },
+ "lineup|2110018728314224992|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished, generic engagement response that closely echoes the post’s sentiment and adds a formulaic sequence of emojis."
+ },
+ "lineup|2110018728314224992|continuation": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, generic hype language and neatly structured praise read more like AI-generated promotional copy than a spontaneous fan reply."
+ },
+ "lineup|2109672093403279370|constrained": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It uses a polished, context-aware sword-and-shield metaphor, while the others read like short, spontaneous fan reactions."
+ },
+ "lineup|2109672093403279370|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It is unusually long and over-specific compared with the brief fan reactions, combining polished stats, exaggerated drama, and generic sports hype."
+ },
+ "lineup|2109672093403279370|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It is unusually polished and explanatory, extending the sword emoji into a neat opponent-specific shield metaphor unlike the brief fan reactions."
+ },
+ "lineup|2109672093403279370|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "It is the most context-specific and syntactically polished reply, pairing a named player with a formulaic 'masterclass week' construction."
+ },
+ "lineup|2109672093403279370|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, promotional phrasing and multiple thematic emojis feel more generated than the brief, casual fan reactions."
+ },
+ "lineup|2067322859848925290|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It is unusually verbose and analytically explains the emoji sequence and vague caption, unlike the concise, context-specific fan replies."
+ },
+ "lineup|2067322859848925290|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It has a polished, self-aware quip structure that explicitly interprets the post’s wording and emoji, unlike the more spontaneous fan reactions."
+ },
+ "lineup|2067322859848925290|remix": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "It uses polished, generic congratulatory language without the specific personal detail or casual spontaneity seen in the other replies."
+ },
+ "lineup|2067322859848925290|bestof": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "It reads as a polished but generic congratulatory response, lacking the specific personal context or casual humor of the other replies."
+ },
+ "lineup|2067322859848925290|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It is unusually polished and elaborative, explicitly echoing the post’s focus on “details” while simulating a specific future reaction."
+ },
+ "lineup|2067322859848925290|human_raw": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It sounds artificially performative and oddly specific, elaborating on the product detail in a polished way that is less natural than the other replies."
+ },
+ "lineup|2067322859848925290|continuation": {
+  "candidate_position": 4,
+  "pick": 2,
+  "detected": false,
+  "why": "It reads as a polished, generic congratulatory response without the specific personal detail or colloquial enthusiasm found in the other replies."
+ },
+ "lineup|2109672093403279370|bestof": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "The generic, context-free enthusiasm reads most like an AI-generated reaction compared with the more specific or idiomatic fan replies."
+ },
+ "lineup|2106459938151145977|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a polished promotional summary, mechanically connecting Clark’s impact across several domains and inserting the unusually specific NBA 2K27 Season 2 reference."
+ },
+ "lineup|2106459938151145977|continuation": {
+  "candidate_position": 4,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, generalized phrasing and neatly structured criticism sound more AI-generated than the more spontaneous, idiosyncratic replies."
+ },
+ "lineup|2106459938151145977|bestof": {
+  "candidate_position": 2,
+  "pick": 5,
+  "detected": false,
+  "why": "It reads unusually polished and generic, with a neatly structured cause-and-effect critique rather than the messier punctuation and emotionally specific phrasing of the other replies."
+ },
+ "lineup|2106459938151145977|human_raw": {
+  "candidate_position": 3,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished, generalized phrasing and tidy cause-and-effect structure stand out from the more specific, emotionally irregular human replies."
+ },
+ "lineup|2106459938151145977|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished parallel structure, comprehensive list of grievances, and neatly framed contrast between commercial value and athletic merit read as more deliberately composed than the other replies."
+ },
+ "lineup|2106459938151145977|remix": {
+  "candidate_position": 5,
+  "pick": 1,
+  "detected": false,
+  "why": "It is the most polished and generically structured response, with an awkwardly abstract phrase about fans having 'shown' frustration that suggests AI-generated prose."
+ },
+ "lineup|2110808408366493714|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It is unusually detailed and analytical compared with the brief, casual, fan-style reactions in the other replies."
+ },
+ "lineup|2106459938151145977|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It reads like a manufactured topical tie-in, combining the post’s exact phrase with a conveniently current 2K27 reference in an unnaturally compressed, promotional-sounding reply."
+ },
+ "lineup|2110808408366493714|remix": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It neatly restates a specific post detail and adds a polished wordplay punchline, making it more composed than the brief, casual fan reactions."
+ },
+ "lineup|2110808408366493714|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, multi-sentence praise and abstract phrasing about “redefining the franchise's defensive culture” sound more AI-generated than the brief, casual fan reactions."
+ },
+ "lineup|2110808408366493714|human_raw": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "It is the most polished and context-aware response, combining a complete reaction with strategically placed slang and an emoji."
+ },
+ "lineup|2110808408366493714|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It unnaturally restates the post’s key statistic in a polished, explanatory sentence, unlike the brief, spontaneous fan reactions."
+ },
+ "lineup|2110808211347456506|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It is unusually polished and context-heavy, combining multiple facts with a constructed joke unlike the brief, spontaneous fan reactions."
+ },
+ "lineup|2110808408366493714|constrained": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It is the only reply that neatly synthesizes a specific fact from the post into a polished, context-aware joke, while the others are brief generic fan reactions."
+ },
+ "lineup|2110808408366493714|bestof": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It uniquely combines a specific detail from the post with a polished opponent-directed joke, suggesting generated contextual synthesis."
+ },
+ "lineup|2110808211347456506|constrained": {
+  "candidate_position": 2,
+  "pick": 5,
+  "detected": false,
+  "why": "It mechanically restates the post with generic celebratory emojis, unlike the more specific, contextual, and colloquial reactions."
+ },
+ "lineup|2110808211347456506|continuation": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its unusually long, polished, and broadly explanatory tone stands out from the brief, reactive fan replies."
+ },
+ "lineup|2110808211347456506|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished wordplay and unusually constructed observation about the Finals read more like generated humor than the brief, reactive style of the other replies."
+ },
+ "lineup|2110808211347456506|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "It mechanically restates the post in a generic celebratory tone, unlike the more spontaneous, opinionated phrasing of the other replies."
+ },
+ "lineup|2110808211347456506|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It reads like a polished, generic recap that repeats every listed player and adds cliché sports phrases, unlike the shorter, more spontaneous fan replies."
+ },
+ "lineup|2110808211347456506|bestof": {
+  "candidate_position": 4,
+  "pick": 1,
+  "detected": false,
+  "why": "It blandly restates an obvious fact from the post with generic fire emojis, unlike the more distinctive slang, sarcasm, and fan-specific commentary in the other replies."
+ },
+ "pairwise|2099247457473339402|constrained": {
+  "better": "A",
+  "why": "Its concise, emotional, and directly celebrates Caitlin with a popular compliment that fans are likely to endorse.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2099247457473339402|remix": {
+  "better": "A",
+  "why": "Its concise, heartfelt praise and GOAT framing are more likely to resonate broadly with Caitlin Clark’s fans.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2105879899399668010|naive": {
+  "better": "A",
+  "why": "Its supportive, team-specific message matches the appreciative tone of the post and is more likely to resonate with Fever fans.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2105879899399668010|constrained": {
+  "better": "A",
+  "why": "It matches the appreciative team tone, supports an injured player, and looks ahead positively to next season without antagonizing fans.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2099247457473339402|bestof": {
+  "better": "B",
+  "why": "A warm, direct congratulation calling Caitlin the GOAT is more likely to resonate with her fans than a convoluted Aces joke.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2105879899399668010|remix": {
+  "better": "B",
+  "why": "It cleverly echoes the post while voicing a widely shared fan demand for the front office to improve the roster.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2105879899399668010|continuation": {
+  "better": "A",
+  "why": "It reflects widespread fan frustration while defending Caitlin Clark, making it more likely to resonate with Fever fans than a taunting reply.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2105879899399668010|bestof": {
+  "better": "A",
+  "why": "Its concise, self-deprecating playoff joke feels more relatable and less forced than the repetitive trolling in B.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2105879899399668010|human_raw": {
+  "better": "B",
+  "why": "Frustrated Fever fans are more likely to endorse a direct demand for organizational change than a rival’s repetitive Caitlin Clark taunt.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110038076114256260|naive": {
+  "better": "A",
+  "why": "It’s concise, enthusiastic, and relatable, signaling genuine ticket-buying support without the awkward rival-fan jab in B.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2105879899399668010|human_polish": {
+  "better": "B",
+  "why": "It channels disappointed fans’ frustration with team leadership, making it more relatable and likeable than a rival’s repetitive taunt.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110038076114256260|constrained": {
+  "better": "B",
+  "why": "It shows stronger, funnier fan enthusiasm through the relatable impulse to buy multiple tickets before even deciding who is coming.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110038076114256260|continuation": {
+  "better": "B",
+  "why": "It’s funny, spontaneous, and directly matches the excitement of the ticket announcement, making it more relatable and likeable.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110038076114256260|remix": {
+  "better": "A",
+  "why": "Its witty, Atlanta-specific observation is more broadly relatable and likely to earn likes beyond just committed ticket buyers.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2110038076114256260|bestof": {
+  "better": "B",
+  "why": "Its enthusiastic, relatable support for the Dream and humorous spontaneity are more likely to resonate with the team’s fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110038076114256260|human_raw": {
+  "better": "B",
+  "why": "Its high-energy, team-focused excitement matches the post’s tone and is more likely to resonate with Dream fans.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110038076114256260|human_polish": {
+  "better": "B",
+  "why": "It’s a funny, relatable declaration of immediate support that directly matches the post’s call for Atlanta fans to buy tickets and show up.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110792840989024541|naive": {
+  "better": "A",
+  "why": "It feels more authentic, concise, and directly engages with Angel Reese’s winning history while adding a playful fan correction.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2110792840989024541|constrained": {
+  "better": "A",
+  "why": "It playfully supports Reese while calling for recognition of her Unrivaled title, making it more relevant and broadly likable than the forced Fever-fan jab.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2110792840989024541|remix": {
+  "better": "B",
+  "why": "It playfully calls out the omission of Angel Reese’s Unrivaled championship, making it more relevant and appealing to her fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110792840989024541|continuation": {
+  "better": "A",
+  "why": "Its concise, playful callout about including her Unrivaled championship feels more authentic and reply-friendly than B’s lengthy recap.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2110792840989024541|bestof": {
+  "better": "B",
+  "why": "It delivers a sharper, self-contained joke about the post’s wording, making it more broadly relatable and likeable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110792840989024541|human_raw": {
+  "better": "B",
+  "why": "It feels more authentic and engaging by playfully calling out the omission of Reese’s Unrivaled success.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110792840989024541|human_polish": {
+  "better": "A",
+  "why": "Its playful, specific callout about including Unrivaled feels more authentic and conversation-driving than the generic praise in B.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2110018728314224992|naive": {
+  "better": "B",
+  "why": "It is concise, enthusiastic, and directly supportive of JuJu, making it more naturally likeable to fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110018728314224992|constrained": {
+  "better": "B",
+  "why": "Its witty, conversational phrasing is more distinctive and likely to attract likes than A's generic encouragement.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110018728314224992|remix": {
+  "better": "A",
+  "why": "Its witty, punchy framing is more likely to spark engagement than the generic encouragement in B.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2110018728314224992|bestof": {
+  "better": "B",
+  "why": "Its upbeat, supportive tone matches the excitement around JuJu Watkins’ return and is more likely to resonate with fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110018728314224992|continuation": {
+  "better": "B",
+  "why": "It is concise, upbeat, and directly celebrates JuJu’s return without the awkward overstatement and mention of rust in A.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2109672093403279370|constrained": {
+  "better": "B",
+  "why": "It’s more specific, playful, and tied to the sword imagery and the Dream matchup, making it more memorable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2109672093403279370|naive": {
+  "better": "B",
+  "why": "It adds humorous, specific cross-fandom support while matching the post’s Finals-week energy, making it more relatable and like-worthy.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110018728314224992|human_polish": {
+  "better": "A",
+  "why": "It feels more specific and energetic, with USC context and fan-friendly emojis that are likelier to resonate.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2109672093403279370|remix": {
+  "better": "A",
+  "why": "A’s playful sword-and-shield wordplay is more creative and engaging than the generic sweep prediction.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2109672093403279370|continuation": {
+  "better": "A",
+  "why": "Its short, upbeat, team-focused confidence is more broadly likable than B’s extreme arson joke and overly specific rant.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2109672093403279370|human_polish": {
+  "better": "B",
+  "why": "Its concise, confident prediction fits X's style and is more immediately likeable.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110018728314224992|human_raw": {
+  "better": "A",
+  "why": "It feels more genuine and directly celebrates JuJu’s long-awaited return without relying on an excessive string of emojis.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2109672093403279370|human_raw": {
+  "better": "B",
+  "why": "It channels confident fan optimism and directly predicts a dominant Finals result, making it more likely to earn likes.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2109672093403279370|bestof": {
+  "better": "B",
+  "why": "Its short, confident sweep prediction is more directly aligned with the team's Finals hype and easier for fans to rally behind.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2067322859848925290|naive": {
+  "better": "A",
+  "why": "Its short, enthusiastic tone feels more natural for X and directly echoes the likely fan demand behind the teaser.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2067322859848925290|remix": {
+  "better": "A",
+  "why": "A is a playful, specific joke that matches Caitlin Clark’s teasing tone and is more engaging than B’s vague response.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2067322859848925290|bestof": {
+  "better": "A",
+  "why": "It makes a clear, playful joke about the intentionally vague caption, making it more relatable and likeable.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2067322859848925290|continuation": {
+  "better": "B",
+  "why": "It is concise, directly expresses fan demand, and feels more natural and context-specific than the generic enthusiasm in A.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2067322859848925290|human_raw": {
+  "better": "B",
+  "why": "Its concise, enthusiastic wording feels more natural and relatable to real X users.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2067322859848925290|human_polish": {
+  "better": "B",
+  "why": "Its concise, relatable enthusiasm feels more natural and is more likely to attract quick agreement from fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2067322859848925290|constrained": {
+  "better": "B",
+  "why": "It is a concise, enthusiastic fan response that directly echoes demand for whatever Caitlin is teasing.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2106459938151145977|continuation": {
+  "better": "A",
+  "why": "Its concise, celebratory tone aligns with the post and is more broadly appealing than B’s accusatory response.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2106459938151145977|bestof": {
+  "better": "A",
+  "why": "It is concise, clever, and channels fans’ concern about protecting Caitlin Clark without the overly confrontational tone of B.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2106459938151145977|remix": {
+  "better": "B",
+  "why": "It is concise, agrees with the quote, and channels fan sentiment into a relevant demand for a championship-caliber roster.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2106459938151145977|constrained": {
+  "better": "A",
+  "why": "Its emotional defense of Caitlin Clark and criticism of team leadership is more likely to resonate with passionate Fever fans than the niche 2K27 reference.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2106459938151145977|naive": {
+  "better": "A",
+  "why": "Its emotionally charged criticism reflects a common fan sentiment about the Fever failing to defend Clark and is more likely to drive engagement than B’s promotional-sounding video game reference.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2106459938151145977|human_raw": {
+  "better": "B",
+  "why": "It delivers a more specific and forceful critique, citing the failure to defend Clark and recognize her skills and accomplishments.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110808408366493714|remix": {
+  "better": "B",
+  "why": "It highlights the remarkable stat with a punchy, humorous line that is more likely to drive likes.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2106459938151145977|human_polish": {
+  "better": "B",
+  "why": "It delivers a more specific, forceful critique with concrete grievances and a clear demand, making it more compelling and shareable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110808408366493714|naive": {
+  "better": "A",
+  "why": "The short, celebratory Dream-themed wordplay is more immediately engaging and shareable than the longer analysis.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2110808408366493714|constrained": {
+  "better": "A",
+  "why": "It highlights the remarkable top-three steals feat with a timely, playful warning that is more engaging than the generic team-name pun.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808408366493714|continuation": {
+  "better": "B",
+  "why": "The short, celebratory team-name pun is more memorable and likely to attract quick likes from fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808408366493714|human_raw": {
+  "better": "B",
+  "why": "It cleverly plays on the Atlanta Dream name while celebrating the team’s achievement, making it more relevant and engaging.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808408366493714|bestof": {
+  "better": "A",
+  "why": "It offers a specific, playful joke about Atlanta having all three steals leaders, making it more engaging than the generic Dream pun.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808408366493714|human_polish": {
+  "better": "B",
+  "why": "The concise, recognizable Dream-themed wordplay is more memorable and broadly likeable.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808211347456506|naive": {
+  "better": "B",
+  "why": "Its short, celebratory fan language is more native to X and directly hypes Atlanta’s two selections.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808211347456506|constrained": {
+  "better": "A",
+  "why": "It adds timely basketball insight by connecting three elite defenders to the Finals matchup, making it more engaging to WNBA fans.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808211347456506|remix": {
+  "better": "A",
+  "why": "It is shorter, more enthusiastic, and uses fan-style language that is more likely to earn quick likes from Atlanta supporters.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2110808211347456506|continuation": {
+  "better": "B",
+  "why": "It’s short, celebratory, and directly highlights Atlanta having two selections, making it more likely to resonate with fans and earn likes.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808211347456506|human_polish": {
+  "better": "B",
+  "why": "Its short, playful celebration of Atlanta having two selections feels more native to X and is likely to attract more likes.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808211347456506|bestof": {
+  "better": "B",
+  "why": "It is a short, enthusiastic celebration of Atlanta landing two players on the team, making it more broadly likable to fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110808211347456506|human_raw": {
+  "better": "A",
+  "why": "It directly celebrates Atlanta having two selections with a punchier, more engaging fan reaction.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "gen|2109769353935688054|human_raw": {
+  "text": "apparently its a report of 800 players from 40 different countries, so basically a complete waste of time. obviously the wages will be different in other countries. if you aren't comparing inside of a country to other jobs there then you have no reference.",
+  "likes": 6
+ },
+ "gen|2109769353935688054|human_polish": {
+  "text": "The report surveyed 800 players across 40 countries. Wages vary hugely between countries, so lumping them together tells us very little. The useful comparison is players' pay against other jobs within the same country. Without that, there's no real reference point.",
+  "original": "apparently its a report of 800 players from 40 different countries, so basically a complete waste of time. obviously the wages will be different in other countries. if you aren't comparing inside of a country to other jobs there then you have no reference."
+ },
+ "gen|2109769353935688054|remix": {
+  "text": "a whole fifpro report to say what two words already cover: pay them",
+  "move": "wry reframe"
+ },
+ "gen|2106419802117976116|naive": {
+  "text": "10-0 on picks, and the Fever's offseason hasn't even started yet. Please share the secret before the Finals start on the 17th, because I'm tired of getting cooked by my own bracket."
+ },
+ "gen|2109769353935688054|constrained": {
+  "text": "financial pressures listed first says it all. love of the game doesn't cover rent"
+ },
+ "gen|2109769353935688054|naive": {
+  "text": "The phrase that matters is \"leaving early.\" That means the league loses its best players in their prime, and fans lose the rivalries and storylines they were just starting to follow. Fair pay and mental health support aren't perks. They're what keeps the product on the field."
+ },
+ "gen|2109769353935688054|continuation": {
+  "text": "Remember when we were promised professionalism and equal investment by now? Yeah...",
+  "raw": "\nRemember when we were promised professionalism and equal investment by now? Yeah...\n\n@FutbolWatcher99 · 3,020 followers · 1,301 likes\nNot surprising at all. Even \"top\" league players outside the US are making nowhere near a liveable wage. We need to do better.\n\n@SoccerKate2k7 · 879 followers · 758 likes\nMy cousin played semi-pro in Europe for 3 years and had to work a second job just to pay rent."
+ },
+ "gen|2106419802117976116|human_raw": {
+  "text": "Yes you did and also went 10/10 on the outfit and shoes 🔥🔥🔥",
+  "likes": 142
+ },
+ "gen|2106419802117976116|constrained": {
+  "text": "the \"i promise you\" tells me someone already called cap. receipts or it didn't happen"
+ },
+ "gen|2106419802117976116|human_polish": {
+  "text": "10-0 on the picks AND 10/10 on the fit. Not even the shoes missed 🔥",
+  "original": "Yes you did and also went 10/10 on the outfit and shoes 🔥🔥🔥"
+ },
+ "gen|2106419802117976116|continuation": {
+  "text": "\"What's the witchcraft??? Didn't you go like 7-3 last week too lmao\"",
+  "raw": "\n\"What's the witchcraft??? Didn't you go like 7-3 last week too lmao\"\n\n@betbruh420 · 871 followers · 1,102 likes\n\"Lock of the century merchant strikes again\"\n\n@CaitlinClark22 · 1.2M followers · 892 likes\n\"Lucky streak tbh. Don't tail me blindly lol\"\n\n---\n\nI don't have any record of this tweet, thread, or account. If you're asking me to continue a document you were working on, I don't see the conte"
+ },
+ "gen|2106399407834898501|naive": {
+  "text": "Season ended in three games against the Aces, Aliyah Boston's knee is in the shop after surgery, and Caitlin sent her support. Good news: Caitlin headlines NBA 2K27 Season 2, so the offseason is at least playable. Heal up, Aliyah."
+ },
+ "gen|2106419802117976116|remix": {
+  "text": "\"i promise you\" is a wild way to say there are no screenshots",
+  "move": "demand the receipts"
+ },
+ "gen|2106399407834898501|constrained": {
+  "text": "only took the aces three games to get us to this post 😭"
+ },
+ "gen|2106399407834898501|human_raw": {
+  "text": "White should have been banned from any position in the WNBA after the Vanderbilt debacle.\n\n“Vanderbilt basketball team’s complete walkout on White was as strong a statement on White’s toxicity as humanly possible. How in Hades did the coaching position in Indiana become a possibility without other LIKE MINDED league members creating and securing the contract?”\n\nThe league has ignored this Code 3 disaster. That’s one reason I think she was hired to destroy Caitlin and coaching was the obvious cover.",
+  "likes": 62
+ },
+ "gen|2106399407834898501|remix": {
+  "text": "\"conclusion\" is a nice word for the Aces ending it",
+  "move": "wry reframe of 'conclusion'"
+ },
+ "gen|2106399407834898501|continuation": {
+  "text": "\"Hard decisions have to be made.\" That's the quote right there. Not a coincidence she said it right after being asked about the roster. Changes incoming.",
+  "raw": "\n\"Hard decisions have to be made.\" That's the quote right there. Not a coincidence she said it right after being asked about the roster. Changes incoming.\n\n@FeverFaithful22 · 845 followers · 1,247 likes\nWatching Steph navigate questions about the bench rotation was painful. You could tell she wanted to say more but couldn't. Something happened behind closed doors this year.\n\n@SportsGuyMike · 12.4k"
+ },
+ "gen|2106399407834898501|human_polish": {
+  "text": "Vanderbilt's roster turnover under White should've raised real questions before Indiana hired her. The league never seemed to care. I can't shake the feeling that this hire was never about winning, and that Caitlin's development paid the price. Fans deserve real answers.",
+  "original": "White should have been banned from any position in the WNBA after the Vanderbilt debacle.\n\n“Vanderbilt basketball team’s complete walkout on White was as strong a statement on White’s toxicity as humanly possible. How in Hades did the coaching position in Indiana become a possibility without other LIKE MINDED league members creating and securing the contract?”\n\nThe league has ignored this Code 3 disaster. That’s one reason I think she was hired to destroy Caitlin and coaching was the obvious cover."
+ },
+ "gen|2109445947881087063|naive": {
+  "text": "Sunday Night Football on Monday's calendar, WNBA Finals on Oct 17. Atlanta's schedule is getting out of hand. Fever season's over, so I'm a temporary Dream fan until further notice. Don't make me regret it 😤"
+ },
+ "gen|2109769353935688054|bestof": {
+  "text": "we needed a whole FIFPRO report to learn rent is due in women's football too",
+  "samples": [
+   "we needed a whole FIFPRO report to learn rent is due in women's football too",
+   "\"financial pressures\" is a polite way to say pay them",
+   "\"financial pressures\" is a fancy way of saying pay them",
+   "fifpro wrote a whole report just to say pay them",
+   "a whole fifpro report just to land on 'pay them more'"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 1 has the driest, most specific joke, closest to the casual voice of the references, while 3, 4 and 5 are near-duplicate 'pay them' formulas that read as AI-generated, and 3 is the most generic of these."
+ },
+ "gen|2109445947881087063|constrained": {
+  "text": "sunday night football, then finals oct 17. good week to be an atlanta fan 🅰️"
+ },
+ "gen|2109445947881087063|human_raw": {
+  "text": "please let them play their games there! They just need 2 games to win it all!",
+  "likes": 15
+ },
+ "gen|2109445947881087063|human_polish": {
+  "text": "Please let them play their games there! The Dream only need 2 more wins to take it all 🏆 #RiseUp",
+  "original": "please let them play their games there! They just need 2 games to win it all!"
+ },
+ "gen|2109445947881087063|remix": {
+  "text": "cute football warmup, now go handle the valkyries on the 17th",
+  "move": "blunt demand at the team"
+ },
+ "gen|2109445947881087063|continuation": {
+  "text": "Literally my two favorite teams having a crossover episode, I can't handle this",
+  "raw": "\nLiterally my two favorite teams having a crossover episode, I can't handle this\n\n@graceUNholy · 3,809 followers · 1,553 likes\nOkay so which player is wearing a falcons jersey because Rhyne needs to be in that red and black IMMEDIATELY\n\n@dripped_magazine · 44k followers · 982 likes\nThe tunnel fits from this are going to be insane, mark our words 📸\n\n@d1ana_stan · 891 followers · 847 likes\nThe way A"
+ },
+ "gen|2110824046833348936|constrained": {
+  "text": "10-0 since august 30 is absurd. DB walked in and the losing just stopped"
+ },
+ "gen|2110824046833348936|naive": {
+  "text": "10-0 since Aug 30 is the kind of stat that makes every other front office check their calendar. Golden State's first Finals trip comes with a 10-game streak to stop. Fever fans will be watching from the couch with popcorn and a lot of opinions."
+ },
+ "gen|2110824046833348936|remix": {
+  "text": "10-0 since one signing. every other front office is staring at the ceiling rn",
+  "move": "wry front office reframe"
+ },
+ "gen|2110824046833348936|human_raw": {
+  "text": "DeQuitter probably gonna request a trade to Valkyries next",
+  "likes": 6
+ },
+ "gen|2106419802117976116|bestof": {
+  "text": "ok 10-0 picker, dream or valkyries in the finals? we need receipts",
+  "samples": [
+   "ok 10-0 picker, dream or valkyries in the finals? we need receipts",
+   "the \"i promise you\" is doing a lot of work here. receipts or it didn't happen",
+   "the \"i promise you\" is doing a lot of work here, where's the screenshot",
+   "the \"i promise you\" tells me there are no screenshots",
+   "'i promise you' is exactly what someone says when they have no screenshot 😭"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 1 reads as a casual fan asking a basketball-specific question, while 2 and 3 share the same stock 'doing a lot of work' phrasing that sounds AI-written, so they go last, with 4 and 5 in the middle as shorter, punchier versions of that joke."
+ },
+ "gen|2110824046833348936|continuation": {
+  "text": "· 38 replies\nBonner to Atlanta was the steal of the decade and the Golden State Valkyries don't stand a chance.",
+  "raw": " · 38 replies\nBonner to Atlanta was the steal of the decade and the Golden State Valkyries don't stand a chance.  \n\n@BNicknames · 3,109 followers · 1,023 likes · 51 replies\ni'm a lifelong valks fan (7 months) but i think we can pull this off\n\n@AllWomensDreamx · 1,422 followers · 827 likes · 4 replies\nI've been a Dream fan since the beginning. Through all the struggles, the rebuilds, watching other"
+ },
+ "gen|2110824046833348936|human_polish": {
+  "text": "Bonner's gonna beat Golden State and then request a trade to the Valkyries 😭",
+  "original": "DeQuitter probably gonna request a trade to Valkyries next"
+ },
+ "gen|2106399407834898501|bestof": {
+  "text": "conclusion is a generous word for a three game series against the Aces",
+  "samples": [
+   "conclusion is a generous word for a three game series against the Aces",
+   "conclusion is a polite word for losing a three-game series to the Aces",
+   "conclusion is one way to say three games against the aces",
+   "\"conclusion\" is a generous word for getting bounced by the aces",
+   "\"conclusion\" is a nice word for losing a three-game series to the Aces"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 1 is a casual, punchy lowercase joke that reads like a real fan, while the quoted, polished 'nice word for losing a three-game series' phrasing in 5 and 2 reads most like a templated AI quip."
+ },
+ "gen|2110417062963081284|naive": {
+  "text": "Rookie class really looked at five spots and said \"cute.\" The league had to go find a sixth chair. Somewhere a ballot-counter is just saying \"fine.\""
+ },
+ "gen|2110417062963081284|remix": {
+  "text": "voters really said five is a suggestion",
+  "move": "wry reframe of the rule"
+ },
+ "gen|2110417062963081284|human_raw": {
+  "text": "Six spots instead of five. UConn (Fudd) and LSU (Flau'jae) both had players named, per their programs. College basketball keeps supplying the league.",
+  "likes": 2
+ },
+ "gen|2110417062963081284|constrained": {
+  "text": "that sixth spot is the best plus-one in basketball"
+ },
+ "gen|2110417062963081284|continuation": {
+  "text": "What a stacked class! All six deserve it tbh\n12:27 PM | 25 likes",
+  "raw": "\nWhat a stacked class! All six deserve it tbh\n12:27 PM | 25 likes\n\n@ladyhoops_daily · 3,123 followers · 2,091 likes\nWhen the league's talent pool is THIS deep... 💪 \nWNBA keeps growing\n12:28 PM | 34 likes\n\n@realhoopfan · 890 followers · 1,451 likes\nPeople still trying to claim women's basketball is boring. \nWatch ONE game from this class.\n12:31 PM | 89 likes\n\n@wnbafanatic22 · 445 followers · 956 li"
+ },
+ "gen|2110417062963081284|human_polish": {
+  "text": "Six spots instead of five, and the college pipeline is showing out. UConn's Azzi Fudd and LSU's Flau'jae Johnson both made it, per their programs. College hoops keeps feeding the league 🙌",
+  "original": "Six spots instead of five. UConn (Fudd) and LSU (Flau'jae) both had players named, per their programs. College basketball keeps supplying the league."
+ },
+ "gen|2105382766682714299|naive": {
+  "text": "\"This is only the beginning\" is a scary thing to tell a fanbase whose wallets are already on the injury report. 😏 Caitlin 1s are going to look great on the court and even better in my closet, where they'll never see a game. 💙"
+ },
+ "gen|2105382766682714299|constrained": {
+  "text": "the 😏 after \"only the beginning\" is doing a lot of work. ok caitlin i'm listening"
+ },
+ "gen|2105382766682714299|remix": {
+  "text": "that 😏 at the end is the real announcement, the shoes are just the opener",
+  "move": "wry reframe of the smirk"
+ },
+ "gen|2105382766682714299|human_raw": {
+  "text": "WE ARE SO EXCITED THE HARD WORK PAID OFF 💙💙💙💙💙",
+  "likes": 78
+ },
+ "gen|2109445947881087063|bestof": {
+  "text": "must be nice to have october plans. the fever got sent home by the aces 😭",
+  "samples": [
+   "tell the home squad to borrow some of that Finals luck while you're there",
+   "finals in 5 days and you're out here on a field trip to the Falcons 😂",
+   "must be nice to have october plans. the fever got sent home by the aces 😭",
+   "dream stopping by to show the falcons what october games that matter look like",
+   "a little sunday football before the finals, must be nice to still have games"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 3 has the casual, self-deprecating fan voice and the specific rival-team jab that the top references use, while 1 and 5 read as generic, polished, AI-sounding quips."
+ },
+ "gen|2105382766682714299|human_polish": {
+  "text": "We are SO ready!! All that hard work is about to pay off, and you deserve every bit of it 💙 Can't wait to see what's coming next 😏",
+  "original": "WE ARE SO EXCITED THE HARD WORK PAID OFF 💙💙💙💙💙"
+ },
+ "gen|2105382766682714299|continuation": {
+  "text": "Everyone who said she was \"just a college star\" owes Nike an apology. This is going to be the biggest launch since MJ. Bookmark this.",
+  "raw": "\nEveryone who said she was \"just a college star\" owes Nike an apology. This is going to be the biggest launch since MJ. Bookmark this.\n\n@justkeepballin · 1.3K followers · 1,432 likes\nGENERATIONAL. No other word for it. Sold my jerseys to pay for these shoes man I don't even care anymore\n\n@talkingbasketball · 45.3K followers · 988 likes  \nNumbers time: Pre-orders for Caitlin 1 reportedly highest fo"
+ },
+ "gen|2108954459304763841|naive": {
+  "text": "Fever fans, fresh out of the playoffs and emotionally unemployed, are accepting applications for a Finals team to adopt. Atlanta, you got the job. Don't make us regret it. 🅰️TL"
+ },
+ "gen|2108954459304763841|remix": {
+  "text": "ready? the fever lost to the aces, i have nothing else to watch. i'm basically a Dream fan now",
+  "move": "wry self-own"
+ },
+ "gen|2108954459304763841|constrained": {
+  "text": "fever fan with no season left, so i'm borrowing the Dream for saturday the 17th 🅰️"
+ },
+ "gen|2108954459304763841|human_raw": {
+  "text": "When are y’all releasing those TICKETS?!!!!",
+  "likes": 7
+ },
+ "gen|2110824046833348936|bestof": {
+  "text": "so the whole league was one DeWanna Bonner signing away from 10-0 and nobody told us",
+  "samples": [
+   "10-0 since DB showed up. valkyries, you got a plan or just prayers?",
+   "10-0 since aug 30. every other front office is taking notes right now",
+   "10-0 since aug 30 and we're calling it an 'effect' like it isn't a cheat code",
+   "10-0 since aug 30. somebody check if DB is also drawing up the plays",
+   "so the whole league was one DeWanna Bonner signing away from 10-0 and nobody told us"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 5 has the sarcastic, fan-banter tone of the top references, while 2 reads like generic AI-style praise and the others fall in between."
+ },
+ "gen|2108954459304763841|human_polish": {
+  "text": "Okay but when are the TICKETS dropping?! 🎟️ Some of us have been ready since day one and we are NOT missing Game 1 #AllForAtlanta",
+  "original": "When are y’all releasing those TICKETS?!!!!"
+ },
+ "gen|2108954459304763841|continuation": {
+  "text": "Let's fucking GOOOOO. This team has been through hell and back this year. They've earned this. Whatever happens, I'm so proud of what Coach Terrell has built here.",
+  "raw": "\nLet's fucking GOOOOO. This team has been through hell and back this year. They've earned this. Whatever happens, I'm so proud of what Coach Terrell has built here. \n\n@rach_ballislife · 82 followers · 1,543 likes\nEveryone doubted us after the Alyssa Thomas trade. Look at us now. Going to the Finals, baby! Prove 'em all wrong, Dream! 🏀💚\n\n@alwaysmntns · 17,342 followers · 1,088 likes\nBest season to "
+ },
+ "gen|2110417062963081284|bestof": {
+  "text": "so the all-rookie team now has a sixth man",
+  "samples": [
+   "rookie class so deep the five-player limit just gave up",
+   "voters couldn't cut anyone so they just added a chair 😭",
+   "voters couldn't pick five so they just pulled up another chair",
+   "so the all-rookie team now has a sixth man",
+   "nobody wanted to be the one to cut the sixth, so now it's a six-pack 😂"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 4 is short, dry wordplay ('sixth man') that sounds like a real fan, while 1 sounds the most like generic AI hype and 2 and 3 are near-duplicate 'added a chair' lines."
+ },
+ "gen|2110808214048502128|constrained": {
+  "text": "3 of these 5 are in the finals. dream vs valkyries is gonna be a rock fight"
+ },
+ "gen|2110808214048502128|naive": {
+  "text": "Three of these five (Burton, Stokes, Canada) are in the Finals, which start Oct 17: Dream vs Valkyries. The All-Defensive Second Team is basically a Finals scouting report. Somebody's offense is about to have a very long series."
+ },
+ "gen|2110808214048502128|human_raw": {
+  "text": "BIG JC!!!",
+  "likes": 20
+ },
+ "gen|2110808214048502128|human_polish": {
+  "text": "BIG JC!!! Jordin Canada making this list is so well deserved. She's a menace on defense every single night 🔒👏",
+  "original": "BIG JC!!!"
+ },
+ "gen|2110808214048502128|remix": {
+  "text": "finals preview: burton and stokes vs canada. somebody's second team defense is getting cooked",
+  "move": "finals preview reframe"
+ },
+ "gen|2110808214048502128|continuation": {
+  "text": "Breanna needs to be in the conversation for best defensive player of all time. She's been doing this for a DECADE now.",
+  "raw": "\nBreanna needs to be in the conversation for best defensive player of all time. She's been doing this for a DECADE now.\n\n@citronslices · 104 followers · 1,132 likes\nSonia \"Steal Your Lunch Money\" Citron gets her flowers 🍊 Just two seasons in and already dominating on D! Proud to have drafted her!\n\n@valksrising · 589 followers · 1,120 likes\nTwo Valkyries on All-Defense in year ONE?! Golden State re"
+ },
+ "gen|2105382766682714299|bestof": {
+  "text": "that 😏 better mean roster moves too, the shoes are already handled",
+  "samples": [
+   "caitlin 1 means a caitlin 2 is coming and my bank account already knows",
+   "that 😏 at the end tells me the Caitlin 2 is already sketched out",
+   "that 😏 better mean roster moves too, the shoes are already handled",
+   "that 😏 tells me there's a caitlin 2 coming and my wallet already knows",
+   "\"only the beginning\" is a threat to my wallet and the 😏 confirms it"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 3 sounds most like the real references, with their terse, opinionated fan-snark about the team, while the wallet-and-Caitlin-2 candidates read as formulaic AI quips, and 4 is the most generic, near-duplicate of 1."
+ },
+ "gen|2108954459304763841|bestof": {
+  "text": "are we ready? fever season's over, i have nothing else to do saturday",
+  "samples": [
+   "are we ready? fever season's over, i have nothing else to do saturday",
+   "two teams left and neither one is Vegas. fever fans are riding with atlanta now",
+   "two teams left and neither one is the aces. yeah i'm ready",
+   "ready. fever's out so i'm just here for the snacks and zero blood pressure",
+   "two teams left and neither is the Aces. fever fans are eating good this october"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 1 is the most casual and self-deprecating, closest to the lowercase, jokey tone of the top references, while 2, 3 and 5 are near-duplicate templated takes that read as machine-generated."
+ },
+ "gen|2110808214048502128|bestof": {
+  "text": "two valkyries and a dream on the second team. finals scoring is gonna be rough 😭",
+  "samples": [
+   "two valkyries and a dream on the second team. finals scoring is gonna be rough 😭",
+   "three of these five are in the finals. second team defense is the real finals preview",
+   "burton, stokes and canada are all in the finals. somebody's offense is gonna need a lawyer",
+   "two valkyries plus canada on the second team. finals points are gonna be hard to come by",
+   "3 of these 5 are in the finals. the second team is out here deciding the title 😭"
+  ],
+  "gate_rejected": 0,
+  "select_why": "Candidate 1 has the casual, lowercase, emoji-tagged voice of the high-performing references, while candidates 2 and 4 read as polished, generic AI-style takes."
+ },
+ "gen|2099247457473339402|bestof_random": {
+  "text": "gold looks great on you. now go get the Aces back for us",
+  "pool": 5
+ },
+ "gen|2110792840989024541|bestof_random": {
+  "text": "\"every stage of her life\" and the post still ends on \"chasing\" lol",
+  "pool": 5
+ },
+ "gen|2110038076114256260|bestof_random": {
+  "text": "must be nice having a game 4 to sell tickets for 🥲",
+  "pool": 5
+ },
+ "gen|2105879899399668010|bestof_random": {
+  "text": "we showed up and showed out. front office, your turn this offseason",
+  "pool": 5
+ },
+ "gen|2110018728314224992|bestof_random": {
+  "text": "rest of the top 25 seeing 'biggest story' go to someone who sat out all last year 😭",
+  "pool": 5
+ },
+ "gen|2109672093403279370|bestof_random": {
+  "text": "finals week and the valkyries are the ones who actually studied",
+  "pool": 4
+ },
+ "gen|2105879899399668010|bestof_rubric": {
+  "text": "fans showed out. now the front office needs to show up in free agency",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c5",
+    72,
+    "Revise"
+   ],
+   [
+    "c4",
+    66,
+    "Revise"
+   ],
+   [
+    "c2",
+    55,
+    "Revise"
+   ],
+   [
+    "c3",
+    48,
+    "Weak"
+   ],
+   [
+    "c1",
+    42,
+    "Weak"
+   ]
+  ]
+ },
+ "gen|2067322859848925290|bestof_random": {
+  "text": "love how the post says details and then gives us zero details",
+  "pool": 5
+ },
+ "gen|2099247457473339402|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2745 (char 2744)"
+ },
+ "gen|2106459938151145977|bestof_random": {
+  "text": "if she's the tipping point, quit tipping and build the roster around her",
+  "pool": 5
+ },
+ "gen|2110018728314224992|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2848 (char 2847)"
+ },
+ "gen|2110808408366493714|bestof_random": {
+  "text": "top three steals leaders all on one roster. somebody call the cops",
+  "pool": 5
+ },
+ "gen|2110792840989024541|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2940 (char 2939)"
+ },
+ "gen|2110808211347456506|bestof_random": {
+  "text": "three of these five are in the finals, so somebody has to score on purpose",
+  "pool": 5
+ },
+ "gen|2109672093403279370|bestof_rubric": {
+  "text": "finals week and the valkyries are the ones who actually studied",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c4",
+    66,
+    "Revise"
+   ],
+   [
+    "c3",
+    60,
+    "Revise"
+   ],
+   [
+    "c1",
+    38,
+    "Weak"
+   ],
+   [
+    "c2",
+    28,
+    "Weak"
+   ]
+  ]
+ },
+ "gen|2109769353935688054|bestof_random": {
+  "text": "we needed a whole FIFPRO report to learn rent is due in women's football too",
+  "pool": 5
+ },
+ "gen|2110038076114256260|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2503 (char 2502)"
+ },
+ "gen|2106419802117976116|bestof_random": {
+  "text": "the \"i promise you\" is doing a lot of work here, where's the screenshot",
+  "pool": 5
+ },
+ "gen|2067322859848925290|bestof_rubric": {
+  "text": "you typed 'details' and gave us zero details 😭",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c3",
+    71,
+    "Revise"
+   ],
+   [
+    "c2",
+    66,
+    "Revise"
+   ],
+   [
+    "c5",
+    60,
+    "Revise"
+   ],
+   [
+    "c1",
+    56,
+    "Revise"
+   ],
+   [
+    "c4",
+    50,
+    "Revise"
+   ]
+  ]
+ },
+ "gen|2106399407834898501|bestof_random": {
+  "text": "conclusion is one way to say three games against the aces",
+  "pool": 5
+ },
+ "gen|2110808211347456506|bestof_rubric": {
+  "text": "three of these five are in the Finals. somebody's first team defense has to lose lol",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c5",
+    66,
+    "Revise"
+   ],
+   [
+    "c4",
+    62,
+    "Revise"
+   ],
+   [
+    "c3",
+    57,
+    "Revise"
+   ],
+   [
+    "c1",
+    48,
+    "Revise"
+   ],
+   [
+    "c2",
+    33,
+    "Weak"
+   ]
+  ]
+ },
+ "gen|2109445947881087063|bestof_random": {
+  "text": "a little sunday football before the finals, must be nice to still have games",
+  "pool": 5
+ },
+ "gen|2109769353935688054|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 3129 (char 3128)"
+ },
+ "gen|2110824046833348936|bestof_random": {
+  "text": "so the whole league was one DeWanna Bonner signing away from 10-0 and nobody told us",
+  "pool": 5
+ },
+ "gen|2106459938151145977|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2674 (char 2673)"
+ },
+ "gen|2110417062963081284|bestof_random": {
+  "text": "rookie class so deep the five-player limit just gave up",
+  "pool": 5
+ },
+ "gen|2106419802117976116|bestof_rubric": {
+  "text": "the \"i promise you\" is doing a lot of work here. receipts or it didn't happen",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c2",
+    66,
+    "Revise"
+   ],
+   [
+    "c3",
+    62,
+    "Revise"
+   ],
+   [
+    "c1",
+    57,
+    "Revise"
+   ],
+   [
+    "c5",
+    50,
+    "Revise"
+   ],
+   [
+    "c4",
+    46,
+    "Revise"
+   ]
+  ]
+ },
+ "gen|2105382766682714299|bestof_random": {
+  "text": "that 😏 better mean roster moves too, the shoes are already handled",
+  "pool": 5
+ },
+ "gen|2110808408366493714|bestof_rubric": {
+  "text": "top three in steals all on one roster. opposing guards need to file a police report",
+  "verdict": "Strong",
+  "ranked": [
+   [
+    "c1",
+    78,
+    "Strong"
+   ],
+   [
+    "c5",
+    72,
+    "Revise"
+   ],
+   [
+    "c4",
+    64,
+    "Revise"
+   ],
+   [
+    "c2",
+    55,
+    "Revise"
+   ],
+   [
+    "c3",
+    38,
+    "Weak"
+   ]
+  ]
+ },
+ "gen|2108954459304763841|bestof_random": {
+  "text": "two teams left and neither one is Vegas. fever fans are riding with atlanta now",
+  "pool": 5
+ },
+ "gen|2105382766682714299|bestof_rubric": {
+  "text": "\"only the beginning\" is a threat to my wallet and the 😏 confirms it",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c5",
+    74,
+    "Revise"
+   ],
+   [
+    "c3",
+    70,
+    "Revise"
+   ],
+   [
+    "c1",
+    62,
+    "Revise"
+   ],
+   [
+    "c4",
+    58,
+    "Revise"
+   ],
+   [
+    "c2",
+    55,
+    "Revise"
+   ]
+  ]
+ },
+ "gen|2110808214048502128|bestof_random": {
+  "text": "3 of these 5 are in the finals. the second team is out here deciding the title 😭",
+  "pool": 5
+ },
+ "gen|2109445947881087063|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2093 (char 2092)"
+ },
+ "gen|2110824046833348936|bestof_rubric": {
+  "text": "10-0 since DB showed up. valkyries, you got a plan or just prayers?",
+  "verdict": "Strong",
+  "ranked": [
+   [
+    "c1",
+    74,
+    "Strong"
+   ],
+   [
+    "c3",
+    63,
+    "Revise"
+   ],
+   [
+    "c4",
+    55,
+    "Revise"
+   ],
+   [
+    "c2",
+    48,
+    "Revise"
+   ],
+   [
+    "c5",
+    38,
+    "Weak"
+   ]
+  ]
+ },
+ "gen|2106399407834898501|bestof_rubric": {
+  "text": "conclusion is a generous word for a three game series against the Aces",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c1",
+    62,
+    "Revise"
+   ],
+   [
+    "c4",
+    57,
+    "Revise"
+   ],
+   [
+    "c3",
+    55,
+    "Revise"
+   ],
+   [
+    "c5",
+    52,
+    "Revise"
+   ],
+   [
+    "c2",
+    51,
+    "Revise"
+   ]
+  ]
+ },
+ "gen|2110417062963081284|bestof_rubric": {
+  "text": "so the all-rookie team now has a sixth man",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c4",
+    72,
+    "Revise"
+   ],
+   [
+    "c2",
+    70,
+    "Revise"
+   ],
+   [
+    "c5",
+    66,
+    "Revise"
+   ],
+   [
+    "c1",
+    60,
+    "Revise"
+   ],
+   [
+    "c3",
+    52,
+    "Revise"
+   ]
+  ]
+ },
+ "gen|2108954459304763841|bestof_rubric": {
+  "text": "ready. fever's out so i'm just here for the snacks and zero blood pressure",
+  "verdict": "Revise",
+  "ranked": [
+   [
+    "c4",
+    70,
+    "Revise"
+   ],
+   [
+    "c1",
+    58,
+    "Revise"
+   ],
+   [
+    "c3",
+    50,
+    "Revise"
+   ],
+   [
+    "c2",
+    47,
+    "Weak"
+   ],
+   [
+    "c5",
+    46,
+    "Weak"
+   ]
+  ]
+ },
+ "gen|2110808214048502128|bestof_rubric": {
+  "error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 2889 (char 2888)"
+ },
+ "lineup2|2099247457473339402|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its elaborately crafted joke about the exclamation-point key contrasts with the brief, spontaneous congratulations in the other replies."
+ },
+ "lineup2|2099247457473339402|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Reply 4 is the only one with a polished, self-contained observation about the post’s wording, unlike the brief, spontaneous cheers in the other replies."
+ },
+ "lineup2|2099247457473339402|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished full-court-press metaphor and carefully composed congratulatory follow-up contrast with the brief, spontaneous reactions in the other replies."
+ },
+ "lineup2|2099247457473339402|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Reply 3 stands out for adding an unsupported 30-point finals narrative and stacking fan slang, while the others are simple celebratory reactions."
+ },
+ "pairwise|2099247457473339402|bestof_random": {
+  "better": "B",
+  "why": "It is a concise, universally supportive celebration that flatters Caitlin and matches the emotional tone of her post.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2099247457473339402|bestof_random": {
+  "candidate_position": 1,
+  "pick": 2,
+  "detected": false,
+  "why": "It reads like a generic, context-neutral congratulatory response, while the others have more distinctly human brevity or fan-specific phrasing."
+ },
+ "lineup2|2099247457473339402|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished two-part phrasing and added Aces reference seem more deliberately constructed than the other replies’ brief, spontaneous cheers."
+ },
+ "lineup2|2099247457473339402|bestof": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its elaborate, carefully constructed joke contrasts with the brief, spontaneous congratulations in the other replies."
+ },
+ "lineup2|2105879899399668010|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished offseason recap, neatly combined player references, and upbeat closing feel more deliberately composed than the blunt, emotionally reactive replies."
+ },
+ "lineup2|2099247457473339402|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, complete phrasing and explicit mention of Caitlin and Team USA stand out against the other replies’ short, spontaneous fan reactions."
+ },
+ "lineup2|2105879899399668010|constrained": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its neatly balanced phrasing echoes the post and adds generic encouragement, making it sound more deliberately composed than the other replies’ blunt, pointed reactions."
+ },
+ "lineup2|2105879899399668010|remix": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neatly balanced phrasing echoes the post and pivots into a polished offseason punchline, making it the most likely AI-written reply."
+ },
+ "lineup2|2099247457473339402|human_raw": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, generic two-sentence congratulations sound more formulaic than the other replies’ brief, spontaneous fan reactions."
+ },
+ "lineup|2105879899399668010|bestof_random": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It neatly mirrors the post’s phrasing and adds a polished, generic call to action, making it read more like AI-generated engagement than the more specific, emotionally raw replies."
+ },
+ "lineup2|2105879899399668010|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its neatly constructed callback to “showed up and showed out” and polished playoff punchline feel more deliberately composed than the other replies’ blunt, personal reactions."
+ },
+ "pairwise|2105879899399668010|bestof_random": {
+  "better": "B",
+  "why": "It echoes the team’s message while channeling fan energy into a widely shared call for the front office to improve the roster.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2105879899399668010|bestof_random": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It neatly echoes the post’s wording and pivots into a polished offseason challenge, unlike the more blunt and idiosyncratic reactions in the other replies."
+ },
+ "lineup|2105879899399668010|bestof_rubric": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It neatly mirrors the post’s “showed up and showed out” phrasing with a polished, generic call for free-agency action, making it more templated than the other replies."
+ },
+ "pairwise|2105879899399668010|bestof_rubric": {
+  "better": "A",
+  "why": "It matches the fans’ supportive tone while channeling their desire for roster improvement, whereas B is hostile and likely to be downvoted or ignored.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2105879899399668010|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its generic fan outrage, formulaic slang, and vague criticism of the front office read as a constructed imitation compared with the other replies’ more distinctive phrasing or specific grievances."
+ },
+ "lineup2|2105879899399668010|bestof_rubric": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished parallel phrasing echoes the post and pivots neatly to a generic front-office critique, unlike the more personal, blunt reactions in the other replies."
+ },
+ "lineup2|2110038076114256260|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, multi-sentence setup and neatly packaged joke about snacks and playoff stress sound more deliberately composed than the brief, spontaneous reactions in the other replies."
+ },
+ "lineup2|2105879899399668010|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished parallel phrasing and generic, neatly structured criticism stand out against the other replies’ more spontaneous slang and specific grievances."
+ },
+ "lineup2|2105879899399668010|human_raw": {
+  "candidate_position": 4,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, generic expression of player loyalty seems more templated than the other replies’ specific grievances and idiosyncratic phrasing, though text alone cannot establish authorship."
+ },
+ "lineup2|2110038076114256260|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained quip about the post’s wording feels more like AI-generated engagement than the other replies’ direct, context-specific reactions."
+ },
+ "lineup2|2110038076114256260|bestof": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its carefully constructed rivalry joke and vague reference to “our series” feel more engineered than the other replies’ direct, spontaneous reactions."
+ },
+ "lineup2|2110038076114256260|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its stacked hype phrases, generic day-one fandom claim, and potentially unsupported “one win away” assertion read more like generated promotional enthusiasm than the other replies’ specific, conversational reactions."
+ },
+ "lineup|2110038076114256260|bestof_random": {
+  "candidate_position": 1,
+  "pick": 3,
+  "detected": false,
+  "why": "It reads like a generic, context-aware paraphrase of the post’s call for fans to show up, without the personal or conversational specificity of the other replies."
+ },
+ "pairwise|2110038076114256260|bestof_random": {
+  "better": "B",
+  "why": "Its playful, bittersweet sarcasm is more distinctive and likely to resonate with rival fans than the straightforward enthusiasm in A.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110038076114256260|constrained": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, self-contained punchline built around quoting the post’s slogan feels more deliberately crafted than the other replies’ spontaneous reactions."
+ },
+ "lineup2|2110038076114256260|bestof_random": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished two-sentence setup and broadly relatable punchline with an emoji feel more like generated fan banter than the other replies’ blunt or context-specific reactions."
+ },
+ "lineup2|2110038076114256260|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its combination of a generic conversational reaction and a polished, all-caps rallying cry closely echoing the post feels more constructed than the other replies."
+ },
+ "lineup2|2110038076114256260|human_raw": {
+  "candidate_position": 3,
+  "pick": 1,
+  "detected": false,
+  "why": "Its generic, neatly phrased reaction lacks the distinctive slang, personal detail, or direct community references found in the other replies."
+ },
+ "lineup2|2110792840989024541|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, generic fan commentary, neatly structured joke, and redundant broadcast details sound more like AI-generated engagement than the other replies’ distinctive voices."
+ },
+ "lineup2|2110792840989024541|constrained": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its awkward shift from questioning “every stage of her life” to a generic jab at Fever fans feels more like an AI-crafted engagement reply than the other replies’ specific fandom reactions or analytics promotion."
+ },
+ "lineup|2110792840989024541|bestof_random": {
+  "candidate_position": 5,
+  "pick": 4,
+  "detected": false,
+  "why": "It reads like a templated analytics promo, with highly structured percentile bullets, repetitive polished phrasing, and a generic call to action unlike the casual human replies."
+ },
+ "lineup2|2110792840989024541|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its neatly packaged inspirational arc, generic motivational phrasing, and forced slang read like an AI imitation of a fan reaction."
+ },
+ "lineup2|2110792840989024541|bestof_random": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its neatly constructed contrast between “every stage of her life” and “chasing” reads like a deliberately engineered punchline rather than the more spontaneous fan reactions or promotional copy in the other replies."
+ },
+ "lineup2|2110792840989024541|bestof": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neatly constructed joke contrasting “a history of winning” with “first” feels more like an AI-crafted quip than the other replies’ spontaneous fandom or analytics promotion."
+ },
+ "lineup2|2110792840989024541|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its neatly constructed callback to the post followed by a generic rivalry punchline feels more deliberately generated than the other replies’ idiosyncratic slang or promotional formatting."
+ },
+ "pairwise|2110792840989024541|bestof_random": {
+  "better": "B",
+  "why": "It playfully calls out the omission of Angel Reese’s Unrivaled title, making it more relevant and appealing to her fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2110018728314224992|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its unusually detailed scheduling context and polished restatement of the post contrast with the other replies’ brief, spontaneous fan reactions."
+ },
+ "lineup2|2110018728314224992|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished setup and deliberately witty “main character” punchline read more like a crafted imitation of casual X banter than the other replies."
+ },
+ "lineup2|2110792840989024541|human_polish": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, generic encouragement and neatly placed emojis read more like model-generated fan engagement than the other replies’ distinctive slang or account-specific promotional content."
+ },
+ "lineup2|2110018728314224992|continuation": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its extended string of generic praise, unsupported claims about rust and sacrifice, and polished hype reads more like AI-generated enthusiasm than the shorter, more specific human replies."
+ },
+ "lineup2|2110792840989024541|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its tidy, generic reminder and stock fire emoji read like an AI-generated fan response, unlike the more idiosyncratic language or specific promotional detail in the other replies."
+ },
+ "lineup|2110018728314224992|bestof_random": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, generic encouragement and paraphrasing of the post read more like AI-generated engagement than the other terse or idiosyncratic replies."
+ },
+ "lineup2|2110018728314224992|remix": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, lowercase setup-and-punchline structure and neatly tailored joke about the rest of the top 25 feel more deliberately crafted than the other replies."
+ },
+ "lineup2|2110018728314224992|bestof": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its neatly constructed, contrarian punchline reads like a deliberately crafted response to the headline, unlike the more spontaneous cheers and trolling in the other replies."
+ },
+ "pairwise|2110018728314224992|bestof_random": {
+  "better": "A",
+  "why": "A is upbeat, directly supports JuJu’s highly anticipated return, and better matches espnW’s audience sentiment.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2110018728314224992|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its carefully constructed, post-specific joke and trendy phrasing feel more like a model imitating X banter than the other replies’ straightforward cheers or off-topic provocation."
+ },
+ "lineup2|2110018728314224992|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, generic enthusiasm, clustered emojis, and repetitive welcome-back sentiments make it read more like an AI-generated engagement reply than the others."
+ },
+ "lineup2|2110018728314224992|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished, generic two-part encouragement reads more like AI-generated promotional copy than the other replies’ terse slogans, emoji-heavy enthusiasm, or pointed provocation."
+ },
+ "lineup2|2109672093403279370|constrained": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its elaborately tailored sword-and-shield wordplay stands out against the other replies’ brief, conventional fan reactions."
+ },
+ "lineup2|2109672093403279370|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished sword-and-shield wordplay and added opponent reference stand out from the other replies’ brief, straightforward fan reactions."
+ },
+ "lineup2|2109672093403279370|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished mini-narrative about adopting a Finals team feels more deliberately constructed than the other replies’ brief, spontaneous cheers."
+ },
+ "pairwise|2109672093403279370|bestof_random": {
+  "better": "A",
+  "why": "It cleverly riffs on “finals week” with a school metaphor while hyping the Valkyries, making it more original and engaging.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2109672093403279370|bestof_random": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished wordplay on “Finals week” as exam week feels more deliberately crafted than the other replies’ straightforward fan reactions."
+ },
+ "lineup2|2109672093403279370|naive": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, multi-sentence narrative and explanatory context stand out from the other replies’ brief, spontaneous fan reactions."
+ },
+ "lineup2|2109672093403279370|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its conspicuously elaborate hype, oddly specific TNT threat, and detailed stat line contrast with the short, natural fan reactions in the other replies."
+ },
+ "lineup|2109672093403279370|bestof_random": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It uses a polished, context-aware 'finals week' school metaphor, unlike the other brief, conventional fan reactions."
+ },
+ "lineup|2109672093403279370|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It uses a polished, context-aware 'finals week/studied' wordplay that feels more deliberately generated than the brief fan reactions."
+ },
+ "lineup2|2109672093403279370|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly constructed Finals-week study pun feels more deliberately crafted than the other replies’ brief, spontaneous fan reactions."
+ },
+ "pairwise|2109672093403279370|bestof_rubric": {
+  "better": "A",
+  "why": "It is more original and playfully ties Finals week to the Valkyries being prepared, while B is a generic prediction.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2109672093403279370|human_raw": {
+  "candidate_position": 1,
+  "pick": 3,
+  "detected": false,
+  "why": "Its generic, neatly packaged prediction reads more like simulated fan banter than the other replies’ spontaneous reactions or player-specific enthusiasm."
+ },
+ "lineup2|2109672093403279370|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its stacked dramatic imagery, repeated team framing, and generic closing cheer feel more deliberately composed than the other replies’ brief, casual fan reactions."
+ },
+ "lineup2|2067322859848925290|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained joke about the caption and emoji feels AI-crafted, while the other replies react naturally to the apparent shoe announcement."
+ },
+ "lineup2|2067322859848925290|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its lengthy, polished explanation of the emojis and generic 'power move' commentary contrasts with the other replies’ brief reactions and personal details."
+ },
+ "lineup|2067322859848925290|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It is a generic, context-free observation that mechanically riffs on the post’s wording, unlike the specific and personal reactions in the other replies."
+ },
+ "lineup2|2067322859848925290|remix": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its neatly constructed setup and punchline, paired with a mirrored emoji, feel more deliberately engineered than the other replies’ spontaneous congratulations and personal remarks."
+ },
+ "lineup2|2067322859848925290|continuation": {
+  "candidate_position": 4,
+  "pick": 2,
+  "detected": false,
+  "why": "Its polished, generic congratulatory phrasing and restrained enthusiasm feel more templated than the other replies’ personal details or casual fan language."
+ },
+ "pairwise|2067322859848925290|bestof_random": {
+  "better": "A",
+  "why": "It makes a clear, playful joke about the vague caption, giving users a more relatable reason to like it.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2067322859848925290|bestof": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained joke riffs generically on the caption, unlike the other replies’ specific references and reactions to the apparent shoe announcement."
+ },
+ "pairwise|2067322859848925290|bestof_rubric": {
+  "better": "B",
+  "why": "It playfully calls out the vague post in a relatable way, making it more likely to earn likes.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2067322859848925290|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its self-contained joke riffs only on the caption, while the other replies reference the apparent product reveal or specific personal context."
+ },
+ "lineup|2067322859848925290|bestof_rubric": {
+  "candidate_position": 4,
+  "pick": 1,
+  "detected": false,
+  "why": "It reads like a polished, generic congratulatory response without the specific personal context or casual spontaneity of the other replies."
+ },
+ "lineup2|2067322859848925290|bestof_rubric": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It reads like a generic, self-contained joke about the post’s wording, whereas the other replies reference specific products, styling, or personal experiences."
+ },
+ "lineup2|2067322859848925290|human_raw": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its conspicuously performative slang and oddly specific claim about seeing “tiny 22s materialize” feel more manufactured than the other replies’ straightforward reactions."
+ },
+ "lineup2|2106459938151145977|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Reply 1 uses polished, structured commentary and an oddly specific NBA 2K27 reference, unlike the spontaneous, emotionally charged criticism in the other replies."
+ },
+ "lineup2|2067322859848925290|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its exaggerated enthusiasm, explicit callback to “details,” and elaborated imagined wearing experience feel more constructed than the other replies’ brief reactions or personal anecdotes."
+ },
+ "lineup2|2106459938151145977|remix": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its tidy pivot from agreeing with the quote to a generic roster-building challenge contrasts with the other replies’ emotionally charged, specific grievances."
+ },
+ "lineup2|2106459938151145977|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its tidy repetition of “tipping point” and restrained, generic punchline contrast with the more emotionally charged and specific grievances in the other replies."
+ },
+ "lineup2|2106459938151145977|continuation": {
+  "candidate_position": 4,
+  "pick": 5,
+  "detected": false,
+  "why": "Reply 5 has unusually polished, measured phrasing and broadly summarizes the surrounding criticism without the more distinctive wording or emotional irregularities of the other replies."
+ },
+ "lineup2|2106459938151145977|bestof_random": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its concise, polished wordplay on “tipping point” and generic roster-building advice stand apart from the other replies’ emotionally charged, specific grievances."
+ },
+ "lineup2|2106459938151145977|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its forced casual phrasing and oddly specific 2K27 reference read like an attempt to manufacture topical relevance, unlike the other replies’ sustained criticism of team leadership."
+ },
+ "lineup|2106459938151145977|bestof_random": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "It uses polished, generalized criticism and a neatly structured cause-and-effect argument, unlike the more spontaneous, idiosyncratic phrasing of the other replies."
+ },
+ "pairwise|2106459938151145977|bestof_random": {
+  "better": "A",
+  "why": "It is concise, punchy, and channels fan frustration into a clear roster-building demand rather than a repetitive personal attack.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2110808408366493714|constrained": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its tailored restatement of the steals statistic and neatly constructed Valkyries punchline feel more deliberately composed than the other replies’ brief, spontaneous cheers."
+ },
+ "lineup2|2110808408366493714|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, multi-sentence analysis and added Finals context contrast with the brief, informal fan reactions in the other replies."
+ },
+ "lineup2|2106459938151145977|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Reply 3 has an unusually polished rhetorical structure, balancing comprehensive criticism with carefully paired phrases and a punchy closing directive, unlike the more spontaneous wording of the others."
+ },
+ "lineup2|2110808408366493714|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, multi-sentence narrative and abstract phrasing about redefining the franchise’s defensive culture stand out from the other replies’ short, casual fan reactions."
+ },
+ "lineup2|2106459938151145977|human_raw": {
+  "candidate_position": 3,
+  "pick": 4,
+  "detected": false,
+  "why": "Reply 4 has unusually polished, measured phrasing and a tidy causal argument, unlike the more idiosyncratic punctuation, emotional outbursts, and specific accusations in the other replies."
+ },
+ "lineup|2110808408366493714|bestof_random": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished statistic-based wordplay feels more deliberately constructed than the brief, spontaneous fan reactions."
+ },
+ "lineup2|2110808408366493714|bestof_random": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished setup-and-punchline joke directly repackages the post’s statistics, unlike the brief, spontaneous fan reactions in the other replies."
+ },
+ "lineup2|2110808408366493714|bestof": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neatly constructed setup and topical punchline feel more deliberately crafted than the other replies’ brief, spontaneous fan reactions."
+ },
+ "lineup|2110808408366493714|bestof_rubric": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, context-specific joke about steals and a police report reads more like generated engagement bait than the brief, spontaneous fan reactions."
+ },
+ "pairwise|2110808408366493714|bestof_random": {
+  "better": "B",
+  "why": "It cleverly riffs on the remarkable steals statistic with a punchline, making it more specific and engaging than the generic team-name pun.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110808408366493714|bestof_rubric": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished setup-and-punchline joke and specific restatement of the post stand out from the other replies’ brief, spontaneous fan reactions."
+ },
+ "pairwise|2110808408366493714|bestof_rubric": {
+  "better": "B",
+  "why": "It highlights the remarkable stat with a sharp, funny punchline that is more likely to drive likes.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110808408366493714|remix": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its neatly constructed setup and theft-themed punchline closely rework the post’s statistics, unlike the brief, spontaneous fan reactions in the other replies."
+ },
+ "lineup2|2110808211347456506|naive": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished setup, added Finals context, and elaborate scoreboard joke contrast with the other replies’ short, spontaneous fan reactions."
+ },
+ "lineup2|2110808408366493714|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It combines slang with a polished restatement of the post’s key statistic and a generic punchline, unlike the other replies’ brief, spontaneous reactions."
+ },
+ "lineup2|2110808408366493714|human_raw": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "Its polished combination of a post-specific observation, trendy slang, and an emoji feels more deliberately constructed than the other replies’ spontaneous reactions."
+ },
+ "lineup2|2110808211347456506|constrained": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It adds a neatly framed Finals matchup observation and explanatory basketball commentary, unlike the other replies’ short, spontaneous fan reactions."
+ },
+ "lineup2|2110808211347456506|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its carefully constructed joke about the finals being “this list guarding itself” feels more engineered than the other replies’ spontaneous fan reactions."
+ },
+ "lineup|2110808211347456506|bestof_random": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "It blandly restates the post with generic fire emojis, unlike the more distinctive, context-aware phrasing of the other replies."
+ },
+ "lineup2|2110808211347456506|bestof": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained sarcastic punchline feels more deliberately constructed than the other replies’ spontaneous fan shorthand and hype."
+ },
+ "lineup|2110808211347456506|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 4,
+  "detected": false,
+  "why": "It blandly restates information from the post with generic fire emojis, unlike the more opinionated and conversational replies."
+ },
+ "lineup2|2110808211347456506|continuation": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its extended, generic praise and loosely related complaint about A’ja needing help contrast with the other replies’ brief, context-specific fan reactions."
+ },
+ "pairwise|2110808211347456506|bestof_random": {
+  "better": "B",
+  "why": "It is a short, enthusiastic celebration of both Atlanta players that is more immediately relatable and likeable to fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2110808211347456506|bestof_random": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its self-contained, carefully constructed joke contrasts with the other replies’ more spontaneous, team-focused fan reactions."
+ },
+ "lineup2|2110808211347456506|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly structured observation and polished punchline stand out from the other replies’ more spontaneous, fan-specific reactions."
+ },
+ "pairwise|2110808211347456506|bestof_rubric": {
+  "better": "B",
+  "why": "It is a punchy, enthusiastic celebration of Atlanta having two selections, making it more immediately likeable to fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2109769353935688054|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It uses unusually polished, structured rhetoric and a neatly framed concluding argument, unlike the shorter, more spontaneous reactions in the other replies."
+ },
+ "lineup2|2109769353935688054|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished structure, explanatory framing, and slogan-like conclusion contrast with the other replies’ more casual, narrowly focused reactions."
+ },
+ "lineup2|2110808211347456506|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, generic praise, repetition of all five players’ names, and forced fan-language closing contrast with the other replies’ brief, spontaneous reactions."
+ },
+ "lineup|2109769353935688054|constrained": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "It is unusually polished and generalized, with a neatly framed sponsorship argument and moral conclusion that reads more like an AI-generated synthesis than a spontaneous X reply."
+ },
+ "pairwise|2109769353935688054|naive": {
+  "better": "B",
+  "why": "Its concise, skeptical challenge to the post’s framing is more likely to spark agreement and engagement from real X users.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2109769353935688054|remix": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "It uses polished, generalized reasoning and a neatly structured critique, unlike the more terse, colloquial, and context-specific human replies."
+ },
+ "lineup2|2110808211347456506|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "It reads like a generic restatement of the announcement with appended emojis, unlike the more distinctive fan slang and opinions in the other replies."
+ },
+ "lineup2|2109769353935688054|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its generic empathy, neatly packaged aphorism, and deliberate lowercase styling resemble an AI-generated social-media reply more than the other replies’ specific, idiosyncratic criticisms."
+ },
+ "lineup|2109769353935688054|continuation": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "It uses polished, generalized reasoning and a neatly framed moral conclusion, unlike the more terse and context-specific human replies."
+ },
+ "pairwise|2109769353935688054|remix": {
+  "better": "B",
+  "why": "It is concise, punchy, and aligns with the audience’s likely support for better pay in women’s football.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2109769353935688054|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its neatly packaged punchline and generic summary of the report feel more deliberately crafted than the other replies’ specific, opinionated reactions."
+ },
+ "lineup|2109769353935688054|bestof": {
+  "candidate_position": 5,
+  "pick": 2,
+  "detected": false,
+  "why": "It is unusually polished and explanatory, using broad context and a neatly framed moral conclusion rather than the terse, reactive style of the other replies."
+ },
+ "pairwise|2109769353935688054|continuation": {
+  "better": "A",
+  "why": "It directly challenges the post’s framing with a specific, provocative salary point, making it more likely to attract likes and engagement.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2109769353935688054|bestof": {
+  "better": "B",
+  "why": "Its concise, relatable sarcasm is more likely to resonate broadly and earn likes than A's narrower salary critique.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2109769353935688054|bestof": {
+  "candidate_position": 5,
+  "pick": 2,
+  "detected": false,
+  "why": "Its polished structure, broad sponsorship claims, and neatly framed moral conclusion sound more like an AI-generated response than the other replies’ terse, idiosyncratic reactions."
+ },
+ "pairwise|2109769353935688054|constrained": {
+  "better": "A",
+  "why": "It adds an empathetic, relatable observation that reinforces the report’s point, while B dismisses the broader issue by focusing on a potentially atypical salary.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2109769353935688054|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its generic, neatly packaged sarcasm lacks the concrete salary, sponsorship, and league-specific details that make the other replies sound more grounded in individual reactions."
+ },
+ "lineup|2109769353935688054|bestof_random": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "It uses polished, generalized commentary with a structured argument and none of the terse, context-specific phrasing typical of the other replies."
+ },
+ "lineup2|2109769353935688054|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, self-contained sarcasm reads like a crafted social-media quip, unlike the other replies’ more specific, loosely phrased criticisms of the player pictured and league economics."
+ },
+ "pairwise|2109769353935688054|bestof_random": {
+  "better": "A",
+  "why": "It is a concise, relatable joke that supports the report’s broader point without fixating on one unusually well-paid player.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2109769353935688054|human_raw": {
+  "candidate_position": 4,
+  "pick": 1,
+  "detected": false,
+  "why": "It is unusually polished and broadly framed, using balanced explanatory language and a generic moral conclusion unlike the terse, colloquial, context-specific replies."
+ },
+ "pairwise|2109769353935688054|human_raw": {
+  "better": "A",
+  "why": "Its concise, immediately highlights the apparent mismatch between the featured player and the report's financial-pressure framing, and is more likeable than B's lengthy dismissal.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2109769353935688054|human_raw": {
+  "candidate_position": 4,
+  "pick": 1,
+  "detected": false,
+  "why": "Reply 1 has polished grammar and a neatly structured argument with a broad moral conclusion, unlike the more colloquial, context-specific reactions in the other replies."
+ },
+ "lineup|2109769353935688054|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It uses unusually polished, structured reasoning and generic analytical framing compared with the terse, informal, and reactive style of the other replies."
+ },
+ "lineup|2106419802117976116|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It is unusually verbose and polished, overexplains the joke, and adds multiple specific contextual references compared with the short, natural replies."
+ },
+ "pairwise|2109769353935688054|human_polish": {
+  "better": "A",
+  "why": "Its concise, pointed criticism is more likely to attract likes than B’s longer, more analytical response.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2109769353935688054|human_polish": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, methodical progression from survey statistics to methodological criticism and a proposed comparison is more characteristic of an AI-generated response than the other replies' informal reactions."
+ },
+ "pairwise|2106419802117976116|naive": {
+  "better": "A",
+  "why": "It’s concise, witty, and taps into the familiar joke about athletes teasing betting partnerships, making it more naturally likeable on X.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2106419802117976116|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its unusually polished, multi-sentence phrasing and densely packed contextual references stand out against the other replies’ short, casual quips."
+ },
+ "pairwise|2106419802117976116|constrained": {
+  "better": "B",
+  "why": "It playfully riffs on her wording and invites receipts, making it more directly engaging and broadly likable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2106419802117976116|remix": {
+  "better": "B",
+  "why": "It directly and humorously calls out the lack of proof, making it more relatable and reply-worthy.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2106419802117976116|constrained": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a deliberately crafted social-media reaction, combining an explanation of the phrasing with two stock slang expressions rather than the other replies’ terse, context-specific jabs."
+ },
+ "lineup|2106419802117976116|constrained": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a generic, self-contained social-media quip built from stock phrases ('called cap' and 'receipts or it didn't happen'), unlike the more context-specific replies."
+ },
+ "lineup2|2106419802117976116|remix": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its self-contained, polished punchline about missing screenshots reads more like an AI-crafted quip than the other replies’ terse, context-specific reactions."
+ },
+ "lineup|2106419802117976116|remix": {
+  "candidate_position": 5,
+  "pick": 3,
+  "detected": false,
+  "why": "It reads like a polished, self-contained quip inferred from the betting context, while the others have more distinctly human traits such as typos, trolling, or meme-style shorthand."
+ },
+ "lineup|2106419802117976116|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It reads like a self-contained, overly explanatory reaction, with polished punctuation and invented prior-week context that feels less organic than the other terse replies."
+ },
+ "lineup|2106419802117976116|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It is unusually polished and context-stacked, combining a nickname, a topical finals question, and the phrase “we need receipts” in a way that feels generated."
+ },
+ "lineup2|2106419802117976116|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its quotation marks, generic exaggerated reaction, and unsupported reference to last week’s record make it read more like a constructed conversational response than the other terse, context-specific replies."
+ },
+ "pairwise|2106419802117976116|continuation": {
+  "better": "A",
+  "why": "Its concise, topical punchline about a gambling sponsorship is sharper and more broadly likeable than the longer, more conversational reply.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2106419802117976116|bestof": {
+  "better": "B",
+  "why": "Its sharper, more quotable joke about an implied gambling partnership is likely to attract broader engagement.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2106419802117976116|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a polished, generic skepticism template, while the others contain more specific sports context, slang, or human-like imperfections."
+ },
+ "lineup2|2106419802117976116|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its carefully topical matchup question and stacked social-media slang feel more deliberately constructed to drive engagement than the other replies’ brief, offhand reactions."
+ },
+ "pairwise|2106419802117976116|bestof_random": {
+  "better": "B",
+  "why": "It is a sharper, more original joke that playfully connects her perfect picks claim to a potential betting sponsorship.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2106419802117976116|bestof_rubric": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished skepticism, balanced phrasing, and generic 'receipts or it didn't happen' formulation feel more AI-composed than the terse, context-specific replies."
+ },
+ "lineup2|2106419802117976116|bestof_random": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished setup-and-punchline structure and stock phrase “doing a lot of work here” feel more AI-generated than the other replies’ terse, context-specific jabs."
+ },
+ "pairwise|2106419802117976116|bestof_rubric": {
+  "better": "A",
+  "why": "It is shorter, sharper, and makes a more topical joke than the generic request for receipts.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2106419802117976116|bestof_rubric": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished combination of a stock phrase (“doing a lot of work here”) and a generic receipts joke feels more AI-generated than the other replies’ terse, context-specific remarks."
+ },
+ "lineup|2106419802117976116|human_raw": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "It reads like a polished, context-aware one-liner but lacks the specific personal tone, typo, or situational detail found in the other replies."
+ },
+ "pairwise|2106419802117976116|human_raw": {
+  "better": "A",
+  "why": "Its sharp, humorous skepticism is more likely to earn likes than a generic flattering compliment.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup|2106419802117976116|human_polish": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It has the polished, formulaic compliment structure and neatly mirrored wordplay typical of an AI-generated social reply."
+ },
+ "lineup2|2106419802117976116|human_raw": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished, self-contained sponsorship joke feels more generically constructed than the other replies’ specific references, typos, and fan commentary."
+ },
+ "lineup|2106399407834898501|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished news recap that awkwardly bundles multiple unrelated updates, unlike the direct emotional reactions in the other replies."
+ },
+ "lineup2|2106419802117976116|human_polish": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished parallel phrasing, generic hype, and unsupported reference to an outfit make it stand out from the other replies’ terse, context-specific banter."
+ },
+ "lineup2|2106399407834898501|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Reply 5 stands out for its polished recap, loosely related NBA 2K27 reference, and neatly packaged wordplay, unlike the other replies’ direct, informal criticism."
+ },
+ "pairwise|2106419802117976116|human_polish": {
+  "better": "B",
+  "why": "It is sharper and more topical, turning the suspiciously perfect picks into a concise joke about an imminent gambling sponsorship.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2106399407834898501|constrained": {
+  "better": "A",
+  "why": "Its playful, self-deprecating joke about the Aces sweeping the Fever is more broadly relatable and less divisive than calling for Stephanie White to leave.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2106399407834898501|naive": {
+  "better": "B",
+  "why": "Its blunt criticism of Stephanie White is more emotionally charged and directly reflects frustrated fan sentiment, making it more likely to attract likes.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2106399407834898501|constrained": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neatly packaged joke, lowercase styling, and emoji feel like a deliberate imitation of fan banter, unlike the more idiosyncratic criticism in the other replies."
+ },
+ "pairwise|2106399407834898501|remix": {
+  "better": "B",
+  "why": "It’s a sharper, more topical joke about the Fever’s playoff exit, making it more broadly likable than the direct call to fire White.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2106399407834898501|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads as unusually polished and neatly structured, using the quote as evidence before delivering a concise, confident inference."
+ },
+ "lineup|2106399407834898501|remix": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished wordplay on “conclusion” reads like a neatly constructed AI-generated quip compared with the more spontaneous, error-prone fan reactions."
+ },
+ "lineup2|2106399407834898501|remix": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, self-contained wordplay about “conclusion” contrasts with the other replies’ more personal, loosely written criticism of the coach."
+ },
+ "lineup2|2106399407834898501|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished quote-and-analysis structure and tidy concluding prediction contrast with the other replies’ more informal, emotionally charged phrasing."
+ },
+ "pairwise|2106399407834898501|continuation": {
+  "better": "B",
+  "why": "It highlights a specific, consequential quote and offers timely roster-change analysis that fans are more likely to engage with than a generic negative remark.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2106399407834898501|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, self-contained wordplay and unusually clean phrasing read more like a generated quip than the typo-filled, context-heavy fan reactions."
+ },
+ "lineup2|2106399407834898501|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, self-contained wordplay contrasts with the more emotionally direct, unevenly phrased criticism in the other replies."
+ },
+ "pairwise|2106399407834898501|bestof_random": {
+  "better": "B",
+  "why": "Its sharper, more specific playoff joke is more likely to resonate and earn likes than the generic coaching complaint.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2106399407834898501|bestof_random": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly crafted wordplay on “conclusion” reads like a generated sports quip, unlike the more personal, unevenly phrased criticism in the other replies."
+ },
+ "lineup|2106399407834898501|constrained": {
+  "candidate_position": 1,
+  "pick": 2,
+  "detected": false,
+  "why": "Its polished, self-contained setup and conclusion read more like a generated response than the more colloquial, typo-filled, or detail-specific fan replies."
+ },
+ "pairwise|2106399407834898501|bestof": {
+  "better": "A",
+  "why": "It is a sharper, more situationally relevant joke, while B is a generic and harsher call for White to be fired.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2106399407834898501|bestof_random": {
+  "candidate_position": 3,
+  "pick": 4,
+  "detected": false,
+  "why": "It is the most structured and comprehensive response, presenting a polished sequence of specific criticisms unlike the shorter, more spontaneous replies."
+ },
+ "lineup|2106399407834898501|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, context-aware sarcasm and concise phrasing stand out from the more typo-filled, emotionally specific human replies."
+ },
+ "pairwise|2106399407834898501|bestof_rubric": {
+  "better": "A",
+  "why": "It delivers a sharper, more emotionally charged reaction that frustrated Fever fans are more likely to endorse.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2106399407834898501|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly constructed, context-aware punchline reads more like a generated quip than the other replies’ emotionally charged, unevenly written fan criticism."
+ },
+ "lineup|2106399407834898501|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "It presents a neatly structured, multi-point critique with unusually polished progression and comprehensive season analysis compared with the more spontaneous, idiosyncratic human replies."
+ },
+ "lineup2|2106399407834898501|human_raw": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its unusually elaborate quotation, strained phrasing, and escalating conspiracy narrative stand out from the other replies’ brief, colloquial criticism."
+ },
+ "lineup|2106399407834898501|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished structure, detailed contextual framing, and generic concluding call for accountability read more like AI-generated commentary than the terse, spontaneous fan replies."
+ },
+ "pairwise|2106399407834898501|human_raw": {
+  "better": "B",
+  "why": "It is concise, directly expresses a common fan sentiment, and avoids the lengthy conspiratorial claims in A.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2106399407834898501|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished structure, contextual background, and neatly framed conclusion distinguish it from the shorter, rougher, more spontaneous-sounding replies."
+ },
+ "pairwise|2106399407834898501|human_polish": {
+  "better": "B",
+  "why": "Its short, blunt, emotionally charged call for a coaching change is more likely to attract quick likes from frustrated Fever fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2109445947881087063|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Reply 1 stands out for its polished, multi-sentence construction and conspicuous calendar and basketball references, unlike the other replies’ brief, spontaneous reactions."
+ },
+ "lineup|2109445947881087063|constrained": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished contextual summary that neatly connects the event to a future finals date, unlike the more spontaneous, colloquial reactions."
+ },
+ "pairwise|2109445947881087063|naive": {
+  "better": "B",
+  "why": "It is concise, locally relevant, and makes a playful venue-upgrade joke that fits the team post better.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2109445947881087063|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It is unusually long and context-heavy compared with the brief, spontaneous fan reactions, and it awkwardly combines schedule details with a manufactured fandom narrative."
+ },
+ "lineup2|2109445947881087063|constrained": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It neatly combines the post’s football context with a specific upcoming Finals date and a generic fan sentiment, making it sound more deliberately composed than the other spontaneous replies."
+ },
+ "pairwise|2109445947881087063|constrained": {
+  "better": "B",
+  "why": "It’s a witty, timely call for the Dream to play their Finals games at the much larger Mercedes-Benz Stadium.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2109445947881087063|remix": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished, context-aware summary that neatly combines the football appearance with a specific upcoming game, unlike the more spontaneous human reactions."
+ },
+ "lineup|2109445947881087063|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It uses a polished, generic fandom phrase ('crossover episode') and complete sentence structure, unlike the more spontaneous, context-specific replies."
+ },
+ "pairwise|2109445947881087063|remix": {
+  "better": "A",
+  "why": "It makes a timely, witty venue-related joke that feels more specific and engaging to Atlanta Dream fans.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2109445947881087063|continuation": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, generic “crossover episode” enthusiasm contrasts with the other replies’ more specific references, informal phrasing, and spontaneous reactions."
+ },
+ "lineup2|2109445947881087063|remix": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished pivot from a football outing to a specific upcoming matchup feels more deliberately context-engineered than the other replies’ spontaneous reactions."
+ },
+ "pairwise|2109445947881087063|continuation": {
+  "better": "A",
+  "why": "It is a witty, specific suggestion tied to both Atlanta teams and Mercedes-Benz Stadium, making it more likely to resonate with local fans.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2109445947881087063|bestof": {
+  "better": "B",
+  "why": "It is a witty, directly relevant reply about the Dream needing Mercedes-Benz Stadium, making it more likely to resonate with Atlanta fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2109445947881087063|bestof": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a deliberately crafted, topical rivalry joke, while the other replies are shorter, more spontaneous reactions to the post."
+ },
+ "lineup|2109445947881087063|bestof": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a context-aware, self-contained quip that deliberately connects the October outing to the Fever’s playoff elimination, unlike the more spontaneous reactions."
+ },
+ "lineup2|2109445947881087063|bestof_random": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its neatly constructed setup and generic finals-related jab feel more manufactured than the other replies’ spontaneous, specific reactions."
+ },
+ "lineup|2109445947881087063|bestof_random": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It reads like a generic, context-derived quip, while the others use more spontaneous phrasing or refer to specific people and details likely visible in the post’s image."
+ },
+ "pairwise|2109445947881087063|bestof_random": {
+  "better": "A",
+  "why": "It makes a timely, team-specific joke about securing a bigger venue for the Dream’s games, which is more likely to resonate with Atlanta fans.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2109445947881087063|human_raw": {
+  "better": "A",
+  "why": "Its concise, playful phrasing feels more native to X and directly riffs on the stadium visit.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2109445947881087063|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its neatly phrased request and spelled-out venue name sound more deliberately composed than the other replies’ slang, emphatic reactions, and informal wording."
+ },
+ "lineup|2109445947881087063|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It is unusually polished and explanatory, restating the playoff stakes and adding a neatly aligned hashtag compared with the more spontaneous replies."
+ },
+ "lineup2|2109445947881087063|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, explanatory phrasing and reuse of the post’s hashtag sound more like generated engagement than the other replies’ brief, informal reactions."
+ },
+ "pairwise|2109445947881087063|human_polish": {
+  "better": "B",
+  "why": "It is more enthusiastic and supportive, directly highlights the Dream's championship stakes, and matches the post's fan-focused tone.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2109445947881087063|human_raw": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like an overly explicit, context-summarizing response, while the others use more spontaneous fan-specific phrasing."
+ },
+ "lineup|2110824046833348936|naive": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It reads like a polished, context-heavy sports summary with balanced narrative framing, unlike the brief and emotionally reactive human replies."
+ },
+ "lineup2|2110824046833348936|naive": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, multi-sentence commentary restates the post’s statistics and adds neatly packaged observations, unlike the other replies’ brief, spontaneous fan reactions."
+ },
+ "pairwise|2110824046833348936|naive": {
+  "better": "B",
+  "why": "Its concise, funny pushback feels more authentic and reply-native, making it more likely to earn likes.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2110824046833348936|constrained": {
+  "better": "A",
+  "why": "It amplifies the post’s celebratory narrative with a punchy line about Bonner’s immediate impact.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2110824046833348936|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It neatly restates the post’s statistic and conclusion in a polished, generic way, unlike the more spontaneous and idiosyncratic reactions."
+ },
+ "lineup|2110824046833348936|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, generic cause-and-effect quip reads more like an AI-crafted engagement reply than the terse, emotional, typo-filled human reactions."
+ },
+ "lineup2|2110824046833348936|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished two-sentence paraphrase of the post and neatly packaged punchline stand out against the other replies’ terse slang, emotional reactions, and rougher wording."
+ },
+ "pairwise|2110824046833348936|remix": {
+  "better": "A",
+  "why": "It amplifies the post’s hype with a punchy joke, making it more broadly likable than the dismissive counterpoint.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2110824046833348936|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished, generic sports take that restates the post’s key names, unlike the more spontaneous slang and errors in the other replies."
+ },
+ "lineup2|2110824046833348936|continuation": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "The stray “· 38 replies” interface text and polished phrasing with full team names make this reply stand out from the others’ casual, reactive style."
+ },
+ "pairwise|2110824046833348936|continuation": {
+  "better": "B",
+  "why": "It is concise, funny, and pushes back on an overstated narrative without making an equally exaggerated prediction.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2110824046833348936|bestof": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, self-contained joke neatly reframes the post’s central statistic, making it more characteristic of an AI-generated quip than the terse, emotional, typo-filled replies."
+ },
+ "lineup2|2110824046833348936|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished setup-and-punchline structure and generic league-wide reaction feel more deliberately crafted than the other replies’ terse, emotional fan commentary."
+ },
+ "lineup|2110824046833348936|bestof_random": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, neatly structured punchline reads like a generated social-media quip, while the others are more spontaneous and idiosyncratic."
+ },
+ "pairwise|2110824046833348936|bestof": {
+  "better": "B",
+  "why": "It turns the stat into a sharper, more playful joke that invites broader engagement.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110824046833348936|bestof_random": {
+  "better": "A",
+  "why": "It turns the stat into a sharper, funnier joke that amplifies the post’s hype rather than undercutting it.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2110824046833348936|bestof": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, self-contained ironic framing reads more like a deliberately crafted engagement reply than the terse reactions and rougher phrasing of the others."
+ },
+ "lineup2|2110824046833348936|bestof_random": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, self-contained ironic punchline reads more like a crafted AI response than the other replies’ blunt reactions, shorthand, and typos."
+ },
+ "lineup|2110824046833348936|bestof_rubric": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It neatly restates the post’s key statistic and adds a polished, generic rhetorical question, unlike the more spontaneous and idiosyncratic human replies."
+ },
+ "pairwise|2110824046833348936|bestof_rubric": {
+  "better": "B",
+  "why": "It amplifies the undefeated streak with playful Finals trash talk, making it more engaging and shareable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110824046833348936|bestof_rubric": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished stat recap and neatly constructed “plan or just prayers?” punchline sound more deliberately crafted than the other replies’ terse reactions and rough phrasing."
+ },
+ "pairwise|2110824046833348936|human_raw": {
+  "better": "B",
+  "why": "It’s a concise, believable correction that fits the post, while A feels unnecessarily hostile and speculative.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2110824046833348936|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "It is the most polished and generically contextual response, while the others contain more distinctive shorthand, typos, nicknames, or emotionally erratic formatting typical of real users."
+ },
+ "lineup2|2110824046833348936|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its measured counterpoint and neatly placed emoji feel more like a composed imitation of fan banter than the other replies’ terse slang, typos, and heated insults."
+ },
+ "lineup|2110824046833348936|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It reads like a polished, context-aware joke engineered around Bonner's team changes, unlike the more spontaneous and imperfect human reactions."
+ },
+ "pairwise|2110824046833348936|human_polish": {
+  "better": "B",
+  "why": "It is more specific, timely, and humorously riffs on both the Finals matchup and Bonner's team changes.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110824046833348936|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, context-specific joke and neatly structured punchline stand out from the other replies’ terse reactions and rougher phrasing."
+ },
+ "lineup|2110417062963081284|naive": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, multi-sentence comedic framing and metaphorical punchline feel more deliberately generated than the brief, typo-filled fan reactions."
+ },
+ "lineup2|2110417062963081284|naive": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its polished, multi-sentence joke with coordinated punchlines stands out from the other replies’ brief, informal fan reactions."
+ },
+ "lineup|2110417062963081284|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished wordplay about the unusual sixth selection reads more like a generated quip than the specific, informal fan reactions in the other replies."
+ },
+ "pairwise|2110417062963081284|naive": {
+  "better": "B",
+  "why": "Its witty, punchy joke directly plays off the unusual six-player selection, making it more broadly engaging and shareable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110417062963081284|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained wordplay echoes the post’s premise without the player-specific enthusiasm or informal quirks found in the other replies."
+ },
+ "pairwise|2110417062963081284|remix": {
+  "better": "B",
+  "why": "Its concise joke directly riffs on the unusual six-player selection, making it more broadly relatable and shareable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110417062963081284|constrained": {
+  "better": "A",
+  "why": "Specific praise for Azzi’s defense and three-point shooting is more likely to attract likes from her fans than the generic plus-one joke.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2110417062963081284|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, generic enthusiasm closely mirrors the post without the player-specific opinions, quirks, or errors found in the other replies."
+ },
+ "lineup2|2110417062963081284|remix": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neatly crafted, generic quip mirrors the post’s premise, while the other replies contain more idiosyncratic player references, wording, and errors."
+ },
+ "lineup|2110417062963081284|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It is a polished, generic affirmation that closely paraphrases the post without adding the idiosyncratic details, errors, or fan-specific voice seen in the other replies."
+ },
+ "lineup|2110417062963081284|remix": {
+  "candidate_position": 1,
+  "pick": 2,
+  "detected": false,
+  "why": "It is the most polished and contextually complete response, combining generic praise with multiple supporting accolades in a way typical of AI-generated engagement."
+ },
+ "pairwise|2110417062963081284|continuation": {
+  "better": "B",
+  "why": "Its specific, enthusiastic praise of Azzi and her accomplishments is more likely to attract likes from fans than the generic agreement in A.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2110417062963081284|bestof_random": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, generic punchline neatly mirrors the post’s premise, unlike the more specific and irregularly phrased human replies."
+ },
+ "pairwise|2110417062963081284|bestof": {
+  "better": "B",
+  "why": "It is a concise, clever joke about adding a sixth player to a traditionally five-player team.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110417062963081284|bestof_random": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-contained joke directly mirrors the post’s premise, unlike the more player-specific, informal, or tangential replies."
+ },
+ "lineup2|2110417062963081284|bestof": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly packaged sixth-man pun reads like a deliberately crafted response, unlike the other replies’ messier, player-focused fan reactions."
+ },
+ "pairwise|2110417062963081284|bestof_random": {
+  "better": "B",
+  "why": "It humorously riffs on the unusual six-player selection and celebrates the entire rookie class, making it more broadly engaging.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2110417062963081284|bestof": {
+  "candidate_position": 3,
+  "pick": 4,
+  "detected": false,
+  "why": "It reads like a polished, generic congratulatory summary that neatly combines multiple accolades, unlike the more spontaneous or error-filled human replies."
+ },
+ "pairwise|2110417062963081284|bestof_rubric": {
+  "better": "B",
+  "why": "It enthusiastically celebrates Azzi’s specific achievements, making it more engaging and appealing to fans than the generic joke.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2110417062963081284|human_raw": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished, context-heavy summary with explanatory parentheticals rather than a spontaneous fan reaction."
+ },
+ "lineup|2110417062963081284|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 1,
+  "detected": false,
+  "why": "It reads like an incoherent, factually mismatched generated response, mentioning Caitlin Clark’s 2026 numbers instead of reacting to the six-player All-Rookie Team."
+ },
+ "lineup2|2110417062963081284|bestof_rubric": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly packaged sixth-man joke reads like a deliberately crafted response, unlike the more idiosyncratic fan reactions in the other replies."
+ },
+ "pairwise|2110417062963081284|human_raw": {
+  "better": "A",
+  "why": "Its concise, celebratory tone and specific praise feel more authentic and engaging to WNBA fans.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup2|2110417062963081284|human_raw": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its detached, explanatory tone and unnecessary sourcing phrase “per their programs” read like an AI-generated summary rather than a spontaneous fan reaction."
+ },
+ "lineup|2110417062963081284|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished summary with sourced context and a broad concluding takeaway, unlike the shorter, more spontaneous fan reactions."
+ },
+ "pairwise|2110417062963081284|human_polish": {
+  "better": "B",
+  "why": "It is concise, enthusiastic, and specifically celebrates Azzi Fudd’s strengths, making it more likely to resonate with real fans.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2105382766682714299|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads like a polished, self-contained quip that deliberately mirrors the post’s wording and emojis while stacking multiple tidy jokes."
+ },
+ "lineup2|2110417062963081284|human_polish": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished recap, explanatory college-pipeline framing, and unnecessary attribution to the players’ programs stand apart from the other replies’ brief, informal fan reactions."
+ },
+ "pairwise|2105382766682714299|naive": {
+  "better": "B",
+  "why": "Its brief, enthusiastic, and context-aware tone feels more like an authentic fan reply, making it likelier to earn likes than A’s polished, lengthy joke.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "pairwise|2105382766682714299|constrained": {
+  "better": "B",
+  "why": "It playfully picks up on Caitlin’s teasing emoji and invites speculation, making it more engaging and relatable.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2105382766682714299|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished interpretation of the emoji and neatly phrased lowercase punchline feels more deliberately crafted than the spontaneous fan reactions."
+ },
+ "lineup|2105382766682714299|remix": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It has a polished, self-contained punchline that neatly interprets the emoji, unlike the more spontaneous and personally specific fan replies."
+ },
+ "lineup2|2105382766682714299|constrained": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, self-aware commentary on the emoji and quoted phrase feels more deliberately crafted than the other replies’ spontaneous excitement and personal details."
+ },
+ "lineup2|2105382766682714299|remix": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, self-contained wordplay about the emoji being the real announcement reads more like a crafted AI quip than the other replies’ spontaneous excitement or specific personal details."
+ },
+ "pairwise|2105382766682714299|remix": {
+  "better": "A",
+  "why": "It playfully riffs on Caitlin’s teasing emoji and builds excitement for future drops, making it more engaging and relatable.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2105382766682714299|continuation": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished hot-take structure, sweeping MJ comparison, and generic “Bookmark this” closer contrast with the more spontaneous, personally specific fan replies."
+ },
+ "lineup|2105382766682714299|continuation": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished hot-take framing, sweeping Michael Jordan comparison, and engagement-bait closer (“Bookmark this”) read as more AI-generated than the personal, idiosyncratic replies."
+ },
+ "pairwise|2105382766682714299|continuation": {
+  "better": "B",
+  "why": "Its concise, excited, and lightly humorous tone feels more authentic and relatable than A's exaggerated comparison to Michael Jordan.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2105382766682714299|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished, context-aware quip that neatly links the teasing emoji to a separate fan concern, unlike the more spontaneous and personally specific reactions."
+ },
+ "lineup2|2105382766682714299|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, context-aware quip linking the 😏 emoji to roster moves reads like crafted engagement bait, unlike the other replies’ more spontaneous fan reactions."
+ },
+ "pairwise|2105382766682714299|bestof": {
+  "better": "B",
+  "why": "It playfully riffs on her 😏 emoji and ties the launch excitement to fans’ stronger interest in roster moves, making it more timely and engaging.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2105382766682714299|bestof_random": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its neatly crafted pivot from the smirking emoji to roster moves feels more deliberately engineered than the other replies’ straightforward excitement and personal details."
+ },
+ "lineup2|2105382766682714299|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, multi-part joke, neatly integrated basketball metaphor, and mirrored emojis read more like a crafted AI response than the other replies’ spontaneous fan reactions."
+ },
+ "lineup|2105382766682714299|bestof_rubric": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It has a polished, self-contained joke structure that directly repurposes the post’s wording and emoji, making it sound more AI-crafted than the spontaneous personal reactions."
+ },
+ "pairwise|2105382766682714299|bestof_rubric": {
+  "better": "A",
+  "why": "It playfully riffs on Caitlin’s wording and emoji while expressing fan excitement in a more relatable, engaging way.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "pairwise|2105382766682714299|bestof_random": {
+  "better": "B",
+  "why": "It adds a witty, fan-relevant spin about roster moves while still signaling enthusiasm for the shoes.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2105382766682714299|bestof_random": {
+  "candidate_position": 5,
+  "pick": 3,
+  "detected": false,
+  "why": "It is a generic enthusiasm-only reaction with no specific personal context, product detail, or distinctive conversational hook tied to the post."
+ },
+ "lineup2|2105382766682714299|bestof_rubric": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, self-contained joke about a “threat to my wallet,” paired with an explicit callback to the emoji, feels more deliberately crafted than the other replies’ spontaneous reactions and personal details."
+ },
+ "pairwise|2105382766682714299|human_raw": {
+  "better": "A",
+  "why": "Its enthusiastic, supportive tone directly matches Caitlin Clark's excitement and is more broadly relatable to fans.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2105382766682714299|human_raw": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It reads as the most generic, context-light enthusiasm, with formulaic praise and repetitive emojis rather than a specific personal reaction."
+ },
+ "lineup|2105382766682714299|human_polish": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished, generic paraphrase of the post, echoing its themes and emojis without adding the idiosyncratic details typical of the other replies."
+ },
+ "lineup2|2105382766682714299|human_polish": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, generic encouragement and close mirroring of the post’s emojis and future-facing language stand out from the other replies’ spontaneous excitement or specific personal details."
+ },
+ "pairwise|2108954459304763841|naive": {
+  "better": "A",
+  "why": "Its timely humor and playful appeal to Fever fans is more distinctive and likely to spark broader engagement than a basic series prediction.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2108954459304763841|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished, multi-clause comedic framing and neatly constructed punchline read more like AI-generated social media copy than the brief, spontaneous fan reactions."
+ },
+ "lineup2|2108954459304763841|naive": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Reply 5 stands out for its polished, multi-sentence setup and punchline, unlike the shorter, more spontaneous fan reactions in the other replies."
+ },
+ "pairwise|2105382766682714299|human_polish": {
+  "better": "B",
+  "why": "Its short, playful reference to prior attempts feels more authentic and likely to resonate with real X users than the generic praise in A.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2105382766682714299|human_raw": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "Its generic, exaggerated excitement lacks the personal details or distinctive phrasing that make the other replies feel more individually grounded."
+ },
+ "lineup|2108954459304763841|constrained": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It unnaturally repeats the full date from the post and offers a neatly contextualized allegiance switch, unlike the more spontaneous, slang-heavy fan replies."
+ },
+ "pairwise|2108954459304763841|constrained": {
+  "better": "A",
+  "why": "A is concise, confident, and directly supports the Dream with a championship prediction and trophy emoji.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2108954459304763841|remix": {
+  "better": "A",
+  "why": "A is concise, confident, and directly supports the Dream with a celebratory series prediction, making it more appealing to the team’s fans.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "lineup|2108954459304763841|remix": {
+  "candidate_position": 3,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished, generic prediction lacks the idiosyncratic phrasing and conversational context found in the other replies."
+ },
+ "lineup2|2108954459304763841|constrained": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its carefully crafted fan-switching narrative and conspicuous reuse of the post’s exact date and emoji feel more deliberately tailored than the other replies’ spontaneous reactions."
+ },
+ "lineup2|2108954459304763841|remix": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly structured setup and punchline, with explanatory context about becoming a Dream fan, feel more deliberately composed than the other replies’ spontaneous fan reactions."
+ },
+ "lineup|2108954459304763841|continuation": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It is unusually polished, emotionally comprehensive, and generically motivational compared with the brief, slang-heavy reactions from the other users."
+ },
+ "lineup2|2108954459304763841|continuation": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished emotional arc, generic adversity narrative, and conspicuous praise for “Coach Terrell” stand out from the other replies’ brief, spontaneous fan reactions."
+ },
+ "pairwise|2108954459304763841|bestof": {
+  "better": "A",
+  "why": "The confident championship prediction with a trophy emoji is more aligned with the team’s fanbase and likely to attract more supportive likes.",
+  "candidate_won": false,
+  "candidate_was": "B"
+ },
+ "pairwise|2108954459304763841|continuation": {
+  "better": "B",
+  "why": "Its passionate, team-specific support and praise for Coach Terrell are more emotionally engaging to real fans.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2108954459304763841|bestof": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its neatly constructed callback to “Are you ready?” and self-contained Fever punchline feel more deliberately composed than the other replies’ spontaneous fan reactions."
+ },
+ "lineup|2108954459304763841|bestof_random": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "It is the most generic and context-light reply, offering a clean prediction with a predictable trophy emoji and none of the distinctive slang or specific commentary found in the others."
+ },
+ "pairwise|2108954459304763841|bestof_random": {
+  "better": "A",
+  "why": "It taps into anti-Vegas sentiment and rallies Fever fans behind Atlanta, giving more fan groups a reason to like it.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2108954459304763841|bestof": {
+  "candidate_position": 5,
+  "pick": 2,
+  "detected": false,
+  "why": "It is a generic, clean prediction with an emoji, while the other replies contain more idiosyncratic phrasing, humor, or player-specific commentary typical of real users."
+ },
+ "lineup2|2108954459304763841|bestof_rubric": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its neatly constructed joke about snacks and zero blood pressure feels more deliberately polished than the other replies’ spontaneous fan predictions and reactions."
+ },
+ "lineup|2108954459304763841|bestof_rubric": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, self-contained joke about snacks and “zero blood pressure” feels more deliberately constructed than the raw, typo-filled fan reactions."
+ },
+ "pairwise|2108954459304763841|bestof_rubric": {
+  "better": "B",
+  "why": "A confident championship prediction directly supports the Dream and is more likely to resonate with fans under the team's post.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup2|2108954459304763841|bestof_random": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "Its neatly framed matchup commentary and broad claim about Fever fans feel more deliberately composed than the other replies’ spontaneous slang, predictions, and emoji-heavy reactions."
+ },
+ "lineup|2108954459304763841|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished phrasing, strategic capitalization, balanced emoji use, and reuse of the official hashtag make it read like a generated fan-engagement response."
+ },
+ "pairwise|2108954459304763841|human_raw": {
+  "better": "B",
+  "why": "It reflects an immediate, relatable fan concern about ticket availability, while A’s 4–2 prediction may not fit the series format.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2108954459304763841|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "It is the most generic and context-light prediction, lacking the idiosyncratic phrasing and specific fan commentary found in the other replies."
+ },
+ "lineup2|2108954459304763841|human_raw": {
+  "candidate_position": 1,
+  "pick": 4,
+  "detected": false,
+  "why": "Its neatly formatted, generic prediction and single trophy emoji lack the distinctive slang, emphatic punctuation, or specific commentary found in the other replies."
+ },
+ "pairwise|2108954459304763841|human_polish": {
+  "better": "A",
+  "why": "It matches the excitement of the post, invites useful ticket information, and feels more authentic and engaging than a bare score prediction.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2108954459304763841|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished engagement-question format, emphatic capitalization, ticket emoji, and repeated campaign hashtag feel more deliberately constructed than the other replies’ casual fan reactions."
+ },
+ "lineup|2110808214048502128|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a polished, self-contained analysis that methodically connects three selections to the Finals, unlike the brief, emotional, typo-filled fan reactions."
+ },
+ "lineup2|2110808214048502128|naive": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished structure, added scheduling context, and neatly framed punchline contrast with the short, emotionally reactive style of the other replies."
+ },
+ "pairwise|2110808214048502128|constrained": {
+  "better": "B",
+  "why": "It connects the defensive honors to the Finals matchup with a punchy, timely observation, while A is awkwardly worded and less credible.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup|2110808214048502128|constrained": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It reads like a polished, context-aware observation that synthesizes the list into a broader finals matchup prediction, unlike the more impulsive fan reactions."
+ },
+ "pairwise|2110808214048502128|naive": {
+  "better": "B",
+  "why": "The blunt, fan-driven outrage over Azzi Fudd’s omission is more emotionally engaging and likely to attract likes than the analytical Finals observation.",
+  "candidate_won": false,
+  "candidate_was": "A"
+ },
+ "lineup|2110808214048502128|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It is the only reply with a polished, context-aware joke connecting three named players to a hypothetical finals matchup, unlike the brief and emotionally reactive fan comments."
+ },
+ "lineup2|2110808214048502128|constrained": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its neatly packaged observation about Finals representation and a matchup prediction reads more like a crafted conversational response than the other replies’ spontaneous fan reactions."
+ },
+ "lineup2|2110808214048502128|remix": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its neatly constructed finals matchup and polished punchline stand out from the other replies’ brief, emotional fan reactions and unedited phrasing."
+ },
+ "lineup|2110808214048502128|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It is the most polished and self-contained reply, using a generic legacy argument rather than the shorthand, typos, and emotional reactions typical of the other responses."
+ },
+ "pairwise|2110808214048502128|remix": {
+  "better": "A",
+  "why": "It is a timely, witty finals-preview joke involving three listed players, while B has a distracting typo and a less compelling complaint.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2110808214048502128|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It is the only reply with a polished, context-aware observation connecting multiple selections to expected Finals scoring rather than a brief emotional fan reaction."
+ },
+ "pairwise|2110808214048502128|continuation": {
+  "better": "B",
+  "why": "It offers a strong, positive legacy take about a popular star, while A is weakened by awkward wording and a less broadly compelling snub claim.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "lineup2|2110808214048502128|continuation": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its polished, complete sentences and generic career-level praise contrast with the other replies’ more spontaneous slang, typos, and emoji-heavy reactions."
+ },
+ "lineup2|2110808214048502128|bestof": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished team-count observation and neatly constructed joke feel more deliberately composed than the other replies’ spontaneous cheers and complaints."
+ },
+ "lineup|2110808214048502128|bestof_random": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It offers a neatly framed, context-aware observation with polished phrasing, unlike the more spontaneous and error-filled fan reactions."
+ },
+ "pairwise|2110808214048502128|bestof": {
+  "better": "B",
+  "why": "It’s a sharper, more humorous observation tied to the listed teams and the Finals, making it more broadly engaging.",
+  "candidate_won": true,
+  "candidate_was": "B"
+ },
+ "pairwise|2110808214048502128|bestof_random": {
+  "better": "A",
+  "why": "It is timely, clever, and positively connects the selections to the Finals, while B has a distracting typo and reads as a generic complaint.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2110808214048502128|bestof_random": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its neatly packaged statistical observation and polished punchline feel more deliberately composed than the other replies’ brief cheers and unfiltered complaints."
+ },
+ "pairwise|2110808214048502128|human_raw": {
+  "better": "A",
+  "why": "The short, enthusiastic celebration of Jordin Canada is more likely to attract broad positive engagement than a typo-filled complaint.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup2|2110808214048502128|human_raw": {
+  "candidate_position": 2,
+  "pick": 5,
+  "detected": false,
+  "why": "Its stacked slang and elaborately framed Azzi Fudd grievance feel more deliberately constructed than the other replies’ brief cheers or typo-heavy complaint."
+ },
+ "lineup|2110808214048502128|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It is unusually polished and explanatory for the thread, with generic praise and neatly placed emojis that resemble AI-generated social media copy."
+ },
+ "lineup2|2110808214048502128|human_polish": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "Its polished, complete sentences and generic praise contrast with the other replies’ terse, typo-heavy, or emotionally spontaneous fan language."
+ },
+ "pairwise|2110808214048502128|human_polish": {
+  "better": "A",
+  "why": "The enthusiastic, player-specific praise is more polished and likely to resonate with fans than B's typo-filled complaint.",
+  "candidate_won": true,
+  "candidate_was": "A"
+ },
+ "lineup|2110808214048502128|human_raw": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "“BIG JC!!!” is the most generic, context-mirroring cheer and lacks the idiosyncratic phrasing or emotional specificity of the other replies."
+ }
+}
