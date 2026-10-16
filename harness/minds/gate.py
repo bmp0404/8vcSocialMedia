@@ -15,7 +15,8 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
-from harness.facts.ground import FactIndex, grounded_numbers
+from harness.facts.ground import FactIndex, anchor_words, grounded_numbers, unit_after
+from harness.learning.kinds import Fact
 from harness.minds.settings import GateLimits
 from harness.xtext import MAX_WEIGHTED_CHARS, overflow_index, weighted_length
 
@@ -258,6 +259,19 @@ def _rule_ungrounded_name(text: str, c: _Ctx) -> list[str]:
         return []
     return [(f"name {w!r} isn't in the context", a, b) for w, a, b in capitalized_names(_unmarked(text))
             if w.lower() not in c.context and not (c.facts and c.facts.grounds_name(w))]
+
+
+def facts_used(text: str, *, context: str, facts: FactIndex, post: str | None = None) -> list[tuple[Fact, str]]:
+    """(fact, the name or number it backs) for every name or number in `text` that `context` lacks and a fact in
+    `facts` backs: what the grounding rules leaned on to let `text` through. Same matching as the rules."""
+    text = _unmarked(unicodedata.normalize("NFC", text))
+    ctx = unicodedata.normalize("NFC", context).lower()
+    out = [(f, w) for w, _, _ in capitalized_names(text) if w.lower() not in ctx for f in facts.facts_for_name(w)]
+    anchors = anchor_words(text) | anchor_words(post or "") | facts.anchors
+    for m in NUMBER.finditer(text):
+        if m.group(0) not in ctx:
+            out += [(f, m.group(0)) for f in facts.facts_for_number(m.group(0), unit_after(text, m.end()), anchors)]
+    return out
 
 
 RULES = {

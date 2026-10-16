@@ -457,8 +457,19 @@ BOSTON = Fact(id="fact-boston", subject="entity-aliyah-boston", question="How di
 NEEDS_FACTS = "Boston had 19 points and 10 boards"
 
 
+class VetoSpy(MockLLM):
+    def __init__(self):
+        super().__init__()
+        self.veto_prompts = []
+
+    def complete_json(self, system, prompt, mock=None):
+        if system.startswith("You screen candidate"):
+            self.veto_prompts.append(prompt)
+        return super().complete_json(system, prompt, mock)
+
+
 @pytest.mark.parametrize("arm", ["continuation", "styled"])
-def test_live_facts_reach_the_plan_and_the_gate_on_the_hot_path(tmp_path, monkeypatch, arm):
+def test_live_facts_reach_the_plan_the_gate_and_the_veto_on_the_hot_path(tmp_path, monkeypatch, arm):
     """The draft names a player and two numbers the post doesn't hold; only the live fact grounds them."""
     monkeypatch.setattr(hot.writer, "continuations", lambda *a, **k: [NEEDS_FACTS])
     monkeypatch.setattr(hot.writer, "styled_replies", lambda *a, **k: [NEEDS_FACTS])
@@ -469,11 +480,13 @@ def test_live_facts_reach_the_plan_and_the_gate_on_the_hot_path(tmp_path, monkey
     without = hot.run_hot(MockLLM(), "wnba", post, reader=FakeReader(), out_dir=tmp_path / "a", seed=arms.DEFAULT_SEED,
                           detected_at=T0 - M, clock=Clock())
     assert (without["offer"], without["abstain_reason"], without["facts_live"]) == ("abstain", "gate_rejected", None)
-    with_facts = hot.run_hot(MockLLM(), "wnba", post, reader=FakeReader(), out_dir=tmp_path / "b",
+    spy = VetoSpy()
+    with_facts = hot.run_hot(spy, "wnba", post, reader=FakeReader(), out_dir=tmp_path / "b",
                              seed=arms.DEFAULT_SEED, detected_at=T0 - M, clock=Clock(), facts=[BOSTON])
     assert (with_facts["offer"], with_facts["draft"], with_facts["facts_live"]) == ("draft", NEEDS_FACTS, 1)
-    assert with_facts["draft_meta"]["facts_live"] == 1
+    assert with_facts["draft_meta"]["facts_live"] == with_facts["draft_meta"]["facts_shown_to_veto"] == 1
     assert planned == [None, [BOSTON]]
+    assert len(spy.veto_prompts) == 2 and all(f"true as of 2026-10-16: {BOSTON.answer}" in p for p in spy.veto_prompts)
 
 
 def test_a_real_run_loads_the_target_profiles_live_facts_from_its_store(tmp_path, monkeypatch):

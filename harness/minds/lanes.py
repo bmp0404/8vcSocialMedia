@@ -273,6 +273,50 @@ def judge_meta(cfg: ActionConfig, picked: veto.VetoResult, cands: list[dict], gr
             "pick": "random among drafts that passed", "grounding": grounding}
 
 
+# Live facts the veto sees per target, and per name or number in a draft. No measurement picked either number:
+# they bound the prompt when several drafts lean on different box-score lines.
+VETO_FACTS = 8
+FACTS_PER_TOKEN = 2
+FACT_CHARS = 300
+VETO_FACTS_HEADER = ("LIVE FACTS (from sources such as box scores, rosters and the account's own posts, each with the "
+                     "date it was true):")
+
+
+def _snippet(answer: str, token: str, width: int = FACT_CHARS) -> str:
+    """The part of a fact's answer that holds `token`: only the matching lines of a multi-line fact (a thread),
+    and a window around the token when the answer is longer than `width`."""
+    key = token.lower().replace("’", "'").removesuffix("'s")
+    lines = [line for line in answer.splitlines() if line.strip()]
+    if len(lines) > 1:
+        answer = " / ".join([line for line in lines if key in line.lower().replace("’", "'")] or lines[:1])
+    answer = " ".join(answer.split())
+    if len(answer) <= width:
+        return answer
+    start = max(0, min(answer.lower().replace("’", "'").find(key) - width // 2, len(answer) - width))
+    return ("…" if start else "") + answer[start:start + width] + ("…" if start + width < len(answer) else "")
+
+
+def veto_facts(texts: list[str], context: str, post: str, index: ground.FactIndex | None) -> list[str]:
+    """Lines for the live facts the gate leaned on to pass `texts`: the facts behind each name or number the context
+    lacks, facts about that name first, then the newest. Empty when the gate leaned on none, so the veto's input is
+    what it was before facts existed."""
+    if not index:
+        return []
+    chosen: dict[str, str] = {}
+    for text in texts:
+        by_token: dict[str, list[Fact]] = {}
+        for f, token in gate.facts_used(text, context=context, facts=index, post=post):
+            by_token.setdefault(token, []).append(f)
+        for token, facts in by_token.items():
+            named = ground.anchor_words(token)
+            facts = sorted(sorted(facts, key=lambda f: f.as_of, reverse=True),
+                           key=lambda f: not (ground.subject_anchors(f) & named))
+            for f in facts[:FACTS_PER_TOKEN]:
+                if f.id not in chosen and len(chosen) < VETO_FACTS:
+                    chosen[f.id] = f"- fact, true as of {f.as_of}: {_snippet(f.answer, token)}"
+    return list(chosen.values())
+
+
 def fact_index(live_facts: list[Fact], author: str, url: str, post: str, replies: list[dict],
                now: datetime | None = None) -> ground.FactIndex:
     """Live facts plus the whole thread under the target (the page shows at most `page_replies` of it).
@@ -326,7 +370,11 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     detail = f"{method}: {len(passing)}/{len(cands)} drafts passed the gate" + (f" ({note})" if note else "")
     if not passing:
         return Decision(REPLY_LANE, url, "abstain", "gate_rejected", detail, candidates=cands), None
-    picked, grounded, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane="reply", context=context,
+    # The veto sees the live facts the gate leaned on, so a name or number they back isn't vetoed as unsupported.
+    # The gate's own context stays without them: its substring check would accept any number in the block.
+    shown = veto_facts(passing, context, post, index)
+    veto_context = context + ("\n\n" + VETO_FACTS_HEADER + "\n" + "\n".join(shown) if shown else "")
+    picked, grounded, why = _veto_and_pick(llm, cfg, mission, cands, passing, lane="reply", context=veto_context,
                                            seed=url, grounding=grounding)
     if picked is None:
         return Decision(REPLY_LANE, url, "abstain", "judge_rejected", why, candidates=cands), None
@@ -339,9 +387,9 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
                     "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, grounded),
-                    "facts_live": None if live_facts is None else len(live_facts),
+                    "facts_live": None if live_facts is None else len(live_facts), "facts_shown_to_veto": len(shown),
                     # What the veto judged the draft against; qualify's critic gets the same (Integration run 37).
-                    "veto_context": context},
+                    "veto_context": veto_context},
     )
     return Decision(REPLY_LANE, url, "reply", detail=detail, candidates=cands), action
 

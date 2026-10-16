@@ -108,6 +108,7 @@ class _Indexed:
     anchors: frozenset[str]
     pairs: frozenset[str]  # hyphenated pairs, as written
     numbers: frozenset[tuple[str, str]]  # (unit, number) for every other number
+    words: frozenset[str]
 
 
 class FactIndex:
@@ -121,14 +122,16 @@ class FactIndex:
         self._words: set[str] = set()
         self._indexed: list[_Indexed] = []
         for f in self.facts:
-            self._words |= words(f.answer)
+            fact_words = words(f.answer)
+            self._words |= fact_words
             pairs, numbers = set(), set()
             for m in NUMBER.finditer(f.answer):
                 if is_pair(m.group(0)):
                     pairs.add(m.group(0))
                 else:
                     numbers.add((unit_after(f.answer, m.end()), m.group(0)))
-            self._indexed.append(_Indexed(frozenset(subject_anchors(f)), frozenset(pairs), frozenset(numbers)))
+            self._indexed.append(_Indexed(frozenset(subject_anchors(f)), frozenset(pairs), frozenset(numbers),
+                                          frozenset(fact_words)))
 
     def __bool__(self) -> bool:
         return bool(self.facts)
@@ -140,13 +143,18 @@ class FactIndex:
     def grounds_number(self, token: str, unit: str, anchors: set[str]) -> bool:
         """True when a fact about one of `anchors` holds `token`: a hyphenated pair as written, or any other
         number with the same unit (see unit_after)."""
+        return bool(self.facts_for_number(token, unit, anchors))
+
+    def facts_for_name(self, name: str) -> list[Fact]:
+        """The facts that back `name` the way grounds_name does."""
+        key = POSSESSIVE.sub("", normalize(name))
+        return [f for f, ix in zip(self.facts, self._indexed) if key and key in ix.words]
+
+    def facts_for_number(self, token: str, unit: str, anchors: set[str]) -> list[Fact]:
+        """The facts that back `token` the way grounds_number does."""
         hyphenated = is_pair(token)
-        for ix in self._indexed:
-            if not ix.anchors & anchors:
-                continue
-            if (token in ix.pairs) if hyphenated else ((unit, token) in ix.numbers):
-                return True
-        return False
+        return [f for f, ix in zip(self.facts, self._indexed) if ix.anchors & anchors
+                and ((token in ix.pairs) if hyphenated else ((unit, token) in ix.numbers))]
 
 
 def grounded_numbers(index: FactIndex, text: str, post: str = "") -> set[int]:

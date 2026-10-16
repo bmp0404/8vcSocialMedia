@@ -132,6 +132,17 @@ def test_facts_never_silence_style_rules_or_handles():
     assert rules == {"em_dash", "ai_vocab", "unknown_handle"}
 
 
+def test_facts_used_names_the_fact_behind_each_name_and_number_the_context_lacks():
+    roster = fact("Indiana Fever roster: Aliyah Boston (#7, F), Kelsey Mitchell (#0, G).", subject="entity-indiana-fever",
+                  fid="fact-roster")
+    idx = ground.FactIndex([BOSTON, FEVER, roster], ground.anchor_words("Indiana Fever " + POST))
+    used = gate.facts_used("so Boston had 19 points and 10 boards, Indy", context=POST, facts=idx)
+    assert {(f.id, token) for f, token in used} == {(BOSTON.id, "Boston"), (roster.id, "Boston"), (BOSTON.id, "19"),
+                                                    (BOSTON.id, "10")}  # "Indy" is in the post
+    # A number with the wrong unit backs nothing, the same as in the gate; a [VERIFY] marker is the person's to check.
+    assert gate.facts_used("so Boston dropped 19 tonight [VERIFY: 31 assists]", context="Boston", facts=idx) == []
+
+
 # ---------------------------------------------------------------- ESPN parsers
 
 SUMMARY = {
@@ -290,6 +301,63 @@ def test_lane_gate_grounds_drafts_on_live_facts(tmp_out, monkeypatch):
     actions, with_facts = lane_run(MockLLM(), [BOSTON])
     assert [a.text for a in actions if a.type == "reply"] == ["Boston had 19 points and 10 boards"]
     assert actions[0].draft_meta["facts_live"] == 1
+
+
+class VetoSpy(MockLLM):
+    """Keeps the user prompt of every veto call."""
+
+    def __init__(self):
+        super().__init__()
+        self.veto_prompts = []
+
+    def complete_json(self, system, prompt, mock=None):
+        if system.startswith("You screen candidate"):
+            self.veto_prompts.append(prompt)
+        return super().complete_json(system, prompt, mock)
+
+
+def test_the_veto_sees_the_facts_the_gate_leaned_on_and_the_critic_gets_the_same(tmp_out, monkeypatch):
+    monkeypatch.setattr(writer, "continuations", lambda *a, **k: ["Boston had 19 points and 10 boards"])
+    gate_contexts = []
+    real_check = gate.check
+    monkeypatch.setattr(gate, "check", lambda *a, **k: gate_contexts.append(k.get("context")) or real_check(*a, **k))
+    spy = VetoSpy()
+    actions, _ = lane_run(spy, [FEVER, BOSTON])
+    [reply] = [a for a in actions if a.type == "reply"]
+    line = f"- fact, true as of {BOSTON.as_of}: {BOSTON.answer}"
+    prompts = [p for p in spy.veto_prompts if p.startswith("POST by @IndianaFever")]  # not the caption's
+    assert len(prompts) == 2 and all(lanes.VETO_FACTS_HEADER + "\n" + line in p for p in prompts)
+    assert "Indiana Fever lost" not in prompts[0]  # the gate didn't need the team's result
+    assert reply.draft_meta["facts_shown_to_veto"] == 1
+    assert line in reply.draft_meta["veto_context"] and prompts[0].startswith(reply.draft_meta["veto_context"])
+    assert gate_contexts and not any("LIVE FACTS" in c for c in gate_contexts if c)
+
+
+@pytest.mark.parametrize("facts", [None, [FEVER]])
+def test_the_veto_context_is_unchanged_when_the_gate_leaned_on_no_fact(tmp_out, monkeypatch, facts):
+    monkeypatch.setattr(writer, "continuations", lambda *a, **k: ["thank you for the season, indy"])
+    spy = VetoSpy()
+    actions, _ = lane_run(spy, facts)
+    [reply] = [a for a in actions if a.type == "reply"]
+    assert "LIVE FACTS" not in reply.draft_meta["veto_context"] and reply.draft_meta["facts_shown_to_veto"] == 0
+    assert all("LIVE FACTS" not in p for p in spy.veto_prompts)
+
+
+def test_veto_facts_caps_the_block_and_shows_only_the_matching_replies_of_a_thread_fact():
+    thread = posts.thread_facts("IndianaFever", X_URL, ["Mitchell was cooking", "great season", "bring back White"], AT)
+    idx = ground.FactIndex(thread, ())
+    lines = lanes.veto_facts(["honestly Mitchell carried us"], POST, POST, idx)
+    assert lines == [f"- fact, true as of {AT.date().isoformat()}: Mitchell was cooking"]
+    names = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima"]
+    many = [fact(f"{n} scored", subject=f"entity-{n.lower()}", fid=f"fact-{n}") for n in names]
+    assert len(lanes.veto_facts(["ok " + " ".join(names)], POST, POST, ground.FactIndex(many))) == lanes.VETO_FACTS
+    assert lanes.veto_facts(["so Boston had 19 points"], POST, POST, None) == []
+
+
+def test_a_long_fact_is_cut_to_a_window_around_the_name():
+    roster = "Team roster: " + ", ".join(f"Name{i} (#{i}, G)" for i in range(40)) + ", Kelsey Mitchell (#0, G)."
+    snippet = lanes._snippet(roster, "Mitchell")
+    assert "Kelsey Mitchell" in snippet and snippet.startswith("…") and len(snippet) <= lanes.FACT_CHARS + 2
 
 
 def by_reason(decisions):
