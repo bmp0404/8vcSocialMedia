@@ -14,9 +14,10 @@ something the draft, the post or the target's handle names (an anchor, from the 
 holds the same number with the same unit: the word right after it, with stat synonyms folded
 together, so "27 pts" matches "27 points" but "dropping 31 tonight" matches nothing in a box score,
 and "500mb" doesn't match "500 → 1,000". A hyphenated pair such as a score, a record or "8-16" from
-the field is specific enough to match without a unit, in either order, because people write a score
-as 94-83 or 83-94. Matching the number alone let 9 of 143 invented WNBA stats and 15 of 235 invented
-dev-tool numbers through (action/DESIGN.md), which is why the unit is required.
+the field is specific enough to match without a unit, but only as written: a 28-16 record must not back
+up "16-28". Game facts write the score both ways round, because people write 94-83 or 83-94. Matching
+the number alone let 9 of 143 invented WNBA stats and 15 of 235 invented dev-tool numbers through
+(action/DESIGN.md), which is why the unit is required.
 """
 
 import re
@@ -37,7 +38,7 @@ STAT_WORDS = {
     "steals": ("steals", "steal", "stl", "stls"),
     "blocks": ("blocks", "block", "blk", "blks"),
     "turnovers": ("turnovers", "turnover", "tov", "tovs"),
-    "threes": ("threes", "three", "3s", "3pm", "triples"),
+    "threes": ("threes", "three", "triples"),
     "minutes": ("minutes", "minute", "min", "mins"),
 }
 STAT_LABEL = {w: label for label, words in STAT_WORDS.items() for w in words}
@@ -93,19 +94,19 @@ def unit_after(text: str, end: int) -> str:
     if m.group(0) == "%":
         return "%"
     word = m.group(1).lower()
-    return STAT_LABEL.get(word) or (word[:-1] if len(word) > 3 and word.endswith("s") else word)
+    single = word[:-1] if len(word) > 3 and word.endswith("s") else word
+    return STAT_LABEL.get(word) or STAT_LABEL.get(single) or single
 
 
-def pair(token: str) -> frozenset[str] | None:
-    """Both orders of a hyphenated pair ("94-83" and "83-94"), or None for any other number."""
-    parts = token.split("-")
-    return frozenset({token, f"{parts[1]}-{parts[0]}"}) if len(parts) == 2 else None
+def is_pair(token: str) -> bool:
+    """A hyphenated pair of numbers: a score, a record, a shooting line."""
+    return token.count("-") == 1
 
 
 @dataclass(frozen=True)
 class _Indexed:
     anchors: frozenset[str]
-    pairs: frozenset[str]  # hyphenated pairs, both orders
+    pairs: frozenset[str]  # hyphenated pairs, as written
     numbers: frozenset[tuple[str, str]]  # (unit, number) for every other number
 
 
@@ -123,9 +124,8 @@ class FactIndex:
             self._words |= words(f.answer)
             pairs, numbers = set(), set()
             for m in NUMBER.finditer(f.answer):
-                both = pair(m.group(0))
-                if both:
-                    pairs |= both
+                if is_pair(m.group(0)):
+                    pairs.add(m.group(0))
                 else:
                     numbers.add((unit_after(f.answer, m.end()), m.group(0)))
             self._indexed.append(_Indexed(frozenset(subject_anchors(f)), frozenset(pairs), frozenset(numbers)))
@@ -138,13 +138,13 @@ class FactIndex:
         return bool(key) and key in self._words
 
     def grounds_number(self, token: str, unit: str, anchors: set[str]) -> bool:
-        """True when a fact about one of `anchors` holds `token`: a hyphenated pair in either order, or any
-        other number with the same unit (see unit_after)."""
-        both = pair(token)
+        """True when a fact about one of `anchors` holds `token`: a hyphenated pair as written, or any other
+        number with the same unit (see unit_after)."""
+        hyphenated = is_pair(token)
         for ix in self._indexed:
             if not ix.anchors & anchors:
                 continue
-            if (both and ix.pairs & both) or (not both and (unit, token) in ix.numbers):
+            if (token in ix.pairs) if hyphenated else ((unit, token) in ix.numbers):
                 return True
         return False
 

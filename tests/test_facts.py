@@ -23,9 +23,9 @@ def fact(answer, subject="entity-aliyah-boston", as_of="2026-10-02", valid_until
 
 
 BOSTON = fact("Aliyah Boston (Indiana Fever) against the Las Vegas Aces on 2026-10-01: 19 points, 10 rebounds, "
-              "3 assists, 32 minutes, 2 threes, 8-16 FG, 2-4 3PT.")
-FEVER = fact("On 2026-10-01 (postseason), the Indiana Fever lost to the Las Vegas Aces 83-94. Record after the game: "
-             "Indiana Fever 28-16.", subject="entity-indiana-fever")
+              "3 assists, 32 minutes, 2 threes, 8-16 from the field, 2-4 from three.")
+FEVER = fact("On 2026-10-01 (postseason), the Indiana Fever lost to the Las Vegas Aces 83-94 (94-83). Record after the "
+             "game: Indiana Fever 28-16.", subject="entity-indiana-fever")
 
 
 # ---------------------------------------------------------------- validity windows
@@ -59,7 +59,8 @@ def test_names_match_whole_words_ignoring_case_curly_apostrophes_and_possessives
 
 @pytest.mark.parametrize("text, end, unit", [
     ("27 pts", 2, "points"), ("10 boards and", 2, "rebounds"), ("a 27-point night", 4, "points"),
-    ("38% shooting", 2, "%"), ("500mb free", 3, "mb"), ("3 models", 1, "model"), ("31.", 2, ""), ("500 → 1,000", 3, ""),
+    ("30 pieces", 2, "points"), ("38% shooting", 2, "%"), ("500mb free", 3, "mb"), ("3 models", 1, "model"),
+    ("31.", 2, ""), ("500 → 1,000", 3, ""),
 ])
 def test_unit_after_folds_stat_words_and_plurals(text, end, unit):
     assert ground.unit_after(text, end) == unit
@@ -72,8 +73,21 @@ def test_number_needs_an_anchor_and_the_same_unit():
     assert not idx.grounds_number("19", "points", {"clark"})  # no fact about Clark
     assert not idx.grounds_number("10", "assists", {"boston"})  # 10 is her rebounds
     assert not idx.grounds_number("19", "tonight", {"boston"})
-    assert idx.grounds_number("94-83", "", {"fever"}) and idx.grounds_number("8-16", "from", {"boston"})
+    assert idx.grounds_number("94-83", "", {"fever"}) and idx.grounds_number("83-94", "", {"fever"})
+    assert idx.grounds_number("8-16", "from", {"boston"})
     assert not idx.grounds_number("28-16", "", {"aces"})  # the Fever's record, not the Aces'
+    assert not idx.grounds_number("16-28", "", {"fever"})  # a pair matches only as written
+    assert not idx.grounds_number("16-8", "", {"boston"})
+
+
+def test_a_player_line_indexes_exactly_its_stats():
+    [ix] = ground.FactIndex([BOSTON])._indexed
+    assert ix.anchors == {"aliyah", "boston"}
+    assert ix.pairs == {"8-16", "2-4"}
+    assert ix.numbers == {("", "2026-10-01"), ("points", "19"), ("rebounds", "10"), ("assists", "3"),
+                          ("minutes", "32"), ("threes", "2")}
+    # "2-4 3PT" once indexed a "3 points" for every player who played.
+    assert not gate.check("Boston had just 3 points tonight", context=POST, facts=ground.FactIndex([BOSTON])).passed
 
 
 def test_index_anchors_apply_to_every_draft():
@@ -142,11 +156,11 @@ def test_game_facts_write_one_result_per_team_and_one_line_per_player_who_played
     by_subject = {f.subject: f for f in facts}
     assert set(by_subject) == {"entity-las-vegas-aces", "entity-indiana-fever", "entity-aliyah-boston"}
     assert by_subject["entity-indiana-fever"].answer == (
-        "On 2026-10-01 (postseason), the Indiana Fever lost to the Las Vegas Aces 83-94. "
+        "On 2026-10-01 (postseason), the Indiana Fever lost to the Las Vegas Aces 83-94 (94-83). "
         "Record after the game: Indiana Fever 28-16. Series: LV wins series 2-1.")
     assert by_subject["entity-aliyah-boston"].answer == (
         "Aliyah Boston (Indiana Fever) against the Las Vegas Aces on 2026-10-01: 19 points, 10 rebounds, 3 assists, "
-        "1 steals, 2 blocks, 0 turnovers, 32 minutes, 2 threes, 8-16 FG, 2-4 3PT, 1-2 FT.")
+        "1 steals, 2 blocks, 0 turnovers, 32 minutes, 2 threes, 8-16 from the field, 2-4 from three, 1-2 from the line.")
     # Tip-off 01:00Z plus three hours is 04:00Z on Oct 2; live for 30 days from there.
     assert {(f.as_of, f.valid_until) for f in facts} == {("2026-10-02", "2026-11-01")}
     assert json.loads(by_subject["entity-aliyah-boston"].quote)["stats"]["PTS"] == "19"
@@ -312,3 +326,57 @@ def test_planner_prompt_is_unchanged_without_facts():
 
 def test_fact_numbers_are_found_the_way_the_gate_finds_them():
     assert ground.NUMBER.pattern == gate.NUMBER.pattern
+
+
+class OneMissingSummary(espn.Espn):
+    """Two finished games for one team; the older one's summary 404s."""
+
+    def __init__(self):
+        super().__init__(client=None)
+        self.client = None
+
+    def teams(self):
+        return [{"id": "5", "displayName": "Indiana Fever"}]
+
+    def get(self, path, settled_after=None, max_age_s=3600):
+        done = {"completed": True}
+        if path.startswith("teams/5/schedule"):
+            return {"events": [{"id": "1", "date": "2026-09-27T20:00Z", "competitions": [{"status": {"type": done}}]},
+                               {"id": "2", "date": "2026-10-02T01:00Z", "competitions": [{"status": {"type": done}}]}]}, "u"
+        if path == "summary?event=1":
+            raise espn.FetchError("HTTP 404 from site.api.espn.com")
+        if path == "summary?event=2":
+            return SUMMARY, "u"
+        return {"injuries": []}, "u"
+
+
+def test_a_missing_box_score_skips_that_game_only():
+    e = OneMissingSummary()
+    facts = e.facts_at(AT, history_days=30)
+    assert {f.subject for f in facts} >= {"entity-indiana-fever", "entity-aliyah-boston"}
+    assert list(e.skipped) == ["1"]
+
+
+def test_a_teams_game_facts_cover_only_its_own_side():
+    facts = espn.game_facts(SUMMARY, "u", team="Indiana Fever")
+    assert {f.subject for f in facts} == {"entity-indiana-fever", "entity-aliyah-boston"}
+
+
+class TwoGames(OneMissingSummary):
+    """The same team's two finished games, both readable; the newer one should be what the store keeps."""
+
+    def get(self, path, settled_after=None, max_age_s=3600):
+        if path == "summary?event=1":
+            older = json.loads(json.dumps(SUMMARY))
+            older["header"]["competitions"][0]["date"] = "2026-09-27T20:00Z"
+            older["boxscore"]["players"][0]["statistics"][0]["athletes"][0]["stats"][1] = "31"
+            return older, "u"
+        return super().get(path, settled_after, max_age_s)
+
+
+def test_a_newer_game_replaces_the_older_ones_facts():
+    facts = TwoGames().facts_at(AT, history_days=30)
+    [boston] = [f for f in facts if f.subject == "entity-aliyah-boston"]
+    [fever] = [f for f in facts if f.subject == "entity-indiana-fever"]
+    assert "19 points" in boston.answer and "31 points" not in boston.answer and boston.as_of == "2026-10-02"
+    assert fever.as_of == "2026-10-02"

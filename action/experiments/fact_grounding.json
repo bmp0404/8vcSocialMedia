@@ -2,7 +2,7 @@
  "wnba_real_replies": {
   "threads": 24,
   "replies": 670,
-  "facts_live_per_thread_median": 248,
+  "facts_live_per_thread_median": 207,
   "before": {
    "rejected": 239,
    "rejected_rate": 0.357,
@@ -15,29 +15,29 @@
    }
   },
   "after": {
-   "rejected": 218,
-   "rejected_rate": 0.325,
-   "rejected_by_grounding_only": 104,
-   "rejected_by_grounding_only_rate": 0.155,
+   "rejected": 217,
+   "rejected_rate": 0.324,
+   "rejected_by_grounding_only": 103,
+   "rejected_by_grounding_only_rate": 0.154,
    "grounding_rule_hits": {
-    "ungrounded_name": 151,
+    "ungrounded_name": 147,
     "ungrounded_number": 77,
     "unknown_handle": 22
    }
   },
-  "passed_only_with_facts": 21,
+  "passed_only_with_facts": 22,
   "change_in_rejected_rate": {
-   "change": -0.031,
+   "change": -0.033,
    "ci95": [
-    -0.046,
+    -0.048,
     -0.018
    ],
    "clusters": 24
   },
   "change_in_grounding_only_rate": {
-   "change": -0.031,
+   "change": -0.033,
    "ci95": [
-    -0.046,
+    -0.048,
     -0.018
    ],
    "clusters": 24
@@ -150,7 +150,7 @@
  "wnba_real_replies_last_7_days_with_rosters": {
   "threads": 16,
   "replies": 392,
-  "facts_live_per_thread_median": 263,
+  "facts_live_per_thread_median": 221,
   "before": {
    "rejected": 139,
    "rejected_rate": 0.355,
@@ -240,7 +240,7 @@
  "wnba_real_replies_last_7_days": {
   "threads": 16,
   "replies": 392,
-  "facts_live_per_thread_median": 248,
+  "facts_live_per_thread_median": 206,
   "before": {
    "rejected": 139,
    "rejected_rate": 0.355,
@@ -253,30 +253,30 @@
    }
   },
   "after": {
-   "rejected": 125,
-   "rejected_rate": 0.319,
-   "rejected_by_grounding_only": 47,
-   "rejected_by_grounding_only_rate": 0.12,
+   "rejected": 124,
+   "rejected_rate": 0.316,
+   "rejected_by_grounding_only": 46,
+   "rejected_by_grounding_only_rate": 0.117,
    "grounding_rule_hits": {
     "ungrounded_number": 48,
     "unknown_handle": 16,
-    "ungrounded_name": 63
+    "ungrounded_name": 62
    }
   },
-  "passed_only_with_facts": 14,
+  "passed_only_with_facts": 15,
   "change_in_rejected_rate": {
-   "change": -0.036,
+   "change": -0.038,
    "ci95": [
-    -0.058,
-    -0.015
+    -0.061,
+    -0.016
    ],
    "clusters": 16
   },
   "change_in_grounding_only_rate": {
-   "change": -0.036,
+   "change": -0.038,
    "ci95": [
-    -0.058,
-    -0.015
+    -0.061,
+    -0.016
    ],
    "clusters": 16
   }
@@ -315,6 +315,71 @@
    "caught_before": 208,
    "caught_after": 193,
    "let_through_by_facts": 15
+  }
+ },
+ "wnba_espn_games_skipped": [
+  "401856947"
+ ],
+ "month_of_games_variant": {
+  "note": "Every game from the 30 days before each post, each kept as its own fact, instead of each team's and player's most recent game. Same threads and drafts, run before game facts were keyed by most recent game (harness/facts/espn.py). Replaced because it let more invented WNBA stats through.",
+  "wnba_real_replies": {
+   "facts_live_per_thread_median": 1016,
+   "change_in_rejected_rate": {
+    "change": -0.033,
+    "ci95": [
+     -0.048,
+     -0.018
+    ],
+    "clusters": 24
+   }
+  },
+  "wnba_invented_stats": {
+   "drafts_with_a_number": 143,
+   "caught_before": 125,
+   "caught_after": 119,
+   "caught_before_rate": 0.874,
+   "caught_after_rate": 0.832,
+   "let_through_by_facts": 6,
+   "change_in_caught_rate": {
+    "change": -0.042,
+    "ci95": [
+     -0.077,
+     -0.007
+    ],
+    "clusters": 24
+   },
+   "let_through_examples": [
+    "rhyne howard guarding the other team's best wing for 34 minutes a game and finally getting the flowers",
+    "angel reese pulling down 13 boards a night and now first team defense?? the growth is real",
+    "caitlin hit 6 threes in the gold medal game, logo range apparently works internationally too",
+    "the 14 assists in one game still lives rent free in my head. details later pls",
+    "the Fever were 9 point favorites last night and i still managed to pick wrong. teach me your ways",
+    "gabby guarding the other team's best player for 34 minutes a night and still getting buckets. unreal"
+   ]
+  },
+  "wnba_invented_stats_heldout": {
+   "drafts_with_a_number": 144,
+   "caught_before": 121,
+   "caught_after": 115,
+   "caught_before_rate": 0.84,
+   "caught_after_rate": 0.799,
+   "let_through_by_facts": 6,
+   "change_in_caught_rate": {
+    "change": -0.042,
+    "ci95": [
+     -0.069,
+     -0.014
+    ],
+    "clusters": 24
+   },
+   "let_through_examples": [
+    "kelsey mitchell hit 7 threes against the wings and the whole building lost it",
+    "9 assists a night and still somehow underrated by half the internet",
+    "angel reese pulling down 13 boards a night and also making all-defensive first team? chicago really traded a monster",
+    "and i'm over here 2-8 on my picks, send help",
+    "the dream were 30-14 in the regular season and i still don't think people understand how good this team is. see you at state farm",
+    "jordin canada with 11 assists in game one?? the pace she sets is everything"
+   ]
   }
  }
 }

@@ -6,8 +6,11 @@ can check the answer against the source without refetching.
 
 Validity windows are guesses; no measurement picked them:
 - roster: 7 days from the fetch. Trades and signings are rare in season and a week is a refresh cycle.
-- last game: 30 days from the game, as a box score stays true; a month keeps "last night" claims and
-  playoff talk groundable while the result is still discussed.
+- most recent game: 30 days from the game, or until the team plays again. Each team's result and each
+  player's line share one fact id per subject ("most recent game"), so a newer game replaces the older
+  fact instead of piling up beside it. A month of box scores held every stat value a player had hit
+  and let 12 of 287 invented WNBA stats through, against 4 with the most recent game only
+  (action/DESIGN.md).
 - next game: from the fetch until the day after tip-off, when the result replaces it.
 - injury: 3 days from ESPN's last update to the entry, because statuses turn over between games.
 
@@ -20,7 +23,7 @@ from the live roster endpoint, so they are included only when `at` is now. That 
 import json
 from datetime import datetime, timedelta, timezone
 
-from harness.context.http import PoliteClient
+from harness.context.http import FetchError, PoliteClient
 from harness.learning.kinds import Fact, short_hash, slug
 
 SITE = "https://site.api.espn.com/apis/site/v2/sports/{league}"
@@ -28,10 +31,11 @@ LEAGUE = "basketball/wnba"
 ROSTER_DAYS, GAME_DAYS, INJURY_DAYS = 7, 30, 3
 # A WNBA game runs about two hours; three keeps an overtime game from counting as known before it ended.
 GAME_LENGTH = timedelta(hours=3)
-# Box-score columns, rendered with the stat words ground.STAT_WORDS reads back.
+# Box-score columns, rendered with the stat words ground.STAT_WORDS reads back. Shooting labels are words:
+# "2-4 3PT" made the gate read the 3 of 3PT as "3 points" for every player who played.
 LINE = (("PTS", "points"), ("REB", "rebounds"), ("AST", "assists"), ("STL", "steals"), ("BLK", "blocks"),
         ("TO", "turnovers"), ("MIN", "minutes"))
-SHOOTING = (("FG", "FG"), ("3PT", "3PT"), ("FT", "FT"))
+SHOOTING = (("FG", "from the field"), ("3PT", "from three"), ("FT", "from the line"))
 
 
 def entity(name: str) -> str:
@@ -63,8 +67,9 @@ def roster_facts(payload: dict, team: str, url: str, fetched: datetime) -> list[
                   {"athletes": [n for n, _, _ in players], "coach": coach}, url, fetched, fetched + timedelta(days=ROSTER_DAYS))]
 
 
-def game_facts(summary: dict, url: str) -> list[Fact]:
-    """One result fact per team and one line per player who played, from a finished game's summary."""
+def game_facts(summary: dict, url: str, team: str | None = None) -> list[Fact]:
+    """One result fact per team and one line per player who played, from a finished game's summary. With
+    `team`, only that team's result and players: a game is each team's most recent only from its own side."""
     comp = ((summary.get("header") or {}).get("competitions") or [{}])[0]
     if not (comp.get("status") or {}).get("type", {}).get("completed"):
         return []
@@ -81,19 +86,25 @@ def game_facts(summary: dict, url: str) -> list[Fact]:
     stage = {2: "regular season", 3: "postseason"}.get(season, "")
     series = "; ".join(s.get("summary", "") for s in comp.get("series") or [] if s.get("type") == "playoff" and s.get("summary"))
     facts = []
-    for team, me in sides.items():
-        opp, them = next((t, s) for t, s in sides.items() if t != team)
+    for side, me in sides.items():
+        if team and side != team:
+            continue
+        opp, them = next((t, s) for t, s in sides.items() if t != side)
         verb = "beat" if me["winner"] else "lost to"
-        answer = (f"On {day}{f' ({stage})' if stage else ''}, the {team} {verb} the {opp} {me['score']}-{them['score']}."
+        # The score both ways round, since people write either; the gate matches a pair only as written.
+        answer = (f"On {day}{f' ({stage})' if stage else ''}, the {side} {verb} the {opp} "
+                  f"{me['score']}-{them['score']} ({them['score']}-{me['score']})."
                   # Only this team's record: with both, "27-17" from the opponent grounded a draft about this team.
-                  + (f" Record after the game: {team} {me['record']}." if me["record"] else "")
+                  + (f" Record after the game: {side} {me['record']}." if me["record"] else "")
                   + (f" Series: {series}." if series else ""))
-        facts.append(_fact(entity(team), f"What happened in the {team} game on {day}?", answer,
-                           {"team": team, "opponent": opp, **{f"team_{k}": v for k, v in me.items()},
+        facts.append(_fact(entity(side), f"What happened in the {side}'s most recent game?", answer,
+                           {"team": side, "opponent": opp, **{f"team_{k}": v for k, v in me.items()},
                             **{f"opponent_{k}": v for k, v in them.items()}, "series": series}, url, as_of, until))
     for block in (summary.get("boxscore") or {}).get("players") or []:
-        team = block["team"]["displayName"]
-        opp = next((t for t in sides if t != team), "")
+        side = block["team"]["displayName"]
+        if team and side != team:
+            continue
+        opp = next((t for t in sides if t != side), "")
         for table in block.get("statistics") or []:
             names = table.get("names") or []
             for a in table.get("athletes") or []:
@@ -104,9 +115,9 @@ def game_facts(summary: dict, url: str) -> list[Fact]:
                 line = {**{w: stats.get(k, "") for k, w in LINE}, "threes": stats.get("3PT", "").split("-")[0]}
                 parts = [f"{v} {w}" for w, v in line.items() if v != ""]
                 parts += [f"{stats[k]} {w}" for k, w in SHOOTING if stats.get(k)]
-                facts.append(_fact(entity(name), f"How did {name} play for the {team} on {day}?",
-                                   f"{name} ({team}) against the {opp} on {day}: {', '.join(parts)}.",
-                                   {"athlete": name, "team": team, "stats": stats}, url, as_of, until))
+                facts.append(_fact(entity(name), f"How did {name} play in their most recent game?",
+                                   f"{name} ({side}) against the {opp} on {day}: {', '.join(parts)}.",
+                                   {"athlete": name, "team": side, "stats": stats}, url, as_of, until))
     return facts
 
 
@@ -157,6 +168,7 @@ class Espn:
     def __init__(self, client: PoliteClient | None = None, league: str = LEAGUE):
         self.client = client or PoliteClient(min_interval_s=1.0)
         self.base = SITE.format(league=league)
+        self.skipped: dict[str, str] = {}  # event id -> why its box score couldn't be read
 
     def get(self, path: str, settled_after: datetime | None = None, max_age_s: float | None = 3600) -> tuple[dict, str]:
         url = f"{self.base}/{path}"
@@ -166,9 +178,15 @@ class Espn:
         data, _ = self.get("teams", max_age_s=86400)
         return [t["team"] for t in data["sports"][0]["leagues"][0]["teams"]]
 
-    def facts_at(self, at: datetime, rosters: bool = False, season: int | None = None) -> list[Fact]:
+    def game(self, event: dict, team: str) -> list[Fact]:
+        summary, url = self.get(f"summary?event={event['id']}", settled_after=_time(event["date"]) + GAME_LENGTH)
+        return game_facts(summary, url, team)
+
+    def facts_at(self, at: datetime, rosters: bool = False, season: int | None = None, history_days: int = 0) -> list[Fact]:
         """Every team's last finished game and next game as of `at`, injuries updated by then, and the
-        current rosters when `rosters` is set (only true for now)."""
+        current rosters when `rosters` is set (only true for now). `history_days` also reads every game that
+        ended in the days before `at`; since a newer game replaces an older one's facts, the result is what
+        daily refreshes would have left in the store, including lines for players who sat out the last game."""
         season = season or at.year
         facts: list[Fact] = []
         for team in self.teams():
@@ -179,8 +197,14 @@ class Espn:
                     and e["competitions"][0].get("status", {}).get("type", {}).get("completed")]
             if done:
                 last = max(done, key=lambda e: e["date"])
-                summary, url = self.get(f"summary?event={last['id']}", settled_after=_time(last["date"]) + GAME_LENGTH)
-                facts += game_facts(summary, url)
+                since = at - timedelta(days=history_days)
+                for event in [e for e in done if since <= _time(e["date"]) + GAME_LENGTH and e is not last] + [last]:
+                    try:
+                        facts += self.game(event, name)
+                    except FetchError as e:  # one missing box score shouldn't cost the league's other facts
+                        if event["id"] not in self.skipped:
+                            print(f"[facts] skipped ESPN game {event['id']} ({event.get('shortName', '')}): {e}")
+                        self.skipped[event["id"]] = str(e)
             facts += next_game_fact(sched, name, sched_url, at)
         if rosters:
             facts += self.rosters(at)
@@ -199,8 +223,9 @@ class Espn:
 
 
 def _dedupe(facts: list[Fact]) -> list[Fact]:
-    """One fact per id, keeping the first: a player traded mid-window appears in two teams' games."""
+    """One fact per id, keeping the newest: what writing them to the store in date order would leave."""
     out: dict[str, Fact] = {}
     for f in facts:
-        out.setdefault(f.id, f)
+        if f.id not in out or f.as_of > out[f.id].as_of:
+            out[f.id] = f
     return list(out.values())

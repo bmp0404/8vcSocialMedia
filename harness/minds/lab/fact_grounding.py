@@ -3,8 +3,10 @@ stats? Writes action/experiments/fact_grounding.json.
 
 Real replies, checked the way `gate_calibration` checks them (the post and the thread's other replies as
 context), once without facts and once with the facts that were live when the post went out:
-- wnba: the 24 threads in action/fixtures/x_threads.json, with ESPN facts as of each post
-  (`Espn.facts_at`, so no game that ended later and no roster, which ESPN only serves for today);
+- wnba: the 24 threads in action/fixtures/x_threads.json, with the ESPN facts daily refreshes would have
+  left in the store at each post: each team's and player's most recent game from the GAME_DAYS before it,
+  the next game, injury entries updated by then, and no roster, which ESPN only serves for today
+  (`Espn.facts_at`);
 - devtools: the threads in data/context/reply_samples.jsonl (local only), with the author's own posts from
   the 30 days before the root (data/context/author_timelines.jsonl). Only counts are written for it.
 
@@ -26,7 +28,8 @@ from datetime import datetime, timedelta, timezone
 from harness import config
 from harness.evals.metrics import cluster_bootstrap
 from harness.facts import ground, posts
-from harness.facts.espn import Espn
+from harness.context.http import PoliteClient
+from harness.facts.espn import GAME_DAYS, Espn
 from harness.minds import gate
 from harness.minds.lab.fetch_x_threads import OUT as FIXTURE
 
@@ -57,6 +60,33 @@ def _read_jsonl(path):
 # ---------------------------------------------------------------- the two sets
 
 
+class _Memo:
+    """In-memory copies of ESPN responses for one run, so the run writes nothing to disk. Game summaries
+    (about 0.5 MB each) aren't kept; _MemoEspn keeps their parsed facts instead."""
+
+    def __init__(self, client: PoliteClient):
+        self.client, self.seen = client, {}
+
+    def get(self, url, max_age_s=None, headers=None, settled_after=None):
+        if "/summary?" in url:
+            return self.client.get(url)
+        if url not in self.seen:
+            self.seen[url] = self.client.get(url)
+        return self.seen[url]
+
+
+class _MemoEspn(Espn):
+    def __init__(self):
+        super().__init__(client=_Memo(PoliteClient(min_interval_s=1.0, cache_dir=None)))
+        self.games: dict[tuple[str, str], list] = {}
+
+    def game(self, event: dict, team: str) -> list:
+        key = (event["id"], team)
+        if key not in self.games:
+            self.games[key] = super().game(event, team)
+        return self.games[key]
+
+
 def wnba_threads(espn: Espn, roster_days: int = 0) -> list[dict]:
     """The fixture's threads with the facts live at each post. With `roster_days`, threads posted in the
     last `roster_days` also get today's rosters, as if a refresh had run that day and no roster changed."""
@@ -64,7 +94,7 @@ def wnba_threads(espn: Espn, roster_days: int = 0) -> list[dict]:
     out = []
     for t in json.loads(FIXTURE.read_text(encoding="utf-8"))["threads"]:
         at = _when(t["created_at"])
-        facts = ground.live(espn.facts_at(at), at)
+        facts = ground.live(espn.facts_at(at, history_days=GAME_DAYS), at)
         if roster_days and now - at < timedelta(days=roster_days):
             facts += espn.rosters(at)
         elif roster_days:
@@ -215,13 +245,14 @@ def main() -> None:
     p.add_argument("--invent", action="store_true", help="also write and check invented-stat drafts (LLM calls)")
     args = p.parse_args()
     report = json.loads(REPORT.read_text(encoding="utf-8")) if REPORT.exists() else {}
-    espn = Espn()
+    espn = _MemoEspn()
     wnba, dev = wnba_threads(espn), devtools_threads()
     report["wnba_real_replies"] = measure_real(wnba, examples=True)
     recent = [t for t in wnba if datetime.now(timezone.utc) - t["at"] < timedelta(days=7)]
     report["wnba_real_replies_last_7_days"] = measure_real(recent, examples=False)
     report["wnba_real_replies_last_7_days_with_rosters"] = measure_real(wnba_threads(espn, roster_days=7), examples=False)
     report["devtools_real_replies"] = measure_real(dev, examples=False)
+    report["wnba_espn_games_skipped"] = sorted(espn.skipped)
     if args.invent:
         import anthropic
 
@@ -232,7 +263,8 @@ def main() -> None:
             report[f"wnba_invented_stats{suffix}"] = measure_invented(invent(wnba, "wnba", client, batch), examples=True)
             report[f"devtools_invented_stats{suffix}"] = measure_invented(invent(sample, "devtools", client, batch), examples=False)
     REPORT.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({k: {kk: vv for kk, vv in v.items() if not kk.endswith("examples")} for k, v in report.items()}, indent=1))
+    print(json.dumps({k: {kk: vv for kk, vv in v.items() if not kk.endswith("examples")} if isinstance(v, dict) else v
+                      for k, v in report.items()}, indent=1))
 
 
 if __name__ == "__main__":
