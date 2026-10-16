@@ -5,6 +5,8 @@ from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
+import pydantic
+
 from baml_sdk import (
     CandidatePost, Comparison, Confidence, Criterion, GradePost_spec, Performance, PostGrade, ReferencePost, Verdict,
 )
@@ -94,8 +96,12 @@ class GradeTests(unittest.TestCase):
         self.assertEqual(validate_grade(grade(self.refs, 5), self.refs), 100)
 
     def test_invalid_scores_and_invented_citations_rejected(self):
+        with self.assertRaises(pydantic.ValidationError):
+            Criterion(score=6, reason="Out of range")
+        out_of_range = grade(self.refs)
+        out_of_range.clarity = Criterion.model_construct(score=6, reason="Bypassed validation")
         with self.assertRaisesRegex(ValueError, "outside"):
-            validate_grade(grade(self.refs, 6), self.refs)
+            validate_grade(out_of_range, self.refs)
         invalid = grade(self.refs)
         invalid.comparisons[0].reference_id = "invented"
         with self.assertRaisesRegex(ValueError, "unknown reference"):

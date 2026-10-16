@@ -116,7 +116,7 @@ class Criterion(pydantic.BaseModel):
         extra="ignore",
         populate_by_name=True,
     )
-    score: int
+    score: typing.Union[typing.Literal[0], typing.Literal[1], typing.Literal[2], typing.Literal[3], typing.Literal[4], typing.Literal[5]]
     reason: str
 
 
@@ -149,30 +149,38 @@ class PostGrade(pydantic.BaseModel):
     limitations: typing.List[str]
 
 
-judge_client       = _define_function("user.judge_client", "sync",  ["provider", "model"], binding_name="judge_client", binding_qualname="judge_client", binding_module=__name__)
+judge_client       = _define_function("user.judge_client", "sync",  ["provider", "model"], ["max_tokens"], binding_name="judge_client", binding_qualname="judge_client", binding_module=__name__)
 judge_client.__doc__ = """Raises:
     Io, ParseError"""
-judge_client_async = _define_function("user.judge_client", "async", ["provider", "model"], binding_name="judge_client_async", binding_qualname="judge_client_async", binding_module=__name__)
+judge_client_async = _define_function("user.judge_client", "async", ["provider", "model"], ["max_tokens"], binding_name="judge_client_async", binding_qualname="judge_client_async", binding_module=__name__)
 judge_client_async.__doc__ = """Raises:
     Io, ParseError"""
 
 
-GradePost       = _define_function("user.GradePost", "sync",  ["candidate", "references"], ["provider", "model", "on_event"], binding_name="GradePost", binding_qualname="GradePost", binding_module=__name__)
+judge_api_client       = _define_function("user.judge_api_client", "sync",  ["provider", "model"], ["max_tokens"], binding_name="judge_api_client", binding_qualname="judge_api_client", binding_module=__name__)
+judge_api_client.__doc__ = """Raises:
+    Io, ParseError"""
+judge_api_client_async = _define_function("user.judge_api_client", "async", ["provider", "model"], ["max_tokens"], binding_name="judge_api_client_async", binding_qualname="judge_api_client_async", binding_module=__name__)
+judge_api_client_async.__doc__ = """Raises:
+    Io, ParseError"""
+
+
+GradePost       = _define_function("user.GradePost", "sync",  ["candidate", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="GradePost", binding_qualname="GradePost", binding_module=__name__)
 GradePost.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-GradePost_async = _define_function("user.GradePost", "async", ["candidate", "references"], ["provider", "model", "on_event"], binding_name="GradePost_async", binding_qualname="GradePost_async", binding_module=__name__)
+GradePost_async = _define_function("user.GradePost", "async", ["candidate", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="GradePost_async", binding_qualname="GradePost_async", binding_module=__name__)
 GradePost_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-GradePost_spec       = _define_function("user.GradePost@spec", "sync",  ["candidate", "references"], ["provider", "model"], binding_name="GradePost_spec", binding_qualname="GradePost_spec", binding_module=__name__)
+GradePost_spec       = _define_function("user.GradePost@spec", "sync",  ["candidate", "references"], ["provider", "model", "max_tokens"], binding_name="GradePost_spec", binding_qualname="GradePost_spec", binding_module=__name__)
 GradePost_spec.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, InvalidRequest"""
-GradePost_spec_async = _define_function("user.GradePost@spec", "async", ["candidate", "references"], ["provider", "model"], binding_name="GradePost_spec_async", binding_qualname="GradePost_spec_async", binding_module=__name__)
+GradePost_spec_async = _define_function("user.GradePost@spec", "async", ["candidate", "references"], ["provider", "model", "max_tokens"], binding_name="GradePost_spec_async", binding_qualname="GradePost_spec_async", binding_module=__name__)
 GradePost_spec_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, InvalidRequest"""
-GradePost_stream       = _define_function("user.GradePost@stream", "sync",  ["candidate", "references"], ["provider", "model", "on_event"], binding_name="GradePost_stream", binding_qualname="GradePost_stream", binding_module=__name__)
+GradePost_stream       = _define_function("user.GradePost@stream", "sync",  ["candidate", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="GradePost_stream", binding_qualname="GradePost_stream", binding_module=__name__)
 GradePost_stream.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-GradePost_stream_async = _define_function("user.GradePost@stream", "async", ["candidate", "references"], ["provider", "model", "on_event"], binding_name="GradePost_stream_async", binding_qualname="GradePost_stream_async", binding_module=__name__)
+GradePost_stream_async = _define_function("user.GradePost@stream", "async", ["candidate", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="GradePost_stream_async", binding_qualname="GradePost_stream_async", binding_module=__name__)
 GradePost_stream_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
 
@@ -211,24 +219,60 @@ class CandidateRanking(pydantic.BaseModel):
     limitations: typing.List[str]
 
 
-RankCandidates       = _define_function("user.RankCandidates", "sync",  ["candidates", "references"], ["provider", "model", "on_event"], binding_name="RankCandidates", binding_qualname="RankCandidates", binding_module=__name__)
+RankCandidates       = _define_function("user.RankCandidates", "sync",  ["candidates", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="RankCandidates", binding_qualname="RankCandidates", binding_module=__name__)
 RankCandidates.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-RankCandidates_async = _define_function("user.RankCandidates", "async", ["candidates", "references"], ["provider", "model", "on_event"], binding_name="RankCandidates_async", binding_qualname="RankCandidates_async", binding_module=__name__)
+RankCandidates_async = _define_function("user.RankCandidates", "async", ["candidates", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="RankCandidates_async", binding_qualname="RankCandidates_async", binding_module=__name__)
 RankCandidates_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-RankCandidates_spec       = _define_function("user.RankCandidates@spec", "sync",  ["candidates", "references"], ["provider", "model"], binding_name="RankCandidates_spec", binding_qualname="RankCandidates_spec", binding_module=__name__)
+RankCandidates_spec       = _define_function("user.RankCandidates@spec", "sync",  ["candidates", "references"], ["provider", "model", "max_tokens"], binding_name="RankCandidates_spec", binding_qualname="RankCandidates_spec", binding_module=__name__)
 RankCandidates_spec.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, InvalidRequest"""
-RankCandidates_spec_async = _define_function("user.RankCandidates@spec", "async", ["candidates", "references"], ["provider", "model"], binding_name="RankCandidates_spec_async", binding_qualname="RankCandidates_spec_async", binding_module=__name__)
+RankCandidates_spec_async = _define_function("user.RankCandidates@spec", "async", ["candidates", "references"], ["provider", "model", "max_tokens"], binding_name="RankCandidates_spec_async", binding_qualname="RankCandidates_spec_async", binding_module=__name__)
 RankCandidates_spec_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, InvalidRequest"""
-RankCandidates_stream       = _define_function("user.RankCandidates@stream", "sync",  ["candidates", "references"], ["provider", "model", "on_event"], binding_name="RankCandidates_stream", binding_qualname="RankCandidates_stream", binding_module=__name__)
+RankCandidates_stream       = _define_function("user.RankCandidates@stream", "sync",  ["candidates", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="RankCandidates_stream", binding_qualname="RankCandidates_stream", binding_module=__name__)
 RankCandidates_stream.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-RankCandidates_stream_async = _define_function("user.RankCandidates@stream", "async", ["candidates", "references"], ["provider", "model", "on_event"], binding_name="RankCandidates_stream_async", binding_qualname="RankCandidates_stream_async", binding_module=__name__)
+RankCandidates_stream_async = _define_function("user.RankCandidates@stream", "async", ["candidates", "references"], ["provider", "model", "max_tokens", "on_event"], binding_name="RankCandidates_stream_async", binding_qualname="RankCandidates_stream_async", binding_module=__name__)
 RankCandidates_stream_async.__doc__ = """Raises:
     InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+
+
+fixture_candidate       = _define_function("user.fixture_candidate", "sync",  [], binding_name="fixture_candidate", binding_qualname="fixture_candidate", binding_module=__name__)
+fixture_candidate_async = _define_function("user.fixture_candidate", "async", [], binding_name="fixture_candidate_async", binding_qualname="fixture_candidate_async", binding_module=__name__)
+
+
+fixture_references       = _define_function("user.fixture_references", "sync",  [], binding_name="fixture_references", binding_qualname="fixture_references", binding_module=__name__)
+fixture_references_async = _define_function("user.fixture_references", "async", [], binding_name="fixture_references_async", binding_qualname="fixture_references_async", binding_module=__name__)
+
+
+criteria_json       = _define_function("user.criteria_json", "sync",  ["relevance"], binding_name="criteria_json", binding_qualname="criteria_json", binding_module=__name__)
+criteria_json_async = _define_function("user.criteria_json", "async", ["relevance"], binding_name="criteria_json_async", binding_qualname="criteria_json_async", binding_module=__name__)
+
+
+grade_json       = _define_function("user.grade_json", "sync",  ["relevance", "comparisons"], binding_name="grade_json", binding_qualname="grade_json", binding_module=__name__)
+grade_json_async = _define_function("user.grade_json", "async", ["relevance", "comparisons"], binding_name="grade_json_async", binding_qualname="grade_json_async", binding_module=__name__)
+
+
+two_comparisons       = _define_function("user.two_comparisons", "sync",  [], binding_name="two_comparisons", binding_qualname="two_comparisons", binding_module=__name__)
+two_comparisons_async = _define_function("user.two_comparisons", "async", [], binding_name="two_comparisons_async", binding_qualname="two_comparisons_async", binding_module=__name__)
+
+
+parse_grade       = _define_function("user.parse_grade", "sync",  ["reply"], binding_name="parse_grade", binding_qualname="parse_grade", binding_module=__name__)
+parse_grade.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+parse_grade_async = _define_function("user.parse_grade", "async", ["reply"], binding_name="parse_grade_async", binding_qualname="parse_grade_async", binding_module=__name__)
+parse_grade_async.__doc__ = """Raises:
+    InvalidArgument, Io, ParseError, InvalidRequest"""
+
+
+parse_failure       = _define_function("user.parse_failure", "sync",  ["reply"], binding_name="parse_failure", binding_qualname="parse_failure", binding_module=__name__)
+parse_failure.__doc__ = """Raises:
+    InvalidArgument, Io, InvalidRequest"""
+parse_failure_async = _define_function("user.parse_failure", "async", ["reply"], binding_name="parse_failure_async", binding_qualname="parse_failure_async", binding_module=__name__)
+parse_failure_async.__doc__ = """Raises:
+    InvalidArgument, Io, InvalidRequest"""
 
 
 __all__ = [
@@ -242,6 +286,8 @@ __all__ = [
     "PostGrade",
     "judge_client",
     "judge_client_async",
+    "judge_api_client",
+    "judge_api_client_async",
     "GradePost",
     "GradePost_async",
     "GradePost_spec",
@@ -257,6 +303,20 @@ __all__ = [
     "RankCandidates_spec_async",
     "RankCandidates_stream",
     "RankCandidates_stream_async",
+    "fixture_candidate",
+    "fixture_candidate_async",
+    "fixture_references",
+    "fixture_references_async",
+    "criteria_json",
+    "criteria_json_async",
+    "grade_json",
+    "grade_json_async",
+    "two_comparisons",
+    "two_comparisons_async",
+    "parse_grade",
+    "parse_grade_async",
+    "parse_failure",
+    "parse_failure_async",
 ]
 
 # BEP-066 host reflection surface.

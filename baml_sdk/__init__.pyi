@@ -84,7 +84,7 @@ class CandidatePost(pydantic.BaseModel):
 
 
 class Criterion(pydantic.BaseModel):
-    score: int
+    score: typing.Union[typing.Literal[0], typing.Literal[1], typing.Literal[2], typing.Literal[3], typing.Literal[4], typing.Literal[5]]
     reason: str
 
 
@@ -107,30 +107,38 @@ class PostGrade(pydantic.BaseModel):
     limitations: typing.List[str]
 
 
-def judge_client(provider: str, model: str, *, _baml: _BamlOptions | None = None) -> typing.Any:
+def judge_client(provider: str, model: str, *, max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> typing.Any:
     """Raises:
         Io, ParseError"""
-async def judge_client_async(provider: str, model: str, *, _baml: _BamlOptions | None = None) -> typing.Any:
+async def judge_client_async(provider: str, model: str, *, max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> typing.Any:
     """Raises:
         Io, ParseError"""
 
 
-def GradePost(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> PostGrade:
+def judge_api_client(provider: str, model: str, *, max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> typing.Any:
+    """Raises:
+        Io, ParseError"""
+async def judge_api_client_async(provider: str, model: str, *, max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> typing.Any:
+    """Raises:
+        Io, ParseError"""
+
+
+def GradePost(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> PostGrade:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-async def GradePost_async(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> PostGrade:
+async def GradePost_async(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> PostGrade:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-def GradePost_spec(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", _baml: _BamlOptions | None = None) -> ai.FunctionSpec[PostGrade]:
+def GradePost_spec(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[PostGrade]:
     """Raises:
         InvalidArgument, Io, ParseError, InvalidRequest"""
-async def GradePost_spec_async(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", _baml: _BamlOptions | None = None) -> ai.FunctionSpec[PostGrade]:
+async def GradePost_spec_async(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[PostGrade]:
     """Raises:
         InvalidArgument, Io, ParseError, InvalidRequest"""
-def GradePost_stream(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[PostGrade, _BamlStreamDone], PostGrade, PostGrade]:
+def GradePost_stream(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[PostGrade, _BamlStreamDone], PostGrade, PostGrade]:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-async def GradePost_stream_async(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[PostGrade, _BamlStreamDone], PostGrade, PostGrade]:
+async def GradePost_stream_async(candidate: CandidatePost, references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[PostGrade, _BamlStreamDone], PostGrade, PostGrade]:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
 
@@ -154,24 +162,60 @@ class CandidateRanking(pydantic.BaseModel):
     limitations: typing.List[str]
 
 
-def RankCandidates(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> CandidateRanking:
+def RankCandidates(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> CandidateRanking:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-async def RankCandidates_async(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> CandidateRanking:
+async def RankCandidates_async(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> CandidateRanking:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-def RankCandidates_spec(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", _baml: _BamlOptions | None = None) -> ai.FunctionSpec[CandidateRanking]:
+def RankCandidates_spec(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[CandidateRanking]:
     """Raises:
         InvalidArgument, Io, ParseError, InvalidRequest"""
-async def RankCandidates_spec_async(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", _baml: _BamlOptions | None = None) -> ai.FunctionSpec[CandidateRanking]:
+async def RankCandidates_spec_async(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, _baml: _BamlOptions | None = None) -> ai.FunctionSpec[CandidateRanking]:
     """Raises:
         InvalidArgument, Io, ParseError, InvalidRequest"""
-def RankCandidates_stream(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[CandidateRanking, _BamlStreamDone], CandidateRanking, CandidateRanking]:
+def RankCandidates_stream(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[CandidateRanking, _BamlStreamDone], CandidateRanking, CandidateRanking]:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
-async def RankCandidates_stream_async(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[CandidateRanking, _BamlStreamDone], CandidateRanking, CandidateRanking]:
+async def RankCandidates_stream_async(candidates: typing.List[RankingCandidate], references: typing.List[ReferencePost], *, provider: typing.Union[str, UNSET] = "claude_code", model: typing.Union[str, UNSET] = "sonnet", max_tokens: typing.Union[int, UNSET] = 8192, on_event: typing.Union[typing.Callable[[ai.events.Event], None], None, UNSET] = None, _baml: _BamlOptions | None = None) -> _BamlStream[typing.Union[CandidateRanking, _BamlStreamDone], CandidateRanking, CandidateRanking]:
     """Raises:
         InvalidArgument, Io, ParseError, Timeout, UnknownError, CompilationError"""
+
+
+def fixture_candidate(*, _baml: _BamlOptions | None = None) -> CandidatePost: ...
+async def fixture_candidate_async(*, _baml: _BamlOptions | None = None) -> CandidatePost: ...
+
+
+def fixture_references(*, _baml: _BamlOptions | None = None) -> typing.List[ReferencePost]: ...
+async def fixture_references_async(*, _baml: _BamlOptions | None = None) -> typing.List[ReferencePost]: ...
+
+
+def criteria_json(relevance: str, *, _baml: _BamlOptions | None = None) -> str: ...
+async def criteria_json_async(relevance: str, *, _baml: _BamlOptions | None = None) -> str: ...
+
+
+def grade_json(relevance: str, comparisons: str, *, _baml: _BamlOptions | None = None) -> str: ...
+async def grade_json_async(relevance: str, comparisons: str, *, _baml: _BamlOptions | None = None) -> str: ...
+
+
+def two_comparisons(*, _baml: _BamlOptions | None = None) -> str: ...
+async def two_comparisons_async(*, _baml: _BamlOptions | None = None) -> str: ...
+
+
+def parse_grade(reply: str, *, _baml: _BamlOptions | None = None) -> PostGrade:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+async def parse_grade_async(reply: str, *, _baml: _BamlOptions | None = None) -> PostGrade:
+    """Raises:
+        InvalidArgument, Io, ParseError, InvalidRequest"""
+
+
+def parse_failure(reply: str, *, _baml: _BamlOptions | None = None) -> str:
+    """Raises:
+        InvalidArgument, Io, InvalidRequest"""
+async def parse_failure_async(reply: str, *, _baml: _BamlOptions | None = None) -> str:
+    """Raises:
+        InvalidArgument, Io, InvalidRequest"""
 
 
 __all__ = [
@@ -185,6 +229,8 @@ __all__ = [
     "PostGrade",
     "judge_client",
     "judge_client_async",
+    "judge_api_client",
+    "judge_api_client_async",
     "GradePost",
     "GradePost_async",
     "GradePost_spec",
@@ -200,6 +246,20 @@ __all__ = [
     "RankCandidates_spec_async",
     "RankCandidates_stream",
     "RankCandidates_stream_async",
+    "fixture_candidate",
+    "fixture_candidate_async",
+    "fixture_references",
+    "fixture_references_async",
+    "criteria_json",
+    "criteria_json_async",
+    "grade_json",
+    "grade_json_async",
+    "two_comparisons",
+    "two_comparisons_async",
+    "parse_grade",
+    "parse_grade_async",
+    "parse_failure",
+    "parse_failure_async",
 ]
 
 from . import reflect as reflect
