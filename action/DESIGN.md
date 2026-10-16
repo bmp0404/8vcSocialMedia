@@ -78,6 +78,29 @@ Iterate promoted the reply lane on 27 real threads (Opus detection 1.000 to 0.37
 
 With the mission check, a live Opus run on those three strings vetoed all three. The first was off mission ("sincerely cheers rival Angel Reese"). The other two were off mission for saying nothing. The same run also vetoed two drafts we'd want: an on-voice jab ("six all-rookies and the fever didn't need one, we have caitlin") and a real fan reply, both on split verdicts between the two orders. So the mission check costs pass rate. Iterate is rerunning its instrument with the check frozen to measure how much.
 
+### Writing from the account's side
+
+Iterate's v3 retest reverted the first promotion of this lane. Continuing another team's thread made the model write as that team's fans (12 of 20 vetoes), and 10 more vetoes were for content-free lines. Two changes answer it. Neither has a measurement against real engagement.
+
+- **The writer replies as the account's handle** (`action/account.json`). The page is otherwise unchanged: neutral handles for everyone else, no like counts. A probe on 4 threads with 16 drafts per framing (`harness/minds/lab/framing_probe.py`) picked this framing. Neutral handles gave 2 lines of UI junk or empty text and 2 veto passes. The account's handle gave 0 and 4. Adding the display name gave 1 and 2, and it invented stats. A "signed in as" header with a bio was worse than all three: the model wrote reply-box text like "[reply on this post]" and "Draft my reply". On the Angel Reese thread, the neutral page wrote "A BORN WINNER ✨" and the account's handle wrote "Please change your name to Clark National Basketball Association".
+- **The planning call labels each post** `own`, `rival` or `neutral`. On a rival post, `rival_thread_mode` decides: banter with the styled prompt (the default), abstain, or continue anyway.
+
+The rerun on the same 19 threads (`harness/minds/lab/side_experiment.py`) reports lineup detection and veto pass rate together. All three arms faced one veto: the current prompt, on Opus, with mission fit, in two orders.
+
+| Writer | Veto pass rate per draft | Threads shipped | Opus spotted the shipped draft |
+| --- | --- | --- | --- |
+| Current lane: plan, then continuation replying as the account | 15/48 (0.31) | 7/19 | 2/7 |
+| Earlier lane: continuation with neutral handles | 23/114 (0.20) | 11/19 | 4/11 |
+| Today's persona prompt | 0/19 (0.00) | 0/19 | none shipped |
+
+Notes on the table:
+
+- The persona prompt's drafts failed mostly as "reads as AI" (13 of 19). That's why the 0.00 here differs from Iterate's 0.556 for `main`'s persona prompt, which came from a veto without the AI-register check.
+- Content-free lines failed the gate on 29% of the current lane's drafts, against 42% before.
+- The planner abstained on 12 of 19 threads: 8 `no_angle`, 2 `mute_risk`, 1 `off_mission`, and 1 abstained before the plan. That included all 3 rival threads, so banter against continuation on rival posts is still unmeasured.
+- Shipped examples: "Who knew a shoe launch could outshine a whole league💀" and "If only the @wnba loved Caitlin Clark as much as the @IndianaFever has."
+- The veto also passed "Lmao she will never be as good as CC" under the espnW JuJu Watkins post. That one is borderline for "punch at takes, not people".
+
 ### What the live runs did
 
 Two runs on live WNBA, Fever, Clark, espnW, Dream and Valkyries posts (`action/experiments/live_decide-*.json`). The second widened the age cutoff to 48 hours to have anything to answer.

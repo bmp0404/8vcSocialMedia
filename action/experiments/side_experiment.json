@@ -1,0 +1,294 @@
+{
+ "threads": 19,
+ "veto": {
+  "model": "claude-opus-5-5",
+  "orders": 2,
+  "checks": "p_ai, unsupported, off_mission, risk"
+ },
+ "judges": {
+  "claude-fable-5-dd-los-6.5-tpg": "gpt-5.6-sol",
+  "claude-fable-5-dd-artsa-6-tpg": "gpt-6-astra",
+  "claude-opus-5-5": "claude-opus-5-5"
+ },
+ "arms": {
+  "pipeline_v2": {
+   "drafts": 48,
+   "veto_passed": 15,
+   "veto_pass_rate": 0.312,
+   "gate_failed": 14,
+   "veto_reasons": {
+    "unsupported claim": 10,
+    "off mission": 9,
+    "mute/report risk": 4,
+    "split verdict between orders": 4,
+    "reads as AI": 2
+   },
+   "shipped": 7,
+   "abstained": {
+    "off_mission": 1,
+    "judge_rejected": 1,
+    "mute_risk": 2,
+    "no_angle": 8
+   },
+   "sides": {
+    "own": 7,
+    "rival": 3,
+    "neutral": 9
+   },
+   "methods": {
+    "continuation": 7,
+    "banter": 0,
+    "styled": 0
+   },
+   "detection_on_shipped": {
+    "opus": {
+     "k": 2,
+     "n": 7,
+     "rate": 0.286
+    },
+    "artsa": {
+     "k": 3,
+     "n": 7,
+     "rate": 0.429
+    },
+    "los": {
+     "k": 4,
+     "n": 7,
+     "rate": 0.571
+    }
+   }
+  },
+  "pipeline_v2_rival_cont": {
+   "drafts": 48,
+   "veto_passed": 15,
+   "veto_pass_rate": 0.312,
+   "gate_failed": 14,
+   "veto_reasons": {
+    "unsupported claim": 10,
+    "off mission": 9,
+    "mute/report risk": 4,
+    "split verdict between orders": 4,
+    "reads as AI": 2
+   },
+   "shipped": 7
+  },
+  "pipeline_v1_reveto": {
+   "drafts": 114,
+   "veto_passed": 23,
+   "veto_pass_rate": 0.202,
+   "gate_failed": 48,
+   "veto_reasons": {
+    "off mission": 25,
+    "unsupported claim": 13,
+    "split verdict between orders": 9,
+    "mute/report risk": 6,
+    "reads as AI": 4
+   },
+   "shipped": 11,
+   "detection_on_shipped": {
+    "opus": {
+     "k": 4,
+     "n": 11,
+     "rate": 0.364
+    },
+    "artsa": {
+     "k": 3,
+     "n": 11,
+     "rate": 0.273
+    },
+    "los": {
+     "k": 4,
+     "n": 11,
+     "rate": 0.364
+    }
+   }
+  },
+  "naive_reveto": {
+   "drafts": 19,
+   "veto_passed": 0,
+   "veto_pass_rate": 0.0,
+   "gate_failed": 6,
+   "veto_reasons": {
+    "reads as AI": 13,
+    "off mission": 2,
+    "unsupported claim": 2
+   },
+   "shipped": 0,
+   "detection_on_shipped": {
+    "opus": {
+     "k": 0,
+     "n": 0,
+     "rate": null
+    },
+    "artsa": {
+     "k": 0,
+     "n": 0,
+     "rate": null
+    },
+    "los": {
+     "k": 0,
+     "n": 0,
+     "rate": null
+    }
+   }
+  }
+ },
+ "rival_threads": [
+  {
+   "thread": "https://x.com/WNBA/status/2110792840989024541",
+   "banter": null,
+   "continuation": null,
+   "banter_veto_passed": 0,
+   "continuation_veto_passed": 0
+  },
+  {
+   "thread": "https://x.com/AtlantaDream/status/2110808408366493714",
+   "banter": null,
+   "continuation": null,
+   "banter_veto_passed": 0,
+   "continuation_veto_passed": 0
+  },
+  {
+   "thread": "https://x.com/AtlantaDream/status/2108954459304763841",
+   "banter": null,
+   "continuation": null,
+   "banter_veto_passed": 0,
+   "continuation_veto_passed": 0
+  }
+ ],
+ "shipped_v2": [
+  {
+   "thread": "https://x.com/CaitlinClark22/status/2099247457473339402",
+   "side": "own",
+   "method": "continuation",
+   "text": "😁😁 SHE DID IT. I'M SO PROUD",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/IndianaFever/status/2105879899399668010",
+   "side": "own",
+   "method": "continuation",
+   "text": "We weren't showing up for the Fever. We came for Caitlin and we're leaving feeling like she's being held hostage.",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/AtlantaDream/status/2110038076114256260",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/WNBA/status/2110792840989024541",
+   "side": "rival",
+   "method": null,
+   "text": null,
+   "abstained": "mute_risk"
+  },
+  {
+   "thread": "https://x.com/espnW/status/2110018728314224992",
+   "side": "neutral",
+   "method": "continuation",
+   "text": "Lmao she will never be as good as CC",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/valkyries/status/2109672093403279370",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/CaitlinClark22/status/2067322859848925290",
+   "side": "own",
+   "method": "continuation",
+   "text": "SUCH A GOOD SHOE",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/IndianaFever/status/2106459938151145977",
+   "side": "own",
+   "method": "continuation",
+   "text": "If only the @wnba loved Caitlin Clark as much as the @IndianaFever has.",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/AtlantaDream/status/2110808408366493714",
+   "side": "rival",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/WNBA/status/2110808211347456506",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/espnW/status/2109769353935688054",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "off_mission"
+  },
+  {
+   "thread": "https://x.com/CaitlinClark22/status/2106419802117976116",
+   "side": "own",
+   "method": null,
+   "text": null,
+   "abstained": "judge_rejected"
+  },
+  {
+   "thread": "https://x.com/IndianaFever/status/2106399407834898501",
+   "side": "own",
+   "method": null,
+   "text": null,
+   "abstained": "mute_risk"
+  },
+  {
+   "thread": "https://x.com/AtlantaDream/status/2109445947881087063",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/WNBA/status/2110824046833348936",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/espnW/status/2110417062963081284",
+   "side": "neutral",
+   "method": "continuation",
+   "text": "CAITLIN is literally the greatest of all time",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/CaitlinClark22/status/2105382766682714299",
+   "side": "own",
+   "method": "continuation",
+   "text": "Who knew a shoe launch could outshine a whole league💀",
+   "abstained": null
+  },
+  {
+   "thread": "https://x.com/AtlantaDream/status/2108954459304763841",
+   "side": "rival",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  },
+  {
+   "thread": "https://x.com/WNBA/status/2110808214048502128",
+   "side": "neutral",
+   "method": null,
+   "text": null,
+   "abstained": "no_angle"
+  }
+ ]
+}

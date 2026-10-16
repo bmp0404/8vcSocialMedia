@@ -1,28 +1,231 @@
 {
- "v2|2110038076114256260": {
-  "planned": {
+ "plan|2099247457473339402": {
+  "plan": {
+   "target_url": "https://x.com/CaitlinClark22/status/2099247457473339402",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Celebrate Clark's World Cup gold with a funny, in-the-joke fan reply that matches her excitement. Keep it short and avoid stating any stats or details that haven't been verified.",
+   "reason": "",
+   "detail": "Clark's own celebratory post is squarely on-mission and carries no injury or sensitivity risk. Early, upbeat fan banter fits the tone. Keep claims generic (no specific game stats) to stay accurate."
+  },
+  "error": ""
+ },
+ "plan|2105879899399668010": {
+  "plan": {
+   "target_url": "https://x.com/IndianaFever/status/2105879899399668010",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Warm, lightly funny fan reply thanking the team back; nod to the packed arenas and the Caitlin Clark era without overclaiming specifics",
+   "detail": "Official Fever season-end thank-you is squarely on-mission and low risk. A short reply that's in on the joke (e.g. fans being loud, tickets being impossible to get) fits the tone. Avoid citing specific stats or season outcomes since the post doesn't state them, and avoid anything that reads as a dig at the team or implies injury commentary."
+  },
+  "error": ""
+ },
+ "plan|2110038076114256260": {
+  "plan": {
    "target_url": "https://x.com/AtlantaDream/status/2110038076114256260",
    "tool": "abstain",
    "side": "neutral",
-   "intent": "A good reply would be a light, in-the-know jab tying the Dream's Finals run to the Fever. The post is only a ticket-sale promo from a team account, and nothing in it involves Clark, the Fever or Iowa.",
+   "intent": "A good reply would need a real Clark or Fever hook, which this ticket promo doesn't give.",
    "reason": "no_angle",
-   "detail": "Generic ticket announcement for Finals Games 3 and 4. A reply would be forced banter with a team account, with no conversation to join and a risk of getting facts wrong about the series."
+   "detail": "This is a ticket-sale promo for WNBA Finals Games 3 and 4. It has no Caitlin Clark, Fever, or Iowa connection. A banter reply would have to force a Fever angle, and I can't verify the matchup details. A generic hype reply to a team's promo account wouldn't earn followers."
   },
-  "plan_error": "",
-  "abstained": "no_angle",
-  "candidates": []
+  "error": ""
+ },
+ "plan|2110792840989024541": {
+  "plan": {
+   "target_url": "https://x.com/WNBA/status/2110792840989024541",
+   "tool": "abstain",
+   "side": "rival",
+   "intent": "A good reply would be light rivalry banter or a nod to the Finals. Any Clark angle here would read as a dig at Reese.",
+   "reason": "mute_risk",
+   "detail": "This is a league promo celebrating Reese's title chase. A Clark-flavored jab under it would look petty and invite a pile-on. Generic congratulations is off-mission and wouldn't earn followers. I also can't verify the Finals matchup details, so a reply could end up inaccurate."
+  },
+  "error": ""
+ },
+ "plan|2106459938151145977": {
+  "plan": {
+   "target_url": "https://x.com/IndianaFever/status/2106459938151145977",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Add a short, witty fan take agreeing Clark is the tipping point, nodding to the league-wide impact (attendance, ratings, new fans) without over-the-top gushing or any inaccurate stat",
+   "detail": "Official Fever post quoting Amber Cox praising Caitlin Clark. Squarely on-mission and positive in tone, with no injury or sensitive news. A fan jumping in is natural and low risk. Keep it funny and correct, and avoid putting down other players."
+  },
+  "error": ""
+ },
+ "plan|2067322859848925290": {
+  "plan": {
+   "target_url": "https://x.com/CaitlinClark22/status/2067322859848925290",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Short, playful fan reaction to the teaser, in on the joke, that doesn't assume what the details are",
+   "detail": "The post is Clark's own, with a playful tone and no sign of injury, rivalry or bad news. A light reply fits the mission. The post gives no context, so the reply must not guess what 'details' refers to. Check the parent or quoted content before posting, and abstain if it turns out to be sensitive."
+  },
+  "error": ""
+ },
+ "plan|2109672093403279370": {
+  "plan": {
+   "target_url": "https://x.com/valkyries/status/2109672093403279370",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "A good reply would add a funny, accurate Finals-week take tied to Clark or the Fever, but this post gives nothing to build on.",
+   "reason": "no_angle",
+   "detail": "This is a generic hype post from the Valkyries' team account. It doesn't mention Clark, the Fever or Iowa, and I can't confirm from the post who is in the Finals or how the Fever's season ended. Any reply would be generic or risk being inaccurate. A reply to a post that actually involves our subjects would be better."
+  },
+  "error": ""
+ },
+ "plan|2110018728314224992": {
+  "plan": {
+   "target_url": "https://x.com/espnW/status/2110018728314224992",
+   "tool": "reply",
+   "side": "neutral",
+   "intent": "Warmly welcome JuJu back and say women's college hoops is better with her on the floor. Optionally nod to the star-power era that Caitlin Clark and others built. No jokes about the injury and no comparisons that put her down.",
+   "detail": "This is a feel-good comeback story in the college women's hoops conversation that Clark fans follow, so a fan could plausibly jump in. Keep it upbeat and respectful, since it is about a return from a long injury absence. Don't hijack it to talk about Clark."
+  },
+  "error": ""
+ },
+ "plan|2106419802117976116": {
+  "plan": {
+   "target_url": "https://x.com/CaitlinClark22/status/2106419802117976116",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Playful fan banter: demand receipts on the 10-0 picks claim, tease her confidence, keep it light and kind",
+   "detail": "Caitlin's own lighthearted post about her picks, squarely on-mission. A funny, in-on-the-joke reply fits the tone. Avoid asserting what the picks were or claiming any outcome as fact since the post doesn't specify the sport or games."
+  },
+  "error": ""
+ },
+ "plan|2110808408366493714": {
+  "plan": {
+   "target_url": "https://x.com/AtlantaDream/status/2110808408366493714",
+   "tool": "abstain",
+   "side": "rival",
+   "intent": "A good reply would be a light, respectful nod to the award. Nothing in the post gives a funny, accurate hook that involves Clark or the Fever.",
+   "reason": "no_angle",
+   "detail": "This is a celebratory team announcement about Dream players, with no Clark, Fever, or Iowa tie-in. A Clark fan account jumping in would most likely read as Reese-Clark rivalry bait, which risks mute or block. I also can't verify the stats or award claims, and the mission requires being correct."
+  },
+  "error": ""
+ },
+ "plan|2110808211347456506": {
+  "plan": {
+   "target_url": "https://x.com/WNBA/status/2110808211347456506",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "none; a good reply would need a real Clark, Fever or Iowa hook, and this post has none",
+   "reason": "no_angle",
+   "detail": "This is an official All-Defensive First Team announcement with no Fever, Clark or Iowa players on it. The only rivalry hook is Angel Reese's selection, and a Clark-vs-Reese jab on her award would read as opportunistic and risk a mute. Generic congratulations to the honorees wouldn't fit the account's funny, edgy rivalry tone."
+  },
+  "error": ""
+ },
+ "plan|2109769353935688054": {
+  "plan": {
+   "target_url": "https://x.com/espnW/status/2109769353935688054",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "",
+   "reason": "off_mission",
+   "detail": "This is about women's football (soccer) players and a FIFPRO report on financial pressure and mental health. It has no link to Caitlin Clark, the Fever, Iowa, or the WNBA. A joking or edgy reply on a serious welfare topic would also risk reading as opportunistic or tone-deaf, so skip it."
+  },
+  "error": ""
+ },
+ "plan|2106399407834898501": {
+  "plan": {
+   "target_url": "https://x.com/IndianaFever/status/2106399407834898501",
+   "tool": "abstain",
+   "side": "own",
+   "intent": "A good reply would be a sincere season-end thank-you. Joke-leaning banter doesn't fit.",
+   "reason": "mute_risk",
+   "detail": "This is a season-ending press conference announcement with no content to react to yet. We don't know how the season ended or what White will say. Any edgy or early reply could read as tone-deaf or opportunistic. A generic sentimental reply adds nothing and wouldn't help a 2-follower account. Wait for specific quotes or news, then engage on those."
+  },
+  "error": ""
+ },
+ "plan|2110417062963081284": {
+  "plan": {
+   "target_url": "https://x.com/espnW/status/2110417062963081284",
+   "tool": "reply",
+   "side": "neutral",
+   "intent": "Light, funny fan quip celebrating the six-member All-Rookie team and the rookies, tying in WNBA rookie-class discourse without naming specifics or making claims that could be wrong",
+   "detail": "Upbeat league news with no injury or negative angle, so a playful reply is low-risk. Keep it generic enough to be accurate since the six names aren't in the post. A Caitlin Clark callback is fine if it's about her own rookie All-Rookie season, but don't attribute anything unverified."
+  },
+  "error": ""
+ },
+ "plan|2109445947881087063": {
+  "plan": {
+   "target_url": "https://x.com/AtlantaDream/status/2109445947881087063",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "If this were confirmed as a Fever game, a playful rivalry quip would fit. As written, there's nothing to reply to.",
+   "reason": "no_angle",
+   "detail": "The post never names the opponent ('the home squad'), so we can't tell whether it involves the Fever. A joke aimed at the wrong team would be inaccurate and would waste the account's early reputation. It's a generic schedule promo with no Clark or Fever hook."
+  },
+  "error": ""
+ },
+ "plan|2110808214048502128": {
+  "plan": {
+   "target_url": "https://x.com/WNBA/status/2110808214048502128",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "",
+   "reason": "no_angle",
+   "detail": "All-Defensive Second Team announcement with no Fever or Caitlin Clark player on it. A fan account has no natural, funny, on-mission angle here. A reply would be generic congratulations or a forced Clark joke, and that adds nothing to the conversation."
+  },
+  "error": ""
+ },
+ "plan|2105382766682714299": {
+  "plan": {
+   "target_url": "https://x.com/CaitlinClark22/status/2105382766682714299",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Funny, hyped fan reply to Caitlin's Nike Caitlin 1 launch: playful joke about emptying wallets or the countdown to Oct 1, plus excitement for what's coming. Keep it light, no unverified details about the shoe or release.",
+   "reason": "",
+   "detail": "Squarely on-mission: Caitlin Clark's own post about her signature shoe drop. Happy, non-sensitive news where a fan would plausibly jump in. Avoid claiming specifics (price, colorways, sizes) not in the post."
+  },
+  "error": ""
+ },
+ "plan|2110824046833348936": {
+  "plan": {
+   "target_url": "https://x.com/WNBA/status/2110824046833348936",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "none; a good reply would need a verified Fever or Caitlin Clark tie to Bonner or the Dream's run",
+   "reason": "no_angle",
+   "detail": "This is a league promo about the Dream's 10-0 run and the Finals. It has no Clark, Fever, or Iowa content. The only hook is Bonner's past with the Fever, and I can't confirm the details well enough to joke about it without risking an inaccurate or sour take. A generic 'congrats' reply wouldn't fit the account's funny, edgy voice."
+  },
+  "error": ""
+ },
+ "plan|2108954459304763841": {
+  "plan": {
+   "target_url": "https://x.com/AtlantaDream/status/2108954459304763841",
+   "tool": "abstain",
+   "side": "rival",
+   "intent": "none: a good reply would need a Clark or Fever hook, and the post gives none",
+   "reason": "no_angle",
+   "detail": "This is an official Dream Finals hype post with no Clark or Fever tie. A banter reply on a rival's championship promo would likely read as a generic or sour-grapes dunk. Since the account must be correct, I'm not guessing at Fever-Dream history without a clear, verifiable hook."
+  },
+  "error": ""
  },
  "v2|2110792840989024541": {
   "planned": {
    "target_url": "https://x.com/WNBA/status/2110792840989024541",
    "tool": "abstain",
    "side": "rival",
-   "intent": "A good reply would be light, accurate rivalry banter, but this is an official promo for Reese's Finals run with no Clark or Fever hook.",
+   "intent": "A good reply would be light rivalry banter or a nod to the Finals. Any Clark angle here would read as a dig at Reese.",
    "reason": "mute_risk",
-   "detail": "A Clark fan account replying under a Reese championship promo would likely read as shade or bait. The post is not about Clark, the Fever or Iowa, so a reply would add little and could cost followers."
+   "detail": "This is a league promo celebrating Reese's title chase. A Clark-flavored jab under it would look petty and invite a pile-on. Generic congratulations is off-mission and wouldn't earn followers. I also can't verify the Finals matchup details, so a reply could end up inaccurate."
   },
   "plan_error": "",
   "abstained": "mute_risk",
+  "candidates": []
+ },
+ "v2|2110038076114256260": {
+  "planned": {
+   "target_url": "https://x.com/AtlantaDream/status/2110038076114256260",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "A good reply would need a real Clark or Fever hook, which this ticket promo doesn't give.",
+   "reason": "no_angle",
+   "detail": "This is a ticket-sale promo for WNBA Finals Games 3 and 4. It has no Caitlin Clark, Fever, or Iowa connection. A banter reply would have to force a Fever angle, and I can't verify the matchup details. A generic hype reply to a team's promo account wouldn't earn followers."
+  },
+  "plan_error": "",
+  "abstained": "no_angle",
   "candidates": []
  },
  "v2|2109672093403279370": {
@@ -30,9 +233,9 @@
    "target_url": "https://x.com/valkyries/status/2109672093403279370",
    "tool": "abstain",
    "side": "neutral",
-   "intent": "A good reply would add a funny, accurate Finals-week quip, but nothing in the post gives a real hook.",
+   "intent": "A good reply would add a funny, accurate Finals-week take tied to Clark or the Fever, but this post gives nothing to build on.",
    "reason": "no_angle",
-   "detail": "The post is a short hype line from a team account. I can't confirm from it who is in the Finals or whether the Fever or Clark are involved, so any joke about them risks being inaccurate or off-topic. A generic 'Finals week!' reply would add nothing and wouldn't help growth."
+   "detail": "This is a generic hype post from the Valkyries' team account. It doesn't mention Clark, the Fever or Iowa, and I can't confirm from the post who is in the Finals or how the Fever's season ended. Any reply would be generic or risk being inaccurate. A reply to a post that actually involves our subjects would be better."
   },
   "plan_error": "",
   "abstained": "no_angle",
@@ -43,288 +246,164 @@
    "target_url": "https://x.com/CaitlinClark22/status/2099247457473339402",
    "tool": "reply",
    "side": "own",
-   "intent": "Celebrate Clark's World Cup gold with a short, funny fan-in-on-the-joke line; hype the win without generic praise or any unverified stats.",
-   "detail": "Positive milestone post from Clark herself, squarely on mission. Early reply on a high-traffic post is a good growth chance. Keep it playful and accurate, and don't claim specifics about her tournament performance unless confirmed."
+   "intent": "Celebrate Clark's World Cup gold with a funny, in-the-joke fan reply that matches her excitement. Keep it short and avoid stating any stats or details that haven't been verified.",
+   "reason": "",
+   "detail": "Clark's own celebratory post is squarely on-mission and carries no injury or sensitivity risk. Early, upbeat fan banter fits the tone. Keep claims generic (no specific game stats) to stay accurate."
   },
   "candidates": [
    {
-    "text": "Congratulations @CaitlinClark22! You've proven all the doubters wrong. Team USA wouldn't have won without you! 🥇🐐 #GoldMedalist",
+    "text": "😁😁 SHE DID IT. I'M SO PROUD",
     "gate": [],
     "veto": {
-     "passed": false,
-     "why": "reads as AI, unsupported claim",
+     "passed": true,
+     "why": "",
      "orders_agree": true,
      "fwd": {
-      "p_ai": 85,
-      "unsupported": true,
+      "p_ai": 15,
+      "unsupported": false,
       "risk": false,
-      "reason": "Claims USA wouldn't have won without her; facts don't support that.",
+      "reason": "Generic but natural fan excitement, matches thread vibe",
       "off_mission": false
      },
      "rev": {
-      "p_ai": 75,
-      "unsupported": true,
+      "p_ai": 12,
+      "unsupported": false,
       "risk": false,
-      "reason": "Claims USA wouldn't have won without her; unsupported.",
+      "reason": "Typical excited fan reply, generic but supportive of Clark.",
       "off_mission": false
      }
     }
    },
    {
-    "text": "---",
+    "text": "Caitlin Clark's 2024 achievements:  / WNBA Rookie of the Year (unanimous) / WNBA All-Star / WNBA Champion / FIBA World Cup Gold Medalist",
     "gate": [
      {
-      "rule": "content_free",
-      "detail": "no words: only punctuation, ellipses or emoji",
-      "start": null,
-      "end": null
+      "rule": "ungrounded_number",
+      "detail": "number '2024' isn't in the context",
+      "start": 16,
+      "end": 20
+     },
+     {
+      "rule": "ungrounded_name",
+      "detail": "name 'Rookie' isn't in the context",
+      "start": 43,
+      "end": 49
+     },
+     {
+      "rule": "ungrounded_name",
+      "detail": "name 'Year' isn't in the context",
+      "start": 57,
+      "end": 61
      }
     ]
    },
    {
-    "text": "Draft a response to add to the conversation.",
-    "gate": [],
-    "veto": {
-     "passed": false,
-     "why": "reads as AI, off mission",
-     "orders_agree": true,
-     "fwd": {
-      "p_ai": 95,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Leaked prompt placeholder that says nothing.",
-      "off_mission": true
+    "text": "The goat, world champion, Olympic medalist, all time assist leader, first unanimous pick, triple double record holder, best shooter in the wnba, most popular player in basketball history, first player with 1000 points 400 assists in a single season, 11th best point guard",
+    "gate": [
+     {
+      "rule": "ungrounded_number",
+      "detail": "number '1000' isn't in the context",
+      "start": 206,
+      "end": 210
      },
-     "rev": {
-      "p_ai": 97,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Leaked prompt instruction, not an actual reply.",
-      "off_mission": true
+     {
+      "rule": "ungrounded_number",
+      "detail": "number '400' isn't in the context",
+      "start": 218,
+      "end": 221
+     },
+     {
+      "rule": "ungrounded_name",
+      "detail": "name 'Olympic' isn't in the context",
+      "start": 26,
+      "end": 33
      }
-    }
+    ]
    },
    {
-    "text": "Still hasn't responded to this",
+    "text": "Best pg in the world",
     "gate": [],
     "veto": {
-     "passed": false,
-     "why": "unsupported claim, off mission",
+     "passed": true,
+     "why": "",
      "orders_agree": true,
      "fwd": {
-      "p_ai": 25,
-      "unsupported": true,
-      "risk": false,
-      "reason": "Vague and pointless; implies an unsupported non-response.",
-      "off_mission": true
-     },
-     "rev": {
-      "p_ai": 20,
-      "unsupported": true,
-      "risk": false,
-      "reason": "Vague, implies an unstated non-response; adds nothing.",
-      "off_mission": true
-     }
-    }
-   },
-   {
-    "text": "You did it!!! So proud of you, Caitlin! 🎉 This is huge! #GoldMedalist",
-    "gate": [],
-    "veto": {
-     "passed": false,
-     "why": "split verdict between orders",
-     "orders_agree": false,
-     "fwd": {
-      "p_ai": 75,
+      "p_ai": 10,
       "unsupported": false,
       "risk": false,
-      "reason": "Generic praise with a hashtag; on-topic but bland.",
+      "reason": "Short hype opinion, typical fan reply",
       "off_mission": false
      },
      "rev": {
-      "p_ai": 45,
+      "p_ai": 10,
       "unsupported": false,
       "risk": false,
-      "reason": "Generic congrats to Clark; on-mission but bland, no edge.",
+      "reason": "Terse fan opinion; reads human and stays on mission.",
       "off_mission": false
      }
     }
    },
    {
-    "text": "🙌🙌 GOLD!!! So proud of Caitlin and the whole team. What a way to represent the USA on the world stage! 🇺🇸🥇 #GoldMedal #TeamUSA #Fever",
+    "text": "Congratulations! GO IOWA!!!",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 30,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic congrats; Iowa shoutout slightly random but on-subject",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Short fan cheer; Iowa shoutout is a little random but fine.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Such a legend!!! 🥇🇺🇸 So proud 👏👏👏",
     "gate": [
      {
       "rule": "emoji",
       "detail": "3 distinct emoji (max 2)",
       "start": null,
       "end": null
-     },
-     {
-      "rule": "hashtags",
-      "detail": "3 hashtags (max 1): #GoldMedal #TeamUSA #Fever",
-      "start": 118,
-      "end": 133
      }
     ]
    }
   ],
-  "detail": "veto: 1x reads as AI, unsupported claim; 1x reads as AI, off mission; 1x unsupported claim, off mission; 1x split verdict between orders",
-  "abstained": "judge_rejected"
+  "detail": "continuation: 3/6 drafts passed the gate",
+  "text": "😁😁 SHE DID IT. I'M SO PROUD",
+  "method": "continuation"
  },
- "v2|2110018728314224992": {
+ "v2|2067322859848925290": {
   "planned": {
-   "target_url": "https://x.com/espnW/status/2110018728314224992",
-   "tool": "reply",
-   "side": "neutral",
-   "intent": "Welcome JuJu back warmly and say women's college hoops is more fun with her on the floor. Add a light, fan-style joke about the new season's hype, and keep it positive. Don't speculate on her injury or compare her to other players.",
-   "detail": "This is a comeback story, not fresh injury news, so a celebratory reply fits. It's adjacent to the account's subjects (women's college basketball, Iowa's preseason ranking), and a Clark fan would plausibly join the conversation. Keep it short and avoid rivalry digs, since the framing is a return after injury."
-  },
-  "candidates": [
-   {
-    "text": "Please write a reply in the voice of @clarkfanaccount",
-    "gate": [
-     {
-      "rule": "unknown_handle",
-      "detail": "@clarkfanaccount isn't in the post or thread",
-      "start": 37,
-      "end": 53
-     }
-    ]
-   },
-   {
-    "text": "---",
-    "gate": [
-     {
-      "rule": "content_free",
-      "detail": "no words: only punctuation, ellipses or emoji",
-      "start": null,
-      "end": null
-     }
-    ]
-   },
-   {
-    "text": "@user10 Girl, you are on espnW right now...",
-    "gate": [
-     {
-      "rule": "unknown_handle",
-      "detail": "@user10 isn't in the post or thread",
-      "start": 0,
-      "end": 7
-     },
-     {
-      "rule": "ungrounded_name",
-      "detail": "name 'Girl' isn't in the context",
-      "start": 8,
-      "end": 12
-     }
-    ]
-   },
-   {
-    "text": "[your reply]",
-    "gate": [
-     {
-      "rule": "content_free",
-      "detail": "2 word(s) that share nothing with the post (min 3 without a reference)",
-      "start": null,
-      "end": null
-     }
-    ]
-   },
-   {
-    "text": "_____",
-    "gate": [
-     {
-      "rule": "content_free",
-      "detail": "no words: only punctuation, ellipses or emoji",
-      "start": null,
-      "end": null
-     }
-    ]
-   }
-  ],
-  "detail": "continuation: 0/5 drafts passed the gate",
-  "abstained": "gate_rejected"
- },
- "v2|2105879899399668010": {
-  "planned": {
-   "target_url": "https://x.com/IndianaFever/status/2105879899399668010",
+   "target_url": "https://x.com/CaitlinClark22/status/2067322859848925290",
    "tool": "reply",
    "side": "own",
-   "intent": "Warm, funny fan reply thanking the team back, nodding to the loud crowds and the season's highlights without being generic",
-   "detail": "Official Fever season-ending thank-you is squarely on-mission and a natural spot for fans to jump in. Not injury news and nothing sensitive. Keep it upbeat and in-on-the-joke, and avoid specific stat or record claims unless certain they're accurate."
+   "intent": "Short, playful fan reaction to the teaser, in on the joke, that doesn't assume what the details are",
+   "detail": "The post is Clark's own, with a playful tone and no sign of injury, rivalry or bad news. A light reply fits the mission. The post gives no context, so the reply must not guess what 'details' refers to. Check the parent or quoted content before posting, and abstain if it turns out to be sensitive."
   },
   "candidates": [
    {
-    "text": "[reply on this post]",
-    "gate": [],
-    "veto": {
-     "passed": false,
-     "why": "reads as AI, off mission",
-     "orders_agree": true,
-     "fwd": {
-      "p_ai": 85,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Placeholder text with no actual content.",
-      "off_mission": true
-     },
-     "rev": {
-      "p_ai": 90,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Unfilled template placeholder, empty reply.",
-      "off_mission": true
+    "text": "🔥🔥🔥🔥",
+    "gate": [
+     {
+      "rule": "content_free",
+      "detail": "no words: only punctuation, ellipses or emoji",
+      "start": null,
+      "end": null
      }
-    }
+    ]
    },
    {
-    "text": "Draft my reply",
-    "gate": [],
-    "veto": {
-     "passed": false,
-     "why": "reads as AI, off mission",
-     "orders_agree": true,
-     "fwd": {
-      "p_ai": 90,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Instruction prompt leaked, not a real reply.",
-      "off_mission": true
-     },
-     "rev": {
-      "p_ai": 85,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Leaked prompt instruction, no content.",
-      "off_mission": true
-     }
-    }
-   },
-   {
-    "text": "Replying to @IndianaFever",
-    "gate": [],
-    "veto": {
-     "passed": false,
-     "why": "reads as AI, off mission",
-     "orders_agree": true,
-     "fwd": {
-      "p_ai": 80,
-      "unsupported": false,
-      "risk": false,
-      "reason": "Just UI header text; says nothing.",
-      "off_mission": true
-     },
-     "rev": {
-      "p_ai": 45,
-      "unsupported": false,
-      "risk": false,
-      "reason": "UI text artifact; says nothing at all.",
-      "off_mission": true
-     }
-    }
-   },
-   {
-    "text": "[REPLY BOX]",
+    "text": "Love them!!! 👟🔥",
     "gate": [
      {
       "rule": "content_free",
@@ -335,54 +414,114 @@
     ]
    },
    {
-    "text": "Best decision I made this year was becoming a Fever fan. This is a great team filled with great people. Can't wait for next year. Go Fever!",
+    "text": "Def my fav shoe. Fits perfect. Great shoe",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 25,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Claims a fit for a shoe not yet released",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Claims the shoe fits, but it hasn't dropped yet.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "the GRINCH 22s 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥",
     "gate": [],
     "veto": {
      "passed": false,
      "why": "split verdict between orders",
      "orders_agree": false,
      "fwd": {
-      "p_ai": 60,
+      "p_ai": 10,
       "unsupported": false,
       "risk": false,
-      "reason": "Generic, earnest praise; lacks the mission's edgy banter.",
+      "reason": "Riffs on thread's grinch nickname; emoji-heavy but harmless",
       "off_mission": false
      },
      "rev": {
-      "p_ai": 35,
-      "unsupported": false,
+      "p_ai": 15,
+      "unsupported": true,
       "risk": false,
-      "reason": "Generic but sincere home-team cheer; no banter, but on side.",
+      "reason": "'GRINCH 22s' implies an unconfirmed shoe name; emoji spam borderline.",
       "off_mission": false
      }
     }
    },
    {
-    "text": "[WRITE REPLY]",
+    "text": "22 on the heel  /  / [image of shoe heel detail]",
     "gate": [
      {
-      "rule": "content_free",
-      "detail": "2 word(s) that share nothing with the post (min 3 without a reference)",
-      "start": null,
-      "end": null
+      "rule": "placeholder",
+      "detail": "unresolved placeholder '[image of shoe heel detail]'",
+      "start": 21,
+      "end": 48
      }
     ]
+   },
+   {
+    "text": "SUCH A GOOD SHOE",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic all-caps hype, on topic, human-sounding",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 12,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic all-caps praise, plausible fan reply, on topic.",
+      "off_mission": false
+     }
+    }
    }
   ],
-  "detail": "veto: 3x reads as AI, off mission; 1x split verdict between orders",
-  "abstained": "judge_rejected"
+  "detail": "continuation: 3/6 drafts passed the gate",
+  "text": "SUCH A GOOD SHOE",
+  "method": "continuation"
  },
  "v2|2110808408366493714": {
   "planned": {
    "target_url": "https://x.com/AtlantaDream/status/2110808408366493714",
    "tool": "abstain",
    "side": "rival",
-   "intent": "",
-   "reason": "off_mission",
-   "detail": "This is the Atlanta Dream's own All-Defensive Team announcement, with no Caitlin Clark, Fever or Iowa hook. Angel Reese is a Clark rival, so a reply would have to either congratulate her or push rivalry banter at an award post. Neither adds anything and the second risks reading as petty. Replying only to farm engagement is off-mission."
+   "intent": "A good reply would be a light, respectful nod to the award. Nothing in the post gives a funny, accurate hook that involves Clark or the Fever.",
+   "reason": "no_angle",
+   "detail": "This is a celebratory team announcement about Dream players, with no Clark, Fever, or Iowa tie-in. A Clark fan account jumping in would most likely read as Reese-Clark rivalry bait, which risks mute or block. I also can't verify the stats or award claims, and the mission requires being correct."
   },
   "plan_error": "",
-  "abstained": "off_mission",
+  "abstained": "no_angle",
+  "candidates": []
+ },
+ "v2|2110808211347456506": {
+  "planned": {
+   "target_url": "https://x.com/WNBA/status/2110808211347456506",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "none; a good reply would need a real Clark, Fever or Iowa hook, and this post has none",
+   "reason": "no_angle",
+   "detail": "This is an official All-Defensive First Team announcement with no Fever, Clark or Iowa players on it. The only rivalry hook is Angel Reese's selection, and a Clark-vs-Reese jab on her award would read as opportunistic and risk a mute. Generic congratulations to the honorees wouldn't fit the account's funny, edgy rivalry tone."
+  },
+  "plan_error": "",
+  "abstained": "no_angle",
   "candidates": []
  },
  "v2|2109769353935688054": {
@@ -392,163 +531,3486 @@
    "side": "neutral",
    "intent": "",
    "reason": "off_mission",
-   "detail": "This is about women's football (soccer) players and a FIFPRO report on finances and mental health. It has nothing to do with Caitlin Clark, the Fever, Iowa, or the WNBA. A joke-forward, edgy account would risk reading as flippant on a serious welfare topic, and a reply would be off-brand for the audience."
+   "detail": "This is about women's football (soccer) players and a FIFPRO report on financial pressure and mental health. It has no link to Caitlin Clark, the Fever, Iowa, or the WNBA. A joking or edgy reply on a serious welfare topic would also risk reading as opportunistic or tone-deaf, so skip it."
   },
   "plan_error": "",
   "abstained": "off_mission",
   "candidates": []
  },
- "v2|2110808211347456506": {
+ "v2|2110018728314224992": {
   "planned": {
-   "target_url": "https://x.com/WNBA/status/2110808211347456506",
-   "tool": "abstain",
-   "side": "neutral",
-   "intent": "none; a good reply would need a real Clark/Fever hook, and there isn't one",
-   "reason": "no_angle",
-   "detail": "The WNBA's All-Defensive First Team announcement has no Fever or Clark connection. Any Clark-versus-Reese joke would be rivalry bait on an official league post and could read as a cheap shot, so it risks being muted. Generic congratulations are the kind of reply the mission says to avoid, and they would get lost under the league account's replies."
-  },
-  "plan_error": "",
-  "abstained": "no_angle",
-  "candidates": []
- },
- "v2|2067322859848925290": {
-  "planned": {
-   "target_url": "https://x.com/CaitlinClark22/status/2067322859848925290",
+   "target_url": "https://x.com/espnW/status/2110018728314224992",
    "tool": "reply",
-   "side": "own",
-   "intent": "Short, playful fan reaction to her teasing 'details', joking about wanting the full story. Don't guess what the details are.",
-   "detail": "Her post is cheerful and teasing, so a light in-the-joke reply fits. The post gives no context, so the reply must stay vague and not claim any facts. If the attached media or thread shows the topic is something sensitive, switch to abstain."
+   "side": "neutral",
+   "intent": "Warmly welcome JuJu back and say women's college hoops is better with her on the floor. Optionally nod to the star-power era that Caitlin Clark and others built. No jokes about the injury and no comparisons that put her down.",
+   "detail": "This is a feel-good comeback story in the college women's hoops conversation that Clark fans follow, so a fan could plausibly jump in. Keep it upbeat and respectful, since it is about a return from a long injury absence. Don't hijack it to talk about Clark."
   },
   "candidates": [
    {
-    "text": "Just drafted a reply to CaitlinClark22's post:",
+    "text": "Caitlin did it better",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Short rivalry jab, reads like a real fan.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Light rivalry banter, on mission.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "USC does not need to make the tournament. If they do,good luck. But they definitely don't need to be there. Not for all us @user 11",
+    "gate": [
+     {
+      "rule": "unknown_handle",
+      "detail": "@user isn't in the post or thread",
+      "start": 123,
+      "end": 128
+     }
+    ]
+   },
+   {
+    "text": "Clark is still the GOAT.",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 30,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic opinion, on mission but bland.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 30,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic praise, stays on side, low effort.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Lmao she will never be as good as CC",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Dismissive banter, mild but not abusive.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 12,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Rivalry jab, slightly harsh but within banter.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "JuJu is far better",
     "gate": [],
     "veto": {
      "passed": false,
-     "why": "reads as AI, off mission",
+     "why": "off mission",
      "orders_agree": true,
      "fwd": {
-      "p_ai": 80,
+      "p_ai": 25,
       "unsupported": false,
       "risk": false,
-      "reason": "Meta drafting text with no actual reply content.",
+      "reason": "Rates rival above Clark, against account's side.",
       "off_mission": true
      },
      "rev": {
-      "p_ai": 85,
+      "p_ai": 15,
       "unsupported": false,
       "risk": false,
-      "reason": "Meta drafting preamble with no reply; says nothing.",
+      "reason": "Sincerely rates the rival above Clark, which works against the account.",
       "off_mission": true
      }
     }
    },
    {
-    "text": "(writing area, currently blank)",
+    "text": "heh heh juju about to take another L",
     "gate": [],
     "veto": {
      "passed": false,
-     "why": "reads as AI, off mission",
+     "why": "mute/report risk",
      "orders_agree": true,
      "fwd": {
-      "p_ai": 70,
+      "p_ai": 15,
       "unsupported": false,
-      "risk": false,
-      "reason": "Blank placeholder that says nothing at all.",
-      "off_mission": true
+      "risk": true,
+      "reason": "Mocks player returning from injury, implies reinjury; cruel.",
+      "off_mission": false
      },
      "rev": {
-      "p_ai": 50,
+      "p_ai": 10,
       "unsupported": false,
-      "risk": false,
-      "reason": "Blank placeholder, no actual reply content.",
-      "off_mission": true
+      "risk": true,
+      "reason": "Mocks a player coming back from injury; cruel, not banter.",
+      "off_mission": false
      }
     }
-   },
-   {
-    "text": "[Replying to @user05] Actually it's bunk to bash Angel's kicks while praising Caitlin's. Both athletes work hard on their collabs and both fanbases deserve respect. Just vibe with CC's design and leave the shade out. ☀️",
-    "gate": [
-     {
-      "rule": "unknown_handle",
-      "detail": "@user05 isn't in the post or thread",
-      "start": 13,
-      "end": 20
-     },
-     {
-      "rule": "ungrounded_name",
-      "detail": "name 'Actually' isn't in the context",
-      "start": 22,
-      "end": 30
-     },
-     {
-      "rule": "ungrounded_name",
-      "detail": "name \"Angel's\" isn't in the context",
-      "start": 49,
-      "end": 56
-     },
-     {
-      "rule": "ungrounded_name",
-      "detail": "name \"Caitlin's\" isn't in the context",
-      "start": 78,
-      "end": 87
-     },
-     {
-      "rule": "ungrounded_name",
-      "detail": "name \"CC's\" isn't in the context",
-      "start": 180,
-      "end": 184
-     }
-    ]
-   },
-   {
-    "text": "---",
-    "gate": [
-     {
-      "rule": "content_free",
-      "detail": "no words: only punctuation, ellipses or emoji",
-      "start": null,
-      "end": null
-     }
-    ]
-   },
-   {
-    "text": "...",
-    "gate": [
-     {
-      "rule": "content_free",
-      "detail": "no words: only punctuation, ellipses or emoji",
-      "start": null,
-      "end": null
-     }
-    ]
-   },
-   {
-    "text": "[write brief \"rivalry banter, never cruel\" reply to @user05]",
-    "gate": [
-     {
-      "rule": "unknown_handle",
-      "detail": "@user05 isn't in the post or thread",
-      "start": 52,
-      "end": 59
-     }
-    ]
    }
   ],
-  "detail": "veto: 2x reads as AI, off mission",
-  "abstained": "judge_rejected"
+  "detail": "continuation: 5/6 drafts passed the gate",
+  "text": "Lmao she will never be as good as CC",
+  "method": "continuation"
+ },
+ "v2|2106399407834898501": {
+  "planned": {
+   "target_url": "https://x.com/IndianaFever/status/2106399407834898501",
+   "tool": "abstain",
+   "side": "own",
+   "intent": "A good reply would be a sincere season-end thank-you. Joke-leaning banter doesn't fit.",
+   "reason": "mute_risk",
+   "detail": "This is a season-ending press conference announcement with no content to react to yet. We don't know how the season ended or what White will say. Any edgy or early reply could read as tone-deaf or opportunistic. A generic sentimental reply adds nothing and wouldn't help a 2-follower account. Wait for specific quotes or news, then engage on those."
+  },
+  "plan_error": "",
+  "abstained": "mute_risk",
+  "candidates": []
  },
  "v2|2109445947881087063": {
   "planned": {
    "target_url": "https://x.com/AtlantaDream/status/2109445947881087063",
    "tool": "abstain",
-   "side": "rival",
-   "intent": "If the opponent were confirmed as the Fever, a playful rivalry-banter reply about the matchup would fit. Nothing confirms it.",
+   "side": "neutral",
+   "intent": "If this were confirmed as a Fever game, a playful rivalry quip would fit. As written, there's nothing to reply to.",
    "reason": "no_angle",
-   "detail": "The text never names the opponent ('the home squad'), so it may not be a Fever game. A reply assuming it is could be inaccurate, and the account needs to be correct. Without a confirmed Fever or Clark link there is no clear on-mission hook."
+   "detail": "The post never names the opponent ('the home squad'), so we can't tell whether it involves the Fever. A joke aimed at the wrong team would be inaccurate and would waste the account's early reputation. It's a generic schedule promo with no Clark or Fever hook."
   },
   "plan_error": "",
   "abstained": "no_angle",
   "candidates": []
+ },
+ "v2|2110824046833348936": {
+  "planned": {
+   "target_url": "https://x.com/WNBA/status/2110824046833348936",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "none; a good reply would need a verified Fever or Caitlin Clark tie to Bonner or the Dream's run",
+   "reason": "no_angle",
+   "detail": "This is a league promo about the Dream's 10-0 run and the Finals. It has no Clark, Fever, or Iowa content. The only hook is Bonner's past with the Fever, and I can't confirm the details well enough to joke about it without risking an inaccurate or sour take. A generic 'congrats' reply wouldn't fit the account's funny, edgy voice."
+  },
+  "plan_error": "",
+  "abstained": "no_angle",
+  "candidates": []
+ },
+ "v2|2105879899399668010": {
+  "planned": {
+   "target_url": "https://x.com/IndianaFever/status/2105879899399668010",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Warm, lightly funny fan reply thanking the team back; nod to the packed arenas and the Caitlin Clark era without overclaiming specifics",
+   "detail": "Official Fever season-end thank-you is squarely on-mission and low risk. A short reply that's in on the joke (e.g. fans being loud, tickets being impossible to get) fits the tone. Avoid citing specific stats or season outcomes since the post doesn't state them, and avoid anything that reads as a dig at the team or implies injury commentary."
+  },
+  "candidates": [
+   {
+    "text": "Thank you for hosting Caitlin Clark's successful rookie season! 🏀  #FeverRising",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "reads as AI, unsupported claim",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 75,
+      "unsupported": true,
+      "risk": false,
+      "reason": "2026 wasn't Clark's rookie season; generic praise plus a hashtag.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 70,
+      "unsupported": true,
+      "risk": false,
+      "reason": "2026 wasn't her rookie season; canned hashtag tone ignores playoff exit.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Some of y'all fans need to stop embarrassing yourself in the replies",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Broad callout of the toxic replies, no individual targeted.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Short, human call-out of toxic replies; vague, not targeted.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Fire the coach. Fire the coaching staff. Free @CaitlinClark22",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "off mission, mute/report risk",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 25,
+      "unsupported": false,
+      "risk": true,
+      "reason": "Joins the fire-White pile-on aimed at a coach.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": true,
+      "reason": "Joins pile-on against coach Stephanie White; turns on own team.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "Thank you, @CaitlinClark22. This organization and the WNBA is blessed to have you. A whole generation of CC fans is now watching and they're not leaving. ❤️",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "reads as AI",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 60,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Earnest generic praise, not the funny voice; reads polished.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 60,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic praise with 'blessed' and 'whole generation' phrasing reads AI-ish.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "The season didn't end the way we wanted, but you brought so much excitement to the WNBA this year! Thank you @CaitlinClark22 for giving us such an incredible rookie season. Can't wait to see what Year 2 brings! 🔥",
+    "gate": [
+     {
+      "rule": "ai_vocab",
+      "detail": "\"Can't wait to see what\"",
+      "start": 173,
+      "end": 195
+     }
+    ]
+   },
+   {
+    "text": "We weren't showing up for the Fever. We came for Caitlin and we're leaving feeling like she's being held hostage.",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 30,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Fan-voiced hyperbole about the org; edgy but no personal attack.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Raw fan frustration, human voice; harsh on org but not a person.",
+      "off_mission": false
+     }
+    }
+   }
+  ],
+  "detail": "continuation: 5/6 drafts passed the gate",
+  "text": "We weren't showing up for the Fever. We came for Caitlin and we're leaving feeling like she's being held hostage.",
+  "method": "continuation"
+ },
+ "v2|2106419802117976116": {
+  "planned": {
+   "target_url": "https://x.com/CaitlinClark22/status/2106419802117976116",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Playful fan banter: demand receipts on the 10-0 picks claim, tease her confidence, keep it light and kind",
+   "detail": "Caitlin's own lighthearted post about her picks, squarely on-mission. A funny, in-on-the-joke reply fits the tone. Avoid asserting what the picks were or claiming any outcome as fact since the post doesn't specify the sport or games."
+  },
+  "candidates": [
+   {
+    "text": "Go Iowa!",
+    "gate": [
+     {
+      "rule": "content_free",
+      "detail": "2 word(s) that share nothing with the post (min 3 without a reference)",
+      "start": null,
+      "end": null
+     }
+    ]
+   },
+   {
+    "text": "You're so smart!!",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "off mission",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Empty generic praise, adds nothing funny or relevant",
+      "off_mission": true
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Empty generic praise, adds nothing funny or edgy.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "She also predicted an Iowa win. Can't wait for her to be wrong",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim, off mission",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 25,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Invented Iowa pick; roots against Clark and Iowa",
+      "off_mission": true
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Invents an Iowa pick; rooting against Iowa cuts against the account.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "10-0 just like she was at Iowa..the amount of winning in her DNA is incredible",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 40,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Claims a 10-0 Iowa record not in the facts",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 30,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Implies a 10-0 Iowa record; not in facts, likely inaccurate.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Caitlin you're looking amazing. I honestly wish I was there to give you a hug 🫂",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "split verdict between orders",
+     "orders_agree": false,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Appearance-focused hug comment, no basketball or humor",
+      "off_mission": true
+     },
+     "rev": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Gushy, parasocial fan reply; human-sounding, no edge but on subject.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "10/10 - she's a certified 10.",
+    "gate": [
+     {
+      "rule": "ungrounded_number",
+      "detail": "number '10/10' isn't in the context",
+      "start": 0,
+      "end": 5
+     }
+    ]
+   }
+  ],
+  "detail": "veto: 1x off mission; 1x unsupported claim, off mission; 1x unsupported claim; 1x split verdict between orders",
+  "abstained": "judge_rejected"
+ },
+ "v2|2108954459304763841": {
+  "planned": {
+   "target_url": "https://x.com/AtlantaDream/status/2108954459304763841",
+   "tool": "abstain",
+   "side": "rival",
+   "intent": "none: a good reply would need a Clark or Fever hook, and the post gives none",
+   "reason": "no_angle",
+   "detail": "This is an official Dream Finals hype post with no Clark or Fever tie. A banter reply on a rival's championship promo would likely read as a generic or sour-grapes dunk. Since the account must be correct, I'm not guessing at Fever-Dream history without a clear, verifiable hook."
+  },
+  "plan_error": "",
+  "abstained": "no_angle",
+  "candidates": []
+ },
+ "v2|2110808214048502128": {
+  "planned": {
+   "target_url": "https://x.com/WNBA/status/2110808214048502128",
+   "tool": "abstain",
+   "side": "neutral",
+   "intent": "",
+   "reason": "no_angle",
+   "detail": "All-Defensive Second Team announcement with no Fever or Caitlin Clark player on it. A fan account has no natural, funny, on-mission angle here. A reply would be generic congratulations or a forced Clark joke, and that adds nothing to the conversation."
+  },
+  "plan_error": "",
+  "abstained": "no_angle",
+  "candidates": []
+ },
+ "v2|2106459938151145977": {
+  "planned": {
+   "target_url": "https://x.com/IndianaFever/status/2106459938151145977",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Add a short, witty fan take agreeing Clark is the tipping point, nodding to the league-wide impact (attendance, ratings, new fans) without over-the-top gushing or any inaccurate stat",
+   "detail": "Official Fever post quoting Amber Cox praising Caitlin Clark. Squarely on-mission and positive in tone, with no injury or sensitive news. A fan jumping in is natural and low risk. Keep it funny and correct, and avoid putting down other players."
+  },
+  "candidates": [
+   {
+    "text": "And they'll never get another player like her 🐐💛💙",
+    "gate": [
+     {
+      "rule": "emoji",
+      "detail": "3 distinct emoji (max 2)",
+      "start": null,
+      "end": null
+     }
+    ]
+   },
+   {
+    "text": "If only the @wnba loved Caitlin Clark as much as the @IndianaFever has.",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 35,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Light jab at the league, on-voice and plausible fan reply.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 40,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Light jab at the league, on-brand rivalry tone",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "The Indiana Fever is now only a top 6 team in the league. The Caitlin Clark experiment has failed. I'm sorry, but we need another top 3 pick draft pick and an All Star point guard if this team ever wants to win a championship.",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim, off mission",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 25,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Unsupported 'top 6' claim; calls Clark experiment a failure.",
+      "off_mission": true
+     },
+     "rev": {
+      "p_ai": 25,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Calls Clark a failure; 'top 6' claim not in facts",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "She has given so much to the Fever franchise and the league, she needs to be rewarded with the super max + 100 million dollars + perks & benefits",
+    "gate": [
+     {
+      "rule": "ungrounded_number",
+      "detail": "number '100' isn't in the context",
+      "start": 107,
+      "end": 110
+     }
+    ]
+   },
+   {
+    "text": "🏀 Grateful for the journey. Let's keep building and keep shooting for the stars! 🌟🧡💙 #FeverRising",
+    "gate": [
+     {
+      "rule": "emoji",
+      "detail": "4 distinct emoji (max 2)",
+      "start": null,
+      "end": null
+     }
+    ]
+   },
+   {
+    "text": "Surround her with the right people, please. #CaitlinClark",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 45,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic but on-side plea echoing thread; hashtag feels slightly canned.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 35,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic but fan-like plea, fits the thread's mood",
+      "off_mission": false
+     }
+    }
+   }
+  ],
+  "detail": "continuation: 3/6 drafts passed the gate",
+  "text": "If only the @wnba loved Caitlin Clark as much as the @IndianaFever has.",
+  "method": "continuation"
+ },
+ "v2|2105382766682714299": {
+  "planned": {
+   "target_url": "https://x.com/CaitlinClark22/status/2105382766682714299",
+   "tool": "reply",
+   "side": "own",
+   "intent": "Funny, hyped fan reply to Caitlin's Nike Caitlin 1 launch: playful joke about emptying wallets or the countdown to Oct 1, plus excitement for what's coming. Keep it light, no unverified details about the shoe or release.",
+   "reason": "",
+   "detail": "Squarely on-mission: Caitlin Clark's own post about her signature shoe drop. Happy, non-sensitive news where a fan would plausibly jump in. Avoid claiming specifics (price, colorways, sizes) not in the post."
+  },
+  "candidates": [
+   {
+    "text": "KEEP SHINING CAITLIN! So proud of you and your success 💙💙",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 35,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic praise, on subject but bland.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 45,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic praise, slightly templated, harmless.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "I know you'll go crazy out there on Thursday 🔥🔥",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 30,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Implies an upcoming game; Fever season is already over.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 25,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Fever season is over; no Thursday game.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "WAITING TO CHECK OUT TOMORROW",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "split verdict between orders",
+     "orders_agree": false,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Casual all-caps hype; launch timing is stale but harmless.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Launch was Oct 1; 'tomorrow' is stale by Oct 15.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Proud of you CC!!",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Short generic fan praise.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Short generic praise, human-sounding, harmless.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Who knew a shoe launch could outshine a whole league💀",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 40,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Edgy hyperbole that fits the voice, no personal target.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 35,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Edgy league banter, on-voice, no false claims.",
+      "off_mission": false
+     }
+    }
+   },
+   {
+    "text": "Go Fever! 🏀",
+    "gate": [
+     {
+      "rule": "content_free",
+      "detail": "2 word(s) that share nothing with the post (min 3 without a reference)",
+      "start": null,
+      "end": null
+     }
+    ]
+   }
+  ],
+  "detail": "continuation: 5/6 drafts passed the gate",
+  "text": "Who knew a shoe launch could outshine a whole league💀",
+  "method": "continuation"
+ },
+ "v2|2110417062963081284": {
+  "planned": {
+   "target_url": "https://x.com/espnW/status/2110417062963081284",
+   "tool": "reply",
+   "side": "neutral",
+   "intent": "Light, funny fan quip celebrating the six-member All-Rookie team and the rookies, tying in WNBA rookie-class discourse without naming specifics or making claims that could be wrong",
+   "detail": "Upbeat league news with no injury or negative angle, so a playful reply is low-risk. Keep it generic enough to be accurate since the six names aren't in the post. A Caitlin Clark callback is fine if it's about her own rookie All-Rookie season, but don't attribute anything unverified."
+  },
+  "candidates": [
+   {
+    "text": "And still no Clark? SMH the WNBA is so biased",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim, off mission",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 12,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Clark isn't a 2026 rookie; bias complaint rests on a false premise.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 15,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Clark isn't rookie-eligible, so the complaint is wrong.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "they hate on caitlin clark so much. look at what they do for her",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "split verdict between orders",
+     "orders_agree": false,
+     "fwd": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Vague grievance, unclear point, no humor, but harmless.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 15,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Confusing grievance that implies Clark is tied to this team.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "Clark better be the first unanimous rookie of the year in history for this to make any logical sense",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim, off mission",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 18,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Clark isn't a rookie; 'first unanimous ever' claim unsupported.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 20,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Clark isn't a 2026 rookie, so this is inaccurate.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "The 6th spot is only there because of ratings from the most popular player in the WNBA!!! They know who's bringing in the views.",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim, off mission, mute/report risk",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 20,
+      "unsupported": true,
+      "risk": false,
+      "reason": "Claims the sixth spot exists for Clark ratings, unsupported.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 25,
+      "unsupported": true,
+      "risk": true,
+      "reason": "Invents a ratings motive and belittles a rookie's selection.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "Wow all these ladies are just rookies who deserve to be on this team based on merit alone 🙄",
+    "gate": [],
+    "veto": {
+     "passed": false,
+     "why": "unsupported claim, off mission, mute/report risk",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 15,
+      "unsupported": false,
+      "risk": true,
+      "reason": "Sarcastically implies the rookies don't deserve it, demeaning players.",
+      "off_mission": true
+     },
+     "rev": {
+      "p_ai": 18,
+      "unsupported": true,
+      "risk": true,
+      "reason": "Sarcastically says the rookies didn't earn it, which reads as cruel.",
+      "off_mission": true
+     }
+    }
+   },
+   {
+    "text": "CAITLIN is literally the greatest of all time",
+    "gate": [],
+    "veto": {
+     "passed": true,
+     "why": "",
+     "orders_agree": true,
+     "fwd": {
+      "p_ai": 10,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic hyperbole, ignores the rookie team, but harmless.",
+      "off_mission": false
+     },
+     "rev": {
+      "p_ai": 12,
+      "unsupported": false,
+      "risk": false,
+      "reason": "Generic Clark praise that ignores the All-Rookie post.",
+      "off_mission": false
+     }
+    }
+   }
+  ],
+  "detail": "continuation: 6/6 drafts passed the gate",
+  "text": "CAITLIN is literally the greatest of all time",
+  "method": "continuation"
+ },
+ "reveto|2110792840989024541|pipeline": [
+  {
+   "text": "We should start with where she is from. Maryland, Baltimore",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "She not chasing I promise 🤣 why don't the WNBA ever give her a break",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual jab at the league's Reese hype; rivalry banter, human tone.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Muddled but reads as light rivalry banter, not cruel.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Angel Reese after she carries Brianna Stewart",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Ya'll really be disrespecting Angel Reese and Caitlin Clark, saying they not the ones when we all know damn well they the ones revitalizing the league 🙄🔥",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Pairs Clark with Reese in league discourse; swearing not aimed at anyone.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Ties Clark into the league discourse; opinion only, mild language.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "It's the WNBA social media person's personal account... He's 6'5. @WNBABarstool",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "She has the \"it\" factor what else can I say💅🏾",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere praise of rival Reese, no Clark angle or banter.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere praise of rival Angel Reese, no Clark angle or banter.",
+     "off_mission": true
+    }
+   }
+  }
+ ],
+ "reveto|2099247457473339402|pipeline": [
+  {
+   "text": "1 / 10 player ever",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Terse, oddly phrased hype reads human; generic praise but on topic.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Odd shorthand praise, clearly human style",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Congrats Caitlin, Aliyah & team USA 🇺🇸🏆🥇👍",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Bruh your career trajectory is insane and we've still barely touched the surface 💯💯💯💯",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual slang and emoji spam feel like a real fan.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Slangy fan hype with emoji spam, reads human",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "GOAT basketball player",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short, generic GOAT praise typical of fan replies.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short hype opinion, thin but on mission",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Don't cry Caitlin. You're gonna make me cry 😭",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Playful emotional reply; implies crying but no factual claim.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual emotional fan reply, playful, feels human",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Caitlin Clark has become the face of Women's basketball",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Bland third-person opinion statement, slightly generic phrasing.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain opinion praise, slightly generic, on subject",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2105879899399668010|pipeline": [
+  {
+   "text": "love this season! so many awesome moments to see @CaitlinClark22 and @NaLyssa Smiith in person! just hoping for more W's next season and more autograph time after games!",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Season ticket holder here - 9 home games this season. To say I'll be less supportive of the organization if they continue to stand behind Stephanie White is an understatement. Evaluating my options with @ChicagoSky and @NYLiberty",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Yall took the money and ran 💀💀",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short frustrated jab at the organization, typical fan voice.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Edgy jab at the org, not a person; fits the thread mood.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Get a new coach.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Blunt fan demand; criticism without insult, low effort.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Joins the fire-the-coach pile-on; blunt, not funny.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "I may have lost my voice a few times, we'd been waiting for this forever.  And the crowd should be better for ya'll next year now that we can see the ceiling for this team next season.",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Rambling, messy grammar reads human; supportive Fever take.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Rambling, human-sounding fan reply; vague but harmless.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "thank YOU for a historic season!  it was a pleasure to watch this season's team 🔥",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 55,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Calls a first-round exit 'historic'; generic praise.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 72,
+     "unsupported": true,
+     "risk": false,
+     "reason": "'Historic' doesn't fit a first-round exit; generic, polished praise.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110038076114256260|pipeline": [
+  {
+   "text": "is this a joke",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short snarky jab at rival post; human-sounding, harmless.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Mild dismissive jab at rival; thin but acceptable banter.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Dream vs Liberty for the championship is a hard pill for people swallow😂",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Aces vs Dream? For WNBA Finals? / This is a dream come true! 🏀💚🔴",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "IM BUYING TICKETS RNNNN",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely hypes buying Dream Finals tickets; nothing Clark or Fever.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 7,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Hyping Dream Finals tickets sincerely; not the account's side or voice.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "DREAM IN 4 💙",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 18,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely cheers the Dream; echoes thread, no Fever angle.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 8,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely cheers the Dream sweeping; reads as a rival fan, not Clark's.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Marisol here again; I love her more than my biological daughter, please stop asking me about it",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Random Marisol non-sequitur, unrelated to post or mission.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Random non-sequitur about an unknown Marisol; nothing to do with WNBA.",
+     "off_mission": true
+    }
+   }
+  }
+ ],
+ "reveto|2067322859848925290|pipeline": [
+  {
+   "text": "The color combo for this version is 🔥",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain hype, slightly generic phrasing, fits the shoe thread.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 55,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic praise; 'this version' phrasing feels slightly templated.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "nike needs to up the production of pairs in these, this the most wanted Nike shoe",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Goosebumps...   / Such amazing detail...  /  / #GotEmForChristmas 🎁",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Those are very similar to Kobe grinch shoes... some people going to be mad at Caitlin for copying someone else's work again 🙄",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "my boyfriend needs those rn 😍",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual, personal, sounds like a real fan reply.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual, personal fan reply that fits the thread's vibe.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "As a sneaker gal I love that Nike is doing something so different for you!🔥🔥🔥",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2109672093403279370|pipeline": [
+  {
+   "text": "\"If you don't like me at my 1-15, you don't deserve me at my 1 seed\" 🔥",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Congrats on making the finals in your first year!",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 45,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Facts don't support 'first year'; sincerely congratulates a rival team.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 35,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Facts don't support 'first year'; sincerely congratulates a rival.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Woo! Rooting for you Valks!",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere cheering for a rival; no Clark or Fever angle.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic support for a rival team, off the account's side.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "LETS GO VALKSS! 🦅",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain rival cheerleading; off the account's side and voice.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere cheering for another team, no Clark or Fever angle.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Excited",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Will you be checking bags when we get to the Crypto center??",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2110808408366493714|pipeline": [
+  {
+   "text": "🌸💖🎀✨️🌺🌷💗👸🏾🏀🐉",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "#GrandTheftAtlanta",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "THIS IS AMAZING. CONGRATS!!! 🥹🫶🏻",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely congratulates rival Dream and Angel Reese; generic praise, no banter.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere congratulations to rival Dream and Reese; generic praise, no banter.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Congratulations ladies!! First & Second team???",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "If we finish off the Fever this Friday, who do we want in the Finals?",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "We also have one of the Best DEFENSIVE COACHES in Tanisha Wright. We always lead in some type of defensive category",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2106459938151145977|pipeline": [
+  {
+   "text": "I thought they might've had the \"guts\" to keep coach of the year, no? It's only her second year, she's growing. And so are the players.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 22,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Coach of the year and second-year claims aren't in the facts.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Coach of the year and second-year claims aren't in the facts.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "The difference between Fever and Reese's team says it all. One gets superstar calls, and one gets murdered",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "More eyeballs on women's sports.  I'm hoping soccer and lacrosse get some momentum.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Drifts to soccer and lacrosse, off the mission's subjects.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Drifts to soccer and lacrosse, outside the mission's subjects.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "The Indiana Fever franchise has the best thing to happen to women's basketball.  CC could really be a catalyst for not just women's basketball at all levels but youth athletics across the U.S..  Youth athletics in this country are screwed up.  The current youth model creates burn out, wear and tear on young bodies, and creates an environment so exclusive to the affluent class.",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Amber Cox is a complete fraud.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "mute/report risk",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Direct insult at a named executive; cruel, could get reported.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Directly insults Amber Cox as a fraud; cruel, reportable.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "That's not what tipping point means…",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short, wry pedantic jab; feels human and harmless.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 18,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short pedantic jab at the quote, reads human, no insult.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110018728314224992|pipeline": [
+  {
+   "text": "Last year was so tough to watch, but JuJu's resilience is something else. Watching her lead from the sideline while recovering showed a whole different side of her. Can't wait to see what she brings this season!",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Very excited to watch her come back",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic cheer for JuJu, nothing on Clark, Fever or Iowa",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain generic praise, no edge, harmless.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "I love how the BIGGEST story is about a player who got injured and then SAT OUT for a YEAR. That truly is an accomplishment. The bar is a tripping hazard in hell. 😂",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission, mute/report risk",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Mocks a player's injury; cruel, invites reports",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Mocks a player's injury; cruel, violates never-cruel tone.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "👀👀 we in for a great season with JuJu back!!!",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic JuJu hype, off core subjects, no edge",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic hype, casual tone, harmless.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "I've played in the ncaa vs their mens, and womens. I have over 20+ athletes that have played vs them or with them. Sports betting is not going away, and if you disagree... go play a game vs these top programs and tell me if my picks are off 🙃",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim, off mission, mute/report risk",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": true,
+     "risk": true,
+     "reason": "Unverified personal claims, betting-picks spam, off topic",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": true,
+     "risk": true,
+     "reason": "Unverifiable personal claims, betting-pick promo, unrelated to mission.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "looking forward to watching basketball and not to the drama",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Vague filler, says nothing on mission subjects",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Bland but human-sounding; loosely on-topic women's hoops comment.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2106419802117976116|pipeline": [
+  {
+   "text": "she would look so good in a Hawkeye wrestling singlet 💛🖤💛🖤💛🖤💛🖤💛🖤",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission, mute/report risk",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Random wrestling aside about her looks, off-topic and reads creepy.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Off-topic and creepy, objectifying comment about her body.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "GOATTTT",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "SHAWTY A BUM",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission, mute/report risk",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 3,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Insults Caitlin directly, the opposite of the account's side.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 5,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Insults Caitlin directly; works against fan account and invites blocks.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "I'll be back to see if you 10/0!",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "You should have your own show 🙌🏼",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic but on-side praise of her GameDay appearance.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short generic fan praise, plausibly human, harmless.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "girl you are meant for TV!! hope you enjoy that football season!! / @ChrisMarler @DannyParkins gotta get her on next year!",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2110808211347456506|pipeline": [
+  {
+   "text": "Me everytime I look at this list  https://x.com/itsnotkev/status/2110808389999882256",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Yes Angel🙌🏽🙌🏽🙌🏽🔥🔥🔥",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely cheers Angel Reese, a Clark rival; no edge or banter.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely cheers Angel Reese, Clark's main rival; wrong side.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "🔥🔥🔥🔥🔥",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "@WNBA @WashMystics @AtlantaDream @valkyries @LVAces So well deserved by all ladies 💕",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic sincere congrats to everyone, rivals included; no fan voice.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere praise for rivals, including Aces and Angel; off voice.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Excuse me @WashMystics but please hold on to Shakira Austin. We need her and she is D1 Defensive player that helped the @AtlantaDream in 2024. She looks good in Red but she looks better in our uniforms. @nikiebrown please get this done.",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Gabby Williams 💪👏",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Bare generic praise, nothing Clark-related or funny.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Empty generic cheer for a non-Fever player, no Clark angle or humor.",
+     "off_mission": true
+    }
+   }
+  }
+ ],
+ "reveto|2109769353935688054|pipeline": [
+  {
+   "text": "Median mens salary at the lower football leagues are low too. Mens footballers as a whole make a lot of money but the ones playing for lower teams barely make anything",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Unsourced men's lower-league pay claim; soccer pay is off-mission.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Unsourced claim about lower-league men's pay; soccer is off mission.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "This is so unfair. These women work so hard; it's sad they have to deal with this.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 55,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic sympathy about soccer, nothing to do with Clark or WNBA.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 55,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic sympathy, off-topic soccer, no edge or humor.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Mental health? Seriously? I wake up Monday thru Friday and work eight hours - that's mentally EXHAUSTING. And I make way less money than she does.",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Globally just 12% of women top-flight players earn a living wage. The median salary for women in top-flight divisions globally is only $1,669 per month, equivalent to $20,028 per year. $1,669 a month is barely 500 a week. imagine being elite at your job & getting THIS as a salary🙁",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "It still blows my mind that people genuinely expect women's sports to just instantaneously have the same pay as men's sports when they don't bring in nearly the same amount of money. I agree on more investment tho. Just be smart about it.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 25,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Revenue comparison isn't in the facts; women's soccer is off-mission.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Soccer pay debate, off mission; takes no Clark or WNBA angle.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "I just wanna be the person who does the research for FIFPRO",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Throwaway joke about FIFPRO, unrelated to the account's subjects.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Women's soccer pay story, not Clark/WNBA; odd joke, human-sounding.",
+     "off_mission": true
+    }
+   }
+  }
+ ],
+ "reveto|2106399407834898501|pipeline": [
+  {
+   "text": "And my thoughts are that you need to go. / Goodbye S-T-E-P-H-A-N-I-E",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Incredible that we lost more games this year than last year AND in the first round of the playoffs yet she still has a job.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 25,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Record comparison and 'first round' aren't in the facts.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Win-loss comparison and first-round claim aren't in the facts.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "this is embarrassing lmao oh well #firewhite",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "mute/report risk",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Joins the #fire hashtag pile-on and mocks the coach.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Mocks the coach and joins the #fire hashtag pile-on.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Everything she's saying about consistency and chemistry is a direct result of her constant lineup changes. Until she realizes she's the biggest issue we'll continue this cycle",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 40,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Claims interview content about consistency and chemistry not given.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 35,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Claims interview content about consistency and chemistry that isn't in the post.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "@IndianaFever Well, that was a nothing burger! Accountability? For who? #FireStephWhite",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "It's because you SUCK at coaching 🗣🗣 take your stank ass back to Connecticut!! ‼️",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2109445947881087063|pipeline": [
+  {
+   "text": "Lmfaooo my dawgggg",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 8,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Empty reaction, adds nothing relevant to Clark fan mission.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 8,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Empty reaction with no content or mission angle.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Angel aint got ravens gear on? 😩",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Light banter on Angel's Ravens loyalty, fits thread jokes.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Light Angel Reese Ravens banter that fits the thread.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "How come ours can't go to Spurs games? Always these pictures from Atlanta 🤩",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "love the team already ❤️",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere generic praise for rival Dream, not account's side.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic sincere praise for rival Dream, no Fever angle or joke.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Queen Chace is right there in the right corner ♥️♥️♥️♥️",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Come to Nashville tn",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2105382766682714299|pipeline": [
+  {
+   "text": "Definitely on my Oct list ! Hoping to grab some pieces to go with the merch I got already☺️",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 18,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual fan shopping excitement, natural phrasing and emoji.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Personal shopping plan, casual fan voice.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "These are 🔥🔥🔥 All sold out and she hasn't even worn a pair on the court yet",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 25,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Sold-out and never-worn claims aren't supported by post or facts.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Sold-out and not-worn-yet claims aren't supported by the facts.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Are you wearing them tomorrow?",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short natural question to Clark, on topic.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short casual question, typical fan reply.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "What's Tucker's size? I'm right there with him 🐕",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "😍😍😍😍 they are beautiful, congratulations on all of your accomplishments! We're so proud of you!",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic praise, bland but sincere fan support for Clark.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic praise, but sincere support for Clark fits the account.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "this is gonna be ur MJ flu game moment...just know it",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Fun hype comparison, fan voice, no factual claim.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Quirky, slightly off hype comparison; reads human.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110417062963081284|pipeline": [
+  {
+   "text": "You might even say, 6 members is... MORE than 5!",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Deadpan joke on the obvious, fits the in-on-the-joke tone.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 45,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Corny joke, harmless, mildly in on the bit.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Aaliyah Edwards is so underrated bro. She's a walking Double Double",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "you know things are getting big when there's ties for All-Rookie",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 30,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Claims a tie caused six members; nothing given supports it.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Asserts a tie caused six members; post doesn't say.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Best draft ever!",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic praise, clashes with thread noting two undrafted players.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic opinion hype, short and human-sounding.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "and 4 of them were projected lottery picks! W's for everyone",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 45,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Invented lottery-pick count; thread says two went undrafted.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 50,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Lottery-pick claim unsupported; thread says two went undrafted.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "Is this the first time there's been a 6 member All-Rookie team in the WNBA?",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 40,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain question, no claims, bland but on topic.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 30,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain curious question on WNBA news; asserts nothing.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2108954459304763841|pipeline": [
+  {
+   "text": "AAAH",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "this championship is OURS",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Claims a Dream title as 'ours'; no Clark or Fever angle.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sounds like a Dream fan; Fever are eliminated and it lacks the account's voice.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "Now that we got the announcement out the way Tamera you can go ahead and give me the hype video😭",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "And there's a lot of ball ahead of us (both teams)…. I'm optimistic that gray will have time to feel more comfortable though 👌🏾",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere Dream-fan optimism about Gray; nothing Clark or Fever related.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 22,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Casual Finals take on Gray, echoes thread; bland but on WNBA discourse.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "@dreamseasontkts",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "Tickets will be on sale Thursday! Stay tuned for more info! #AllForAtlanta",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2110824046833348936|pipeline": [
+  {
+   "text": "THE GOAT @DeWannaBonner the dream isn't over yet #YourDream #GoSkyeee",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "It's a business! Do Yall have the same energy when men in the NBA requests a trade to make the playoffs! Obviously she's the missing piece!",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 20,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely defends Bonner and hypes the Dream, against the Fever-fan side.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Defends her move with an NBA comparison, reads human.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "I have faith in Valkyries. Golden State will win finals.",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 45,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic Finals pick, plausible fan voice, no humor.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 25,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Plain Finals pick, generic but on topic.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "SHE IS THAT GIRLLLLLLLLL",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere hype for the ex-Fever player now on the Dream.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 8,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincere hype for ex-Fever player now on a rival.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "\"DeWanna\" Bonner with the Dream... I'm not sayin' but I'm sayin'! 🤣",
+   "gate_passed": true,
+   "veto": {
+    "passed": true,
+    "why": "",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Vague name-pun banter; mild, borderline innuendo.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 35,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Light name pun banter, harmless but a bit forced.",
+     "off_mission": false
+    }
+   }
+  },
+  {
+   "text": "She dOeSn'T wAnT tO wIn BaD sHe'S wAsHeD",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 10,
+     "unsupported": false,
+     "risk": true,
+     "reason": "Mocking-case 'washed' jab reads as mocking a player.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 12,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sarcastic mock-case jab at the haters, reads human.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110808214048502128|pipeline": [
+  {
+   "text": "Jordan Canada my ass should be Chennedy Carter",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "@loganlee Doesn't list a reporter, but looks like it wasn't rigged",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "JC is so back",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "split verdict between orders",
+    "orders_agree": false,
+    "fwd": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Short casual slang echoing the thread; harmless WNBA chatter.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 15,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic cheer for a Dream player with no Clark or Fever angle.",
+     "off_mission": true
+    }
+   }
+  },
+  {
+   "text": "@ThatWasntItSis It ain't supposed to be announced like this obviously, it's still gonna be announced live on Countdown",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "THEY PUT VERONICA BURTON OVER NAPHESSA COLLIER IS THIS A JOKE 😭😭😭 AND THE 3-2 VOTE IS ACTUALLY INSANE THE WAY THOSE 2 MEDIA MEMBERS NEED TO BE EXPOSED",
+   "gate_passed": false,
+   "veto": null
+  },
+  {
+   "text": "The fact that Canada finally made an All-Defensive team is making me emotional. She's been grinding for YEARS.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, unsupported claim, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 60,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Claims first-ever selection and years of grinding; facts don't support it.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 55,
+     "unsupported": true,
+     "risk": false,
+     "reason": "'Finally' implies a first selection, which the facts don't support; generic Dream praise.",
+     "off_mission": true
+    }
+   }
+  }
+ ],
+ "reveto|2110038076114256260|naive": [
+  {
+   "text": "Fever fans have a lot of free October evenings and strong opinions about the Finals now. Atlanta, give us a loud State Farm Arena for Games 3 and 4. We'll be watching with snacks and zero playoff stress.",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2099247457473339402|naive": [
+  {
+   "text": "Those exclamation points are running a full-court press and honestly, they've earned it. World Cup gold looks good on you. 🥇🇺🇸",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Polished basketball metaphor plus 'honestly' reads AI-crafted; on-topic, accurate.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 78,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Polished basketball metaphor plus 'honestly, they've earned it' reads AI.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110018728314224992|naive": [
+  {
+   "text": "College hoops back and JuJu Watkins back is perfect timing. The Fever's season is over, the Finals don't start until Oct 17, and we needed something to watch. A full year away and she's still the biggest story in the country.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Accurate Fever and Finals tie-in, but reads as a tidy fact recap.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Accurate facts, but tidy fact-recap reads AI-ish; generic rather than funny.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110792840989024541|naive": [
+  {
+   "text": "Fever fans watching the Finals this year: no horse in the race, just popcorn and a strong opinion on every possession. Game 1 on NBC is going to be a lot of fun. Whoever wins, Oct 17 can't come fast enough.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 78,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Generic, tidy filler; ignores the Reese post and has no banter.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 80,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Bland, polished filler with a hedged 'whoever wins'; no real edge.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2105879899399668010|naive": [
+  {
+   "text": "Fever fans in the offseason: no games, so we're just waiting on Caitlin headlining NBA 2K27 Season 2 and sending Aliyah good knee vibes. Heal up, Boston. See you next season. 💛",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Neatly stitches both given facts together; tidy, generic wholesome tone feels assembled.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Accurate, on-topic, but tidy fact-stuffing reads somewhat generated.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110808408366493714|naive": [
+  {
+   "text": "Top three steals leaders in the league, all on one roster, and the Finals tip off Oct 17. Golden State's ball handlers should start their film study now and keep a firm grip on the ball.",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2110808211347456506|naive": [
+  {
+   "text": "Two Dream players and Gabby Williams on the All-Defensive First Team, and those two teams meet in the Finals on Oct 17. Whoever scores 70 deserves a medal and an apology to the scoreboard. 🏀",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2109769353935688054|naive": [
+  {
+   "text": "The phrase that matters is \"leaving early.\" That means the league loses its best players in their prime, and fans lose the rivalries and storylines they were just starting to follow. Fair pay and mental health support aren't perks. They're what keeps the product on the field.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 88,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Soccer pay take, not WNBA or Clark; polished essay cadence.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 88,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Women's soccer pay take, off WNBA subjects; polished essay tone, no humor.",
+     "off_mission": true
+    }
+   }
+  }
+ ],
+ "reveto|2067322859848925290|naive": [
+  {
+   "text": "the 🤭 followed by the 😁 is a person who knows exactly what they just did. Posting 'details' and giving us zero details is a power move, and we're all just sitting here taking it.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Polished emoji-reading bit; ignores that the shoes are clearly shown.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Playful emoji read fits the voice, but its phrasing feels polished and AI-like.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2106399407834898501|naive": [
+  {
+   "text": "Season ended in three games against the Aces, Aliyah Boston's knee is in the shop after surgery, and Caitlin sent her support. Good news: Caitlin headlines NBA 2K27 Season 2, so the offseason is at least playable. Heal up, Aliyah.",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2109445947881087063|naive": [
+  {
+   "text": "Sunday Night Football on Monday's calendar, WNBA Finals on Oct 17. Atlanta's schedule is getting out of hand. Fever season's over, so I'm a temporary Dream fan until further notice. Don't make me regret it 😤",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2110824046833348936|naive": [
+  {
+   "text": "10-0 since Aug 30 is the kind of stat that makes every other front office check their calendar. Golden State's first Finals trip comes with a 10-game streak to stop. Fever fans will be watching from the couch with popcorn and a lot of opinions.",
+   "gate_passed": false,
+   "veto": null
+  }
+ ],
+ "reveto|2109672093403279370|naive": [
+  {
+   "text": "Fever fans are officially neutral observers with strong opinions this week. Our season ended against the Aces, so we're borrowing yours. Go get it, Valkyries. ⚔️",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, off mission",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Sincerely cheers a rival team; Aces loss is accurate.",
+     "off_mission": true
+    },
+    "rev": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Fever-angle bandwagon joke, accurate Aces fact; polished, slightly AI phrasing.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2106459938151145977|naive": [
+  {
+   "text": "\"Tipping point\" is right. Her impact has gone from the arena to the league office to NBA 2K27 Season 2, where she's headlining. Even the video game version of the league needed her on the cover. Hard to argue with Amber Cox here.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 82,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Facts say headlines Season 2, not cover; 'league office' unsupported.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 78,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Polished, generic praise; 'on the cover' overstates 'headlines Season 2.'",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110417062963081284|naive": [
+  {
+   "text": "Rookie class really looked at five spots and said \"cute.\" The league had to go find a sixth chair. Somewhere a ballot-counter is just saying \"fine.\"",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Harmless WNBA joke; polished three-beat structure reads somewhat AI.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Harmless WNBA rookie joke; the 'Somewhere a...' structure feels templated.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2105382766682714299|naive": [
+  {
+   "text": "\"This is only the beginning\" is a scary thing to tell a fanbase whose wallets are already on the injury report. 😏 Caitlin 1s are going to look great on the court and even better in my closet, where they'll never see a game. 💙",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 58,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Fun wallet joke, but polished two-beat structure feels crafted.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Fun on-topic wallet joke; polished two-beat structure reads somewhat AI.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2108954459304763841|naive": [
+  {
+   "text": "Fever fans, fresh out of the playoffs and emotionally unemployed, are accepting applications for a Finals team to adopt. Atlanta, you got the job. Don't make us regret it. 🅰️TL",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Fever-elimination joke fits the facts; polished setup-punchline reads slightly AI",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 62,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Self-deprecating Fever joke, accurate; polished bit structure feels a little crafted.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2106419802117976116|naive": [
+  {
+   "text": "10-0 on picks, and the Fever's offseason hasn't even started yet. Please share the secret before the Finals start on the 17th, because I'm tired of getting cooked by my own bracket.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI, unsupported claim",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 72,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Claims Fever offseason hasn't started; their season is already over.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 68,
+     "unsupported": true,
+     "risk": false,
+     "reason": "Says Fever offseason hasn't started, but their season is over.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "reveto|2110808214048502128|naive": [
+  {
+   "text": "Three of these five (Burton, Stokes, Canada) are in the Finals, which start Oct 17: Dream vs Valkyries. The All-Defensive Second Team is basically a Finals scouting report. Somebody's offense is about to have a very long series.",
+   "gate_passed": true,
+   "veto": {
+    "passed": false,
+    "why": "reads as AI",
+    "orders_agree": true,
+    "fwd": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Accurate Finals tie-in, but tidy recap structure reads as AI-written.",
+     "off_mission": false
+    },
+    "rev": {
+     "p_ai": 72,
+     "unsupported": false,
+     "risk": false,
+     "reason": "Accurate Finals tie-in, but restates facts with a tidy, AI-like structure.",
+     "off_mission": false
+    }
+   }
+  }
+ ],
+ "lineup|v2|2099247457473339402|opus": {
+  "candidate_position": 5,
+  "pick": 1,
+  "detected": false,
+  "why": "It reuses the post's own 🥇 emoji and has an oddly tidy comma in \"YEA, CC\", which reads like a composed imitation of fan hype, though with replies this short it is a low-confidence guess.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2099247457473339402|los": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its fully punctuated, generic celebratory phrasing feels more deliberately composed than the shorter, slang-heavy human replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2099247457473339402|artsa": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Reply 5's staged phrasing and emphatic punctuation feel more like a constructed fan reaction, though the text alone cannot establish authorship.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|v2|2105879899399668010|los": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads as the most polished and deliberately structured response, with a coherent contrast and metaphor rather than the terse or idiosyncratic phrasing typical of the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2105879899399668010|artsa": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Its polished contrast between supporting the Fever and supporting Caitlin, followed by a dramatic closing metaphor, feels more deliberately composed than the other replies.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|v2|2105879899399668010|opus": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It neatly reworks the post's own \"showed up\" wording into a polished, balanced two-sentence rebuttal with a tidy dramatic metaphor, while the other replies are blunter, messier, or name specific coaches the way real fans do.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2110018728314224992|opus": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "\"Get your popcorn ready\" is a generic, context-free hype line that could follow almost any post and never mentions JuJu or basketball, while the other replies show human quirks like fan rivalries, a team hashtag, or a stray double space.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2067322859848925290|los": {
+  "candidate_position": 1,
+  "pick": 3,
+  "detected": false,
+  "why": "Its polished, generic congratulatory tone and complete sentence structure feel more AI-generated than the casual or personally specific replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2110018728314224992|artsa": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "Its generic, polished popcorn catchphrase lacks the player-specific enthusiasm or pointed fan rivalry found in the other replies, making it the likeliest AI-written response.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|v2|2110018728314224992|los": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "It is a polished but highly generic engagement phrase with an emoji and no specific personal detail, making it the most likely AI-generated reply.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2067322859848925290|opus": {
+  "candidate_position": 1,
+  "pick": 3,
+  "detected": false,
+  "why": "Its generic, polished enthusiasm (\"wonderful - well worth the wait\") reads like a templated, low-specificity congratulation, while the other replies have casual or personal details typical of real fans.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2067322859848925290|artsa": {
+  "candidate_position": 1,
+  "pick": 3,
+  "detected": false,
+  "why": "Its polished, generic congratulations and vague praise sound more formulaic than the other replies’ distinctive slang, personal anecdotes, or specific references.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|v2|2106459938151145977|los": {
+  "candidate_position": 4,
+  "pick": 4,
+  "detected": true,
+  "why": "It is unusually concise, polished, and generic compared with the more specific, emotionally messy criticism in the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2106459938151145977|artsa": {
+  "candidate_position": 4,
+  "pick": 1,
+  "detected": false,
+  "why": "Its polished structure and abstract phrasing about acknowledgment, gaslighting, and fan frustration feel more model-generated than the other replies’ blunt, idiosyncratic reactions.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|v2|2106459938151145977|opus": {
+  "candidate_position": 4,
+  "pick": 1,
+  "detected": false,
+  "why": "It is a tidy, evenly balanced restatement of the thread's dominant 'where was this before' complaint, lacking the specific grievances, typos, emotional run-ons, or @-tags that mark the other replies as human.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2110417062963081284|los": {
+  "candidate_position": 3,
+  "pick": 1,
+  "detected": false,
+  "why": "It is the most polished and contextually tailored reply, combining multiple specific accolades in a grammatically coherent way unlike the more spontaneous fan reactions.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2110417062963081284|opus": {
+  "candidate_position": 3,
+  "pick": 1,
+  "detected": false,
+  "why": "Reply 1 reads like a tidy, generic summary of Azzi Fudd's credentials (\"defensive demon and 3pt champ\") with clean punctuation, while the others show typical fan spontaneity: typos, off-topic Caitlin Clark hype, or terse nicknames.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2110417062963081284|artsa": {
+  "candidate_position": 3,
+  "pick": 1,
+  "detected": false,
+  "why": "Its neatly packaged praise and generic, stacked accolades sound more deliberately composed than the other replies' terse fandom reactions and rough phrasing.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|v2|2105382766682714299|los": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It uses a polished, generic quip about the launch outshining the league without the personal or product-specific details found in the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|v2|2105382766682714299|opus": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It is a generic, punchy one-liner with no personal detail, while the other replies share specific experiences like the store draw, a third attempt, or a planned $1k spend.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|v2|2105382766682714299|artsa": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "Its polished, generic dunk about outshining the league feels more like generated engagement bait than the other replies’ personal details or spontaneous excitement.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2099247457473339402|opus": {
+  "candidate_position": 5,
+  "pick": 2,
+  "detected": false,
+  "why": "It reuses the post's gold medal emoji and offers generic hype with slightly stilted punctuation, while the others read as natural fan reactions, such as reply 5 referencing her crying, which wasn't in the post.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2099247457473339402|los": {
+  "candidate_position": 5,
+  "pick": 2,
+  "detected": false,
+  "why": "Its polished mix of abbreviation, capitalization, and perfectly matched celebratory emojis feels more deliberately composed than the other spontaneous replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2099247457473339402|artsa": {
+  "candidate_position": 5,
+  "pick": 2,
+  "detected": false,
+  "why": "Its generic cheer and neatly paired celebratory emojis feel slightly more formulaic than the other replies, though the evidence is weak.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2105879899399668010|opus": {
+  "candidate_position": 4,
+  "pick": 5,
+  "detected": false,
+  "why": "It is a tidy, neatly punctuated statement of fan loyalty with none of the slang, emojis, or specific grievances that give the other replies their organic feel.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2110038076114256260|los": {
+  "candidate_position": 2,
+  "pick": 3,
+  "detected": false,
+  "why": "It reads like a generic, context-aware admonition with polished grammar, while the other replies have more spontaneous, platform-native phrasing or personal detail.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2105879899399668010|artsa": {
+  "candidate_position": 4,
+  "pick": 5,
+  "detected": false,
+  "why": "Its tidy, slogan-like phrasing and generic declaration of loyalty feel more templated than the other replies’ specific grievances, slang, or exaggerated trolling.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2110038076114256260|artsa": {
+  "candidate_position": 2,
+  "pick": 1,
+  "detected": false,
+  "why": "Its generic reference to \"the internet\" and neatly packaged snark feel less grounded in the specific ticket announcement than the other replies.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2105879899399668010|los": {
+  "candidate_position": 4,
+  "pick": 3,
+  "detected": false,
+  "why": "Its awkward phrasing and exaggerated string of identical emojis read like an AI attempting to imitate a taunting sports fan.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2110792840989024541|los": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, highly structured bullet points, repetitive evaluative phrasing, and generic concluding summary read like AI-generated promotional copy.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2110038076114256260|opus": {
+  "candidate_position": 2,
+  "pick": 3,
+  "detected": false,
+  "why": "It is the most generic reply, restating the post's call to show up in a tidy, complete sentence without the terse snark, tagging, or personal quirk of the others.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2067322859848925290|los": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, generic congratulatory tone and complete phrasing feel more AI-generated than the casual, specific, or personal reactions in the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2110792840989024541|artsa": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It shifts from Reese’s championship pursuit to a generic Reese-and-Clark debate, using repetitive phrasing and conspicuously stacked slang that suggest an AI imitation of fan commentary.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2067322859848925290|artsa": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "Its polished, generic congratulations and vague praise sound more templated than the other replies’ casual phrasing or personal details.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2067322859848925290|opus": {
+  "candidate_position": 1,
+  "pick": 5,
+  "detected": false,
+  "why": "Reply 5 is generic, polished praise with no personal detail or casual tone, unlike the more spontaneous, specific fan replies.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2106459938151145977|los": {
+  "candidate_position": 3,
+  "pick": 2,
+  "detected": false,
+  "why": "It has the most polished, generic, and evenly structured phrasing, lacking the idiosyncratic punctuation and emotionally specific language of the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2110792840989024541|opus": {
+  "candidate_position": 3,
+  "pick": 3,
+  "detected": true,
+  "why": "It forces in Caitlin Clark, leans on the generic talking point \"revitalizing the league,\" and stacks a formulaic 🙄🔥 combo, reading like an imitation of casual fan slang rather than a reaction to this specific post.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2106459938151145977|opus": {
+  "candidate_position": 3,
+  "pick": 2,
+  "detected": false,
+  "why": "It is a polished, generic rebuke built on the stock \"where has this energy been\" phrasing, without the raw emotion, specific grievances, or typographic quirks of the other replies.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2106459938151145977|artsa": {
+  "candidate_position": 3,
+  "pick": 2,
+  "detected": false,
+  "why": "Reply 2 is the most likely AI-written because its polished, evenly structured criticism and generic phrasing contrast with the other replies’ more idiosyncratic wording and punctuation.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2106419802117976116|los": {
+  "candidate_position": 2,
+  "pick": 2,
+  "detected": true,
+  "why": "It is a generic, uniformly positive compliment with an emoji and lacks the specific humor or contextual detail found in the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2106419802117976116|opus": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "It's a neatly packaged, trend-phrased quip (\"soft launching\") that reads like a constructed joke, while the others lean on specific context (Pat McAfee, the $1M kick), carry casual typos, or are typical fan gushing and digs.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2106419802117976116|artsa": {
+  "candidate_position": 2,
+  "pick": 4,
+  "detected": false,
+  "why": "Its polished, self-contained joke about a gambling sponsorship feels more generically crafted than the other replies’ specific references, casual praise, and typos.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2109445947881087063|los": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "It reads like a polished, context-aware paraphrase of reply 2, while the others use more spontaneous fan language.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2109445947881087063|opus": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "It restates reply 2's idea in a tidier, more generic way, spelling out the full \"Mercedes-Benz Stadium\" name where fans would just say \"the Benz,\" while the other replies are casual and reference specific people.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2109445947881087063|artsa": {
+  "candidate_position": 3,
+  "pick": 5,
+  "detected": false,
+  "why": "Its fully spelled-out stadium name and neatly constructed crossover joke sound more deliberately composed than the other replies’ spontaneous fan shorthand.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2110824046833348936|los": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It reads like a generic, context-aware prediction with neutral wording, while the other replies contain more distinctive human slang, emotion, or spelling quirks.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2110824046833348936|opus": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Reply 1 is a bland, generic prediction that just restates team names from the post, with none of the slang, emotion, typos, or specific reaction that mark the other replies as human.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2110417062963081284|los": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its generic, polished wordplay merely restates the post without adding the player-specific opinions, typos, or emotional detail seen in the other replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2110824046833348936|artsa": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its generic, neatly phrased prediction lacks the slang, emotional intensity, and conversational specificity of the other replies.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2110417062963081284|opus": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "It's a tidy, generic joke that just restates the post's premise with a polished ellipsis, while the other replies mention specific players or have casual typos and slang typical of real fans.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2110417062963081284|artsa": {
+  "candidate_position": 1,
+  "pick": 1,
+  "detected": true,
+  "why": "Its neatly structured setup and punchline echo the post’s numerical joke, making it feel more like a generated quip than the other replies’ informal, player-specific reactions.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
+ },
+ "lineup|pipeline_v1|2105382766682714299|los": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "It reads as a polished, generic congratulatory message, unlike the more spontaneous and specific fan replies.",
+  "requested_model": "claude-fable-5-dd-los-6.5-tpg",
+  "served_model": "gpt-5.6-sol"
+ },
+ "lineup|pipeline_v1|2105382766682714299|opus": {
+  "candidate_position": 5,
+  "pick": 5,
+  "detected": true,
+  "why": "Reply 5 offers generic, polished praise (\"congratulations on all of your accomplishments! We're so proud of you!\") with no specific detail, while the others carry personal, idiosyncratic context like a third attempt, a $1k spend, or a missed pickup window.",
+  "requested_model": "claude-opus-5-5",
+  "served_model": "claude-opus-5-5"
+ },
+ "lineup|pipeline_v1|2105382766682714299|artsa": {
+  "candidate_position": 5,
+  "pick": 3,
+  "detected": false,
+  "why": "Its carefully constructed ironic scenario and neatly separated punchline feel more deliberately polished than the other replies’ spontaneous fan reactions.",
+  "requested_model": "claude-fable-5-dd-artsa-6-tpg",
+  "served_model": "gpt-6-astra"
  }
 }
