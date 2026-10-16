@@ -48,3 +48,5 @@ The repo ships these skills in `.claude/skills/`. Read the matching `SKILL.md` b
 - `technical-writing`: docs, including each stage's `DESIGN.md`.
 - `pr-writing`: pull request titles and descriptions.
 - `deslop`: reviewing a diff before you commit it.
+- `baml-core`: the BAML v1 language, from the 0.22.2 toolchain (`baml agent install`). `docs.boundaryml.com` documents v0, so don't follow it here.
+- `baml-repo`: editing `eval/baml_src`, regenerating `eval/baml_sdk`, or moving a harness LLM call to BAML.
