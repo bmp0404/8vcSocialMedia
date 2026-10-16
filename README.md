@@ -39,6 +39,17 @@ Keyboard: `j`/`k` move, `a` approve, `x` kill, `u` reset, `e` edit.
 
 ## Layout
 
+The central filesystem is organized into five directories:
+
+```text
+observation/  # Inputs and observations collected by the harness
+action/       # Actions and execution workflows
+eval/         # Evaluations, scoring, and validation
+memory/       # Persistent context and learned information
+data/         # Source documents, datasets, and supporting assets
+```
+
+
 | Path | Stage |
 | --- | --- |
 | `mission/mission.md` | The account's mission file (placeholder until 8VC's arrives) |
