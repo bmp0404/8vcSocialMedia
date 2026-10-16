@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-This repo is a media harness built at the 8VC ATX build session. It recommends X actions for a brand account and writes them to `out/` for 8VC's Grok bot, which decides what to post. Tonight's brand is a Caitlin Clark fan account. Several people's agents edit this repo at the same time.
+This repo is a media harness built at the 8VC ATX build session. It recommends X actions for a brand account and writes them to `out/`; a person decides what gets posted. Each brand is a mission profile under `mission/profiles/<name>/`, and `HARNESS_PROFILE` picks one (`wnba` by default, or `devtools`). Several people's agents may edit this repo at the same time.
 
 Read `CONTRIBUTING.md` before you add a stage, change a shared contract, or decide where a file goes. `README.md` lists the commands.
 
 ## Never post
 
-Don't write code that posts, replies, likes, follows or otherwise writes to X, and don't call those endpoints while testing. We have no posting access, and 8VC's bot owns the account. Reading X is fine.
+Don't write code that posts, replies, likes, follows or otherwise writes to X, and don't call those endpoints while testing. We have no posting access, and the harness only recommends. Reading X is fine.
 
 ## Check your work
 
@@ -32,7 +32,7 @@ Real runs spend the team's LLM credits. Test with `--narratives 2 --per-mind 1` 
 
 ## Code conventions
 
-- Put brand-specific text in `mission/mission.md` or a prompt file. The same code has to run against the data team's dev-tool dataset.
+- Put brand-specific text in the profile's files (`mission.md`, `prompts.toml`) and read them through `config.profile_file()`. The same code runs for every profile.
 - A source that can't fetch raises an error that says why. `observe()` prints it and skips the source. Don't return an empty list to hide a failure.
 - Drafts must not invent facts or stats. Prompts tell the model to write `[VERIFY: ...]` instead.
 - Open files with `encoding="utf-8"` and use `pathlib`. Teammates run Windows and macOS.
