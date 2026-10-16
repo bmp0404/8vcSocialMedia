@@ -277,28 +277,35 @@ def test_off_mission_split_between_orders_is_a_veto():
 
 # ---- writing from the account's side (Iterate v3: 12 of 20 vetoes spoke as the other team's fans)
 
-ACCOUNT = writer.Account("clarkfanaccount")
+FRAMING = writer.ReplyFraming("clarkfanaccount")
 
 
-def test_continuations_reply_as_the_account():
+def test_continuations_reply_under_the_framing_handle():
     llm = fake_anthropic("ok")
-    writer.continuations(llm, "WNBA", "post", ["r"] * 8, ActionConfig(reply_samples=4), seed="u", account=ACCOUNT)
+    writer.continuations(llm, "WNBA", "post", ["r"] * 8, ActionConfig(reply_samples=4), seed="u", framing=FRAMING)
     prefills = [k["messages"][-1]["content"] for k in llm.client.kwargs]
     assert len(prefills) == 4 and all(p.endswith("\n@clarkfanaccount:") for p in prefills)
     # The page itself stays as before: no header, other handles neutral, no counts.
     assert all("Signed in" not in p and "@user01: r" in p and "likes" not in p for p in prefills)
 
 
-def test_load_account_validates_loudly(tmp_path):
+def test_load_framing_validates_loudly(tmp_path, monkeypatch):
     good = tmp_path / "a.json"
-    good.write_text(json.dumps({"_note": "x", "handle": "@me"}), encoding="utf-8")
-    assert writer.load_account(good) == writer.Account("me")
-    for bad in ({"handle": ""}, {"handle": "me", "bio": "fan"}, {}):
+    good.write_text(json.dumps({"_note": "x", "framing_handle": "@me"}), encoding="utf-8")
+    assert writer.load_framing(good) == writer.ReplyFraming("me")
+    for bad in ({"framing_handle": ""}, {"framing_handle": "me", "bio": "fan"}, {"handle": "me"}, {}):
         path = tmp_path / "b.json"
         path.write_text(json.dumps(bad), encoding="utf-8")
-        with pytest.raises(ValueError, match="needs exactly one non-empty 'handle'"):
-            writer.load_account(path)
-    assert writer.load_account(tmp_path / "missing.json") is None
+        with pytest.raises(ValueError, match="needs exactly one non-empty 'framing_handle'"):
+            writer.load_framing(path)
+    assert writer.load_framing(tmp_path / "missing.json") is None
+    monkeypatch.setenv("HARNESS_ACCOUNT", str(good))
+    with pytest.raises(ValueError, match="HARNESS_ACCOUNT is now HARNESS_REPLY_FRAMING"):
+        writer.load_framing()
+
+
+def test_shipped_framing_file_loads():
+    assert writer.load_framing(writer.FRAMING_PATH) == writer.ReplyFraming("clarkfanaccount")
 
 
 def test_rival_thread_mode_is_validated():

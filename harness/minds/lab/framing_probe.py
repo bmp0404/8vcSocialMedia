@@ -24,9 +24,9 @@ def page(t, variant):
     if variant == "neutral":
         return base, random.Random(t["id"]).choice(writer.PREFILL_HANDLES)
     if variant == "handle":
-        return base, writer.load_account().handle
+        return base, writer.load_framing().framing_handle
     if variant == "named":
-        return base, f"{writer.load_account().handle} (Caitlin Clark Fan Account)"
+        return base, f"{writer.load_framing().framing_handle} (Caitlin Clark Fan Account)"
 
 def gen(t, variant):
     p, h = page(t, variant)

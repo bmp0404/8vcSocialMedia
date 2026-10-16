@@ -41,7 +41,7 @@ MISSION:
 {mission}"""
 
 
-ACCOUNT_PATH = config.ROOT / "action" / "account.json"
+FRAMING_PATH = config.ROOT / "action" / "reply_framing.json"
 
 BANTER_ANGLE = ("This post is about a rival of the account. Reply from the account's side with banter at the rival's "
                 "take or team: a jab, never cheering them, never insulting a person.")
@@ -52,22 +52,31 @@ class WriterUnavailable(RuntimeError):
 
 
 @dataclass(frozen=True)
-class Account:
-    """The account the reply lane writes as (action/account.json)."""
+class ReplyFraming:
+    """The handle continuation replies are written under on the saved page (action/reply_framing.json).
 
-    handle: str
+    It sets the side a draft takes, not which account is read or measured: that is [brand] x_handle in
+    mission/observe.toml (harness/sources/watch.py account_handle). framing_probe.py measured the effect:
+    replying under a fan-sounding handle passed the veto 4 times in 16 drafts, neutral handles 2.
+    """
+
+    framing_handle: str
 
 
-def load_account(path: Path | None = None) -> Account | None:
-    """The account file at HARNESS_ACCOUNT or action/account.json, or None when there is none."""
-    path = path or Path(os.getenv("HARNESS_ACCOUNT") or ACCOUNT_PATH)
+def load_framing(path: Path | None = None) -> ReplyFraming | None:
+    """The framing file at HARNESS_REPLY_FRAMING or action/reply_framing.json, or None when there is none."""
+    if os.getenv("HARNESS_ACCOUNT"):
+        raise ValueError("HARNESS_ACCOUNT is now HARNESS_REPLY_FRAMING (action/account.json is "
+                         "action/reply_framing.json); rename the variable")
+    path = path or Path(os.getenv("HARNESS_REPLY_FRAMING") or FRAMING_PATH)
     if not path.exists():
         return None
     raw = {k: v for k, v in json.loads(path.read_text(encoding="utf-8")).items() if not k.startswith("_")}
-    if set(raw) != {"handle"} or not isinstance(raw["handle"], str) or not raw["handle"].strip("@ "):
-        raise ValueError(f"{path}: needs exactly one non-empty 'handle' string (keys starting with _ are notes); "
-                         f"got keys {sorted(raw)}")
-    return Account(raw["handle"].strip().lstrip("@"))
+    handle = raw.get("framing_handle")
+    if set(raw) != {"framing_handle"} or not isinstance(handle, str) or not handle.strip("@ "):
+        raise ValueError(f"{path}: needs exactly one non-empty 'framing_handle' string (keys starting with _ are "
+                         f"notes); got keys {sorted(raw)}")
+    return ReplyFraming(handle.strip().lstrip("@"))
 
 
 def build_page(author: str, post_text: str, replies: list[str]) -> str:
@@ -98,13 +107,13 @@ def continue_page(llm: LLM, page: str, handle: str, cfg: ActionConfig, i: int = 
 
 
 def continuations(llm: LLM, author: str, post_text: str, replies: list[str], cfg: ActionConfig, seed: str,
-                  account: Account | None = None) -> list[str]:
-    """cfg.reply_samples continuations of the page: replying as `account` when given, else one
-    neutral handle each. Replying as the account's handle is what puts the draft on the account's
-    side; Iterate's retest found neutral handles on a rival's thread wrote as the rival's fans."""
+                  framing: ReplyFraming | None = None) -> list[str]:
+    """cfg.reply_samples continuations of the page: replying under `framing`'s handle when given, else
+    one neutral handle each. The framing handle is what puts the draft on the account's side;
+    Iterate's retest found neutral handles on a rival's thread wrote as the rival's fans."""
     page = build_page(author, post_text, replies[: cfg.page_replies])
-    if account:
-        handles = [account.handle] * cfg.reply_samples
+    if framing:
+        handles = [framing.framing_handle] * cfg.reply_samples
     else:
         handles = random.Random(seed).sample(PREFILL_HANDLES, min(cfg.reply_samples, len(PREFILL_HANDLES)))
     with ThreadPoolExecutor(len(handles) or 1) as pool:

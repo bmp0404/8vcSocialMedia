@@ -205,20 +205,25 @@ def test_baseline_takes_earlier_posts_of_the_same_group_only():
 
 # ---------------------------------------------------------------------------------------- inputs
 
-def test_handle_refuses_placeholder_and_names_both_keys(tmp_path, monkeypatch):
-    toml, account = tmp_path / "observe.toml", tmp_path / "account.json"
+def test_handle_comes_from_brand_x_handle_and_the_env_overrides_it(tmp_path, monkeypatch):
+    toml = tmp_path / "observe.toml"
     toml.write_text('[brand]\nx_handle = ""\n', encoding="utf-8")
-    account.write_text('{"handle": "clarkfanaccount"}', encoding="utf-8")
     monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(toml))
-    monkeypatch.setenv("HARNESS_ACCOUNT", str(account))
-    with pytest.raises(HandleError) as e:
+    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
+    with pytest.raises(HandleError, match=r"\[brand\] x_handle is empty.*HARNESS_ACCOUNT_HANDLE.*--handle"):
         resolve_handle()
-    assert "[brand] x_handle" in str(e.value) and '"handle"' in str(e.value)
     assert resolve_handle("@IowaWBB") == ("IowaWBB", "--handle")
-    account.write_text('{"handle": "realfan"}', encoding="utf-8")
-    assert resolve_handle()[0] == "realfan"
-    toml.write_text('[brand]\nx_handle = "otherfan"\n', encoding="utf-8")
-    with pytest.raises(HandleError, match="both must name"):
+    toml.write_text('[brand]\nx_handle = "@_sgu_"\n', encoding="utf-8")
+    assert resolve_handle() == ("_sgu_", f"{toml} [brand] x_handle")
+    monkeypatch.setenv("HARNESS_ACCOUNT_HANDLE", "@otherfan")
+    assert resolve_handle() == ("otherfan", "HARNESS_ACCOUNT_HANDLE")
+    assert resolve_handle("IowaWBB") == ("IowaWBB", "--handle")
+
+
+def test_handle_reports_a_missing_observe_config(tmp_path, monkeypatch):
+    monkeypatch.setenv("HARNESS_OBSERVE_CONFIG", str(tmp_path / "missing.toml"))
+    monkeypatch.delenv("HARNESS_ACCOUNT_HANDLE", raising=False)
+    with pytest.raises(HandleError, match="observe config not found"):
         resolve_handle()
 
 

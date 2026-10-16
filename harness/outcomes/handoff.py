@@ -1,21 +1,15 @@
 """The two repo inputs sync needs: the approved hand-off files and the account's X handle."""
 
 import json
-import os
 import re
-import tomllib
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
-from harness import config
+from harness.sources.common import SourceError
+from harness.sources.watch import ACCOUNT_HANDLE_ENV, account_handle
 
 APPROVED_GLOB = "approved-run*.json"
-OBSERVE_PATH = config.ROOT / "mission" / "observe.toml"
-ACCOUNT_PATH = config.ROOT / "action" / "account.json"
-# sam/action ships action/account.json with this name so the reply lane has something to write as.
-# It isn't the brand's account, so reading its timeline would label someone else's posts.
-PLACEHOLDER_HANDLES = {"clarkfanaccount"}
 REQUIRED_KEYS = ("id", "type", "text", "approved_at")
 TEXTLESS_TYPES = {"follow"}  # the review page shows no text box for a follow
 _STATUS_ID = re.compile(r"/status(?:es)?/(\d+)")
@@ -92,43 +86,15 @@ def load_approved(directory: Path) -> list[ApprovedAction]:
     return sorted(found.values(), key=lambda a: (a.approved_at, a.id))
 
 
-def _observe_handle(path: Path) -> str:
-    if not path.exists():
-        return ""
-    return str((tomllib.loads(path.read_text(encoding="utf-8")).get("brand") or {}).get("x_handle") or "")
-
-
-def _account_handle(path: Path) -> str:
-    if not path.exists():
-        return ""
-    return str(json.loads(path.read_text(encoding="utf-8")).get("handle") or "")
-
-
-def _clean(handle: str) -> str:
-    return handle.strip().lstrip("@").strip()
-
-
 def resolve_handle(override: str | None = None) -> tuple[str, str]:
-    """(handle, where it came from). Raises HandleError naming both config keys when neither is usable."""
+    """(handle, where it came from): --handle, else watch.account_handle(). Raises HandleError when unset."""
     if override:
-        handle = _clean(override)
-        if handle.lower() in PLACEHOLDER_HANDLES:
-            raise HandleError(f"--handle {handle} is the placeholder from action/account.json, not the brand account")
-        return handle, "--handle"
-    observe_path = Path(os.getenv("HARNESS_OBSERVE_CONFIG") or OBSERVE_PATH)
-    account_path = Path(os.getenv("HARNESS_ACCOUNT") or ACCOUNT_PATH)
-    observed, account = _clean(_observe_handle(observe_path)), _clean(_account_handle(account_path))
-    real = {name: h for name, h in ((observe_path, observed), (account_path, account))
-            if h and h.lower() not in PLACEHOLDER_HANDLES}
-    if len({h.lower() for h in real.values()}) > 1:
-        raise HandleError(f"{observe_path} [brand] x_handle is {observed!r} but {account_path} handle is "
-                          f"{account!r}; both must name the brand account")
-    if not real:
-        raise HandleError(
-            "No real X handle for the brand account. Set [brand] x_handle in "
-            f"{observe_path} (found {observed!r}) or \"handle\" in {account_path} (found {account!r}). "
-            f"{sorted(PLACEHOLDER_HANDLES)} are placeholders. HARNESS_OBSERVE_CONFIG and HARNESS_ACCOUNT "
-            "point at other files; --handle overrides both."
-        )
-    path, handle = next(iter(real.items()))
-    return handle, str(path)
+        return override.strip().lstrip("@").strip(), "--handle"
+    try:
+        handle, source = account_handle()
+    except SourceError as e:
+        raise HandleError(str(e)) from e
+    if not handle:
+        raise HandleError(f"No X handle for the brand account: {source} is empty. Set it, set "
+                          f"{ACCOUNT_HANDLE_ENV}, or pass --handle.")
+    return handle, source

@@ -3,9 +3,11 @@
 # Point HARNESS_OBSERVE_CONFIG at a different TOML file to swap brands.
 
 [brand]
-# The account's own X handle, without "@". Unknown on 2026-10-15. The x_brand source
-# raises until this is set.
-x_handle = ""
+# The account's own X handle, without "@": the account x_brand reads and `harness outcomes`
+# measures. HARNESS_ACCOUNT_HANDLE overrides it. "_sgu_" is Sam's alt, used for testing because
+# we own no brand account; the harness never posts from it. action/reply_framing.json holds a
+# different handle, the one reply drafts are written under.
+x_handle = "_sgu_"
 
 [espn]
 # ESPN site-API paths, <sport>/<league>. espn_news reads every league here.

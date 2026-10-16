@@ -190,7 +190,7 @@ def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative]
             decisions.append(Decision(REPLY_LANE, t["url"], "abstain", "budget_exhausted", "reply cap reached"))
             continue
         d, a = answer_target(llm, mission, facts, t, cfg, fetch, plan.get("intent", ""), grounding,
-                             side=plan.get("side", "neutral"), account=writer.load_account())
+                             side=plan.get("side", "neutral"), framing=writer.load_framing())
         if a and budget.take("reply"):
             d.action_id = a.id
             actions.append(a)
@@ -253,7 +253,7 @@ def judge_meta(cfg: ActionConfig, picked: veto.VetoResult, cands: list[dict], gr
 
 
 def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig, fetch, intent: str = "",
-                  grounding=None, side: str = "neutral", account: writer.Account | None = None) -> tuple[Decision, Action | None]:
+                  grounding=None, side: str = "neutral", framing: writer.ReplyFraming | None = None) -> tuple[Decision, Action | None]:
     url, author, post = t["url"], t["author"], t.get("text", "")
     note = ""
     if side == "rival" and cfg.rival_thread_mode == "abstain":
@@ -276,7 +276,7 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     texts = []
     if method == "continuation":
         try:
-            texts = writer.continuations(llm, author, post, page, cfg, seed=url, account=account)
+            texts = writer.continuations(llm, author, post, page, cfg, seed=url, framing=framing)
         except writer.WriterUnavailable as e:
             method, note = "styled", str(e)
             routing.warn(f"continuation unavailable ({e}); replies fall back to the styled prompt")
@@ -300,7 +300,7 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
         type="reply", text=picked.text, mind="reply_lane", narrative_id=n.id, rationale=intent,
         target_url=url, target_handle=author, lane=REPLY_LANE, target_text=post,
         draft_meta={"method": method, "side": side, "intent": intent, "samples": len(texts), "page_replies": len(page),
-                    "written_as": account.handle if account and method == "continuation" else None,
+                    "written_as": framing.framing_handle if framing and method == "continuation" else None,
                     "page_dropped_as_bots": dropped,
                     "writer_model": cfg.continuation_model if method == "continuation" else cfg.styled_model,
                     "target": target_meta(t), "judge": judge_meta(cfg, picked, cands, ground)},

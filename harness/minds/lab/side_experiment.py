@@ -61,7 +61,7 @@ def run_v2(t: dict, planned: dict, rival_mode: str) -> dict:
                 "candidates": []}
     d, a = lanes.answer_target(llm, mission, f"{mission}\n\n{CONTEXT}", target_for(t), cfg, fetch=lambda u: [],
                                intent=plan.get("intent", ""), side=plan.get("side", "neutral"),
-                               account=writer.load_account())
+                               framing=writer.load_framing())
     out = {"planned": plan, "candidates": d.candidates, "detail": d.detail}
     if a is None:
         out["abstained"] = d.reason

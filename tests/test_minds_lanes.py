@@ -439,10 +439,10 @@ def test_rival_thread_can_abstain():
     assert [(d.reason, d.detail) for d in decisions if d.lane == "reply"] == [("off_mission", "rival thread; rival_thread_mode is abstain")]
 
 
-def test_own_side_thread_continues_as_the_account(monkeypatch, tmp_path):
-    path = tmp_path / "account.json"
-    path.write_text(json.dumps({"handle": "me"}), encoding="utf-8")
-    monkeypatch.setenv("HARNESS_ACCOUNT", str(path))
+def test_own_side_thread_continues_under_the_framing_handle(monkeypatch, tmp_path):
+    path = tmp_path / "reply_framing.json"
+    path.write_text(json.dumps({"framing_handle": "me"}), encoding="utf-8")
+    monkeypatch.setenv("HARNESS_REPLY_FRAMING", str(path))
     actions, _ = run(MockLLM(), [narrative([target()])])
     (a,) = [a for a in actions if a.type == "reply"]
     assert (a.draft_meta["method"], a.draft_meta["side"], a.draft_meta["written_as"]) == ("continuation", "own", "me")
