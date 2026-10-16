@@ -1,0 +1,50 @@
+{
+ "status_id": "2110838124351836441",
+ "url": "https://x.com/WNBA/status/2110838124351836441",
+ "profile": "wnba",
+ "arm": "human",
+ "arm_seed": "sgu-arms-1",
+ "provider": "mock",
+ "target": {
+  "url": "https://x.com/WNBA/status/2110838124351836441",
+  "author": "WNBA",
+  "text": "The best moments of the @ConnecticutSun from 2026 ☀️\n\nThe Connecticut Sun made the Northeast proud in their sunset season. Tap back into their top plays from #WNBASeason30.",
+  "created_at": "2026-10-15T21:00:00+00:00",
+  "conversation_id": "2110838124351836441",
+  "age_minutes": 3.15,
+  "likes": 40,
+  "reposts": 3,
+  "replies": 2,
+  "quotes": 0,
+  "views": null,
+  "author_followers": null,
+  "thread_attached": 0
+ },
+ "plan": {
+  "target_url": "https://x.com/WNBA/status/2110838124351836441",
+  "tool": "reply",
+  "side": "own",
+  "intent": "mock"
+ },
+ "plan_error": "",
+ "offer": "human_prompt",
+ "draft": null,
+ "prompt": "Reply to @WNBA's post from @_sgu_ with a one-liner of your own. The plan's read on a good reply: mock. Post it by hand, soon.",
+ "abstain_reason": null,
+ "abstain_detail": null,
+ "method": null,
+ "decision": null,
+ "draft_meta": null,
+ "models": [],
+ "detected_at": "2026-10-15T21:03:00+00:00",
+ "started_at": "2026-10-15T21:03:09+00:00",
+ "finished_at": "2026-10-15T21:03:18+00:00",
+ "timings": {
+  "plan_s": 0.0,
+  "draft_s": 0.0,
+  "total_s": 0.0,
+  "detected_to_finished_s": 18.0,
+  "post_age_at_detection_s": 180.0,
+  "post_age_at_finish_s": 198.0
+ }
+}

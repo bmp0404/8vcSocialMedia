@@ -1,0 +1,1 @@
+{"item_id": "x:101", "run_id": "fixture-model-b", "annotator": {"model": "model-b", "response_model": "model-b", "prompt_sha": "0000"}, "labels": {"format": "other", "humor": "none"}, "rationale": "", "usage": {}, "at": "2026-10-16T01:00:01+00:00", "error": null}
