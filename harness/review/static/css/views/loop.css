@@ -1,0 +1,795 @@
+/* Loop view. A round's six stages sit as bays on the board, grouped by who runs them: the harness
+   (python -m harness run), a person (review) and the learn command. A bay the round hasn't reached
+   is an empty dashed slot on the aluminium; a reached bay holds a strip of paper. Layout follows
+   the board's own width (container queries), so it holds up whether the rail is open or not. */
+
+.loop {
+  container: loop / inline-size;
+  padding-bottom: var(--s6);
+}
+
+.loop-pad {
+  padding-inline: var(--s5);
+}
+
+.loop .viewhead .sub {
+  min-height: 1.5em;
+}
+
+.loop-notices:not(:empty) {
+  display: grid;
+  gap: var(--s2);
+  margin-bottom: var(--s4);
+}
+
+/* --- The board ---------------------------------------------------------------------------- */
+
+.loop-board {
+  container: loopboard / inline-size;
+}
+
+.loop-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+}
+
+.loop-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+/* A printed label over each group of bays, with the command that runs them. */
+.loop-grouphead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  align-content: flex-end;
+  gap: 2px var(--s2);
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.loop-grouphead .label {
+  color: var(--ink);
+}
+
+.loop-aside {
+  min-width: 0;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+.loop-aside code {
+  background: none;
+  padding: 0;
+}
+
+.loop-bays {
+  flex: 1;
+  display: grid;
+  gap: var(--s2);
+}
+
+.loop-bay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  min-width: 0;
+  padding: var(--s3);
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  box-shadow: var(--shadow-strip);
+  overflow: hidden;
+}
+
+/* Not reached yet: an empty slot, no paper. */
+.loop-bay[data-state="waiting"] {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--rule-strong);
+  box-shadow: none;
+}
+
+.loop-bay[data-state="running"] {
+  border-color: color-mix(in srgb, var(--warn) 50%, var(--rule));
+}
+
+.loop-bay[data-state="failed"] {
+  border-color: color-mix(in srgb, var(--struck) 50%, var(--rule));
+}
+
+/* The bar across a bay's top edge: amber and moving while the stage runs, the human strip's ink
+   when the drafts wait for a person, red when the stage failed. */
+.loop-bar {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.loop-bay[data-state="running"] .loop-bar {
+  background: color-mix(in srgb, var(--warn) 22%, transparent);
+}
+
+.loop-bay[data-state="running"] .loop-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  background: var(--warn);
+  /* Three sweeps, then the bay rests on its track; the ticking timer shows it's still alive.
+     Motion that runs on its own past 5 s needs a pause control (WCAG 2.2.2). */
+  animation: loop-scan 1.3s linear 3 forwards;
+}
+
+.loop-bay[data-state="yours"] .loop-bar {
+  background: var(--human);
+}
+
+.loop-bay[data-state="failed"] .loop-bar {
+  background: var(--struck);
+}
+
+@keyframes loop-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+.loop-bay-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.loop-bay-name {
+  flex: 1;
+  min-width: 0;
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.loop-bay-time {
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.loop-bay[data-state="running"] .loop-bay-time {
+  color: var(--warn);
+}
+
+.loop-bay[data-state="failed"] .loop-bay-time {
+  color: var(--struck);
+}
+
+.loop-bay[data-state="yours"] .loop-bay-time {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.loop-bay-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.loop-bay-body > .btn {
+  margin-top: auto;
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.loop-fig {
+  display: grid;
+  gap: 3px;
+}
+
+.loop-n {
+  font: 800 var(--t-num) / 1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.loop-what {
+  font-size: var(--t-small);
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+
+.loop-detail {
+  display: grid;
+  gap: var(--s1);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-small);
+  line-height: 1.4;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.loop-detail > p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.loop-detail .loop-fail {
+  color: var(--struck);
+  font-family: var(--font-code);
+  font-size: 11.5px;
+  -webkit-line-clamp: 4;
+}
+
+/* Text on the board rather than on paper takes the board's secondary ink. */
+.loop-bay[data-state="waiting"] :is(.loop-n, .loop-what, .loop-detail, .loop-bay-time) {
+  color: var(--ink-2);
+}
+
+.loop-bay[data-state="waiting"] .loop-detail {
+  border-top-color: transparent;
+  padding-top: 0;
+}
+
+.loop-n.is-none {
+  color: var(--ink-faint);
+}
+
+.loop-bay[data-state="waiting"] .loop-n.is-none {
+  color: var(--ink-2);
+  opacity: 0.55;
+}
+
+.loop-nowrap {
+  white-space: nowrap;
+}
+
+/* Per-source counts in the Observe bay. */
+.loop-src {
+  display: grid;
+  gap: 1px;
+  font: 11.5px / 1.5 var(--font-code);
+}
+
+.loop-src li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.loop-src li > :first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loop-src li > :last-child {
+  flex: none;
+  font: 12px / 1.45 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.loop-src li.bad > :last-child {
+  color: var(--struck);
+  font-weight: 700;
+}
+
+.loop-src li.wait > :last-child {
+  color: var(--ink-3);
+}
+
+.loop-detail .loop-why {
+  font-size: 12px;
+  -webkit-line-clamp: 4;
+}
+
+.loop-why .mono {
+  color: var(--struck);
+}
+
+.loop-ids {
+  font: 11.5px / 1.45 var(--font-code);
+}
+
+.loop-more {
+  font-size: 12px;
+}
+
+/* The return track: Learn's lessons go back to Decide in the next round. Drawn only when all six
+   bays share a row; otherwise the note below says it in words. */
+.loop-track {
+  display: none;
+  position: relative;
+  height: 30px;
+}
+
+.loop-track::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--colw) / 2);
+  right: calc(var(--colw) / 2);
+  top: 7px;
+  bottom: 11px;
+  border: 1px solid var(--rule-strong);
+  border-top: 0;
+  border-radius: 0 0 var(--r-strip) var(--r-strip);
+}
+
+.loop-track::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(var(--colw) / 2 - 4px);
+  border: 4.5px solid transparent;
+  border-top: 0;
+  border-bottom: 7px solid var(--rule-strong);
+}
+
+.loop-track span {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  transform: translateX(-50%);
+  padding: 0 var(--s2);
+  background: var(--board);
+  font: 12px / 16px var(--font-ui);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.loop-note {
+  margin-top: var(--s2);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+/* Two columns: the round's four bays in a square, review and learn side by side. */
+@container loopboard (min-width: 480px) {
+  .loop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s2);
+  }
+  .loop-group[data-group="round"] {
+    grid-column: 1 / -1;
+  }
+  .loop-group[data-group="round"] .loop-bays {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Four columns: the round across one row, review and learn below at double width. */
+@container loopboard (min-width: 760px) {
+  .loop-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .loop-group[data-group="checkpoint"] {
+    grid-column: 1 / 3;
+  }
+  .loop-group[data-group="memory"] {
+    grid-column: 3 / 5;
+  }
+  .loop-group[data-group="round"] .loop-bays {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* All six in one row. A narrow spacer column separates the groups; subgrid keeps every bay's top
+   edge level even when a group label wraps. */
+@container loopboard (min-width: 1040px) {
+  .loop-grid {
+    --gap: var(--s2);
+    grid-template-columns: repeat(4, minmax(0, 1fr)) var(--gap) minmax(0, 1fr) var(--gap) minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: var(--gap);
+  }
+  .loop-group {
+    display: grid;
+    grid-row: 1 / 3;
+    grid-template-rows: subgrid;
+    grid-template-columns: subgrid;
+  }
+  .loop-group[data-group="round"] {
+    grid-column: 1 / 5;
+  }
+  .loop-group[data-group="checkpoint"] {
+    grid-column: 6 / 7;
+  }
+  .loop-group[data-group="memory"] {
+    grid-column: 8 / 9;
+  }
+  .loop-grouphead {
+    grid-column: 1 / -1;
+  }
+  .loop-group[data-group] .loop-bays {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+  }
+  .loop-track {
+    /* One bay column: the board's width less 7 gaps and 2 spacers, over 6. */
+    --colw: calc((100cqw - 9 * var(--gap)) / 6);
+    display: block;
+    grid-row: 3;
+    grid-column: 3 / 9;
+  }
+  .loop-note {
+    display: none;
+  }
+}
+
+/* One column on a phone: each bay reads as one compact strip. */
+@container loopboard (max-width: 479px) {
+  .loop-bay {
+    gap: var(--s2);
+    padding: 10px var(--s3) var(--s3);
+  }
+  .loop-fig {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s2);
+  }
+  .loop-n {
+    font-size: 20px;
+  }
+}
+
+/* --- Run control and log ------------------------------------------------------------------ */
+
+.loop-lower {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: start;
+  margin-top: var(--s5);
+}
+
+@container loop (min-width: 720px) {
+  .loop-lower {
+    grid-template-columns: minmax(280px, 4fr) minmax(0, 7fr);
+  }
+}
+
+.loop-run-what,
+.loop-cost {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.loop-run .kv {
+  font-size: 13px;
+}
+
+.loop-run .kv code {
+  overflow-wrap: anywhere;
+}
+
+.loop-run-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
+}
+
+.loop-run [data-act="run"] {
+  min-width: 132px;
+}
+
+.loop-run [data-act="run"][aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.loop-run-state {
+  font-size: 12px;
+  color: var(--warn);
+}
+
+.loop-run-msg:empty {
+  display: none;
+}
+
+.loop-run-msg {
+  display: grid;
+  gap: var(--s2);
+}
+
+.loop-logwrap {
+  position: relative;
+}
+
+/* A fixed height, so the page below doesn't move while a round's lines arrive. */
+.loop-logbox {
+  height: 300px;
+  padding: var(--s2) 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--strip-inset);
+  border-radius: var(--r-strip);
+}
+
+/* Log text in the code face; the stage tag keeps the board's B612 labels, times the UI figures. */
+.loop-lines {
+  font: 12px / 1.55 var(--font-code);
+}
+
+.loop-lines li {
+  display: grid;
+  grid-template-columns: 3.4em 6.4em minmax(0, 1fr);
+  gap: var(--s2);
+  padding: 0 var(--s3);
+}
+
+.loop-lines .t {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  text-align: right;
+}
+
+.loop-lines .s {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loop-lines .x {
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.loop-lines .bad .x {
+  color: var(--struck);
+}
+
+.loop-jump {
+  position: absolute;
+  right: var(--s3);
+  bottom: var(--s2);
+  box-shadow: var(--shadow-lift);
+}
+
+@container loop (max-width: 520px) {
+  .loop-logbox {
+    height: 240px;
+  }
+  .loop-lines {
+    font-size: 11.5px;
+  }
+  .loop-lines li {
+    grid-template-columns: 2.8em 5.4em minmax(0, 1fr);
+    gap: 6px;
+    padding: 0 var(--s2);
+  }
+}
+
+/* --- Narratives and recent runs ----------------------------------------------------------- */
+
+.loop-sec {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s3);
+  margin-top: var(--s6);
+}
+
+.loop-sec > .section-head .aside {
+  color: var(--ink-2);
+}
+
+.loop-empty {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.loop-log .loop-empty {
+  color: var(--ink-3);
+}
+
+.loop-sk {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s4);
+}
+
+.loop-nars {
+  display: grid;
+}
+
+.loop-nar {
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-top: 1px solid var(--rule);
+}
+
+.loop-nar:first-child {
+  border-top: 0;
+}
+
+@container loop (min-width: 720px) {
+  .loop-nar {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: var(--s5);
+  }
+}
+
+.loop-nar-main {
+  min-width: 0;
+}
+
+.loop-nar-title {
+  font: 700 var(--t-lead) / 1.3 var(--font-ui);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.loop-nar-angle {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: var(--s1);
+  max-width: 76ch;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.loop-nar-angle .label {
+  margin-right: var(--s1);
+}
+
+.loop-nar-nums {
+  display: grid;
+  align-content: start;
+  gap: var(--s2);
+}
+
+.loop-score {
+  display: grid;
+  grid-template-columns: 7.2em 2.8em minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--s2);
+  row-gap: 2px;
+}
+
+.loop-score dd {
+  min-width: 0;
+}
+
+.loop-score .num {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.loop-basis {
+  grid-column: 2 / -1;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.loop-tablewrap {
+  overflow-x: auto;
+}
+
+.loop-runs {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.loop-runs th,
+.loop-runs td {
+  padding: 7px var(--s3);
+  text-align: left;
+  vertical-align: baseline;
+  border-top: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+.loop-runs thead th {
+  border-top: 0;
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.loop-runs tbody th {
+  font-weight: 600;
+}
+
+.loop-runs .n {
+  text-align: right;
+}
+
+.loop-runs td.src {
+  min-width: 16ch;
+  max-width: 36ch;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: var(--ink-3);
+}
+
+/* The run the bays show. */
+.loop-runs tr[aria-current] > * {
+  background: var(--strip-inset);
+}
+
+.loop-runs tr[aria-current] > th {
+  box-shadow: inset 3px 0 var(--ink);
+}
+
+/* --- Motion ------------------------------------------------------------------------------- */
+
+/* The bays settle into place once, when the board first renders; polls never replay it. */
+.loop-board[data-enter] .loop-bay {
+  animation: loop-in var(--d-base) var(--ease-out) both;
+  animation-delay: calc(var(--i) * 40ms);
+}
+
+@keyframes loop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes loop-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop-board[data-enter] .loop-bay {
+    animation-name: loop-fade;
+  }
+  .loop-bay[data-state="running"] .loop-bar::after {
+    animation: none;
+    width: 100%;
+  }
+}
+
+/* Narrow layout: the shell's inline padding, clear of the notch in landscape. */
+@media (max-width: 860px) {
+  .loop-pad {
+    padding-inline: var(--page-x);
+  }
+}
+
+/* Touch: the run links get a 44px target and visible press feedback (the tap highlight is off). */
+@media (pointer: coarse) {
+  .loop-runs th a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .loop-runs th a:active {
+    background-color: var(--strip-inset);
+  }
+}

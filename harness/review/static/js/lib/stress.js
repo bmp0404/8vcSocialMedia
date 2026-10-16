@@ -1,6 +1,6 @@
 // ?fixture=stress: the realistic fixture pushed to its limits, generated in the tab so the repo
 // carries no megabyte fixture. It covers what breaks layouts: long and unbreakable text, mixed
-// scripts and emoji, 160 strips, missing optional fields and unknown codes.
+// scripts and emoji, 160 strips, missing optional fields, unknown codes and many runs.
 
 const LONG =
   "This draft keeps going so the layout has to wrap it, with a URL " +
@@ -36,6 +36,12 @@ export function stressFrom(routes) {
         { lane: "post", opportunity: "no-such-narrative", tool: "ask_human", reason: "", detail: "", question: `${UNI} ${LONG}? The harness picks the timing.`, action_id: null, candidates: [{ mind: "x".repeat(60), type: "post", text: LONG, gate: [] }] },
       );
     }
+  }
+  const loop = out["GET /api/loop"];
+  if (loop?.round?.lines) {
+    const lines = loop.round.lines;
+    loop.round.lines = Array.from({ length: 400 }, (_, i) => ({ ...lines[i % lines.length], text: i % 25 === 0 ? `${lines[i % lines.length].text} ${LONG}` : lines[i % lines.length].text }));
+    loop.runs = Array.from({ length: 60 }, (_, i) => ({ ...(loop.runs?.[0] || {}), id: 900 - i, sources: i % 3 ? "sample" : "espn_news,google_news,x_targets,bluesky,attention" }));
   }
   return out;
 }

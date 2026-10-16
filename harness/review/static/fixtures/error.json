@@ -32,6 +32,15 @@
   "GET /api/runs/31": {
    "status": 500,
    "error": "OperationalError: no such table: actions (delete data/harness.db after a schema change)"
+  },
+  "GET /api/loop": {"status": 500, "error": "OperationalError: database is locked"},
+  "GET /api/experiments": {
+   "status": 500,
+   "error": "PermissionError: [Errno 13] Permission denied: 'eval/experiments/exp-20261016-action-f691d2.json'"
+  },
+  "GET /api/memory": {
+   "status": 500,
+   "error": "Couldn't open the memory store: JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
   }
  }
 }
