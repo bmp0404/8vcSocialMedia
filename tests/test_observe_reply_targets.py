@@ -267,6 +267,12 @@ def _source_env(monkeypatch, tmp_path, backend, toml):
     monkeypatch.setenv("HARNESS_X_SNAPSHOTS", str(tmp_path / "snaps.json"))
     monkeypatch.setattr(rt, "get_backend", lambda capability: backend)
     monkeypatch.setattr(rt, "now_utc", lambda: NOW)
+    # The fake backend isn't an FxXBackend, so threads would build a real fxtwitter reader.
+    monkeypatch.setattr(rt, "_reader", _no_reader)
+
+
+def _no_reader():
+    raise XAccessError("no fxtwitter reader in unit tests")
 
 
 TOML = """
@@ -402,3 +408,29 @@ def test_thread_replies_raise_source_error():
 
     with pytest.raises(SourceError, match="fxtwitter conversation for 100: HTTP 404"):
         thread_replies(ConversationReader(error=RuntimeError("HTTP 404")), "100", 5)
+
+
+class ThreadReader:
+    """Conversation fake: a thread for one id, a crash of an unexpected type for another."""
+
+    def conversation(self, status_id):
+        if status_id == "w2":
+            raise KeyError("results")  # not a RuntimeError: fxtwitter changed shape
+        return [fx_post("r1", 5, likes=4, author_handle="fan", replying_to_status=status_id, author_followers=30)]
+
+
+def test_threads_attach_and_one_bad_thread_does_not_sink_the_source(monkeypatch, tmp_path, capsys):
+    backend = FakeBackend(timelines={"WNBA": [post("w1", likes=900), post("w2", likes=800)]})
+    _source_env(monkeypatch, tmp_path, backend, TOML)
+    monkeypatch.setattr(rt, "_reader", ThreadReader)
+    got = {s.url.rsplit("/", 1)[1]: s for s in rt.ReplyTargetSource().fetch("")}
+    assert got["w1"].thread == [{"author": "fan", "text": "fx r1", "likes": 4, "followers": 30}]
+    assert got["w2"].thread == []
+    assert "no thread for https://x.com/WNBA/status/w2" in capsys.readouterr().out
+
+
+def test_network_guard_blocks_sockets():
+    import socket
+
+    with pytest.raises(RuntimeError, match="unit test tried to open a network connection"):
+        socket.create_connection(("example.com", 80), timeout=1)
