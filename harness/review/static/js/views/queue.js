@@ -590,7 +590,9 @@ function abstainDetail(e) {
   const cands = d.candidates || [];
   const usable = cands.filter((c) => c.text);
   const best = usable.find((c) => !(c.gate || []).length && c.veto?.passed !== false) || usable[0];
-  const fakeAction = { target_url: isXPost(d.opportunity) ? d.opportunity : null, target_text: "", draft_meta: {} };
+  // An action in the same run may already carry what observe saw of this post.
+  const sibling = S.actions.find((a) => a.target_url && a.target_url === d.opportunity);
+  const fakeAction = { target_url: isXPost(d.opportunity) ? d.opportunity : null, target_text: sibling?.target_text || "", draft_meta: { target: sibling?.draft_meta?.target } };
   const t = fakeAction.target_url ? targetOf(fakeAction, S.context) : null;
   const text = S.edits.get(e.key) ?? best?.text ?? "";
   const kind = d.lane === "reply" ? "reply" : best?.type && TEXT_KINDS.has(best.type) ? best.type : "post";

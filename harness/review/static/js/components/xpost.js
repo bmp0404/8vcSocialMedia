@@ -100,7 +100,7 @@ export function targetCard(t, { runStartedAt, quoted = false } = {}) {
         ${t.isX && !quoted ? html`<a class="xopen" href="${t.url}" target="_blank" rel="noopener noreferrer" title="Open on X">Open on X<span aria-hidden="true"> ↗</span></a>` : ""}
       </header>
       ${t.text ? html`<p class="xtext">${xText(t.text)}</p>` : html`<p class="xtext xmissing">The run didn't capture this post's text. <a href="${t.url}" target="_blank" rel="noopener noreferrer">Read it on ${t.isX ? "X" : hostOf(t.url)}</a>.</p>`}
-      ${quoted ? "" : metricsRow(t.metrics)}
+      ${quoted || Object.values(t.metrics).every((v) => v == null) ? "" : metricsRow(t.metrics)}
       ${rate && !quoted ? html`<p class="xvel"><span class="label">Velocity</span> ${rate} when observed${t.verified ? "" : " (counts read by a model, not X)"}</p>` : ""}
     </div>
   </article>`;
