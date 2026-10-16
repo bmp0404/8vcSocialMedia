@@ -70,26 +70,46 @@ def done_items(path: Path) -> set[str]:
 
 @dataclass
 class Guard:
-    """Shared across concurrent runs: the call budget, the in-flight cap and the failure-rate stop."""
+    """Shared across concurrent runs: the call budget, the in-flight cap and the failure-rate stop.
+
+    The failure window is kept per model. Pooled over models, a healthy annotator's successes hid a
+    GPT model failing 85 of its last 200 calls on 2026-10-16, which is the hammering the rule exists
+    to prevent. A model that trips the rule stops; the others keep going.
+    """
 
     budget_left: int
     in_flight: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(MAX_IN_FLIGHT))
-    recent: deque = field(default_factory=lambda: deque(maxlen=FAIL_WINDOW))
-    stopped: str | None = None
+    recent: dict = field(default_factory=dict)  # model -> deque of ok flags
+    stopped_models: dict = field(default_factory=dict)  # model -> reason
 
-    def take_call(self) -> None:
-        if self.stopped:
-            raise FailureRateStop(self.stopped)
+    @property
+    def stopped(self) -> str | None:
+        return "; ".join(f"{m}: {r}" for m, r in self.stopped_models.items()) or None
+
+    def take_call(self, model: str = "") -> None:
+        if model in self.stopped_models:
+            raise FailureRateStop(self.stopped_models[model])
         if self.budget_left <= 0:
             raise BudgetExceeded(f"call budget of {CALL_BUDGET} reached")
         self.budget_left -= 1
 
-    def record(self, ok: bool) -> None:
-        self.recent.append(ok)
-        if len(self.recent) == FAIL_WINDOW:
-            failed = self.recent.count(False)
-            if failed > FAIL_SHARE * FAIL_WINDOW and not self.stopped:
-                self.stopped = f"{failed} of the last {FAIL_WINDOW} calls failed"
+    def seed(self, calls_dir: Path = CALLS_DIR) -> None:
+        """Start each model's window from its logged calls, so a restart doesn't forget a failing streak."""
+        rows = []
+        if calls_dir.is_dir():
+            for path in calls_dir.glob("*.jsonl"):
+                with path.open(encoding="utf-8") as f:
+                    rows += [(r["at"], r["model"], bool(r.get("ok"))) for r in map(json.loads, f)]
+        for _, model, ok in sorted(rows):
+            self.record(ok, model)
+
+    def record(self, ok: bool, model: str = "") -> None:
+        window = self.recent.setdefault(model, deque(maxlen=FAIL_WINDOW))
+        window.append(ok)
+        if len(window) == FAIL_WINDOW and model not in self.stopped_models:
+            failed = window.count(False)
+            if failed > FAIL_SHARE * FAIL_WINDOW:
+                self.stopped_models[model] = f"{failed} of its last {FAIL_WINDOW} calls failed"
 
 
 @dataclass
@@ -137,7 +157,7 @@ async def annotate_one(client, annotator: Annotator, run_id: str, item: dict, pa
     last_error = None
     response_model = None
     for attempt in range(MAX_ATTEMPTS):
-        guard.take_call()
+        guard.take_call(annotator.model)
         t0 = time.monotonic()
         call = {"at": _now(), "run_id": run_id, "model": annotator.model, "item_id": item["item_id"], "attempt": attempt}
         try:
@@ -154,7 +174,7 @@ async def annotate_one(client, annotator: Annotator, run_id: str, item: dict, pa
             calls_log.write(json.dumps(call) + "\n")
             stats.calls += 1
             stats.errors[kind] += 1
-            guard.record(False)
+            guard.record(False, annotator.model)
             last_error = f"{kind}: {str(e)[:200]}"
             if not _transient(e):
                 break
@@ -191,7 +211,7 @@ async def annotate_one(client, annotator: Annotator, run_id: str, item: dict, pa
         call.update(ok=problem is None, error=problem, response_model=resp.model, stop=resp.stop_reason,
                     seconds=round(time.monotonic() - t0, 2), **usage)
         calls_log.write(json.dumps(call, ensure_ascii=False) + "\n")
-        guard.record(problem is None)
+        guard.record(problem is None, annotator.model)
         if problem is None:
             return {"item_id": item["item_id"], "run_id": run_id,
                     "annotator": {"model": annotator.model, "response_model": response_model,
@@ -223,7 +243,7 @@ async def run_annotator(annotator: Annotator, run_id: str, items: list[dict], by
     with out_path.open("a", encoding="utf-8") as out, calls_path.open("a", encoding="utf-8") as calls_log:
         async def worker():
             for item in queue:
-                if guard.stopped:
+                if annotator.model in guard.stopped_models:
                     return
                 parent = by_id.get(item["parent_id"]) if item.get("parent_id") else None
                 async with lane:

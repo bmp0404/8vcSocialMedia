@@ -43,7 +43,11 @@ async def _run(args) -> None:
     items = [by_id[i] for i in ids]
     used = annotate.calls_used()
     guard = annotate.Guard(budget_left=min(annotate.CALL_BUDGET - used, args.max_calls or annotate.CALL_BUDGET))
+    if not args.fresh_window:
+        guard.seed()
     print(f"[label] {len(items)} items, {used} calls used so far, {guard.budget_left} allowed this run")
+    if guard.stopped:
+        print(f"[label] already stopped from the call logs: {guard.stopped}")
     lanes = dict(part.split("=") for part in args.concurrency.split(",")) if args.concurrency else {}
     tasks, names = [], []
     for model in args.models.split(","):
@@ -102,6 +106,8 @@ def main() -> None:
     r.add_argument("--concurrency", default="", help="per-model lanes, e.g. claude-sonnet-5-5=6,gpt-6.1-sol=10")
     r.add_argument("--limit", type=int, default=0)
     r.add_argument("--max-calls", type=int, default=0, help="cap for this run, below the global budget")
+    r.add_argument("--fresh-window", action="store_true",
+                   help="ignore logged failures; use only after checking that a stopped model answers again")
     sub.add_parser("calls")
     a = sub.add_parser("analyze")
     a.add_argument("--prefix", required=True)

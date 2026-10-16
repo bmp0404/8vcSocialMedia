@@ -151,12 +151,14 @@ def test_guard_budget_and_failure_rate_stop():
         g.take_call()
     g = annotate.Guard(budget_left=10**6)
     for i in range(annotate.FAIL_WINDOW):
-        g.record(i % 5 != 4)  # exactly 20% failed: not more than 20%, keep going
+        g.record(i % 5 != 4, "gpt")  # exactly 20% failed: not more than 20%, keep going
+        g.record(True, "claude")
     assert g.stopped is None
-    g.record(False)  # drops a success from the window, which now holds 41 failures in 200
-    assert g.stopped and "41 of the last 200" in g.stopped
+    g.record(False, "gpt")  # drops a success from gpt's window, which now holds 41 failures in 200
+    assert g.stopped == "gpt: 41 of its last 200 calls failed"
     with pytest.raises(annotate.FailureRateStop):
-        g.take_call()
+        g.take_call("gpt")
+    g.take_call("claude")  # a healthy model keeps its calls
 
 
 def test_reply_label_votes_needs_every_reference_model(tmp_path):
@@ -173,3 +175,12 @@ def test_reply_label_votes_needs_every_reference_model(tmp_path):
         + row("x:1", "other", {"specificity": 5}, "2"), encoding="utf-8")
     votes, _ = reply_label_votes(("c", "g"), SCHEMA, tmp_path)
     assert votes == {"x:1": {"specificity": [4, 3]}}  # x:2 lacks a good answer from g
+
+
+def test_guard_seeds_each_window_from_the_call_logs(tmp_path):
+    rows = [{"at": f"2026-10-16T09:{i // 60:02d}:{i % 60:02d}", "model": "gpt", "ok": i % 2 == 0} for i in range(200)]
+    rows += [{"at": "2026-10-16T08:00:00", "model": "claude", "ok": True}]
+    (tmp_path / "run.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    g = annotate.Guard(budget_left=10)
+    g.seed(tmp_path)
+    assert "gpt" in g.stopped_models and "claude" not in g.stopped_models
