@@ -1,0 +1,126 @@
+{
+ "question": "Would watching mid-size amplifiers have surfaced more open, fresh threads than the current lists?",
+ "window": [
+  "2026-10-02",
+  "2026-10-16"
+ ],
+ "poll_rate_per_s": 0.2,
+ "hot_age_minutes": 10.0,
+ "open_rule": "2+ of the top 3 under 1,000 followers",
+ "brand_open_rate_pooled": 0.612,
+ "lists": {
+  "platform": {
+   "handles": 15,
+   "read_every_s": 75.0,
+   "quiet_posts_per_day": 5.07,
+   "posts_per_day": 12.93,
+   "fresh_per_day": 12.93,
+   "open_fresh_per_day": 8.19
+  },
+  "watch": {
+   "handles": 24,
+   "read_every_s": 120.0,
+   "quiet_posts_per_day": 8.36,
+   "posts_per_day": 19.64,
+   "fresh_per_day": 19.64,
+   "open_fresh_per_day": 14.34
+  }
+ },
+ "pools": {
+  "reposters": {
+   "fetched": 75,
+   "errors": 13,
+   "timelines_with_no_original_post": 25,
+   "timeline_posts_read": 1240,
+   "with_scored_threads": 2,
+   "scored_threads": 2,
+   "open_rate_of_scored_threads": 1.0,
+   "busy_on_topic_posts_in_window": 0,
+   "busy_posts_in_window": 4,
+   "quiet_posts_in_window": 62,
+   "yields": {
+    "candidates_on_topic": {
+     "handles": 62,
+     "read_every_s": 310.0,
+     "quiet_posts_per_day": 0.99,
+     "posts_per_day": 0.0,
+     "fresh_per_day": 0.0,
+     "open_fresh_per_day": 0.0
+    },
+    "candidates_any_post": {
+     "handles": 62,
+     "read_every_s": 310.0,
+     "quiet_posts_per_day": 52.32,
+     "posts_per_day": 2.09,
+     "fresh_per_day": 2.09,
+     "open_fresh_per_day": 2.09
+    },
+    "platform+candidates_on_topic": {
+     "handles": 77,
+     "read_every_s": 385.0,
+     "quiet_posts_per_day": 6.06,
+     "posts_per_day": 12.93,
+     "fresh_per_day": 12.93,
+     "open_fresh_per_day": 8.19
+    },
+    "per_handle_candidates_on_topic_minus_platform": {
+     "diff": -0.546,
+     "ci95": [
+      -0.83,
+      -0.33
+     ]
+    },
+    "platform+candidates_any_post": {
+     "handles": 77,
+     "read_every_s": 385.0,
+     "quiet_posts_per_day": 57.39,
+     "posts_per_day": 15.02,
+     "fresh_per_day": 15.02,
+     "open_fresh_per_day": 10.28
+    },
+    "per_handle_candidates_any_post_minus_platform": {
+     "diff": -0.512,
+     "ci95": [
+      -0.8,
+      -0.28
+     ]
+    },
+    "watch+candidates_on_topic": {
+     "handles": 86,
+     "read_every_s": 430.0,
+     "quiet_posts_per_day": 9.35,
+     "posts_per_day": 19.64,
+     "fresh_per_day": 19.64,
+     "open_fresh_per_day": 14.34
+    },
+    "per_handle_candidates_on_topic_minus_watch": {
+     "diff": -0.598,
+     "ci95": [
+      -0.79,
+      -0.44
+     ]
+    },
+    "watch+candidates_any_post": {
+     "handles": 86,
+     "read_every_s": 430.0,
+     "quiet_posts_per_day": 60.67,
+     "posts_per_day": 21.73,
+     "fresh_per_day": 21.73,
+     "open_fresh_per_day": 16.43
+    },
+    "per_handle_candidates_any_post_minus_watch": {
+     "diff": -0.564,
+     "ci95": [
+      -0.76,
+      -0.4
+     ]
+    }
+   }
+  }
+ },
+ "bootstrap": {
+  "draws": 2000,
+  "seed": 0,
+  "resamples": "accounts within each group, then their scored threads"
+ }
+}

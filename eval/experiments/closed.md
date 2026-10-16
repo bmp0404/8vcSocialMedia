@@ -53,3 +53,15 @@ The timing half held up better than the share. An author's earlier median minute
 **Closes:** ordering `lanes.plan_targets` by openness and a per-author `reply_max_age_minutes`. `openness(handle)` and the committed per-account table (`data/context/openness.json`) stay, because the watcher reads the same interface. The dev-tool watch list on `sam/watch` admits accounts at a share of 0.5 or more; this check found no evidence that the share carries over to an account's next threads.
 
 **Reopen if:** the watcher's rolling threads (`data/threads/`) give 30 or more threads with no small account in the top 3, or the share correlation's interval clears zero on threads collected after this date.
+
+## Watching mid-size accounts that repost the dev-tool space (closed 2026-10-16)
+
+**Result:** The accounts that amplify the space by reposting don't start threads worth replying to. Ranked by how many different brands' posts they reposted (`data/context/reposters.jsonl`, 1,000 to 100,000 followers, self-reposts and watched brands left out), the top 75 were read through fxtwitter: one timeline page each and the replies under up to four day-old original posts. 13 profiles returned 404. Of the 62 read, 25 had no original post in their last 20 timeline items. In the 2026-10-02 to 10-16 window they posted 4 originals that drew 3 or more replies and 62 that drew fewer, and none of the busy ones was English with one of the profile's keywords. Only 2 had a thread with 3 or more replies old enough to score.
+
+Replaying the window's posts through the watcher's polling (one profile read per handle in turn at 0.2 reads per second; fresh means read within 10 minutes; open means 2 or more of the top 3 replies from accounts under 1,000 followers), the current lists catch 8.2 open fresh threads a day (sam/platform's 15 handles) and 14.3 (sam/watch's 24). Adding the 62 candidates adds none that the watcher would act on, and adds 2.1 a day if every post counted regardless of topic or language. Per handle, the candidates trail the lists by 0.55 [0.33, 0.83] and 0.60 [0.44, 0.79] open fresh threads a day. Intervals resample accounts within each group, then their scored threads, 2,000 draws. Polling never limited freshness: 86 handles are read every 430 seconds, under the 10-minute bar.
+
+**Source:** `uv run python -m harness.rank.amplifiers build --top 75` then `replay`; counts in `eval/experiments/reports/amplifier-replay.json`. The candidate list (`data/context/amplifiers.jsonl`) names private people and stays local. No LLM calls. The wnba profile has no reposter data on disk, so it wasn't tested. A second pool, mid-size accounts that replied under 3 or more brands' threads (94 of them in the reply samples), stopped partway when the disk filled; `build --pool repliers` reruns it.
+
+**Closes:** adding repost amplifiers to either dev-tool watch list. No additions are proposed.
+
+**Reopen if:** the replier pool, or quote lists once a source has them, turns up mid-size accounts whose English, on-topic posts draw 3 or more replies at a rate near the brands' 0.55 to 0.60 open fresh threads per handle per day.
