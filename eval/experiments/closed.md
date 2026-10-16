@@ -65,3 +65,53 @@ Replaying the window's posts through the watcher's polling (one profile read per
 **Closes:** adding repost amplifiers to either dev-tool watch list. No additions are proposed.
 
 **Reopen if:** the replier pool, or quote lists once a source has them, turns up mid-size accounts whose English, on-topic posts draw 3 or more replies at a rate near the brands' 0.55 to 0.60 open fresh threads per handle per day.
+
+## The audience panel as the production post ranker (closed 2026-10-16)
+
+**Result:** The panel ranks an account's posts no better than a free model. On the post benchmark's test authors, the panel (one Sonnet 5.5 call per post, the mean of four persona guesses) scores 0.723 pair accuracy on 1,016 pairs from 37 accounts, and the TF-IDF ridge, which makes no LLM calls, scores 0.711 on its 932. On those 932 pairs the panel minus the ridge is +0.017 [−0.044, +0.087]; against the Claude label model it is −0.007 [−0.046, +0.035]. Intervals resample accounts.
+
+**Source:** `data/bench/results/judges-posts.json`, per-post scores in `data/bench/results/judges/panel-claude-sonnet-5-5.jsonl`, method in `harness/corpus/DESIGN.md` ("The production judges on the post benchmark"). 598 calls, one post per call.
+
+**Closes:** ranking post drafts with the panel in production. The panel stays in `eval/experiments/instruments.json` as a report-only instrument, scored on the watcher's posts as they mature.
+
+**Reopen if:** the panel beats the ridge with an interval above zero on posts made after 2026-10-16 (its instrument entry tracks this), or on the brand's own posts.
+
+## The BAML judge as a ranker (closed 2026-10-16)
+
+**Result:** `GradePost`'s `score_100` ranks test-author posts at 0.639 on 907 pairs, below the Claude label model by −0.084 [−0.155, −0.013] and no better than length (+0.032 [−0.021, +0.082]). Its rubric took 18 distinct values and called 504 of 571 posts "Revise". 27 posts got no grade.
+
+**Source:** `data/bench/results/judges-posts.json` and `data/bench/results/judges/baml_judge-claude-sonnet-5-5.jsonl`; `harness/corpus/DESIGN.md`.
+
+**Closes:** ranking or selecting drafts by the BAML judge's score. Its grounding criterion remains an optional veto (`ActionConfig.grounding_veto`, `harness/minds/veto.py`).
+
+**Reopen if:** a revised rubric beats the label model with an interval above zero on the frozen post benchmark's test authors.
+
+## A reply's wording, once timing is known (closed 2026-10-16)
+
+**Result:** On the reply benchmark's 1,332 test pairs over 40 threads, adding the text features to the timing-and-reach model changes pair accuracy by +0.002 [−0.034, +0.044] (0.772 against 0.770). Hashed n-grams make it worse, −0.071 [−0.137, −0.001], and Claude's and GPT's label fields add +0.007 [−0.036, +0.040]. The +0.002 was computed after the n-gram version's test result had been seen, so it is one look at test, not a clean held-out number.
+
+**Source:** `data/bench/results/replies.json` (`ranker_pooled_test`) and `data/bench/results/replies-labels.json`; `harness/corpus/DESIGN.md`, "Reply ranker".
+
+**Closes:** optimizing a reply draft's words for likes, and any fitness that scores wording with a likes model. The reply lane improves through the target, the timing and the veto; a person's own take carries the words.
+
+**Reopen if:** the text block clears zero against timing alone on the rolling benchmark's watcher threads at two weekly cutoffs, or on 30 or more ranked `_sgu_` replies. `harness improve` folds those threads in as their +48h reads land.
+
+## LLM-picked best-of-N (closed 2026-10-16)
+
+**Result:** Picking the drafts a model rates most likely to get likes makes them easier to spot as AI. Among 12 continuations per thread, the 4 that Opus 5.5 picked were detected at AUC 0.70, against 0.44 for plain continuations (Opus judge), and forced-choice detection rose from 31% to 50% (chance is 20%). On styled drafts the same pick moved nothing (0.86 against 0.88). The judge's scores tracked real top replies' likes at Spearman 0.15. Persona drafts picked this way are covered in the entry "Persona drafting and LLM best-of-N for replies" above.
+
+**Source:** `research/action.md` in `8vc-context` (outside this repository): the condition table and finding 3; the Spearman figure is quoted in `harness/minds/veto.py`. B3's architecture counsel listed it as a kill, and the lead adopted it.
+
+**Closes:** any step that ranks or selects drafts by a model's opinion. The reply lane picks at random among the drafts that pass the veto (`harness/minds/lanes.py`, `_veto_and_pick`).
+
+**Reopen if:** a model's pick beats a random pick among the same candidates on the lineup instrument (`action_lineup`, with the GPT-family detector as a guardrail), under the paired gate, and holds on threads posted after the experiment was proposed.
+
+## Prompt variants an LLM proposes and tunes against a detector (closed 2026-10-16)
+
+**Result:** Not run here. Closed on the design argument and two observations. A loop that rewrites prompts until the lineup detector stops finding them learns that detector's blind spots, not what a reader notices. In the research run, the "bestof" condition passed a GPT detector (picked 20% of the time, chance) while Opus 5.5 caught it 90% of the time, so passing one detector said little. And `exp-20261016-action-7ea3e0` cut Opus detection from 1.00 to 0.37 and was promoted, then failed a stricter veto (`exp-20261016-action-d71d3a`: veto pass 0.26 against 0.56): the drafts that read less like AI included ones cheering the other team ("Let's go Angel Reese, another championship").
+
+**Source:** `research/action.md` in `8vc-context`, the forced-choice re-check of the worker's conditions; `eval/experiments/exp-20261016-action-7ea3e0.json` and `exp-20261016-action-d71d3a.json`; B3's kill list.
+
+**Closes:** a proposer that writes prompt variants and keeps those the detector misses, such as `mutate_and_retire` on `aarav/self-improving` run as a prompt tuner. A prompt change enters the queue as a spec with a hypothesis (`eval/experiments/queue/`), is screened once, and is promoted only after a confirmation on later threads with the other family's detector as a guardrail.
+
+**Reopen if:** gains a tuning loop finds on its own detector also show on a detector from another family that never saw the variants, and in a human lineup, on threads posted after the tuning.
