@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -47,6 +48,8 @@ class EvalContext:
     w_panel: float = 0.5
     w_tournament: float = 0.5
     w_rubric: float = 0.0
+    # Optional third signal: the no-LLM feature model (features.py), post lane only, HARNESS_EVAL_FEATURES=on.
+    w_features: float = field(default_factory=lambda: 0.5 if _features_on() else 0.0)
     rubric: bool = True  # still run the rubric for guardrail flags and per-criterion justifications
     seed: int = 0
     triage: bool = True  # reply lane: attach a triage verdict per target post
@@ -66,6 +69,10 @@ class EvalContext:
         if isinstance(ctx, cls):
             return ctx
         return cls(llm=ctx.llm, mission=ctx.mission, lane=lane or getattr(ctx, "lane", "post"), **kw)
+
+
+def _features_on() -> bool:
+    return (os.getenv("HARNESS_EVAL_FEATURES") or "off").strip().lower() in {"on", "1", "true", "yes"}
 
 
 def audience_from_mission(mission: str) -> str:

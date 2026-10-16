@@ -3,6 +3,15 @@
     python scripts/backtest_eval.py --feed data/devtools_virality_30d.csv
     python scripts/backtest_eval.py --feed data/backtest_fixture.json
     python scripts/backtest_eval.py --feed <path> --methods rubric,pairwise --deciders claude,jev
+    python scripts/backtest_eval.py --enriched data/context/devtools_enriched.csv --methods panel,rubric,pairwise
+
+--enriched: cleaner labels from the enriched export. Keeps mature, eligible (not thread-continuation),
+non-boosted posts from the Mid-size / Smaller accounts the blend weights were NOT tuned on (the tuned
+accounts are the first --tuned-accounts of the old stratified sample, i.e. the old in-sample run), up to
+--per-account posts each. Targets: engagement / author median (label), engagement per view, and the old
+within-account percentile for comparison. Reports pooled Spearman and same-account pairwise accuracy with
+90% account-bootstrap CIs. Adds a no-LLM feature baseline (harness/evaluator/features.py) trained on
+every other account; --write-feature-model saves it to data/feature_model.json for HARNESS_EVAL_FEATURES.
 
 Methods: panel (current qualify.py audience panel), rubric, pairwise (Swiss/round-robin + Bradley-Terry,
 within each account), triage (P(engage), a side metric), z-score combos, and text-only baselines
@@ -31,14 +40,19 @@ from harness.llm import get_llm  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--feed", required=True, help="CSV / JSON / JSONL of posts with engagement")
+    ap.add_argument("--feed", help="CSV / JSON / JSONL of posts with engagement")
+    ap.add_argument("--enriched", help="enriched CSV (data/context/devtools_enriched.csv): cleaner labels, holdout accounts")
+    ap.add_argument("--tuned-accounts", type=int, default=10,
+                    help="--enriched: the first N sampled accounts (where the blend was tuned) are excluded")
+    ap.add_argument("--write-feature-model", nargs="?", const="data/feature_model.json", default=None,
+                    help="--enriched: save the feature model (default path data/feature_model.json)")
     ap.add_argument("--target", default="auto", choices=["auto", "account", "impressions", "followers", "raw"])
     ap.add_argument("--segments", default="Mid-size,Smaller/closest",
                     help="comma list of Segment values to keep ('' = all); ignored if the feed has none")
     ap.add_argument("--accounts", type=int, default=10, help="accounts to sample (account target)")
     ap.add_argument("--skip-accounts", type=int, default=0,
                     help="skip the first N sampled accounts (e.g. --skip-accounts 10 = a disjoint holdout)")
-    ap.add_argument("--per-account", type=int, default=8, help="posts per sampled account")
+    ap.add_argument("--per-account", type=int, default=None, help="posts per sampled account (default 8; --enriched 12)")
     ap.add_argument("--limit", type=int, default=120, help="hard cap on posts evaluated")
     ap.add_argument("--methods", default="panel,rubric,pairwise,triage")
     ap.add_argument("--deciders", default="auto", help="comma list or 'auto' (every backend with a key)")
@@ -54,18 +68,40 @@ def main() -> None:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-    posts = B.load(args.feed)
-    total = len(posts)
-    posts, mode = B.normalize(posts, args.target)
+    if not (args.feed or args.enriched):
+        ap.error("--feed or --enriched is required")
     segs = [s.strip() for s in args.segments.split(",") if s.strip()]
-    if not any(p.segment for p in posts):
-        segs = []
-    picked = B.sample(posts, segs or None, args.accounts, args.per_account, args.seed, skip=args.skip_accounts)[: args.limit]
+    feature_model = None
+    if args.enriched:
+        args.feed = args.enriched
+        posts = B.load_enriched(args.enriched)
+        total = len(posts)
+        posts, mode = B.normalize(posts, "account")  # p.target = the old within-account percentile
+        tuned = {p.author for p in B.sample(posts, segs or None, args.tuned_accounts, 8, args.seed)}
+        picked, holdout_accts = B.holdout_set(posts, tuned, segs or None, args.per_account or 12)
+        picked = picked[: args.limit]
+        feature_model, finfo = B.fit_feature_model(posts, holdout_accts)
+        print(f"[backtest] {args.enriched}: {total} posts; {sum(map(B.clean, posts))} mature/eligible/non-boosted; "
+              f"evaluating {len(picked)} from {len({p.author for p in picked})} holdout accounts (segments={segs}; "
+              f"{len(tuned)} tuned accounts excluded: {', '.join(sorted(tuned))})")
+        print(f"[features] ridge on {finfo['n']} posts / {finfo['accounts']} non-holdout accounts, "
+              f"lambda={feature_model['lambda']}, grouped-CV pair_acc {max(finfo['cv_pair_acc'].values()):.3f}")
+        if args.write_feature_model:
+            Path(args.write_feature_model).write_text(json.dumps(feature_model, indent=1), encoding="utf-8")
+            print(f"[features] model -> {args.write_feature_model}")
+    else:
+        posts = B.load(args.feed)
+        total = len(posts)
+        posts, mode = B.normalize(posts, args.target)
+        if not any(p.segment for p in posts):
+            segs = []
+        picked = B.sample(posts, segs or None, args.accounts, args.per_account or 8, args.seed,
+                          skip=args.skip_accounts)[: args.limit]
+        synth = sum(p.synthetic for p in picked)
+        print(f"[backtest] {args.feed}: {total} posts loaded, target={mode}, evaluating {len(picked)} "
+              f"from {len({p.group for p in picked})} group(s)" + (f", segments={segs}" if segs else "")
+              + (f"; {synth} SYNTHETIC" if synth else ""))
     grouped = mode == "account"
-    synth = sum(p.synthetic for p in picked)
-    print(f"[backtest] {args.feed}: {total} posts loaded, target={mode}, evaluating {len(picked)} "
-          f"from {len({p.group for p in picked})} group(s)" + (f", segments={segs}" if segs else "")
-          + (f"; {synth} SYNTHETIC" if synth else ""))
 
     llm = get_llm(args.provider)
     ectx = EvalContext(llm=llm, mission=config.mission(), lane="post", seed=args.seed, triage=False)
@@ -113,6 +149,23 @@ def main() -> None:
         scores["baseline: has_media (not shown to judges)"] = {
             p.id: float(p.media.lower() not in {"", "none"}) for p in picked}
     scores["baseline: random"] = {p.id: rng.random() for p in picked}
+    if feature_model:
+        from harness.evaluator import features as F
+
+        feat = {p.id: F.predict(feature_model, B.post_features(p)) for p in picked}
+        scores["features (no LLM, text-only)"] = feat
+        scores["features + has_media (not draft-time)"] = {
+            p.id: F.predict(feature_model, B.post_features(p, text_only=False)) for p in picked}
+        aud0 = args.pair_audience.split(",")[0].strip()
+        for d in deciders:
+            pan = scores.get("panel (qualify.py, absolute 0-1)")
+            pw = scores.get(f"pairwise[{d},{aud0}] (BT win prob)")
+            if pan:
+                scores["combo panel+features"] = B.combine(pan, feat)
+            if pw:
+                scores[f"combo pairwise+features[{d}]"] = B.combine(pw, feat)
+            if pan and pw:
+                scores[f"combo panel+pairwise+features[{d}]"] = B.combine(pan, pw, feat)
 
     if args.pair_test:
         # pairs come from accounts NOT in the ranked sample (held out from anything tuned on it)
@@ -127,12 +180,21 @@ def main() -> None:
                                  f"(90% CI {r['lo']:.2f}-{r['hi']:.2f}; strict {r['strict']}/{r['n']}, ties {r['ties']}, "
                                  f"orders agreed {r['consistent']:.0%}) from {len({h.author for h, _ in vp})} accounts")
 
-    rows = [(name, B.evaluate_scores(picked, s, grouped)) for name, s in scores.items()]
-    target_desc = {"account": "within-account engagement percentile", "impressions": "engagement / impressions",
-                   "followers": "engagement / followers", "raw": "raw engagement"}[mode]
-    print(f"\nTarget: {target_desc}." + (" pair_acc and viral_AUC count within-account pairs only." if grouped else "")
-          + " P@25% = share of the method's top quartile that is in the actual top quartile.\n")
-    print(B.fmt_table(rows))
+    if args.enriched:
+        rows = {}
+        for key, (col, desc) in B.ENRICHED_TARGETS.items():
+            rows[key] = [(name, B.evaluate_enriched(picked, s, key)) for name, s in scores.items()
+                         if not name.startswith("  ")]
+            print(f"\nTarget {key}: {desc}{f' [{col}]' if col else ''}. Spearman pooled over holdout posts; "
+                  "pair_acc = same-account pairs only; 90% CIs from an account-level bootstrap.\n")
+            print(B.fmt_enriched(rows[key]))
+    else:
+        rows = [(name, B.evaluate_scores(picked, s, grouped)) for name, s in scores.items()]
+        target_desc = {"account": "within-account engagement percentile", "impressions": "engagement / impressions",
+                       "followers": "engagement / followers", "raw": "raw engagement"}[mode]
+        print(f"\nTarget: {target_desc}." + (" pair_acc and viral_AUC count within-account pairs only." if grouped else "")
+              + " P@25% = share of the method's top quartile that is in the actual top quartile.\n")
+        print(B.fmt_table(rows))
     for line in extra:
         print(line)
     st = cache.STATS
@@ -143,9 +205,10 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
         "feed": args.feed, "target": mode, "n": len(picked),
-        "metrics": {n: r for n, r in rows},
+        "metrics": {k: dict(v) for k, v in rows.items()} if isinstance(rows, dict) else {n: r for n, r in rows},
         "posts": [{"id": p.id, "author": p.author, "text": p.text, "eng": p.eng, "target": p.target,
                    "category": p.category, "segment": p.segment,
+                   **({"targets": {k: B.enriched_target(p, k) for k in B.ENRICHED_TARGETS}} if args.enriched else {}),
                    "scores": {n: s.get(p.id) for n, s in scores.items()}} for p in picked],
     }, indent=1, default=str), encoding="utf-8")
     print(f"per-post scores -> {out}")

@@ -23,6 +23,7 @@ class Ranked:
     rubric: RubricResult | None = None
     triage: Triage | None = None
     flags: list[str] = field(default_factory=list)
+    features: float | None = None  # no-LLM feature-model score (HARNESS_EVAL_FEATURES=on, post lane)
 
     @property
     def action(self) -> Action | None:
@@ -32,7 +33,8 @@ class Ranked:
         return {"rank": self.rank, "score": round(self.score, 3), "win_prob": self.win_prob,
                 "rating": round(self.rating) if self.rating is not None else None,
                 "rubric": self.rubric.to_dict() if self.rubric else None,
-                "triage": self.triage.to_dict() if self.triage else None, "flags": self.flags}
+                "triage": self.triage.to_dict() if self.triage else None, "flags": self.flags,
+                **({"features": round(self.features, 3)} if self.features is not None else {})}
 
 
 def _pct(xs: list[float]) -> list[float]:
@@ -50,6 +52,13 @@ def _blend(live: list[Ranked], ectx: EvalContext) -> None:
         comps.append((ectx.w_tournament, [r.win_prob if r.win_prob is not None else 0.5 for r in live]))
     if ectx.w_rubric and live and all(r.rubric for r in live):
         comps.append((ectx.w_rubric, [r.rubric.total for r in live]))
+    if ectx.w_features and live and ectx.lane == "post":  # trained on original posts, not replies
+        from harness.evaluator import features
+
+        for r in live:
+            r.features = features.score(r.candidate.text)
+        if all(r.features is not None for r in live):
+            comps.append((ectx.w_features, [r.features for r in live]))
     if not comps:
         return
     pcts = [(w, _pct(vals)) for w, vals in comps]

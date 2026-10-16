@@ -79,6 +79,7 @@ Env vars for the loop (all in `.env.example`):
 | `HARNESS_DB`, `HARNESS_LESSONS`, `HARNESS_WEIGHTS`, `HARNESS_PROPOSALS` | Memory, lessons, learned weights (default next to the DB) and mission proposals; point all four at a temp dir for a throwaway loop |
 | `HARNESS_FOLLOW_SLOTS` | Reserved follow slots per run (default 2; 0 disables follows) |
 | `HARNESS_EVALUATOR` | `on` (default) / `off`: reply triage gate + panel/pairwise ranking (see Evaluation) |
+| `HARNESS_EVAL_FEATURES` | `off` (default) / `on`: post lane adds the no-LLM feature model as a third ranking signal (see Evaluation) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `HANDOFF_EMAIL_FROM`, `HANDOFF_EMAIL_TO`, `HANDOFF_EMAIL_CC` | Hand-off email; only used with `--send` |
 | `X_BEARER_TOKEN` | `ingest-metrics --from x` (and the `x_api` source) |
 
@@ -87,8 +88,38 @@ Env vars for the loop (all in `.env.example`):
 `harness/evaluator/` runs after the critic (`qualify.py`) when `HARNESS_EVALUATOR=on` (the default):
 - **Reply triage**: before any mind drafts, one batched call (judge model) labels each target post engage / wait / skip. Only `engage` targets get drafts; the rest are logged as `wait` / `no_response` rows with a typed reason.
 - **Ranking**: in each lane, `predicted_score` = 0.5 x panel percentile + 0.5 x Haiku pairwise-tournament percentile (Bradley-Terry). A Sonnet rubric adds per-criterion notes and guardrail flags (voice / grounding / cringe below threshold). These show as `EVAL_FLAGS` in the hand-off email and as `context.eval` in the JSON. Only a hard grounding failure (rubric grounding 1/5) vetoes; with 6+ drafts in a lane, the tournament's bottom tercile is cut. Follows skip the evaluator and keep their own ranker.
-- **Backtest** (`scripts/backtest_eval.py`, 1,665 real dev-tool X posts, holdout accounts, Spearman vs within-account engagement): panel+pairwise **+0.62**, panel +0.56, length baseline +0.45, rubric +0.40.
+- **Backtest** (`scripts/backtest_eval.py`, 1,665 real dev-tool X posts, holdout accounts, Spearman vs within-account engagement): panel+pairwise **+0.62**, panel +0.56, length baseline +0.45, rubric +0.40. These numbers are inflated: the sample included thread continuations and immature posts, which are easy to rank. See the cleaner labels below.
 - **A/B**: `HARNESS_EVALUATOR=off` falls back to the panel score alone (no triage, no gates).
+
+### Backtest on cleaner labels (`--enriched`)
+
+`python scripts/backtest_eval.py --enriched data/context/devtools_enriched.csv --methods panel,rubric,pairwise`
+keeps only mature, eligible (not thread-continuation), non-boosted posts from the 11 Mid-size / Smaller
+accounts the blend was *not* tuned on: 105 posts, at most 12 per account. CIs are 90% account-level
+bootstrap; pair_acc counts same-account pairs only (496 pairs).
+
+| Method | Engagement / author median: Spearman | pair_acc | Eng. per view (n=97): Spearman | pair_acc |
+| --- | --- | --- | --- | --- |
+| panel+pairwise (current default) | **+0.31** [+0.14, +0.47] | **0.65** [0.55, 0.76] | +0.21 [-0.04, +0.40] | 0.50 |
+| pairwise | +0.32 [+0.10, +0.50] | 0.64 | +0.02 | 0.50 |
+| panel | +0.18 [+0.07, +0.29] | 0.58 | +0.22 | 0.47 |
+| rubric | +0.14 [-0.04, +0.32] | 0.55 | +0.39 | 0.51 |
+| features (no LLM, text-only) | +0.24 [+0.05, +0.42] | 0.61 [0.50, 0.71] | -0.03 | 0.51 |
+| panel+pairwise+features | +0.34 [+0.16, +0.50] | 0.66 [0.55, 0.77] | +0.17 | 0.51 |
+| length baseline | +0.07 [-0.04, +0.19] | 0.55 | -0.09 | 0.48 |
+| random | +0.09 | 0.52 | -0.10 | 0.44 |
+
+- On clean labels the evaluator is still the best ranker. The length baseline collapses from +0.45 to +0.07, because it was mostly picking up short thread continuations. Re-scoring the old 64-post holdout gives the same picture: on its 36 clean posts, panel+pairwise is +0.37 and length is -0.05.
+- The LLM blend beats the no-LLM feature model by about +0.07 Spearman and +0.04 pair accuracy. The CIs overlap, so the margin is real but modest.
+- Nothing ranks *engagement per view* within an account: every pair_acc is about 0.50. Pooled per-view Spearman (e.g. rubric +0.39) mostly reflects differences between accounts. Our judges predict reach-driven engagement, not per-impression resonance.
+- **Feature model** (`harness/evaluator/features.py`, stdlib ridge on draft-time text features: length, links, mentions, question, hook types and so on; `data/feature_model.json`, trained on 582 posts from 53 non-holdout accounts). `HARNESS_EVAL_FEATURES=on` adds it to the post-lane blend as a third, equal-weight percentile signal, also shown as `context.eval.features`. It is off by default because the gain (+0.03 Spearman) is well inside the noise. Refit it with `--write-feature-model`.
+
+### When to post (no suggested window)
+
+`python scripts/timing_analysis.py` looks at eligible, non-boosted posts (256 posts, 20 Mid-size / Smaller accounts, repeated texts de-duplicated) and measures log(engagement / author median), centered within account, by PT hour block and day of week:
+- **Hour:** 6-9am PT is x1.28 (x1.20 after shrinkage toward zero, 90% CI x1.02-1.58, n=56). 3-6pm PT is x0.55 (n=19), but that dip comes mostly from one account's repeated ad posts. The overall permutation p is 0.045, which fails three robustness checks: p=0.26 on within-account ranks, p=0.52 on the 49 Other accounts (where 6-9am is x1.12 with a CI touching 1), and p=0.48 on engagement per view.
+- **Day:** no effect (p=0.35; Tue-Thu x1.05).
+- So there is no reliable timing signal at this sample size, and post-lane actions carry no `suggested_window`. Re-run the script once more data is in.
 
 ### Review dashboard
 

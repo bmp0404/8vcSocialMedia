@@ -71,6 +71,7 @@ class Post:
     target: float = 0.0
     group: str = ""
     scores: dict[str, float] = field(default_factory=dict)
+    extra: dict[str, str] = field(default_factory=dict)  # enriched columns (pre_*, outcome_*, label_*, boost_*)
 
 
 # --------------------------------------------------------------------------- load
@@ -330,3 +331,153 @@ def judge_pairs(pairs: list[tuple[Post, Post]], ectx: EvalContext, backend: str 
     lo, hi = M.wilson(right, len(res))
     return {"n": len(res), "acc": right / max(1, len(res)), "lo": lo, "hi": hi, "strict": strict,
             "ties": sum(r.s == 0.5 for r in res), "consistent": sum(r.consistent for r in res) / max(1, len(res))}
+
+
+# --------------------------------------------------------------------------- enriched labels
+# data/context/devtools_enriched.csv: the same posts plus pre_* (known before posting), outcome_* (X views,
+# per-view rates), label_* (maturity / eligibility, ratio to the author's median) and boost_* (paid or
+# inauthentic reach) columns. Eligible = mature and not a thread continuation.
+
+ENRICHED_TARGETS = {
+    "lift": ("eng_ratio_author_median", "engagement / author's median (label)"),
+    "epv": ("outcome_eng_per_view", "engagement per view (X views)"),
+    "pct": (None, "within-account engagement percentile (old target, same posts)"),
+}
+
+
+def _true(v: str | None) -> bool:
+    return str(v or "").strip().lower() in {"true", "1", "yes"}
+
+
+def load_enriched(path: str | Path) -> list[Post]:
+    """Posts from the enriched CSV, id = post URL (as in the plain CSV, so cached judgments line up), with
+    every enriched column in Post.extra and Post.group = author."""
+    rows = {r.get("post_url"): r for r in _rows(Path(path))}
+    out = []
+    for p in load(path):
+        r = rows.get(p.url)
+        if r is None:
+            continue
+        p.id, p.extra, p.group = p.url or p.id, r, p.author
+        out.append(p)
+    return out
+
+
+def clean(p: Post) -> bool:
+    """Mature, eligible (not a thread continuation) and not flagged as boosted or inauthentic."""
+    x = p.extra
+    return (_true(x.get("label_mature")) and _true(x.get("label_eligible"))
+            and not _true(x.get("boost_suspect")) and not _true(x.get("boost_likely_inauthentic")))
+
+
+def enriched_target(p: Post, key: str) -> float | None:
+    col = ENRICHED_TARGETS[key][0]
+    return _num(p.extra.get(col)) if col else p.target
+
+
+def holdout_set(posts: list[Post], exclude: set[str], segments: list[str] | None, per_account: int = 12,
+                min_posts: int = 4, min_body: int = 20) -> tuple[list[Post], set[str]]:
+    """Clean posts from accounts in `segments` that are not in `exclude` (the accounts the blend weights were
+    tuned on). Per account: all clean posts, or `per_account` spread evenly over the lift distribution.
+    Returns (posts, every holdout account in those segments, including ones with < min_posts)."""
+    accts = {p.author for p in posts if (not segments or p.segment in segments) and p.author not in exclude}
+    by = defaultdict(list)
+    for p in posts:
+        if p.author in accts and clean(p) and body_len(p.text) >= min_body and enriched_target(p, "lift") is not None:
+            by[p.author].append(p)
+    out = []
+    for a in sorted(by):
+        ps = sorted(by[a], key=lambda p: (enriched_target(p, "lift"), p.id))
+        if len(ps) < min_posts:
+            continue
+        k = min(per_account, len(ps))
+        idx = sorted({round(i * (len(ps) - 1) / max(1, k - 1)) for i in range(k)})
+        out += [ps[i] for i in idx]
+    return out, accts
+
+
+def _cluster_boot(groups: list[str], stat, n_boot: int = 1000, seed: int = 0, alpha: float = 0.10):
+    """Account-level bootstrap: resample accounts with replacement (a repeated account is a new group)."""
+    rng = random.Random(seed)
+    idx_by = defaultdict(list)
+    for i, g in enumerate(groups):
+        idx_by[g].append(i)
+    accts = sorted(idx_by)
+    vals = []
+    for _ in range(n_boot):
+        idx, grp = [], []
+        for k in range(len(accts)):
+            a = rng.choice(accts)
+            idx += idx_by[a]
+            grp += [f"{a}#{k}"] * len(idx_by[a])
+        v = stat(idx, grp)
+        if not math.isnan(v):
+            vals.append(v)
+    if not vals:
+        return float("nan"), float("nan")
+    vals.sort()
+    return vals[int(alpha / 2 * len(vals))], vals[int((1 - alpha / 2) * len(vals)) - 1]
+
+
+def evaluate_enriched(posts: list[Post], scores: dict[str, float], key: str, n_boot: int = 1000) -> dict:
+    """Spearman (pooled) and same-account pairwise accuracy vs an enriched target, 90% account-bootstrap CIs."""
+    ps = [p for p in posts if p.id in scores and enriched_target(p, key) is not None]
+    if len(ps) < 4:
+        return {}
+    pred = [scores[p.id] for p in ps]
+    act = [enriched_target(p, key) for p in ps]
+    groups = [p.author for p in ps]
+    pairs = sum(1 for i in range(len(ps)) for j in range(i + 1, len(ps)) if groups[i] == groups[j] and act[i] != act[j])
+    sp = lambda idx, g: M.spearman([pred[i] for i in idx], [act[i] for i in idx])  # noqa: E731
+    pa = lambda idx, g: M.pairwise_accuracy([pred[i] for i in idx], [act[i] for i in idx], g)  # noqa: E731
+    return {"n": len(ps), "accounts": len(set(groups)), "pairs": pairs,
+            "spearman": M.spearman(pred, act), "sp_ci": _cluster_boot(groups, sp, n_boot),
+            "pair_acc": M.pairwise_accuracy(pred, act, groups), "pa_ci": _cluster_boot(groups, pa, n_boot)}
+
+
+def fmt_enriched(rows: list[tuple[str, dict]]) -> str:
+    head = f"{'method':<44}{'n':>4}{'acct':>5}  {'spearman':>8} {'90% CI':>13}  {'pair_acc':>8} {'90% CI':>11} {'pairs':>6}"
+    lines = [head, "-" * len(head)]
+    for name, r in rows:
+        if not r:
+            lines.append(f"{name:<44}  (not enough scored posts)")
+            continue
+        sci = f"[{r['sp_ci'][0]:+.2f},{r['sp_ci'][1]:+.2f}]"
+        pci = f"[{r['pa_ci'][0]:.2f},{r['pa_ci'][1]:.2f}]"
+        lines.append(f"{name:<44}{r['n']:>4}{r['accounts']:>5}  {r['spearman']:>+8.2f} {sci:>13}  "
+                     f"{r['pair_acc']:>8.2f} {pci:>11} {r['pairs']:>6}")
+    return "\n".join(lines)
+
+
+def post_features(p: Post, text_only: bool = True) -> dict[str, float]:
+    """Draft-time features for a real post: strip the trailing t.co link X adds for attached media; with
+    `text_only`, has_media is forced to 0 (what a harness draft looks like)."""
+    from harness.evaluator import features as F
+
+    media = _true(p.extra.get("pre_has_media")) if p.extra else p.media.lower() not in {"", "none"}
+    f = F.extract(p.text, has_media=media, strip_media_link=True)
+    if text_only:
+        f["has_media"] = 0.0
+    return f
+
+
+def fit_feature_model(posts: list[Post], exclude: set[str], min_body: int = 20) -> tuple[dict, dict]:
+    """Ridge on draft-time features over clean posts from accounts NOT in `exclude`; target = log lift vs the
+    author's median (label_lift_window), centered within account. Returns (model, info)."""
+    from harness.evaluator import features as F
+
+    train = [p for p in posts if p.author not in exclude and clean(p) and body_len(p.text) >= min_body
+             and _num(p.extra.get("label_lift_window")) is not None]
+    cnt = defaultdict(int)
+    for p in train:
+        cnt[p.author] += 1
+    train = [p for p in train if cnt[p.author] >= 2]
+    groups = [p.author for p in train]
+    y = F.center_within([_num(p.extra["label_lift_window"]) for p in train], groups)
+    rows = [post_features(p, text_only=False) for p in train]
+    model, cv = F.fit_cv(rows, y, groups)
+    info = {"n": len(train), "accounts": len(set(groups)), "cv_pair_acc": {str(k): round(v, 4) for k, v in cv.items()},
+            "target": "label_lift_window centered within account", "filter": "label_mature & label_eligible & "
+            "!boost_suspect & !boost_likely_inauthentic & body >= 20 chars; holdout accounts excluded"}
+    model["trained_on"] = info
+    return model, info
