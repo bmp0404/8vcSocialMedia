@@ -60,16 +60,25 @@ def cmd_rescore(a) -> None:
     by_id = {p.id: p for p in posts}
     picked = [by_id[i] for i in old["sample_ids"]]
     preds, extras = {}, {}
-    sources = [old] + [json.loads(Path(f).read_text(encoding="utf-8")) for f in a.merge or []]
-    for src in sources:
+    sources = [(old, "")]
+    for spec in a.merge or []:
+        path, _, suffix = spec.partition("::")
+        sources.append((json.loads(Path(path).read_text(encoding="utf-8")), suffix))
+    for src, suffix in sources:
         if src["sample_ids"] != old["sample_ids"]:
             raise SystemExit("--merge reports must come from the same sample (same seed, per-tier and filters)")
         for name, r in src["results"].items():
             if r.get("derived"):
                 continue  # recomputed from the others
-            preds[name] = {pid: Prediction(**v) for pid, v in r["predictions"].items()}
-            extras[name] = {k: v for k, v in r.items()
-                            if k not in {"all", "without_boost_suspect", "category_balanced", "predictions"}}
+            if name in preds and name in backtest.BASELINES:
+                continue  # baselines are deterministic; the first copy stands
+            label = f"{name}{suffix}" if suffix and name not in backtest.BASELINES else name
+            if label in preds:
+                raise SystemExit(f"two reports both have {label}; give the second one a suffix: --merge path::_suffix")
+            preds[label] = {pid: Prediction(**v) for pid, v in r["predictions"].items()}
+            extras[label] = {k: v for k, v in r.items()
+                             if k not in {"all", "without_boost_suspect", "category_balanced", "predictions"}}
+            extras[label]["source_run_at"] = src.get("at")
     meta = {k: v for k, v in old.items() if k not in
             {"protocol", "n_sampled", "n_scored_by_all", "sample_ids", "sampled_categories", "target_source",
              "boost_flags", "seed",
@@ -77,9 +86,10 @@ def cmd_rescore(a) -> None:
     meta["rescored_at"] = datetime.now().isoformat(timespec="seconds")
     meta["enriched_csv"] = str(dataset.ENRICHED_PATH) if dataset.ENRICHED_PATH.exists() else None
     report = backtest.summarize(picked, preds, extras, by_id, seed=old["seed"], n_boot=a.boot, meta=meta)
-    backtest.write(report, Path(a.report))
+    out = Path(a.out) if a.out else Path(a.report)
+    backtest.write(report, out)
     print(backtest.markdown(report))
-    print(f"[rescore] rewrote {a.report} and its .md")
+    print(f"[rescore] wrote {out} and its .md")
 
 
 def cmd_leakage(a) -> None:
@@ -180,7 +190,9 @@ def register(sub) -> None:
     r = ev.add_parser("rescore", help="recompute a backtest report's metrics from its saved predictions")
     r.add_argument("report", help="path to a backtest-*.json report")
     r.add_argument("--boot", type=int, default=2000)
-    r.add_argument("--merge", action="append", help="add the predictors from another report on the same sample")
+    r.add_argument("--merge", action="append",
+                   help="add another report's predictors on the same sample; path::_suffix renames them")
+    r.add_argument("--out", help="write here instead of overwriting the report")
     r.set_defaults(func=cmd_rescore)
 
     lk = ev.add_parser("leakage", help="probe whether the model can recite dataset posts from memory")
