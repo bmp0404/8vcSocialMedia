@@ -5,7 +5,7 @@ description: Rules for BAML in this repo (eval/baml_src, the generated baml_sdk/
 
 # BAML in this repo
 
-The repo runs BAML v1: `baml-bridge` and toolchain 0.22.2, with the generated package `baml_sdk`. `docs.boundaryml.com` documents v0 and says to ignore it for v1, so its `retry_policy`, `ClientRegistry`, `@check`/`@assert`, Jinja and `baml-py` don't apply here. For language questions, read `.claude/skills/baml-core/SKILL.md` and run `baml describe <name>`. The rules below come from a tested audit on 2026-10-16; each gives its reason.
+The repo runs BAML v1: `baml-bridge` and toolchain 0.22.2, with the generated package `baml_sdk`. `docs.boundaryml.com` documents v0 and says to ignore it for v1, so its `retry_policy`, `ClientRegistry`, `@check`/`@assert`, Jinja and `baml-py` don't apply here. For language questions, read `.claude/skills/baml-core/SKILL.md` and run `baml describe <name>`. The rules below come from a tested audit on 2026-10-16 and probes on 0.22.2; each gives its reason. Probe a rule again before you rely on it after a toolchain bump.
 
 ## Setup
 
@@ -19,9 +19,9 @@ The repo runs BAML v1: `baml-bridge` and toolchain 0.22.2, with the generated pa
 
 Schema-aligned parsing (SAP) is BAML's tolerant parser. It fixes format noise such as fenced blocks, unquoted keys and trailing commas, but it also has silent behaviors:
 
-- Put closed ranges in the type, such as `score: 0 | 1 | 2 | 3 | 4 | 5`. An out-of-range value then raises `ParseError`, and the runner re-asks once.
+- A closed range in the type, such as `score: 0 | 1 | 2 | 3 | 4 | 5`, raises `ParseError` (and the runner re-asks once) only on a field of a class. Inside an array, an out-of-range element is dropped without an error, and SAP rounds fractions into the range: 0.8 becomes 1 for `0..10`, and 4.6 becomes 5 for `0..5`. When a fractional answer is possible, keep the field a `float` and check the range in Python.
 - Don't write `@check` or `@assert`. 0.22.2 rejects them. Validate rules that span fields in Python, and raise a specific error.
-- Wrap any array whose length matters in a class, and check the length in Python. SAP drops elements that fail to parse, fills a missing array with `[]`, and accepts the parsable prefix of truncated JSON. A dropped verdict must never read as "no objection".
+- Wrap any array whose length matters in a class, and check the length in Python. SAP drops elements that fail to parse, including an element missing a required field, and fills a missing array with `[]`. On truncated JSON it can lose the whole array, including elements that were complete (a probe on 0.22.2 parsed `{"items":[{complete},{"id":"b","score":2,"re` to `items: []`). A dropped verdict must never read as "no objection".
 - Recheck any value where a wrong type must fail. SAP coerces `"10"` to 10, rounds 12.7 to 13 for an int field, and maps loose strings to enum members.
 - `@description`, `///` comments and enum names render into the prompt through `ctx.output_format()`. State each rule once, there or in the prose, not both.
 
@@ -34,7 +34,7 @@ Schema-aligned parsing (SAP) is BAML's tolerant parser. It fixes format noise su
 ## Clients
 
 - Wrap API clients in `ai.clients.Retry.new(inner = c)`, which makes 3 attempts with backoff on rate limits, network failures and retryable provider errors. It doesn't retry parse failures or refusals.
-- Choose the provider at runtime by passing a client value. v1 has no ClientRegistry. From Python, build `baml_sdk.vendor.anthropic.Client.new(...)` and pass it to `F_spec(...).call(client=...)`.
+- Build clients inside BAML. v1 has no ClientRegistry, and a client value from Python doesn't work: passing `baml_sdk.vendor.anthropic.Client.new(...)` to `.call(client=...)` raises `TypeError: host value type anthropic.Client is not a member of declared union ai.Client | null`, and so does a client returned by a BAML function once it has passed through Python, or `Retry.new(<python client>)`. To choose the provider at runtime, pass provider, model and `max_tokens` as function arguments, and build the client in a BAML function from them, as `judge_client` does.
 - Don't cap the Anthropic client below its 8192 default without measuring. On the gateway, `claude-sonnet-5-5` thinking spent a whole 4,096-token budget in `harness/llm.py`, and hitting the cap raises `FinishReasonError`.
 - For an OpenAI-compatible gateway without `/responses`, use `openai.GenericClient`, which posts to `/chat/completions`.
 - Read keys with `env.NAME`. Never write a key into a `.baml` file.
