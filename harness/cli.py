@@ -8,7 +8,7 @@ from harness.llm import get_llm
 from harness.memstore import record_round
 from harness.minds import decide, write_decision_log
 from harness.orient import orient
-from harness.qualify import qualify, ready as qualify_ready
+from harness.qualify import qualify, ranker_choice, ready as qualify_ready
 from harness.review import serve
 from harness.sources import observe
 from harness.sources.watch import account_handle
@@ -21,7 +21,8 @@ def run(args) -> None:
     # Read before any LLM call, so a broken observe config fails the run before it spends anything.
     account, account_source = account_handle()
     print(f"[run] account @{account} (from {account_source})" if account else f"[run] no account: {account_source} is empty")
-    ranker = qualify_ready()  # loads the post ranker and checks its hash before anything is spent
+    ranker = ranker_choice()
+    print(f"[run] qualify orders the post lane by {qualify_ready(ranker)}")  # loads and checks it before any spend
 
     signals = observe(sources, mission)
     if not signals:

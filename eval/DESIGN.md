@@ -141,17 +141,18 @@ The panel and phase D numbers are from `data/bench/results/judges-posts.json`. T
 
 What qualify does with it:
 
+- Each profile names its post ranker in `mission/profiles/<name>/qualify.toml`. devtools names `post_ridge`. wnba names `"none"`, because `post_ridge` learned only from dev-tool brands and nothing shows its order means anything for a fan account, so wnba rounds keep decide's order, score nothing and print `--`, and never load the model.
 - It scores the post lane's posts and quotes, which are people's takes and captions, and reorders them among the places they already hold in decide's list.
 - Replies and follows keep decide's order and get no score. On the reply benchmark, text added +0.002 [-0.034, 0.044] to timing and reach (`data/bench/results/replies.json`, `ranker_pooled_test`), so a text score has nothing to add there.
 - `predicted_score` becomes the ranker's percentile among its own training posts, 0 to 1. `draft_meta["ranker"]` holds that, the raw score (the predicted within-account z-score of log engagement) and the hash. Unscored actions keep `predicted_score` at 0.0, so the review dashboard and the approved hand-off, which sort by it, list scored posts first and then everything else in decide's order. Episode notes and learning's features read that 0.0 as a prediction, and the field mixes panel means from older runs with percentiles from new ones.
-- `harness run` loads the ranker and checks its hash before observe, so a bad model file or an unknown `HARNESS_QUALIFY_RANKER` costs nothing.
+- `harness run` reads the profile's choice, loads the model and checks its hash before observe, so a bad model file, a malformed `qualify.toml` or an unknown `HARNESS_QUALIFY_RANKER` costs nothing.
 - A round costs the critic's one call. The panel cost two more, one per order.
 
-`HARNESS_QUALIFY_RANKER=panel` (the `qualify.ranker` knob in `harness/iterate/knobs.py`) restores the old path exactly: the panel scores every draft in two orders and qualify sorts all of them by its mean. The engine's `--eval panel` asks for the panel by name. The `qualify.panel`, `qualify.model`, `qualify.batch` and `qualify.memory` knobs and the `qualify_auc` fitness now tune a path production doesn't run by default.
+`HARNESS_QUALIFY_RANKER` is the `qualify.ranker` knob in `harness/iterate/knobs.py`: `learned` (the default) uses the profile's post ranker, and `panel` restores the old path exactly: the panel scores every draft in two orders and qualify sorts all of them by its mean. The engine's `--eval panel` asks for the panel by name. The `qualify.panel`, `qualify.model`, `qualify.batch` and `qualify.memory` knobs and the `qualify_auc` fitness now tune a path production doesn't run by default.
 
 Not measured:
 
-- The ranker learned from dev-tool brand accounts. On the wnba profile it orders a fan account's captions by what it learned there, and nothing shows that order means anything. The panel had no wnba measurement either.
+- No ranker has learned from fan-account posts, so wnba has none. The panel had no wnba measurement either.
 - The benchmark pairs differ by 3x or more in engagement, and a round's post lane ships at most one caption or a few takes, so the ranker usually orders one to three drafts that differ less.
 - No outcome yet shows whether its order predicts what the account's own posts get.
 

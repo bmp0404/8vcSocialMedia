@@ -148,10 +148,10 @@ REGISTRY: tuple[Knob, ...] = (
     Knob("qualify.memory", str, "off", "qualify",
          "Show the panel the brand's own older posts with their outcomes: off, on, or on with labels shuffled.",
          choices=("off", "on", "shuffled"), reader=""),
-    Knob("qualify.ranker", str, "post_ridge", "qualify",
-         "What orders drafts: the TF-IDF ridge fitted on the post benchmark's dev authors, which scores the post "
-         "lane's posts and quotes and leaves replies in decide's order, or the panel, which scores and sorts every "
-         "draft (harness/qualify.py).", choices=("post_ridge", "panel"),
+    Knob("qualify.ranker", str, "learned", "qualify",
+         "What orders drafts: the learned post ranker the profile's qualify.toml names, which scores the post lane's "
+         "posts and quotes and leaves replies in decide's order, or the panel, which scores and sorts every draft "
+         "(harness/qualify.py).", choices=("learned", "panel"),
          reader="harness/qualify.py:ranker_choice (HARNESS_QUALIFY_RANKER)"),
     # Orient
     Knob("orient.budget_chars", int, 60_000, "orient", "Signal payload cap.", lo=5_000, hi=200_000,

@@ -1,11 +1,12 @@
-"""qualify's ranker: the post ridge orders only the post lane's posts and quotes, replies keep decide's order,
-and the panel comes back only through the qualify.ranker knob."""
+"""qualify's ranker: the profile's post ranker orders only the post lane's posts and quotes, replies keep decide's
+order, wnba names no ranker, and the panel comes back only through the qualify.ranker knob."""
 
 import argparse
+import json
 
 import pytest
 
-from harness import qualify as q
+from harness import config, qualify as q
 from harness.iterate import knobs
 from harness.llm import LLM
 from harness.models import Action
@@ -36,8 +37,18 @@ class Recorder(LLM):
 
 
 @pytest.fixture(autouse=True)
-def default_ranker(monkeypatch):
+def devtools_with_the_default_ranker(monkeypatch):
+    """devtools names post_ridge; the wnba tests switch back with use_profile."""
     monkeypatch.delenv(q.RANKER_ENV, raising=False)
+    monkeypatch.setenv("HARNESS_PROFILE", "devtools")
+
+
+def refuse_to_load(monkeypatch):
+    def refuse(*a, **k):
+        raise AssertionError("a wnba round loaded a post ranker")
+
+    monkeypatch.setattr(post_ranker, "load", refuse)
+    monkeypatch.setattr(post_ranker, "load_named", refuse)
 
 
 def reply(text, aid):
@@ -53,12 +64,12 @@ def follow(aid):
     return Action(type="follow", text="", mind="chorus", narrative_id="n", lane="post", id=aid, target_handle="WNBA")
 
 
-def test_the_ridge_is_the_default_and_spends_one_critic_call_and_no_panel_call():
+def test_devtools_ranks_with_post_ridge_by_default_and_spends_one_critic_call_and_no_panel_call():
     llm = Recorder()
     actions = [reply(HIGH, "r1"), post(LOW, "p1"), post(HIGH, "q1", kind="quote"), follow("f1")]
     kept = q.qualify(llm, "MISSION", actions)
     assert llm.calls == [CRITIC]
-    model = post_ranker.load()
+    model = post_ranker.load_named("post_ridge")
     by_id = {a.id: a for a in kept}
     for aid, text in (("p1", LOW), ("q1", HIGH)):
         meta = by_id[aid].draft_meta["ranker"]
@@ -97,7 +108,7 @@ def test_an_unknown_ranker_is_refused_before_any_call(monkeypatch, how):
     llm = Recorder()
     if how == "env":
         monkeypatch.setenv(q.RANKER_ENV, "pannel")
-        with pytest.raises(ValueError, match=r"HARNESS_QUALIFY_RANKER='pannel'; expected one of \['post_ridge', 'panel'\]"):
+        with pytest.raises(ValueError, match=r"HARNESS_QUALIFY_RANKER='pannel'; expected one of \['learned', 'panel'\]"):
             q.qualify(llm, "MISSION", [post(LOW, "p1")])
     else:
         with pytest.raises(ValueError, match="ranker 'ridge'"):
@@ -109,7 +120,7 @@ def test_a_model_that_fails_its_hash_check_stops_qualify_before_the_critic_call(
     def broken():
         raise post_ranker.RankerError("post_ridge.json.gz hashes to x, but the manifest records y")
 
-    monkeypatch.setattr(post_ranker, "load", broken)
+    monkeypatch.setattr(post_ranker, "load_named", lambda name: broken())
     llm = Recorder()
     with pytest.raises(post_ranker.RankerError, match="hashes to"):
         q.qualify(llm, "MISSION", [post(LOW, "p1")])
@@ -118,7 +129,7 @@ def test_a_model_that_fails_its_hash_check_stops_qualify_before_the_critic_call(
 
 def test_the_knob_is_registered_with_the_production_default():
     knob = knobs.BY_PATH["qualify.ranker"]
-    assert knob.default == q.RANKERS[0] == q.ranker_choice() == "post_ridge"
+    assert knob.default == q.RANKERS[0] == q.ranker_choice() == "learned"
     assert knob.choices == q.RANKERS and knob.stage == "qualify" and "HARNESS_QUALIFY_RANKER" in knob.reader
 
 
@@ -139,12 +150,12 @@ def test_a_run_whose_model_fails_its_hash_check_stops_before_observe(monkeypatch
     def broken():
         raise post_ranker.RankerError("post_ridge.json.gz hashes to x, but the manifest records y")
 
-    monkeypatch.setattr(post_ranker, "load", broken)
+    monkeypatch.setattr(post_ranker, "load_named", lambda name: broken())
     monkeypatch.setattr(cli, "observe", lambda *a, **k: pytest.fail("observe ran before the ranker was checked"))
     with pytest.raises(post_ranker.RankerError, match="hashes to"):
         cli.run(RUN)
     monkeypatch.setenv(q.RANKER_ENV, "panel")  # the panel needs no model file
-    assert q.ready() == "panel"
+    assert q.ready() == "the audience panel"
 
 
 def test_the_review_list_keeps_unscored_replies_in_the_order_the_run_saved_them(tmp_path, monkeypatch):
@@ -154,3 +165,54 @@ def test_the_review_list_keeps_unscored_replies_in_the_order_the_run_saved_them(
     q.qualify(Recorder(), "MISSION", actions)
     run_id = memory.save_run(actions)
     assert [a["id"] for a in memory.run_actions(run_id)] == ["p1", "zz", "aa", "mm", "f1"]
+
+
+def test_each_profile_names_its_post_ranker_in_qualify_toml():
+    assert q.profile_post_ranker() == "post_ridge" and q.ready() == "post_ridge"
+    with config.use_profile("wnba"):
+        assert q.profile_post_ranker() == "none" and q.profile_ranker() is None
+        assert q.ready() == "decide's order: profile wnba names no post ranker"
+
+
+def test_a_wnba_round_never_loads_the_ridge_and_scores_nothing(monkeypatch):
+    refuse_to_load(monkeypatch)
+    actions = [reply(HIGH, "r1"), post(LOW, "p_low"), post(HIGH, "p_high")]
+    with config.use_profile("wnba"):
+        kept = q.qualify(Recorder(), "MISSION", actions)
+    assert [a.id for a in kept] == ["r1", "p_low", "p_high"]  # decide's order
+    assert all("ranker" not in a.draft_meta and not a.panel for a in kept)
+
+
+def test_a_wnba_mock_run_never_loads_the_ridge_and_prints_no_score(monkeypatch, tmp_path, capsys):
+    from harness import cli
+    refuse_to_load(monkeypatch)
+    monkeypatch.setenv("HARNESS_PROFILE", "wnba")
+    monkeypatch.setattr(config, "DB_PATH", tmp_path / "h.db")
+    monkeypatch.setattr(config, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setenv("MEMSTORE_PATH", str(tmp_path / "store"))
+    cli.run(RUN)
+    out = capsys.readouterr().out
+    assert "qualify orders the post lane by decide's order: profile wnba names no post ranker" in out
+    assert " 1. [ -- ] quote" in out
+    (path,) = (tmp_path / "out").glob("recommendations-*.json")
+    assert all("ranker" not in a["draft_meta"] for a in json.loads(path.read_text(encoding="utf-8"))["recommendations"])
+
+
+@pytest.mark.parametrize("body, match", [
+    ('post_ranker = ""', "exactly one key"), ('ranker = "post_ridge"', "exactly one key"),
+    ('post_ranker = "post_ridge"\nextra = 1', "exactly one key"),
+])
+def test_a_malformed_qualify_toml_is_refused(monkeypatch, tmp_path, body, match):
+    profile = tmp_path / "brand"
+    profile.mkdir()
+    (profile / "qualify.toml").write_text(body, encoding="utf-8")
+    monkeypatch.setattr(config, "PROFILES_DIR", tmp_path)
+    monkeypatch.setenv("HARNESS_PROFILE", "brand")
+    with pytest.raises(ValueError, match=match):
+        q.profile_post_ranker()
+
+
+def test_an_unknown_model_name_lists_the_ones_there():
+    with pytest.raises(post_ranker.RankerError, match=r"no post ranker named 'wnba_ridge' .*\['post_ridge'\]"):
+        post_ranker.load_named("wnba_ridge")
+    assert post_ranker.load_named("post_ridge").name == "post_ridge"

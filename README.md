@@ -101,7 +101,7 @@ data/         # Source documents, datasets, and supporting assets
 
 | Path | Stage |
 | --- | --- |
-| `mission/profiles/<name>/` | One brand: `mission.md`, `observe.toml`, `panel.json`, `reply_framing.json`, `prompts.toml`; `HARNESS_PROFILE` picks it |
+| `mission/profiles/<name>/` | One brand: `mission.md`, `observe.toml`, `panel.json`, `reply_framing.json`, `prompts.toml`, `qualify.toml`; `HARNESS_PROFILE` picks it |
 | `harness/sources/` | **Observe.** One plugin per data source; register it in `sources/__init__.py` |
 | `harness/orient.py` | **Orient.** Clusters signals into narratives scored on relevance × velocity |
 | `harness/minds/prompts/*.md` | **Decide.** One persona per file; add a file to add a mind |

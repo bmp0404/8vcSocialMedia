@@ -1,0 +1,5 @@
+# How qualify orders this profile's post-lane posts and quotes (harness/qualify.py). post_ranker names a model in
+# eval/rankers/ (<name>.json.gz with <name>.manifest.json), loaded only when its bytes match the manifest's hash, or
+# is "none" to keep decide's order and score nothing.
+# post_ridge learned from 39 dev-tool brand accounts and scored 0.709 on 37 held-out ones (eval/DESIGN.md).
+post_ranker = "post_ridge"

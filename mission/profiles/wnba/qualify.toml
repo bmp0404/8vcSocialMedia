@@ -1,0 +1,6 @@
+# How qualify orders this profile's post-lane posts and quotes (harness/qualify.py). post_ranker names a model in
+# eval/rankers/ (<name>.json.gz with <name>.manifest.json), loaded only when its bytes match the manifest's hash, or
+# is "none" to keep decide's order and score nothing.
+# The only model, post_ridge, learned from dev-tool brand accounts, and nothing shows its order means anything for a
+# fan account, so this profile keeps decide's order until a ranker learns from fan-account posts.
+post_ranker = "none"

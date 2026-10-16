@@ -21,12 +21,13 @@ which needs the local corpus snapshot (`python -m harness.corpus rebuild`).
 What the scores mean. `score` is the predicted within-account z-score of log engagement: above 0 means the
 draft looks like the posts that beat their account's typical post. `percentile` places a score among the
 training posts' own scores, 0 to 1, for readers that expect a 0-1 number. The model learned from dev-tool
-brand accounts only; on the wnba profile nothing has measured whether its order means anything.
+brand accounts only, so only the devtools profile names it (mission/profiles/<name>/qualify.toml).
 """
 
 import gzip
 import hashlib
 import json
+import re
 from bisect import bisect_right
 from dataclasses import dataclass
 from pathlib import Path
@@ -64,8 +65,7 @@ class PostRanker:
     model: post.RidgeModel
     sha256: str
     quantiles: tuple[float, ...]
-
-    name = NAME
+    name: str = NAME
 
     def score(self, text: str) -> float:
         return self.model.predict(post.clean_text(text))
@@ -139,7 +139,21 @@ def load(model_path: Path = MODEL_PATH, manifest_path: Path = MANIFEST_PATH) -> 
     model, quantiles = from_json(json.loads(raw))
     if len(quantiles) != QUANTILES + 1 or list(quantiles) != sorted(quantiles) or quantiles[0] == quantiles[-1]:
         raise RankerError(f"{model_path.name} needs {QUANTILES + 1} ascending train_quantiles")
-    return PostRanker(model, got, quantiles)
+    return PostRanker(model, got, quantiles, model_path.name.removesuffix(".json.gz"))
+
+
+_NAME = re.compile(r"^[a-z0-9_]+$")
+
+
+def available() -> list[str]:
+    return sorted(p.name.removesuffix(".manifest.json") for p in DIR.glob("*.manifest.json"))
+
+
+def load_named(name: str) -> PostRanker:
+    """The model eval/rankers/<name>.json.gz, checked against <name>.manifest.json."""
+    if not _NAME.match(name) or name not in available():
+        raise RankerError(f"no post ranker named {name!r} in {DIR}; the ones there are {available()}")
+    return load(DIR / f"{name}.json.gz", DIR / f"{name}.manifest.json")
 
 
 def save(model: post.RidgeModel, quantiles: list[float], manifest: dict, model_path: Path = MODEL_PATH,

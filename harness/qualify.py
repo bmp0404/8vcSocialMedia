@@ -1,13 +1,14 @@
 """Qualify: a brand-safety critic can veto drafts, and a ranker orders the post lane's drafts.
 
 HARNESS_QUALIFY_RANKER picks the ranker; it is the `qualify.ranker` knob in harness/iterate/knobs.py.
-- "post_ridge" (default): the TF-IDF ridge in harness/rank/post_ranker.py, fitted on the post benchmark's dev
-  authors and loaded only when its bytes match the hash in its manifest. On the test authors it scored 0.709
-  against the panel's 0.723, a difference of -0.014 [-0.081, 0.041] (eval/rankers/post_ridge.manifest.json),
-  with no LLM call. It scores the post lane's posts and quotes (people's takes and captions) and reorders
-  them among the places they already hold. Replies and follows keep decide's order: on the reply benchmark
-  the wording added +0.002 [-0.034, 0.044] to timing and reach (data/bench/results/replies.json,
-  ranker_pooled_test), so no text score orders replies.
+- "learned" (default): the post ranker the active profile names in its qualify.toml, a model in eval/rankers/
+  loaded only when its bytes match the hash in its manifest (harness/rank/post_ranker.py). It scores the post lane's
+  posts and quotes (people's takes and captions) and reorders them among the places they already hold. Replies and
+  follows keep decide's order: on the reply benchmark the wording added +0.002 [-0.034, 0.044] to timing and reach
+  (data/bench/results/replies.json, ranker_pooled_test), so no text score orders replies. devtools names
+  post_ridge, which scored 0.709 on held-out dev-tool accounts against the panel's 0.723, a difference of -0.014
+  [-0.081, 0.041] (eval/rankers/post_ridge.manifest.json), with no LLM call. wnba names none, because post_ridge
+  learned only from dev-tool brands, so its rounds keep decide's order and score nothing.
 - "panel": the simulated audience panel scores every draft in two orders and qualify sorts all of them by
   its mean, as before the ridge. It stays so the experiment engine can test it against the ridge.
 
@@ -19,13 +20,14 @@ to score the data team's dev-tool posts.
 import json
 import os
 import random
+import tomllib
 from pathlib import Path
 
 from harness import config
 from harness.llm import LLM
 from harness.models import Action
 
-RANKERS = ("post_ridge", "panel")
+RANKERS = ("learned", "panel")
 RANKER_ENV = "HARNESS_QUALIFY_RANKER"
 
 # A separate model for the panel. On the dev-tool backtest (eval/DESIGN.md) gpt-6.1-sol separated a
@@ -133,24 +135,44 @@ def panel_llm(llm: LLM) -> LLM:
 
 
 def ranker_choice() -> str:
-    """HARNESS_QUALIFY_RANKER, default "post_ridge". Any other value raises, so a typo can't quietly run the default."""
+    """HARNESS_QUALIFY_RANKER, default "learned". Any other value raises, so a typo can't quietly run the default."""
     choice = os.getenv(RANKER_ENV, "").strip() or RANKERS[0]
     if choice not in RANKERS:
         raise ValueError(f"{RANKER_ENV}={choice!r}; expected one of {list(RANKERS)}")
     return choice
 
 
+def profile_post_ranker() -> str:
+    """The model the active profile's qualify.toml names as `post_ranker`, or "none". Anything else in the file raises."""
+    path = config.profile_file("qualify.toml")
+    data = tomllib.loads(path.read_text(encoding="utf-8"))
+    name = data.get("post_ranker")
+    if set(data) != {"post_ranker"} or not isinstance(name, str) or not name:
+        raise ValueError(f"{path} must hold exactly one key, post_ranker = \"<model in eval/rankers/>\" or \"none\"; "
+                         f"got {data}")
+    return name
+
+
+def profile_ranker():
+    """The active profile's post ranker with its hash checked, or None when the profile names none."""
+    name = profile_post_ranker()
+    if name == "none":
+        return None
+    from harness.rank import post_ranker
+
+    return post_ranker.load_named(name)
+
+
 def ready(ranker: str | None = None) -> str:
-    """The ranker a run will use, after loading it: `harness run` calls this before it spends anything, so a typo
-    in HARNESS_QUALIFY_RANKER or a model that fails its hash check stops the run before observe."""
+    """Say what will order this round, after loading it: `harness run` calls this before it spends anything, so a
+    typo in HARNESS_QUALIFY_RANKER or qualify.toml, or a model that fails its hash check, stops the run before observe."""
     ranker = ranker or ranker_choice()
     if ranker not in RANKERS:
         raise ValueError(f"qualify: ranker {ranker!r}; expected one of {list(RANKERS)}")
-    if ranker == "post_ridge":
-        from harness.rank import post_ranker
-
-        post_ranker.load()
-    return ranker
+    if ranker == "panel":
+        return "the audience panel"
+    model = profile_ranker()
+    return model.name if model else f"decide's order: profile {config.profile_name()} names no post ranker"
 
 
 def rankable(a: Action) -> bool:
@@ -198,14 +220,13 @@ def qualify(llm: LLM, mission: str, actions: list[Action], panel: dict[str, str]
             a.predicted_score = panel_mean(a.panel)
         kept = sorted((a for a in actions if not a.vetoed), key=lambda a: a.predicted_score, reverse=True)
     else:
-        from harness.rank import post_ranker
-
-        model = post_ranker.load()  # before the critic's call, so a bad model file costs nothing
+        model = profile_ranker()  # before the critic's call, so a bad model file costs nothing
         critic(llm, mission, actions)
         for a in actions:
-            if rankable(a):
+            if model and rankable(a):
                 a.draft_meta["ranker"] = model.describe(a.text)
                 a.predicted_score = a.draft_meta["ranker"]["percentile"]
         kept = rank_posts([a for a in actions if not a.vetoed])
+        ranker = model.name if model else "decide's order (the profile names no post ranker)"
     print(f"[qualify] kept {len(kept)}/{len(actions)} drafts; ranked by {ranker}")
     return kept
