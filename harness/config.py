@@ -47,6 +47,9 @@ MODEL = os.getenv("HARNESS_MODEL", "")
 SOURCES = [s.strip() for s in os.getenv("HARNESS_SOURCES", "sample").split(",") if s.strip()]
 # Recommendation slots reserved for follows (ranked by the reply lane's follow ranker, not the panel).
 FOLLOW_SLOTS = max(0, int(os.getenv("HARNESS_FOLLOW_SLOTS") or 2))
+# Pre-posting evaluator (harness/evaluator): reply-lane triage gate + panel/pairwise ranking of drafts.
+# `off` falls back to the panel score alone, for A/B runs.
+EVALUATOR = (os.getenv("HARNESS_EVALUATOR") or "on").strip().lower() not in {"off", "0", "false", "no"}
 
 
 def mission() -> str:

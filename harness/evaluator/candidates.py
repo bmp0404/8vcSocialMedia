@@ -53,6 +53,9 @@ class EvalContext:
     audience: str = field(default="")  # the mission's audience (triage / rubric context)
     pair_audience: str = "neutral"  # pairwise judge audience: neutral | mission | custom text
     pair_tier: str = "fast"  # pairwise judge tier on claude: fast (Haiku) | judge (configured model)
+    # triage tier on claude. One batched call per ~10 posts, so the judge tier is cheap; on real dev-tool
+    # posts Haiku (low effort) declined 9-10 of 10 targets, including priority peers' on-subject launches.
+    triage_tier: str = "judge"
 
     def __post_init__(self):
         self.audience = self.audience or audience_from_mission(self.mission)

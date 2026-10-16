@@ -80,6 +80,18 @@ def _sentiment(a: Any) -> str:
     return " / ".join(f"{k} {float(s.get(k) or 0):.0%}" for k in ("positive", "neutral", "negative"))
 
 
+def eval_flags(a: Any) -> str:
+    """Evaluator guardrail flags (rubric voice / grounding / cringe below threshold), e.g.
+    'low_cringe 2/5: reads like a plug'. 'none' when the draft wasn't flagged or wasn't evaluated."""
+    ev = (_get(a, "context") or {}).get("eval") or {}
+    scores = (ev.get("rubric") or {}).get("scores") or {}
+    out = []
+    for f in ev.get("flags") or []:
+        sc = scores.get(f) or {}
+        out.append(f"{f} {sc['score']:g}/5: {_one_line(sc.get('why'), 120)}" if "score" in sc else f)
+    return "; ".join(out) or "none"
+
+
 def _one_line(s: str | None, limit: int = 240) -> str:
     s = re.sub(r"\s+", " ", s or "").strip()
     return s if len(s) <= limit else s[: limit - 3].rstrip() + "..."
@@ -126,6 +138,7 @@ def render(actions: Iterable[Any], run_id: str, mission_name: str) -> tuple[str,
         "  - TARGET_URL / TARGET_HANDLE say which tweet or account the action applies to;",
         "    \"none\" means the action has no target.",
         "  - The raw JSON for every action is attached (recommendations-<run>.json).",
+        "  - EVAL_FLAGS lists pre-posting guardrail warnings (voice, grounding, cringe); \"none\" is clean.",
         "",
         reply_line,
         "",
@@ -145,6 +158,7 @@ def render(actions: Iterable[Any], run_id: str, mission_name: str) -> tuple[str,
             f"PREDICTED_SCORE: {float(score):.3f}",
             f"PREDICTED_SENTIMENT: {_sentiment(a)}",
             f"RATIONALE: {_one_line(_get(a, 'rationale')) or 'none'}",
+            f"EVAL_FLAGS: {eval_flags(a)}",
         ]
         lines += ["TEXT:", TEXT_OPEN, text, TEXT_CLOSE] if text else ["TEXT: none (nothing to post)"]
         lines += [
@@ -190,6 +204,7 @@ def _render_html(actions: list, run_id: str, mission_name: str, generated: str, 
             f"<tr><td>TARGET</td><td>{' &middot; '.join(target) or 'none'}</td></tr>"
             f"<tr><td>SCORE</td><td>{float(_get(a, 'predicted_score') or 0):.3f}</td></tr>"
             f"<tr><td>SENTIMENT</td><td>{e(_sentiment(a))}</td></tr>"
+            f"<tr><td>EVAL_FLAGS</td><td>{e(eval_flags(a))}</td></tr>"
             "</table>"
             f"<p style=\"margin:8px 0 4px\"><b>Rationale:</b> {e(_one_line(_get(a, 'rationale')) or 'none')}</p>"
             + (

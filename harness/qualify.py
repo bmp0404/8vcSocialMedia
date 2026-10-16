@@ -53,9 +53,11 @@ Veto a draft when any of these hold, and give exactly one reason code:
   responds to something the post didn't say.
 - nothing_to_add: agrees or restates without adding a take, tip, fact or joke.
 - stale: responds to something old enough that joining now looks late.
-- repetitive: a near-repeat of something the account said recently or of another draft in this batch,
-  or one plug too many (the MISSION caps how often replies may mention the product; across this batch,
-  veto the weakest plugs beyond that share).
+- repetitive: a near-repeat (same joke, premise or punchline) of something in ALREADY SAID RECENTLY or
+  of another draft in this batch, or one plug too many (the MISSION caps how often replies may mention
+  the product; across this batch, veto the weakest plugs beyond that share). Within the batch, veto
+  only the weaker draft of a near-repeat pair, never both. Sharing a topic or narrative with a
+  different take is not a repeat.
 - other: anything else that should not ship (say what in the critique).
 Otherwise keep it (veto false, reason null). Be strict on factual_risk, fair on everything else: a
 sharp, specific draft that respects the MISSION should ship. Reason codes: {", ".join(REASONS)}."""

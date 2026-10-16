@@ -1,8 +1,9 @@
-"""Fast triage gate for the reply lane: is this post worth drafting a reply for at all?
+"""Cheap triage gate for the reply lane: is this post worth drafting a reply for at all?
 
-Two choice questions per post on the fast tier (Haiku, or a decision model): the decision
-(engage / wait / skip) and a typed reason (models.REASONS, or worth_it). On a decision model
-`p_engage` is the calibrated P(engage); on claude it is 1/0 from the hard choice.
+Two choice questions per post, batched (~10 posts per call) on EvalContext.triage_tier (claude: the
+judge model by default, since Haiku over-declined; or a decision model): the decision (engage / wait /
+skip) and a typed reason (models.REASONS, or worth_it). On a decision model `p_engage` is the calibrated
+P(engage); on claude it is 1/0 from the hard choice.
 """
 
 from __future__ import annotations
@@ -15,16 +16,26 @@ from harness.evaluator.decide import Question, decide_batch
 from harness.models import Signal
 
 SYSTEM = """You triage X posts for the brand account in the MISSION: should it spend effort drafting a
-reply to this post right now? Engage only when the brand can add a concrete take, tip or joke that
-fits the MISSION. Most posts are a skip.
+reply to this post right now? Drafts are scored and vetoed later, so this gate only filters out posts
+not worth an attempt.
+- engage: the post is on the MISSION's core subjects, or comes from a watchlist account (see
+  `watchlist`: relationship and notes) posting about their launch or a take near those subjects, and
+  a concrete take, tip, joke or specific congratulation could fit without inventing facts. The MISSION
+  asks the account to congratulate peers' launches and riff on their posts; that counts as adding something.
+- wait: on-subject, but the thread is still forming or nothing sharp fits yet.
+- skip: off the MISSION's subjects (however popular, and even from a watchlist account), a promo with
+  nothing to riff on, stale, risky, or a reply would need facts the MISSION and the post don't give.
+Read the core subjects broadly: a post about a tool, product or workflow the MISSION names (or its
+watchlist peers' agent launches) is on-subject even if it doesn't mention the brand's exact angle.
 
 MISSION:
 {mission}"""
 
 DECISION = Question("decision", "Should the brand account draft a reply to this post?", {
-    "engage": "on-topic for the MISSION, alive, and the account can clearly add something",
-    "wait": "relevant, but the thread is still forming or there is nothing sharp to add yet",
-    "skip": "off-topic, low value, stale, risky, or would need invented facts",
+    "engage": "on the MISSION's subjects (or a watchlist peer's launch near them) and a take, tip, joke or "
+              "specific congratulation could fit",
+    "wait": "on-subject, but the thread is still forming or nothing sharp fits yet",
+    "skip": "off the MISSION's subjects, a promo with nothing to riff on, stale, risky, or would need invented facts",
 })
 REASON = Question("reason", "What is the main reason for that decision?", {
     "worth_it": "relevant post where the account can add value now",
@@ -80,7 +91,7 @@ def triage(posts: list[Signal | dict], ectx: EvalContext, backend: str | None = 
     keys = [key_of(p) for p in posts]
     answers = decide_batch([_render(p, notes.get(k)) for p, k in zip(posts, keys)], [DECISION, REASON],
                            backend or ectx.decider, llm=ectx.llm, system=SYSTEM.format(mission=ectx.mission),
-                           tier="fast")
+                           tier=ectx.triage_tier)
     out = {}
     for k, ans in zip(keys, answers):
         d, r = ans["decision"], ans["reason"]

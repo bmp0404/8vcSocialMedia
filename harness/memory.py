@@ -219,8 +219,8 @@ def recall(lane: str, context_text: str | None = None, k: int = 3, days: int = 7
 
     Returns {"lane", "lessons", "best", "worst", "recent_texts", "engaged_handles", "engaged_urls",
     "declined_urls"}: best/worst are this lane's measured actions (biased toward ones similar to
-    `context_text`), recent_texts are what either lane recommended or posted in the last `days` days,
-    engaged_* are targets we actually posted to in that window or recommended in the last
+    `context_text`), recent_texts are what either lane posted in the last `days` days or ranked into a
+    hand-off in the last RECOMMENDED_WINDOW_HOURS (never vetoed or cut drafts), engaged_* are targets we actually posted to in that window or recommended in the last
     RECOMMENDED_WINDOW_HOURS, and declined_urls are posts the reply lane said `no_response` to in that
     same short window.
     """
@@ -243,6 +243,9 @@ def recall(lane: str, context_text: str | None = None, k: int = 3, days: int = 7
             (recent_rec,),
         )}
     engaged = [a for a in recent if a["status"] == "posted" or (a["created_at"] or "") >= recent_rec]
+    # What the critic and minds treat as "already said": posted in `days`, or recommended (ranked into a
+    # hand-off) within RECOMMENDED_WINDOW_HOURS. Vetoed, cut and declined drafts never count.
+    said = [a for a in engaged if a["status"] == "posted" or not a["vetoed"]]
 
     ctx = _words(context_text or "")
     sim = lambda a: len(ctx & _words(a["text"] + " " + json.dumps(a["context"]))) / (len(ctx) or 1)  # noqa: E731
@@ -264,7 +267,7 @@ def recall(lane: str, context_text: str | None = None, k: int = 3, days: int = 7
         "lessons": _lane_lessons(config.lessons(), lane),
         "best": [example(a) for a in best],
         "worst": [example(a) for a in worst],
-        "recent_texts": list(dict.fromkeys(a["text"] for a in recent if a["text"]))[:15],
+        "recent_texts": list(dict.fromkeys(a["text"] for a in said if a["text"]))[:15],
         "engaged_handles": sorted(handles),
         "engaged_urls": sorted({a["target_url"] for a in engaged if a.get("target_url")}),
         "declined_urls": sorted(declined),

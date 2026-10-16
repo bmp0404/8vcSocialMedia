@@ -21,7 +21,7 @@ def run(args) -> None:
         raise SystemExit("--send only applies with --email")
     targets = config.TARGETS_PATH.name if config.TARGETS_PATH else "none"
     print(f"[run] mission: {config.mission_name()} | lanes: {', '.join(lanes)} | sources: {', '.join(sources)}"
-          f" | targets: {targets} | db: {config.DB_PATH.name}")
+          f" | targets: {targets} | db: {config.DB_PATH.name} | evaluator: {'on' if config.EVALUATOR else 'off'}")
 
     signals = observe(sources, mission)
     if not signals:
@@ -29,16 +29,18 @@ def run(args) -> None:
     run_id = memory.start_run(lanes, sources, args.provider)
     ctx = LaneContext(llm, mission, run_id, per_mind=args.per_mind)
 
-    # Rank by predicted_score x the learned action-type weight (learn.get_weights); predicted_score itself
-    # stays the panel's number. Follows are ranked by the reply lane's follow ranker and get up to
-    # HARNESS_FOLLOW_SLOTS reserved slots after the content actions.
+    # Rank by predicted_score x the learned action-type weight (learn.get_weights). predicted_score is the
+    # evaluator's within-lane blend (0.5 panel percentile + 0.5 pairwise-tournament percentile), or the
+    # panel's number with HARNESS_EVALUATOR=off. Follows skip the evaluator: the reply lane's follow ranker
+    # scores them and they get up to HARNESS_FOLLOW_SLOTS reserved slots after the content actions.
     weights = {lane: learn.get_weights(lane)["type"] for lane in lanes}
     rank_score = {}
-    content, follows = [], []
+    content, follows, said = [], [], []
     for lane in lanes:
         limit = args.targets if lane == "reply" else args.narratives
-        evaluated = LANES[lane](replace(ctx, limit=limit), signals)
+        evaluated = LANES[lane](replace(ctx, limit=limit, said=tuple(said)), signals)
         keep = [a for a in evaluated if not a.vetoed and a.type not in DECLINE_TYPES]
+        said += [a.text for a in keep if a.text]  # later lanes treat these as already said
         for a in keep:
             rank_score[a.id] = a.predicted_score * weights[lane].get(a.type, 1)
         follows += [a for a in keep if a.type == "follow"]
@@ -61,8 +63,9 @@ def run(args) -> None:
         if a.context.get("slot") == "follow":
             sent = "follow slot"
         w = f" x{rank_score[a.id] / a.predicted_score:.2f}" if a.predicted_score and abs(rank_score[a.id] - a.predicted_score) > 1e-9 else ""
+        flags = (a.context.get("eval") or {}).get("flags")
         print(f"{i:>2}. [{a.predicted_score:.2f}{w} +/=/- {sent}] {a.lane:<5} {a.type:<7} {a.mind:<19} "
-              f"{a.text.replace(chr(10), ' / ')}  {target}")
+              f"{a.text.replace(chr(10), ' / ')}  {target}" + (f"  [flags: {', '.join(flags)}]" if flags else ""))
 
     if args.email:
         print()

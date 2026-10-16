@@ -1,6 +1,8 @@
 """Reply lane: observe posts worth jumping into -> decide reply/quote/mention/follow or decline -> eval.
 
-Every observed post is a potential target, so each action carries the target post's url/author.
+Every observed post is a potential target, so each action carries the target post's url/author. With
+HARNESS_EVALUATOR=on, `gate` triages the targets first (evaluator.triage) and only `engage` ones reach
+the minds; the others are logged as wait / no_response with triage's typed reason.
 Posts by watchlist accounts (the targets file) are boosted, priority ones more, and each target's
 `relationship` and `notes` go into the drafting prompt. Follows and mentions are limited to watchlist
 accounts when a watchlist exists. A target no mind wants to engage with becomes one `wait` or
@@ -23,7 +25,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 
 from harness import config, learn, memory
-from harness.lanes.common import LaneContext, evaluate, gist
+from harness.lanes.common import LaneContext, evaluate, gist, recall
 from harness.llm import mock_score
 from harness.minds import ask, load_minds
 from harness.models import DECLINE_TYPES, LANE_TYPES, REASONS, Action, Signal, norm_reason
@@ -336,9 +338,51 @@ them passed ({why}). Give each a real attempt in your own style, or decline it w
 truly off-mission or risky. Only act on your focus targets this time."""
 
 
+def _watch_note(s: Signal) -> dict | None:
+    acct = _watch(_handle(s))
+    return {k: acct.get(k) for k in ("name", "relationship", "priority", "notes")} if acct else None
+
+
+def gate(ctx: LaneContext, targets: dict[str, Signal]) -> tuple[dict[str, Signal], dict[str, dict]]:
+    """Evaluator triage (engage / wait / skip) on every target before any mind drafts. Declined targets
+    become wait / no_response rows in memory with triage's typed reason. Returns (engage targets,
+    {url: triage verdict} for the engage targets)."""
+    from harness.evaluator import EvalContext, triage
+    from harness.evaluator.triage import key_of
+
+    notes = {key_of(s): n for s in targets.values() if (n := _watch_note(s))}
+    verdicts = triage(list(targets.values()), EvalContext.of(ctx, LANE), notes=notes)
+    keep, declined, info = {}, [], {}
+    for tid, s in targets.items():
+        t = verdicts.get(key_of(s))
+        out = t.decline() if t else None
+        if not out:
+            keep[tid] = s
+            if t:
+                info[s.url] = t.to_dict()
+            continue
+        kind, reason = out
+        context = asdict(s) | {"triage": t.to_dict()}
+        if n := _watch_note(s):
+            context["watchlist"] = n
+        declined.append(Action(
+            type=kind, text="", mind="triage", narrative_id=f"sig:{s.id or tid}",
+            rationale=f"triage {t.decision}: {t.why}".strip(), target_url=s.url, target_handle=_handle(s),
+            context=context, reason=norm_reason(reason), lane=LANE, run_id=ctx.run_id,
+        ))
+    if declined:
+        memory.save_actions(declined)
+        print(f"[reply:triage] drafting for {len(keep)}/{len(targets)} targets; declined "
+              + ", ".join(f"{a.type}({a.reason}) @{a.target_handle}" for a in declined))
+    return keep, info
+
+
 def run(ctx: LaneContext, signals: list[Signal]) -> list[Action]:
-    mem = memory.recall(LANE, context_text=" ".join(s.text for s in signals))
+    mem = recall(ctx, LANE, signals)
     targets = observe(signals, mem, ctx.limit)
+    triaged: dict[str, dict] = {}
+    if targets and config.EVALUATOR:
+        targets, triaged = gate(ctx, targets)
     if not targets:
         return rank_follows(ctx, signals, {}, config.FOLLOW_SLOTS)
     payload = json.dumps(
@@ -427,5 +471,8 @@ def run(ctx: LaneContext, signals: list[Signal]) -> list[Action]:
         memory.save_actions(declines)
         print(f"[reply:act] declined {len(declines)} targets: "
               + ", ".join(f"{a.type}({a.reason}) @{a.target_handle}" for a in declines))
+    for a in actions:
+        if a.target_url in triaged:
+            a.context["triage"] = triaged[a.target_url]
     evaluated = evaluate(ctx, LANE, actions, mem)
     return evaluated + rank_follows(ctx, signals, endorsements, config.FOLLOW_SLOTS)

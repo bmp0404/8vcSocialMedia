@@ -78,8 +78,17 @@ Env vars for the loop (all in `.env.example`):
 | `HARNESS_SOURCES`, `HARNESS_FEED_PATH`, `HARNESS_FEED_SINCE_DAYS`, `HARNESS_FEED_LIMIT` | What to observe; e.g. `feed` + `data/devtools_virality_30d.csv` + `HARNESS_FEED_LIMIT=40` (newest 40) |
 | `HARNESS_DB`, `HARNESS_LESSONS`, `HARNESS_WEIGHTS`, `HARNESS_PROPOSALS` | Memory, lessons, learned weights (default next to the DB) and mission proposals; point all four at a temp dir for a throwaway loop |
 | `HARNESS_FOLLOW_SLOTS` | Reserved follow slots per run (default 2; 0 disables follows) |
+| `HARNESS_EVALUATOR` | `on` (default) / `off`: reply triage gate + panel/pairwise ranking (see Evaluation) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `HANDOFF_EMAIL_FROM`, `HANDOFF_EMAIL_TO`, `HANDOFF_EMAIL_CC` | Hand-off email; only used with `--send` |
 | `X_BEARER_TOKEN` | `ingest-metrics --from x` (and the `x_api` source) |
+
+## Evaluation (pre-posting)
+
+`harness/evaluator/` runs after the critic (`qualify.py`) when `HARNESS_EVALUATOR=on` (the default):
+- **Reply triage**: before any mind drafts, one batched call (judge model) labels each target post engage / wait / skip. Only `engage` targets get drafts; the rest are logged as `wait` / `no_response` rows with a typed reason.
+- **Ranking**: in each lane, `predicted_score` = 0.5 x panel percentile + 0.5 x Haiku pairwise-tournament percentile (Bradley-Terry). A Sonnet rubric adds per-criterion notes and guardrail flags (voice / grounding / cringe below threshold). These show as `EVAL_FLAGS` in the hand-off email and as `context.eval` in the JSON. Only a hard grounding failure (rubric grounding 1/5) vetoes; with 6+ drafts in a lane, the tournament's bottom tercile is cut. Follows skip the evaluator and keep their own ranker.
+- **Backtest** (`scripts/backtest_eval.py`, 1,665 real dev-tool X posts, holdout accounts, Spearman vs within-account engagement): panel+pairwise **+0.62**, panel +0.56, length baseline +0.45, rubric +0.40.
+- **A/B**: `HARNESS_EVALUATOR=off` falls back to the panel score alone (no triage, no gates).
 
 ### Review dashboard
 
@@ -109,7 +118,7 @@ data/         # Source documents, datasets, and supporting assets
 | `mission/*_targets.json` | Watchlist (`accounts`: handle, priority, relationship, notes) + search `keywords`; `HARNESS_TARGETS`, default `<mission stem>_targets.json` |
 | `harness/sources/` | **Observe.** One plugin per data source, registered in `sources/__init__.py`: `sample`, `feed` (teammate scraper output, `HARNESS_FEED_PATH`; flexible field names, including the `data/devtools_virality_30d.csv` export; trim with `HARNESS_FEED_LIMIT` / `HARNESS_FEED_SINCE_DAYS`), `x_api` (query built from the targets file), `reddit` |
 | `harness/lanes/reply.py` | **Reply lane.** Hottest not-yet-engaged posts become targets, watchlist authors boosted (priority more); each mind owns a few focus targets (draft cap = `learn.quota`, scaled by learned mind weights) and replies / quotes / mentions (watchlist only) or declines with `wait` / `no_response` + a reason. A priority watchlist post the assigned mind passes on gets a second look from another mind before it's declined. Follows bypass the panel: `rank_follows` picks up to `HARNESS_FOLLOW_SLOTS`, skipping accounts already followed. Declines are logged to memory, never emailed |
-| `harness/lanes/post.py` | **Post lane.** `orient.py` clusters signals into narratives; minds write original posts |
+| `harness/lanes/post.py` | **Post lane.** `orient.py` clusters signals into distinct narratives, which are dealt round-robin so each mind writes on its own ones (one post per narrative); minds write original posts. Drafts the reply lane kept earlier in the run count as already said |
 | `harness/lanes/common.py` | Shared lane context + the Eval step (score, critique, write to memory) |
 | `harness/minds/` | Persona prompts, one per file; `MIND_LANES` maps each to the reply and/or post lane: `reply_sniper`, `friendly_rival` (reply), `agent_wrangler`, `technical_explainer` (both), `build_in_public` (post) |
 | `harness/qualify.py` | **Eval.** Simulated audience panel scores drafts and predicts a positive/neutral/negative sentiment split; hard rules + a critic veto. Vetoes carry a `reason`: off_tone, stale, wrong_target, nothing_to_add, factual_risk (invented brand facts), repetitive, other |
