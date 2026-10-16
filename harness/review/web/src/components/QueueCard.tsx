@@ -6,7 +6,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { api, ApiError, type Card } from '../lib/api'
 import { ago, freshness } from '../lib/time'
-import { draftTweet, type Account } from '../lib/tweet'
+import { draftTweet, userOf, type Account } from '../lib/tweet'
 import { primaryLabel, reviewBody, VerdictError, type Decision, type Origin, type ReviewBody } from '../lib/verdict'
 import { MAX_WEIGHTED_CHARS, weightedLength } from '../lib/xtext'
 import { missingNote, Post, PostSkeleton, usePost } from './Post'
@@ -91,8 +91,12 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
     })
   }
 
+  // A command acts once, on the card that was showing when it was given. Undo remounts a card while the
+  // queue still holds the command that decided it; replaying that would approve the card again.
+  const handled = useRef(command?.seq)
   useEffect(() => {
-    if (!command) return
+    if (!command || command.seq === handled.current) return
+    handled.current = command.seq
     if (command.name === 'approve' && !killing) (unchecked ? edit : approve)()
     else if (command.name === 'edit' && card.draft && !words) edit()
     else if (command.name === 'kill') setKilling(true)
@@ -142,7 +146,10 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
       ) : null}
 
       <div className="node node-composer" data-up={card.target ? '' : undefined} data-down={card.draft ? '' : undefined}>
-        <span className="slot-avatar" aria-hidden="true" />
+        {/* The empty avatar becomes the account's once there are words to post as it. */}
+        <span className="slot-avatar" aria-hidden="true" data-filled={words ? '' : undefined}>
+          <img src={userOf(account).profile_image_url_https} alt="" />
+        </span>
         <label className="composer-label" htmlFor={`${id}-box`}>
           {card.arm === 'human' ? 'Your one-liner' : `Your ${noun}`}
         </label>
@@ -152,7 +159,7 @@ export function QueueCard({ card, account, reasons, onDecided, command }: Props)
           className="composer"
           rows={1}
           value={composer}
-          placeholder={card.draft ? 'Write it yourself, or approve the draft below' : 'Write it yourself'}
+          placeholder="Write it yourself"
           onChange={(e) => {
             setComposer(e.target.value)
             if (!e.target.value) setOrigin('take')

@@ -143,8 +143,8 @@ function useQueue() {
       const stillThere = new Set(d.cards.map((c) => c.id))
       // A card decided on this page stays as its receipt; one decided elsewhere leaves.
       const kept = shownRef.current.filter((c) => stillThere.has(c.id) || decidedRef.current.has(c.id))
-      if (kept.length === 0) {
-        setShown(d.cards)
+      if (kept.every((c) => decidedRef.current.has(c.id))) {
+        setShown(withArrivals(kept, fresh)) // nobody is mid-card, so new cards can't push anything away
         setIncoming([])
       } else {
         setShown(kept)
@@ -162,11 +162,16 @@ function useQueue() {
   }, [load])
 
   const showIncoming = () => {
-    setShown((s) => [...incoming.filter((c) => c.source === 'hot'), ...s, ...incoming.filter((c) => c.source !== 'hot')])
+    setShown((s) => withArrivals(s, incoming))
     setIncoming([])
     window.scrollTo({ top: 0 })
   }
   return { data, shown, incoming, showIncoming, decided, setDecided, error }
+}
+
+/** New hot targets go on top, as the queue orders them; new round drafts go after what is there. */
+function withArrivals(shown: Card[], arrivals: Card[]): Card[] {
+  return [...arrivals.filter((c) => c.source === 'hot'), ...shown, ...arrivals.filter((c) => c.source !== 'hot')]
 }
 
 const SHORTCUTS: [string, string][] = [

@@ -112,3 +112,22 @@ export function storedTweet(post: StoredPost): Tweet {
   }
   return t
 }
+
+/** X's copy of a long post with the harness's full text in place of the cut one. X ends the cut text with a
+ * "Show more" link (note_tweet); this page never cuts text, and the stored copy has all of it. Media,
+ * author and counts stay X's. */
+export function withFullText(tweet: Tweet, stored: StoredPost | null): Tweet {
+  if (!tweet.note_tweet || !stored?.text) return tweet
+  const { note_tweet: _cut, ...rest } = tweet
+  const text = escapeHtml(stored.text)
+  return { ...rest, text, display_text_range: [0, Array.from(text).length], entities: entitiesOf(text) }
+}
+
+/** X's copy with every link shown whole. X shortens a link's text with an ellipsis
+ * ("netlify.com/blog/netlify-s..."), and this page never cuts text. */
+export function wholeLinks(tweet: Tweet): Tweet {
+  const urls = tweet.entities?.urls
+  if (!urls?.length) return tweet
+  const whole = urls.map((u) => ({ ...u, display_url: u.expanded_url.replace(/^https?:\/\//, '') }))
+  return { ...tweet, entities: { ...tweet.entities!, urls: whole } }
+}

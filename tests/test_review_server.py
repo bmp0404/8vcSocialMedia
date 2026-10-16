@@ -231,13 +231,26 @@ def test_a_kill_keeps_its_reasons_and_undo_returns_the_card(hot_files):
     ({"status": "approved", "text": 5}, "text"),
     ({"status": "approved", "note": ["x"]}, "note"),
     ({"status": "maybe"}, "status must be one of"),
+    ({"status": "approved", "text": "   "}, "write the reply first"),
     ({"status": "approved", "text": "x" * 281}, "weighs 281"),
     ({"status": "approved", "text": "clark had [VERIFY: 12 assists]"}, "resolve [VERIFY: 12 assists]"),
 ])
 def test_a_bad_verdict_is_refused_and_nothing_is_saved(hot_files, body, needle):
     code, res = review(f"hot-{CONTINUATION}", **body)
     assert code == 400 and needle in res["error"], res
-    assert memory.review_history() == []
+    with memory.connect() as conn:  # not even the hot target's run and action
+        assert [conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0] for t in ("runs", "actions", "review_events")] == [0, 0, 0]
+
+
+def test_a_hot_target_keeps_the_account_the_watcher_drafted_for(hot_files):
+    rec = json.loads((hot_files / f"{CONTINUATION}.json").read_text(encoding="utf-8"))
+    (hot_files / f"{CONTINUATION}.json").write_text(json.dumps({**rec, "account": "other_brand"}), encoding="utf-8")
+    del rec["account"]  # a file from before run_hot wrote one: its profile's account now
+    (hot_files / f"{STYLED}.json").write_text(json.dumps({**rec, "status_id": STYLED}), encoding="utf-8")
+    cards = {c["id"]: c["account"] for c in request("GET", "/api/queue")[1]["cards"]}
+    assert (cards[f"hot-{CONTINUATION}"], cards[f"hot-{STYLED}"]) == ("other_brand", "_sgu_")
+    review(f"hot-{CONTINUATION}", status="approved")
+    assert handoff(1)["account"] == "other_brand"
 
 
 def test_a_verdict_on_an_unknown_action_is_404(hot_files):
@@ -301,6 +314,14 @@ def test_a_missing_post_comes_with_the_harnesss_copy(hot_files, monkeypatch):
     assert (s["author"], s["status_id"], s["likes"], s["replies"]) == ("AtlantaDream", CONTINUATION, 40, 10)
     assert s["text"].startswith("We're only two days away from the 2026 WNBA Finals")
     assert s["created_at"] == "2026-10-16T00:09:15+00:00"
+
+
+def test_a_post_x_cut_short_comes_with_the_harnesss_full_text(hot_files, monkeypatch):
+    cut = {**TWEET, "id_str": CONTINUATION, "note_tweet": {"id": "n1"}}
+    monkeypatch.setattr(tweets, "syndication", lambda sid: {"result": "ok", "data": cut if sid == CONTINUATION else TWEET})
+    res = request("GET", f"/api/tweet/{CONTINUATION}")[1]
+    assert res["data"] == cut and res["stored"]["text"].startswith("We're only two days away")
+    assert request("GET", "/api/tweet/5")[1]["stored"] is None  # a whole post needs no copy
 
 
 def test_a_rounds_target_is_found_in_its_trace(store, monkeypatch):

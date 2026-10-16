@@ -1,4 +1,3 @@
-import { flushSync } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { api, type Card, type QueueData, type Status } from '../lib/api'
 import type { Account } from '../lib/tweet'
@@ -25,6 +24,7 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
   const list = useRef<HTMLDivElement>(null)
 
   function decide(v: Verdict) {
+    setCommand(null)
     lastDecided.current.push(v.card.id)
     transition(() => setDecided((m) => new Map(m).set(v.card.id, v)))
   }
@@ -84,11 +84,10 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
         </p>
       ))}
       {incoming.length ? (
-        <button type="button" className="arrivals" onClick={() => flushSync(showIncoming)}>
+        <button type="button" className="arrivals" onClick={showIncoming}>
           {arrivalsLabel(incoming)}
         </button>
       ) : null}
-      {shown.length === 0 ? <EmptyQueue status={status} /> : null}
       {shown.map((card) => {
         const v = decided.get(card.id)
         const account = accountFor(accounts, card, status)
@@ -108,6 +107,7 @@ export function Queue({ queue, shown, incoming, showIncoming, decided, setDecide
           </div>
         )
       })}
+      {open.length === 0 ? <EmptyQueue status={status} /> : null}
     </div>
   )
 }

@@ -5,7 +5,7 @@ caught under 10 minutes old. A file offers a draft (the continuation or styled a
 operator's own one-liner (the human arm), or an abstention, which offers nothing and is not a card.
 
 Hot targets have no row in memory until a person gives a verdict. The first verdict creates one run
-for the target and one action in it, so `learn`, which reads a profile's runs, and `export_approved`
+for the target, naming the account the watcher drafted for, and one action in it, so `learn`, which reads a profile's runs, and `export_approved`
 see it like any round's draft. The action's id is `hot-<status_id>`, the id the outcomes ledger gives
 the same target (`hot_action_id` in `harness/outcomes/handoff.py` on sam/watch). Both files then name
 one action, so `outcomes sync` keeps a single ledger row per target, with its arm.
@@ -92,6 +92,26 @@ def to_action(rec: dict) -> dict:
     ).to_dict()
 
 
+def offer(sid: str) -> dict:
+    """The hot file for `sid` that offers something to decide. KeyError when there is no such file."""
+    path = hot_dir() / f"{sid}.json"
+    if not path.is_file():
+        raise KeyError(action_id(sid))
+    rec = load(path)
+    if rec["offer"] not in OFFERS:
+        raise ValueError(f"{path.name} abstained ({rec.get('abstain_reason')}), so there is nothing to decide")
+    return rec
+
+
+def account_of(rec: dict) -> str | None:
+    """The account the watcher drafted for. Files from before run_hot wrote "account" name only a profile,
+    so for those it is that profile's account now."""
+    if "account" in rec:
+        return (rec["account"] or "").lstrip("@") or None
+    with config.use_profile(rec["profile"]):
+        return account_handle()[0] or None
+
+
 def ensure_action(sid: str) -> None:
     """Create the run and action for hot target `sid` unless they exist. KeyError when no hot file offers it.
 
@@ -104,15 +124,8 @@ def ensure_action(sid: str) -> None:
     with memory.connect() as conn:
         if conn.execute("SELECT 1 FROM actions WHERE id = ?", (aid,)).fetchone():
             return
-    path = hot_dir() / f"{sid}.json"
-    if not path.is_file():
-        raise KeyError(aid)
-    rec = load(path)
-    if rec["offer"] not in OFFERS:
-        raise ValueError(f"{path.name} abstained ({rec.get('abstain_reason')}), so there is nothing to decide")
-    action = to_action(rec)
-    with config.use_profile(rec["profile"]):
-        account, _ = account_handle()
+    rec = offer(sid)
+    action, account = to_action(rec), account_of(rec)
     try:
         with memory.connect() as conn:
             run_id = conn.execute(

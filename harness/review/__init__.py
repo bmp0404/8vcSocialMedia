@@ -7,6 +7,8 @@ registered through routes.py. DESIGN.md says what each view is for.
 """
 
 import json
+import os
+import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -42,8 +44,11 @@ def export_approved(run_id: int) -> Path:
             print(f"[review] hand-off refuses {a['id']}: resolve {', '.join(markers)} first")
         else:
             ready.append(a)
-    path.write_text(json.dumps({"run_id": run_id, "account": memory.run_account(run_id), "actions": ready,
-                                "refused": refused}, indent=2), encoding="utf-8")
+    # Write then rename, so a reader such as `outcomes sync` never sees half a file.
+    tmp = path.with_suffix(f".{os.getpid()}.{threading.get_ident()}.tmp")
+    tmp.write_text(json.dumps({"run_id": run_id, "account": memory.run_account(run_id), "actions": ready,
+                               "refused": refused}, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
     return path
 
 
@@ -51,11 +56,15 @@ def check_approval(action_id: str, status: str, text: str | None) -> None:
     """Refuse an approval the hand-off can't take, before the verdict is saved: an edit X would reject on
     length (drafts passed the gate's length rule; an edit hasn't), or text with a [VERIFY: ...] marker
     nobody resolved. KeyError for an unknown action."""
-    if status != "approved":
-        return
-    if text and weighted_length(text) > MAX_WEIGHTED_CHARS:
-        raise ValueError(f"edited text weighs {weighted_length(text)} as X counts it (max {MAX_WEIGHTED_CHARS})")
-    if markers := verify_markers(text or memory.action_text(action_id)):
+    if status == "approved":
+        check_words(text or memory.action_text(action_id), edited=bool(text))
+
+
+def check_words(words: str, edited: bool) -> None:
+    """check_approval's rules for the words that would post. Only an edit is checked for length."""
+    if edited and weighted_length(words) > MAX_WEIGHTED_CHARS:
+        raise ValueError(f"edited text weighs {weighted_length(words)} as X counts it (max {MAX_WEIGHTED_CHARS})")
+    if markers := verify_markers(words):
         raise ValueError(f"resolve {', '.join(markers)} before approving: check the fact and write it in, or cut it")
 
 

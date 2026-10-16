@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { QuotedTweet, TweetBody, TweetContainer, TweetHeader, TweetInReplyTo, TweetMedia, TweetSkeleton, enrichTweet } from 'react-tweet'
 import type { Tweet } from 'react-tweet/api'
 import { api, type PostData } from '../lib/api'
-import { storedTweet } from '../lib/tweet'
+import { storedTweet, wholeLinks, withFullText } from '../lib/tweet'
 
 type Props = {
   tweet: Tweet
@@ -86,7 +86,8 @@ export function usePost(statusId: string | null | undefined) {
       live = false
     }
   }, [statusId])
-  const tweet = state.post ? (state.post.data ?? (state.post.stored ? storedTweet(state.post.stored) : null)) : null
+  const post = state.post
+  const tweet = post ? (post.data ? wholeLinks(withFullText(post.data, post.stored)) : post.stored ? storedTweet(post.stored) : null) : null
   return { tweet, missing: state.post?.missing ?? null, error: state.error, loading: !state.post && !state.error && !!statusId }
 }
 

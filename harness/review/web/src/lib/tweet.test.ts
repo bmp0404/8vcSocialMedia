@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { entitiesOf, escapeHtml } from './entities'
-import { draftTweet, initialAvatar, storedTweet, type Account, type StoredPost } from './tweet'
+import { draftTweet, initialAvatar, storedTweet, wholeLinks, withFullText, type Account, type StoredPost } from './tweet'
 
 const SGU: Account = { handle: '_sgu_', name: 'Sam', avatar_url: 'https://pbs.twimg.com/a.jpg', verified: false }
 const AT = '2026-10-16T00:12:00.000Z'
@@ -120,5 +120,35 @@ describe('storedTweet', () => {
   it('treats missing counts as zero and a missing author as unknown', () => {
     const t = storedTweet({ ...stored, author: '', likes: null, replies: null })
     expect([t.user.screen_name, t.favorite_count, t.conversation_count]).toEqual(['unknown', 0, 0])
+  })
+})
+
+describe('withFullText', () => {
+  const full: StoredPost = {
+    status_id: '5', author: 'voidzerodev', text: 'a long post & all of its words', created_at: null, likes: null,
+    replies: null, reposts: null, quotes: null, author_followers: null, in_reply_to: null, in_reply_to_status: null,
+  }
+  const cut = { ...storedTweet({ ...full, text: 'a long post' }), note_tweet: { id: 'n1' }, mediaDetails: [] }
+
+  it('puts the stored full text in place of the cut one and drops "Show more"', () => {
+    const t = withFullText(cut, full)
+    expect([t.text, t.note_tweet, t.display_text_range]).toEqual(['a long post &amp; all of its words', undefined, [0, 34]])
+    expect(t.mediaDetails).toEqual([])
+  })
+
+  it('keeps X\'s copy when it is whole or there is no stored text', () => {
+    const whole = storedTweet(full)
+    expect(withFullText(whole, full)).toBe(whole)
+    expect(withFullText(cut, null)).toBe(cut)
+  })
+})
+
+describe('wholeLinks', () => {
+  it('shows each link whole instead of X\'s shortened text', () => {
+    const t = draftTweet({ account: SGU, text: 'see https://netlify.com/blog/netlify-source', createdAt: AT })
+    t.entities!.urls[0].display_url = 'netlify.com/blog/netlify-s…'
+    expect(wholeLinks(t).entities!.urls[0].display_url).toBe('netlify.com/blog/netlify-source')
+    const plain = draftTweet({ account: SGU, text: 'no links', createdAt: AT })
+    expect(wholeLinks(plain)).toBe(plain)
   })
 })

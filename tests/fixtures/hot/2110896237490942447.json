@@ -236,6 +236,7 @@
   },
   "veto_context": "POST by @valkyries:\nBallhalla awaits. ⚔️\n\nTHREAD:\n\n\nHANDLES IN THREAD: \n\nFACTS:\n# Mission: Caitlin Clark fan account (X)\n\n> Placeholder. Replace with the mission file 8VC hands out.\n\n**Who it's for:** Caitlin Clark fans, Indiana Fever and Iowa Hawkeyes fans, and WNBA Twitter in general.\n\n**Core subjects:** Caitlin Clark's games, stats, and highlights; Fever news; Iowa women's basketball; WNBA rivalries and discourse.\n\n**Tone:** Funny and a little edgy, like a fan who's in on the joke. Rivalry banter beats generic praise. Never cruel, never harassing, never inaccurate.\n\n**Goals:** Grow from roughly 2 followers to a real audience by being early, funny, and correct in the conversations that are already happening.\n\n**Action space:** original posts, replies, quote posts, mentions, follows. X only.\n\n\nWHAT'S GOING ON:\n- @valkyries just posted: Ballhalla awaits. ⚔️"
  },
+ "account": "_sgu_",
  "models": [],
  "detected_at": "2026-10-16T00:53:56+00:00",
  "started_at": "2026-10-16T00:54:05+00:00",
@@ -243,7 +244,7 @@
  "timings": {
   "plan_s": 0.0,
   "draft_s": 0.0,
-  "total_s": 0.0,
+  "total_s": 0.01,
   "detected_to_finished_s": 18.0,
   "post_age_at_detection_s": 180.0,
   "post_age_at_finish_s": 198.0

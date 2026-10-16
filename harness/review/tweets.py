@@ -223,7 +223,8 @@ def syndication(sid: str, get=None) -> dict:
 @route("GET", r"/api/tweet/(\d+)")
 def get_tweet(req: Request):
     """{"data": Tweet|None, "stored": fields|None, "missing": None|"not_found"|"tombstone"|"unreachable"}.
-    `stored` comes with every answer that has no data, so the page can still show the post."""
+    `stored` comes with every answer that has no data, so the page can still show the post, and with a long
+    post X cut short, so the page can show all of its text."""
     sid = req.match[1]
     if not STATUS_ID.fullmatch(sid):
         raise HTTPError(400, f"{sid} isn't a status id")
@@ -232,7 +233,9 @@ def get_tweet(req: Request):
     except FetchError:
         rec = {"result": "unreachable", "data": None}
     if rec["result"] == "ok":
-        return {"data": rec["data"], "stored": None, "missing": None}
+        # X cuts a long post's text and links "Show more" (note_tweet). The harness's copy has all of it.
+        full = stored(sid) if rec["data"].get("note_tweet") else None
+        return {"data": rec["data"], "stored": full, "missing": None}
     found = stored(sid)
     if found is None and rec["result"] == "unreachable":
         raise HTTPError(502, f"X didn't answer for post {sid}, and the harness has no copy of it")

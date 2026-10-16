@@ -1,7 +1,7 @@
 // The audit set, one item at a time: the post as X shows it, the schema's questions, and the models'
 // labels only after the person has answered, so they can't anchor on them.
 
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { api, ApiError, type AuditData, type AuditPost, type Consensus } from '../lib/api'
 import { controlsFor, labelsPayload, optionLabel, type Control, type Value } from '../lib/schema'
 import { date } from '../lib/time'
@@ -17,6 +17,8 @@ export function Audit() {
   const [revealed, setRevealed] = useState<Consensus | null>(null)
   const [busy, setBusy] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const shownItem = useRef<string | null>(null)
+  shownItem.current = data?.item?.item_id ?? null
 
   useEffect(() => {
     let live = true
@@ -65,9 +67,10 @@ export function Audit() {
     setBusy(true)
     try {
       const res = await api.answer(item.item_id, labelsPayload(controls, answers), note.trim())
-      setRevealed(res.consensus)
+      // Only reveal votes beside the item they belong to.
+      if (shownItem.current === item.item_id) setRevealed(res.consensus)
     } catch (e) {
-      setSaveError(e instanceof Error ? e.message : String(e))
+      if (shownItem.current === item.item_id) setSaveError(e instanceof Error ? e.message : String(e))
     } finally {
       setBusy(false)
     }
@@ -118,7 +121,7 @@ export function Audit() {
             control={c}
             value={answers[c.name]}
             onChange={(v) => setAnswers((a) => ({ ...a, [c.name]: v }))}
-            disabled={!!revealed}
+            disabled={!!revealed || busy}
             result={revealed?.[c.name]}
           />
         ))}
@@ -132,7 +135,7 @@ export function Audit() {
               <button type="submit" className="button primary" disabled={!answered || busy}>
                 Save answers
               </button>
-              <button type="button" className="button quiet" onClick={() => next(true)}>
+              <button type="button" className="button quiet" onClick={() => next(true)} disabled={busy}>
                 Skip
               </button>
             </div>
@@ -203,27 +206,19 @@ function Question({ control: c, value, onChange, disabled, result }: QuestionPro
   )
 }
 
+/** The models' labels for one field. The person's own answer is the selected option just above, so it isn't
+ * repeated; a model that agrees with it says "Same". */
 function Votes({ result, mine }: { result: Consensus[string]; mine: Value | undefined }) {
   const models = Object.entries(result.votes)
+  if (!models.length) return <p className="votes-none">No model labeled this.</p>
   return (
     <dl className="votes">
-      <div>
-        <dt>You</dt>
-        <dd>{mine === undefined ? 'Skipped' : optionLabel(mine)}</dd>
-      </div>
-      {models.length ? (
-        models.map(([model, v]) => (
-          <div key={model} data-differs={mine !== undefined && v !== mine ? '' : undefined}>
-            <dt>{model}</dt>
-            <dd>{optionLabel(v)}</dd>
-          </div>
-        ))
-      ) : (
-        <div>
-          <dt>Models</dt>
-          <dd>No votes</dd>
+      {models.map(([model, v]) => (
+        <div key={model} data-differs={mine !== undefined && v !== mine ? '' : undefined}>
+          <dt>{model}</dt>
+          <dd>{mine !== undefined && v === mine ? 'Same' : optionLabel(v)}</dd>
         </div>
-      )}
+      ))}
     </dl>
   )
 }

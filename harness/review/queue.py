@@ -9,12 +9,13 @@ critic vetoed. Their records stay in memory.
 
 import json
 import re
+import threading
 from datetime import datetime, timedelta, timezone
 
 from harness import config, memory
 from harness.minds.gate import verify_markers
 from harness.outcomes.handoff import status_id
-from harness.review import check_approval, export_approved, hot
+from harness.review import check_words, export_approved, hot
 from harness.review.routes import HTTPError, Request, route
 from harness.sources.watch import account_handle
 from harness.xtext import MAX_WEIGHTED_CHARS
@@ -67,18 +68,13 @@ def hot_cards(decided: set[str]) -> tuple[list[dict], list[str]]:
         draft = rec.get("draft") if rec["offer"] == "draft" else None
         cards.append({
             "id": aid, "source": "hot", "type": "reply", "arm": rec["arm"], "method": rec.get("method"),
-            "profile": rec["profile"], "account": _account(rec["profile"]), "draft": draft,
+            "profile": rec["profile"], "account": hot.account_of(rec), "draft": draft,
             "verify": verify_markers(draft or ""),
             "target": {"status_id": str(rec["status_id"]), "url": rec["url"], "author": target.get("author")},
             "context": None, "at": target.get("created_at") or rec["finished_at"],
         })
     cards.sort(key=lambda c: c["at"], reverse=True)
     return cards, problems
-
-
-def _account(profile: str) -> str | None:
-    with config.use_profile(profile):
-        return account_handle()[0] or None
 
 
 def run_cards(decided: set[str], now: datetime | None = None) -> list[dict]:
@@ -120,28 +116,51 @@ def get_queue(req: Request):
             "limit": MAX_WEIGHTED_CHARS}
 
 
+def _draft(aid: str, sid: str | None) -> str:
+    """The draft a verdict judges: memory's copy, or the hot file's before a hot target's first verdict."""
+    try:
+        return memory.action_text(aid)
+    except KeyError:
+        if sid is None:
+            raise
+        return hot.offer(sid).get("draft") or ""
+
+
+# One verdict at a time: each rewrites its run's whole hand-off file, and two exports racing could write
+# an older snapshot over a newer one.
+_VERDICTS = threading.Lock()
+
+
 @route("POST", r"/api/actions/([\w-]+)/review")
 def post_review(req: Request):
     """Record a verdict: `{status: approved|killed|pending, text?, note?, reasons?}`, the body the original
     dashboard sent. `text` is the words to post when they differ from the draft (an edit or a person's own
-    take); `pending` undoes the last verdict. Every verdict rewrites the run's hand-off file."""
+    take); `pending` undoes the last verdict. Every verdict rewrites the run's hand-off file.
+
+    Everything is checked before anything is written, so a refused verdict on a hot target leaves no run."""
     aid, body = req.match[1], req.body
     status, text, note, reasons = body.get("status", ""), body.get("text"), body.get("note") or "", body.get("reasons") or []
+    if status not in memory.REVIEW_STATUSES:
+        raise HTTPError(400, f"status must be one of {sorted(memory.REVIEW_STATUSES)}")
     if text is not None and not isinstance(text, str):
         raise HTTPError(400, "text must be a string or null")
     if not isinstance(note, str):
         raise HTTPError(400, "note must be a string")
     if not isinstance(reasons, list) or not all(isinstance(r, str) and r in KILL_REASONS for r in reasons):
         raise HTTPError(400, f"reasons must be a list drawn from {sorted(KILL_REASONS)}")
-    try:
-        if sid := hot.status_id(aid):
-            hot.ensure_action(sid)
-        if status == "approved" and not (text or memory.action_text(aid)).strip():
-            raise ValueError("there is nothing to post yet: write the reply first")
-        check_approval(aid, status, text)
-        run_id = memory.set_review(aid, status, text, note, reasons=reasons)
-    except KeyError:
-        raise HTTPError(404, f"unknown action {aid}") from None
-    except ValueError as e:
-        raise HTTPError(400, str(e)) from None
-    return {"ok": True, "export": str(export_approved(run_id))}
+    sid = hot.status_id(aid)
+    with _VERDICTS:
+        try:
+            draft = _draft(aid, sid)
+            if status == "approved":
+                if not (text or draft).strip():
+                    raise ValueError("there is nothing to post yet: write the reply first")
+                check_words(text or draft, edited=bool(text))
+            if sid:
+                hot.ensure_action(sid)
+            run_id = memory.set_review(aid, status, text, note, reasons=reasons)
+        except KeyError:
+            raise HTTPError(404, f"unknown action {aid}") from None
+        except ValueError as e:
+            raise HTTPError(400, str(e)) from None
+        return {"ok": True, "export": str(export_approved(run_id))}
