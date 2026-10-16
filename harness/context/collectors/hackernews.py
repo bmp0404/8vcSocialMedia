@@ -54,6 +54,9 @@ def stories(
     }
     if title_only:
         params["restrictSearchableAttributes"] = "title"
+        # Algolia's typo tolerance and prefix matching turned "vLLM" into ~940 stories in 47 days.
+        params["typoTolerance"] = "false"
+        params["queryType"] = "prefixNone"
     url = f"{ALGOLIA}/search_by_date?" + urllib.parse.urlencode(params)
     past = end < datetime.now(timezone.utc) - timedelta(days=2)
     data = client().get_json(url, max_age_s=None if past else 3600)
