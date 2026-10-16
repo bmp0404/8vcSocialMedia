@@ -1,0 +1,28 @@
+name: codeowner-rerun
+
+# Reruns codeowner-approval when a review is submitted or dismissed, so an owner's approval clears the
+# check without a new push. GitHub blocks the merge on the failed run from the pull_request event even
+# if a later run passes, so the review has to rerun that run instead of starting its own.
+on:
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  rerun:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          ids=$(gh run list --workflow codeowner-approval.yml --event pull_request --commit "$HEAD_SHA" --json databaseId --jq '.[].databaseId')
+          for id in $ids; do
+            # A run still in progress may have read the reviews before this one, so let it finish, then rerun it.
+            gh run watch "$id" > /dev/null || true
+            gh run rerun "$id"
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
