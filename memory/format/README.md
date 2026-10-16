@@ -1,6 +1,6 @@
 # Memory log format
 
-This is the log format for the `ns_harness` media object in `digital-objects-framework`. Each loop runs Observe → Decide → Eval → Act, with no Orient step, and every step writes one JSON log. The harness only recommends actions. A separate Grok bot does the posting.
+This is a proposed log format for the Python harness in `harness/`. The harness would write these logs in addition to the SQLite store in `data/harness.db`, not instead of it. Each round writes one JSON log per stage. `observe` covers `harness/sources/` and `harness/orient.py`, `decide` covers `harness/minds/`, `eval` covers `harness/qualify.py`, and `act` records what went to review. The harness only recommends actions. A separate Grok bot does the posting.
 
 Logs embed X API v2 objects unchanged, so a predicted `public_metrics` can be diffed field by field against the actual one. Each `*.example.json` in this directory shows one log type. All ids, names and texts in them are placeholders.
 
@@ -11,7 +11,6 @@ memory/
   inbox/<file>.jsonl          # backfill team drop: raw X API v2 GET /2/tweets/search/recent response pages (data + includes)
   loops/<loop_id>/
     observe.json  stash.json  decide.json  eval.json  act.json
-  outbox/<loop_id>.json       # what the Grok bot polls; identical content to act.json
   outcomes/<tweet_id>.json    # actual metrics for our own posted tweets, from the backfill team
 ```
 
@@ -45,7 +44,7 @@ User objects (`includes.users[]`) use the v2 fields unchanged: `id`, `username`,
 - `own_history[{loop_id, tweet_id, bucket_id, predicted_public_metrics, actual_public_metrics}]`
 - `lessons` is reserved for later and is `null` for now.
 
-**`decide.json`** ([example](decide.example.json)) holds 3 to 5 persona candidates for one `attempt`. Each candidate has `candidate_id`, `persona` (for example `rivalry_troll`, `stat_nerd` or `hype_fan`), `bucket_id`, `action_type` (`post`, `reply`, `quote`, `mention` or `follow`), `request`, `source_tweet_ids[]` and `rationale`.
+**`decide.json`** ([example](decide.example.json)) holds the candidates from every mind for one `attempt`. Each candidate has `candidate_id`, `mind` (a file name in `harness/minds/prompts/`, such as `rivalry_banterer` or `stat_nerd`), `bucket_id`, `action_type` (`post`, `reply`, `quote`, `mention` or `follow`), `request`, `source_tweet_ids[]` and `rationale`.
 
 `request` is a literal X API v2 request, `{method, path, body}`:
 
@@ -62,7 +61,7 @@ User objects (`includes.users[]`) use the v2 fields unchanged: `id`, `username`,
 
 `selected_candidate_id` is `null` when every candidate is vetoed. Decide then retries with the critiques attached, up to a small maximum number of attempts. After that, Act records `none`.
 
-**`act.json`** ([example](act.example.json)) has `decision` (`ship` or `none`), `reason_code` (`null`, `no_fit`, `cooldown`, `all_vetoed` or `risk`), `candidate_id`, `request` and `predicted_public_metrics`. Act also writes the same content to `outbox/<loop_id>.json`. `none` is a first-class action. A `none` decision looks like this:
+**`act.json`** ([example](act.example.json)) has `decision` (`ship` or `none`), `reason_code` (`null`, `no_fit`, `cooldown`, `all_vetoed` or `risk`), `candidate_id`, `request` and `predicted_public_metrics`. `act.json` is a memory record only. The hand-off file for the Grok bot stays `out/approved-run<id>.json`, which `python -m harness review` writes after a human approves. `none` is a first-class action. A `none` decision looks like this:
 
 ```json
 {"schema_version": "1", "loop_id": "loop-20261015T2200Z", "step": "act", "ts": "2026-10-15T22:01:10Z",
@@ -75,7 +74,7 @@ User objects (`includes.users[]`) use the v2 fields unchanged: `id`, `username`,
 
 - X API v2 objects are embedded unchanged. Harness-specific fields sit alongside them, never inside them.
 - `predicted_public_metrics` uses exactly the v2 `public_metrics` keys, so it can be diffed against outcomes.
-- Posting happens only after a positive eval. The harness itself never posts. The Grok bot reads `outbox/`.
+- An action reaches the Grok bot only after a positive eval and a human approval. The harness itself never posts.
 - Whether `impression_count` is available depends on the X API access tier. Non-public and organic metrics exist only for tweets the account owns. The backfill team still has to confirm both points.
 
 ## Open questions

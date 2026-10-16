@@ -7,14 +7,14 @@
   "candidates": [
     {
       "candidate_id": "a1-c1",
-      "persona": "rivalry_troll",
+      "mind": "rivalry_banterer",
       "bucket_id": "rivalry",
       "action_type": "reply",
       "request": {
         "method": "POST",
         "path": "/2/tweets",
         "body": {
-          "text": "Placeholder rivalry_troll reply draft. #CaitlinClark",
+          "text": "Placeholder rivalry_banterer reply draft. #CaitlinClark",
           "reply": {"in_reply_to_tweet_id": "1000000000000000001"}
         }
       },
@@ -23,7 +23,7 @@
     },
     {
       "candidate_id": "a1-c2",
-      "persona": "stat_nerd",
+      "mind": "stat_nerd",
       "bucket_id": "fever",
       "action_type": "quote",
       "request": {
@@ -39,14 +39,14 @@
     },
     {
       "candidate_id": "a1-c3",
-      "persona": "hype_fan",
+      "mind": "meme_lord",
       "bucket_id": "hawkeyes",
       "action_type": "post",
       "request": {
         "method": "POST",
         "path": "/2/tweets",
         "body": {
-          "text": "Placeholder hype_fan post draft. #Hawkeyes"
+          "text": "Placeholder meme_lord post draft. #Hawkeyes"
         }
       },
       "source_tweet_ids": ["1000000000000000004"],
@@ -54,14 +54,14 @@
     },
     {
       "candidate_id": "a1-c4",
-      "persona": "hype_fan",
+      "mind": "community_builder",
       "bucket_id": "hawkeyes",
       "action_type": "mention",
       "request": {
         "method": "POST",
         "path": "/2/tweets",
         "body": {
-          "text": "@example_fan_4 Placeholder hype_fan mention draft. #Hawkeyes"
+          "text": "@example_fan_4 Placeholder community_builder mention draft. #Hawkeyes"
         }
       },
       "source_tweet_ids": ["1000000000000000004"],
