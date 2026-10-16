@@ -81,15 +81,24 @@ def test_clean_text_and_scorable_filter():
     assert is_scorable(post(4))
 
 
-def test_enriched_file_must_cover_every_post(tmp_path):
+def test_enriched_file_supplies_boost_flags_and_eligibility(tmp_path):
     f = tmp_path / "enriched.csv"
-    f.write_text("Post URL,eng_ratio_author_median,boost_suspect\nhttps://x.com/@a/status/1,2.0,true\n",
+    f.write_text("Post URL,boost_suspect,label_eligible,outcome_x\nhttps://x.com/@a/status/1,True,False,9\n",
                  encoding="utf-8")
     posts = [post(1)]
     apply_enriched(posts, f)
-    assert posts[0].target == pytest.approx(math.log(2.0)) and posts[0].boost_suspect is True
+    assert posts[0].boost_suspect is True and posts[0].context_eligible is False
+    assert not is_eligible(posts[0])  # the context label overrides the local rules
     with pytest.raises(ValueError, match="no row"):
         apply_enriched([post(9)], f)
+    bad = tmp_path / "bad.csv"
+    bad.write_text("Post URL,boost_suspect\nx,True\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="label_eligible"):
+        apply_enriched(posts, bad)
+    odd = tmp_path / "odd.csv"
+    odd.write_text("Post URL,boost_suspect,label_eligible\nhttps://x.com/@a/status/1,maybe,True\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="expected True or False"):
+        apply_enriched([post(1)], odd)
 
 
 def test_sample_takes_both_tiers_from_accounts_that_have_both():
@@ -251,3 +260,12 @@ def test_leakage_text_measures():
     assert leakage.verbatim("a b c d e f g h i", "A b c d e f g h, then more")
     assert not leakage.verbatim("a b c", "a b c")  # too short to call verbatim
     assert leakage.halves("one two three four five") == ("one two", "three four five")
+
+
+def test_paired_difference_for_a_relative_predictor_uses_only_pairs_from_one_call():
+    posts = [post(1, engagement=500), post(2, engagement=1), post(3, engagement=500), post(4, engagement=1)]
+    a = {posts[0].id: Prediction(10, {"call": "x"}), posts[1].id: Prediction(5, {"call": "x"}),
+         posts[2].id: Prediction(3, {"call": "y"}), posts[3].id: Prediction(1, {"call": "y"})}
+    b = {p.id: Prediction(s) for p, s in zip(posts, [1, 0, 0, 1])}
+    assert backtest.paired_difference(posts, a, b, n_boot=20, seed=0, relative=True)["value"] == 0.5
+    assert backtest.paired_difference(posts, a, b, n_boot=20, seed=0)["value"] == 0.25

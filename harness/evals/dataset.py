@@ -12,6 +12,7 @@ Eligibility removes posts whose outcome says little about their text:
 
 import csv
 import html
+import os
 import math
 import re
 import statistics
@@ -23,7 +24,9 @@ from harness import config
 from harness.evals.settings import BacktestConfig
 
 DATASET_PATH = config.ROOT / "data" / "devtools_virality_30d.csv"
-ENRICHED_PATH = config.ROOT / "data" / "context" / "devtools_enriched.csv"
+# The context worker's enrichment (sam/context-dynamics, data/context/). Only its boost flags and its
+# eligibility label are read here; its pre_* columns are features and its outcome_* columns leak.
+ENRICHED_PATH = Path(os.getenv("HARNESS_ENRICHED") or config.ROOT / "data" / "context" / "devtools_enriched.csv")
 CATEGORIES = ("Super Viral", "Medium Viral", "Deadweight")
 TWITTER_EPOCH_MS = 1288834974657  # same decoding as harness/context/snowflake.py on sam/context-dynamics
 # Thresholds live in settings.BacktestConfig. Their evidence:
@@ -56,8 +59,9 @@ class Post:
     created_at: datetime | None = None  # decoded from the status id
     minutes_after_previous: float | None = None  # gap to the same account's previous post in the CSV
     age_hours: float | None = None  # at the newest post in the CSV, which stands in for scrape time
-    target: float = 0.0  # log1p(engagement) - log1p(account median), or the enriched equivalent
+    target: float = 0.0  # log1p(engagement) - log1p(account median)
     boost_suspect: bool | None = None  # None until the context worker's flags are loaded
+    context_eligible: bool | None = None  # the context worker's label_eligible, when loaded
 
     @property
     def clean_text(self) -> str:
@@ -131,20 +135,31 @@ def attach_targets(posts: list[Post]) -> None:
 
 
 def apply_enriched(posts: list[Post], path: Path) -> None:
-    """Take the context worker's normalized target and boost flags, keyed by Post URL."""
+    """Take the context worker's boost flags and eligibility label, keyed by Post URL.
+
+    Its `label_eligible` marks mature posts that aren't thread continuations, using fxtwitter's
+    replying_to where it has it, which catches self-replies the 3-minute rule misses.
+    """
     with open(path, encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
-    need = {"Post URL", "eng_ratio_author_median", "boost_suspect"}
+    need = {"Post URL", "boost_suspect", "label_eligible"}
     if not rows or need - set(rows[0]):
-        raise ValueError(f"{path} must have columns {sorted(need)}; found {sorted(rows[0]) if rows else 'no rows'}")
+        missing = sorted(need - set(rows[0])) if rows else "every column"
+        raise ValueError(f"{path} lacks {missing}; the eval reads boost_suspect and label_eligible from it")
     by_id = {r["Post URL"]: r for r in rows}
+
+    def flag(value: str, column: str, pid: str) -> bool:
+        v = value.strip().lower()
+        if v not in {"true", "false"}:
+            raise ValueError(f"{path}: {column}={value!r} for {pid}; expected True or False")
+        return v == "true"
+
     for p in posts:
         r = by_id.get(p.id)
         if r is None:
             raise ValueError(f"{path} has no row for {p.id}; regenerate it from the current dataset")
-        # log keeps the same ordering as the ratio and puts it on the scale attach_targets uses.
-        p.target = math.log(max(float(r["eng_ratio_author_median"]), 1e-9))
-        p.boost_suspect = r["boost_suspect"].strip().lower() in {"1", "true", "yes"}
+        p.boost_suspect = flag(r["boost_suspect"], "boost_suspect", p.id)
+        p.context_eligible = flag(r["label_eligible"], "label_eligible", p.id)
 
 
 def is_scorable(p: Post, cfg: BacktestConfig = BacktestConfig()) -> bool:
@@ -162,6 +177,8 @@ def is_young(p: Post, cfg: BacktestConfig = BacktestConfig()) -> bool:
 
 
 def is_eligible(p: Post, cfg: BacktestConfig = BacktestConfig()) -> bool:
+    if p.context_eligible is not None:
+        return is_scorable(p, cfg) and p.context_eligible
     return is_scorable(p, cfg) and not is_thread_continuation(p, cfg) and not is_young(p, cfg)
 
 

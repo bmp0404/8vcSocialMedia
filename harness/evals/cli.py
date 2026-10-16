@@ -42,6 +42,7 @@ def cmd_backtest(a) -> None:
     predictors = build(a.predictors.split(","), _provider(a), models, Path(a.panel), pool, a.seed, a.memory, a.batch)
     meta = {"at": datetime.now().isoformat(timespec="seconds"), "provider": _provider(a), "models": models,
             "panel_path": a.panel, "memory": a.memory, "config": asdict(cfg), "n_eligible": len(pool),
+            "enriched_csv": str(dataset.ENRICHED_PATH) if dataset.ENRICHED_PATH.exists() else None,
             "dropped": dropped}
     out = backtest.default_path(meta)
     report = backtest.run(predictors, picked, {p.id: p for p in posts}, seed=a.seed, n_boot=a.boot,
@@ -70,9 +71,11 @@ def cmd_rescore(a) -> None:
             extras[name] = {k: v for k, v in r.items()
                             if k not in {"all", "without_boost_suspect", "category_balanced", "predictions"}}
     meta = {k: v for k, v in old.items() if k not in
-            {"protocol", "n_sampled", "n_scored_by_all", "sample_ids", "sampled_categories", "target_source", "seed",
+            {"protocol", "n_sampled", "n_scored_by_all", "sample_ids", "sampled_categories", "target_source",
+             "boost_flags", "seed",
              "results", "comparisons"}}
     meta["rescored_at"] = datetime.now().isoformat(timespec="seconds")
+    meta["enriched_csv"] = str(dataset.ENRICHED_PATH) if dataset.ENRICHED_PATH.exists() else None
     report = backtest.summarize(picked, preds, extras, by_id, seed=old["seed"], n_boot=a.boot, meta=meta)
     backtest.write(report, Path(a.report))
     print(backtest.markdown(report))
