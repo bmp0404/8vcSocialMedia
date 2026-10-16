@@ -111,10 +111,34 @@ uv run python -m harness improve stop                             # SIGTERM, the
 
 `--threads-dir`, `--watch-dir`, `--hot-dir` and `--outcomes-db` point the loop at another checkout's watcher. `--instrument-calls` and `--experiment-calls` cap LLM calls per cycle (300 and 800 by default).
 
+## The first live cycles
+
+On 2026-10-16 the loop ran from this worktree against the platform watcher's files (`--threads-dir`, `--watch-dir`, `--hot-dir`, `--outcomes-db`), on the real gateway.
+
+| Cycle | Started (UTC) | What happened |
+| --- | --- | --- |
+| 1 | 14:51 | Facts: 216 for wnba from ESPN; 310 for devtools from 19 accounts, 5 left out because fxtwitter answered 404. Fold: no watcher thread has a +48h read yet. Instruments: none has an outcome after its cutoff. The `styled-reply` screen started and hung for over 20 minutes; the process was killed. |
+| 2 | 15:24 | Marked cycle 1's experiments step interrupted and ran it again. The screen finished in 4 minutes on 280 calls plus 4 pre-flight probes. |
+| 3 | 15:29 | Facts, fold and the decided spec were all skipped by key: 0 calls. |
+
+The screen compared the styled prompt with the persona call on 20 WNBA threads (18 fixture threads and 2 of the watcher's):
+
+| Metric | Persona call | Styled prompt | Difference, 95% CI |
+| --- | --- | --- | --- |
+| Opus 5.5 detection (primary, lower is better) | 0.95 | 0.80 | −0.15 [−0.30, −0.00] |
+| GPT detector (guardrail) | 0.75 | 0.30 | −0.45 [−0.65, −0.25] |
+| Veto pass rate (guardrail) | 0.65 | 0.85 | +0.20 [−0.05, +0.45] |
+| Reply length, characters | 215 | 67 | −148 |
+
+BH passed it (p = 0.044), but its lower bound, +0.000, didn't clear the noise floor of 0.05 between the champion and its repeat, so the record is inconclusive and the spec is done. More threads would decide it: the persona call is found almost every time, and the styled prompt still four times in five.
+
+Three defects came out of the live runs, each fixed with a test. The devtools facts refresh died on the first unreadable account (13:58 run). Every gateway GPT model answered 429 `usage_limit_reached` from 13:50 to about 14:50, so the loop now probes a phase's models before spending its budget, and deferred the screen twice. And cycle 1's hang came from compounding retries: `MeteredLLM` retried four times and the SDK twice more inside each attempt, with backoff sleeps, against a GPT pool still answering some calls with 429. Cycle 2 ran on the fixed client and logged 15 such retries without stalling.
+
 ## Not verified
 
 - No `_sgu_` reply has been ranked yet, so every `_sgu_` scorer has run only on synthetic outcomes in the tests.
 - No watcher thread has had a +48h read yet. The fold, and every instrument scored on watcher threads, has run only on synthetic threads. Nothing has been demoted or held live.
 - The label model's live labeling call (`effort: low` through `extra_body`) has not run in this loop; only its fit on stored labels has.
-- No action experiment ran live: the GPT detector's pool was out of quota for the whole batch, so the queued spec waited at its pre-flight.
+- The confirmation phase, the weekly cap, stack checks and instrument demotion have run only in tests: the one live screen was inconclusive, and no instrument has outcomes yet.
+- The long-running mode ran live for one wait and a SIGTERM; no scheduled six-hour cycle, and no morning report at 11:00 UTC, has run unattended.
 - The 24-hour reply window, the 20-outcome threshold, the 30 and 40 cluster caps, 21 days to stale and the 6-hour cycle are policy.
