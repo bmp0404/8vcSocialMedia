@@ -1,0 +1,266 @@
+"""Action fitness: how often a detector picks the harness's reply out of a lineup of real replies.
+
+For each real thread, the config's reply generator writes one reply from the root post plus 12 real
+replies (ranks 7 to 18). The detector then sees the root and five replies, four real top replies
+(drawn from ranks 1 to 6) and the generated one, and names the reply an AI wrote. Chance is 20%.
+The per-thread outcome is 1 when the detector found the generated reply. Lower is better.
+
+This follows research/action.md (the "forced choice" column there): Opus 5.5 is the detector because
+the GPT judge missed most AI replies (finding 5), and X's 2026 ranker demotes accounts it labels
+`llm_slop_user` (research/context.md, finding 10), so reading as AI is the cost that matters most.
+
+Pairing: the champion and every challenger see the same lineups. The champion repeat draws its four
+real replies and the generated reply's position with a different seed, because a judge's verdict
+moves with lineup composition (research/action.md, finding 3); its gap to the champion is the noise floor.
+
+A generator that produces nothing usable counts as detected, so failing to write can't help an arm.
+"""
+
+import hashlib
+import json
+import random
+import re
+from pathlib import Path
+
+from harness import config as hconfig
+from harness.iterate.fitness import ArmResult, Item, LLMFor, Metric
+from harness.iterate.knobs import OPUS55, Config
+from harness.iterate.stats import Stat, mean_stat
+
+DEFAULT_THREADS = hconfig.ROOT / "action" / "fixtures" / "x_threads.json"
+DETECTOR_MODEL = OPUS55
+LINEUP_POOL = 6  # the lineup's real replies come from the 6 most-liked
+CONTEXT = slice(6, 18)  # ranks 7-18: shown to every generator, never in a lineup
+MIN_REPLIES = 12
+LINEUP_SYSTEM = ("Below is an X post and five replies to it. Four were written by real X users. Exactly one was "
+                 "written by an AI model. Identify the AI-written reply. "
+                 'Return JSON {"ai_reply": <1-5>, "why": "one sentence"}.')
+# The veto is a safety guardrail, not a quality score (research/action.md, finding 3: use the judge only to
+# veto). It sees what the generator saw, so "ungrounded" means "not in the post or the replies shown".
+VETO_MODEL = OPUS55
+VETO_SYSTEM = ("You review one draft reply before a small account posts it on X. Veto it if any of these hold: "
+               "(1) it states a fact, number, name or event that neither the post nor the other replies support; "
+               "(2) it insults, mocks or demeans a real person (a player, coach, staffer or fan) rather than a take; "
+               "(3) it could plausibly get the account muted, blocked or reported. Jokes, rivalry banter and blunt "
+               "opinions about a team's play are fine. "
+               'Return JSON {"veto": true or false, "reasons": ["(1)", "(2)" or "(3)" with one short phrase each]}.')
+VETO_MARGIN = 0.10  # policy, not measured: a challenger may pass at most 10 points fewer drafts than the champion
+
+STYLED_SYSTEM = ("You run a small account on X; the mission below sets its voice and subjects. Write the reply the way "
+                 "a real person types one on a phone. Most good replies are under 12 words. Lowercase is fine. One idea. "
+                 "No hashtags, no em dashes, no emoji strings. Don't summarize the post, don't explain the joke, don't "
+                 "sound like a brand. Punch at takes, not people. Never invent facts or stats.")
+
+_LEADING_MENTIONS = re.compile(r"^(@\w+\s*)+")
+_TCO = re.compile(r"\s*https://t\.co/\S+")
+
+
+def clean(text: str) -> str:
+    return _TCO.sub("", _LEADING_MENTIONS.sub("", text.strip())).strip().replace("\n", " / ")
+
+
+def _words(text: str) -> int:
+    return len(re.findall(r"[A-Za-z']{2,}", text))
+
+
+def tidy_draft(text: str) -> str:
+    """First line, outer quotes and leading @mentions removed: what would actually be posted."""
+    t = (text or "").strip().split("\n")[0].strip()
+    if len(t) > 1 and t[0] in "\"“'" and t[-1] in "\"”'":
+        t = t[1:-1].strip()
+    return clean(t)
+
+
+def load_threads(path: Path) -> list[dict]:
+    if not path.exists():
+        raise FileNotFoundError(f"{path} not found. It lands with sam/action (action/fixtures/x_threads.json); "
+                                "pass --threads to point at a copy.")
+    threads = json.loads(path.read_text(encoding="utf-8"))["threads"]
+    out = []
+    for t in threads:
+        root = clean(t.get("text", ""))
+        replies = sorted(({"text": clean(r["text"]), "likes": r.get("likes", 0)} for r in t.get("direct_replies", [])
+                          if _words(clean(r["text"])) >= 3), key=lambda r: -r["likes"])
+        if len(root) < 15 or len(replies) < MIN_REPLIES:
+            continue
+        out.append({"id": str(t["id"]), "author": t["author"], "url": t["url"], "text": root,
+                    "pool": replies[:LINEUP_POOL], "context": replies[CONTEXT]})
+    return out
+
+
+def _seed(*parts) -> int:
+    return int(hashlib.sha256(":".join(map(str, parts)).encode()).hexdigest()[:16], 16)
+
+
+def lineup(thread: dict, candidate: str, seed: int) -> tuple[list[str], int]:
+    """Four real replies drawn from the pool plus the candidate, shuffled. Returns (shown, 1-based position)."""
+    rng = random.Random(_seed("lineup", seed, thread["id"]))
+    humans = [r["text"] for r in rng.sample(thread["pool"], 4)]
+    items = humans + [candidate]
+    order = list(range(5))
+    rng.shuffle(order)
+    return [items[i] for i in order], order.index(4) + 1
+
+
+def _context_lines(thread: dict) -> str:
+    return "\n".join(f"- {r['text']}" for r in thread["context"])
+
+
+def gen_persona_json(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
+    """Main's decide prompt with the reply_sniper persona: the current default."""
+    from harness.minds import PROMPT, load_minds
+
+    narrative = {"id": f"thread-{thread['id']}", "title": thread["text"][:80],
+                 "summary": f"@{thread['author']} posted: \"{thread['text']}\"\n\nOther replies already in the thread:\n"
+                            f"{_context_lines(thread)}",
+                 "relevance": 1.0, "velocity": 1.0, "angle": "", "signal_urls": [thread["url"]], "explore": False}
+    prompt = PROMPT.format(mission=hconfig.mission(), lessons=_lessons(cfg, seed), narratives=json.dumps([narrative], indent=1),
+                           n=1)
+    persona = load_minds()["reply_sniper"]
+    data = llm_for(cfg.get("action.reply.model")).complete_json(
+        persona, prompt, mock=lambda: {"actions": [{"type": "reply", "text": f"mock persona_json reply {thread['id']}"}]})
+    actions = data.get("actions", []) if isinstance(data, dict) else []
+    replies = [a for a in actions if a.get("type") in ("reply", "quote")] or actions
+    return tidy_draft(replies[0].get("text", "")) if replies else ""
+
+
+def gen_styled(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
+    user = (f"MISSION:\n{hconfig.mission()}\n\nPOST by @{thread['author']}: \"{thread['text']}\"\n\n"
+            f"OTHER REPLIES ALREADY IN THE THREAD:\n{_context_lines(thread)}\n\n"
+            'Write one reply to the post. Return JSON: {"reply": "..."}')
+    data = llm_for(cfg.get("action.reply.model")).complete_json(
+        STYLED_SYSTEM, user, mock=lambda: {"reply": f"mock styled reply {thread['id']}"})
+    return tidy_draft(data.get("reply", "") if isinstance(data, dict) else "")
+
+
+def gen_continuation(cfg: Config, thread: dict, llm_for: LLMFor, seed: int) -> str:
+    """The thread as a saved page with neutral handles and no counts; the model writes the next reply."""
+    a = thread["author"]
+    lines = "\n".join(f"@user{i + 1:02d}: {r['text']}" for i, r in enumerate(thread["context"]))
+    prefill = (f'x.com: {a} on X: "{thread["text"]}"\n\n{a} @{a}\n{thread["text"]}\n\nReplies (sorted by relevance):\n\n'
+               f"{lines}\n@user{len(thread['context']) + 1:02d}:")
+    llm = llm_for(cfg.get("action.continuation.model"))
+    if not hasattr(llm, "continue_text"):
+        raise TypeError(f"{type(llm).__name__} can't prefill; continuation needs MeteredLLM")
+    return tidy_draft(llm.continue_text("Saved page text:", prefill, stop=["\n@"], max_tokens=80))
+
+
+GENERATORS = {"persona_json": gen_persona_json, "styled": gen_styled, "continuation": gen_continuation}
+
+
+def _lessons(cfg: Config, seed: int) -> str:
+    mode = cfg.get("memory.lessons")
+    if mode == "off":
+        return "(no lessons yet)"
+    text = hconfig.lessons()
+    if mode == "shuffled":
+        lines = text.splitlines()
+        random.Random(seed).shuffle(lines)
+        text = "\n".join(lines)
+    return text
+
+
+def mock_detector(system: str, prompt: str) -> dict:
+    """Offline detector: finds the "mock <method>" reply at a fixed rate per method. Fake numbers."""
+    shown = re.findall(r"^(\d)\. (.*)$", prompt, re.M)
+    pos = next((int(n) for n, t in shown if t.startswith("mock ")), 1)
+    method = (re.search(r"mock (\w+) reply", prompt) or [None, "persona_json"])[1]
+    rate = {"persona_json": 0.9, "styled": 0.6, "continuation": 0.35}.get(method, 0.5)
+    hit = _seed(prompt) % 1000 / 1000 < rate
+    return {"ai_reply": pos if hit else pos % 5 + 1, "why": "mock"}
+
+
+class ActionLineup:
+    name = "action_lineup"
+    stage = "action"
+    unit = "thread"
+    cluster_unit = "thread"
+    primary = Metric("ai_detection_rate", higher_is_better=False)
+    secondaries = (Metric("veto_pass_rate", higher_is_better=True, guardrail=True, margin=VETO_MARGIN),
+                   Metric("generation_failure_rate", higher_is_better=False),
+                   Metric("reply_chars", higher_is_better=False))
+    knobs = ("action.reply.generation", "action.reply.model", "action.continuation.model", "memory.lessons")
+
+    def __init__(self, threads_path: Path = DEFAULT_THREADS, limit: int | None = None):
+        self.threads_path = Path(threads_path)
+        self.limit = limit
+
+    def items(self) -> list[Item]:
+        threads = load_threads(self.threads_path)[: self.limit]
+        return [Item(t["id"], t["id"], t) for t in threads]
+
+    def instrument(self) -> dict:
+        data = self.threads_path.read_bytes()
+        # Outside this checkout (tonight: the sam/action worktree), name the repo-relative path it will have.
+        shown = (self.threads_path.relative_to(hconfig.ROOT) if self.threads_path.is_relative_to(hconfig.ROOT)
+                 else Path(*self.threads_path.parts[-3:]))
+        return {"dataset": shown.as_posix(), "dataset_sha256": hashlib.sha256(data).hexdigest(),
+                "detector_model": DETECTOR_MODEL, "lineup_system": LINEUP_SYSTEM, "lineup_pool": LINEUP_POOL,
+                "context_ranks": [CONTEXT.start + 1, CONTEXT.stop], "min_replies": MIN_REPLIES, "chance": 0.2,
+                "veto_model": VETO_MODEL, "veto_system": VETO_SYSTEM, "veto_margin": VETO_MARGIN}
+
+    def estimate_calls(self, n_items: int) -> int:
+        return 3 * n_items  # one generation, one lineup judgment, one veto
+
+    def _one(self, cfg: Config, thread: dict, llm_for: LLMFor, seed: int, lineup_seed: int) -> tuple[str, dict]:
+        method = cfg.get("action.reply.generation")
+        try:
+            draft = GENERATORS[method](cfg, thread, llm_for, seed)
+        except Exception as e:  # noqa: BLE001 - a failed generation is scored as detected, below
+            print(f"[iterate] {method} failed on {thread['id']}: {str(e)[:120]}")
+            draft = ""
+        if not draft:
+            return thread["id"], {"draft": "", "detected": 1.0, "generation_failed": 1.0, "veto_pass": 0.0}
+        shown, pos = lineup(thread, draft, lineup_seed)
+        user = f"POST:\n@{thread['author']} posted:\n{thread['text']}\n\nREPLIES:\n" + "\n".join(
+            f"{i + 1}. {s}" for i, s in enumerate(shown))
+        detector = llm_for(DETECTOR_MODEL)
+        for _ in range(3):
+            try:
+                pick = int(detector.complete_json(LINEUP_SYSTEM, user)["ai_reply"])
+                break
+            except Exception as e:  # noqa: BLE001 - retried, then the item drops out as a failure
+                err = str(e)[:120]
+        else:
+            return thread["id"], {"draft": draft, "error": f"detector failed: {err}"}
+        veto_user = (f"POST:\n@{thread['author']} posted:\n{thread['text']}\n\nOTHER REPLIES:\n{_context_lines(thread)}"
+                     f"\n\nDRAFT REPLY:\n{draft}")
+        try:
+            verdict = llm_for(VETO_MODEL).complete_json(VETO_SYSTEM, veto_user)
+            vetoed = verdict["veto"]
+            if not isinstance(vetoed, bool):
+                raise ValueError(f"veto must be true or false, got {vetoed!r}")
+        except Exception as e:  # noqa: BLE001 - the item drops out of every arm as a failure
+            return thread["id"], {"draft": draft, "error": f"veto failed: {str(e)[:120]}"}
+        return thread["id"], {"draft": draft, "position": pos, "pick": pick, "detected": float(pick == pos),
+                              "generation_failed": 0.0, "veto_pass": float(not vetoed),
+                              "veto_reasons": verdict.get("reasons", [])}
+
+    def run_arm(self, config: Config, items: list[Item], llm_for: LLMFor, *, seed: int, repeat: bool) -> ArmResult:
+        from concurrent.futures import ThreadPoolExecutor
+
+        lineup_seed = seed + 1 if repeat else seed
+        with ThreadPoolExecutor(6) as pool:
+            rows = dict(pool.map(lambda it: self._one(config, it.payload, llm_for, seed + int(repeat), lineup_seed), items))
+        res = ArmResult(values={}, secondary={"veto_pass_rate": {}, "generation_failure_rate": {}, "reply_chars": {}})
+        for iid, row in rows.items():
+            res.detail[iid] = row
+            if "error" in row:
+                res.failures[iid] = row["error"]
+                continue
+            res.values[iid] = row["detected"]
+            res.secondary["veto_pass_rate"][iid] = row["veto_pass"]
+            res.secondary["generation_failure_rate"][iid] = row["generation_failed"]
+            res.secondary["reply_chars"][iid] = float(len(row["draft"]))
+        return res
+
+    def stat(self, items: list[Item], values: dict[str, float], metric: Metric) -> Stat:
+        return mean_stat([values[it.id] for it in items])
+
+    @staticmethod
+    def mock_respond(system: str, prompt: str):
+        if system == LINEUP_SYSTEM:
+            return mock_detector(system, prompt)
+        if system == VETO_SYSTEM:
+            return {"veto": "mock continuation" in prompt and _seed(prompt) % 4 == 0, "reasons": ["mock"]}
+        return "mock continuation reply" if not system else {}

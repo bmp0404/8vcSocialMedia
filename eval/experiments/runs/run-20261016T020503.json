@@ -1,0 +1,39 @@
+{
+ "run_id": "run-20261016T020503",
+ "started_at": "2026-10-16T02:05:03+00:00",
+ "finished_at": "2026-10-16T02:06:00+00:00",
+ "provider": "anthropic",
+ "champion": "cfg-17e3b75195e4",
+ "max_calls": 200,
+ "estimated_calls": 153,
+ "llm_calls": 153,
+ "by_arm": {
+  "action_lineup:champion": {
+   "llm_calls": 51,
+   "input_tokens": 5575,
+   "output_tokens": 17117,
+   "errors": 0
+  },
+  "action_lineup:champion_repeat": {
+   "llm_calls": 51,
+   "input_tokens": 5959,
+   "output_tokens": 16846,
+   "errors": 0
+  },
+  "action_lineup:cfg-f544f07093c8": {
+   "llm_calls": 51,
+   "input_tokens": 14563,
+   "output_tokens": 6749,
+   "errors": 0
+  }
+ },
+ "bh": {
+  "q": 0.1,
+  "family_size": 1,
+  "rejected": 1
+ },
+ "experiments": [
+  "exp-20261016-action-f691d2"
+ ],
+ "note": "persona JSON vs continuation on the lineup fitness, with the veto guardrail"
+}
