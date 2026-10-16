@@ -83,8 +83,13 @@ def _cap(pairs: list, rng: random.Random) -> list:
     return sorted(rng.sample(pairs, MAX_PAIRS_PER_GROUP), key=lambda p: p.pair_id)
 
 
-def eligible_replies(corpus: Corpus) -> dict[str, list[Item]]:
-    """Root status ID -> sampled direct replies that a pair may use."""
+def both_mature(reply: Item, root: Item) -> bool:
+    return reply.mature and root.mature
+
+
+def eligible_replies(corpus: Corpus, settled=both_mature) -> dict[str, list[Item]]:
+    """Root status ID -> sampled direct replies that a pair may use. `settled(reply, root)` says whether a
+    reply's likes count; the frozen benchmark needs both read 48 hours or more after they were posted."""
     by_root = defaultdict(list)
     for item in corpus.items:
         if item.thread_root is None or item.parent_id != item.thread_root:
@@ -94,17 +99,17 @@ def eligible_replies(corpus: Corpus) -> dict[str, list[Item]]:
             raise ValueError(f"reply {item.status_id} points at root {item.thread_root}, which is not in the corpus")
         if item.author.lower() == root.author.lower() or not reply_body(item.text):
             continue  # the root's own author, or a reply with no words of its own
-        if not (item.mature and root.mature):
+        if not settled(item, root):
             continue
         by_root[item.thread_root].append(item)
     return by_root
 
 
 def reply_pairs(corpus: Corpus, min_likes: int = REPLY_MIN_LIKES, ratio: float = REPLY_RATIO,
-                cap: bool = True) -> list[Pair]:
+                cap: bool = True, settled=both_mature) -> list[Pair]:
     rng = random.Random(SEED)
     out = []
-    for root_id, replies in sorted(eligible_replies(corpus).items()):
+    for root_id, replies in sorted(eligible_replies(corpus, settled).items()):
         root = corpus.get(root_id)
         coverage = next((r.thread_coverage for r in replies if r.thread_coverage is not None), None)
         split = "dev" if root.created_at < DEV_BEFORE else "test"
