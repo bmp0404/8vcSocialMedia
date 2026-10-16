@@ -1,0 +1,159 @@
+/* Clearance design tokens. Direction: an air-traffic flight-strip board for media actions.
+   Each recommendation is a strip in a bay; a person clears it, strikes it, or releases a held one.
+   Change values here, not in components. DESIGN.md explains each choice. */
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/atkinson-next-latin.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/atkinson-next-latin-ext.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "B612 Mono";
+  src: url("../fonts/b612-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "B612 Mono";
+  src: url("../fonts/b612-mono-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Board and paper */
+  --board: #d3d8db;        /* the aluminium strip board: page background */
+  --board-deep: #c6cdd1;   /* rail, wells cut into the board */
+  --strip: #fafbfa;        /* strip paper */
+  --strip-inset: #eef1f2;  /* wells inside a strip: evidence, logs */
+  --rule: #c3cacf;         /* printed rules on a strip */
+  --rule-strong: #9aa3a9;
+
+  /* Ink. Pairs checked at WCAG AA: ink-2 on board 6.7:1, ink-3 on strip 6.5:1. */
+  --ink: #121619;
+  --ink-2: #3d464c;        /* secondary text on the board */
+  --ink-3: #545d63;        /* secondary text on strips */
+  --ink-faint: #8c959b;    /* decoration only, never body text */
+
+  /* Strip holders: the lane a strip belongs to */
+  --reply: #2b67ae;
+  --post: #c7900f;
+  --human: #2a2f33;
+  --held: #8c959b;
+
+  /* Marks a controller makes */
+  --cleared: #1c7a4a;
+  --struck: #c0322a;
+  --warn: #855a00;         /* amber as text: 5.2:1 on warn-wash, 5.3:1 on strip-inset, 5.8:1 on strip.
+                              Under 4.5:1 on board and board-deep, so text there sits on warn-wash. */
+  --cleared-wash: #e3f1e9;
+  --struck-wash: #f8e5e3;
+  --warn-wash: #f6edd8;
+
+  --focus: #121619;
+  --overlay: rgb(18 22 25 / 0.42);
+
+  /* X's own light palette, used only inside the post preview */
+  --x-bg: #ffffff;
+  --x-ink: #0f1419;
+  --x-muted: #536471;
+  --x-line: #eff3f4;
+  --x-blue: #1d9bf0;
+  --x-yellow: #ffd400;
+  --x-red: #f4212e;
+
+  /* Type */
+  --font-ui: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "B612 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; /* labels, fields, stamps */
+  /* Paths, knob names, hashes and logs. B612 Mono gives "." a full cell with narrow glyphs, so
+     "action.reply.generation" reads as "action. reply. generation"; the system mono doesn't. */
+  --font-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-x: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --t-label: 10.5px;  /* mono field labels, uppercase */
+  --t-small: 12.5px;
+  --t-body: 14px;
+  --t-x: 15px;        /* X's post text size */
+  --t-lead: 16px;
+  --t-title: 21px;
+  --t-num: 26px;
+
+  /* Space: 4px steps */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+
+  --r-strip: 4px;
+  --r-control: 6px;
+  --r-x: 16px;
+  --holder: 6px;      /* width of a strip's coloured edge */
+
+  /* Motion. Curves from the animate skill; nothing over 320ms. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --d-press: 120ms;
+  --d-fast: 160ms;
+  --d-base: 220ms;
+  --d-sheet: 320ms;
+
+  --shadow-strip: 0 1px 0 rgb(18 22 25 / 0.08), 0 1px 2px rgb(18 22 25 / 0.06);
+  --shadow-lift: 0 1px 0 rgb(18 22 25 / 0.06), 0 8px 24px rgb(18 22 25 / 0.14);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --board: #0f1316;
+    --board-deep: #0a0d0f;
+    --strip: #192024;
+    --strip-inset: #12181b;
+    --rule: #2c353b;
+    --rule-strong: #46525a;
+
+    --ink: #e4e9eb;
+    --ink-2: #a3aeb5;
+    --ink-3: #96a1a8;
+    --ink-faint: #5b666d;
+
+    --reply: #5c9be6;
+    --post: #e4b23c;
+    --human: #c9d1d6;
+    --held: #69747b;
+
+    --cleared: #45c07d;
+    --struck: #f06a5e;
+    --warn: #e4b23c;
+    --cleared-wash: #14291e;
+    --struck-wash: #331917;
+    --warn-wash: #2e2512;
+
+    --focus: #e4e9eb;
+    --overlay: rgb(0 0 0 / 0.6);
+
+    --x-bg: #000000;
+    --x-ink: #e7e9ea;
+    --x-muted: #71767b;
+    --x-line: #2f3336;
+
+    --shadow-strip: 0 1px 0 rgb(0 0 0 / 0.4);
+    --shadow-lift: 0 1px 0 rgb(0 0 0 / 0.5), 0 12px 32px rgb(0 0 0 / 0.5);
+  }
+}

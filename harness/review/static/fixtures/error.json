@@ -1,0 +1,37 @@
+{
+ "about": "Each view's main route failing, with the server's error text.",
+ "routes": {
+  "GET /api/meta": {
+   "provider": "anthropic",
+   "model": "claude-sonnet-5-5",
+   "sources": ["espn_news", "google_news", "x_targets"],
+   "account_handle": null,
+   "kill_reasons": {
+    "off_message": "off-message",
+    "factually_shaky": "shaky fact",
+    "stale_story": "stale story",
+    "wrong_target": "wrong target",
+    "slop": "reads as AI",
+    "tone": "wrong tone",
+    "other": "other"
+   }
+  },
+  "GET /api/runs": [
+   {
+    "id": 31,
+    "started_at": "@now-14m",
+    "provider": "anthropic",
+    "sources": "espn_news,google_news,x_targets",
+    "n_actions": 9,
+    "n_approved": 1,
+    "n_killed": 1
+   }
+  ]
+ },
+ "errors": {
+  "GET /api/runs/31": {
+   "status": 500,
+   "error": "OperationalError: no such table: actions (delete data/harness.db after a schema change)"
+  }
+ }
+}

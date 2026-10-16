@@ -2,251 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Harness Review</title>
-<style>
-  :root {
-    --bg: #f6f6f4; --card: #fff; --ink: #1b1b1a; --muted: #6b6b66; --line: #e3e3de;
-    --accent: #e8572a; --ok: #1f8a4c; --bad: #c0392b; --warn: #b7791f; --focus: #2b6cb0;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141413; --card: #1e1e1c; --ink: #ececea; --muted: #9a9a94; --line: #33332f;
-      --accent: #f07a50; --ok: #4cc283; --bad: #ef6b5e; --warn: #e0a84a; --focus: #6aa7f0;
-    }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line);
-           padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
-  h1 { font-size: 16px; margin: 0; }
-  h1 span { color: var(--accent); }
-  select, button, input, textarea { font: inherit; color: inherit; }
-  select, input { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
-  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-  .tabs button { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
-  .tabs button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .spacer { flex: 1; }
-  .ghost { border: 1px solid var(--line); background: var(--card); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
-  main { max-width: 860px; margin: 0 auto; padding: 16px; display: grid; gap: 12px; }
-  .hint { color: var(--muted); font-size: 12px; text-align: center; padding: 4px 16px 0; }
-  .empty { color: var(--muted); text-align: center; padding: 48px 0; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;
-          display: grid; gap: 10px; border-left: 4px solid var(--line); }
-  .card.focus { outline: 2px solid var(--focus); outline-offset: 1px; }
-  .card.approved { border-left-color: var(--ok); }
-  .card.killed { border-left-color: var(--bad); opacity: .65; }
-  .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 12px; color: var(--muted); }
-  .score { font-weight: 700; font-size: 13px; color: var(--ink); background: var(--bg); border-radius: 6px; padding: 2px 8px; }
-  .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; text-transform: uppercase; letter-spacing: .03em; font-size: 11px; color: var(--ink); }
-  .veto { color: var(--warn); font-weight: 600; }
-  .status-approved { color: var(--ok); font-weight: 600; }
-  .status-killed { color: var(--bad); font-weight: 600; }
-  .target { overflow-wrap: anywhere; }
-  .target a { color: var(--focus); }
-  textarea { width: 100%; min-height: 64px; resize: vertical; background: var(--bg); border: 1px solid var(--line);
-             border-radius: 8px; padding: 8px 10px; font-size: 15px; }
-  .count { font-size: 11px; color: var(--muted); text-align: right; margin-top: -6px; }
-  .count.over { color: var(--bad); font-weight: 600; }
-  details { font-size: 13px; }
-  summary { cursor: pointer; color: var(--muted); }
-  .why { display: grid; gap: 6px; padding-top: 6px; }
-  .why b { font-weight: 600; }
-  .panel { display: grid; grid-template-columns: max-content 1fr 3ch; gap: 3px 8px; align-items: center; font-size: 12px; }
-  .bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
-  .bar i { display: block; height: 100%; background: var(--accent); }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .actions input { flex: 1 1 200px; min-width: 0; }
-  .btn { border: 0; border-radius: 6px; padding: 7px 14px; font-weight: 600; cursor: pointer; }
-  .approve { background: var(--ok); color: #fff; }
-  .kill { background: var(--bad); color: #fff; }
-  .reset { background: transparent; border: 1px solid var(--line); }
-  kbd { font: 11px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; }
-  .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg);
-           padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
-  .toast.show { opacity: 1; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#c6cdd1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0d0f" media="(prefers-color-scheme: dark)">
+<title>Clearance</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/static/fonts/atkinson-next-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/b612-mono-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/base.css">
+<link rel="stylesheet" href="/static/css/components.css">
+<link rel="stylesheet" href="/static/css/xpost.css">
+<script type="module" src="/static/js/app.js"></script>
 </head>
 <body>
-<header>
-  <h1>Harness <span>Review</span></h1>
-  <select id="run" aria-label="Run"></select>
-  <div class="tabs" id="tabs"></div>
-  <div class="spacer"></div>
-  <button class="ghost" id="copy" title="Copy the approved hand-off JSON">Copy approved JSON</button>
-</header>
-<p class="hint"><kbd>j</kbd>/<kbd>k</kbd> move · <kbd>a</kbd> approve · <kbd>x</kbd> kill · <kbd>u</kbd> reset · <kbd>e</kbd> edit text</p>
-<main id="list"></main>
-<div class="toast" id="toast"></div>
-
-<script>
-const FILTERS = {
-  pending: a => a.review.status === "pending" && !a.vetoed,
-  approved: a => a.review.status === "approved",
-  killed: a => a.review.status === "killed",
-  vetoed: a => a.vetoed && a.review.status === "pending",
-  all: () => true,
-};
-const LABELS = { pending: "To review", approved: "Approved", killed: "Killed", vetoed: "Critic vetoed", all: "All" };
-let state = { runs: [], runId: null, actions: [], filter: "pending", focus: 0 };
-
-const $ = s => document.querySelector(s);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const api = (path, opts) => fetch(path, opts).then(r => r.json());
-
-function toast(msg) {
-  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1600);
-}
-
-function visible() { return state.actions.filter(FILTERS[state.filter]); }
-
-function renderTabs() {
-  $("#tabs").innerHTML = Object.keys(FILTERS).map(k =>
-    `<button data-f="${k}" class="${k === state.filter ? "on" : ""}">${LABELS[k]} · ${state.actions.filter(FILTERS[k]).length}</button>`
-  ).join("");
-}
-
-function targetHtml(a) {
-  if (a.target_url) return `→ <a href="${esc(a.target_url)}" target="_blank" rel="noopener">${esc(a.target_url)}</a>`;
-  if (a.target_handle) return `→ <a href="https://x.com/${esc(a.target_handle)}" target="_blank" rel="noopener">@${esc(a.target_handle)}</a>`;
-  return "";
-}
-
-function panelHtml(panel) {
-  const rows = Object.entries(panel || {});
-  if (!rows.length) return "";
-  return `<div class="panel">${rows.map(([k, v]) =>
-    `<span>${esc(k.replaceAll("_", " "))}</span><span class="bar"><i style="width:${Math.round(v * 100)}%"></i></span><span>${Math.round(v * 100)}</span>`
-  ).join("")}</div>`;
-}
-
-function cardHtml(a, i) {
-  const st = a.review.status;
-  const text = a.review.text ?? a.text;
-  const isFollow = a.type === "follow";
-  return `<article class="card ${st} ${i === state.focus ? "focus" : ""}" data-i="${i}" data-id="${a.id}">
-    <div class="meta">
-      <span class="score">${(a.predicted_score * 100).toFixed(0)}</span>
-      <span class="pill">${esc(a.type)}</span>
-      <span>${esc(a.mind.replaceAll("_", " "))}</span>
-      <span>· ${esc(a.narrative_id)}</span>
-      ${a.vetoed ? `<span class="veto">⚠ critic veto</span>` : ""}
-      ${st !== "pending" ? `<span class="status-${st}">${st}</span>` : ""}
-      ${a.review.text ? `<span>· edited</span>` : ""}
-    </div>
-    ${targetHtml(a) ? `<div class="meta target">${targetHtml(a)}</div>` : ""}
-    ${isFollow ? "" : `<textarea aria-label="Post text">${esc(text)}</textarea><div class="count"></div>`}
-    <details>
-      <summary>Why this?</summary>
-      <div class="why">
-        ${a.rationale ? `<div><b>Rationale:</b> ${esc(a.rationale)}</div>` : ""}
-        ${a.critique ? `<div><b>Critic:</b> ${esc(a.critique)}</div>` : ""}
-        ${panelHtml(a.panel)}
-      </div>
-    </details>
-    <div class="actions">
-      <input class="note" placeholder="Note (optional, fed to learning)" value="${esc(a.review.note)}">
-      <button class="btn approve" data-act="approved">Approve</button>
-      <button class="btn kill" data-act="killed">Kill</button>
-      ${st !== "pending" ? `<button class="btn reset" data-act="pending">Reset</button>` : ""}
-    </div>
-  </article>`;
-}
-
-function updateCount(card) {
-  const ta = card.querySelector("textarea"), c = card.querySelector(".count");
-  if (!ta) return;
-  const n = [...ta.value].length;
-  c.textContent = `${n} / 280`;
-  c.classList.toggle("over", n > 280);
-}
-
-function render() {
-  renderTabs();
-  const items = visible();
-  state.focus = Math.min(state.focus, Math.max(items.length - 1, 0));
-  $("#list").innerHTML = items.length
-    ? items.map(cardHtml).join("")
-    : `<div class="empty">${state.runs.length ? "Nothing here." : "No runs yet. Run <code>python -m harness run</code> first."}</div>`;
-  document.querySelectorAll(".card").forEach(updateCount);
-}
-
-async function review(card, status) {
-  const a = state.actions.find(x => x.id === card.dataset.id);
-  const ta = card.querySelector("textarea");
-  const edited = ta && ta.value.trim() !== a.text.trim() ? ta.value.trim() : null;
-  if (status === "approved" && edited && [...edited].length > 280) return toast("Over 280 characters");
-  const note = card.querySelector(".note").value;
-  const res = await api(`/api/actions/${a.id}/review`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status, text: edited, note }),
-  });
-  if (!res.ok) return toast(res.error || "Failed");
-  a.review = { status, text: status === "pending" ? null : edited, note: status === "pending" ? "" : note };
-  toast(status === "pending" ? "Reset" : status === "approved" ? "Approved → hand-off file updated" : "Killed");
-  render();
-  loadRuns(false);
-}
-
-async function loadRun(id) {
-  state.runId = id;
-  state.actions = await api(`/api/runs/${id}`);
-  state.focus = 0;
-  render();
-}
-
-async function loadRuns(selectLatest = true) {
-  state.runs = await api("/api/runs");
-  $("#run").innerHTML = state.runs.map(r =>
-    `<option value="${r.id}">Run ${r.id} · ${new Date(r.started_at).toLocaleString()} · ${r.n_approved || 0}✓ ${r.n_killed || 0}✗ / ${r.n_actions}</option>`
-  ).join("");
-  if (selectLatest && state.runs.length) await loadRun(state.runs[0].id);
-  else if (state.runId) $("#run").value = state.runId;
-  if (!state.runs.length) render();
-}
-
-$("#run").addEventListener("change", e => loadRun(+e.target.value));
-$("#tabs").addEventListener("click", e => {
-  const f = e.target.dataset.f; if (!f) return;
-  state.filter = f; state.focus = 0; render();
-});
-$("#list").addEventListener("click", e => {
-  const card = e.target.closest(".card"); if (!card) return;
-  if (e.target.dataset.act) return review(card, e.target.dataset.act);
-  state.focus = +card.dataset.i;
-  document.querySelectorAll(".card").forEach(c => c.classList.toggle("focus", c === card));
-});
-$("#list").addEventListener("input", e => { if (e.target.tagName === "TEXTAREA") updateCount(e.target.closest(".card")); });
-$("#copy").addEventListener("click", async () => {
-  if (!state.runId) return;
-  const data = await api(`/api/runs/${state.runId}/approved`);
-  try { await navigator.clipboard.writeText(JSON.stringify(data, null, 2)); toast(`Copied ${data.length} approved`); }
-  catch { toast("Clipboard blocked; see out/approved-run" + state.runId + ".json"); }
-});
-document.addEventListener("keydown", e => {
-  if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
-    if (e.key === "Escape") document.activeElement.blur();
-    return;
-  }
-  const cards = [...document.querySelectorAll(".card")];
-  const card = cards[state.focus];
-  const move = d => {
-    state.focus = Math.max(0, Math.min(cards.length - 1, state.focus + d));
-    cards.forEach((c, i) => c.classList.toggle("focus", i === state.focus));
-    cards[state.focus]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  };
-  if (e.key === "j") move(1);
-  else if (e.key === "k") move(-1);
-  else if (!card) return;
-  else if (e.key === "a") review(card, "approved");
-  else if (e.key === "x") review(card, "killed");
-  else if (e.key === "u") review(card, "pending");
-  else if (e.key === "e") { e.preventDefault(); card.querySelector("textarea")?.focus(); }
-});
-
-loadRuns();
-</script>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="shell">
+  <nav class="rail" aria-label="Views">
+    <a class="brand" href="#/queue">
+      <span class="brand-name">Clearance</span>
+      <span class="brand-sub">Media harness checkpoint</span>
+    </a>
+    <div id="nav" class="nav"></div>
+    <div id="rail-foot" class="rail-foot"></div>
+  </nav>
+  <main id="main" class="main" tabindex="-1">
+    <div id="view"></div>
+  </main>
+  <footer class="readback" aria-label="Last action">
+    <div id="fixture-banner" class="fixture-banner" hidden></div>
+    <div id="readback-text" class="readback-text" role="status" aria-live="polite">Ready.</div>
+    <div id="readback-chips" class="readback-chips"></div>
+    <div id="readback-hints" class="readback-hints" aria-hidden="true"></div>
+  </footer>
+</div>
+<div id="toasts" class="toasts"></div>
+<dialog id="keys-sheet" class="sheet" aria-labelledby="keys-title">
+  <div class="sheet-head">
+    <h2 id="keys-title">Keyboard</h2>
+    <button id="keys-close" class="btn btn-quiet btn-small" type="button">Close <kbd>esc</kbd></button>
+  </div>
+  <div id="keys-body" class="sheet-body"></div>
+</dialog>
+<noscript><p style="padding:24px">Clearance needs JavaScript. The JSON API is at <a href="/api/runs">/api/runs</a>.</p></noscript>
 </body>
 </html>
