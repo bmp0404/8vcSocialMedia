@@ -245,13 +245,58 @@ def test_human_take_already_shipped_is_skipped(tmp_out):
     assert not [a for a in actions if a.mind == "human"]
 
 
-def test_caption_quotes_a_reply_target_and_credits_news_posts():
+GNEWS = "https://news.google.com/rss/articles/CBMiXmh0dHBzOi8vd3d3LmVzcG4uY29tL3duYmE?oc=5"
+
+
+def test_caption_quotes_a_reply_target():
     actions, _ = run(MockLLM(), [narrative([target(age=500.0)])])
     (q,) = [a for a in actions if a.mind == "caption"]
     assert (q.type, q.target_url) == ("quote", X_URL)
-    actions, _ = run(MockLLM(), [narrative(signal_urls=[ESPN])])
+
+
+def test_caption_credits_the_publisher_by_name():
+    cfg = ActionConfig()
+    actions, _ = lanes.run(MockLLM(), "mission", "lessons", [narrative(signal_urls=[ESPN])], [], cfg=cfg,
+                           budget=lanes.Budget(cfg), takes=[], sources={ESPN: "ESPN"})
     (p,) = [a for a in actions if a.mind == "caption"]
-    assert p.type == "post" and p.text.endswith(f"(via espn.com) {ESPN}")
+    assert p.type == "post" and p.text.endswith(f" via ESPN {ESPN}") and "(via" not in p.text
+    assert p.draft_meta["credit"] == "ESPN"
+
+
+def test_caption_without_a_known_publisher_credits_the_domain():
+    actions, _ = run(MockLLM(), [narrative(signal_urls=[ESPN])])
+    assert [a.text.endswith(f" via espn.com {ESPN}") for a in actions if a.mind == "caption"] == [True]
+
+
+def test_caption_prefers_a_publisher_link_over_a_google_news_redirect():
+    actions, _ = run(MockLLM(), [narrative(signal_urls=[GNEWS, ESPN])])
+    (p,) = [a for a in actions if a.mind == "caption"]
+    assert ESPN in p.text and "news.google.com" not in p.text
+
+
+def test_only_redirect_links_means_no_caption():
+    actions, decisions = run(MockLLM(), [narrative(signal_urls=[GNEWS])])
+    assert not [a for a in actions if a.mind == "caption"]
+    assert [d.reason for d in decisions if d.lane == "post" and d.tool == "abstain"] == ["no_linkable_source"]
+
+
+def test_credit_for():
+    assert lanes.credit_for("https://x.com/espnW/status/1", {}) == "@espnW"
+    assert lanes.credit_for(ESPN, {ESPN: "ESPN"}) == "ESPN"
+    assert lanes.credit_for(ESPN, {}) == "espn.com"
+
+
+def test_retry_with_nothing_revisable_returns_nothing():
+    caption = Action(type="post", text="rest up", mind="caption", narrative_id="finals", critique="opaque link")
+    assert decide(MockLLM(), "mission", "lessons", [narrative(signal_urls=[ESPN])], vetoed=[caption]) == []
+    assert lanes.PENDING == []  # no second caption, no decisions
+
+
+def test_revising_call_never_recaptions_or_reships_takes():
+    cfg = ActionConfig()
+    actions, decisions = lanes.run(MockLLM(), "mission", "lessons", [narrative([target()], signal_urls=[ESPN])], [],
+                                   revising=True, cfg=cfg, budget=lanes.Budget(cfg), takes=[{"text": "my take"}])
+    assert actions == [] and decisions == []
 
 
 def test_caption_over_cap_or_invented_fact_is_rejected():

@@ -23,7 +23,7 @@ def run(args) -> None:
     narratives = orient(llm, mission, signals, top=args.narratives)
     print(f"[orient] {len(narratives)} narratives: " + ", ".join(n.id for n in narratives))
     lessons = config.lessons()
-    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind)
+    batch = decide(llm, mission, lessons, narratives, per_mind=args.per_mind, signals=signals)
     actions, kept = batch, qualify(llm, mission, batch)
     for _ in range(args.retries):
         if kept or not batch:

@@ -13,7 +13,7 @@ from pathlib import Path
 from harness.llm import LLM
 from harness.minds import lanes, settings
 from harness.minds.lanes import write_decision_log  # noqa: F401 - cli.py calls it after memory.save_run
-from harness.models import ACTION_TYPES, Action, Narrative
+from harness.models import ACTION_TYPES, Action, Narrative, Signal
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
@@ -103,12 +103,20 @@ def decide(
     vetoed: list[Action] | None = None,
     budget: lanes.Budget | None = None,
     cfg: settings.ActionConfig | None = None,
+    signals: list[Signal] | None = None,
 ) -> list[Action]:
     """Draft actions from every mind. With `vetoed`, each mind instead revises its own vetoed drafts.
     Returns only the actions that clear the lanes (see lanes.run). Every decision, abstentions
-    included, waits in lanes.PENDING until write_decision_log(run_id)."""
+    included, waits in lanes.PENDING until write_decision_log(run_id). `signals` lets the post lane
+    credit a link's publisher by name (Signal.author)."""
     minds = load_minds()
     prompts = {}
+    if vetoed and not [a for a in vetoed if a.mind in minds and a.type != "follow"]:
+        # Only persona drafts can be revised, and persona text no longer ships (lanes.post_lane). The
+        # lanes don't redraft vetoed replies or captions, so there's nothing to retry; returning
+        # nothing ends cli.run's retry loop instead of captioning the same source twice.
+        print(f"[decide] retry skipped: none of the {len(vetoed)} vetoed actions is a revisable persona draft")
+        return []
     if vetoed:
         used = {a.narrative_id for a in vetoed}
         targets = [asdict(n) for n in narratives if n.id in used]
@@ -131,7 +139,8 @@ def decide(
     actions = [a for batch in results for a in batch]
     verb = "revised into" if vetoed else "proposed"
     print(f"[decide] {len(prompts)} minds {verb} {len(actions)} actions")
+    sources = {s.url: s.author for s in signals or [] if s.url and s.author}
     shipped, decisions = lanes.run(llm, mission, lessons, narratives, actions, revising=bool(vetoed),
-                                   cfg=cfg or settings.load(), budget=budget)
+                                   cfg=cfg or settings.load(), budget=budget, sources=sources)
     lanes.PENDING.extend(decisions)
     return shipped
