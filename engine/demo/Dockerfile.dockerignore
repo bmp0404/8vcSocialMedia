@@ -3,3 +3,9 @@
 !index.html
 !Dockerfile
 !Dockerfile.dockerignore
+
+!dashboard.py
+!dashboard.html
+!dashboard.css
+!dashboard.js
+!sample.json

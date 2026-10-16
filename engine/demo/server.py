@@ -10,6 +10,11 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+if __package__:
+    from .dashboard import Dashboard, validate_post
+else:
+    from dashboard import Dashboard, validate_post
+
 ROOT = Path(__file__).parent
 JOB_TIMEOUT_SECONDS = 300
 
@@ -92,7 +97,15 @@ def candidate_payload(value: dict) -> dict:
 
 
 def make_handler(queue: Queue, worker_token: str):
+    dashboard = Dashboard(queue.path)
+
     class Handler(BaseHTTPRequestHandler):
+        def workspace(self):
+            value = self.headers.get("X-Workspace", "")
+            if len(value) != 32 or any(c not in "0123456789abcdef" for c in value):
+                raise ValueError("A browser workspace is required. Reload the dashboard.")
+            return value
+
         def log_message(self, format, *args):
             # Request paths or headers can contain user-provided data.
             return
@@ -115,7 +128,17 @@ def make_handler(queue: Queue, worker_token: str):
         def do_GET(self):
             path = self.path.split('?', 1)[0]
             if path == '/':
-                return self.send(200, (ROOT / 'index.html').read_text(encoding='utf-8'), 'text/html; charset=utf-8')
+                return self.send(200, (ROOT / 'dashboard.html').read_text(encoding='utf-8'), 'text/html; charset=utf-8')
+            if path in ('/eval', '/dashboard.css', '/dashboard.js'):
+                filename, content_type = {'/eval': ('index.html', 'text/html; charset=utf-8'), '/dashboard.css': ('dashboard.css', 'text/css'), '/dashboard.js': ('dashboard.js', 'text/javascript')}[path]
+                return self.send(200, (ROOT / filename).read_text(encoding='utf-8'), content_type)
+            if path == '/api/dashboard' or path.startswith('/api/dashboard/tasks/'):
+                try:
+                    workspace = self.workspace()
+                    result = dashboard.snapshot(workspace) if path == '/api/dashboard' else dashboard.task(workspace, path.rsplit('/', 1)[1])
+                    return self.send(200 if result else 404, result or {'error': 'Task not found.'})
+                except ValueError as exc:
+                    return self.send(400, {'error': str(exc)})
             if path == '/healthz':
                 return self.send(200, {'ok': True})
             if path == '/api/status':
@@ -136,6 +159,19 @@ def make_handler(queue: Queue, worker_token: str):
                 value = json.loads(self.rfile.read(length))
                 if not isinstance(value, dict):
                     raise ValueError('Expected an object.')
+                if self.path == '/api/validate':
+                    return self.send(200, validate_post(value))
+                if self.path == '/api/dashboard/ingest':
+                    return self.send(200, dashboard.ingest(self.workspace(), value.get('signals')))
+                if self.path == '/api/dashboard/notes':
+                    return self.send(201, dashboard.add_note(self.workspace(), value))
+                if self.path == '/api/dashboard/tasks':
+                    return self.send(202, dashboard.submit(self.workspace(), value))
+                if self.path == '/internal/dashboard/claim':
+                    return self.send(200, {'job': dashboard.claim()})
+                if self.path == '/internal/dashboard/finish':
+                    ok = dashboard.finish(value)
+                    return self.send(200 if ok else 409, {'accepted': ok})
                 if self.path == '/api/jobs':
                     job_id = queue.submit(candidate_payload(value))
                     return self.send(202, {'id': job_id, 'status': 'queued'})
