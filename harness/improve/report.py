@@ -34,6 +34,7 @@ class ReportData:
     day: Day | None = None
     hot_offers: dict[str, dict] = field(default_factory=dict)  # hot status ID -> arm and offer
     failures: list[str] = field(default_factory=list)  # steps that failed, with why
+    interrupted: list[str] = field(default_factory=list)  # steps a process died in; they ran again
     disk_free_gb: float | None = None
 
 
@@ -135,6 +136,9 @@ def render(d: ReportData) -> str:
             lines.append(f"- No watcher thread has a +48h read yet, so the rolling benchmark is empty{nxt}.")
         if d.fold.get("refused"):
             lines.append(f"- Threads kept out of the benchmark: " + ", ".join(f"{n} {why}" for why, n in d.fold["refused"].items()) + ".")
+    if d.interrupted:
+        lines.append(f"- A process stopped in the middle of the {', '.join(sorted(set(d.interrupted)))} step; "
+                     "the next cycle ran it again from the ledger's state.")
     if d.champion_changed:
         lines.append(f"- The champion changed ({', '.join(d.champion_changed)}); it is now `{d.champion}`.")
     else:

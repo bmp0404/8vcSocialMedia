@@ -101,6 +101,14 @@ class State:
             row = c.execute("SELECT MAX(finished_at) FROM cycles WHERE stop_reason = 'done'").fetchone()[0]
         return datetime.fromisoformat(row) if row else None
 
+    def mark_interrupted(self, at: datetime) -> int:
+        """Steps a dead process left running. Only one loop runs at a time (the pid file), so at the start
+        of a cycle any running step belongs to a process that died mid-step; its key isn't done, so the
+        step runs again."""
+        with self._conn() as c:
+            return c.execute("UPDATE steps SET status = 'interrupted', finished_at = ? WHERE status = 'running'",
+                             (iso(at),)).rowcount
+
     def done(self, key: str) -> bool:
         with self._conn() as c:
             return c.execute("SELECT 1 FROM steps WHERE key = ? AND status = 'done'", (key,)).fetchone() is not None
@@ -302,8 +310,10 @@ class Scheduler:
 
     def run_cycle(self) -> int:
         now = self.clock()
+        interrupted = self.state.mark_interrupted(now)
         cycle = self.state.start_cycle(os.getpid(), now)
-        self.log(f"[improve] cycle {cycle} starts")
+        self.log(f"[improve] cycle {cycle} starts" + (f"; {interrupted} step(s) an earlier process left "
+                                                      "unfinished will run again" if interrupted else ""))
         for profile in self.cfg.profiles:
             if self.stop.is_set():
                 break
@@ -648,11 +658,13 @@ class Scheduler:
         recent = [r for r in recs if since is None or campaign.decided_at(r) >= since]
         decided = [r for r in recent if r["decision"]["status"] not in ("pending",)]
         champion, _ = ledger.champion(self.cfg.ledger_dir) if self.cfg.ledger_dir.is_dir() else (None, [])
-        facts, queue_state, queue_errors, failures = {}, [], {}, []
+        facts, queue_state, queue_errors, failures, interrupted = {}, [], {}, [], []
         for row in steps:
             summary = json.loads(row["summary"] or "{}")
             if row["status"] == "failed":
                 failures.append(f"The {row['step']} step failed: {row['error']}")
+            elif row["status"] == "interrupted":
+                interrupted.append(row["step"])
             elif row["step"] == "facts":
                 facts[summary.get("profile", "?")] = summary.get("result") or summary.get("skipped", "")
             elif row["step"] == "experiments":
@@ -669,7 +681,7 @@ class Scheduler:
             champion_changed=[r["id"] for r in recent if r["decision"]["status"] == "promoted"],
             queue=queue_state, queue_errors=queue_errors, day=day,
             hot_offers={h["status_id"]: watchday.hot_offer(h["path"]) for h in (day.hot if day else [])},
-            failures=failures, disk_free_gb=shutil.disk_usage("/").free / 1e9)
+            failures=failures, interrupted=interrupted, disk_free_gb=shutil.disk_usage("/").free / 1e9)
         # A report a person forced keeps its own file, so it never overwrites the morning one.
         name = f"report-{now.date().isoformat()}" + (f"-{now:%H%M}" if self.cfg.force_report else "")
         path = self.cfg.out_dir / f"{name}.md"

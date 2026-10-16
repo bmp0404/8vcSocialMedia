@@ -441,3 +441,14 @@ def test_rulers_name_real_instruments_and_real_guardrails():
         assert fitness in sch.default_catalog()
         assert spec["primary"] in names
         assert set(spec["guardrails"]) <= guards and set(spec["guardrails"].values()) <= names
+
+
+def test_a_step_a_dead_process_left_running_is_marked_interrupted_and_run_again(setup):
+    cfg, make, _, clock = setup
+    s = make()
+    s.state.start_step("experiments:99", "experiments", 99, clock.t)  # the process died here
+    s.run_cycle()
+    rows = {r["key"]: r["status"] for r in s.state.steps_since(None)}
+    assert rows["experiments:99"] == "interrupted" and len(_records(cfg)) == 1
+    report = (cfg.out_dir / "report-2026-10-21.md").read_text(encoding="utf-8")
+    assert "stopped in the middle of the experiments step" in report
