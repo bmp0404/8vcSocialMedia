@@ -13,12 +13,14 @@ def main() -> None:
     p = sub.add_parser("backfill-x", help="fetch current X metrics for every dataset post, then author timelines")
     p.add_argument("--limit", type=int, help="fetch at most this many posts (testing)")
     p.add_argument("--no-timelines", action="store_true")
+    p.add_argument("--interval", type=float, help="seconds between fxtwitter requests (default: settings bulk_interval_s)")
 
     sub.add_parser("enrich", help="write data/context/devtools_enriched.csv and accounts.csv")
 
     p = sub.add_parser("collect", help="collect context signals, reply samples or reposters for the dataset")
     p.add_argument("job", choices=["context", "replies", "reposters", "all-x"])
     p.add_argument("--gdelt-budget", type=int, default=0, help="context: at most this many GDELT calls (it 429s often)")
+    p.add_argument("--interval", type=float, help="replies/reposters: seconds between fxtwitter requests")
 
     sub.add_parser("analyze", help="write data/context/analysis.json from the enriched dataset")
 
@@ -38,7 +40,8 @@ def main() -> None:
     if args.cmd == "backfill-x":
         from harness.context import backfill
 
-        backfill.run(limit=args.limit, timelines=not args.no_timelines)
+        kw = {"interval_s": args.interval} if args.interval else {}
+        backfill.run(limit=args.limit, timelines=not args.no_timelines, **kw)
     elif args.cmd == "enrich":
         from harness.context import enrich
 
@@ -51,10 +54,11 @@ def main() -> None:
         if args.job == "context":
             out = collect.collect_context(gdelt_budget=args.gdelt_budget)
             print(f"[collect] context for {len(out['accounts'])} accounts, {len(out['errors'])} errors")
+        kw = {"interval_s": args.interval} if args.interval else {}
         if args.job in ("replies", "all-x"):
-            print(f"[collect] replies for {collect.collect_replies()} posts")
+            print(f"[collect] replies for {collect.collect_replies(**kw)} posts")
         if args.job in ("reposters", "all-x"):
-            print(f"[collect] reposters for {collect.collect_reposters()} posts")
+            print(f"[collect] reposters for {collect.collect_reposters(**kw)} posts")
     elif args.cmd == "analyze":
         from harness.context import analysis
 

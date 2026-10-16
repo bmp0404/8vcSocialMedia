@@ -18,7 +18,9 @@ def attention(
     start: datetime,
     end: datetime,
     wikipedia_article: str | None = None,
-    sources: tuple[str, ...] = ("wikipedia", "hackernews", "google_trends", "gdelt"),
+    # GDELT is opt-in: on this IP its DOC API answers most calls with HTTP 429 after 9-17 s,
+    # which cost Observe's live run about 3 minutes, and it misses most dev-tool news anyway.
+    sources: tuple[str, ...] = ("wikipedia", "hackernews", "google_trends"),
     errors: dict[str, str] | None = None,
 ) -> dict[str, Series]:
     """Attention to `term` from each source that answered, as {source: Series}.
