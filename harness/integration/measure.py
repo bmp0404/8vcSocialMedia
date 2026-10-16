@@ -40,7 +40,6 @@ DETECTOR_MODEL = "claude-opus-5-5"
 STATUS_ID = re.compile(r"(?:x|twitter)\.com/(\w{1,15})/status/(\d+)")
 LEADING_MENTIONS = re.compile(r"^(?:@\w+\s+)+")
 TCO = re.compile(r"\s*https?://t\.co/\S+")
-TEXT_KINDS = ("reply", "quote", "post", "mention")
 # About 30k tokens. A full round serialized to about 31k characters on 2026-10-15, so this holds
 # every signal; the cap only guards against a much larger round.
 EVIDENCE_CHARS = 120_000
@@ -110,72 +109,78 @@ def targets_by_url(rec: dict) -> dict[str, dict]:
     return out
 
 
+def _is_caption(d: dict) -> bool:
+    """A post-lane decision about a caption or quote of a real source (it carries draft candidates)."""
+    return d["lane"] == "post" and d["tool"] != "ask_human" and bool(d.get("candidates"))
+
+
 def drafts(rec: dict, decisions: list[dict], actions: dict[str, dict]) -> list[dict]:
-    """Every text draft the lanes produced, with how far it got."""
-    shipped_text = {a["text"]: a for a in actions.values()}
+    """Every draft the lanes could have shipped (reply drafts and source captions), with how far
+    it got. Chorus angles attached to a question for a person never ship, so they're left out."""
     targets = targets_by_url(rec)
+    shipped = {(a.get("target_url") or a.get("draft_meta", {}).get("source_url"), a["text"]): a for a in actions.values()}
     out = []
     for d in decisions:
+        if d["lane"] == "reply":
+            kind, t = "reply", targets.get(d["opportunity"], {})
+        elif _is_caption(d):
+            kind = "quote" if "x.com/" in d["opportunity"] or "twitter.com/" in d["opportunity"] else "post"
+            t = targets.get(d["opportunity"], {})
+        else:
+            continue
         for c in d.get("candidates") or []:
             text = c.get("text")
             if not text:
                 continue
-            if d["lane"] == "reply":
-                t = targets.get(d["opportunity"], {})
-                kind, target = "reply", d["opportunity"]
-                narrative = t.get("narrative_id", "")
-            else:
-                kind, target, t = c.get("type", "post"), None, {}
-                narrative = d["opportunity"] if d["opportunity"] not in ("chorus", "") else ""
-            if kind not in TEXT_KINDS:
-                continue
-            a = shipped_text.get(text)
+            a = shipped.get((d["opportunity"], text))
+            if a is None and kind == "post":  # a shipped caption gets "(via domain) url" appended
+                a = next((x for (u, tx), x in shipped.items() if u == d["opportunity"] and tx.startswith(text)), None)
             out.append({
-                "lane": d["lane"], "kind": kind, "text": text, "mind": c.get("mind", "reply_lane"),
-                "target_url": target, "target_text": t.get("text", ""), "target_author": t.get("author", ""),
-                "narrative_id": a["narrative_id"] if a else narrative,
-                "gate_passed": "gate" not in c or not c["gate"] if "schema_error" not in c else False,
-                "gate_reasons": c.get("gate") or ([c["schema_error"]] if "schema_error" in c else []),
+                "lane": d["lane"], "kind": kind, "text": text,
+                "target_url": d["opportunity"] if kind in ("reply", "quote") else None,
+                "source_url": d["opportunity"] if kind == "post" else None,
+                "target_text": t.get("text", ""), "target_author": t.get("author", ""),
+                "narrative_id": a["narrative_id"] if a else t.get("narrative_id", ""),
+                "schema_error": c.get("schema_error"),
+                "gate_passed": "schema_error" not in c and not c.get("gate"),
+                "gate_rules": sorted({f["rule"] if isinstance(f, dict) else str(f).split(":")[0] for f in c.get("gate") or []}),
+                "veto_passed": (c.get("veto") or {}).get("passed"),
+                "veto_why": (c.get("veto") or {}).get("why", ""),
                 "action_id": a["id"] if a else None,
             })
-    seen, uniq = set(), []
-    for x in out:  # a shipped post appears in both the judge's candidate list and its own decision
-        key = (x["lane"], x["text"])
-        if key not in seen:
-            seen.add(key)
-            uniq.append(x)
-    return uniq
+    return out
 
 
 def funnel(rec: dict, decisions: list[dict], actions: dict[str, dict]) -> dict:
     reply = [d for d in decisions if d["lane"] == "reply"]
-    post = [d for d in decisions if d["lane"] == "post"]
-    cands = [c for d in reply for c in d.get("candidates") or []]
+    drafted = [d for d in reply if d.get("candidates")]
+    rc = [c for d in drafted for c in d["candidates"]]
     reply_f = {
         "targets_offered": len({d["opportunity"] for d in reply if d["opportunity"]}),
-        "targets_skipped_before_drafting": sum(d["reason"] in ("stale_target", "budget_exhausted") and not d.get("candidates")
-                                               for d in reply),
-        "samples": len(cands),
-        "sample_errors": sum("error" in c for c in cands),
-        "schema_rejected": sum("schema_error" in c for c in cands),
-        "model_abstained": sum("abstain" in c for c in cands),
-        "gate_passed": sum("text" in c and not c.get("gate") for c in cands),
-        "judge_scored": sum("verdict" in c for c in cands),
+        "stale": sum(d["reason"] == "stale_target" for d in reply),
+        "planner_abstained": sum(d["tool"] == "abstain" and not d.get("candidates") and d["reason"] != "stale_target"
+                                 and d["opportunity"] != "" for d in reply),
+        "targets_drafted": len(drafted),
+        "drafts": len(rc),
+        "schema_rejected": sum("schema_error" in c for c in rc),
+        "gate_passed": sum("schema_error" not in c and not c.get("gate") for c in rc),
+        "veto_passed": sum(bool((c.get("veto") or {}).get("passed")) for c in rc),
         "shipped": sum(bool(d.get("action_id")) for d in reply),
     }
-    chorus_rejected = [c for d in post if d["opportunity"] == "chorus" and d["reason"] == "gate_rejected"
-                       for c in d.get("candidates") or []]
-    writing = {c["text"] for d in post if d["tool"] in ("post", "mention") or d["reason"] == "judge_rejected"
-               for c in d.get("candidates") or [] if c.get("text")}
-    follows = [d for d in post if d["tool"] == "follow"]
+    post = [d for d in decisions if d["lane"] == "post"]
+    caps = [d for d in post if _is_caption(d)]
+    cc = [c for d in caps for c in d["candidates"]]
+    asks = [d for d in post if d["tool"] == "ask_human"]
     post_f = {
-        "chorus_text_drafts": len(chorus_rejected) + len(writing),
-        "schema_rejected": sum("schema_error" in c for c in chorus_rejected),
-        "gate_rejected": sum("gate" in c for c in chorus_rejected),
-        "gate_passed": len(writing),
-        "text_shipped": sum(bool(d.get("action_id")) and d["tool"] in ("post", "mention") for d in post),
-        "follows_shipped": len(follows),
-        "questions_for_a_person": sum(d["tool"] == "ask_human" for d in post),
+        "caption_sources": len(caps),
+        "caption_drafts": len(cc),
+        "caption_gate_passed": sum("schema_error" not in c and not c.get("gate") for c in cc),
+        "caption_veto_passed": sum(bool((c.get("veto") or {}).get("passed")) for c in cc),
+        "caption_shipped": sum(bool(d.get("action_id")) for d in caps),
+        "human_takes_shipped": sum(bool(d.get("action_id")) and d.get("detail") == "human take, verbatim" for d in post),
+        "follows_shipped": sum(d["tool"] == "follow" and bool(d.get("action_id")) for d in post),
+        "chorus_angles_for_a_person": sum(len(d.get("candidates") or []) for d in asks),
+        "questions_for_a_person": len(asks),
     }
     q_in = [i for call in rec["qualify_calls"] for i in call["in"]]
     q_kept = [i for call in rec["qualify_calls"] for i in call["kept"]]
@@ -419,6 +424,7 @@ def summarize(checked: list[dict], resolved: dict, actions: dict[str, dict]) -> 
     return {
         "all_drafts": stats(checked),
         "gate_passed": stats([r for r in checked if r["gate_passed"]]),
+        "veto_passed": stats([r for r in checked if r["veto_passed"]]),
         "shipped": stats([r for r in checked if r["action_id"]]),
         "targets_checked": len(vals),
         "targets_resolve": sum(v["resolves"] for v in vals),
@@ -436,13 +442,16 @@ def render(m: dict) -> str:
         "",
         "| Stage | Count |",
         "| --- | --- |",
-        f"| Reply targets offered | {r['targets_offered']} |",
-        f"| Reply samples drafted | {r['samples']} (errors {r['sample_errors']}, schema rejected {r['schema_rejected']}, model abstained {r['model_abstained']}) |",
-        f"| Reply samples past the slop gate | {r['gate_passed']} |",
-        f"| Replies shipped by the judge | {r['shipped']} |",
-        f"| Chorus text drafts | {p['chorus_text_drafts']} (schema rejected {p['schema_rejected']}, gate rejected {p['gate_rejected']}) |",
-        f"| Chorus drafts past the slop gate | {p['gate_passed']} |",
-        f"| Posts or mentions shipped by the judge | {p['text_shipped']} |",
+        f"| Reply targets offered | {r['targets_offered']} (stale {r['stale']}, planner abstained {r['planner_abstained']}) |",
+        f"| Reply targets drafted | {r['targets_drafted']} |",
+        f"| Reply drafts | {r['drafts']} (schema rejected {r['schema_rejected']}) |",
+        f"| Reply drafts past the slop gate | {r['gate_passed']} |",
+        f"| Reply drafts past the Opus veto | {r['veto_passed']} |",
+        f"| Replies shipped | {r['shipped']} |",
+        f"| Caption sources tried | {p['caption_sources']} |",
+        f"| Caption drafts | {p['caption_drafts']} (gate passed {p['caption_gate_passed']}, veto passed {p['caption_veto_passed']}) |",
+        f"| Captions shipped | {p['caption_shipped']} |",
+        f"| Human takes shipped | {p['human_takes_shipped']} |",
         f"| Follows shipped | {p['follows_shipped']} |",
         f"| Into qualify | {q['in']} |",
         f"| Vetoed by the critic | {q['critic_vetoed']} |",
@@ -456,7 +465,7 @@ def render(m: dict) -> str:
         "| Drafts | n | Lineup orders caught | Caught in both orders | Mean P(AI) | P(AI) >= 50 | Insult | Bait | Unsupported claims (drafts) | Deterministic ungrounded |",
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
-    for name in ("all_drafts", "gate_passed", "shipped"):
+    for name in ("all_drafts", "gate_passed", "veto_passed", "shipped"):
         x = s[name]
         lines.append(
             f"| {name.replace('_', ' ')} | {x['drafts']} | {x['lineup_orders_caught']}/{x['lineup_orders']} | "

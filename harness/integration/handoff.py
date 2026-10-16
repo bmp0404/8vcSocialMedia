@@ -146,7 +146,7 @@ def render(h: dict) -> str:
         out += _item(i, r)
     out += [f"## Held ({len(h['held'])})", ""]
     for i, r in enumerate(h["held"], 1):
-        out += _item(i, r) + [f"   - Held because: {'; '.join(r['held_because'])}", ""]
+        out += _item(i, r)[:-1] + [f"   - Held because: {'; '.join(r['held_because'])}", ""]
     if h["questions_for_a_person"]:
         out += ["## Questions for a person", ""] + [f"- {q}" for q in h["questions_for_a_person"]] + [""]
     if h["abstentions"]:
