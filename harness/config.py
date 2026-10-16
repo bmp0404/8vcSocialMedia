@@ -104,15 +104,16 @@ def mission() -> str:
 
 
 def lessons() -> str:
+    from harness.learning.memstore_adapter import written_by_learning
+    from harness.memstore import MemoryValidationError, prompt_block
+
     path = lessons_path()
     text = path.read_text(encoding="utf-8") if path.exists() else "(no lessons yet)"
-    # Memory must never break a run, so any memstore failure falls back to the lessons file alone.
+    # The lessons file is learn's rendering of the store's tested lessons; the block adds the store's other notes.
     try:
-        from harness.learning.memstore_adapter import written_by_learning
-        from harness.memstore import prompt_block
-
-        # The lessons file is learn's rendering of the store's tested lessons; the block adds the store's other notes.
         block = prompt_block(exclude=written_by_learning)
-    except Exception:
+    except (OSError, MemoryValidationError) as e:
+        # A store that can't be read costs this round its memory, not the round. Anything else is a bug and raises.
+        print(f"[memory] skipped the memory store this round: {type(e).__name__}: {e}")
         block = ""
     return text + "\n\n" + block if block else text

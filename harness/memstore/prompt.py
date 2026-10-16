@@ -48,22 +48,21 @@ def _confidence(note: Note) -> float:
 
 
 def prompt_block(max_chars: int = 6000, exclude: Callable[[Note], bool] | None = None) -> str:
-    """All procedures, then confident well-evidenced lessons, capped. Returns "" when empty; never raises.
+    """All procedures, then confident well-evidenced lessons, capped. Returns "" when empty.
 
-    `exclude` drops notes that reach the prompt another way, so none appears twice.
+    `exclude` drops notes that reach the prompt another way, so none appears twice. An unreadable
+    note is skipped by iter_notes with a message; a store that can't be read raises OSError, which
+    config.lessons() reports. This used to return "" on any exception, which hid bugs too.
     """
-    try:
-        keep = (lambda n: not exclude(n)) if exclude else (lambda n: True)
-        procedures = sorted((n for n in iter_notes(["procedure"]) if keep(n)), key=lambda n: n.id)
-        lessons = [
-            n
-            for n in iter_notes(["lesson"])
-            if keep(n)
-            and _confidence(n) >= LESSON_MIN_CONFIDENCE
-            and len(n.meta.get("evidence") or []) >= LESSON_MIN_EVIDENCE
-        ]
-        lessons.sort(key=_confidence, reverse=True)
-        blocks = [f"### {n.title} ({n.type}, {n.id})\n{n.body.strip()}" for n in procedures + lessons]
-        return _join_capped(blocks, max_chars) if blocks else ""
-    except Exception:
-        return ""
+    keep = (lambda n: not exclude(n)) if exclude else (lambda n: True)
+    procedures = sorted((n for n in iter_notes(["procedure"]) if keep(n)), key=lambda n: n.id)
+    lessons = [
+        n
+        for n in iter_notes(["lesson"])
+        if keep(n)
+        and _confidence(n) >= LESSON_MIN_CONFIDENCE
+        and len(n.meta.get("evidence") or []) >= LESSON_MIN_EVIDENCE
+    ]
+    lessons.sort(key=_confidence, reverse=True)
+    blocks = [f"### {n.title} ({n.type}, {n.id})\n{n.body.strip()}" for n in procedures + lessons]
+    return _join_capped(blocks, max_chars) if blocks else ""

@@ -27,6 +27,7 @@ class EngineTests(unittest.TestCase):
             decide=Mock(return_value=[self.action]),
             evaluate=Mock(side_effect=lambda llm, mission, actions, narratives, signals: (actions, {"test": True})),
             save_run=Mock(return_value=7),
+            end_round=Mock(return_value=[]),
             finish_memory=Mock(),
         )
 
@@ -42,6 +43,7 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(self.components.decide.call_args.args[2], "Prior lesson")
         self.components.save_run.assert_called_once_with([self.action], account="_sgu_")
         self.components.finish_memory.assert_called_once_with(self.llm)
+        self.components.end_round.assert_called_once_with(7)
         artifact = json.loads(Path(result["recommendations_path"]).read_text())
         self.assertEqual(artifact["run_id"], 7)
         self.assertEqual(artifact["recommendations"][0]["id"], "draft-1")

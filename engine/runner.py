@@ -10,6 +10,7 @@ from typing import Callable
 from harness import config, memory
 from harness.learn import learn
 from harness.llm import LLM
+from harness.memstore import record_round
 from harness.minds import decide, lanes, write_decision_log
 from harness.models import Action, Narrative, Signal
 from harness.orient import orient
@@ -46,6 +47,7 @@ class Components:
     # decide() queues every decision, abstentions included, in lanes.PENDING; this writes them out as
     # decisions-run<id>.json, the file `harness run` writes, so engine rounds keep their abstentions.
     log_decisions: Callable[[int, Path], Path | None] = write_decision_log
+    end_round: Callable[[int], list[str]] = record_round  # one episode note per draft, as harness run writes
     finish_memory: Callable[[LLM], object] = learn
 
 
@@ -118,7 +120,7 @@ def run_round(llm: LLM, mission: str, sources: list[str], options: Options,
         journal["actions"] = len(all_actions)
         journal["reason"] = "no_signals" if not signals else "no_narratives" if not narratives else "no_eligible_actions" if not kept else "recommendations_ready"
         # Existing learn() only derives lessons from recorded real outcomes, not panel predictions.
-        stage("memory_write", lambda: components.finish_memory(llm))
+        stage("memory_write", lambda: (components.end_round(run_id), components.finish_memory(llm)))
         journal["status"] = "completed" if kept else "abstained"
         journal["stage"] = "done"
         write_json(folder / "round.json", journal)

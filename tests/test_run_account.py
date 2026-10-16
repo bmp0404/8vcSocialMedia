@@ -43,3 +43,12 @@ def test_mock_run_records_the_account(isolated, monkeypatch):
     data = json.loads(path.read_text(encoding="utf-8"))
     assert data["account"] == "other"
     assert memory.run_account(data["run_id"]) == "other"
+
+
+def test_mock_run_writes_one_episode_per_draft(isolated):
+    from harness import memstore
+
+    cli.run(argparse.Namespace(provider="mock", sources="sample", narratives=2, per_mind=1, top=10, retries=0))
+    (run,) = memory.list_runs()
+    drafts = memory.run_actions(run["id"])
+    assert drafts and sorted(n.id for n in memstore.list_notes("episode")) == sorted(f"ep-{a['id']}" for a in drafts)

@@ -115,6 +115,21 @@ def _write_ledger(path: Path, ledger: dict) -> None:
     os.replace(tmp, path)
 
 
+def record_round(run_id: int) -> list[str]:
+    """round_end for a run that just finished, under the run's provider. harness run and the engine call it
+    once per round. A store that can't be written costs the round its episodes, not the round, so the
+    store's own errors are reported and skipped; anything else raises."""
+    from harness.memstore.note import MemoryValidationError
+
+    try:
+        ids = round_end(run_id, provider=config.PROVIDER)
+    except (OSError, MemoryValidationError) as e:
+        print(f"[memory] run {run_id}: episodes not written: {type(e).__name__}: {e}")
+        return []
+    print(f"[memory] run {run_id}: {len(ids)} episode notes written")
+    return ids
+
+
 def round_end(run_id: int, *, provider: str) -> list[str]:
     """Write one episode note per action in the run; return the ids written."""
     actions = memory.run_actions(run_id)

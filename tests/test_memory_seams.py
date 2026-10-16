@@ -79,3 +79,37 @@ def test_prompt_block_exclude_drops_only_matching_notes(isolated):
 
     assert "Ask one question at the end" in block
     assert "Name the player in the first five words" not in block
+
+
+def test_lessons_report_an_unreadable_store_and_raise_on_a_bug(isolated, monkeypatch, capsys):
+    config.LESSONS_PATH.write_text("# Lessons\n- one\n", encoding="utf-8")
+
+    def unreadable(**kwargs):
+        raise PermissionError("store locked down")
+
+    monkeypatch.setattr(memstore, "prompt_block", unreadable)
+    assert config.lessons() == "# Lessons\n- one\n"
+    assert "[memory] skipped the memory store this round: PermissionError: store locked down" in capsys.readouterr().out
+
+    def buggy(**kwargs):
+        raise KeyError("evidence")
+
+    monkeypatch.setattr(memstore, "prompt_block", buggy)
+    with pytest.raises(KeyError):
+        config.lessons()
+
+
+def test_record_round_writes_episodes_once_and_reports_a_store_error(isolated, monkeypatch, capsys):
+    from harness.memstore import episodes
+
+    run_id = memory.save_run([Action(type="post", text="a draft", mind="m", narrative_id="n", id="a1")])
+    assert memstore.record_round(run_id) == ["ep-a1"]
+    assert memstore.record_round(run_id) == []  # nothing changed since: no rewrite
+    assert memstore.load("ep-a1").meta["source"] == "run"
+
+    def locked(run_id, *, provider):
+        raise TimeoutError("memstore lock still held after 5s")
+
+    monkeypatch.setattr(episodes, "round_end", locked)
+    assert memstore.record_round(run_id) == []
+    assert "episodes not written: TimeoutError: memstore lock still held" in capsys.readouterr().out
