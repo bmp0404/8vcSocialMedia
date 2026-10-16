@@ -27,7 +27,7 @@ def test_the_report_names_demotions_decisions_and_what_needs_a_person():
               fresh_posts=4, hot=[{"status_id": "1", "profile": "devtools", "handle": "vercel", "state": "done"}],
               kept={"+24h": 20, "+48h": 7}, read={"kept": 27, "low_coverage": 5})
     data = report.ReportData(
-        now=NOW, since=NOW - timedelta(days=1), cycles=4, llm_calls=212, facts={"wnba": "[facts] wnba: wrote 300 facts"},
+        now=NOW, since=NOW - timedelta(days=1), cycles=4, llm_calls=212, facts={"devtools": "[facts] devtools: wrote 30 facts (posts:a 10, posts:b 20); skipped 1 unreadable account(s): @c"},
         fold={"pairs": 140, "threads": 7, "weeks": {"5": {}}, "refused": {}},
         instruments={"instruments": {"slop_gate": _instrument("report_only", 0.52, (0.44, 0.6)),
                                      "reply_ranker": _instrument("gates")}},
@@ -44,9 +44,10 @@ def test_the_report_names_demotions_decisions_and_what_needs_a_person():
     assert "Slop gate dropped to report-only" in text and "Slop gate is report-only now" in text
     assert "ai_detection_rate 0.920 to 0.500, difference -0.420 [-0.600, -0.250]" in text
     assert "coverage 90% against 100%" in text
-    assert "@vercel (devtools, arm continuation): offered a draft" in text
+    assert "1 hot target: 1 offered a draft or asked for a one-liner (@vercel (arm continuation))" in text
     assert "Reply from _sgu_ whatever the arm" in text and "bad.toml" in text and "6.5 GB" in text
     assert "qual (qualify_auc, devtools): a candidate waiting for 20 accounts" in text
+    assert "Facts for devtools: wrote 30 facts from 2 sources; 1 account(s) fxtwitter couldn't read were left out (@c)" in text
     assert len(text.splitlines()) < 60  # a page
 
 

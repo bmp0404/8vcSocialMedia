@@ -4,6 +4,8 @@
 fit on a page. No individual's post or reply text appears in it, only handles of watched brands.
 """
 
+import re
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -33,6 +35,19 @@ class ReportData:
     hot_offers: dict[str, dict] = field(default_factory=dict)  # hot status ID -> arm and offer
     failures: list[str] = field(default_factory=list)  # steps that failed, with why
     disk_free_gb: float | None = None
+
+
+_FACTS = re.compile(r"wrote (\d+) facts \((.*?)\)(?:; skipped (\d+) unreadable account\(s\): (.*))?$")
+
+
+def _facts(result: str) -> str:
+    """"wrote 324 facts from 20 sources; 4 accounts unreadable (@a, @b)" from the facts CLI's last line."""
+    m = _FACTS.search(result)
+    if not m:
+        return result
+    sources = len([p for p in m.group(2).split(", ") if p])
+    line = f"wrote {m.group(1)} facts from {sources} source{'s' if sources != 1 else ''}"
+    return line + (f"; {m.group(3)} account(s) fxtwitter couldn't read were left out ({m.group(4)})" if m.group(3) else "")
 
 
 def _t(t: datetime) -> str:
@@ -108,7 +123,7 @@ def render(d: ReportData) -> str:
              f"{span}: {d.cycles} cycle{'s' if d.cycles != 1 else ''} and "
              f"{d.llm_calls} LLM call{'s' if d.llm_calls != 1 else ''}.", "", "## What ran and what changed", ""]
     for profile, result in sorted(d.facts.items()):
-        lines.append(f"- Facts for {profile}: {result}.")
+        lines.append(f"- Facts for {profile}: {_facts(result)}.")
     if d.fold is not None:
         weeks = d.fold.get("weeks") or {}
         if d.fold.get("pairs"):
@@ -152,17 +167,18 @@ def render(d: ReportData) -> str:
                      f"handles{fail}.")
         lines.append(f"- {w.posts_seen} new watched posts, {w.fresh_posts} of them under 10 minutes old when read.")
         if w.hot:
+            offers = [(h, d.hot_offers.get(h["status_id"], {})) for h in w.hot]
+            asked = [f"@{h['handle']} (arm {o.get('arm', '?')})" for h, o in offers if o.get("offer") in ("draft", "human_prompt")]
+            abstained = Counter(o.get("abstain_reason") for _, o in offers if o.get("offer") == "abstain")
+            other = len(offers) - len(asked) - sum(abstained.values())
             parts = []
-            for h in w.hot:
-                o = d.hot_offers.get(h["status_id"], {})
-                what = o.get("offer") or h.get("state")
-                if what == "abstain":
-                    what = f"abstained ({o.get('abstain_reason')})"
-                elif what == "human_prompt":
-                    what = "asked for a one-liner"
-                elif what == "draft":
-                    what = "offered a draft"
-                parts.append(f"@{h['handle']} ({h['profile']}, arm {o.get('arm', '?')}): {what}")
+            if asked:
+                parts.append(f"{len(asked)} offered a draft or asked for a one-liner ({', '.join(asked)})")
+            if abstained:
+                parts.append(f"{sum(abstained.values())} abstained (" +
+                             ", ".join(f"{why} {n}" for why, n in abstained.most_common()) + ")")
+            if other:
+                parts.append(f"{other} failed, went stale or are still queued")
             lines.append(f"- {len(w.hot)} hot target{'s' if len(w.hot) != 1 else ''}: " + "; ".join(parts) + ".")
         else:
             lines.append("- No hot targets.")

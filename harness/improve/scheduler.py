@@ -110,9 +110,12 @@ class State:
             c.execute("UPDATE steps SET status = ?, finished_at = ?, summary = ?, error = ?, llm_calls = ? WHERE key = ?",
                       (status, iso(at), json.dumps(summary or {}, ensure_ascii=False), error, llm_calls, key))
 
-    def steps_since(self, since: datetime | None) -> list[sqlite3.Row]:
+    def steps_since(self, since: datetime | None, strict: bool = False) -> list[sqlite3.Row]:
+        """Steps finished at or after `since`; strictly after when `since` is the previous report, whose own
+        cycle finished in the same second it was written."""
+        op = ">" if strict else ">="
         with self._conn() as c:
-            return c.execute("SELECT * FROM steps WHERE finished_at >= ? ORDER BY finished_at",
+            return c.execute(f"SELECT * FROM steps WHERE finished_at {op} ? ORDER BY finished_at",
                              (iso(since) if since else "",)).fetchall()
 
     def cycles_since(self, since: datetime | None) -> int:
@@ -539,7 +542,7 @@ class Scheduler:
         last = self.state.last_report()
         # The first report covers what the loop has done, not the ledger's whole history.
         since = datetime.fromisoformat(last["written_at"]) if last else self.state.first_started()
-        steps = self.state.steps_since(since)
+        steps = self.state.steps_since(since, strict=last is not None)
         led = instrument_ledger.load(self.cfg.instruments_path)
         events = [{"instrument": n, **e} for n, i in led.get("instruments", {}).items() for e in i.get("events", [])
                   if since is None or datetime.fromisoformat(e["at"]) >= since]
