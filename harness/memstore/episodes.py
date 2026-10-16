@@ -21,16 +21,7 @@ from harness.memstore.note import TYPES, Note, dump, parse, store_root
 LEDGER = ".ingested.json"
 MAX_TEXT = 2000  # keeps a long draft well under the 8,000-character body cap
 
-try:
-    from harness.memstore.store import write_note
-except ImportError:  # P1 (store.py) hasn't merged yet; remove this shim once it has.
-
-    def write_note(note: Note) -> Path:
-        path = store_root() / TYPES[note.type] / f"{note.id}.md"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open("w", encoding="utf-8", newline="\n") as f:
-            f.write(dump(note))
-        return path
+from harness.memstore.store import write_note
 
 
 @contextmanager

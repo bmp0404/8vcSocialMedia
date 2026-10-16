@@ -1,8 +1,8 @@
 """Markdown memory store. See memory/README.md and memory/IMPLEMENTATION.md.
 
 note.py holds the format and store_root(); store.py holds reads and the one
-validated write path. The remaining stubs are replaced by the search and
-round-end packages.
+validated write path. search.py and prompt.py are the read path, and
+episodes.py holds the round-end hook.
 """
 
 from harness.memstore.note import (
@@ -14,6 +14,9 @@ from harness.memstore.note import (
     selftest_note,
     store_root,
 )
+from harness.memstore.episodes import round_end
+from harness.memstore.prompt import context_for, prompt_block
+from harness.memstore.search import search
 from harness.memstore.store import delete_note, list_notes, load, selftest_store, write_note
 
 __all__ = [
@@ -34,19 +37,3 @@ __all__ = [
     "store_root",
     "write_note",
 ]
-
-
-def search(query: str, k: int = 10, types: list[str] | None = None) -> list[dict]:
-    raise NotImplementedError("search lands in P2 (search.py)")
-
-
-def context_for(text: str, k: int = 5, types: list[str] | None = None) -> str:
-    raise NotImplementedError("context_for lands in P2 (prompt.py)")
-
-
-def prompt_block(max_chars: int = 6000) -> str:
-    raise NotImplementedError("prompt_block lands in P2 (prompt.py)")
-
-
-def round_end(run_id: int, *, provider: str) -> list[str]:
-    raise NotImplementedError("round_end lands in P4 (episodes.py)")
