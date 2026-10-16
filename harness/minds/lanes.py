@@ -190,7 +190,7 @@ def reply_lane(llm: LLM, mission: str, lessons: str, narratives: list[Narrative]
 
 
 def _gate_candidates(texts: list[str], kind: str, context: str, limits: GateLimits, offer: Offer,
-                     lane: str, target_url: str | None) -> tuple[list[dict], list[str]]:
+                     lane: str, target_url: str | None, post: str | None = None) -> tuple[list[dict], list[str]]:
     cands, passing = [], []
     for text in dict.fromkeys(t for t in texts if t):
         call = {"tool": kind, "text": text} | ({"target_url": target_url} if target_url else {})
@@ -199,7 +199,7 @@ def _gate_candidates(texts: list[str], kind: str, context: str, limits: GateLimi
         except ActionSchemaError as e:
             cands.append({"text": text, "schema_error": str(e)})
             continue
-        res = gate.check(text, kind, context=context, limits=limits)
+        res = gate.check(text, kind, context=context, limits=limits, post=post)
         cands.append({"text": text, "gate": [asdict(f) for f in res.findings]})
         if res.passed:
             passing.append(text)
@@ -209,7 +209,7 @@ def _gate_candidates(texts: list[str], kind: str, context: str, limits: GateLimi
 def _veto_and_pick(llm: LLM, cfg: ActionConfig, mission: str, cands: list[dict], passing: list[str], *,
                    lane: str, context: str, seed: str, grounding) -> tuple[veto.VetoResult | None, dict | None, str]:
     """Veto every gate-passing draft, then pick at random among survivors, checking grounding when installed."""
-    results = veto.veto(llm, cfg, passing, lane=lane, context=context)
+    results = veto.veto(llm, cfg, passing, lane=lane, context=context, mission=mission)
     by_text = {r.text: r for r in results}
     for c in cands:
         if c.get("text") in by_text:
@@ -255,7 +255,7 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     dropped = []
     if cfg.filter_page_bots and page and not routing.is_mock(llm):
         try:
-            scores = veto.p_ai_scores(llm, cfg, page, context=f"POST by @{author}:\n{post}")
+            scores = veto.p_ai_scores(llm, cfg, page, context=f"POST by @{author}:\n{post}", mission=mission)
             dropped = [r for r, s in zip(page, scores) if s >= cfg.page_max_p_ai]
             page = [r for r, s in zip(page, scores) if s < cfg.page_max_p_ai]
         except veto.VetoError as e:
@@ -275,7 +275,7 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
     context = (f"POST by @{author}:\n{post}\n\nTHREAD:\n" + "\n".join(f"- {r}" for r in page)
                + f"\n\nHANDLES IN THREAD: {known}\n\nFACTS:\n{facts}")
     offer = Offer(target_urls=frozenset({url}), target_handles=frozenset({author}))
-    cands, passing = _gate_candidates(texts, "reply", context, cfg.gate, offer, REPLY_LANE, url)
+    cands, passing = _gate_candidates(texts, "reply", context, cfg.gate, offer, REPLY_LANE, url, post=post)
     detail = f"{method}: {len(passing)}/{len(cands)} drafts passed the gate" + (f" ({note})" if note else "")
     if not passing:
         return Decision(REPLY_LANE, url, "abstain", "gate_rejected", detail, candidates=cands), None
@@ -356,23 +356,42 @@ def _human_takes(takes: list[dict], offer: Offer, narratives: list[Narrative],
     return actions, decisions
 
 
+# Hosts whose links are opaque redirects. Integration's run 36: a news.google.com/rss/articles link
+# with "(via news.google.com)" got the caption vetoed by the critic.
+REDIRECT_HOSTS = {"news.google.com"}
+
+
+def credit_for(url: str, sources: dict[str, str]) -> str:
+    """Who to credit for a link, the way a person would: @handle for an X post, else the publisher's
+    name from the signal (Signal.author), else the bare domain."""
+    host = urlparse(url).netloc.removeprefix("www.")
+    if host in ("x.com", "twitter.com"):
+        return "@" + urlparse(url).path.strip("/").split("/")[0]
+    return (sources.get(url) or "").strip() or host
+
+
 def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionConfig, budget: Budget,
-             offer: Offer, grounding) -> tuple[list[Action], list[Decision]]:
-    """Quote a real X post, or link a news story, with a short caption and the source credited."""
+             offer: Offer, grounding, sources: dict[str, str]) -> tuple[list[Action], list[Decision]]:
+    """Quote a real X post, or link a news story, with a caption that stands on its own and the source
+    credited. Never links an opaque redirect."""
     ranked = sorted(narratives, key=lambda n: -n.relevance * n.velocity)
     targets = reply_targets(narratives)
     # X posts the narratives cite but Observe didn't offer as reply targets can still be quoted.
     cited = [(n, u) for n in ranked for u in n.signal_urls if u in offer.target_urls]
     news = [(n, u) for n in ranked for u in n.signal_urls if u and not thread.STATUS_ID.search(u)]
+    linkable = [(n, u) for n, u in news if urlparse(u).netloc.removeprefix("www.") not in REDIRECT_HOSTS]
     if targets and budget.left("quote") > 0:
         t = targets[0]
         kind, n, url, source = "quote", t["narrative"], t["url"], f"@{t['author']} posted:\n{t.get('text', '')}"
     elif cited and budget.left("quote") > 0:
         kind, (n, url) = "quote", cited[0]
         source = f"{n.title}\n{n.summary}\n(quoting {url})"
-    elif news and budget.left("post") > 0:
-        kind, (n, url) = "post", news[0]
-        source = f"{n.title}\n{n.summary}\n(source: {urlparse(url).netloc})"
+    elif linkable and budget.left("post") > 0:
+        kind, (n, url) = "post", linkable[0]
+        source = f"{n.title}\n{n.summary}\n(reported by {credit_for(url, sources)})"
+    elif news and not linkable and not (targets or cited):
+        return [], [Decision(POST_LANE, news[0][1], "abstain", "no_linkable_source",
+                             f"only redirect links ({', '.join(sorted(REDIRECT_HOSTS))}) to caption")]
     elif not (targets or cited or news):
         return [], [Decision(POST_LANE, "", "abstain", "no_source", "nothing real to quote or caption")]
     else:
@@ -380,7 +399,8 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
     texts = writer.captions(llm, mission, source, cfg)
     limits = GateLimits(**{**asdict(cfg.gate), "max_chars": {**cfg.gate.max_chars, kind: cfg.caption_max_chars}})
     context = f"SOURCE:\n{source}\n\nFACTS:\n{facts_block(mission, narratives)}"
-    cands, passing = _gate_candidates(texts, kind, context, limits, offer, POST_LANE, url if kind == "quote" else None)
+    cands, passing = _gate_candidates(texts, kind, context, limits, offer, POST_LANE, url if kind == "quote" else None,
+                                      post=source)
     if not passing:
         return [], [Decision(POST_LANE, url, "abstain", "gate_rejected", f"caption: 0/{len(cands)} passed the gate",
                              candidates=cands)]
@@ -388,18 +408,20 @@ def _caption(llm: LLM, mission: str, narratives: list[Narrative], cfg: ActionCon
                                          grounding=grounding)
     if picked is None:
         return [], [Decision(POST_LANE, url, "abstain", "judge_rejected", why, candidates=cands)]
-    domain = urlparse(url).netloc.removeprefix("www.")
-    text = picked.text if kind == "quote" else f"{picked.text} (via {domain}) {url}"
+    credit = credit_for(url, sources)
+    # A quote embeds its source. A link post names the publisher the way people do, then the link.
+    text = picked.text if kind == "quote" else f"{picked.text} via {credit} {url}"
     budget.take(kind)
     a = Action(type=kind, text=text, mind="caption", narrative_id=n.id, target_url=url if kind == "quote" else None,
-               lane=POST_LANE, target_text=source, rationale=f"caption of a real source ({domain})",
-               draft_meta={"method": "caption", "writer_model": cfg.styled_model, "source_url": url,
+               lane=POST_LANE, target_text=source, rationale=f"caption of a real source ({credit})",
+               draft_meta={"method": "caption", "writer_model": cfg.styled_model, "source_url": url, "credit": credit,
                            "judge": judge_meta(cfg, picked, cands, ground)})
     return [a], [Decision(POST_LANE, url, kind, detail="caption of a real source", action_id=a.id, candidates=cands)]
 
 
 def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[Action], cfg: ActionConfig,
-              budget: Budget, takes: list[dict], grounding=None) -> tuple[list[Action], list[Decision]]:
+              budget: Budget, takes: list[dict], grounding=None, sources: dict[str, str] | None = None,
+              revising: bool = False) -> tuple[list[Action], list[Decision]]:
     urls, handles = offered(narratives)
     offer = Offer(target_urls=urls, target_handles=handles)
     actions, decisions, angles = [], [], []
@@ -420,11 +442,13 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
             actions.append(a)
             decisions.append(Decision(POST_LANE, a.target_handle, "follow", action_id=a.id))
 
+    if revising:  # a retry revises chorus drafts; takes and captions already had their turn this run
+        return actions, decisions
     took, d = _human_takes(takes, offer, narratives, budget)
     actions += took
     decisions += d
     if not took and narratives:
-        cap, d = _caption(llm, mission, narratives, cfg, budget, offer, grounding)
+        cap, d = _caption(llm, mission, narratives, cfg, budget, offer, grounding, sources or {})
         actions += cap
         decisions += d
         top = max(narratives, key=lambda n: n.relevance * n.velocity)
@@ -442,7 +466,8 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
 
 def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], chorus: list[Action], *,
         revising: bool = False, cfg: ActionConfig | None = None, budget: Budget | None = None,
-        takes: list[dict] | None = None, fetch=thread.fetch_replies) -> tuple[list[Action], list[Decision]]:
+        takes: list[dict] | None = None, fetch=thread.fetch_replies,
+        sources: dict[str, str] | None = None) -> tuple[list[Action], list[Decision]]:
     """Both lanes for one decide() call. Returns the actions that ship and every decision."""
     cfg = cfg or ActionConfig()
     mock = routing.is_mock(llm)
@@ -454,7 +479,8 @@ def run(llm: LLM, mission: str, lessons: str, narratives: list[Narrative], choru
         a, d = reply_lane(llm, mission, lessons, narratives, cfg, budget, fetch, grounding)
         actions += a
         decisions += d
-    a, d = post_lane(llm, mission, narratives, chorus, cfg, budget, load_takes() if takes is None else takes, grounding)
+    a, d = post_lane(llm, mission, narratives, chorus, cfg, budget, load_takes() if takes is None else takes, grounding,
+                     sources, revising)
     actions += a
     decisions += d
     print(f"[decide] {summarize(decisions)}")

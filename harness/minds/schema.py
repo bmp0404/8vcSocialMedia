@@ -27,6 +27,7 @@ ABSTAIN_REASONS = {
     "off_mission": "the story doesn't fit the mission",
     "mute_risk": "answering could get the account muted or reported",
     "no_source": "nothing real to quote or caption",
+    "no_linkable_source": "the only sources are opaque redirect links",
 }
 
 # field name -> (type, required)

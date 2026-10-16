@@ -21,6 +21,10 @@ class GateLimits:
     # 4.5% of real replies use more than 2 distinct emoji; kept because the account doesn't need 3.
     max_distinct_emoji: int = 2
     max_hashtags: dict = field(default_factory=lambda: {"reply": 1, "quote": 1, "post": 2, "mention": 1})
+    # A draft with fewer words than this must share at least one word with the post it answers.
+    # Uncalibrated: chosen after Iterate's run shipped a bare "...". Real top replies include
+    # one-word ones ("Queen", "IKTR"), so this rejects some human-style replies on purpose.
+    min_words_without_post_reference: int = 3
 
 
 @dataclass(frozen=True)
