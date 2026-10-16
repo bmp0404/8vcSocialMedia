@@ -108,3 +108,16 @@ def test_iso_utc_converts_to_utc():
 
     dt = datetime(2026, 10, 15, 15, 0, tzinfo=timezone(timedelta(hours=-5)))
     assert iso_utc(dt) == "2026-10-15T20:00:00Z"
+
+
+def test_bluesky_maps_counts_skips_opt_outs_and_uses_link_titles():
+    from harness.sources.bluesky import post_signals
+
+    signals = post_signals(json.loads(_fixture("bluesky_search.json")))
+    assert [s.author for s in signals] == ["kerithburke.bsky.social", "linker.bsky.social"]
+    s = signals[0]
+    assert s.kind == "social" and s.source == "bluesky"
+    assert s.url == "https://bsky.app/profile/kerithburke.bsky.social/post/3mxrgv3vrzs24"
+    assert s.created_at == "2026-10-13T16:21:48Z"
+    assert s.metrics == {"likes": 103, "reposts": 30, "replies": 2, "quotes": 9}
+    assert signals[1].text == "Finals preview video"

@@ -1,5 +1,6 @@
 from harness.models import Signal
 from harness.sources.base import Source
+from harness.sources.bluesky import BlueskySource
 from harness.sources.espn import EspnNewsSource, EspnScoresSource
 from harness.sources.google_news import GoogleNewsSource
 from harness.sources.reddit import RedditSource
@@ -18,6 +19,7 @@ REGISTRY: dict[str, type[Source]] = {
         GoogleNewsSource,
         ReplyTargetSource,
         BrandActivitySource,
+        BlueskySource,
     )
 }
 

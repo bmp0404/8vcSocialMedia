@@ -37,6 +37,13 @@ class XWatch:
 
 
 @dataclass
+class BlueskyWatch:
+    queries: list[str] = field(default_factory=list)
+    lookback_hours: int = 24
+    per_query: int = 25
+
+
+@dataclass
 class ReplyTargetWatch:
     accounts: list[str] = field(default_factory=list)
     broad_accounts: list[str] = field(default_factory=list)
@@ -52,6 +59,7 @@ class Watch:
     espn: EspnWatch = field(default_factory=EspnWatch)
     google_news: NewsWatch = field(default_factory=NewsWatch)
     x: XWatch = field(default_factory=XWatch)
+    bluesky: BlueskyWatch = field(default_factory=BlueskyWatch)
     reply_targets: ReplyTargetWatch = field(default_factory=ReplyTargetWatch)
 
 
@@ -65,7 +73,7 @@ def _section(cls, raw: dict, name: str):
 
 def parse_watch(raw: dict) -> Watch:
     """Build a Watch from parsed TOML, rejecting keys it doesn't know so typos fail loudly."""
-    sections = {"brand", "espn", "google_news", "x", "reply_targets"}
+    sections = {"brand", "espn", "google_news", "x", "bluesky", "reply_targets"}
     unknown = set(raw) - sections
     if unknown:
         raise SourceError(f"observe config: unknown sections {sorted(unknown)}; expected {sorted(sections)}")
@@ -77,6 +85,7 @@ def parse_watch(raw: dict) -> Watch:
         espn=_section(EspnWatch, raw.get("espn", {}), "espn"),
         google_news=_section(NewsWatch, raw.get("google_news", {}), "google_news"),
         x=_section(XWatch, raw.get("x", {}), "x"),
+        bluesky=_section(BlueskyWatch, raw.get("bluesky", {}), "bluesky"),
         reply_targets=_section(ReplyTargetWatch, raw.get("reply_targets", {}), "reply_targets"),
     )
 

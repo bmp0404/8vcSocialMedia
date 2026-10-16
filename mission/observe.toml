@@ -30,6 +30,13 @@ queries = ["Caitlin Clark", "WNBA Finals", "Indiana Fever", "Aliyah Boston"]
 lookback_hours = 24
 per_query = 25
 
+[bluesky]
+# Public Bluesky search, the top posts of the last lookback_hours. Not X, so these show what fans
+# are saying and how hard, but they are never reply targets.
+queries = ["Caitlin Clark", "WNBA Finals", "Indiana Fever"]
+lookback_hours = 24
+per_query = 25
+
 [reply_targets]
 # Accounts whose fresh posts draw enough traffic that an early reply gets seen.
 # A first guess from the brief's storylines; nobody has checked them against real reply traffic.
