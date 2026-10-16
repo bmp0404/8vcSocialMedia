@@ -132,5 +132,10 @@ def main() -> None:
 
     add_improve_commands(sub)
 
+    # Brand onboarding (sam/onboard): `python -m harness onboard`, plus `onboard check`.
+    from harness.onboard.cli import add_commands as add_onboard_commands
+
+    add_onboard_commands(sub)
+
     args = parser.parse_args()
     args.func(args)
