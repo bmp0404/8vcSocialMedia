@@ -1,0 +1,405 @@
+{
+  "_note": "SYNTHETIC demo data. Not real posts by these accounts; shaped like scraper output for the `feed` source (HARNESS_FEED_PATH).",
+  "data": [
+    {
+      "tweet_id": "1999000000000000001",
+      "conversation_id": "1999000000000000001",
+      "full_text": "delegating one task to an agent is easy now. delegating ten tasks across a team without two agents quietly touching the same module is the actual problem.",
+      "created_at": "2026-10-15T22:40:00Z",
+      "user": {
+        "username": "factoryai",
+        "followers_count": 48000
+      },
+      "public_metrics": {
+        "like_count": 760,
+        "retweet_count": 85,
+        "reply_count": 64,
+        "quote_count": 12,
+        "impression_count": 61000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000002",
+      "conversation_id": "1999000000000000002",
+      "full_text": "how many agents are you running at once these days? we keep seeing people go from 2 to 6 parallel Claude Code sessions in a week, then hit a wall on review.",
+      "created_at": "2026-10-15T21:05:00Z",
+      "user": {
+        "username": "conductor_build",
+        "followers_count": 21000
+      },
+      "public_metrics": {
+        "like_count": 420,
+        "retweet_count": 38,
+        "reply_count": 96,
+        "quote_count": 9,
+        "impression_count": 38000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000003",
+      "conversation_id": "1999000000000000003",
+      "full_text": "the hard part of a team running lots of autonomous agents isn't starting them. it's knowing what each one is doing, and when a human should step in.",
+      "created_at": "2026-10-15T19:30:00Z",
+      "user": {
+        "username": "cognition",
+        "followers_count": 310000
+      },
+      "public_metrics": {
+        "like_count": 1800,
+        "retweet_count": 210,
+        "reply_count": 140,
+        "quote_count": 35,
+        "impression_count": 240000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000004",
+      "conversation_id": "1999000000000000004",
+      "full_text": "merge conflicts between two agents are weirder than between two humans. both are confident, neither remembers why, and the commit messages are suspiciously polite.",
+      "created_at": "2026-10-15T23:50:00Z",
+      "user": {
+        "username": "greptile",
+        "followers_count": 15000
+      },
+      "public_metrics": {
+        "like_count": 480,
+        "retweet_count": 52,
+        "reply_count": 70,
+        "quote_count": 14,
+        "impression_count": 33000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000005",
+      "conversation_id": "1999000000000000005",
+      "full_text": "PR volume per engineer goes way up once a team leans on coding agents. review becomes the bottleneck. how is your team keeping up?",
+      "created_at": "2026-10-15T17:10:00Z",
+      "lang": "en",
+      "synthetic": true,
+      "screen_name": "coderabbitai",
+      "like_count": 650,
+      "retweet_count": 60,
+      "reply_count": 120,
+      "quote_count": 18,
+      "views": 72000
+    },
+    {
+      "tweet_id": "1999000000000000006",
+      "conversation_id": "1999000000000000006",
+      "full_text": "MCP tip: keep servers small and single-purpose. one server that does everything is a debugging nightmare when your agent picks the wrong tool.",
+      "created_at": "2026-10-15T20:15:00Z",
+      "user": {
+        "username": "cline",
+        "followers_count": 92000
+      },
+      "public_metrics": {
+        "like_count": 900,
+        "retweet_count": 110,
+        "reply_count": 45,
+        "quote_count": 20,
+        "impression_count": 95000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000007",
+      "conversation_id": "1999000000000000007",
+      "full_text": "sharing an agent thread with a teammate beats pasting a 400-line transcript into Slack. the context is the handoff.",
+      "created_at": "2026-10-15T18:45:00Z",
+      "user": {
+        "username": "AmpCode",
+        "followers_count": 38000
+      },
+      "public_metrics": {
+        "like_count": 540,
+        "retweet_count": 48,
+        "reply_count": 37,
+        "quote_count": 8,
+        "impression_count": 41000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000008",
+      "conversation_id": "1999000000000000008",
+      "full_text": "stacked PRs were made for this moment: agents produce small diffs fast, and someone still has to land them in the right order.",
+      "created_at": "2026-10-15T16:20:00Z",
+      "user": {
+        "username": "withgraphite",
+        "followers_count": 27000
+      },
+      "public_metrics": {
+        "like_count": 380,
+        "retweet_count": 30,
+        "reply_count": 22,
+        "quote_count": 5,
+        "impression_count": 29000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000009",
+      "conversation_id": "1999000000000000009",
+      "full_text": "spec first, then code. a written spec gives every agent working in the repo the same source of truth.",
+      "created_at": "2026-10-15T15:00:00Z",
+      "user": {
+        "username": "kirodotdev",
+        "followers_count": 33000
+      },
+      "public_metrics": {
+        "like_count": 300,
+        "retweet_count": 25,
+        "reply_count": 18,
+        "quote_count": 4,
+        "impression_count": 26000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000010",
+      "conversation_id": "1999000000000000010",
+      "full_text": "8 agent tabs open. one of them has been waiting on a permission prompt for 40 minutes. which one? nobody knows.",
+      "created_at": "2026-10-16T00:20:00Z",
+      "lang": "en",
+      "synthetic": true,
+      "screen_name": "warpdotdev",
+      "like_count": 1200,
+      "retweet_count": 90,
+      "reply_count": 150,
+      "quote_count": 22,
+      "views": 130000
+    },
+    {
+      "tweet_id": "1999000000000000011",
+      "conversation_id": "1999000000000000011",
+      "full_text": "building multiplayer editing taught us one thing: presence matters. you need to see where everyone else is before you start typing.",
+      "created_at": "2026-10-15T14:30:00Z",
+      "user": {
+        "username": "zeddotdev",
+        "followers_count": 120000
+      },
+      "public_metrics": {
+        "like_count": 700,
+        "retweet_count": 55,
+        "reply_count": 40,
+        "quote_count": 10,
+        "impression_count": 70000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000012",
+      "conversation_id": "1999000000000000012",
+      "full_text": "spinning up 100 sandboxes in parallel is the easy part now. deciding what runs in each one, and keeping them from duplicating work, is next.",
+      "created_at": "2026-10-15T13:40:00Z",
+      "user": {
+        "username": "e2b",
+        "followers_count": 26000
+      },
+      "public_metrics": {
+        "like_count": 350,
+        "retweet_count": 40,
+        "reply_count": 25,
+        "quote_count": 6,
+        "impression_count": 30000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000013",
+      "conversation_id": "1999000000000000013",
+      "full_text": "one database branch per agent: every agent gets its own copy of the data and nobody steps on anyone else's migration.",
+      "created_at": "2026-10-15T12:10:00Z",
+      "user": {
+        "username": "neondatabase",
+        "followers_count": 85000
+      },
+      "public_metrics": {
+        "like_count": 600,
+        "retweet_count": 70,
+        "reply_count": 30,
+        "quote_count": 9,
+        "impression_count": 58000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000014",
+      "conversation_id": "1999000000000000014",
+      "full_text": "when the stack trace points at code nobody on the team remembers writing, it might be an agent's. figuring out who (or what) wrote a line is getting interesting.",
+      "created_at": "2026-10-15T22:00:00Z",
+      "user": {
+        "username": "getsentry",
+        "followers_count": 150000
+      },
+      "public_metrics": {
+        "like_count": 980,
+        "retweet_count": 120,
+        "reply_count": 88,
+        "quote_count": 25,
+        "impression_count": 110000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000015",
+      "conversation_id": "1999000000000000015",
+      "full_text": "custom modes let you split architect / coder / reviewer across agents. how many modes are you actually using day to day?",
+      "created_at": "2026-10-15T11:25:00Z",
+      "lang": "en",
+      "synthetic": true,
+      "screen_name": "RooCode",
+      "like_count": 210,
+      "retweet_count": 15,
+      "reply_count": 28,
+      "quote_count": 2,
+      "views": 17000
+    },
+    {
+      "tweet_id": "1999000000000000016",
+      "conversation_id": "1999000000000000016",
+      "full_text": "team-wide agent rules checked into the repo beat everyone's personal prompt file. consistency across agents starts with shared config.",
+      "created_at": "2026-10-15T10:50:00Z",
+      "user": {
+        "username": "continuedev",
+        "followers_count": 30000
+      },
+      "public_metrics": {
+        "like_count": 260,
+        "retweet_count": 20,
+        "reply_count": 14,
+        "quote_count": 3,
+        "impression_count": 21000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000017",
+      "conversation_id": "1999000000000000017",
+      "full_text": "fan out 50 sandboxed agent attempts in parallel, keep the one that passes the tests. compute is cheap; your attention isn't.",
+      "created_at": "2026-10-15T09:30:00Z",
+      "user": {
+        "username": "modal_labs",
+        "followers_count": 55000
+      },
+      "public_metrics": {
+        "like_count": 450,
+        "retweet_count": 50,
+        "reply_count": 20,
+        "quote_count": 7,
+        "impression_count": 44000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000018",
+      "conversation_id": "1999000000000000018",
+      "full_text": "the office dog has strong opinions about tabs vs spaces. (spaces.)",
+      "created_at": "2026-10-15T23:15:00Z",
+      "user": {
+        "username": "convex_dev",
+        "followers_count": 70000
+      },
+      "public_metrics": {
+        "like_count": 2000,
+        "retweet_count": 100,
+        "reply_count": 200,
+        "quote_count": 15,
+        "impression_count": 150000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000019",
+      "conversation_id": "1999000000000000019",
+      "full_text": "we're hiring across engineering and support. come build the future of deployment with us, link in bio.",
+      "created_at": "2026-10-15T16:55:00Z",
+      "user": {
+        "username": "Railway",
+        "followers_count": 110000
+      },
+      "public_metrics": {
+        "like_count": 300,
+        "retweet_count": 40,
+        "reply_count": 12,
+        "quote_count": 1,
+        "impression_count": 35000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000000020",
+      "conversation_id": "1999000000000000020",
+      "full_text": "happy friday. what are you shipping this weekend?",
+      "created_at": "2026-10-15T20:40:00Z",
+      "lang": "en",
+      "synthetic": true,
+      "screen_name": "resend",
+      "like_count": 150,
+      "retweet_count": 5,
+      "reply_count": 80,
+      "quote_count": 1,
+      "views": 18000
+    },
+    {
+      "tweet_id": "1999000000000000021",
+      "conversation_id": "1999000000000000021",
+      "full_text": "three coding agents side by side in one terminal UI. terminal nerds, this one's for you.",
+      "created_at": "2026-10-10T18:00:00Z",
+      "user": {
+        "username": "charmcli",
+        "followers_count": 45000
+      },
+      "public_metrics": {
+        "like_count": 800,
+        "retweet_count": 60,
+        "reply_count": 30,
+        "quote_count": 8,
+        "impression_count": 52000
+      },
+      "lang": "en",
+      "synthetic": true
+    },
+    {
+      "tweet_id": "1999000000000099999",
+      "full_text": "",
+      "created_at": "2026-10-15T19:00:00Z",
+      "user": {
+        "username": "tldraw",
+        "followers_count": 90000
+      },
+      "public_metrics": {
+        "like_count": 900,
+        "retweet_count": 80,
+        "reply_count": 40
+      },
+      "media": [
+        {
+          "type": "video"
+        }
+      ],
+      "lang": "zxx",
+      "synthetic": true
+    }
+  ]
+}

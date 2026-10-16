@@ -81,14 +81,17 @@
 <div class="toast" id="toast"></div>
 
 <script>
+const DECLINED = a => a.status === "declined";
 const FILTERS = {
-  pending: a => a.review.status === "pending" && !a.vetoed,
+  pending: a => a.review.status === "pending" && !a.vetoed && !DECLINED(a),
   approved: a => a.review.status === "approved",
   killed: a => a.review.status === "killed",
   vetoed: a => a.vetoed && a.review.status === "pending",
+  declined: DECLINED,
   all: () => true,
 };
-const LABELS = { pending: "To review", approved: "Approved", killed: "Killed", vetoed: "Critic vetoed", all: "All" };
+const LABELS = { pending: "To review", approved: "Approved", killed: "Killed", vetoed: "Critic vetoed", declined: "Declined", all: "All" };
+const REASONS = ["off_tone", "stale", "wrong_target", "nothing_to_add", "factual_risk", "repetitive", "other"];
 let state = { runs: [], runId: null, actions: [], filter: "pending", focus: 0 };
 
 const $ = s => document.querySelector(s);
@@ -134,21 +137,24 @@ function cardHtml(a, i) {
       <span>${esc((a.mind || "").replaceAll("_", " "))}</span>
       <span>· ${esc(a.narrative_id)}</span>
       ${a.vetoed ? `<span class="veto">⚠ critic veto</span>` : ""}
+      ${a.reason ? `<span class="pill">${esc(a.reason)}</span>` : ""}
       ${st !== "pending" ? `<span class="status-${st}">${st}</span>` : ""}
       ${a.review.text ? `<span>· edited</span>` : ""}
     </div>
     ${targetHtml(a) ? `<div class="meta target">${targetHtml(a)}</div>` : ""}
-    ${isFollow ? "" : `<textarea aria-label="Post text">${esc(text)}</textarea><div class="count"></div>`}
+    ${isFollow || DECLINED(a) ? "" : `<textarea aria-label="Post text">${esc(text)}</textarea><div class="count"></div>`}
     <details>
       <summary>Why this?</summary>
       <div class="why">
         ${a.rationale ? `<div><b>Rationale:</b> ${esc(a.rationale)}</div>` : ""}
         ${a.critique ? `<div><b>Critic:</b> ${esc(a.critique)}</div>` : ""}
+        ${a.sentiment && Object.keys(a.sentiment).length ? `<div><b>Predicted sentiment:</b> ${["positive", "neutral", "negative"].map(k => `${k} ${Math.round((a.sentiment[k] || 0) * 100)}%`).join(" · ")}</div>` : ""}
         ${panelHtml(a.panel)}
       </div>
     </details>
     <div class="actions">
       <input class="note" placeholder="Note (optional, fed to learning)" value="${esc(a.review.note)}">
+      <select class="reason" title="Kill reason">${REASONS.map(r => `<option ${r === (a.reason || "other") ? "selected" : ""}>${r}</option>`).join("")}</select>
       <button class="btn approve" data-act="approved">Approve</button>
       <button class="btn kill" data-act="killed">Kill</button>
       ${st !== "pending" ? `<button class="btn reset" data-act="pending">Reset</button>` : ""}
@@ -182,7 +188,7 @@ async function review(card, status) {
   const note = card.querySelector(".note").value;
   const res = await api(`/api/actions/${a.id}/review`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status, text: edited, note }),
+    body: JSON.stringify({ status, text: edited, note, reason: card.querySelector(".reason")?.value }),
   });
   if (!res.ok) return toast(res.error || "Failed");
   a.review = { status, text: status === "pending" ? null : edited, note: status === "pending" ? "" : note };

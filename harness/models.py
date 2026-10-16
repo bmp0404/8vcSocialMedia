@@ -3,6 +3,19 @@ from dataclasses import asdict, dataclass, field
 
 ACTION_TYPES = {"post", "reply", "quote", "mention", "follow"}
 LANE_TYPES = {"reply": {"reply", "quote", "mention", "follow"}, "post": {"post"}}
+# Reply-lane outcomes where the account deliberately does nothing. Logged to memory, never emailed.
+#   wait: worth revisiting later (thread still forming, nothing sharp yet)
+#   no_response: not worth engaging with at all
+DECLINE_TYPES = {"wait", "no_response"}
+
+# Structured reason carried by every veto, rejection and decline (memory `actions.reason`).
+REASONS = ("off_tone", "stale", "wrong_target", "nothing_to_add", "factual_risk", "repetitive", "other")
+
+
+def norm_reason(value) -> str:
+    """Coerce whatever a model or a human sent into one of REASONS."""
+    v = str(value or "").strip().lower().replace("-", "_").replace(" ", "_")
+    return v if v in REASONS else "other"
 
 
 @dataclass
@@ -45,8 +58,10 @@ class Action:
     target_handle: str | None = None  # without the leading @
     predicted_score: float = 0.0
     panel: dict = field(default_factory=dict)
+    sentiment: dict = field(default_factory=dict)  # predicted reaction split {positive, neutral, negative}
     vetoed: bool = False
     critique: str = ""
+    reason: str | None = None  # one of REASONS when vetoed, rejected or declined
     lane: str = "post"  # reply | post
     context: dict = field(default_factory=dict)  # the observed Signal (reply) or Narrative (post) it responds to
     run_id: int | None = None

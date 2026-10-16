@@ -7,9 +7,14 @@ X_ACCESS_TOKEN_SECRET) are not read.
 
 Env:
   X_BEARER_TOKEN   required
-  X_SEARCH_QUERY   full search query (overrides keywords)
-  X_SEARCH_KEYWORDS comma-separated keywords used to build the default query
+  X_SEARCH_QUERY   full search query (overrides everything below)
+  X_SEARCH_KEYWORDS comma-separated keywords (overrides the targets file's keywords)
+  X_QUERY_MODE     what the default query is built from: both | keywords | accounts (default both).
+                   keywords = the targets file's `keywords`; accounts = `from:` its priority handles
+  X_QUERY_MAX_LEN  max query length; terms past it are dropped (default 512, X's basic-tier limit)
   X_MAX_RESULTS    cap on signals returned by the source (default 25)
+
+The targets file is HARNESS_TARGETS (default `<mission stem>_targets.json`; see config.targets()).
 
 Docs: https://docs.x.com/x-api  (recent search max_results 10-100; user
 timeline 5-100; post lookup up to 100 ids; pay-per-use credits).
@@ -26,18 +31,12 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
+from harness import config
 from harness.models import Signal
 from harness.sources.base import Source
 
 BASE_URL = "https://api.x.com/2"
 TIMEOUT = 20
-
-DEFAULT_KEYWORDS = [
-    "Caitlin Clark",
-    "Indiana Fever",
-    "WNBA",
-    "Iowa Hawkeyes",
-]
 
 TWEET_FIELDS = "public_metrics,created_at,conversation_id,author_id"
 USER_FIELDS = "username,public_metrics"
@@ -137,16 +136,42 @@ def _friendly(pm: dict) -> dict:
 # ----------------------------------------------------------------------- search
 
 
-def build_query(keywords: list[str] | None = None) -> str:
-    """X_SEARCH_QUERY if set, else (kw1 OR "kw 2" ...) -is:retweet lang:en."""
+def build_query(keywords: list[str] | None = None, handles: list[str] | None = None) -> str:
+    """X_SEARCH_QUERY if set; else `(kw1 OR "kw 2" ... OR from:h1 OR from:h2) -is:retweet lang:en`.
+
+    Keywords come from X_SEARCH_KEYWORDS or the targets file; handles are the targets file's priority
+    accounts. X_QUERY_MODE picks keywords, accounts or both; terms that would push the query past
+    X_QUERY_MAX_LEN are dropped (keywords and handles interleaved, so both survive truncation).
+    """
     q = os.getenv("X_SEARCH_QUERY", "").strip()
     if q:
         return q
+    mode = os.getenv("X_QUERY_MODE", "both").strip().lower()
+    targets = config.targets()
     if keywords is None:
-        env_kw = os.getenv("X_SEARCH_KEYWORDS", "")
-        keywords = [k.strip() for k in env_kw.split(",") if k.strip()] or DEFAULT_KEYWORDS
-    terms = [f'"{k}"' if " " in k else k for k in keywords]
-    return f"({' OR '.join(terms)}) -is:retweet lang:en"
+        env_kw = [k.strip() for k in os.getenv("X_SEARCH_KEYWORDS", "").split(",") if k.strip()]
+        keywords = env_kw or list(targets["keywords"])
+    if handles is None:
+        handles = [a["handle"] for a in targets["accounts"] if a.get("priority") and a.get("handle")]
+    kw_terms = [f'"{k}"' if " " in k else k for k in keywords] if mode in {"both", "keywords"} else []
+    from_terms = [f"from:{h.lstrip('@')}" for h in handles] if mode in {"both", "accounts"} else []
+    if not kw_terms and not from_terms:
+        raise XAPIError("-", None, "no X search query: set X_SEARCH_QUERY / X_SEARCH_KEYWORDS or add "
+                                   "keywords / priority accounts to the targets file (HARNESS_TARGETS)")
+    interleaved = [t for pair in zip(kw_terms, from_terms) for t in pair]
+    n = min(len(kw_terms), len(from_terms))
+    interleaved += kw_terms[n:] + from_terms[n:]
+    try:
+        max_len = int(os.getenv("X_QUERY_MAX_LEN", "512"))
+    except ValueError:
+        max_len = 512
+    suffix = " -is:retweet lang:en"
+    terms: list[str] = []
+    for t in interleaved:
+        if len(f"({' OR '.join(terms + [t])}){suffix}") > max_len and terms:
+            continue
+        terms.append(t)
+    return f"({' OR '.join(terms)}){suffix}"
 
 
 def _max_results() -> int:

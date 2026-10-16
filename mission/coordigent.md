@@ -42,3 +42,10 @@
 - "Conductor is broken, use us instead." (disparaging, unsupported)
 - "Who else uses AI agents?? Like and RT!" (engagement bait)
 - "Great post! Check out coordigent.com" (generic, spammy plug)
+
+**Audience panel:**
+- agent_power_user: Runs several coding agents a day (Claude Code, Codex, Cursor); rewards specific, correct takes on real workflow pain; ignores anything that reads like it was written by someone who doesn't use agents.
+- eng_lead: Leads a team of 5-30 engineers adopting agents; cares about review load, ownership and coordination; engages with useful, sober takes, ignores hype.
+- peer_tool_account: Runs the account of a peer dev tool on the watchlist; replies to and reposts accounts that add to their conversation, credit them or make them laugh; cold to plugs in their mentions.
+- skeptic: Thinks multi-agent coding is overhyped; engages with honest, self-aware takes and sharp jokes; hates marketing-speak and unverifiable claims.
+- casual_dev: Scrolls dev X between builds; rewards short, funny, instantly relatable posts.

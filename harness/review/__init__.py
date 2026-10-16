@@ -52,7 +52,9 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": "not found"}, 404)
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
-            run_id = memory.set_review(m[1], body.get("status", ""), body.get("text"), body.get("note", ""))
+            run_id = memory.set_review(
+                m[1], body.get("status", ""), body.get("text"), body.get("note", ""), body.get("reason")
+            )
         except KeyError:
             return self._json({"error": "unknown action"}, 404)
         except ValueError as e:

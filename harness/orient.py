@@ -11,7 +11,9 @@ observed signals into distinct narratives the account could join with an origina
 - relevance (0-1): fit with the mission's subjects and tone
 - velocity (0-1): how fast attention is moving right now
 Suggest a one-line `angle` the account could take, in the mission's voice (a specific take beats
-generic praise). Down-rank narratives the account has already covered recently (see MEMORY)."""
+generic praise). Down-rank narratives the account has already covered recently (see MEMORY).
+Leave out signals that are off-mission or low value instead of forcing them into a narrative, and
+never build an angle on a brand fact (feature, number, customer, launch) that isn't in the MISSION."""
 
 PROMPT = """MISSION:
 {mission}

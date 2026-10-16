@@ -33,6 +33,9 @@ ACTION_HELP = [
     ("follow", "Follow the account TARGET_HANDLE. Nothing is posted; TEXT is empty."),
 ]
 
+# Reply-lane "do nothing" outcomes; logged to memory, never handed off.
+DECLINE_TYPES = {"wait", "no_response", "skip"}
+
 TEXT_OPEN = "<<<BEGIN_TEXT"
 TEXT_CLOSE = "END_TEXT>>>"
 
@@ -54,13 +57,27 @@ def load_recommendations(path: str | Path) -> tuple[list[dict], str | None]:
         run_id = data.get("run_id")
     else:
         actions, run_id = data, None
-    return [a for a in actions if not a.get("vetoed")], (str(run_id) if run_id is not None else None)
+    keep = [a for a in actions if not a.get("vetoed") and (a.get("type") or "").lower() not in DECLINE_TYPES]
+    return keep, (str(run_id) if run_id is not None else None)
 
 
 def _get(a: Any, key: str, default: Any = None) -> Any:
     if isinstance(a, dict):
         return a.get(key, default)
     return getattr(a, key, default)
+
+
+def handle(h: str | None) -> str | None:
+    """Stored handles have no leading @; render them with exactly one."""
+    h = (h or "").strip().lstrip("@")
+    return f"@{h}" if h else None
+
+
+def _sentiment(a: Any) -> str:
+    s = _get(a, "sentiment") or {}
+    if not isinstance(s, dict) or not s:
+        return "none"
+    return " / ".join(f"{k} {float(s.get(k) or 0):.0%}" for k in ("positive", "neutral", "negative"))
 
 
 def _one_line(s: str | None, limit: int = 240) -> str:
@@ -124,8 +141,9 @@ def render(actions: Iterable[Any], run_id: str, mission_name: str) -> tuple[str,
             f"ACTION_ID: {aid}",
             f"TYPE: {atype}",
             f"TARGET_URL: {_get(a, 'target_url') or 'none'}",
-            f"TARGET_HANDLE: {_get(a, 'target_handle') or 'none'}",
+            f"TARGET_HANDLE: {handle(_get(a, 'target_handle')) or 'none'}",
             f"PREDICTED_SCORE: {float(score):.3f}",
+            f"PREDICTED_SENTIMENT: {_sentiment(a)}",
             f"RATIONALE: {_one_line(_get(a, 'rationale')) or 'none'}",
         ]
         lines += ["TEXT:", TEXT_OPEN, text, TEXT_CLOSE] if text else ["TEXT: none (nothing to post)"]
@@ -157,7 +175,7 @@ def _render_html(actions: list, run_id: str, mission_name: str, generated: str, 
         f"<p style=\"background:#fff7d6;padding:8px;border-left:3px solid #e0b000\">{e(reply_line)}</p>",
     ]
     for i, a in enumerate(actions, 1):
-        tu, th = _get(a, "target_url"), _get(a, "target_handle")
+        tu, th = _get(a, "target_url"), handle(_get(a, "target_handle"))
         target = []
         if tu:
             target.append(f"<a href=\"{e(tu)}\">{e(tu)}</a>")
@@ -171,6 +189,7 @@ def _render_html(actions: list, run_id: str, mission_name: str, generated: str, 
             f"<tr><td style=\"padding-right:10px\">ACTION_ID</td><td><b>{e(str(_get(a, 'id', '')))}</b></td></tr>"
             f"<tr><td>TARGET</td><td>{' &middot; '.join(target) or 'none'}</td></tr>"
             f"<tr><td>SCORE</td><td>{float(_get(a, 'predicted_score') or 0):.3f}</td></tr>"
+            f"<tr><td>SENTIMENT</td><td>{e(_sentiment(a))}</td></tr>"
             "</table>"
             f"<p style=\"margin:8px 0 4px\"><b>Rationale:</b> {e(_one_line(_get(a, 'rationale')) or 'none')}</p>"
             + (

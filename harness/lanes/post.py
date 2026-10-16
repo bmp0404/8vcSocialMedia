@@ -21,28 +21,30 @@ NARRATIVES TO WORK WITH:
 {narratives}
 
 Propose up to {n} original X posts in your style, each tied to one narrative. No replies, quotes,
-or @-mentions: these stand on their own. Under 280 characters each.
+or @-mentions: these stand on their own. One post each, not a thread: hard limit 280 characters
+(newlines count), and most land best at 120-220. The narrative's `angle` is a hint, not a script; other
+minds see the same angles, so find the take only your style would write instead of paraphrasing it.
 
 Return JSON: {{"actions": [{{"narrative_id": "...", "text": "...", "rationale": "..."}}]}}"""
 
 MOCK_TEXT = {
-    "meme_lord": [
-        'nobody:\nabsolutely nobody:\nthe timeline at 2am: "{title}"',
-        "me explaining {title} to my group chat for the fourth time this week",
+    "agent_wrangler": [
+        "{title}: two agents, one file, both sure they were first. a love story.",
+        "me explaining {title} to my agents for the fourth time this week",
     ],
-    "rivalry_banterer": [
-        "unpopular opinion on {title}: {angle} is the only honest read. replies are open.",
-        "everyone has a take on {title}. most of them are the same take wearing a different hat.",
+    "technical_explainer": [
+        "{title}, in one line: {angle}. everything else is implementation detail.",
+        "the failure mode in {title} nobody names: no shared state between the agents doing the work.",
     ],
-    "stat_nerd": [
-        "{title}. the one number that matters here: [VERIFY: stat]. everything else is vibes.",
-        "receipts on {title}: [VERIFY: stat]. {angle}, in one line.",
+    "build_in_public": [
+        "what we keep coming back to on {title}: {angle}.",
+        "belief we're building on: {title} is a coordination problem before it's a model problem.",
     ],
 }
 
 
 def _mock(name: str, narratives: list[Narrative], n: int) -> dict:
-    templates = MOCK_TEXT.get(name, MOCK_TEXT["rivalry_banterer"])
+    templates = MOCK_TEXT.get(name, MOCK_TEXT["technical_explainer"])
     out = []
     for i, nar in enumerate(narratives[:n]):
         out.append({

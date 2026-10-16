@@ -16,9 +16,12 @@ class LLM:
         raise NotImplementedError
 
     def complete_json(self, system: str, prompt: str, mock: Callable[[], Any] | None = None) -> Any:
-        """Ask for JSON and parse it. `mock` supplies canned output for the offline backend."""
-        text = self.complete(system + "\n\nRespond with JSON only, no prose.", prompt)
-        return parse_json(text)
+        """Ask for JSON and parse it (one retry on unparseable output). `mock` is for the offline backend."""
+        system += "\n\nRespond with JSON only, no prose."
+        try:
+            return parse_json(self.complete(system, prompt))
+        except ValueError:  # includes json.JSONDecodeError and refusals
+            return parse_json(self.complete(system, prompt))
 
 
 class AnthropicLLM(LLM):
@@ -27,14 +30,20 @@ class AnthropicLLM(LLM):
 
         self.client = anthropic.Anthropic()
         self.model = model
+        # HARNESS_EFFORT: low | medium | high | xhigh | max (unset = the model's default)
+        self.effort = os.getenv("HARNESS_EFFORT", "").strip().lower() or None
 
     def complete(self, system: str, prompt: str) -> str:
+        extra = {"output_config": {"effort": self.effort}} if self.effort else {}
         resp = self.client.messages.create(
             model=self.model,
-            max_tokens=4096,
+            max_tokens=16000,  # thinking shares this budget; 4096 risked truncating panel/critic JSON
             system=system,
             messages=[{"role": "user", "content": prompt}],
+            **extra,
         )
+        if resp.stop_reason == "refusal":
+            raise ValueError("model declined the request (stop_reason=refusal)")
         return "".join(b.text for b in resp.content if b.type == "text")
 
 

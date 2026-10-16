@@ -1,11 +1,13 @@
 from harness.models import Signal
 from harness.sources.base import Source
+from harness.sources.feed import FeedSource
 from harness.sources.reddit import RedditSource
 from harness.sources.sample import SampleSource
+from harness.sources.x_api import XAPISource
 from harness.sources.x_search import XSearchSource
 
 REGISTRY: dict[str, type[Source]] = {
-    cls.name: cls for cls in (SampleSource, RedditSource, XSearchSource)
+    cls.name: cls for cls in (SampleSource, RedditSource, XSearchSource, XAPISource, FeedSource)
 }
 
 

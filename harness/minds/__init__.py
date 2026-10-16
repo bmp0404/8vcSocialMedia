@@ -15,16 +15,21 @@ PROMPTS_DIR = Path(__file__).parent / "prompts"
 
 MIND_LANES = {
     "reply_sniper": {"reply"},
-    "community_builder": {"reply"},
-    "rivalry_banterer": {"reply", "post"},
-    "stat_nerd": {"reply", "post"},
-    "meme_lord": {"post"},
+    "friendly_rival": {"reply"},
+    "agent_wrangler": {"reply", "post"},
+    "technical_explainer": {"reply", "post"},
+    "build_in_public": {"post"},
 }
 
 SYSTEM_SUFFIX = """
 
 You write for the brand account described in the MISSION you are given: its audience, subjects,
-voice and red lines come from there, not from you. Stay inside the mission."""
+voice and red lines come from there, not from you. Stay inside the mission.
+
+Grounding: anything you say about the brand itself (what the product does, platforms, integrations,
+numbers, customers, launches) must be stated in the MISSION. If it isn't there, leave it out; a draft
+with an invented brand fact will be vetoed. Facts about other people and companies must come from the
+post you're responding to or be common knowledge; when unsure, make it an opinion or drop it."""
 
 
 def load_minds(lane: str | None = None) -> dict[str, str]:
@@ -35,18 +40,20 @@ def load_minds(lane: str | None = None) -> dict[str, str]:
 def ask(
     llm: LLM,
     minds: dict[str, str],
-    prompt: str,
+    prompt: str | Callable[[str], str],
     mock: Callable[[str], Any],
     tag: str = "decide",
 ) -> dict[str, list[dict]]:
-    """Ask every mind the same prompt in parallel; returns {mind: [raw action dicts]}.
+    """Ask every mind in parallel; returns {mind: [raw action dicts]}.
 
+    `prompt` is one prompt for all minds, or `prompt(name)` for a per-mind prompt.
     `mock(name)` builds the offline fixture for a given mind.
     """
 
     def one(name: str) -> tuple[str, list[dict]]:
+        text = prompt(name) if callable(prompt) else prompt
         try:
-            data = llm.complete_json(minds[name] + SYSTEM_SUFFIX, prompt, mock=lambda: mock(name))
+            data = llm.complete_json(minds[name] + SYSTEM_SUFFIX, text, mock=lambda: mock(name))
         except Exception as e:  # noqa: BLE001 - one bad mind shouldn't sink the chorus
             print(f"[{tag}] {name} failed: {e}")
             return name, []
