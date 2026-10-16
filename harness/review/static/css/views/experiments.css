@@ -1,0 +1,823 @@
+/* Experiments: the ledger in a well on the left, the selected experiment on paper to the right. */
+
+.xp {
+  container: xp / inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  padding: 0 var(--s5) var(--s6);
+}
+
+/* --- Config in force ---------------------------------------------------------------------- */
+
+.xp-champ {
+  overflow: hidden;
+}
+
+/* Field values: numbers in the UI face with tabular figures, identifiers in the code face. B612
+   stays on the uppercase labels, where its full-width "." and ":" never land inside a number. */
+.xp .field .v {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.xp .field .v.mono {
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+
+.xp-fields {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.xp-fsub {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.xp-changed,
+.xp-champ-note {
+  padding: var(--s2) var(--s3);
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+}
+
+.xp-champ-note {
+  color: var(--ink-3);
+}
+
+.xp-changed {
+  display: grid;
+  gap: var(--s1);
+}
+
+.xp-changed li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--s2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The champion's history, oldest first: date, stamp, record, change; a revert adds its reason. */
+.xp-history {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+
+.xp-history li {
+  display: grid;
+  grid-template-columns: 9.5rem max-content max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 2px var(--s3);
+  padding: 6px var(--s3);
+  font-size: 13px;
+}
+
+.xp-history li + li {
+  border-top: 1px dashed var(--rule);
+}
+
+.xp-history .stamp {
+  font-size: 10px;
+}
+
+.xp-hdate {
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.xp-hchange {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.xp-hwhy {
+  grid-column: 2 / -1;
+  font-size: 12px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+@container xp (max-width: 700px) {
+  .xp-history li {
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+  .xp-hdate {
+    grid-column: 1 / -1;
+  }
+  .xp-hchange,
+  .xp-hwhy {
+    grid-column: 1 / -1;
+  }
+}
+
+.xp-config {
+  border-top: 1px solid var(--rule);
+}
+
+.xp-config > summary {
+  padding: var(--s2) var(--s3);
+}
+
+.xp-config > .xp-tablewrap {
+  margin: 0 var(--s3) var(--s3);
+}
+
+.xp-skel-row {
+  display: flex;
+  gap: var(--s5);
+  padding: var(--s4) var(--s3);
+}
+
+.xp-skel-row .skeleton {
+  flex: none;
+}
+
+/* --- Shared bits -------------------------------------------------------------------------- */
+
+.xp summary {
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  cursor: pointer;
+  width: fit-content;
+}
+
+.xp-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.xp-link.mono {
+  font-family: var(--font-code);
+  font-size: 0.92em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .xp-link:hover {
+    text-decoration-color: currentColor;
+  }
+  .xp summary:hover {
+    color: var(--ink);
+  }
+}
+
+.xp-knob {
+  font-size: 0.9em;
+  color: var(--ink-3);
+}
+
+.xp-note,
+.xp-legend {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+
+.xp-tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+  background: var(--strip);
+}
+
+.xp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.xp-table th,
+.xp-table td {
+  padding: 6px var(--s2);
+  border-top: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.xp-table thead th {
+  border-top: 0;
+  font: 700 var(--t-label) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.xp-table tbody th[scope="row"] {
+  font-weight: 600;
+}
+
+.xp-table tbody th.mono,
+.xp-table td.mono {
+  font-size: 12px;
+}
+
+.xp-table .grp th {
+  font: 700 var(--t-label) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--strip-inset);
+}
+
+.xp-table .r {
+  text-align: right;
+}
+
+.xp-table td small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.xp-table td.num {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* --- Layout: ledger and detail ------------------------------------------------------------ */
+
+.xp-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: start;
+}
+
+.xp-side {
+  container: xpside / inline-size;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* flex: none, or the long list squeezes the bays to nothing inside the height-capped column. */
+.xp-bays {
+  flex: none;
+  padding: 0;
+}
+
+.xp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  max-height: min(64dvh, 560px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Room on the right for the selected strip, which slides out 8px. */
+  padding: var(--s1) 14px var(--s3) var(--s2);
+  background: var(--board-deep);
+  border: 1px solid var(--rule);
+  border-radius: 0 var(--r-strip) var(--r-strip) var(--r-strip);
+}
+
+@container xp (min-width: 760px) {
+  .xp-body {
+    grid-template-columns: minmax(310px, 36%) minmax(0, 1fr);
+  }
+  .xp-side {
+    position: sticky;
+    top: var(--s3);
+    max-height: calc(100dvh - 37px - var(--s3) * 2);
+  }
+  .xp-list {
+    max-height: none;
+    flex: 1;
+  }
+}
+
+/* Under 860px the rail becomes a bar across the top, which the sticky column must clear too. */
+@media (max-width: 860px) {
+  .xp {
+    padding: 0 var(--s3) var(--s5);
+  }
+  @container xp (min-width: 760px) {
+    .xp-side {
+      max-height: calc(100dvh - 37px - 52px - var(--s3) * 2);
+    }
+  }
+}
+
+@container xpside (max-width: 380px) {
+  .xp-bays .bay span {
+    padding: 0 var(--s2);
+  }
+}
+
+.xp-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xp-run {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--s2);
+  padding: var(--s3) 2px 2px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.xp-run .label {
+  color: var(--ink-2);
+}
+
+.xp-run-when {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.xp-run-meta {
+  font-size: 11.5px;
+}
+
+.xp-run-note {
+  flex-basis: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.xp-empty {
+  padding: var(--s4) var(--s2);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.xp-strip {
+  cursor: pointer;
+  flex: none;
+}
+
+.xp-strip .strip-top .where {
+  font-size: 11px;
+}
+
+.xp-strip .stamp {
+  margin-left: auto;
+  font-size: 10px;
+}
+
+.xp-strip .strip-text {
+  font-size: 13.5px;
+}
+
+.xp-strip-why {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+/* The mini gauge has fixed plot and value columns so zero lines up down the whole ledger. */
+.xp-gauge {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 4.6em;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.xp-gauge-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.xp-gauge-v {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* One-time stagger when the ledger first renders; selection and filtering never animate. */
+@keyframes xp-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes xp-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.xp-list.entering .xp-strip {
+  animation: xp-in var(--d-base) var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 6), 6) * 30ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-list.entering .xp-strip {
+    animation-name: xp-fade;
+  }
+}
+
+/* --- Detail ------------------------------------------------------------------------------- */
+
+.xp-detail {
+  container: xpd / inline-size;
+  min-width: 0;
+}
+
+/* Sections are grids; without this a long diff line or table sets their minimum width. */
+.xp-detail .section > *,
+.xp-champ > * {
+  min-width: 0;
+}
+
+.xp-dhead {
+  gap: var(--s2);
+}
+
+.xp-dtitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s3);
+}
+
+.xp-dname {
+  font: 700 14px / 1.3 var(--font-code);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.xp-dtitle .stamp {
+  margin-left: auto;
+}
+
+.xp-gist {
+  font: 600 var(--t-lead) / 1.35 var(--font-ui);
+  text-wrap: pretty;
+}
+
+.xp-reason {
+  display: grid;
+  gap: var(--s1);
+}
+
+.xp-reason p {
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+
+.xp-was {
+  font-size: 13px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.xp-was b {
+  color: var(--ink);
+}
+
+.xp-meta {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.xp-hyp {
+  display: grid;
+  gap: 2px;
+  margin-top: var(--s1);
+}
+
+.xp-hyp p {
+  overflow-wrap: anywhere;
+}
+
+.xp-refs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--s2);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.xp-refs .mono {
+  font-size: 12px;
+}
+
+.xp-to {
+  font-weight: 700;
+}
+
+.xp-files {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s2);
+}
+
+.xp-files code {
+  overflow-wrap: anywhere;
+}
+
+.xp-diff pre {
+  margin-top: var(--s2);
+  overflow-x: auto;
+  font: 12px / 1.55 var(--font-code);
+  white-space: pre;
+}
+
+.xp-diff pre span {
+  display: block;
+  padding-left: var(--s2);
+  border-left: 2px solid transparent;
+  color: var(--ink-3);
+}
+
+.xp-diff pre .add {
+  color: var(--ink);
+  font-weight: 700;
+  border-left-color: var(--ink);
+}
+
+.xp-diff pre .del {
+  border-left-color: var(--rule-strong);
+}
+
+/* Primary metric: two arms, then the improvement and the noise floor on one centred scale. */
+.xp-primary {
+  display: grid;
+  gap: var(--s3);
+}
+
+.xp-mhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s2);
+}
+
+.xp-mhead h3 {
+  font: 700 14px / 1.3 var(--font-code);
+  overflow-wrap: anywhere;
+}
+
+.xp-dir {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.xp-arms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s2);
+}
+
+.xp-arms > div {
+  display: grid;
+  gap: 3px;
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-strip);
+}
+
+.xp-arms dd {
+  font: 700 18px / 1.2 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.xp-arms dd small {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.xp-forest {
+  display: grid;
+  grid-template-columns: minmax(7rem, 13rem) minmax(120px, 1fr) minmax(8.5rem, max-content);
+  column-gap: var(--s3);
+  align-items: center;
+}
+
+.xp-frow {
+  display: contents;
+}
+
+.xp-forest .ci {
+  height: 38px;
+}
+
+.xp-flabel {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.xp-flabel small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+.xp-fval {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.xp-fval small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.xp-faxis > .ci-axis {
+  margin-top: var(--s1);
+}
+
+.xp-verdict {
+  font-size: 14px;
+  text-wrap: pretty;
+}
+
+.xp-mname {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.xp-msub {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.xp-msub .chip {
+  min-height: 18px;
+  padding: 0 5px;
+  font-size: 10.5px;
+}
+
+.xp-msub.xp-fail {
+  color: var(--warn);
+}
+
+.xp-mtable tbody th[scope="row"] {
+  min-width: 12rem;
+}
+
+.xp-mtable td.xp-plotcol {
+  width: 24%;
+  min-width: 110px;
+  vertical-align: middle;
+}
+
+.xp-mtable th.xp-plotcol {
+  min-width: 110px;
+}
+
+@container xpd (max-width: 520px) {
+  .xp-forest {
+    grid-template-columns: minmax(0, 1fr) max-content;
+  }
+  .xp-flabel {
+    grid-column: 1 / -1;
+    padding-top: var(--s2);
+  }
+  .xp-faxis > span:first-child {
+    display: none;
+  }
+  .xp-forest .ci {
+    height: 24px;
+  }
+}
+
+/* Correction family */
+.xp-family {
+  display: grid;
+  gap: var(--s1);
+}
+
+.xp-family ul {
+  display: grid;
+}
+
+.xp-family li {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--s1) var(--s3);
+  padding: 6px var(--s2);
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+}
+
+.xp-family li[aria-current="true"] {
+  background: var(--strip-inset);
+}
+
+.xp-family .stamp {
+  font-size: 10px;
+}
+
+.xp-self {
+  font-size: 0.92em;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.xp-fam-change {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.xp-fam-num {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+@container xpd (max-width: 560px) {
+  .xp-family li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .xp-fam-change {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+.xp-inst {
+  display: grid;
+  gap: var(--s2);
+}
+
+.xp-prompt {
+  display: grid;
+  gap: var(--s1);
+  margin-top: var(--s2);
+}
+
+.xp-prompt p.well {
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.xp-prompt pre.well {
+  overflow-x: auto;
+  font: 11.5px / 1.5 var(--font-code);
+}
+
+.xp-problems {
+  display: block;
+}
+
+.xp-problems ul {
+  margin-top: var(--s1);
+  display: grid;
+  gap: 2px;
+}
+
+.xp-problems li {
+  overflow-wrap: anywhere;
+}
+
+.xp .state code {
+  overflow-wrap: anywhere;
+}
+
+.xp-famhead {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
