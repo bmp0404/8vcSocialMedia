@@ -1,0 +1,22 @@
+{
+ "about": "Every view with nothing to show yet.",
+ "routes": {
+  "GET /api/meta": {
+   "provider": "mock",
+   "model": "",
+   "sources": ["sample"],
+   "account_handle": null,
+   "kill_reasons": {
+    "off_message": "off-message",
+    "factually_shaky": "shaky fact",
+    "stale_story": "stale story",
+    "wrong_target": "wrong target",
+    "slop": "reads as AI",
+    "tone": "wrong tone",
+    "other": "other"
+   }
+  },
+  "GET /api/runs": []
+ },
+ "errors": {}
+}

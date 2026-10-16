@@ -1,0 +1,312 @@
+/* Reset, type and controls shared by every view. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* A pull at the top of a list must not reload the page and drop unsaved edits. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--board);
+  color: var(--ink);
+  font: 400 var(--t-body) / 1.5 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ol,
+ul,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
+img,
+svg {
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* No double-tap zoom delay on controls. */
+button,
+a,
+summary,
+[role="button"],
+[role="tab"],
+[role="option"] {
+  touch-action: manipulation;
+}
+
+/* Headings take focus after a route change; the move itself is the announcement. */
+h1[tabindex="-1"]:focus {
+  outline: none;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--reply) 28%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  left: var(--s3);
+  top: var(--s3);
+  z-index: 100;
+  padding: var(--s2) var(--s3);
+  background: var(--ink);
+  color: var(--strip);
+  border-radius: var(--r-control);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* --- Type helpers -------------------------------------------------------------------------- */
+
+/* Field labels printed on a strip: mono, uppercase, tracked. */
+.label {
+  font: 700 var(--t-label) / 1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.mono {
+  font-family: var(--font-code);
+}
+
+/* Numbers in the reading face with tabular figures. B612 Mono gives "." and ":" a full cell,
+   so 3.3 s reads as "3. 3 s"; it stays on labels, field values and stamps. */
+.num {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--ink-3);
+}
+
+.prose {
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+code {
+  font: 0.92em var(--font-code);
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+  background: var(--strip-inset);
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0 0.4em;
+  font: 700 var(--t-label) / 1.6 var(--font-mono);
+  text-align: center;
+  color: var(--ink-2);
+  background: var(--strip);
+  border: 1px solid var(--rule);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+}
+
+/* --- Buttons ------------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  min-height: 34px;
+  padding: 0 var(--s4);
+  font: 600 13.5px / 1 var(--font-ui);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  background: var(--strip);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-control);
+  white-space: nowrap;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    transform var(--d-press) var(--ease-out),
+    background-color var(--d-fast) ease,
+    border-color var(--d-fast) ease;
+}
+
+.btn:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn kbd {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+  opacity: 0.75;
+}
+
+.btn-clear {
+  color: #fff;
+  background: var(--cleared);
+  border-color: var(--cleared);
+}
+
+.btn-strike {
+  color: #fff;
+  background: var(--struck);
+  border-color: var(--struck);
+}
+
+.btn-ink {
+  color: var(--strip);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.btn-quiet {
+  background: transparent;
+  border-color: var(--rule);
+}
+
+.btn-small {
+  min-height: 28px;
+  padding: 0 var(--s3);
+  font-size: var(--t-small);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-clear,
+  .btn-strike {
+    color: var(--board);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled):not([aria-disabled="true"]) {
+    border-color: var(--ink-3);
+  }
+  .btn-quiet:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--strip);
+  }
+  .btn-clear:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--cleared) 88%, var(--ink));
+    border-color: transparent;
+  }
+  .btn-strike:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--struck) 88%, var(--ink));
+    border-color: transparent;
+  }
+}
+
+/* --- Inputs -------------------------------------------------------------------------------- */
+
+.input,
+.select {
+  min-height: 34px;
+  padding: 6px var(--s3);
+  background: var(--strip);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-control);
+  font-size: var(--t-body);
+}
+
+.select {
+  padding-right: var(--s6);
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%),
+    linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* A placeholder can be a field's only visible label (the Queue's note), so it takes readable ink. */
+.input::placeholder {
+  color: var(--ink-3);
+}
+
+@media (pointer: coarse) {
+  /* Key hints mean nothing on a touch screen. */
+  .btn kbd {
+    display: none;
+  }
+  /* Text inputs below 16px make iOS Safari zoom the page on focus. */
+  .input,
+  .select {
+    font-size: 16px;
+  }
+}

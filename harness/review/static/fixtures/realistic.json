@@ -1,0 +1,620 @@
+{
+ "about": "Built from real harness output: runs 5, 22 and 31 and sam/action's x_threads.json (DESIGN.md, Fixtures). @now-Nm times resolve at page load. Routes not listed fall through to the live server.",
+ "routes": {
+  "GET /api/meta": {
+   "provider": "anthropic",
+   "model": "claude-sonnet-5-5",
+   "sources": ["espn_news", "google_news", "x_targets"],
+   "account_handle": null,
+   "kill_reasons": {
+    "off_message": "off-message",
+    "factually_shaky": "shaky fact",
+    "stale_story": "stale story",
+    "wrong_target": "wrong target",
+    "slop": "reads as AI",
+    "tone": "wrong tone",
+    "other": "other"
+   }
+  },
+  "GET /api/runs": [
+   {
+    "id": 31,
+    "started_at": "@now-14m",
+    "provider": "anthropic",
+    "sources": "espn_news,google_news,x_targets",
+    "n_actions": 9,
+    "n_approved": 1,
+    "n_killed": 1
+   }
+  ],
+  "GET /api/runs/31": [
+   {
+    "id": "f1d0db12",
+    "type": "reply",
+    "text": "10-0 since August 30 and the Fever group chat still thinks we'd have won that trade",
+    "mind": "reply_lane",
+    "narrative_id": "wnba-finals-dream-valkyries",
+    "rationale": "Jump into the league's own Finals hype with a Fever fan's sour-grapes joke",
+    "target_url": "https://x.com/WNBA/status/2110824046833348936",
+    "target_handle": "WNBA",
+    "predicted_score": 0.31,
+    "panel": {"iowa_diehard": 0.42, "casual_wnba_fan": 0.33, "rival_fan": 0.29, "sports_media": 0.18},
+    "vetoed": false,
+    "critique": "Keep. Light rivalry banter on a league post, no cruelty, and the only facts are the post's own.",
+    "lane": "reply",
+    "target_text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+    "draft_meta": {
+     "method": "continuation",
+     "intent": "a Fever fan's wry take on Atlanta's run",
+     "samples": 5,
+     "page_replies": 12,
+     "writer_model": "claude-opus-4-5-20251101",
+     "target": {
+      "url": "https://x.com/WNBA/status/2110824046833348936",
+      "author": "WNBA",
+      "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+      "created_at": "@now-38m",
+      "age_minutes": 38,
+      "likes": 2605,
+      "reposts": 387,
+      "replies": 52,
+      "quotes": 42,
+      "views": 54097,
+      "author_followers": 951935,
+      "engagement_per_hour": 412.5,
+      "thread_attached": 6
+     },
+     "judge": {
+      "veto_model": "claude-opus-5-5",
+      "max_p_ai": 50,
+      "passed": true,
+      "why": "",
+      "orders_agree": true,
+      "fwd": {
+       "p_ai": 18,
+       "unsupported": false,
+       "risk": false,
+       "reason": "Fan-voice bitterness about a trade; reads like a person."
+      },
+      "rev": {
+       "p_ai": 24,
+       "unsupported": false,
+       "risk": false,
+       "reason": "Plausible Fever-fan grumble; no factual claim beyond the post."
+      },
+      "batch": {"drafts": 5, "gate_passed": 3, "veto_passed": 2},
+      "pick": "random among drafts that passed",
+      "grounding": {"score": 0.82, "min": 0.6, "reason": "10-0 and August 30 come from the post."}
+     }
+    },
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "type": "quote",
+    "text": "nice arena now add caitlin",
+    "mind": "caption",
+    "narrative_id": "wnba-finals-dream-valkyries",
+    "rationale": "caption of a real source (x.com)",
+    "target_url": "https://x.com/valkyries/status/2110896237490942447",
+    "target_handle": null,
+    "predicted_score": 0.152,
+    "panel": {"rival_fan": 0.12, "casual_wnba_fan": 0.15, "sports_media": 0.04, "iowa_diehard": 0.3},
+    "vetoed": false,
+    "critique": "The quote post has a valid target_url, so it isn't a targetless reply or quote. The joke is light rivalry banter, with no cruelty or harassment, and it makes no factual claim that could be wrong. It's on-mission, since it's about Caitlin Clark and WNBA discourse. Two caveats: it's a bit thin, and it only lands if the Valkyries post is actually about their arena or facilities. Confirm that before posting. Adding a specific detail would make it funnier, but it's acceptable as is.",
+    "lane": "post",
+    "draft_meta": {
+     "method": "caption",
+     "writer_model": "claude-opus-4-5-20251101",
+     "source_url": "https://x.com/valkyries/status/2110896237490942447",
+     "judge": {
+      "veto_model": "claude-opus-5-5",
+      "max_p_ai": 50,
+      "passed": true,
+      "why": "",
+      "orders_agree": true,
+      "fwd": {
+       "p_ai": 45,
+       "unsupported": false,
+       "risk": false,
+       "reason": "Short formulaic quip; harmless fan banter."
+      },
+      "rev": {
+       "p_ai": 20,
+       "unsupported": false,
+       "risk": false,
+       "reason": "Short, lowercase, fan-style quip; harmless."
+      },
+      "batch": {"drafts": 4, "gate_passed": 4, "veto_passed": 4},
+      "pick": "random among drafts that passed",
+      "grounding": null
+     }
+    },
+    "id": "f0605f9a",
+    "target_text": "@valkyries posted:\nBallhalla awaits. ⚔️",
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "type": "post",
+    "text": "Aliyah Boston played through a knee injury all season, then revealed she needed arthroscopic surgery. I get winded carrying groceries up one flight of stairs. Caitlin Clark hyping her up is the least surprising thing in basketball. Get well, Aliyah.",
+    "mind": "rivalry_banterer",
+    "narrative_id": "clark-boston-knee-surgery",
+    "rationale": "The Boston story is the highest-relevance, highest-velocity narrative. I left out the four words because the source summary doesn't give them, and quoting them from memory risks getting them wrong. The post uses only the reported facts (played through a knee injury, arthroscopic surgery, Clark supportive). I skipped the Cunningham narrative because it would mean characterizing specific quotes I can't verify, and the Finals context is unclear. The joke is aimed at myself, and the tone toward Boston is warm.",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.125,
+    "panel": {"iowa_diehard": 0.2, "casual_wnba_fan": 0.15, "rival_fan": 0.05, "sports_media": 0.1},
+    "vetoed": false,
+    "critique": "Keep. It is kind toward Boston, self-deprecating, and sticks to the reported facts: she played through a knee injury and then had arthroscopic surgery. The 'Clark hyping her up' line is vague enough to be safe, but confirm Clark's public support (a post or comment) is real before publishing. Don't add any invented quote. The joke is mild, but it works.",
+    "id": "88f8c154",
+    "lane": "post",
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "id": "c0ffee21",
+    "type": "mention",
+    "text": "Fever fan in exile, reporting for Finals duty. Game 1 is Saturday, 3:30 ET on NBC, and I'm picking a side based on who would've set Caitlin Clark the better screen. @valkyries, Ballhalla's application is under review. 😌",
+    "mind": "community_builder",
+    "narrative_id": "wnba-finals-dream-valkyries",
+    "rationale": "Pick a Finals side out loud and tag the Valkyries, who are on X and in our size band to notice.",
+    "target_url": null,
+    "target_handle": "valkyries",
+    "predicted_score": 0.19,
+    "panel": {"iowa_diehard": 0.22, "casual_wnba_fan": 0.25, "rival_fan": 0.15, "sports_media": 0.12},
+    "vetoed": false,
+    "critique": "Keep, but [VERIFY] the Game 1 time before posting: the draft states 3:30 ET on NBC.",
+    "lane": "post",
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "id": "f011ow01",
+    "type": "follow",
+    "text": "",
+    "mind": "community_builder",
+    "narrative_id": "cunningham-reese-dream-discourse",
+    "rationale": "HerHoopStats posts the numbers every take in this story cites; following puts us in their notifications.",
+    "target_url": null,
+    "target_handle": "HerHoopStats",
+    "predicted_score": 0.08,
+    "panel": {"iowa_diehard": 0.1, "casual_wnba_fan": 0.08, "rival_fan": 0.05, "sports_media": 0.09},
+    "vetoed": false,
+    "critique": "Keep.",
+    "lane": "post",
+    "draft_meta": {"method": "chorus follow"},
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "type": "post",
+    "text": "me when my knee twinges: cancel plans, ice, dramatic sigh, tell everyone\n\nAliyah Boston: plays a whole season through a knee injury, then quietly gets surgery\n\nCaitlin Clark, hype woman of the year, sending a four-word text: ❤️\n\nthe Fever group chat is undefeated",
+    "mind": "meme_lord",
+    "narrative_id": "clark-boston-knee-surgery",
+    "rationale": "Text-only 'me vs. them' format, so no image is needed. It sticks to facts from the coverage: Boston played through a knee injury and had arthroscopic surgery, and Clark sent a four-word message. I don't have the exact four words, so the post doesn't quote them, to avoid getting it wrong. The tone is warm and relatable, with the joke aimed at the poster's own low pain tolerance and not at Boston. Short enough to read at a glance and easy for Fever fans to quote.",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.217,
+    "panel": {"iowa_diehard": 0.35, "casual_wnba_fan": 0.3, "rival_fan": 0.1, "sports_media": 0.12},
+    "vetoed": true,
+    "critique": "Asserts Clark sent a 'four-word text' but the joke shows a single heart emoji, so it contradicts itself. It also presents a private message as fact, with no sourcing. The group-chat framing implies knowledge of private communications. The tone is fine, but the accuracy problems make it risky.",
+    "id": "1c140aaa",
+    "lane": "post",
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "type": "post",
+    "text": "Aliyah Boston played an entire season on a knee that needed surgery. Caitlin Clark's message to her afterward: 4 words. [VERIFY: exact four-word quote]\n\nOne season, one knee, four words. Best hype woman in the league and the receipts say so.",
+    "mind": "stat_nerd",
+    "narrative_id": "clark-boston-knee-surgery",
+    "rationale": "Highest relevance and velocity narrative, and the tone is warm. The only verifiable numbers are the four-word message and the single season of play, so the post leans on those. The exact quote isn't in the provided narrative, so it's a [VERIFY] placeholder to fill from the ESPN piece before posting. The Cunningham/Reese angle is riskier for accuracy and tone, so I skipped it.",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.068,
+    "panel": {"iowa_diehard": 0.1, "casual_wnba_fan": 0.08, "rival_fan": 0.05, "sports_media": 0.04},
+    "vetoed": true,
+    "critique": "Contains a literal unresolved '[VERIFY: exact four-word quote]' placeholder, so it can't ship. It also leans on an unverified private-message claim as its 'receipts'. The 'four words' hook is only funny if the quote is real and checkable.",
+    "id": "df20b8d6",
+    "lane": "post",
+    "review": {"status": "pending", "text": null, "note": "", "reviewed_at": null}
+   },
+   {
+    "type": "reply",
+    "text": "Ballhalla awaits. Meanwhile Fever Twitter has a fully formed opinion on this series and zero players in it. Sophie Cunningham already got hers on the record, so the discourse is ready for tip-off.",
+    "mind": "reply_sniper",
+    "narrative_id": "wnba-finals-dream-valkyries",
+    "rationale": "This is the only real X post in the narratives, and it's a high-engagement, fast-moving Finals post (about 254 engagements per hour at 62 minutes old). The reply ties in the Cunningham/Finals discourse narrative with a light joke that makes no stat claims and doesn't attack anyone, so it stays accurate and rivalry-flavored.",
+    "target_url": "https://x.com/valkyries/status/2110896237490942447",
+    "target_handle": "valkyries",
+    "predicted_score": 0.06,
+    "panel": {"iowa_diehard": 0.06, "casual_wnba_fan": 0.05, "rival_fan": 0.08, "sports_media": 0.05},
+    "vetoed": true,
+    "critique": "The reply is vague and leans on claims I can't verify. I can't confirm which series the target tweet covers, whether the Fever really have no players in it, or what Sophie Cunningham supposedly 'got on the record'. 'Ballhalla awaits' is also confusing without the tweet's context. It risks being inaccurate or irrelevant, and the mission says 'never inaccurate.' The joke isn't sharp enough to justify that risk.",
+    "id": "beef0004",
+    "lane": "reply",
+    "review": {
+     "status": "approved",
+     "text": "Ballhalla awaits and Fever Twitter has a fully formed opinion on a series with zero of our players in it. We'll be watching anyway.",
+     "note": "Cut the Cunningham line: she's not in this series.",
+     "reviewed_at": "@now-12m"
+    }
+   },
+   {
+    "type": "post",
+    "text": "nobody:\n\nAliyah Boston: plays the whole season through a knee injury, then reveals the surgery\n\nCaitlin Clark: four words\n\nFever fans: that's the most efficient assist of the year",
+    "mind": "meme_lord",
+    "narrative_id": "clark-boston-knee-surgery",
+    "rationale": "Text-only 'nobody:' format on the highest-relevance, fast-moving story. It stays accurate: it says only that Boston played through the injury and had surgery, and that Clark replied in four words. It doesn't guess at the message, so it's safe whatever the wording was. The tone is wholesome with a light joke and no digs at anyone. No image needed.",
+    "target_url": null,
+    "target_handle": null,
+    "predicted_score": 0.175,
+    "panel": {"iowa_diehard": 0.3, "casual_wnba_fan": 0.22, "rival_fan": 0.1, "sports_media": 0.08},
+    "vetoed": true,
+    "critique": "This is a near-duplicate of two other drafts about the same Boston story, and posting all of them would look spammy. The 'nobody:' meme format is also misused, because Boston revealing a surgery isn't a 'nobody' setup. The punchline ('most efficient assist') is muddled, and it never says what the four words were. It rests on an unsourced claim about a private text. The 677b3f73 draft covers this better.",
+    "id": "dead0004",
+    "lane": "post",
+    "review": {
+     "status": "killed",
+     "text": null,
+     "note": "Injury news: keep it warm, not a meme.",
+     "reasons": ["tone"],
+     "reviewed_at": "@now-9m"
+    }
+   }
+  ],
+  "GET /api/runs/31/decisions": {
+   "available": true,
+   "decisions": [
+    {
+     "lane": "reply",
+     "opportunity": "https://x.com/valkyries/status/2110896237490942447",
+     "tool": "abstain",
+     "reason": "stale_target",
+     "detail": "89 min old; cutoff 30",
+     "question": "",
+     "action_id": null,
+     "candidates": []
+    },
+    {
+     "lane": "reply",
+     "opportunity": "https://x.com/WNBA/status/2110824046833348936",
+     "tool": "reply",
+     "reason": "",
+     "detail": "",
+     "question": "",
+     "action_id": "f1d0db12",
+     "candidates": [
+      {
+       "text": "10-0 since August 30 and the Fever group chat still thinks we'd have won that trade",
+       "gate": [],
+       "veto": {
+        "passed": true,
+        "why": "",
+        "orders_agree": true,
+        "fwd": {
+         "p_ai": 18,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Fan-voice bitterness about a trade; reads like a person."
+        },
+        "rev": {
+         "p_ai": 24,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Plausible Fever-fan grumble; no factual claim beyond the post."
+        }
+       },
+       "grounding": {"score": 0.82, "min": 0.6, "reason": "10-0 and August 30 come from the post."}
+      },
+      {
+       "text": "the DB effect is real but so is a Valkyries crowd. Saturday's going to be loud",
+       "gate": [],
+       "veto": {
+        "passed": true,
+        "why": "",
+        "orders_agree": true,
+        "fwd": {"p_ai": 30, "unsupported": false, "risk": false, "reason": "Generic hype; fine."},
+        "rev": {"p_ai": 26, "unsupported": false, "risk": false, "reason": "Neutral and safe."}
+       },
+       "grounding": {"score": 0.7, "min": 0.6, "reason": "Saturday is Game 1 per the league."}
+      },
+      {
+       "text": "Atlanta went and got a closer in August while some of us were still arguing about backcourt rotations",
+       "gate": [],
+       "veto": {
+        "passed": false,
+        "why": "reads as AI in both orders",
+        "orders_agree": true,
+        "fwd": {
+         "p_ai": 62,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Long setup, tidy contrast; assistant cadence."
+        },
+        "rev": {"p_ai": 55, "unsupported": false, "risk": false, "reason": "Too polished for a reply."}
+       }
+      },
+      {
+       "text": "This is what we've been WAITING for‼️ Can't wait to see what's next",
+       "gate": [{"rule": "ai_vocab", "detail": "\"Can't wait to see what\"", "start": 38, "end": 60}]
+      },
+      {"raw": {"tool": "reply"}, "schema_error": "reply: missing required field 'text'"}
+     ]
+    },
+    {
+     "lane": "reply",
+     "opportunity": "https://x.com/WNBA/status/2110792840989024541",
+     "tool": "abstain",
+     "reason": "gate_rejected",
+     "detail": "0/3 drafts usable",
+     "question": "",
+     "action_id": null,
+     "candidates": [
+      {
+       "text": "Angel Reese chasing ring number one is a testament to her grind — Game 1 can't come soon enough.",
+       "gate": [
+        {"rule": "em_dash", "detail": "dash at char 64", "start": 64, "end": 65},
+        {"rule": "ai_vocab", "detail": "'testament'", "start": 41, "end": 50}
+       ]
+      },
+      {
+       "text": "Not just a winner but a whole storyline. #WNBAFinals #Dream",
+       "gate": [
+        {"rule": "not_x_but_y", "detail": "'Not just a winner but'", "start": 0, "end": 21},
+        {"rule": "hashtags", "detail": "2 hashtags (max 1): #WNBAFinals #Dream", "start": 53, "end": 59}
+       ]
+      },
+      {
+       "text": "\"Every level, she wins. Thursday we find out if the WNBA is next.\"",
+       "gate": [{"rule": "wrapped_in_quotes", "detail": "whole draft wrapped in quotes", "start": null, "end": null}]
+      }
+     ]
+    },
+    {
+     "lane": "post",
+     "opportunity": "https://x.com/valkyries/status/2110896237490942447",
+     "tool": "quote",
+     "reason": "",
+     "detail": "caption of a real source",
+     "question": "",
+     "action_id": "f0605f9a",
+     "candidates": [
+      {
+       "text": "caitlin's gonna love playing there eventually",
+       "gate": [],
+       "veto": {
+        "passed": true,
+        "why": "",
+        "orders_agree": true,
+        "fwd": {
+         "p_ai": 30,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Casual, playful nod to Valkyries' home; reads like a fan."
+        },
+        "rev": {
+         "p_ai": 30,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Vague prediction implying she hasn't played there; mild, not harmful."
+        }
+       }
+      },
+      {
+       "text": "cool stadium but does it have clark",
+       "gate": [],
+       "veto": {
+        "passed": true,
+        "why": "",
+        "orders_agree": true,
+        "fwd": {
+         "p_ai": 45,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Template-ish 'does it have X' joke; mild Clark hijack."
+        },
+        "rev": {
+         "p_ai": 30,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Plain banter; 'stadium' is slightly off but reads human."
+        }
+       }
+      },
+      {
+       "text": "nice arena now add caitlin",
+       "gate": [],
+       "veto": {
+        "passed": true,
+        "why": "",
+        "orders_agree": true,
+        "fwd": {
+         "p_ai": 45,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Short formulaic quip; harmless fan banter."
+        },
+        "rev": {
+         "p_ai": 20,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Short, lowercase, fan-style quip; harmless."
+        }
+       }
+      },
+      {
+       "text": "ballhalla's cool but have you seen gainbridge on a clark night",
+       "gate": [],
+       "veto": {
+        "passed": true,
+        "why": "",
+        "orders_agree": true,
+        "fwd": {
+         "p_ai": 35,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Gainbridge reference accurate; good-natured rivalry banter."
+        },
+        "rev": {
+         "p_ai": 35,
+         "unsupported": false,
+         "risk": false,
+         "reason": "Natural rivalry jab; Gainbridge as the Fever's home is common knowledge."
+        }
+       }
+      }
+     ]
+    },
+    {
+     "lane": "post",
+     "opportunity": "",
+     "tool": "abstain",
+     "reason": "budget_exhausted",
+     "detail": "post and quote caps or spacing",
+     "question": "",
+     "action_id": null,
+     "candidates": []
+    },
+    {
+     "lane": "post",
+     "opportunity": "clark-boston-knee-surgery",
+     "tool": "ask_human",
+     "reason": "",
+     "detail": "",
+     "question": "Aliyah Boston's knee surgery and Caitlin Clark's 4-word message. Got a take, a clip or a detail only a real fan would know? Add it to action/takes.json; the harness picks the timing and posts your words as written.",
+     "action_id": null,
+     "candidates": [
+      {
+       "mind": "community_builder",
+       "type": "mention",
+       "text": "Fever fan in exile, reporting for Finals duty. Game 1 is Saturday, 3:30 ET on NBC, and I'm picking a side based on who would've set Caitlin Clark the better screen. @valkyries, Ballhalla's application is under review. 😌",
+       "gate": []
+      },
+      {
+       "mind": "meme_lord",
+       "type": "post",
+       "text": "nobody:\n\nAliyah Boston: plays through a torn lateral meniscus in her right knee\n\nthe rest of the league: \"questionable, sore ankle, been a long week\"\n\nget well soon, Aliyah. the bar is on the floor and you put it there.",
+       "gate": []
+      },
+      {
+       "mind": "rivalry_banterer",
+       "type": "post",
+       "text": "Aliyah Boston had arthroscopic surgery on her right knee for a lateral meniscus tear on Oct. 14, and Caitlin Clark's four-word message to her is the most wholesome thing on the timeline. Rival fanbases, you're allowed one day of being nice. We'll wait. 🫶",
+       "gate": []
+      }
+     ]
+    }
+   ]
+  },
+  "GET /api/runs/31/context": {
+   "available": true,
+   "started_at": "@now-14m",
+   "narratives": [
+    {
+     "id": "clark-boston-knee-surgery",
+     "title": "Aliyah Boston's knee surgery and Caitlin Clark's 4-word message",
+     "summary": "Boston revealed she played through a knee injury all season and had arthroscopic surgery, and Clark's four-word message to her is being recapped by many outlets while Fever fans react.",
+     "relevance": 0.95,
+     "velocity": 0.815,
+     "angle": "Gently funny take on Boston playing a whole season on one good knee and Clark being her biggest hype woman, with the four words quoted accurately and the tone warm, not snarky.",
+     "signal_urls": ["https://www.espn.com/wnba/story/_/id/50189491/fever-forward-aliyah-boston-arthroscopic-knee-surgery"],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "cunningham-reese-dream-discourse",
+     "title": "Sophie Cunningham vs. the league: Angel Reese, Dream defenses and officiating",
+     "summary": "Fever's Sophie Cunningham is publicly calling out 'dangerous' plays, defenses sagging off Angel Reese, and WNBA mishaps, which is stirring up rivalry discourse during the Finals run.",
+     "relevance": 0.85,
+     "velocity": 0.746,
+     "angle": "Fan-in-on-the-joke quip about Cunningham having more takes than the broadcast crew, staying fair to Reese and sticking to what was actually said.",
+     "signal_urls": ["https://www.espn.com/wnba/story/_/id/50176202/2026-wnba-finals-valkyries-dream-schedule-scores-news"],
+     "velocity_basis": "data",
+     "reply_targets": []
+    },
+    {
+     "id": "wnba-finals-dream-valkyries",
+     "title": "WNBA Finals: Dream vs. Valkyries, Game 1 on Oct 17",
+     "summary": "The league is promoting the Finals hard: Angel Reese chasing her first title, the Dream 10-0 since DeWanna Bonner arrived, and the Valkyries' Ballhalla. Fever fans have no team in it and plenty of opinions.",
+     "relevance": 0.65,
+     "velocity": 0.81,
+     "velocity_basis": "data",
+     "angle": "A neutral Fever fan picking a side for the Finals: rivalry banter about the teams, never about injuries.",
+     "signal_urls": [
+      "https://x.com/WNBA/status/2110824046833348936",
+      "https://x.com/WNBA/status/2110792840989024541",
+      "https://x.com/valkyries/status/2110896237490942447"
+     ],
+     "reply_targets": [
+      {
+       "url": "https://x.com/WNBA/status/2110824046833348936",
+       "author": "WNBA",
+       "text": "The DB effect is real 🔥 \n\nSince DeWanna Bonner made her Dream debut on August 30, the @AtlantaDream are 10-0 and headed to the WNBA Finals.\n\nNext up: Golden State.",
+       "created_at": "@now-38m",
+       "age_minutes": 38,
+       "likes": 2605,
+       "reposts": 387,
+       "replies": 52,
+       "quotes": 42,
+       "views": 54097,
+       "author_followers": 951935,
+       "engagement_per_hour": 412.5,
+       "thread": [
+        {
+         "author": null,
+         "text": "They were already legit before she got there 😂",
+         "likes": 15,
+         "followers": 5004
+        },
+        {"author": null, "text": "IKTR", "likes": 15, "followers": 114},
+        {"author": null, "text": "RING CHASER!\nShe will NOT win a ring!", "likes": 7, "followers": 14264}
+       ]
+      },
+      {
+       "url": "https://x.com/WNBA/status/2110792840989024541",
+       "author": "WNBA",
+       "text": "A history of winning 🏆\n\nAngel Reese has found a way to win at every stage of her life, and now she's chasing her first WNBA championship!\n\nTune in to Game 1 of the WNBA Finals October 17 at 3:30pm/ET on NBC & Peacock.",
+       "created_at": "@now-52m",
+       "age_minutes": 52,
+       "likes": 3367,
+       "reposts": 750,
+       "replies": 62,
+       "quotes": 68,
+       "views": 67689,
+       "author_followers": 951935,
+       "engagement_per_hour": 380.2,
+       "thread": [
+        {
+         "author": null,
+         "text": "Now y’all know yall can include Unrivaled. We need allll that lmao",
+         "likes": 146,
+         "followers": 3451
+        },
+        {"author": null, "text": "and don't forget Unrivaled and FIBA 🔥", "likes": 121, "followers": 3389},
+        {
+         "author": null,
+         "text": "Im so glad chose her as my goat in 2023. I can't imagine being a fan of a loser ass bitch 😂😭💯",
+         "likes": 44,
+         "followers": 40
+        }
+       ]
+      },
+      {
+       "url": "https://x.com/valkyries/status/2110896237490942447",
+       "author": "valkyries",
+       "text": "Ballhalla awaits. ⚔️",
+       "created_at": "@now-89m",
+       "age_minutes": 89,
+       "likes": null,
+       "reposts": null,
+       "replies": null,
+       "quotes": null,
+       "views": 3510,
+       "author_followers": 57000,
+       "views_per_hour": 2366.3,
+       "thread": []
+      }
+     ]
+    }
+   ],
+   "signals": []
+  }
+ },
+ "errors": {}
+}
