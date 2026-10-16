@@ -1,0 +1,5 @@
+cache/
+*.log
+tracker/
+# Intermediate fetch results; rebuild with `python -m harness.context backfill-x` and `collect`.
+*.jsonl
