@@ -1,0 +1,6406 @@
+{
+ "accounts": {
+  "@AmpCode": {
+   "name": "Amp",
+   "wiki_article": null,
+   "hn_stories": [
+    {
+     "id": "50112513",
+     "title": "A human-first approach to safe AGI",
+     "points": 3,
+     "created_unix": 1792113359
+    },
+    {
+     "id": "50112310",
+     "title": "Show HN: Chickadee Bandit – Build private apps for your family",
+     "points": 1,
+     "created_unix": 1792111784
+    },
+    {
+     "id": "50112252",
+     "title": "C, Type Systems, GLib, and API Design",
+     "points": 1,
+     "created_unix": 1792111244
+    },
+    {
+     "id": "50112227",
+     "title": "Iran’s precision strikes picked apart Gulf infrastructure, blunting US war plans",
+     "points": 14,
+     "created_unix": 1792111026
+    },
+    {
+     "id": "50112196",
+     "title": "I'm not leaving this apartment",
+     "points": 2,
+     "created_unix": 1792110689
+    },
+    {
+     "id": "50112190",
+     "title": "Lunar fault maps reveal how much the moon is shrinking",
+     "points": 2,
+     "created_unix": 1792110639
+    },
+    {
+     "id": "50111742",
+     "title": "BeBox is a Haiku application that emulates Be Inc.'s BeBox",
+     "points": 26,
+     "created_unix": 1792106573
+    },
+    {
+     "id": "50111381",
+     "title": "Show HN: Luksmith – Mount LUKS Ext4 Drives Natively in Finder on Apple Silicon",
+     "points": 2,
+     "created_unix": 1792103972
+    },
+    {
+     "id": "50111243",
+     "title": "The Sun Never Sets on the Ant Empire",
+     "points": 3,
+     "created_unix": 1792102990
+    },
+    {
+     "id": "50111237",
+     "title": "Show HN: TRON-069 – mapping the Internet's last-mile management infrastructure",
+     "points": 2,
+     "created_unix": 1792102969
+    },
+    {
+     "id": "50111236",
+     "title": "Show HN: eqMini – Open-source macOS equalizer with per-app controls",
+     "points": 1,
+     "created_unix": 1792102946
+    },
+    {
+     "id": "50111034",
+     "title": "Flock CEO defends surveillance technology amid national backlash",
+     "points": 2,
+     "created_unix": 1792101901
+    },
+    {
+     "id": "50110787",
+     "title": "HoverEnhance is a free Mac app that surfaces useful stuff on-hover",
+     "points": 1,
+     "created_unix": 1792100745
+    },
+    {
+     "id": "50110729",
+     "title": "Show HN: An improved kokoro distillation in 9MB",
+     "points": 1,
+     "created_unix": 1792100483
+    },
+    {
+     "id": "50110578",
+     "title": "Expedia Amazoned Hotel Rooms",
+     "points": 3,
+     "created_unix": 1792099770
+    },
+    {
+     "id": "50110559",
+     "title": "We're Asking the Wisconsin Supreme Court to End Warrantless ALPR Searches",
+     "points": 3,
+     "created_unix": 1792099699
+    },
+    {
+     "id": "50110301",
+     "title": "Nvidia, Apple, Google, Microsoft, Amazon, Meta gave Trump $92M for his ballroom",
+     "points": 11,
+     "created_unix": 1792098665
+    },
+    {
+     "id": "50110203",
+     "title": "Show HN: An iOS app to help kids learn to write and read",
+     "points": 1,
+     "created_unix": 1792098215
+    },
+    {
+     "id": "50110022",
+     "title": "Netflix to lay off about 1k employees in biggest cuts since 2022",
+     "points": 4,
+     "created_unix": 1792097482
+    },
+    {
+     "id": "50109773",
+     "title": "Show HN: Brod – Quick cloud to deploy AI apps",
+     "points": 2,
+     "created_unix": 1792096196
+    },
+    {
+     "id": "50109627",
+     "title": "Apple and Meta team up to make Muse AI model run on Mac computers",
+     "points": 7,
+     "created_unix": 1792095373
+    },
+    {
+     "id": "50109521",
+     "title": "A Mac app to find and compress the videos filling your iCloud Photos",
+     "points": 1,
+     "created_unix": 1792094832
+    },
+    {
+     "id": "50109375",
+     "title": "New Withings Users Must Pay $99/Year for Apple Health Syncing",
+     "points": 164,
+     "created_unix": 1792094149
+    },
+    {
+     "id": "50109127",
+     "title": "New ML approach breaks records for weather forecasts looking 2-6 weeks out",
+     "points": 1,
+     "created_unix": 1792093075
+    },
+    {
+     "id": "50109083",
+     "title": "Minions: A Virtual GPU Cloud Built on Idle Apple Devices",
+     "points": 1,
+     "created_unix": 1792092915
+    },
+    {
+     "id": "50108936",
+     "title": "Winning ClickBench with self-improving agent fleet",
+     "points": 1,
+     "created_unix": 1792092368
+    },
+    {
+     "id": "50108713",
+     "title": "Cicada: Sub-ms Go Zero-Trust gateway and gVisor firewall for AI agents Apache 2",
+     "points": 1,
+     "created_unix": 1792091359
+    },
+    {
+     "id": "50108606",
+     "title": "CSV import performance of Scriptella/JDBC and csvsql on PostgreSQL and MariaDB",
+     "points": 1,
+     "created_unix": 1792090949
+    },
+    {
+     "id": "50108571",
+     "title": "Deploy your next rust binary web app using Setu",
+     "points": 1,
+     "created_unix": 1792090864
+    },
+    {
+     "id": "50108284",
+     "title": "Amsterdam server seized at request of U.S. authorities after Antifa allegations",
+     "points": 15,
+     "created_unix": 1792089710
+    },
+    {
+     "id": "50108279",
+     "title": "Push-Based KV Transfer to Improve TTFT, TPOT for Disaggregated Inference in vLLM",
+     "points": 1,
+     "created_unix": 1792089701
+    },
+    {
+     "id": "50107669",
+     "title": "L.A. nonprofit rented luxury Santa Monica apartment, BMW for CEO living in HI",
+     "points": 2,
+     "created_unix": 1792087542
+    },
+    {
+     "id": "50107654",
+     "title": "Show HN: Map each letter and number to a Unicode character and convert your text",
+     "points": 1,
+     "created_unix": 1792087496
+    },
+    {
+     "id": "50107584",
+     "title": "Ask HN: Has anyone made real money from AI gen vibe coded app?",
+     "points": 1,
+     "created_unix": 1792087242
+    },
+    {
+     "id": "50107534",
+     "title": "Accenture Tells Employees to Spend Only $29 on Claude per Month",
+     "points": 17,
+     "created_unix": 1792087058
+    },
+    {
+     "id": "50107262",
+     "title": "Show HN: Blurt – Open-source macOS dictation app (Swift, MIT)",
+     "points": 1,
+     "created_unix": 1792086046
+    },
+    {
+     "id": "50107067",
+     "title": "What Are Data Centers Doing? A Mind-Boggling Amount of Math",
+     "points": 2,
+     "created_unix": 1792085201
+    },
+    {
+     "id": "50106814",
+     "title": "Ive implemented most of the utility behind popular platforms on e",
+     "points": 1,
+     "created_unix": 1792084202
+    },
+    {
+     "id": "50106794",
+     "title": "A Claude Code skill that takes an iOS app from code to the App Store",
+     "points": 1,
+     "created_unix": 1792084119
+    },
+    {
+     "id": "50106708",
+     "title": "Whathappened.here – a social check-in app built on top of OpenStreetMap",
+     "points": 3,
+     "created_unix": 1792083841
+    },
+    {
+     "id": "50106441",
+     "title": "Build Self-Improving AI Agents with Temporal and Oodle",
+     "points": 1,
+     "created_unix": 1792082926
+    },
+    {
+     "id": "50106334",
+     "title": "Georgia man sues Flock, sheriff's office over alleged ALPR-fueled retaliation",
+     "points": 9,
+     "created_unix": 1792082549
+    },
+    {
+     "id": "50106305",
+     "title": "Show HN: Nunc Sonat, control Apple TV and HomePod music from the Mac menu bar",
+     "points": 1,
+     "created_unix": 1792082454
+    },
+    {
+     "id": "50106282",
+     "title": "Fintech startup Ramp hits $60B valuation after $1.85B funding round",
+     "points": 2,
+     "created_unix": 1792082383
+    },
+    {
+     "id": "50106258",
+     "title": "Show HN: Relay – A Mac app that adds /relay command to Claude, Codex and Cursor",
+     "points": 1,
+     "created_unix": 1792082305
+    },
+    {
+     "id": "50106243",
+     "title": "AMD Helion for Agentic AI and Enterprise",
+     "points": 3,
+     "created_unix": 1792082269
+    },
+    {
+     "id": "50106202",
+     "title": "Apple Joins Nvidia in the $5T Valuation Club",
+     "points": 4,
+     "created_unix": 1792082149
+    },
+    {
+     "id": "50105930",
+     "title": "Show HN: Haakon – Amplify Haiku to Beat Opus",
+     "points": 1,
+     "created_unix": 1792081155
+    },
+    {
+     "id": "50105891",
+     "title": "Why Aren't AI Labs' Apps Better?",
+     "points": 1,
+     "created_unix": 1792081034
+    },
+    {
+     "id": "50105793",
+     "title": "Google let a fake Chrome app on the Play Store, and it got over 100k downloads",
+     "points": 8,
+     "created_unix": 1792080738
+    },
+    {
+     "id": "50105281",
+     "title": "How to be more ambitious: A tutorial for humans with models",
+     "points": 2,
+     "created_unix": 1792078818
+    },
+    {
+     "id": "50105243",
+     "title": "Toward a Self-Improving Agentic Code Review Loop",
+     "points": 2,
+     "created_unix": 1792078689
+    },
+    {
+     "id": "50104971",
+     "title": "What are the most important commands of a programming language?",
+     "points": 3,
+     "created_unix": 1792077632
+    },
+    {
+     "id": "50104676",
+     "title": "Show HN: Google Flights for Apple products, new, refurbished and used",
+     "points": 1,
+     "created_unix": 1792076393
+    },
+    {
+     "id": "50104618",
+     "title": "Show HN: OpenFactor, an open source 2FA app for iPhone and Apple Watch",
+     "points": 1,
+     "created_unix": 1792076190
+    },
+    {
+     "id": "50104427",
+     "title": "It's not our job to fix our employers",
+     "points": 1,
+     "created_unix": 1792075534
+    },
+    {
+     "id": "50104296",
+     "title": "Hardware-Based Mixing AndTranscoding with AMD Xilinx",
+     "points": 1,
+     "created_unix": 1792074908
+    },
+    {
+     "id": "50103983",
+     "title": "John Ternus Is Engineering a New Era for Apple",
+     "points": 1,
+     "created_unix": 1792073604
+    },
+    {
+     "id": "50103951",
+     "title": "Why Full Disk Access Matters–and What Apple Should Fix",
+     "points": 1,
+     "created_unix": 1792073476
+    },
+    {
+     "id": "50103855",
+     "title": "The security architecture customer-facing agentic apps need",
+     "points": 1,
+     "created_unix": 1792073005
+    },
+    {
+     "id": "50103813",
+     "title": "Show HN: Verdiq – Flags likely ghost jobs on LinkedIn before you apply",
+     "points": 1,
+     "created_unix": 1792072803
+    },
+    {
+     "id": "50103702",
+     "title": "Vhené – Any Condition MP3 Download",
+     "points": 1,
+     "created_unix": 1792072201
+    },
+    {
+     "id": "50103628",
+     "title": "Apertus 1.5 Technical Report",
+     "points": 2,
+     "created_unix": 1792071868
+    },
+    {
+     "id": "50103464",
+     "title": "Ask HN: Apple HomeView. What problem is Apple Home solving?",
+     "points": 3,
+     "created_unix": 1792071183
+    },
+    {
+     "id": "50103434",
+     "title": "Show HN: Mordiem – OpenAI-compatible API with multi-network failover",
+     "points": 2,
+     "created_unix": 1792071099
+    },
+    {
+     "id": "50103265",
+     "title": "Choosing a Chunking Strategy for Your LLM Apps: A Decision-Tree Approach",
+     "points": 2,
+     "created_unix": 1792070351
+    },
+    {
+     "id": "50103258",
+     "title": "Apache Subversion 1.15 released with \"Pristines On Demand\" feature",
+     "points": 2,
+     "created_unix": 1792070333
+    },
+    {
+     "id": "50103084",
+     "title": "Trustworthy AI Map",
+     "points": 2,
+     "created_unix": 1792069442
+    },
+    {
+     "id": "50103082",
+     "title": "Ask HN: Why aren't vibe-coded clones of MS Office apps a Code Red for Microsoft?",
+     "points": 2,
+     "created_unix": 1792069437
+    },
+    {
+     "id": "50103063",
+     "title": "I translated an Open Source App with 46K GitHub Stars into zh-HK on my own",
+     "points": 1,
+     "created_unix": 1792069371
+    },
+    {
+     "id": "50102789",
+     "title": "VC performance index from public records: 50 firms, 29k companies, API",
+     "points": 1,
+     "created_unix": 1792068017
+    },
+    {
+     "id": "50102623",
+     "title": "Def∇: An APL-Style Self Reference Macro for Lean4",
+     "points": 1,
+     "created_unix": 1792066922
+    },
+    {
+     "id": "50102536",
+     "title": "Amazon New Bee Frontier and Bee Eclipse",
+     "points": 10,
+     "created_unix": 1792066356
+    },
+    {
+     "id": "50102443",
+     "title": "I am just curious about the discussion",
+     "points": 1,
+     "created_unix": 1792065680
+    },
+    {
+     "id": "50102380",
+     "title": "The Shrugflation Triangle: How AI, Oil, and Treasuries Are Impacting the Economy",
+     "points": 2,
+     "created_unix": 1792065226
+    },
+    {
+     "id": "50102360",
+     "title": "Cloud Hypervisor 54 Released with Live Migration Improvements",
+     "points": 1,
+     "created_unix": 1792065127
+    },
+    {
+     "id": "50102354",
+     "title": "Epic Games to Improve Easy Anti-Cheat on Linux Anti-Cheat Systemd Service eBPF",
+     "points": 1,
+     "created_unix": 1792065081
+    },
+    {
+     "id": "50102334",
+     "title": "Sign of the Apocalypse: Coke Plus – 'It's Made with Fiber \"",
+     "points": 2,
+     "created_unix": 1792064953
+    },
+    {
+     "id": "50102290",
+     "title": "Show HN: Codecity, a 3D map of any Git repository",
+     "points": 1,
+     "created_unix": 1792064575
+    },
+    {
+     "id": "50102283",
+     "title": "Show HN: GeekyAnts ranks No. 3 among London mobile app developers on Clutch",
+     "points": 1,
+     "created_unix": 1792064508
+    },
+    {
+     "id": "50101413",
+     "title": "How Should Flock Cameras Be Regulated Under the Fourth Amendment?",
+     "points": 4,
+     "created_unix": 1792057991
+    },
+    {
+     "id": "50101314",
+     "title": "Automattic Applies for a .php Top-Level Domain",
+     "points": 2,
+     "created_unix": 1792057039
+    },
+    {
+     "id": "50101216",
+     "title": "I let Claude hire its first employee. It chose a rock",
+     "points": 2,
+     "created_unix": 1792056233
+    },
+    {
+     "id": "50101198",
+     "title": "Show HN: Bird – a Linux reminder app with an animated bird",
+     "points": 1,
+     "created_unix": 1792056017
+    },
+    {
+     "id": "50101088",
+     "title": "Something is falling apart at GNOME, and it's not subtle",
+     "points": 17,
+     "created_unix": 1792054986
+    },
+    {
+     "id": "50100987",
+     "title": "Show HN: Ampsu – Privacy and EU-focused, adaptive TDEE fast calorie tracker",
+     "points": 2,
+     "created_unix": 1792054031
+    },
+    {
+     "id": "50100874",
+     "title": "AppReviewer Preflight – Catch App Store rejection risks before submitting apps",
+     "points": 1,
+     "created_unix": 1792053032
+    },
+    {
+     "id": "50100448",
+     "title": "Show HN: KIRA–All-in-one local desktop media suite built to empower free speech",
+     "points": 2,
+     "created_unix": 1792049342
+    },
+    {
+     "id": "50100345",
+     "title": "How to be more ambitious: A tutorial for humans with models",
+     "points": 23,
+     "created_unix": 1792048585
+    },
+    {
+     "id": "50100194",
+     "title": "Apple and OpenAI Go to Court in a High-Stakes Legal Battle over AI Trade Secrets",
+     "points": 2,
+     "created_unix": 1792047404
+    },
+    {
+     "id": "50100189",
+     "title": "America Needs More Capital",
+     "points": 3,
+     "created_unix": 1792047384
+    },
+    {
+     "id": "50100079",
+     "title": "Stop Solving Microservice Consistency in Your Application Code",
+     "points": 2,
+     "created_unix": 1792046514
+    },
+    {
+     "id": "50100060",
+     "title": "I gained 20k impressions on my LinkedIn profile in 100 days",
+     "points": 2,
+     "created_unix": 1792046349
+    },
+    {
+     "id": "50099798",
+     "title": "Sony shutdown Overdrive store for pirated PS5 games,clones appeared within hours",
+     "points": 1,
+     "created_unix": 1792044036
+    },
+    {
+     "id": "50099741",
+     "title": "Sill – free/open source app to stream any window from you Mac onto iPhone/iPad",
+     "points": 2,
+     "created_unix": 1792043741
+    },
+    {
+     "id": "50099622",
+     "title": "AMD Helion, Agentic AI Compute at Rack Scale",
+     "points": 1,
+     "created_unix": 1792042667
+    },
+    {
+     "id": "50099555",
+     "title": "Show HN: Umtri (beta) – A living map of your codebase",
+     "points": 2,
+     "created_unix": 1792042020
+    },
+    {
+     "id": "50099331",
+     "title": "Canadian ransomware negotiator arrested amid FBI hacker crackdown",
+     "points": 8,
+     "created_unix": 1792040171
+    },
+    {
+     "id": "50099121",
+     "title": "An Apology",
+     "points": 111,
+     "created_unix": 1792038207
+    },
+    {
+     "id": "50099082",
+     "title": "Show HN: MoneySwitch – AI agents pay x402 APIs in USDC (self-hosted)",
+     "points": 1,
+     "created_unix": 1792037846
+    },
+    {
+     "id": "50098937",
+     "title": "Meta AI creates campaign material for Flávio Bolsonaro and blocks Lula content",
+     "points": 15,
+     "created_unix": 1792036449
+    },
+    {
+     "id": "50098454",
+     "title": "Show HN: My Terminal Themes Web App",
+     "points": 32,
+     "created_unix": 1792031622
+    },
+    {
+     "id": "50098187",
+     "title": "US arrests Saudi employee of OpenAI for allegedly bugging its offices",
+     "points": 1,
+     "created_unix": 1792029332
+    },
+    {
+     "id": "50098029",
+     "title": "Ask HN: Only one link appearing on HN?",
+     "points": 5,
+     "created_unix": 1792027984
+    },
+    {
+     "id": "50097904",
+     "title": "Build Classic Mac Apps with MacMAKE",
+     "points": 2,
+     "created_unix": 1792026804
+    },
+    {
+     "id": "50097799",
+     "title": "The reverts will continue until morale improves",
+     "points": 1,
+     "created_unix": 1792025805
+    },
+    {
+     "id": "50097490",
+     "title": "Show HN: I think Apple should have built this a long time ago",
+     "points": 4,
+     "created_unix": 1792023501
+    },
+    {
+     "id": "50097483",
+     "title": "Minions: Dynamic, Distributed VGPU Cloud Built on Idle Apple Silicon Devices",
+     "points": 2,
+     "created_unix": 1792023450
+    },
+    {
+     "id": "50097025",
+     "title": "Bank of America added 1k contractors to patch AI-exposed software flaws",
+     "points": 10,
+     "created_unix": 1792020306
+    },
+    {
+     "id": "50096767",
+     "title": "Morph Map – Visualise your codebase, sketch a refactor, and export the prompt",
+     "points": 2,
+     "created_unix": 1792018952
+    },
+    {
+     "id": "50096645",
+     "title": "Rustuna: A faster Optuna implementation in Rust",
+     "points": 1,
+     "created_unix": 1792018249
+    },
+    {
+     "id": "50096553",
+     "title": "How to be more ambitious: A tutorial for humans with models",
+     "points": 1,
+     "created_unix": 1792017858
+    },
+    {
+     "id": "50096230",
+     "title": "Apple announces HomeView, a $299 smart display to push Siri AI into homes",
+     "points": 1,
+     "created_unix": 1792016297
+    },
+    {
+     "id": "50095928",
+     "title": "\"Rust Is Amazing, as Long as Nobody Looks at It\" – Fact-Checking DHH [video]",
+     "points": 2,
+     "created_unix": 1792014840
+    },
+    {
+     "id": "50095854",
+     "title": "Anecdotal, but my iOS App got approved much faster with new assets",
+     "points": 3,
+     "created_unix": 1792014490
+    },
+    {
+     "id": "50095756",
+     "title": "Russia hits American businesses with 'drones and missiles' in Ukraine",
+     "points": 4,
+     "created_unix": 1792014105
+    },
+    {
+     "id": "50095454",
+     "title": "Mastering SIMD with Java Vector API",
+     "points": 1,
+     "created_unix": 1792012654
+    },
+    {
+     "id": "50095323",
+     "title": "Tell HN: Don't mass spam employers with LLM generated emails",
+     "points": 7,
+     "created_unix": 1792012164
+    },
+    {
+     "id": "50095232",
+     "title": "Show HN: Impetus – I turned my MPE keyboard into a DAW control surface",
+     "points": 1,
+     "created_unix": 1792011840
+    },
+    {
+     "id": "50095200",
+     "title": "Day Trading app build polished dark sleek for cheap FULL OWNERSHIP",
+     "points": 5,
+     "created_unix": 1792011695
+    },
+    {
+     "id": "50095188",
+     "title": "What is potash, and why is the US importing it from Belarus?",
+     "points": 1,
+     "created_unix": 1792011668
+    },
+    {
+     "id": "50095178",
+     "title": "China Starts Clinical Trial for New 128-Channel Implantable BCI",
+     "points": 2,
+     "created_unix": 1792011638
+    },
+    {
+     "id": "50095130",
+     "title": "OpenAI accuses employee who left for Apple of leaking plans for unreleased devic",
+     "points": 3,
+     "created_unix": 1792011492
+    },
+    {
+     "id": "50094911",
+     "title": "Georgia man sues Flock, sheriff's office over alleged ALPR-fueled retaliation",
+     "points": 3,
+     "created_unix": 1792010584
+    },
+    {
+     "id": "50094575",
+     "title": "The AI labor apocalypse is on hold (for now)",
+     "points": 3,
+     "created_unix": 1792009392
+    },
+    {
+     "id": "50094355",
+     "title": "AI systems are improving rapidly at Slay the Spire and its sequel",
+     "points": 2,
+     "created_unix": 1792008569
+    },
+    {
+     "id": "50094237",
+     "title": "(WIP) Blender 2.45 for Apple Silicon",
+     "points": 1,
+     "created_unix": 1792008143
+    },
+    {
+     "id": "50093857",
+     "title": "Bank of America hired 1000 contractors to patch software flaws exposed by Mythos",
+     "points": 37,
+     "created_unix": 1792006859
+    },
+    {
+     "id": "50093831",
+     "title": "Wealth Inequality in America Drawn to Scale",
+     "points": 9,
+     "created_unix": 1792006763
+    },
+    {
+     "id": "50093731",
+     "title": "The Ivory Tower Is Emptying",
+     "points": 3,
+     "created_unix": 1792006491
+    },
+    {
+     "id": "50093544",
+     "title": "Faster Python startup with lazy imports",
+     "points": 1,
+     "created_unix": 1792005893
+    },
+    {
+     "id": "50093435",
+     "title": "Show HN: Run AI-generated logic safely inside your app",
+     "points": 3,
+     "created_unix": 1792005526
+    },
+    {
+     "id": "50093303",
+     "title": "Page One Open Source Screenwriting App",
+     "points": 2,
+     "created_unix": 1792005095
+    },
+    {
+     "id": "50093180",
+     "title": "Suicide rates highest ever among middle-aged men",
+     "points": 511,
+     "created_unix": 1792004638
+    },
+    {
+     "id": "50092804",
+     "title": "Kidpix.app",
+     "points": 3,
+     "created_unix": 1792003278
+    },
+    {
+     "id": "50092615",
+     "title": "Elevation Lab: An Apology",
+     "points": 3,
+     "created_unix": 1792002629
+    },
+    {
+     "id": "50092080",
+     "title": "Tugz: New deflate library with three applications",
+     "points": 1,
+     "created_unix": 1792000846
+    },
+    {
+     "id": "50091914",
+     "title": "The Death of Amazon's Writing Culture",
+     "points": 40,
+     "created_unix": 1792000364
+    },
+    {
+     "id": "50091875",
+     "title": "America didn't lose its rare earth industry, it sold it",
+     "points": 189,
+     "created_unix": 1792000226
+    },
+    {
+     "id": "50091785",
+     "title": "New ways to create and launch your own app",
+     "points": 3,
+     "created_unix": 1791999915
+    },
+    {
+     "id": "50091684",
+     "title": "OpenAI claims employee sent secret device information to Apple",
+     "points": 28,
+     "created_unix": 1791999577
+    },
+    {
+     "id": "50091642",
+     "title": "Clicks, Impressions and Positions from AI Mode in Google Search Console",
+     "points": 1,
+     "created_unix": 1791999430
+    },
+    {
+     "id": "50091519",
+     "title": "US report details extent of 'devastating' dating-app scams",
+     "points": 49,
+     "created_unix": 1791999084
+    },
+    {
+     "id": "50091513",
+     "title": "French minister accuses Musk of 'online harassment campaigns' against leaders",
+     "points": 10,
+     "created_unix": 1791999067
+    },
+    {
+     "id": "50090994",
+     "title": "Show HN: BitRun, 1-bit LLM runner on CPU (100T/s on Apple Silicon)",
+     "points": 3,
+     "created_unix": 1791997507
+    },
+    {
+     "id": "50090932",
+     "title": "Show HN: I wrote an email app that accepts only one sender per inbox",
+     "points": 110,
+     "created_unix": 1791997259
+    },
+    {
+     "id": "50090818",
+     "title": "Show HN: Aside – Mac app that suggests what to say next during calls",
+     "points": 4,
+     "created_unix": 1791996839
+    },
+    {
+     "id": "50090796",
+     "title": "Ask HN: Are you hesitant to install vibe-coded apps?",
+     "points": 16,
+     "created_unix": 1791996753
+    },
+    {
+     "id": "50090707",
+     "title": "OpenAI: Employee who left for Apple took files about unreleased device",
+     "points": 22,
+     "created_unix": 1791996441
+    },
+    {
+     "id": "50090260",
+     "title": "Apple Plans to Block Hundreds of Programmatic Data Companies from iOS",
+     "points": 4,
+     "created_unix": 1791995077
+    },
+    {
+     "id": "50090118",
+     "title": "Reasons the AI-Apocalypse May Never Arrive",
+     "points": 2,
+     "created_unix": 1791994694
+    },
+    {
+     "id": "50090084",
+     "title": "Amsterdam police confiscates server left-wing ISP A/I at American request",
+     "points": 171,
+     "created_unix": 1791994585
+    },
+    {
+     "id": "50090032",
+     "title": "Ask HN: Any way to remove ads in Apple apps?",
+     "points": 6,
+     "created_unix": 1791994416
+    },
+    {
+     "id": "50089931",
+     "title": "University-Branded Boot Camp Promised Tech Jobs. Nowhere Near What It Delivered",
+     "points": 2,
+     "created_unix": 1791994155
+    },
+    {
+     "id": "50089921",
+     "title": "Americans' social activity has steeply declined in the past 30 years",
+     "points": 561,
+     "created_unix": 1791994140
+    },
+    {
+     "id": "50089878",
+     "title": "How Many Screenshot Apps Does the World Need?",
+     "points": 1,
+     "created_unix": 1791994003
+    },
+    {
+     "id": "50089333",
+     "title": "Amazon uses AI-powered 'risk' system to track union activity globally",
+     "points": 5,
+     "created_unix": 1791992187
+    },
+    {
+     "id": "50088872",
+     "title": "What is APRF? The future of inbox placement",
+     "points": 1,
+     "created_unix": 1791990740
+    },
+    {
+     "id": "50088811",
+     "title": "Used Codex to cheat my reading streak on Apple Books",
+     "points": 1,
+     "created_unix": 1791990449
+    },
+    {
+     "id": "50088748",
+     "title": "I built the RealWorld app in Lean 4",
+     "points": 3,
+     "created_unix": 1791990194
+    },
+    {
+     "id": "50088261",
+     "title": "Ukrainian drones hit Russia's top data centre in attack on AI ambitions",
+     "points": 7,
+     "created_unix": 1791987997
+    },
+    {
+     "id": "50088229",
+     "title": "Show HN: I built a phone app to gamify fitness with friends",
+     "points": 2,
+     "created_unix": 1791987840
+    },
+    {
+     "id": "50088112",
+     "title": "Bitwise-identical training and inference across GPU vendors – Nvidia, AMD, Apple",
+     "points": 1,
+     "created_unix": 1791987326
+    },
+    {
+     "id": "50088078",
+     "title": "Apply as a team and earn €50M in Mollie equity",
+     "points": 4,
+     "created_unix": 1791987172
+    },
+    {
+     "id": "50087751",
+     "title": "Building an AI Product Alone: How I Control API Costs",
+     "points": 1,
+     "created_unix": 1791985616
+    },
+    {
+     "id": "50087626",
+     "title": "Fuwa.chat – Open-source, self-hostable, native discord-like app",
+     "points": 1,
+     "created_unix": 1791985113
+    },
+    {
+     "id": "50087524",
+     "title": "Apple Keynote now showing ads in its UI",
+     "points": 146,
+     "created_unix": 1791984687
+    },
+    {
+     "id": "50087464",
+     "title": "Show HN: Approximatr: The daily game of spatial intuition",
+     "points": 1,
+     "created_unix": 1791984468
+    },
+    {
+     "id": "50087447",
+     "title": "Just Using Claude No Longer Generates Alpha",
+     "points": 3,
+     "created_unix": 1791984390
+    },
+    {
+     "id": "50087386",
+     "title": "BeOS-Inspired Haiku Landed More Hardware Improvements",
+     "points": 7,
+     "created_unix": 1791984206
+    },
+    {
+     "id": "50087330",
+     "title": "Tabs and menus in Apple's 27.0 OSS",
+     "points": 2,
+     "created_unix": 1791984003
+    },
+    {
+     "id": "50087269",
+     "title": "Apple's App Store Connect API Facelift",
+     "points": 4,
+     "created_unix": 1791983730
+    },
+    {
+     "id": "50087077",
+     "title": "Google ships Gemini 4 Argon, Amex launches agent purchase authorization, plus",
+     "points": 2,
+     "created_unix": 1791982818
+    },
+    {
+     "id": "50086953",
+     "title": "Google Play now lets anyone build private, vibe-coded apps that run on Android",
+     "points": 2,
+     "created_unix": 1791982385
+    },
+    {
+     "id": "50086945",
+     "title": "Show HN: Train with Pasta. Workouts Powered by Apple Intelligence",
+     "points": 1,
+     "created_unix": 1791982323
+    },
+    {
+     "id": "50086826",
+     "title": "America's Crisis of Social Connection, with Adam Grant [audio]",
+     "points": 2,
+     "created_unix": 1791981794
+    },
+    {
+     "id": "50086811",
+     "title": "Why 'externalized' proofs of cyclic trait impls does not work",
+     "points": 1,
+     "created_unix": 1791981735
+    },
+    {
+     "id": "50086784",
+     "title": "Hacking the Go compiler to efficiently map IPv4 to IPv6",
+     "points": 4,
+     "created_unix": 1791981603
+    },
+    {
+     "id": "50086760",
+     "title": "A Sane JSON Facade for App Store Connect",
+     "points": 2,
+     "created_unix": 1791981471
+    },
+    {
+     "id": "50086752",
+     "title": "Has the AI Boom Impacted the U.S. Current Account?",
+     "points": 3,
+     "created_unix": 1791981448
+    },
+    {
+     "id": "50086671",
+     "title": "Show HN: Tunr- pivotted from a localhost tunnel to home for vibecoded apps",
+     "points": 1,
+     "created_unix": 1791981054
+    },
+    {
+     "id": "50086638",
+     "title": "Nixmap – An interactive map of Nix concepts and their prerequisites",
+     "points": 2,
+     "created_unix": 1791980914
+    },
+    {
+     "id": "50086475",
+     "title": "GitHub App improvements for least privilege and management",
+     "points": 2,
+     "created_unix": 1791980166
+    },
+    {
+     "id": "50085890",
+     "title": "Show HN: Malware Families Catalog – 2,903 Families with ATT&CK Mappings",
+     "points": 3,
+     "created_unix": 1791976813
+    },
+    {
+     "id": "50085734",
+     "title": "Book Release: Building Serverless Applications with WebAssembly and Spin",
+     "points": 1,
+     "created_unix": 1791975927
+    },
+    {
+     "id": "50085606",
+     "title": "App Life in China",
+     "points": 2,
+     "created_unix": 1791975356
+    },
+    {
+     "id": "50085508",
+     "title": "Show HN: Run macOS on FreeBSD's Bhyve on AMD",
+     "points": 2,
+     "created_unix": 1791974802
+    },
+    {
+     "id": "50085472",
+     "title": "Netflix App: Features, Plans, Pricing, and Everything to Know",
+     "points": 2,
+     "created_unix": 1791974579
+    },
+    {
+     "id": "50085405",
+     "title": "Show HN: Mnemify – 3D terrain map merging Confluence, Notion, Obsidian",
+     "points": 3,
+     "created_unix": 1791974194
+    },
+    {
+     "id": "50085243",
+     "title": "Reviewing Ergodnc – What a Clean Laravel API Still Gets Wrong",
+     "points": 2,
+     "created_unix": 1791973155
+    },
+    {
+     "id": "50085112",
+     "title": "Apple: Switch to Safari (From Chrome)",
+     "points": 36,
+     "created_unix": 1791972537
+    },
+    {
+     "id": "50085100",
+     "title": "Grist: Turn the spreadsheets running your business into secure applications",
+     "points": 2,
+     "created_unix": 1791972451
+    },
+    {
+     "id": "50084970",
+     "title": "Science Corp implants its vision-restoring chip in its first Stargardt patient",
+     "points": 3,
+     "created_unix": 1791971665
+    },
+    {
+     "id": "50084790",
+     "title": "The Economic Complexity of the Western Roman Empire",
+     "points": 6,
+     "created_unix": 1791970329
+    },
+    {
+     "id": "50084757",
+     "title": "How Amazon pushes up prices all across the Internet",
+     "points": 929,
+     "created_unix": 1791970097
+    },
+    {
+     "id": "50084430",
+     "title": "Is your data private if an app needs to send it somewhere else?",
+     "points": 2,
+     "created_unix": 1791967839
+    },
+    {
+     "id": "50084036",
+     "title": "One-year-old AI startup with six employees acquired for estimated $100M",
+     "points": 2,
+     "created_unix": 1791965103
+    },
+    {
+     "id": "50084033",
+     "title": "Show HN: Free remote jobs API – 630k live listings across 16 job boards, no auth",
+     "points": 1,
+     "created_unix": 1791965090
+    },
+    {
+     "id": "50083980",
+     "title": "Lost in Implicit Routing: How LLM Agents Fail to Load Relevant Skills at Scale",
+     "points": 1,
+     "created_unix": 1791964631
+    },
+    {
+     "id": "50083948",
+     "title": "AppReviewer Preflight – Stop wasting days on avoidable App Store rejections",
+     "points": 1,
+     "created_unix": 1791964367
+    },
+    {
+     "id": "50083630",
+     "title": "Lotus Improv on the NeXT",
+     "points": 2,
+     "created_unix": 1791962169
+    },
+    {
+     "id": "50083514",
+     "title": "How to be more ambitious when using AI",
+     "points": 2,
+     "created_unix": 1791961273
+    },
+    {
+     "id": "50083420",
+     "title": "Vocaloid DB Tool Application",
+     "points": 2,
+     "created_unix": 1791960588
+    },
+    {
+     "id": "50083090",
+     "title": "American Express Publishes Intent Intelligence Framework for Agentic Commerce",
+     "points": 1,
+     "created_unix": 1791958366
+    },
+    {
+     "id": "50082962",
+     "title": "Anthropic conjures threat that doesn't exist yet to stoke fears of AI apocalypse",
+     "points": 74,
+     "created_unix": 1791957216
+    },
+    {
+     "id": "50082909",
+     "title": "LeanLLM: An LLM SDK for applications written in Lean 4",
+     "points": 1,
+     "created_unix": 1791956763
+    },
+    {
+     "id": "50082896",
+     "title": "OpenAI employee arrested after recording device found in office",
+     "points": 2,
+     "created_unix": 1791956707
+    },
+    {
+     "id": "50082398",
+     "title": "Bank of America fined $1.2B for money laundering and sanctions violations",
+     "points": 4,
+     "created_unix": 1791952235
+    },
+    {
+     "id": "50081857",
+     "title": "Show HN: Evaluate and improve your agent steering",
+     "points": 4,
+     "created_unix": 1791946719
+    },
+    {
+     "id": "50081221",
+     "title": "Apples to Apples: Getting Type Mappings Right in LLM-Based Code Translation",
+     "points": 8,
+     "created_unix": 1791940790
+    },
+    {
+     "id": "50081190",
+     "title": "KBEmacs, MIT's Programmer's Apprentice, Reanimated",
+     "points": 3,
+     "created_unix": 1791940485
+    },
+    {
+     "id": "50081095",
+     "title": "Show HN: Using the long book of the law to improve PA health insurance appeals",
+     "points": 5,
+     "created_unix": 1791939703
+    },
+    {
+     "id": "50080998",
+     "title": "U.S. Treasury Announces Record Enforcement Actions Against Bank of America",
+     "points": 29,
+     "created_unix": 1791938787
+    },
+    {
+     "id": "50080926",
+     "title": "SlowBooks Pro – From-scratch implementation of QuickBooks Pro 2003 for all OSes",
+     "points": 2,
+     "created_unix": 1791938103
+    },
+    {
+     "id": "50080765",
+     "title": "Apple HomePod Mini 2",
+     "points": 13,
+     "created_unix": 1791936810
+    },
+    {
+     "id": "50080712",
+     "title": "Show HN: Benchmark coding agents on deploying apps",
+     "points": 3,
+     "created_unix": 1791936464
+    },
+    {
+     "id": "50080613",
+     "title": "US hits Bank of America with $1.2B fine",
+     "points": 45,
+     "created_unix": 1791935757
+    },
+    {
+     "id": "50080363",
+     "title": "Amex introduces a framework to prevent AI agents from unauthorized purchases",
+     "points": 4,
+     "created_unix": 1791933819
+    },
+    {
+     "id": "50080275",
+     "title": "Show HN: Pulse Local, a Mac budgeting app whose AI models run on your machine",
+     "points": 119,
+     "created_unix": 1791933203
+    },
+    {
+     "id": "50079761",
+     "title": "The reverts will continue until morale improves",
+     "points": 3,
+     "created_unix": 1791930225
+    },
+    {
+     "id": "50079701",
+     "title": "The First Social Network: In rural Argentina residents send messages w AM radio",
+     "points": 147,
+     "created_unix": 1791929861
+    },
+    {
+     "id": "50079464",
+     "title": "AlphaNIST",
+     "points": 96,
+     "created_unix": 1791928649
+    },
+    {
+     "id": "50079437",
+     "title": "Physical Intelligence API Beta: Frontier Models for Every Robot",
+     "points": 53,
+     "created_unix": 1791928525
+    },
+    {
+     "id": "50078653",
+     "title": "OpenAI employee arrested by FBI over hidden listening device, company says",
+     "points": 37,
+     "created_unix": 1791925153
+    },
+    {
+     "id": "50078579",
+     "title": "Apple Explains Why Chrome Users Should 'Switch to Safari'",
+     "points": 5,
+     "created_unix": 1791924802
+    },
+    {
+     "id": "50078423",
+     "title": "Trezor Wallets Also Compromised with Implants",
+     "points": 35,
+     "created_unix": 1791924142
+    },
+    {
+     "id": "50078280",
+     "title": "Shop CLI: build shopping into your app or agent",
+     "points": 6,
+     "created_unix": 1791923534
+    },
+    {
+     "id": "50078086",
+     "title": "Show HN: Open-source Mac menu bar app for Claude, Codex and Cursor",
+     "points": 3,
+     "created_unix": 1791922843
+    },
+    {
+     "id": "50078046",
+     "title": "Google Play now lets anyone build private, vibe-coded apps that run on Android",
+     "points": 18,
+     "created_unix": 1791922677
+    },
+    {
+     "id": "50077884",
+     "title": "Docker Hub flaw let attackers impersonate users, tamper with images",
+     "points": 9,
+     "created_unix": 1791922028
+    },
+    {
+     "id": "50077770",
+     "title": "Show HN: Realtime Decorrelation Stretch Android App",
+     "points": 1,
+     "created_unix": 1791921576
+    },
+    {
+     "id": "50076747",
+     "title": "Analytical Ballistic Trajectories with Approximately Linear Drag [pdf]",
+     "points": 1,
+     "created_unix": 1791917629
+    },
+    {
+     "id": "50076719",
+     "title": "Origin App Marketplace",
+     "points": 1,
+     "created_unix": 1791917498
+    },
+    {
+     "id": "50076561",
+     "title": "Maestro: A new free music notation app",
+     "points": 3,
+     "created_unix": 1791916865
+    },
+    {
+     "id": "50076296",
+     "title": "HomeView (iOS App)",
+     "points": 1,
+     "created_unix": 1791915974
+    },
+    {
+     "id": "50075819",
+     "title": "A browser animation app I built for my little sister",
+     "points": 2,
+     "created_unix": 1791914002
+    },
+    {
+     "id": "50075774",
+     "title": "Show HN: Hev is a Jev-compatible API, answered by humans",
+     "points": 2,
+     "created_unix": 1791913850
+    },
+    {
+     "id": "50075698",
+     "title": "App Size 101: Drop 40% in an afternoon",
+     "points": 1,
+     "created_unix": 1791913528
+    },
+    {
+     "id": "50075648",
+     "title": "Show HN: Ampsu's Metabolism mode – how it learns what you burn (adaptive TDEE)",
+     "points": 1,
+     "created_unix": 1791913314
+    },
+    {
+     "id": "50074766",
+     "title": "Kroger to lay off 3k corporate employees over 3 years as it leans into AI",
+     "points": 10,
+     "created_unix": 1791910197
+    },
+    {
+     "id": "50074745",
+     "title": "Windows Native Trading App",
+     "points": 3,
+     "created_unix": 1791910120
+    },
+    {
+     "id": "50074739",
+     "title": "Americans Trust in Federal Government Sinks to New Depths",
+     "points": 48,
+     "created_unix": 1791910098
+    },
+    {
+     "id": "50074518",
+     "title": "How to be more ambitious: A tutorial for humans with models",
+     "points": 4,
+     "created_unix": 1791909329
+    },
+    {
+     "id": "50074225",
+     "title": "Show HN: Ampsu – Fast calorie tracking with EU barcodes and adaptive metabolism",
+     "points": 2,
+     "created_unix": 1791908482
+    },
+    {
+     "id": "50073947",
+     "title": "Today we are rolling out Gemini 4 Argon globally (API, App, Antigravity)",
+     "points": 1,
+     "created_unix": 1791907610
+    },
+    {
+     "id": "50073925",
+     "title": "Apple's Polishing Cloth compatibility updated to support HomeView",
+     "points": 2,
+     "created_unix": 1791907548
+    },
+    {
+     "id": "50073795",
+     "title": "Gristle.app: A free, browser-based animation editor (like Flash, no install)",
+     "points": 1,
+     "created_unix": 1791907115
+    },
+    {
+     "id": "50073705",
+     "title": "Google's new WeatherNext 3 AI enabled this free weather app",
+     "points": 1,
+     "created_unix": 1791906817
+    },
+    {
+     "id": "50073455",
+     "title": "Now that information is free, what's a college campus for?",
+     "points": 38,
+     "created_unix": 1791906003
+    },
+    {
+     "id": "50072971",
+     "title": "Cracks Are Starting to Appear in the AI Trade",
+     "points": 3,
+     "created_unix": 1791904314
+    },
+    {
+     "id": "50072841",
+     "title": "Google's Prompt API",
+     "points": 1,
+     "created_unix": 1791903773
+    },
+    {
+     "id": "50072765",
+     "title": "Show HN: RSI-Anything – JEPA world models for self-improving agents",
+     "points": 8,
+     "created_unix": 1791903489
+    },
+    {
+     "id": "50072629",
+     "title": "Tired of updating Docker for Mac. Apple/container is enough",
+     "points": 1,
+     "created_unix": 1791902959
+    },
+    {
+     "id": "50072616",
+     "title": "Show HN: Podway – your self-hosted apps, run by an AI admin",
+     "points": 1,
+     "created_unix": 1791902892
+    },
+    {
+     "id": "50072490",
+     "title": "Cupertino.tech – A curated directory of Apple's SDKs, frameworks and tools",
+     "points": 1,
+     "created_unix": 1791902430
+    },
+    {
+     "id": "50072475",
+     "title": "Show HN: OneOver – V1 of my app's UI took a year, V3 took a weekend",
+     "points": 1,
+     "created_unix": 1791902380
+    },
+    {
+     "id": "50072286",
+     "title": "Apple's new 'Switch to Safari' campaign details why you should ditch Chrome",
+     "points": 291,
+     "created_unix": 1791901568
+    },
+    {
+     "id": "50072093",
+     "title": "Show HN: See which apps rank for any keyword on the App Store and Google Play",
+     "points": 1,
+     "created_unix": 1791900762
+    },
+    {
+     "id": "50072006",
+     "title": "Aperture",
+     "points": 1,
+     "created_unix": 1791900394
+    },
+    {
+     "id": "50071746",
+     "title": "Apple HomeView [video]",
+     "points": 2,
+     "created_unix": 1791899391
+    },
+    {
+     "id": "50071691",
+     "title": "Apple HomeView Won't Be Available in the European Union",
+     "points": 2,
+     "created_unix": 1791899157
+    },
+    {
+     "id": "50071673",
+     "title": "I'm building a cooperative app to help me do exercise",
+     "points": 2,
+     "created_unix": 1791899072
+    },
+    {
+     "id": "50071555",
+     "title": "Looking for feedback on my tennis app",
+     "points": 1,
+     "created_unix": 1791898619
+    },
+    {
+     "id": "50071331",
+     "title": "Apple Home Collection – Home Accessories",
+     "points": 2,
+     "created_unix": 1791897789
+    },
+    {
+     "id": "50071312",
+     "title": "Zxloader.system: a compressed binary loader for Apple II",
+     "points": 1,
+     "created_unix": 1791897709
+    },
+    {
+     "id": "50071310",
+     "title": "New Apple TV 4K",
+     "points": 345,
+     "created_unix": 1791897695
+    },
+    {
+     "id": "50071189",
+     "title": "Apple TV 4K (New)",
+     "points": 12,
+     "created_unix": 1791897197
+    },
+    {
+     "id": "50071175",
+     "title": "If you use Signal on Android here are 3 default app settings you should fix",
+     "points": 1,
+     "created_unix": 1791897161
+    },
+    {
+     "id": "50071085",
+     "title": "Apple Announces HomeView",
+     "points": 5,
+     "created_unix": 1791896797
+    },
+    {
+     "id": "50071081",
+     "title": "Apple Unveils $299 HomeView Hub as Part of New Smart Home Push",
+     "points": 2,
+     "created_unix": 1791896778
+    },
+    {
+     "id": "50071023",
+     "title": "Apple Home Collection, a new lineup of smart home accessories",
+     "points": 7,
+     "created_unix": 1791896557
+    },
+    {
+     "id": "50071017",
+     "title": "Apple HomeView",
+     "points": 757,
+     "created_unix": 1791896532
+    },
+    {
+     "id": "50070841",
+     "title": "Show HN: Calíope – a native database client for every Apple screen",
+     "points": 1,
+     "created_unix": 1791895685
+    },
+    {
+     "id": "50070648",
+     "title": "Apple Unveils Immersive Horror Film Coming Exclusively to Vision Pro",
+     "points": 2,
+     "created_unix": 1791894743
+    },
+    {
+     "id": "50070593",
+     "title": "A Dynamic and Distributed Virtual GPU Cloud Built on Idle Apple Silicon Devices",
+     "points": 247,
+     "created_unix": 1791894396
+    },
+    {
+     "id": "50070313",
+     "title": "Show HN: Helicon – Desktop App for Meta's Muse Code CLI (Linux, Windows, macOS)",
+     "points": 2,
+     "created_unix": 1791892930
+    },
+    {
+     "id": "50070312",
+     "title": "Show HN: Ecsodus – Migrate AWS Copilot apps to Terraform without losing prod",
+     "points": 2,
+     "created_unix": 1791892927
+    },
+    {
+     "id": "50070115",
+     "title": "Pi Pocket: Mobile-First Web App for Pi Durable Agents",
+     "points": 2,
+     "created_unix": 1791891870
+    },
+    {
+     "id": "50070010",
+     "title": "Show HN: Spotatui, a Spotify TUI/GUI without web API rate limits",
+     "points": 91,
+     "created_unix": 1791891120
+    },
+    {
+     "id": "50069802",
+     "title": "Clean room Adobe/Microsoft forks are rapidly improving",
+     "points": 4,
+     "created_unix": 1791889693
+    },
+    {
+     "id": "50069742",
+     "title": "Athenode – plan the whole app as a spec tree, then let agents build it",
+     "points": 1,
+     "created_unix": 1791889217
+    },
+    {
+     "id": "50069406",
+     "title": "Synthwave-Tinted Hyprland Desktop for Apple Silicon Macs and Fedora Asahi Remix",
+     "points": 2,
+     "created_unix": 1791886700
+    },
+    {
+     "id": "50069026",
+     "title": "Show HN: Getup – a tray app that gets you off the chair before your neck hurts",
+     "points": 1,
+     "created_unix": 1791884107
+    },
+    {
+     "id": "50068954",
+     "title": "A Discovery Inside the Steam Deck's APU (2024)",
+     "points": 3,
+     "created_unix": 1791883559
+    },
+    {
+     "id": "50068832",
+     "title": "Update: Empty shelves at Albert Heijn, app still unreachable",
+     "points": 1,
+     "created_unix": 1791882799
+    },
+    {
+     "id": "50068234",
+     "title": "Show HN: Lightweight, self-hosted, web analytics app",
+     "points": 2,
+     "created_unix": 1791878244
+    },
+    {
+     "id": "50068203",
+     "title": "Apple routed a graphite pipe through the iPhone Duo's hinge to dissipate heat",
+     "points": 48,
+     "created_unix": 1791877974
+    },
+    {
+     "id": "50068031",
+     "title": "Show HN: GotEmail – a native Mac mail app with one-click sign-in codes",
+     "points": 2,
+     "created_unix": 1791876485
+    },
+    {
+     "id": "50067264",
+     "title": "Part II: Is It a Flatpak? Is It an AppImage? No It's AppJail",
+     "points": 1,
+     "created_unix": 1791870377
+    },
+    {
+     "id": "50066765",
+     "title": "Show HN: Open Health Sync – Self-hosted API for wearable and health data",
+     "points": 1,
+     "created_unix": 1791866047
+    },
+    {
+     "id": "50066338",
+     "title": "Leave your (Apple) watch at the door",
+     "points": 3,
+     "created_unix": 1791862811
+    },
+    {
+     "id": "50065840",
+     "title": "IsEven API",
+     "points": 6,
+     "created_unix": 1791858607
+    },
+    {
+     "id": "50065439",
+     "title": "Can app-specific credentials enable private account recovery?",
+     "points": 4,
+     "created_unix": 1791855074
+    },
+    {
+     "id": "50065131",
+     "title": "ETAF: Build complete text applications in Emacs with a web-style model",
+     "points": 3,
+     "created_unix": 1791852474
+    },
+    {
+     "id": "50064968",
+     "title": "Show HN: RoboGym – open-source (Apache-2.0) Dual arm SO101 playground",
+     "points": 5,
+     "created_unix": 1791851232
+    },
+    {
+     "id": "50064664",
+     "title": "'Remnants' – Ti West Directed First Immersive Horror Movie for Apple Vision Pro",
+     "points": 4,
+     "created_unix": 1791849111
+    },
+    {
+     "id": "50064617",
+     "title": "Web app that lets you upload a song, pick an instrument and start practising",
+     "points": 1,
+     "created_unix": 1791848790
+    },
+    {
+     "id": "50063649",
+     "title": "Using Jev to make your agents write the code and design the app the way you do",
+     "points": 5,
+     "created_unix": 1791842373
+    },
+    {
+     "id": "50063557",
+     "title": "Ask HN: Are there any chat app around personal photos?",
+     "points": 2,
+     "created_unix": 1791841936
+    },
+    {
+     "id": "50062979",
+     "title": "Show HN: E-reader app for iPhone, quote reels generator",
+     "points": 1,
+     "created_unix": 1791838668
+    },
+    {
+     "id": "50062944",
+     "title": "Digital Habits Focus app: block the feed from social media sites",
+     "points": 1,
+     "created_unix": 1791838447
+    },
+    {
+     "id": "50062553",
+     "title": "A Modern Web App in Punhc Cards and Steam",
+     "points": 3,
+     "created_unix": 1791836908
+    },
+    {
+     "id": "50062237",
+     "title": "Epic Games tells employees to use AI to get Disney game done",
+     "points": 85,
+     "created_unix": 1791835662
+    },
+    {
+     "id": "50062036",
+     "title": "BCHS is an open source software stack for web apps. BSD, C, httpd, SQLite",
+     "points": 2,
+     "created_unix": 1791834774
+    },
+    {
+     "id": "50060954",
+     "title": "Show HN: Use your phone as a Windows mouse and keyboard, without a phone app",
+     "points": 5,
+     "created_unix": 1791830805
+    },
+    {
+     "id": "50060923",
+     "title": "David Rudnick on \"borderline impossible\" process of designing Arsenal typeface",
+     "points": 57,
+     "created_unix": 1791830682
+    },
+    {
+     "id": "50060876",
+     "title": "(Easy) Anti-Cheat Compatibility on Apple Silicon [pdf]",
+     "points": 1,
+     "created_unix": 1791830533
+    },
+    {
+     "id": "50060715",
+     "title": "Show HN: writui – An encrypted Markdown-based writing app for the terminal",
+     "points": 2,
+     "created_unix": 1791829807
+    },
+    {
+     "id": "50060547",
+     "title": "Sticky alpine flower confirms Darwin's 150-year-old carnivorous plant prediction",
+     "points": 102,
+     "created_unix": 1791829217
+    },
+    {
+     "id": "50060296",
+     "title": "My Reddit AMA on the Law of Web Scraping",
+     "points": 113,
+     "created_unix": 1791828152
+    },
+    {
+     "id": "50059972",
+     "title": "Empty shelves likely at Nederlands Albert Heijn due to \"Cyber incident\"",
+     "points": 27,
+     "created_unix": 1791826949
+    },
+    {
+     "id": "50059768",
+     "title": "APX Forth: A Surprise – By Mark Miller – Goto 10",
+     "points": 1,
+     "created_unix": 1791826129
+    },
+    {
+     "id": "50059644",
+     "title": "It's important that we don't concede FOSS to socialists and communists",
+     "points": 3,
+     "created_unix": 1791825643
+    },
+    {
+     "id": "50059382",
+     "title": "What leaving Spectral looked like at Apideck for API linting",
+     "points": 1,
+     "created_unix": 1791824688
+    },
+    {
+     "id": "50058850",
+     "title": "Reverse engineer anything with agents, from app behavior down to native binaries",
+     "points": 99,
+     "created_unix": 1791822715
+    },
+    {
+     "id": "50058528",
+     "title": "A Modern Web App in C",
+     "points": 711,
+     "created_unix": 1791821590
+    },
+    {
+     "id": "50058257",
+     "title": "The new Go JSON API: twice as fast, or 1.5x slower?",
+     "points": 2,
+     "created_unix": 1791820556
+    },
+    {
+     "id": "50057987",
+     "title": "VersaTiles Style v6 released with a new API and look-alikes themes",
+     "points": 1,
+     "created_unix": 1791819493
+    },
+    {
+     "id": "50057684",
+     "title": "Show HN: Mastro – Turn the browser session into a CLI for any web app",
+     "points": 2,
+     "created_unix": 1791818264
+    },
+    {
+     "id": "50057559",
+     "title": "A Strongly Aperiodic Monotile in Three Dimensions",
+     "points": 7,
+     "created_unix": 1791817762
+    },
+    {
+     "id": "50057241",
+     "title": "Show HN: Baa – a menu bar app that frees RAM your AI agents forgot about",
+     "points": 2,
+     "created_unix": 1791816599
+    },
+    {
+     "id": "50057079",
+     "title": "Xcode replacement – Build and deploy iOS apps on Linux, Windows, macOS",
+     "points": 2,
+     "created_unix": 1791815890
+    },
+    {
+     "id": "50056779",
+     "title": "Show HN: An Atlas of Applied AI",
+     "points": 4,
+     "created_unix": 1791814514
+    },
+    {
+     "id": "50056755",
+     "title": "Show HN: Fusebox – get emailed before an OpenAI API bill runs away",
+     "points": 1,
+     "created_unix": 1791814385
+    },
+    {
+     "id": "50056535",
+     "title": "Knocker device remotely \"knocks on wood\" using smartphone app",
+     "points": 1,
+     "created_unix": 1791813296
+    },
+    {
+     "id": "50056308",
+     "title": "We ran the same broken app on three cloud sandboxes",
+     "points": 2,
+     "created_unix": 1791812325
+    },
+    {
+     "id": "50055616",
+     "title": "Pivetta Opera Only X 240 kW Amplifier",
+     "points": 1,
+     "created_unix": 1791809025
+    },
+    {
+     "id": "50055364",
+     "title": "Linus Torvalds Working on a Hefty Linux Kernel Improvement with Claude Code",
+     "points": 5,
+     "created_unix": 1791807760
+    },
+    {
+     "id": "50055270",
+     "title": "Researching Which Instagram Reels Topics Take Off: DIY Scraping vs. a Hosted API",
+     "points": 1,
+     "created_unix": 1791807222
+    },
+    {
+     "id": "50055148",
+     "title": "Show HN: Orisift, an API that screens signup phone, email, IP and domain",
+     "points": 2,
+     "created_unix": 1791806631
+    },
+    {
+     "id": "50054969",
+     "title": "Do you see departments at your company building small apps?",
+     "points": 1,
+     "created_unix": 1791805571
+    },
+    {
+     "id": "50054461",
+     "title": "MCP Server Should Answer Questions, Not Expose APIs",
+     "points": 2,
+     "created_unix": 1791802306
+    },
+    {
+     "id": "50054196",
+     "title": "Show HN: EpochGo – Local-first multi-agent AutoML on Ollama ($0 API costs)",
+     "points": 1,
+     "created_unix": 1791800408
+    },
+    {
+     "id": "50054092",
+     "title": "Ledger confirms spy chip implant behind wallet crypto thefts",
+     "points": 792,
+     "created_unix": 1791799777
+    },
+    {
+     "id": "50053768",
+     "title": "New Apple TV 4K, HomeView, and HomePod Mini: 16 Details Just Leaked",
+     "points": 1,
+     "created_unix": 1791797894
+    },
+    {
+     "id": "50053743",
+     "title": "Gbos-VM: Run Googlebook OS in a GPU-Accelerated VM on Apple Silicon Macs",
+     "points": 1,
+     "created_unix": 1791797720
+    },
+    {
+     "id": "50053689",
+     "title": "A Russian operator's DDoS-amplification lab, with an AI co-pilot",
+     "points": 1,
+     "created_unix": 1791797351
+    },
+    {
+     "id": "50053630",
+     "title": "Show HN: Figranium – Build browser automations visually and run them as APIs",
+     "points": 1,
+     "created_unix": 1791796894
+    },
+    {
+     "id": "50053343",
+     "title": "Trump Mobile hack and apparent lack of FCC authorization raise security alarms",
+     "points": 4,
+     "created_unix": 1791794709
+    },
+    {
+     "id": "50053319",
+     "title": "EU-Compliant Mobile App Paywalls",
+     "points": 4,
+     "created_unix": 1791794539
+    },
+    {
+     "id": "50052795",
+     "title": "Show HN: An OpenAI-compatible API that coding agents sign up for themselves",
+     "points": 2,
+     "created_unix": 1791791118
+    },
+    {
+     "id": "50052682",
+     "title": "Show HN: Shotie – App Store screenshots generated from your code",
+     "points": 2,
+     "created_unix": 1791790474
+    },
+    {
+     "id": "50052470",
+     "title": "APX Forth: A Surprise – By Mark Miller – Goto 10",
+     "points": 2,
+     "created_unix": 1791789092
+    },
+    {
+     "id": "50051791",
+     "title": "Show HN: WriteNative – correct, natural English in any Mac app",
+     "points": 4,
+     "created_unix": 1791783612
+    },
+    {
+     "id": "50051727",
+     "title": "Show HN: Apple Docs 2.0 MCP – Apple's developer docs and WWDC for coding agents",
+     "points": 1,
+     "created_unix": 1791783021
+    },
+    {
+     "id": "50050732",
+     "title": "Show HN: Skills Hub, a desktop app for managing AI agent skills",
+     "points": 10,
+     "created_unix": 1791773299
+    },
+    {
+     "id": "50050565",
+     "title": "Lotus Improv on the NeXT",
+     "points": 16,
+     "created_unix": 1791771820
+    },
+    {
+     "id": "50050519",
+     "title": "What are your thoughts on this technology that the American government has?",
+     "points": 5,
+     "created_unix": 1791771451
+    },
+    {
+     "id": "50049092",
+     "title": "OpenDocRouter: every document model under one API",
+     "points": 2,
+     "created_unix": 1791760759
+    },
+    {
+     "id": "50048522",
+     "title": "Recursive self-improvement through collective intelligence",
+     "points": 138,
+     "created_unix": 1791757330
+    },
+    {
+     "id": "50048207",
+     "title": "I built an app to not forget therapy",
+     "points": 4,
+     "created_unix": 1791755495
+    },
+    {
+     "id": "50048015",
+     "title": "Show HN: THX-01 – Open-source decision model, free API, 60M+ tokens processed",
+     "points": 4,
+     "created_unix": 1791754279
+    },
+    {
+     "id": "50047937",
+     "title": "Show HN: Moodi – A tiny 3D character for your app's loading states",
+     "points": 3,
+     "created_unix": 1791753686
+    },
+    {
+     "id": "50047825",
+     "title": "A Remote Employee Refused 160 Webcam Photos a Day. Her Employer Fired Her",
+     "points": 285,
+     "created_unix": 1791752840
+    },
+    {
+     "id": "50047210",
+     "title": "The Apollo 11 Code Is Open Source (and it's hilarious) [video]",
+     "points": 14,
+     "created_unix": 1791748853
+    },
+    {
+     "id": "50046745",
+     "title": "America's Longest Highway Tunnel (2025)",
+     "points": 15,
+     "created_unix": 1791745959
+    },
+    {
+     "id": "50046527",
+     "title": "Build, debug and hot-reload iPhone apps on Omarchy",
+     "points": 4,
+     "created_unix": 1791744811
+    },
+    {
+     "id": "50046369",
+     "title": "Show HN: Kindlefall a 3D ARPG in the browser, built with Three.js",
+     "points": 5,
+     "created_unix": 1791743909
+    },
+    {
+     "id": "50046024",
+     "title": "I built a simple app for cooking steak",
+     "points": 2,
+     "created_unix": 1791742085
+    },
+    {
+     "id": "50045927",
+     "title": "Solar 'traffic controller' for apartments takes top Australian design award",
+     "points": 3,
+     "created_unix": 1791741549
+    },
+    {
+     "id": "50045689",
+     "title": "Crawlable – We audited 50 top web apps for AI crawler readability",
+     "points": 1,
+     "created_unix": 1791740219
+    },
+    {
+     "id": "50045669",
+     "title": "Electron-gpui: Run GPUI windows inside Electron apps",
+     "points": 2,
+     "created_unix": 1791740096
+    },
+    {
+     "id": "50045518",
+     "title": "Show HN: Self Hosted System One Decision API for Images",
+     "points": 6,
+     "created_unix": 1791739366
+    },
+    {
+     "id": "50045273",
+     "title": "apsw: Another Python SQLite Wrapper",
+     "points": 89,
+     "created_unix": 1791737902
+    },
+    {
+     "id": "50044720",
+     "title": "John Sculley: Apple is suing Steve Jobs (September 23, 1985)",
+     "points": 2,
+     "created_unix": 1791734655
+    },
+    {
+     "id": "50044102",
+     "title": "Nathan: Language lessons with an extraordinary ape (2023)",
+     "points": 1,
+     "created_unix": 1791731256
+    },
+    {
+     "id": "50044096",
+     "title": "Databricks cost optimization: monitoring all-purpose clusters with the API",
+     "points": 2,
+     "created_unix": 1791731234
+    },
+    {
+     "id": "50043802",
+     "title": "Legacy2mcp – Convert your SOAP or REST API to an MCP server in 60 seconds",
+     "points": 1,
+     "created_unix": 1791729665
+    },
+    {
+     "id": "50043789",
+     "title": "Apple Is About to Close the Biggest Hole in Its Ecosystem with HomeView",
+     "points": 1,
+     "created_unix": 1791729565
+    },
+    {
+     "id": "50043507",
+     "title": "Practical application for the u32br RISC-V microprocessor (BlueMacaw) [video]",
+     "points": 1,
+     "created_unix": 1791727897
+    },
+    {
+     "id": "50043311",
+     "title": "Show HN: Quaesito: a self-hosted app for quiz nights with friends",
+     "points": 3,
+     "created_unix": 1791726729
+    },
+    {
+     "id": "50042405",
+     "title": "Show HN: Tack – Type-safe HTTP APIs for Go that reach the TypeScript front end",
+     "points": 2,
+     "created_unix": 1791720692
+    },
+    {
+     "id": "50042216",
+     "title": "Show HN: A Mac app to focus on your actions instead of distractions",
+     "points": 1,
+     "created_unix": 1791719238
+    },
+    {
+     "id": "50042167",
+     "title": "App Talk back and track on a Mac",
+     "points": 1,
+     "created_unix": 1791718884
+    },
+    {
+     "id": "50041873",
+     "title": "Nicolas Cage says he won't work with Amazon again over AI dispute",
+     "points": 100,
+     "created_unix": 1791716601
+    },
+    {
+     "id": "50041573",
+     "title": "Running the unmodified Linux amdgpu driver on an iPad",
+     "points": 101,
+     "created_unix": 1791713898
+    },
+    {
+     "id": "50041545",
+     "title": "Show HN: THX-01 – Free API for our open-source decision model",
+     "points": 2,
+     "created_unix": 1791713525
+    },
+    {
+     "id": "50040922",
+     "title": "We're a dev shop and just launched an app builder(giving away 10 free builds)",
+     "points": 2,
+     "created_unix": 1791707777
+    },
+    {
+     "id": "50040530",
+     "title": "Show HN: RemoveMacAI 1.0, a Mac app to turn off Apple Intelligence on macOS 27",
+     "points": 4,
+     "created_unix": 1791703740
+    },
+    {
+     "id": "50040430",
+     "title": "Show HN: Small web app to memorize Korean words",
+     "points": 1,
+     "created_unix": 1791702034
+    },
+    {
+     "id": "50040177",
+     "title": "Show HN: Another App Store Screenshot Creator, but with high quality images",
+     "points": 1,
+     "created_unix": 1791698044
+    },
+    {
+     "id": "50039886",
+     "title": "Gemini API RLS notes: 3.7-flash now routed to 3.8-flash, 3.5->3.6",
+     "points": 2,
+     "created_unix": 1791693941
+    },
+    {
+     "id": "50039840",
+     "title": "Trump approves tiny 'cars of the near future'",
+     "points": 6,
+     "created_unix": 1791693458
+    },
+    {
+     "id": "50039007",
+     "title": "Show HN: An unofficial download picker for the ArtCraft Rust apps",
+     "points": 5,
+     "created_unix": 1791683078
+    },
+    {
+     "id": "50038795",
+     "title": "Genkit Dart 1.0: Build production-ready agentic apps with Dart and Flutter",
+     "points": 4,
+     "created_unix": 1791680986
+    },
+    {
+     "id": "50038458",
+     "title": "Ask HN: Why aren't Americans rising up against tipping?",
+     "points": 53,
+     "created_unix": 1791678023
+    },
+    {
+     "id": "50038332",
+     "title": "Show HN: TruthBeacon – Open-source Discord moderation app in Tauri and Rust",
+     "points": 4,
+     "created_unix": 1791676621
+    },
+    {
+     "id": "50038215",
+     "title": "Show HN: Aporium – A UMAP galaxy of 5800 philosophy excerpts in conversation",
+     "points": 4,
+     "created_unix": 1791675373
+    },
+    {
+     "id": "50037852",
+     "title": "Show HN: ManimGX – Manim's API on a Rust/wgpu engine, for 3D videos in Python",
+     "points": 10,
+     "created_unix": 1791671610
+    },
+    {
+     "id": "50037106",
+     "title": "MailDeskt – I turned Resend into an email app you can use every day",
+     "points": 1,
+     "created_unix": 1791665886
+    },
+    {
+     "id": "50036511",
+     "title": "The state of AI-assisted reverse-engineering of Apple Macs",
+     "points": 3,
+     "created_unix": 1791661928
+    },
+    {
+     "id": "50036146",
+     "title": "Ask HN: Why did Microsoft invest in AI that could rewrite its apps from scratch?",
+     "points": 4,
+     "created_unix": 1791659681
+    },
+    {
+     "id": "50035892",
+     "title": "Toaruos 2.3 is out with many improvements [from April]",
+     "points": 2,
+     "created_unix": 1791658146
+    },
+    {
+     "id": "50035567",
+     "title": "Apple may have an iPhone 18 Pro demand problem",
+     "points": 11,
+     "created_unix": 1791655941
+    },
+    {
+     "id": "50035478",
+     "title": "Best Free AI APIs for Developers in 2026",
+     "points": 2,
+     "created_unix": 1791655512
+    },
+    {
+     "id": "50035305",
+     "title": "Tortugarr – Android TV app and automated installer for the *ARR stack",
+     "points": 2,
+     "created_unix": 1791654433
+    },
+    {
+     "id": "50034520",
+     "title": "Apple Has Plans to Block Programmatic Data Companies from iOS",
+     "points": 3,
+     "created_unix": 1791650022
+    },
+    {
+     "id": "50034309",
+     "title": "Show HN: Twin Update – update the same apt apps on two Linux PCs in one run",
+     "points": 1,
+     "created_unix": 1791648794
+    },
+    {
+     "id": "50034200",
+     "title": "TestFlight the Press App",
+     "points": 1,
+     "created_unix": 1791647978
+    },
+    {
+     "id": "50033980",
+     "title": "Turn Apple Shortcuts into Live Activities on Your iPhone",
+     "points": 1,
+     "created_unix": 1791646664
+    },
+    {
+     "id": "50033878",
+     "title": "Show HN: Sibuna an open source web application firewall with proof of work",
+     "points": 4,
+     "created_unix": 1791646039
+    },
+    {
+     "id": "50033701",
+     "title": "Dialer applications can be exploited to achieve 1-click MMI execution in Android",
+     "points": 2,
+     "created_unix": 1791644899
+    },
+    {
+     "id": "50033220",
+     "title": "Apple cuts iPhone 18 Pro orders over weak sales",
+     "points": 2,
+     "created_unix": 1791641570
+    },
+    {
+     "id": "50032812",
+     "title": "Show HN: AsoBeast – Open-Source ASO Rank Tracker for App Store and Google Play",
+     "points": 9,
+     "created_unix": 1791639274
+    },
+    {
+     "id": "50032632",
+     "title": "Show HN: ShipOrNah – Free security scan for AI-generated apps",
+     "points": 1,
+     "created_unix": 1791638168
+    },
+    {
+     "id": "50032379",
+     "title": "Rally for AI Rights: Organizing via MCP App",
+     "points": 1,
+     "created_unix": 1791636185
+    },
+    {
+     "id": "50032224",
+     "title": "Apache Karaf – The Modulith Runtime",
+     "points": 1,
+     "created_unix": 1791635098
+    },
+    {
+     "id": "50031823",
+     "title": "A translation layer that allows running Android apps on a Linux system",
+     "points": 1,
+     "created_unix": 1791631572
+    },
+    {
+     "id": "50031653",
+     "title": "Apple/macOS removed from official Unix registry",
+     "points": 298,
+     "created_unix": 1791629851
+    },
+    {
+     "id": "50031604",
+     "title": "Recording one app's audio on macOS without a virtual driver",
+     "points": 1,
+     "created_unix": 1791629439
+    },
+    {
+     "id": "50031053",
+     "title": "Apple Watch Connector for Android, Linux, Windows",
+     "points": 1,
+     "created_unix": 1791623280
+    },
+    {
+     "id": "50030670",
+     "title": "Mac.apk – Run Android Apps Natively on Apple Silicon Macs",
+     "points": 4,
+     "created_unix": 1791618351
+    },
+    {
+     "id": "50029897",
+     "title": "Show HN: Crosstune – Open any music link in your favorite app",
+     "points": 1,
+     "created_unix": 1791610411
+    },
+    {
+     "id": "50029789",
+     "title": "Show HN: Iimos – an AI app that ships as one chat box and rewrites itself",
+     "points": 2,
+     "created_unix": 1791609433
+    },
+    {
+     "id": "50029607",
+     "title": "Show HN: A simple to-do app for iPhone, Mac, and your agent",
+     "points": 16,
+     "created_unix": 1791607033
+    },
+    {
+     "id": "50029598",
+     "title": "Show HN: BSOS – Business communication intelligence API for SaaS developers",
+     "points": 1,
+     "created_unix": 1791606959
+    },
+    {
+     "id": "50029056",
+     "title": "Ask HN: Are there things more important than 'humanity', such as empathy?",
+     "points": 5,
+     "created_unix": 1791600725
+    },
+    {
+     "id": "50026980",
+     "title": "Omarchy M is bringing Omarchy to Apple Silicon",
+     "points": 2,
+     "created_unix": 1791582379
+    },
+    {
+     "id": "50026693",
+     "title": "Claude Design is moving to Artifacts in the Claude app",
+     "points": 4,
+     "created_unix": 1791580809
+    },
+    {
+     "id": "50026121",
+     "title": "Show HN: Elements – Build and deploy web apps with your agent, on your machines",
+     "points": 1,
+     "created_unix": 1791577333
+    },
+    {
+     "id": "50026103",
+     "title": "Apple Shares Slide After Report of iPhone 18 Pro Component Order Cuts",
+     "points": 3,
+     "created_unix": 1791577243
+    },
+    {
+     "id": "50025714",
+     "title": "I Reverse Engineered a Popular iPad App with AI",
+     "points": 1,
+     "created_unix": 1791575116
+    },
+    {
+     "id": "50025574",
+     "title": "Bitwarden: Published version update in app stores",
+     "points": 8,
+     "created_unix": 1791574353
+    },
+    {
+     "id": "50024689",
+     "title": "Airdrop for Non-Apple Devices",
+     "points": 2,
+     "created_unix": 1791570218
+    },
+    {
+     "id": "50024485",
+     "title": "Spec-Driven Development with AI: A New Approach and a Journey into the Past",
+     "points": 1,
+     "created_unix": 1791569366
+    },
+    {
+     "id": "50024242",
+     "title": "Rampart: Browser native on-device PII radaction",
+     "points": 103,
+     "created_unix": 1791568327
+    },
+    {
+     "id": "50023995",
+     "title": "Scam American companies are using to manipulate ingredient lists",
+     "points": 193,
+     "created_unix": 1791567340
+    },
+    {
+     "id": "50023497",
+     "title": "Apple and LG leak shows new 'tap to control' HomeKit features",
+     "points": 2,
+     "created_unix": 1791565525
+    },
+    {
+     "id": "50023448",
+     "title": "Virgil – a coding agent that cuts API calls by up to 78% on repeated work",
+     "points": 1,
+     "created_unix": 1791565346
+    },
+    {
+     "id": "50023409",
+     "title": "Kotlin keeps up with Rust in DHH's Campfire rewrite",
+     "points": 22,
+     "created_unix": 1791565202
+    },
+    {
+     "id": "50023220",
+     "title": "Why Android apps can't talk to your camera when you're connected to a VPN",
+     "points": 2,
+     "created_unix": 1791564466
+    },
+    {
+     "id": "50023166",
+     "title": "Spring Boot JPA vs. JDBC: How Much Can a Small App Save?",
+     "points": 4,
+     "created_unix": 1791564255
+    },
+    {
+     "id": "50023128",
+     "title": "Applying NASA's satellite-imaging trick to ancient museum objects",
+     "points": 4,
+     "created_unix": 1791564110
+    },
+    {
+     "id": "50023012",
+     "title": "Infinite Ascent – Our approach to open research and intelligence",
+     "points": 4,
+     "created_unix": 1791563698
+    },
+    {
+     "id": "50022986",
+     "title": "Show HN: Widefleet – Open-source platform for agent-built apps and workflows",
+     "points": 3,
+     "created_unix": 1791563590
+    },
+    {
+     "id": "50022477",
+     "title": "Heeler: Open-Source iOS App for Herdr",
+     "points": 3,
+     "created_unix": 1791561751
+    },
+    {
+     "id": "50022181",
+     "title": "Show HN: APIblaze – Serverless MCP and API gateway with everything built in",
+     "points": 1,
+     "created_unix": 1791560610
+    },
+    {
+     "id": "50022088",
+     "title": "We got 85–97% fewer estimated tokens than Cua Driver for agents reading Mac apps",
+     "points": 1,
+     "created_unix": 1791560256
+    },
+    {
+     "id": "50021987",
+     "title": "Monthly API credits for Max and Team plans",
+     "points": 2,
+     "created_unix": 1791559911
+    },
+    {
+     "id": "50021979",
+     "title": "The NYT Games app is terrible",
+     "points": 1,
+     "created_unix": 1791559867
+    },
+    {
+     "id": "50021403",
+     "title": "Imposing Sanctions on the International Criminal Court",
+     "points": 181,
+     "created_unix": 1791557757
+    },
+    {
+     "id": "50021066",
+     "title": "US imposes sanctions on ICC hours after former judge wins Nobel Peace Prize",
+     "points": 522,
+     "created_unix": 1791556314
+    },
+    {
+     "id": "50020908",
+     "title": "Show HN: eBay sold listings APIs and MCP",
+     "points": 1,
+     "created_unix": 1791555557
+    },
+    {
+     "id": "50020890",
+     "title": "Mac Shipments Fall, but Apple Still Gains Ground in Shrinking Market",
+     "points": 1,
+     "created_unix": 1791555450
+    },
+    {
+     "id": "50020727",
+     "title": "Ask HN: How are you dealing with PR apocalypse?",
+     "points": 2,
+     "created_unix": 1791554654
+    },
+    {
+     "id": "50020555",
+     "title": "An append-only, signed ledger of vulnerability remediation",
+     "points": 1,
+     "created_unix": 1791553867
+    },
+    {
+     "id": "50019455",
+     "title": "Iranian campaign planted fake articles in real U.S. publications using ChatGPT",
+     "points": 195,
+     "created_unix": 1791548484
+    },
+    {
+     "id": "50019395",
+     "title": "Claude Startups program over capacity; Anthropic to re-review all applications",
+     "points": 3,
+     "created_unix": 1791548034
+    },
+    {
+     "id": "50019253",
+     "title": "Margaret Hamilton, Whose Software Guided the Apollo Missions, Has Died",
+     "points": 1,
+     "created_unix": 1791547111
+    },
+    {
+     "id": "50018982",
+     "title": "Show HN: Pigeon – email API for the mail your app sends",
+     "points": 1,
+     "created_unix": 1791545276
+    },
+    {
+     "id": "50018213",
+     "title": "Denmark data breach: it appears that the password was simply 123456",
+     "points": 2,
+     "created_unix": 1791538757
+    },
+    {
+     "id": "50017888",
+     "title": "Show HN: SpeakUp – iOS app for feedback on your speaking (fillers, pauses, etc.)",
+     "points": 1,
+     "created_unix": 1791536177
+    },
+    {
+     "id": "50017787",
+     "title": "APX Forth: A Surprise",
+     "points": 2,
+     "created_unix": 1791535438
+    },
+    {
+     "id": "50017682",
+     "title": "Turn any app/website into an API",
+     "points": 1,
+     "created_unix": 1791534747
+    },
+    {
+     "id": "50017678",
+     "title": "AI has made it easier than ever to make apps nobody asked for",
+     "points": 6,
+     "created_unix": 1791534720
+    },
+    {
+     "id": "50017641",
+     "title": "How to Automatically Redact Leaked API Keys and .env Files at the Edge",
+     "points": 1,
+     "created_unix": 1791534489
+    },
+    {
+     "id": "50017301",
+     "title": "Show HN: Apogee: Rebuilding Mozilla's Orbit, fully local and private",
+     "points": 66,
+     "created_unix": 1791531379
+    },
+    {
+     "id": "50016580",
+     "title": "Temporal Continuity API",
+     "points": 2,
+     "created_unix": 1791525908
+    },
+    {
+     "id": "50016426",
+     "title": "Show HN:APIFlow Studio – Open-source, offline-first Postman alternative",
+     "points": 3,
+     "created_unix": 1791524443
+    },
+    {
+     "id": "50016296",
+     "title": "API Fault Lab",
+     "points": 1,
+     "created_unix": 1791523269
+    },
+    {
+     "id": "50016180",
+     "title": "Eniac: web search API that turns millions of pages into cited datasets",
+     "points": 1,
+     "created_unix": 1791522094
+    },
+    {
+     "id": "50015622",
+     "title": "Automating Java API Integrations with Gemini CLI",
+     "points": 1,
+     "created_unix": 1791516322
+    },
+    {
+     "id": "50015520",
+     "title": "Show HN: Sibuna an open source web application firewall with proof of work",
+     "points": 1,
+     "created_unix": 1791515323
+    },
+    {
+     "id": "50015242",
+     "title": "I predict Apple will open their platforms within the next five years",
+     "points": 6,
+     "created_unix": 1791512925
+    },
+    {
+     "id": "50015224",
+     "title": "Iran's drones hit America's Achilles heel",
+     "points": 37,
+     "created_unix": 1791512719
+    },
+    {
+     "id": "50015096",
+     "title": "Mind, Amplified Now in Beta",
+     "points": 5,
+     "created_unix": 1791511587
+    },
+    {
+     "id": "50014593",
+     "title": "Amazon's approach to data centers: community-focused, sustainable and efficient",
+     "points": 6,
+     "created_unix": 1791507069
+    },
+    {
+     "id": "50013916",
+     "title": "Show HN: LiteClient – Free, open-source API client for VS Code",
+     "points": 3,
+     "created_unix": 1791502257
+    },
+    {
+     "id": "50013701",
+     "title": "Apple will reportedly debut its first touchscreen MacBook in three weeks",
+     "points": 1,
+     "created_unix": 1791500879
+    },
+    {
+     "id": "50013541",
+     "title": "Highly multiplexed mammalian metabolic engineering with a shotgun approach",
+     "points": 3,
+     "created_unix": 1791499798
+    },
+    {
+     "id": "50013308",
+     "title": "Apophasis",
+     "points": 3,
+     "created_unix": 1791498507
+    },
+    {
+     "id": "50013161",
+     "title": "Qwen3.8-27B at ~200 tok/s peak on an Apple M5 Max",
+     "points": 5,
+     "created_unix": 1791497715
+    },
+    {
+     "id": "50013030",
+     "title": "Claude Max and Team plans include monthly credits for the Claude API",
+     "points": 2,
+     "created_unix": 1791496972
+    },
+    {
+     "id": "50012893",
+     "title": "Microsoft, others suspended from foreign workers applying for alleges visa abuse",
+     "points": 1,
+     "created_unix": 1791496333
+    },
+    {
+     "id": "50012881",
+     "title": "NixOS Module for the ArtCraft Apps",
+     "points": 1,
+     "created_unix": 1791496273
+    },
+    {
+     "id": "50011928",
+     "title": "ADHD as a circadian rhythm disorder: evidence and implications for chronotherapy (2025)",
+     "points": 408,
+     "created_unix": 1791492136
+    },
+    {
+     "id": "50011702",
+     "title": "OpenCode iOS App",
+     "points": 2,
+     "created_unix": 1791491235
+    },
+    {
+     "id": "50011573",
+     "title": "Show HN: App discovery platform helping users to find better apps",
+     "points": 1,
+     "created_unix": 1791490791
+    },
+    {
+     "id": "50010856",
+     "title": "The Apple has been unable to review my tiny utility for over a month now",
+     "points": 1,
+     "created_unix": 1791487943
+    },
+    {
+     "id": "50010848",
+     "title": "The app launch checklist we wish founders used",
+     "points": 2,
+     "created_unix": 1791487921
+    },
+    {
+     "id": "50010701",
+     "title": "Apple AirPods run an acoustic self-test. I recorded it",
+     "points": 2,
+     "created_unix": 1791487239
+    },
+    {
+     "id": "50010539",
+     "title": "Sistema IoT para monitoreo ambiental en Nerdearla",
+     "points": 1,
+     "created_unix": 1791486596
+    },
+    {
+     "id": "50010416",
+     "title": "Bootstrap 6 Alpha 1",
+     "points": 18,
+     "created_unix": 1791486115
+    },
+    {
+     "id": "50010267",
+     "title": "An open vision-language model for diverse medical applications",
+     "points": 4,
+     "created_unix": 1791485475
+    },
+    {
+     "id": "50010240",
+     "title": "GTKX – Build native apps with React, TypeScript, and Adwaita widgets",
+     "points": 6,
+     "created_unix": 1791485364
+    },
+    {
+     "id": "50010170",
+     "title": "What ArtCraft's Vibe-Coded Apps Say About Adobe",
+     "points": 36,
+     "created_unix": 1791485069
+    },
+    {
+     "id": "50009760",
+     "title": "Drunken Penguins – Party card games on everyone's phone. No app",
+     "points": 2,
+     "created_unix": 1791483588
+    },
+    {
+     "id": "50009584",
+     "title": "PocketVibe: App to play Three.js games on your ROCKNIX and Android handhelds",
+     "points": 6,
+     "created_unix": 1791482924
+    },
+    {
+     "id": "50009330",
+     "title": "Show HN: Layer – One API for Polymarket and Kalshi",
+     "points": 5,
+     "created_unix": 1791482026
+    },
+    {
+     "id": "50009062",
+     "title": "AI coding's Fermi paradox: where are the apps that last?",
+     "points": 3,
+     "created_unix": 1791481155
+    },
+    {
+     "id": "50009042",
+     "title": "Show HN: ImapKit, a in memory IMAP server to test mail client apps",
+     "points": 2,
+     "created_unix": 1791481060
+    },
+    {
+     "id": "50008816",
+     "title": "Bootstrap 6 Alpha",
+     "points": 24,
+     "created_unix": 1791480236
+    },
+    {
+     "id": "50008751",
+     "title": "APX Forth: A Surprise",
+     "points": 5,
+     "created_unix": 1791479985
+    },
+    {
+     "id": "50007889",
+     "title": "Natura unveils $99 Interface smart ring for AI agents and apps",
+     "points": 7,
+     "created_unix": 1791476877
+    },
+    {
+     "id": "50007491",
+     "title": "Apps that run on your Claude or ChatGPT plan",
+     "points": 2,
+     "created_unix": 1791475289
+    },
+    {
+     "id": "50007353",
+     "title": "New gTLD Application for .lan",
+     "points": 148,
+     "created_unix": 1791474711
+    },
+    {
+     "id": "50007041",
+     "title": "Classifying Emails with Jev and the OpenAI Decisions API",
+     "points": 1,
+     "created_unix": 1791473417
+    },
+    {
+     "id": "50006936",
+     "title": "Show HN: Nucleus- web apps where document is the state, driven by CSS-like rules",
+     "points": 2,
+     "created_unix": 1791473041
+    },
+    {
+     "id": "50006639",
+     "title": "Throwaway Apps with Dokku and a Wildcard Domain",
+     "points": 1,
+     "created_unix": 1791471591
+    },
+    {
+     "id": "50006610",
+     "title": "Sam Altman at an Apple Event in 2008",
+     "points": 1,
+     "created_unix": 1791471478
+    },
+    {
+     "id": "50006523",
+     "title": "AmiDiskLab: Open-source app for organizing Amiga disk and software collections",
+     "points": 1,
+     "created_unix": 1791471133
+    },
+    {
+     "id": "50006193",
+     "title": "Show HN: Reverse-Engineered C++ Aureal 3D API from 1999",
+     "points": 1,
+     "created_unix": 1791469445
+    },
+    {
+     "id": "50005724",
+     "title": "Show HN: Ask Claude about any UK company – no API key needed",
+     "points": 1,
+     "created_unix": 1791466962
+    },
+    {
+     "id": "50005705",
+     "title": "PassBar – macOS menu-bar client for Passbolt API",
+     "points": 1,
+     "created_unix": 1791466871
+    },
+    {
+     "id": "50005615",
+     "title": "Feather – Press a hotkey in any app, say what to write, it pastes it",
+     "points": 2,
+     "created_unix": 1791466250
+    },
+    {
+     "id": "50005190",
+     "title": "Show HN: pentas.id — White-label ticketing app",
+     "points": 1,
+     "created_unix": 1791463645
+    },
+    {
+     "id": "50005095",
+     "title": "Show HN: BerryDB – Open-source macOS database client written in Swift and AppKit",
+     "points": 5,
+     "created_unix": 1791462956
+    },
+    {
+     "id": "50005024",
+     "title": "Show HN: Etchv – API for invisible watermarks in images, PDFs and videos",
+     "points": 4,
+     "created_unix": 1791462537
+    },
+    {
+     "id": "50004435",
+     "title": "Margaret Hamilton, whose software helped land Apollo astronauts on the moon",
+     "points": 3,
+     "created_unix": 1791458196
+    },
+    {
+     "id": "50004284",
+     "title": "Open-Source Rust Alternatives to Adobe Apps",
+     "points": 36,
+     "created_unix": 1791456910
+    },
+    {
+     "id": "50004018",
+     "title": "Show HN: Sibuna OSS simple web application firewall with proof of work",
+     "points": 1,
+     "created_unix": 1791454640
+    },
+    {
+     "id": "50003963",
+     "title": "Scraping TikTok's Mobile API",
+     "points": 2,
+     "created_unix": 1791454260
+    },
+    {
+     "id": "50003659",
+     "title": "Sources: Apple Planning Two Sets of Product Launches in October",
+     "points": 1,
+     "created_unix": 1791451553
+    },
+    {
+     "id": "50003646",
+     "title": "Mumsnet denies using AI for content after prompt appears on message board",
+     "points": 15,
+     "created_unix": 1791451483
+    },
+    {
+     "id": "50003227",
+     "title": "Tesla browbeating EU to approve 'Full Self-Driving' tech. Pressure is working",
+     "points": 7,
+     "created_unix": 1791448052
+    },
+    {
+     "id": "50003188",
+     "title": "Somebody Vibe Coded Every Single Adobe App [video]",
+     "points": 3,
+     "created_unix": 1791447675
+    },
+    {
+     "id": "50003185",
+     "title": "Margaret Hamilton, whose software powered Apollo 11 moon landing, dies at 90",
+     "points": 4,
+     "created_unix": 1791447636
+    },
+    {
+     "id": "50002904",
+     "title": "Scene at MIT: Margaret Hamilton's Apollo Code (2016)",
+     "points": 3,
+     "created_unix": 1791445270
+    },
+    {
+     "id": "50002787",
+     "title": "Show HN: Diffity – Mac App for Reviewing Diffs",
+     "points": 1,
+     "created_unix": 1791444127
+    },
+    {
+     "id": "50002786",
+     "title": "Interfaze (YC P26) redistribute openRAIL-M model under Apache 2.0",
+     "points": 1,
+     "created_unix": 1791444127
+    },
+    {
+     "id": "50002745",
+     "title": "A Woman Whose Software Guided the Apollo Missions Has Died",
+     "points": 3,
+     "created_unix": 1791443802
+    },
+    {
+     "id": "50002505",
+     "title": "Dat-ecosystem: high level applications built on top of P2P protocols",
+     "points": 59,
+     "created_unix": 1791441793
+    },
+    {
+     "id": "50002294",
+     "title": "A Rant about APIs",
+     "points": 3,
+     "created_unix": 1791439653
+    },
+    {
+     "id": "50002199",
+     "title": "Margaret Hamilton, whose software helped land Apollo 11 on the Moon, dies at 90",
+     "points": 2,
+     "created_unix": 1791438847
+    },
+    {
+     "id": "50001939",
+     "title": "Apple Music Is Getting a New Logo",
+     "points": 1,
+     "created_unix": 1791435665
+    },
+    {
+     "id": "50001520",
+     "title": "Application compatibility layers are there for the customer (2010)",
+     "points": 1,
+     "created_unix": 1791429039
+    },
+    {
+     "id": "50001449",
+     "title": "Practical use cases for OpenAI's Decisions API",
+     "points": 1,
+     "created_unix": 1791428156
+    },
+    {
+     "id": "50001425",
+     "title": "Show HN: A satirical yet useful employee survey app for tolerable workplaces",
+     "points": 3,
+     "created_unix": 1791427911
+    },
+    {
+     "id": "50001323",
+     "title": "April: APL as a DSL in Common Lisp",
+     "points": 18,
+     "created_unix": 1791426917
+    },
+    {
+     "id": "50001109",
+     "title": "Show HN: agentc: <1mb static/no-libc, minimal, embeddable agent with Rust/C API",
+     "points": 3,
+     "created_unix": 1791424414
+    },
+    {
+     "id": "50000793",
+     "title": "Bird masturbation appears natural across 120 species, challenging vet advice",
+     "points": 5,
+     "created_unix": 1791421366
+    },
+    {
+     "id": "50000133",
+     "title": "Application development without programmers [Preview]",
+     "points": 1,
+     "created_unix": 1791415499
+    },
+    {
+     "id": "50000106",
+     "title": "An open vision-language model for diverse medical applications",
+     "points": 5,
+     "created_unix": 1791415346
+    },
+    {
+     "id": "50000089",
+     "title": "Open Source Rust clean-room replacements for 7 of Adobe's apps",
+     "points": 3,
+     "created_unix": 1791415204
+    },
+    {
+     "id": "49999596",
+     "title": "Apple Watch Series 12 / Ultra 4 Owners Report Skin Irritation",
+     "points": 3,
+     "created_unix": 1791411936
+    },
+    {
+     "id": "49999508",
+     "title": "Claude Max and Teams plans now forced to API (Oct 7th update)",
+     "points": 1,
+     "created_unix": 1791411347
+    },
+    {
+     "id": "49999310",
+     "title": "Everything we learned from dropping 80 apps",
+     "points": 2,
+     "created_unix": 1791410091
+    },
+    {
+     "id": "49998987",
+     "title": "DiskFox – A macOS app to find what's taking up disk space",
+     "points": 4,
+     "created_unix": 1791408295
+    },
+    {
+     "id": "49998545",
+     "title": "All the data sources for Apple Maps",
+     "points": 3,
+     "created_unix": 1791405791
+    },
+    {
+     "id": "49998492",
+     "title": "Top iPad Games for Apple Pencil (2020) [MrMacRight] [video]",
+     "points": 1,
+     "created_unix": 1791405567
+    },
+    {
+     "id": "49998473",
+     "title": "Anthropic is adding monthly API credits to Claude Max and Team subscriptions",
+     "points": 2,
+     "created_unix": 1791405446
+    },
+    {
+     "id": "49997994",
+     "title": "Apple to Launch Doorbell, Lock, Thermostat Developed with LG",
+     "points": 4,
+     "created_unix": 1791402904
+    },
+    {
+     "id": "49997654",
+     "title": "Claude Agents SDK will no longer use subscription; API credits included in plans",
+     "points": 6,
+     "created_unix": 1791401330
+    },
+    {
+     "id": "49997301",
+     "title": "ICANN Reveals 2026 Round Applications for New Generic Top-Level Domains",
+     "points": 41,
+     "created_unix": 1791399705
+    },
+    {
+     "id": "49997205",
+     "title": "Claude: Monthly API credits for Max and Team plans",
+     "points": 11,
+     "created_unix": 1791399135
+    },
+    {
+     "id": "49997161",
+     "title": "Meta and Microsoft take steps to reduce employee usage of Claude AI",
+     "points": 377,
+     "created_unix": 1791398980
+    },
+    {
+     "id": "49997092",
+     "title": "New gTLD Program: 2026 Round Application Statistics",
+     "points": 1,
+     "created_unix": 1791398667
+    },
+    {
+     "id": "49997050",
+     "title": "OpenDocRouter: A Unified API for OCR Models",
+     "points": 1,
+     "created_unix": 1791398476
+    },
+    {
+     "id": "49997017",
+     "title": "Moon – A mood tracker where the app does the math and the LLM only writes",
+     "points": 4,
+     "created_unix": 1791398329
+    },
+    {
+     "id": "49996924",
+     "title": "Show HN: Am Buffer – an iPhone alarm that blocks your apps when you wake up",
+     "points": 1,
+     "created_unix": 1791397942
+    },
+    {
+     "id": "49996917",
+     "title": "Tesla is browbeating the EU to approve its 'Full Self-Driving' tech",
+     "points": 3,
+     "created_unix": 1791397911
+    },
+    {
+     "id": "49996431",
+     "title": "Show HN: getrequest – Never lose an API request",
+     "points": 2,
+     "created_unix": 1791396071
+    },
+    {
+     "id": "49996418",
+     "title": "Apple's screen time API is broken",
+     "points": 3,
+     "created_unix": 1791396030
+    },
+    {
+     "id": "49996377",
+     "title": "Apple, Please Stop Deleting My Books",
+     "points": 3,
+     "created_unix": 1791395834
+    },
+    {
+     "id": "49996128",
+     "title": "Show HN: SkanQRCode – URL & IP safety API returning verdicts in <500ms",
+     "points": 1,
+     "created_unix": 1791394713
+    },
+    {
+     "id": "49996116",
+     "title": "Show HN: ChillSweep – A better cleaner app for PC and Mac",
+     "points": 1,
+     "created_unix": 1791394675
+    },
+    {
+     "id": "49996093",
+     "title": "Agents Don't Need Another Memory API. They Need a Memory Agent",
+     "points": 5,
+     "created_unix": 1791394568
+    },
+    {
+     "id": "49995892",
+     "title": "I Priced Out Vibe-Coding a Copy of My $250 App",
+     "points": 2,
+     "created_unix": 1791393774
+    },
+    {
+     "id": "49995771",
+     "title": "Show HN: Zesfy – An app where tasks live inside calendar events",
+     "points": 2,
+     "created_unix": 1791393284
+    },
+    {
+     "id": "49994886",
+     "title": "Show HN: What your Claude Code subscription would cost at API prices",
+     "points": 2,
+     "created_unix": 1791389769
+    },
+    {
+     "id": "49994596",
+     "title": "Tecotype: macOS mail app for professionals who live in their mailbox",
+     "points": 4,
+     "created_unix": 1791388453
+    },
+    {
+     "id": "49994443",
+     "title": "Show HN: Bigwords.page – Turn any screen into a sign. The URL is the app",
+     "points": 728,
+     "created_unix": 1791387861
+    },
+    {
+     "id": "49993984",
+     "title": "Show HN: Checkout this open-source, local-first bioinformatics/AI desktop app",
+     "points": 2,
+     "created_unix": 1791386087
+    },
+    {
+     "id": "49993842",
+     "title": "Mumsnet denies using AI for content after prompt appears on message board",
+     "points": 9,
+     "created_unix": 1791385487
+    },
+    {
+     "id": "49993834",
+     "title": "Show HN: Mecum, open source Mac app that lets agents use ANY desktop software",
+     "points": 4,
+     "created_unix": 1791385467
+    },
+    {
+     "id": "49993786",
+     "title": "Show HN: Planlock – Approve an AI agent's plan once, code enforces every call",
+     "points": 1,
+     "created_unix": 1791385231
+    },
+    {
+     "id": "49993457",
+     "title": "Germany backs EU approval of Tesla's driver-assistance software",
+     "points": 1,
+     "created_unix": 1791383712
+    },
+    {
+     "id": "49993338",
+     "title": "Tell HN: Apple not letting removal of AI models on macOS 27 is outrageous",
+     "points": 37,
+     "created_unix": 1791383213
+    },
+    {
+     "id": "49993261",
+     "title": "Show HN: Emergence: a fun little app to play with chaos",
+     "points": 1,
+     "created_unix": 1791382865
+    },
+    {
+     "id": "49993084",
+     "title": "The Top 100 Gen AI Consumer Apps — 7th Edition",
+     "points": 12,
+     "created_unix": 1791382005
+    },
+    {
+     "id": "49992905",
+     "title": "All the numbers: Amazon Prime Day 2026 powered by AWS",
+     "points": 46,
+     "created_unix": 1791381071
+    },
+    {
+     "id": "49992633",
+     "title": "Pared – remove unwanted Apple Intelligence models without disabling SIP",
+     "points": 3,
+     "created_unix": 1791380003
+    },
+    {
+     "id": "49992518",
+     "title": "Mapping Potential Direct Exposure of U.S. Tariffs in Canada",
+     "points": 2,
+     "created_unix": 1791379554
+    },
+    {
+     "id": "49992182",
+     "title": "Ask HN: How do you use and interpret OpenAI Decisions API",
+     "points": 1,
+     "created_unix": 1791378113
+    },
+    {
+     "id": "49992077",
+     "title": "Apache Pulsar 5.0 Released with Scalable Topics",
+     "points": 1,
+     "created_unix": 1791377569
+    },
+    {
+     "id": "49991636",
+     "title": "Show HN: Nimblegate – stop Claude Code and Codex pushing leaked API keys",
+     "points": 1,
+     "created_unix": 1791375003
+    },
+    {
+     "id": "49991602",
+     "title": "Pharmacological Activation of AMPK Extends Lifespan in Yeast, Worms and Flies",
+     "points": 2,
+     "created_unix": 1791374785
+    },
+    {
+     "id": "49991569",
+     "title": "Show HN: CloudGrip – Open-source AI proxy to cap LLM API budgets",
+     "points": 2,
+     "created_unix": 1791374633
+    },
+    {
+     "id": "49991342",
+     "title": "Chrome DevTools for native macOS and iOS apps",
+     "points": 1,
+     "created_unix": 1791373141
+    },
+    {
+     "id": "49991322",
+     "title": "Show HN: LLM API prices with full price history and a cloud vs. local calculator",
+     "points": 2,
+     "created_unix": 1791372973
+    },
+    {
+     "id": "49991068",
+     "title": "In Appalachia, a rail-to-trail project builds bipartisan support for a bridge",
+     "points": 3,
+     "created_unix": 1791371196
+    },
+    {
+     "id": "49990335",
+     "title": "Google Chrome's AI API actively used for device fingerprinting and profiling",
+     "points": 7,
+     "created_unix": 1791365569
+    },
+    {
+     "id": "49990325",
+     "title": "Formula 1 Coverage on Apple TV to Get Dolby Atmos Later This Month",
+     "points": 2,
+     "created_unix": 1791365505
+    },
+    {
+     "id": "49990322",
+     "title": "Show HN: KIRA – a one-person media studio as a Windows desktop app",
+     "points": 1,
+     "created_unix": 1791365471
+    },
+    {
+     "id": "49990246",
+     "title": "We scanned 100 Lovable apps for GDPR and security. Not one came back clean",
+     "points": 1,
+     "created_unix": 1791364888
+    },
+    {
+     "id": "49990200",
+     "title": "Tesla is browbeating the EU to approve its 'Full Self-Driving'. It's working",
+     "points": 5,
+     "created_unix": 1791364466
+    },
+    {
+     "id": "49990111",
+     "title": "MailDeskt – Manage multiple Gmail/Outlook/iCloud inboxes from one desktop app",
+     "points": 1,
+     "created_unix": 1791363785
+    },
+    {
+     "id": "49990085",
+     "title": "Boston Dynamics appoints former Amazon exec Rohit Prasad as new CEO",
+     "points": 1,
+     "created_unix": 1791363542
+    },
+    {
+     "id": "49990079",
+     "title": "Ask HN: How do you check desktop apps for malicious code?",
+     "points": 1,
+     "created_unix": 1791363513
+    },
+    {
+     "id": "49989005",
+     "title": "FreeLLMAPI – One OpenAI-Compatible API for Multiple Free LLM Providers",
+     "points": 1,
+     "created_unix": 1791353918
+    },
+    {
+     "id": "49988975",
+     "title": "Turn Linux commands into Android applets and automations",
+     "points": 2,
+     "created_unix": 1791353721
+    },
+    {
+     "id": "49988881",
+     "title": "Clean room implementation of Adobe products",
+     "points": 27,
+     "created_unix": 1791352966
+    },
+    {
+     "id": "49988840",
+     "title": "I was tired of tracking expenses across 3 different apps, so I built WeSpend",
+     "points": 3,
+     "created_unix": 1791352622
+    },
+    {
+     "id": "49988213",
+     "title": "I tried connecting a 3.5mm jack directly to a speaker: My first audio amplifier",
+     "points": 2,
+     "created_unix": 1791347644
+    },
+    {
+     "id": "49987490",
+     "title": "Ask HN: Why does steam mobile app guard itself",
+     "points": 3,
+     "created_unix": 1791341509
+    },
+    {
+     "id": "49987386",
+     "title": "Nano Banana 2.1 API at $0.03 per image, same price at 1K, 2K and 4K",
+     "points": 2,
+     "created_unix": 1791340729
+    },
+    {
+     "id": "49987264",
+     "title": "I'm 47th in line to speak to someone at AIG about a lost Apple Watch",
+     "points": 3,
+     "created_unix": 1791339902
+    },
+    {
+     "id": "49987172",
+     "title": "Triage GitHub Pull Requests with OpenAI's Decisions API",
+     "points": 6,
+     "created_unix": 1791339181
+    },
+    {
+     "id": "49987136",
+     "title": "Mastering SIMD with Java Vector API",
+     "points": 11,
+     "created_unix": 1791338922
+    },
+    {
+     "id": "49986927",
+     "title": "Near-Earth Asteroid 2026 TB3 Provides Valuable Insight into Close Approaches",
+     "points": 4,
+     "created_unix": 1791337541
+    },
+    {
+     "id": "49986863",
+     "title": "Boston Dynamics Appoints Rohit Prasad as Chief Executive Officer",
+     "points": 2,
+     "created_unix": 1791337163
+    },
+    {
+     "id": "49986718",
+     "title": "OpenAI Decisions API is now available in Public Beta",
+     "points": 1,
+     "created_unix": 1791336086
+    },
+    {
+     "id": "49985861",
+     "title": "South Korea says AI agents appear to have been used to hack the country's banks",
+     "points": 100,
+     "created_unix": 1791330633
+    },
+    {
+     "id": "49985664",
+     "title": "AnyPS5: Port PS5 binaries to PC without emulation (87% system libraries mapped)",
+     "points": 374,
+     "created_unix": 1791329288
+    },
+    {
+     "id": "49985441",
+     "title": "Add your GitHub profile in your Apple Wallet",
+     "points": 4,
+     "created_unix": 1791327933
+    },
+    {
+     "id": "49985183",
+     "title": "SpaceX looks to raise $40B to buy Nvidia chips in financing led by Apollo",
+     "points": 5,
+     "created_unix": 1791326485
+    },
+    {
+     "id": "49985002",
+     "title": "Apple's Smart Home Push Includes Doorbell, Lock, Thermostat Codeveloped with LG",
+     "points": 20,
+     "created_unix": 1791325488
+    },
+    {
+     "id": "49984025",
+     "title": "Decisions API is in public beta",
+     "points": 393,
+     "created_unix": 1791320245
+    },
+    {
+     "id": "49984022",
+     "title": "Show HN: Ultrafast Apple Music macOS App",
+     "points": 3,
+     "created_unix": 1791320243
+    },
+    {
+     "id": "49983919",
+     "title": "Show HN: StatLite – Lightweight dashboard for application monitoring",
+     "points": 4,
+     "created_unix": 1791319834
+    },
+    {
+     "id": "49983690",
+     "title": "Show HN: VoxScribe, a local hold-to-talk voice dictation app for Windows",
+     "points": 3,
+     "created_unix": 1791318760
+    },
+    {
+     "id": "49983555",
+     "title": "I built Snake, the classic phone game for the Apple TV",
+     "points": 1,
+     "created_unix": 1791318158
+    },
+    {
+     "id": "49982801",
+     "title": "Show HN: Self-custody USDC billing for metered APIs – no Stripe, no bank, $0/mo",
+     "points": 2,
+     "created_unix": 1791314434
+    },
+    {
+     "id": "49982462",
+     "title": "The First Brain Manifesto: AI that amplifies the human brain",
+     "points": 2,
+     "created_unix": 1791312689
+    },
+    {
+     "id": "49982416",
+     "title": "Quite an apropos quote for these times",
+     "points": 2,
+     "created_unix": 1791312403
+    },
+    {
+     "id": "49981935",
+     "title": "How Did That Get in My Phone? Unwanted App Distribution on Android Devices(2020)",
+     "points": 3,
+     "created_unix": 1791309850
+    },
+    {
+     "id": "49981836",
+     "title": "Top 100 Gen AI Consumer Apps (7th Edition)",
+     "points": 2,
+     "created_unix": 1791309237
+    },
+    {
+     "id": "49981287",
+     "title": "Graybox – An API Flight Recorder",
+     "points": 2,
+     "created_unix": 1791306526
+    },
+    {
+     "id": "49980800",
+     "title": "Apple's App Icon HOA",
+     "points": 3,
+     "created_unix": 1791304278
+    },
+    {
+     "id": "49980611",
+     "title": "Proving Rust Web Application Correctness with Lean 4",
+     "points": 1,
+     "created_unix": 1791303227
+    },
+    {
+     "id": "49980293",
+     "title": "Letting Claude Test Windows Apps in a VM Instead of on My PC",
+     "points": 1,
+     "created_unix": 1791301831
+    },
+    {
+     "id": "49980213",
+     "title": "Find API security bugs without touching code",
+     "points": 1,
+     "created_unix": 1791301498
+    },
+    {
+     "id": "49979636",
+     "title": "I had Codex and Pi build the same app in Orca, then compared them side by side",
+     "points": 2,
+     "created_unix": 1791299278
+    },
+    {
+     "id": "49979536",
+     "title": "Remove revenue tax on Kotlin, Swift, TypeScript and Go based apps",
+     "points": 1,
+     "created_unix": 1791298892
+    },
+    {
+     "id": "49979498",
+     "title": "OpenAI uses substantially different model for subs vs. API?",
+     "points": 3,
+     "created_unix": 1791298736
+    },
+    {
+     "id": "49979056",
+     "title": "PrintCraft: Read, organize, combine, split, secure PDFs in a native app in Rust",
+     "points": 4,
+     "created_unix": 1791296868
+    },
+    {
+     "id": "49978798",
+     "title": "ApowerB: Deploy on Kubernetes using helm-chart",
+     "points": 5,
+     "created_unix": 1791295910
+    },
+    {
+     "id": "49978672",
+     "title": "Tesla FSD: German Transport Minister Calls for EU Approval",
+     "points": 3,
+     "created_unix": 1791295373
+    },
+    {
+     "id": "49978663",
+     "title": "OpenAI's B2B Marketplace: The Hyperscaler of AI Apps",
+     "points": 1,
+     "created_unix": 1791295318
+    },
+    {
+     "id": "49978502",
+     "title": "Reright: Human approval for agent-written text",
+     "points": 2,
+     "created_unix": 1791294735
+    },
+    {
+     "id": "49978019",
+     "title": "Persistent remote applications for X11; screen sharing for X11, mac and Windows",
+     "points": 1,
+     "created_unix": 1791292755
+    },
+    {
+     "id": "49977681",
+     "title": "Show HN: TwinStub – deterministic API simulation with signed webhook chains",
+     "points": 1,
+     "created_unix": 1791291213
+    },
+    {
+     "id": "49977545",
+     "title": "Why App Store Connect and RevenueCat revenue never match",
+     "points": 1,
+     "created_unix": 1791290442
+    },
+    {
+     "id": "49977437",
+     "title": "Subquadratic 3SUM and Subcubic APSP",
+     "points": 110,
+     "created_unix": 1791289877
+    },
+    {
+     "id": "49977434",
+     "title": "VMPal – Virtual Machines for Apple Silicon and AI Agents",
+     "points": 5,
+     "created_unix": 1791289855
+    },
+    {
+     "id": "49977347",
+     "title": "Show HN: ApolloShell, a Caelestia-style desktop shell for macOS",
+     "points": 1,
+     "created_unix": 1791289185
+    },
+    {
+     "id": "49976972",
+     "title": "Ask HN: My Apple ID is locked for a week, Apple is a single point of failure",
+     "points": 16,
+     "created_unix": 1791286295
+    },
+    {
+     "id": "49976824",
+     "title": "Show HN: Tofu – let your agent deploy full-stack apps",
+     "points": 4,
+     "created_unix": 1791285122
+    },
+    {
+     "id": "49976747",
+     "title": "Wasp: The first framework that gives your web app a schema",
+     "points": 1,
+     "created_unix": 1791284357
+    },
+    {
+     "id": "49976693",
+     "title": "Asos users receive pop-up notification apparently sent by hackers",
+     "points": 7,
+     "created_unix": 1791283906
+    },
+    {
+     "id": "49976468",
+     "title": "ASOS app users receive push notifications apparently sent by hackers",
+     "points": 64,
+     "created_unix": 1791281740
+    },
+    {
+     "id": "49976142",
+     "title": "Show HN: Screen size calculator that puts the TV on your wall in AR, no app",
+     "points": 1,
+     "created_unix": 1791278682
+    },
+    {
+     "id": "49976125",
+     "title": "Show HN: Apple Notes, Photos and Find My as Native Linux Apps (Omarchy/Arch)",
+     "points": 1,
+     "created_unix": 1791278533
+    },
+    {
+     "id": "49976064",
+     "title": "ASOS app push notification claims hackers breached its customer data warehouse",
+     "points": 6,
+     "created_unix": 1791277884
+    },
+    {
+     "id": "49975756",
+     "title": "Showcase your apps with new assets on the App Store",
+     "points": 1,
+     "created_unix": 1791275318
+    },
+    {
+     "id": "49975484",
+     "title": "German Bundeswehr uses AI to screen applicants for right-wing extremism",
+     "points": 39,
+     "created_unix": 1791272947
+    },
+    {
+     "id": "49975187",
+     "title": "Show HN: Thyme – A New AI-Based App Reverse Engineering Tool",
+     "points": 4,
+     "created_unix": 1791270382
+    },
+    {
+     "id": "49975082",
+     "title": "Apple Is Now Fucked",
+     "points": 3,
+     "created_unix": 1791269378
+    },
+    {
+     "id": "49974970",
+     "title": "Show HN: Open-source iPhone app that streams Claude like the Siri app",
+     "points": 1,
+     "created_unix": 1791268279
+    },
+    {
+     "id": "49974619",
+     "title": "Plainserp – Google search API for AI agents at $0.30 per 1k",
+     "points": 1,
+     "created_unix": 1791265064
+    },
+    {
+     "id": "49974241",
+     "title": "We're cracking recursive self improvement for mobile apps",
+     "points": 1,
+     "created_unix": 1791261470
+    },
+    {
+     "id": "49973854",
+     "title": "Subquadratic 3SUM and Subcubic APSP",
+     "points": 33,
+     "created_unix": 1791257682
+    },
+    {
+     "id": "49973774",
+     "title": "\"Told Apart\"",
+     "points": 2,
+     "created_unix": 1791256887
+    },
+    {
+     "id": "49973649",
+     "title": "Show HN: I built an application to work with multiple coding agents",
+     "points": 3,
+     "created_unix": 1791255693
+    },
+    {
+     "id": "49973221",
+     "title": "Apple may soon track when Google promotes Chrome inside Safari",
+     "points": 20,
+     "created_unix": 1791251565
+    },
+    {
+     "id": "49971594",
+     "title": "Terminal Steps: A Claude mod for a daily step goal, synced from Apple Health",
+     "points": 3,
+     "created_unix": 1791238390
+    },
+    {
+     "id": "49971117",
+     "title": "Top Consumer AI Apps",
+     "points": 3,
+     "created_unix": 1791235992
+    },
+    {
+     "id": "49970810",
+     "title": "Show HN: Sideloop – Re-sign sideloaded iOS apps over Wi-Fi before they expire",
+     "points": 8,
+     "created_unix": 1791234664
+    },
+    {
+     "id": "49970630",
+     "title": "Show HN: Free Public API Lab",
+     "points": 1,
+     "created_unix": 1791233901
+    },
+    {
+     "id": "49970597",
+     "title": "Turn your app into a context graph",
+     "points": 2,
+     "created_unix": 1791233775
+    },
+    {
+     "id": "49970586",
+     "title": "Show HN: All local LLM(s) on all Apple Devices",
+     "points": 1,
+     "created_unix": 1791233729
+    },
+    {
+     "id": "49970043",
+     "title": "Show HN: CoIsland – A local Mac app that monitors your dev tools and alerts you",
+     "points": 9,
+     "created_unix": 1791231292
+    },
+    {
+     "id": "49969932",
+     "title": "An open-source tool lets you delete 12GB of Apple Intelligence data on macOS",
+     "points": 14,
+     "created_unix": 1791230842
+    },
+    {
+     "id": "49969917",
+     "title": "You Are the Application Server",
+     "points": 4,
+     "created_unix": 1791230780
+    },
+    {
+     "id": "49969706",
+     "title": "Pi Durable: What It Is and Why It Matters for Agent Apps",
+     "points": 1,
+     "created_unix": 1791229800
+    },
+    {
+     "id": "49969534",
+     "title": "The API Grand Prix Fabula About Macropay-Solutions PHP Ecosystem",
+     "points": 1,
+     "created_unix": 1791229153
+    },
+    {
+     "id": "49968794",
+     "title": "MCP-pin, block MCP tools that change after you approve them",
+     "points": 2,
+     "created_unix": 1791225922
+    },
+    {
+     "id": "49968646",
+     "title": "Jiti – Grow a running Lisp application by talking to it",
+     "points": 29,
+     "created_unix": 1791225194
+    },
+    {
+     "id": "49968369",
+     "title": "JayDB – Ship apps with no back end at all",
+     "points": 1,
+     "created_unix": 1791224023
+    },
+    {
+     "id": "49968027",
+     "title": "Claude writes code; I author the apps – Lex on Tech",
+     "points": 1,
+     "created_unix": 1791222467
+    },
+    {
+     "id": "49967920",
+     "title": "RequestScript and Stellarium: A new way to write APIs",
+     "points": 1,
+     "created_unix": 1791221998
+    },
+    {
+     "id": "49967777",
+     "title": "SimpleBrain App",
+     "points": 1,
+     "created_unix": 1791221246
+    },
+    {
+     "id": "49967360",
+     "title": "Sleep apnea and pain: not the clear link you'd think",
+     "points": 4,
+     "created_unix": 1791219274
+    },
+    {
+     "id": "49966778",
+     "title": "Pricing and viability of indie apps post-AI",
+     "points": 3,
+     "created_unix": 1791216764
+    },
+    {
+     "id": "49966745",
+     "title": "Show HN: SoldStack – sold prices API for secondhand clothes",
+     "points": 8,
+     "created_unix": 1791216570
+    },
+    {
+     "id": "49966727",
+     "title": "Show HN: Leftovers – FOSS macOS app to cleanup after AI agents",
+     "points": 2,
+     "created_unix": 1791216478
+    },
+    {
+     "id": "49966592",
+     "title": "Show HN: Productivity FOSS App Synced in Desktop and Mobile",
+     "points": 1,
+     "created_unix": 1791215886
+    },
+    {
+     "id": "49966406",
+     "title": "Apple Triples iCloud Mail Alias Limit to Nine",
+     "points": 1,
+     "created_unix": 1791215178
+    },
+    {
+     "id": "49966364",
+     "title": "Apache Iceberg Open Source Fine Grain Access Support",
+     "points": 5,
+     "created_unix": 1791215045
+    },
+    {
+     "id": "49966295",
+     "title": "Show HN: Reverse.horse – A Jev-compatible API powered by your feeble human brain",
+     "points": 1,
+     "created_unix": 1791214746
+    },
+    {
+     "id": "49966293",
+     "title": "Our approach to EU text provenance rules",
+     "points": 72,
+     "created_unix": 1791214735
+    },
+    {
+     "id": "49966041",
+     "title": "Reax – A reaction‑first app using Cloud Run to bypass Vercel's body‑size limits",
+     "points": 1,
+     "created_unix": 1791213725
+    },
+    {
+     "id": "49965851",
+     "title": "Show HN: Recast, an experimental Smalltalk app that repairs itself with an LLM",
+     "points": 3,
+     "created_unix": 1791212883
+    },
+    {
+     "id": "49965821",
+     "title": "I built a $5/month TV app because I got tired of how expensive streaming is",
+     "points": 1,
+     "created_unix": 1791212754
+    },
+    {
+     "id": "49965575",
+     "title": "Show HN: DevBoard – a simpler ClickUp for small dev teams, native apps and MCP",
+     "points": 5,
+     "created_unix": 1791211555
+    },
+    {
+     "id": "49965308",
+     "title": "Making a GTK application in Haskell, part 1",
+     "points": 176,
+     "created_unix": 1791210227
+    },
+    {
+     "id": "49965306",
+     "title": "Cloudflare Web Search API",
+     "points": 2,
+     "created_unix": 1791210224
+    },
+    {
+     "id": "49965219",
+     "title": "Hacker News: An Apology",
+     "points": 8,
+     "created_unix": 1791209868
+    },
+    {
+     "id": "49965152",
+     "title": "The lamps in my house",
+     "points": 349,
+     "created_unix": 1791209534
+    },
+    {
+     "id": "49965111",
+     "title": "Sexy Apocalypse",
+     "points": 1,
+     "created_unix": 1791209314
+    },
+    {
+     "id": "49965102",
+     "title": "Show HN: Approvegate – Deploy approvals enforced in your pipeline, not in Jira",
+     "points": 4,
+     "created_unix": 1791209281
+    },
+    {
+     "id": "49964822",
+     "title": "Apple: MagSafe 3 Charging Cable Firmware Update",
+     "points": 7,
+     "created_unix": 1791207868
+    },
+    {
+     "id": "49964763",
+     "title": "What Israeli immigrants bring to America",
+     "points": 1,
+     "created_unix": 1791207603
+    },
+    {
+     "id": "49963977",
+     "title": "TypingPall – Mac App for code typing practice",
+     "points": 1,
+     "created_unix": 1791203341
+    },
+    {
+     "id": "49963787",
+     "title": "An application in Lisp you grow by talking to it",
+     "points": 31,
+     "created_unix": 1791202259
+    },
+    {
+     "id": "49963171",
+     "title": "Web Search API",
+     "points": 595,
+     "created_unix": 1791197226
+    },
+    {
+     "id": "49962951",
+     "title": "Show HN: Reright.it – Human approval for agent-written text",
+     "points": 1,
+     "created_unix": 1791195519
+    },
+    {
+     "id": "49962857",
+     "title": "Apple and a hacker's future",
+     "points": 300,
+     "created_unix": 1791194702
+    },
+    {
+     "id": "49962650",
+     "title": "Free Messaging App",
+     "points": 2,
+     "created_unix": 1791193287
+    },
+    {
+     "id": "49962602",
+     "title": "Apex Compute Developing Open-Source Mesa Vulkan Driver for Their Hardware",
+     "points": 1,
+     "created_unix": 1791193003
+    },
+    {
+     "id": "49962546",
+     "title": "Building Maintainable PHP Applications: Foundations",
+     "points": 1,
+     "created_unix": 1791192621
+    },
+    {
+     "id": "49962544",
+     "title": "For MACAN(95C) carbon fiber appearance accessories",
+     "points": 1,
+     "created_unix": 1791192614
+    },
+    {
+     "id": "49962280",
+     "title": "Aegis – Next-Gen Selfhosted Web Application Firewall (WAF) & Edge Reverse Proxy",
+     "points": 6,
+     "created_unix": 1791190208
+    },
+    {
+     "id": "49962167",
+     "title": "Pyronaut: A Python app framework that runs on the JVM",
+     "points": 2,
+     "created_unix": 1791189191
+    },
+    {
+     "id": "49961971",
+     "title": "Show HN: Gutsy, subsecond decision model inference on CPU (Jev Style), no API",
+     "points": 3,
+     "created_unix": 1791187403
+    },
+    {
+     "id": "49961755",
+     "title": "What Is Perplexity's Decisions API?",
+     "points": 1,
+     "created_unix": 1791185506
+    },
+    {
+     "id": "49961749",
+     "title": "TypeSafe AI's Jev vs. Perplexity's Decisions API",
+     "points": 1,
+     "created_unix": 1791185476
+    },
+    {
+     "id": "49961677",
+     "title": "Novel approach to create AI slop games discovered",
+     "points": 2,
+     "created_unix": 1791184741
+    },
+    {
+     "id": "49961437",
+     "title": "Apple hiring iCup specialist to manage a large portfolio of coffee machines",
+     "points": 1,
+     "created_unix": 1791182789
+    },
+    {
+     "id": "49960086",
+     "title": "Apple M5 and M6 chip die analysis",
+     "points": 3,
+     "created_unix": 1791167524
+    },
+    {
+     "id": "49959751",
+     "title": "Show HN: HyperCMD, write CLI applications using plain HTML",
+     "points": 7,
+     "created_unix": 1791163996
+    },
+    {
+     "id": "49959254",
+     "title": "Milt Windler, NASA flight director who helped save Apollo 13, dies at 94",
+     "points": 3,
+     "created_unix": 1791158544
+    },
+    {
+     "id": "49959138",
+     "title": "Show HN: Digital scarcity; app where photos gradually decay with time / views",
+     "points": 2,
+     "created_unix": 1791157585
+    },
+    {
+     "id": "49958850",
+     "title": "ArtCraft Apps – open-source Adobe compatible suite written in Rust",
+     "points": 178,
+     "created_unix": 1791154963
+    },
+    {
+     "id": "49958819",
+     "title": "OmniCouncil – Zero-API-cost local MoA desktop app for Mac",
+     "points": 1,
+     "created_unix": 1791154749
+    },
+    {
+     "id": "49958484",
+     "title": "Show HN: I built an square foot measuring app",
+     "points": 1,
+     "created_unix": 1791152243
+    },
+    {
+     "id": "49958422",
+     "title": "Show HN: Sortbot.io – Your physical inventory, with an API and MCP access",
+     "points": 1,
+     "created_unix": 1791151851
+    },
+    {
+     "id": "49957812",
+     "title": "In the wake of Tippett Studios’ closure, a digital archive appears online",
+     "points": 249,
+     "created_unix": 1791147688
+    },
+    {
+     "id": "49957426",
+     "title": "Remote-Jobs-Api.tten.no",
+     "points": 1,
+     "created_unix": 1791145238
+    },
+    {
+     "id": "49957391",
+     "title": "Show HN: Native Rust rewrites of Electron apps, starting with Slack",
+     "points": 1,
+     "created_unix": 1791145015
+    },
+    {
+     "id": "49957334",
+     "title": "I've had agents implement and optimize the Campfire web app in Elixir, Go, Rust",
+     "points": 5,
+     "created_unix": 1791144539
+    },
+    {
+     "id": "49957116",
+     "title": "Turn off Apple Intelligence on macOS 27 and get its disk space back",
+     "points": 775,
+     "created_unix": 1791142945
+    },
+    {
+     "id": "49957068",
+     "title": "Improper redaction reveals Google Data Center water and electricity usage",
+     "points": 529,
+     "created_unix": 1791142625
+    },
+    {
+     "id": "49957017",
+     "title": "Show HN: Magic File Renamer 8 – AI rewrote my 26-year-old app",
+     "points": 2,
+     "created_unix": 1791142168
+    },
+    {
+     "id": "49956982",
+     "title": "An LLVM Pass for Automatic Skeletonization of MPI Applications",
+     "points": 1,
+     "created_unix": 1791141910
+    },
+    {
+     "id": "49956919",
+     "title": "Reworking ComposableThreads' API",
+     "points": 1,
+     "created_unix": 1791141470
+    },
+    {
+     "id": "49956108",
+     "title": "Show HN: Exro – I got tired of cleaning up copy/paste between apps",
+     "points": 1,
+     "created_unix": 1791136116
+    },
+    {
+     "id": "49955626",
+     "title": "Background Passive FTP with No GUI Control Survives Apple Store DFU",
+     "points": 6,
+     "created_unix": 1791133134
+    },
+    {
+     "id": "49955578",
+     "title": "Timeful: Design web apps visually, sync with code instantly",
+     "points": 1,
+     "created_unix": 1791132762
+    },
+    {
+     "id": "49955509",
+     "title": "Show HN: Z8Apps – mobile app creator platform",
+     "points": 1,
+     "created_unix": 1791132382
+    },
+    {
+     "id": "49955364",
+     "title": "Gemini app limiting what models free and AI Plus users can access",
+     "points": 2,
+     "created_unix": 1791131541
+    },
+    {
+     "id": "49955293",
+     "title": "Sugar Amplifies Damage Done to Gut Health by Antibiotics",
+     "points": 2,
+     "created_unix": 1791131104
+    },
+    {
+     "id": "49955173",
+     "title": "Aptera Launch Costs Cut Nearly in Half, to Just $25M",
+     "points": 2,
+     "created_unix": 1791130379
+    },
+    {
+     "id": "49955128",
+     "title": "Show HN: I made an app to let skiers track ski resorts and slopes they have done",
+     "points": 2,
+     "created_unix": 1791130075
+    },
+    {
+     "id": "49955117",
+     "title": "Show HN: Skins.dev – add the features missing from the web apps you use",
+     "points": 4,
+     "created_unix": 1791130013
+    },
+    {
+     "id": "49955068",
+     "title": "Apple says it's tightening macOS privacy controls amid the rise of AI agents",
+     "points": 1,
+     "created_unix": 1791129727
+    },
+    {
+     "id": "49954732",
+     "title": "Show HN: Jarvis, an Android voice assistant that drives other apps by itself",
+     "points": 2,
+     "created_unix": 1791127666
+    },
+    {
+     "id": "49954487",
+     "title": "Neil Peart memorial in Lakeside Park approved, moves closer to reality",
+     "points": 2,
+     "created_unix": 1791126059
+    },
+    {
+     "id": "49954124",
+     "title": "Show HN: Astera: An ad-free stargazing app for Android",
+     "points": 3,
+     "created_unix": 1791123402
+    },
+    {
+     "id": "49953749",
+     "title": "Can an Android app without the INTERNET permission phone home?",
+     "points": 1,
+     "created_unix": 1791120429
+    },
+    {
+     "id": "49953606",
+     "title": "macOS ProactiveHarvesting and AppleIntelligenceReportingSELFIngestor",
+     "points": 1,
+     "created_unix": 1791119293
+    },
+    {
+     "id": "49953146",
+     "title": "Government of India officially removes bitchat from the App Store",
+     "points": 4,
+     "created_unix": 1791115349
+    },
+    {
+     "id": "49952148",
+     "title": "Show HN: Nightwatch – a Mac menu-bar app that tells you when tonight is clear",
+     "points": 89,
+     "created_unix": 1791106261
+    },
+    {
+     "id": "49951388",
+     "title": "Pay Advance Apps May Be Costlier Than Workers Think",
+     "points": 2,
+     "created_unix": 1791097367
+    },
+    {
+     "id": "49950197",
+     "title": "China's space plane appears to have released a mystery object in orbit",
+     "points": 8,
+     "created_unix": 1791082855
+    },
+    {
+     "id": "49950177",
+     "title": "Ask HN: How different is Apple App Store and Play Store paid apps market",
+     "points": 1,
+     "created_unix": 1791082665
+    },
+    {
+     "id": "49949988",
+     "title": "OpenAI's latest features take direct aim at the app store model",
+     "points": 3,
+     "created_unix": 1791080458
+    },
+    {
+     "id": "49949851",
+     "title": "Show HN: A free FAQ and appointment booking API for small businesses",
+     "points": 1,
+     "created_unix": 1791079062
+    },
+    {
+     "id": "49949152",
+     "title": "Apple's \"Clean Design\" Is Stupidity When It Comes to Hiding Fire Extinguishers",
+     "points": 80,
+     "created_unix": 1791072561
+    },
+    {
+     "id": "49949048",
+     "title": "Memory API beta testers wanted Temporal Continuity",
+     "points": 2,
+     "created_unix": 1791071818
+    },
+    {
+     "id": "49948697",
+     "title": "The Mulleted, Meme-Loving Billionaire Behind Meta's Hit AI App",
+     "points": 2,
+     "created_unix": 1791069063
+    },
+    {
+     "id": "49948566",
+     "title": "Sam Altman's sister amends lawsuit accusing OpenAI CEO of sexual abuse",
+     "points": 22,
+     "created_unix": 1791068100
+    },
+    {
+     "id": "49948147",
+     "title": "Monkey Island Ported to the Apple Lisa",
+     "points": 2,
+     "created_unix": 1791064280
+    },
+    {
+     "id": "49947929",
+     "title": "Enterprise Web App and API security under your control",
+     "points": 1,
+     "created_unix": 1791062669
+    },
+    {
+     "id": "49947808",
+     "title": "Show HN: Approvegate – Deploy approvals enforced in your pipeline, not in Jira",
+     "points": 1,
+     "created_unix": 1791061827
+    },
+    {
+     "id": "49947799",
+     "title": "Apple Confirms iPhone 18 Pro Max AT&T Issues, Devices Require Replacement",
+     "points": 20,
+     "created_unix": 1791061730
+    },
+    {
+     "id": "49947600",
+     "title": "Foliant, a Typst-to-PDF API with Templates and an MCP Server",
+     "points": 3,
+     "created_unix": 1791060406
+    },
+    {
+     "id": "49947565",
+     "title": "'Neanderthals Among Us' review",
+     "points": 87,
+     "created_unix": 1791060075
+    },
+    {
+     "id": "49947559",
+     "title": "Milt Windler, NASA flight director who helped save Apollo 13, dies at 94",
+     "points": 5,
+     "created_unix": 1791060038
+    },
+    {
+     "id": "49947011",
+     "title": "Show HN: McKinley – vector editor for SF Symbols (Mac app)",
+     "points": 2,
+     "created_unix": 1791055695
+    },
+    {
+     "id": "49946895",
+     "title": "The work by Valve's Timur Kristóf on improving old AMD GPUs on Linux",
+     "points": 501,
+     "created_unix": 1791054888
+    },
+    {
+     "id": "49946629",
+     "title": "I made a simple one-button WARP app for Windows",
+     "points": 4,
+     "created_unix": 1791052788
+    },
+    {
+     "id": "49946562",
+     "title": "Government of India officially removes bitchat from the App Store",
+     "points": 10,
+     "created_unix": 1791052144
+    },
+    {
+     "id": "49946506",
+     "title": "Show HN: Revline – an AI web app that researches TikTok and Instagram for you",
+     "points": 2,
+     "created_unix": 1791051618
+    },
+    {
+     "id": "49946218",
+     "title": "How to apply to AI safety fellowships (and beyond)",
+     "points": 2,
+     "created_unix": 1791049409
+    },
+    {
+     "id": "49946004",
+     "title": "Open Source Rust clean-room replacements for 7 of Adobe's apps",
+     "points": 3,
+     "created_unix": 1791047577
+    },
+    {
+     "id": "49945989",
+     "title": "Apple removes Bitchat from India app store;Twitter co-founder Jack Dorsey reacts",
+     "points": 3,
+     "created_unix": 1791047463
+    },
+    {
+     "id": "49945866",
+     "title": "EventMaxxer – Automatically apply to events to get you in the right room",
+     "points": 6,
+     "created_unix": 1791046487
+    },
+    {
+     "id": "49945837",
+     "title": "Apple Removes BitChat from India App Store at Government's Request",
+     "points": 5,
+     "created_unix": 1791046296
+    },
+    {
+     "id": "49945661",
+     "title": "Show HN: I made a Mac app to centralize and monitor my dev tools",
+     "points": 5,
+     "created_unix": 1791045140
+    },
+    {
+     "id": "49944332",
+     "title": "Show HN: SweepKit – Lightweight macOS menu bar app for Downloads triage (free)",
+     "points": 1,
+     "created_unix": 1791035967
+    },
+    {
+     "id": "49944312",
+     "title": "Simple Web Application Firewall to Protect Websites and APIs Without CAPTCHAs",
+     "points": 1,
+     "created_unix": 1791035825
+    },
+    {
+     "id": "49943883",
+     "title": "I Look at Buildings, with Aphantasia",
+     "points": 2,
+     "created_unix": 1791032329
+    },
+    {
+     "id": "49943861",
+     "title": "Thorium reader: Cross platform desktop reading app",
+     "points": 3,
+     "created_unix": 1791032140
+    },
+    {
+     "id": "49943694",
+     "title": "US appeals court blocks Minnesota law barring 'nudified' photos in xAI lawsuit",
+     "points": 6,
+     "created_unix": 1791030513
+    },
+    {
+     "id": "49943391",
+     "title": "Show HN: Screenshot Happy – screenshot/PDF API with visual-change monitoring",
+     "points": 2,
+     "created_unix": 1791027991
+    },
+    {
+     "id": "49942499",
+     "title": "Apple Says iPhone 18 PM Users with AT&T Cellular Issue Need Device Replaced",
+     "points": 6,
+     "created_unix": 1791017665
+    },
+    {
+     "id": "49942045",
+     "title": "Apple changes full-disk access permissions to curb abuse from AI agents",
+     "points": 6,
+     "created_unix": 1791011925
+    },
+    {
+     "id": "49942011",
+     "title": "Ideabrowser meets dark mirror – mobile apps you can build today that are WTF",
+     "points": 5,
+     "created_unix": 1791011314
+    },
+    {
+     "id": "49941569",
+     "title": "Show HN: Rowan, an open-source SAST scanner for AI apps (code, models, MCP)\"",
+     "points": 3,
+     "created_unix": 1791005384
+    },
+    {
+     "id": "49941419",
+     "title": "People will be AI's app layer",
+     "points": 2,
+     "created_unix": 1791002785
+    },
+    {
+     "id": "49941377",
+     "title": "A denser layout for the Claude desktop app, 2-column sidebar and project colours",
+     "points": 4,
+     "created_unix": 1791002137
+    },
+    {
+     "id": "49940469",
+     "title": "The Mulleted, Meme-Loving Billionaire Behind Meta's Hit AI App",
+     "points": 3,
+     "created_unix": 1790989770
+    },
+    {
+     "id": "49940219",
+     "title": "Things that apparently cause cancer",
+     "points": 212,
+     "created_unix": 1790986991
+    },
+    {
+     "id": "49939683",
+     "title": "Access open‑weight, cyber‑capable models with one API key",
+     "points": 2,
+     "created_unix": 1790982472
+    },
+    {
+     "id": "49939584",
+     "title": "Show HN: I found API keys in my coding agent history so I built Agent Scrub",
+     "points": 1,
+     "created_unix": 1790981592
+    },
+    {
+     "id": "49939427",
+     "title": "SledTrace – A local debugger that shows why your RAG app answered wrong",
+     "points": 2,
+     "created_unix": 1790980315
+    },
+    {
+     "id": "49939303",
+     "title": "I'd Know: Turkish short-video knowledge app built on Cloudflare Workers",
+     "points": 1,
+     "created_unix": 1790979371
+    },
+    {
+     "id": "49939300",
+     "title": "Tightening Full Disk Access on macOS, in Response to AI Apps Running Amok",
+     "points": 6,
+     "created_unix": 1790979358
+    },
+    {
+     "id": "49939037",
+     "title": "The Official TypeScript SDK for the SpaceXAI API",
+     "points": 1,
+     "created_unix": 1790977804
+    },
+    {
+     "id": "49938997",
+     "title": "Start Your 90 Day Challenge with This Small Mac Desktop App(ADHD Friendly)",
+     "points": 1,
+     "created_unix": 1790977566
+    },
+    {
+     "id": "49938891",
+     "title": "Apple to Tighten Mac Data Controls in Guard Against AI Agents",
+     "points": 3,
+     "created_unix": 1790976976
+    },
+    {
+     "id": "49938517",
+     "title": "Show HN: Portus, A Rust Based API/AI/MCP Gateway",
+     "points": 4,
+     "created_unix": 1790974582
+    },
+    {
+     "id": "49938474",
+     "title": "How great an ape are you?",
+     "points": 4,
+     "created_unix": 1790974322
+    },
+    {
+     "id": "49938443",
+     "title": "I've created an open source 100% Rust clean-room clone of 7 of Adobe's apps",
+     "points": 18,
+     "created_unix": 1790974146
+    },
+    {
+     "id": "49938271",
+     "title": "Apple will limit Mac disk access as AI agents 'substantially' increase risk",
+     "points": 9,
+     "created_unix": 1790973212
+    },
+    {
+     "id": "49938037",
+     "title": "Two US-bound vessels apparently compromised by hackers",
+     "points": 9,
+     "created_unix": 1790971921
+    },
+    {
+     "id": "49937484",
+     "title": "Preview mobile apps inside Claude chat and iterate",
+     "points": 1,
+     "created_unix": 1790969141
+    },
+    {
+     "id": "49937276",
+     "title": "Apple Pass Designer",
+     "points": 574,
+     "created_unix": 1790968016
+    },
+    {
+     "id": "49937239",
+     "title": "Apple is tightening macOS 'Full Disk Access' due to new risks from AI agents",
+     "points": 20,
+     "created_unix": 1790967783
+    },
+    {
+     "id": "49936702",
+     "title": "Show HN: Snip – Terminal notes app that Claude can read and write via MCP",
+     "points": 2,
+     "created_unix": 1790964733
+    },
+    {
+     "id": "49936434",
+     "title": "Show HN: 78,000 free books to my \"Pomodoro for books\" Mac app",
+     "points": 2,
+     "created_unix": 1790963495
+    },
+    {
+     "id": "49935560",
+     "title": "Criticker Android App: Movie Recommendations That Predict Your Rating",
+     "points": 2,
+     "created_unix": 1790959168
+    },
+    {
+     "id": "49935375",
+     "title": "Show HN: Client rooms where calls and AI agents suggest edits, people approve",
+     "points": 3,
+     "created_unix": 1790958345
+    },
+    {
+     "id": "49935311",
+     "title": "Show HN: Taskrouter – One API Learning to Choose Models per AI Task",
+     "points": 1,
+     "created_unix": 1790958078
+    },
+    {
+     "id": "49935249",
+     "title": "Show HN: Keel – automated job applications that refuse to lie",
+     "points": 1,
+     "created_unix": 1790957819
+    },
+    {
+     "id": "49935038",
+     "title": "Magic Switch: Share Apple Magic keyboard/track-pad/mouse between two Macs",
+     "points": 90,
+     "created_unix": 1790956890
+    },
+    {
+     "id": "49934650",
+     "title": "Best app stack of 2026, according to LLMs: Next.js, Supabase, Vercel, Stripe",
+     "points": 3,
+     "created_unix": 1790955140
+    },
+    {
+     "id": "49934623",
+     "title": "App's front end UI is now optional",
+     "points": 3,
+     "created_unix": 1790954970
+    },
+    {
+     "id": "49934608",
+     "title": "Show HN: Status lines in the Claude desktop app",
+     "points": 2,
+     "created_unix": 1790954902
+    },
+    {
+     "id": "49934569",
+     "title": "Power approval set to delay Oracle's Wisconsin AI datacenter",
+     "points": 51,
+     "created_unix": 1790954694
+    },
+    {
+     "id": "49934391",
+     "title": "Apedia – a personal course for anything, built around why you learn",
+     "points": 1,
+     "created_unix": 1790953940
+    },
+    {
+     "id": "49934279",
+     "title": "Embrace the Glitch: The Andapos;404 Motivation Not Found Sloth&Apos; Organic",
+     "points": 1,
+     "created_unix": 1790953296
+    },
+    {
+     "id": "49934197",
+     "title": "247A, Notes 2: The Hardy–Littlewood maximal function and applications",
+     "points": 1,
+     "created_unix": 1790952878
+    },
+    {
+     "id": "49934069",
+     "title": "Show HN: Gemma – NYC Apartment Matches over iMessage",
+     "points": 1,
+     "created_unix": 1790952107
+    },
+    {
+     "id": "49934044",
+     "title": "TimeLimit – offline local time limit parental control app without Google",
+     "points": 2,
+     "created_unix": 1790951961
+    },
+    {
+     "id": "49933826",
+     "title": "Show HN: Fougere – Typescript backend framework, inside your app or on its own",
+     "points": 1,
+     "created_unix": 1790950737
+    },
+    {
+     "id": "49933779",
+     "title": "Show HN: dishlist – an iPhone app for foodie founders near Dogpatch",
+     "points": 2,
+     "created_unix": 1790950532
+    },
+    {
+     "id": "49933643",
+     "title": "Can Jev be trusted when it is confident? Half a million API calls say not always",
+     "points": 8,
+     "created_unix": 1790949676
+    },
+    {
+     "id": "49933484",
+     "title": "Show HN: DimmerPro – a Mac menu bar app that dims below minimum brightness",
+     "points": 1,
+     "created_unix": 1790948901
+    },
+    {
+     "id": "49933461",
+     "title": "A map of every lighthouse",
+     "points": 200,
+     "created_unix": 1790948749
+    },
+    {
+     "id": "49933300",
+     "title": "Anyone Can Build an App Now, but Who Is Going to Pay for It?",
+     "points": 5,
+     "created_unix": 1790947553
+    },
+    {
+     "id": "49933265",
+     "title": "TransCAPI – UK bus and train API that measures how late things run",
+     "points": 1,
+     "created_unix": 1790947330
+    },
+    {
+     "id": "49933130",
+     "title": "Show HN: CertScope, which CPSC rules apply to your SKU, free wizard",
+     "points": 1,
+     "created_unix": 1790946426
+    },
+    {
+     "id": "49933110",
+     "title": "American Capitalism Isn't Just Billionaires",
+     "points": 3,
+     "created_unix": 1790946315
+    },
+    {
+     "id": "49933006",
+     "title": "Show HN: Noite – Enjoy Most of Cloudflare Worker APIs on Your Potato VPS",
+     "points": 4,
+     "created_unix": 1790945747
+    },
+    {
+     "id": "49931915",
+     "title": "DataScalar: A Memory-Centric Approach to Computing [pdf]",
+     "points": 2,
+     "created_unix": 1790936933
+    },
+    {
+     "id": "49931888",
+     "title": "Optimizing GEMM on Apple's M5 from Scratch",
+     "points": 1,
+     "created_unix": 1790936747
+    },
+    {
+     "id": "49930810",
+     "title": "Causeval – statistically rigorous, causal evaluation for LLM apps",
+     "points": 1,
+     "created_unix": 1790926376
+    },
+    {
+     "id": "49930625",
+     "title": "$250M Apple AI Settlement – iPhone 15/16 Users Can Claim $25 to $95 per Device",
+     "points": 5,
+     "created_unix": 1790924777
+    },
+    {
+     "id": "49930613",
+     "title": "Show HN: Apple Developer MCP, App Store Connect via Your AI Assistants",
+     "points": 1,
+     "created_unix": 1790924637
+    },
+    {
+     "id": "49930445",
+     "title": "Dagenza – a fresh new calendar app for iPhone",
+     "points": 1,
+     "created_unix": 1790922813
+    },
+    {
+     "id": "49930369",
+     "title": "Explore decision models in one place with Decisions API",
+     "points": 3,
+     "created_unix": 1790921982
+    },
+    {
+     "id": "49930029",
+     "title": "Singapore gov. launches dating app with Gale-Shapley stable matching algorithm",
+     "points": 2,
+     "created_unix": 1790917758
+    },
+    {
+     "id": "49929941",
+     "title": "Show HN: Syn – Approve remote sudo requests from your Mac",
+     "points": 2,
+     "created_unix": 1790916521
+    },
+    {
+     "id": "49929649",
+     "title": "Apple Says iPhone Duo Has Replaceable 'Cover Layer'",
+     "points": 2,
+     "created_unix": 1790913068
+    },
+    {
+     "id": "49928992",
+     "title": "CIRCT – An experimental effort to apply MLIR and LLVM to hardware design tools",
+     "points": 1,
+     "created_unix": 1790904861
+    },
+    {
+     "id": "49928990",
+     "title": "Apex: Agentic coding for mobile and web, fluent in React",
+     "points": 1,
+     "created_unix": 1790904815
+    },
+    {
+     "id": "49928550",
+     "title": "NASA has a Dragon dilemma, and there appear to be no good answers",
+     "points": 17,
+     "created_unix": 1790900712
+    },
+    {
+     "id": "49928236",
+     "title": "Noodle AI Bots Mac App",
+     "points": 1,
+     "created_unix": 1790897432
+    },
+    {
+     "id": "49928188",
+     "title": "Show HN: Shootsolo – a free camera app for filming yourself without a crew",
+     "points": 1,
+     "created_unix": 1790896981
+    },
+    {
+     "id": "49928054",
+     "title": "Apple's smart home camera reportedly won't record video",
+     "points": 35,
+     "created_unix": 1790895610
+    },
+    {
+     "id": "49928011",
+     "title": "Show HN: PhreshOS – OS for Web Apps",
+     "points": 10,
+     "created_unix": 1790895302
+    },
+    {
+     "id": "49927957",
+     "title": "Apple Mail on Mac May Stop Syncing Microsoft 365 Accounts Today – MacRumors",
+     "points": 2,
+     "created_unix": 1790894891
+    },
+    {
+     "id": "49927854",
+     "title": "The OpenAI Decisions API needs a confidence you can trust",
+     "points": 34,
+     "created_unix": 1790894020
+    },
+    {
+     "id": "49927745",
+     "title": "Challengers Approach: Third Party App Stores Arrive to Google Play",
+     "points": 4,
+     "created_unix": 1790893322
+    },
+    {
+     "id": "49927599",
+     "title": "Pi-autoresearch ported to Claude Code 1:1 using the new mods API",
+     "points": 2,
+     "created_unix": 1790892230
+    },
+    {
+     "id": "49927585",
+     "title": "Scan your LLM agent's tools for cost-amplification bugs (no API key)",
+     "points": 1,
+     "created_unix": 1790892141
+    },
+    {
+     "id": "49926818",
+     "title": "zkAPI: private usage credits for any API",
+     "points": 2,
+     "created_unix": 1790887207
+    },
+    {
+     "id": "49926725",
+     "title": "E2E: Next generation E2E testing framework for web and mobile apps",
+     "points": 1,
+     "created_unix": 1790886735
+    },
+    {
+     "id": "49926681",
+     "title": "DeepSeek outage and degraded: API and status page:)",
+     "points": 1,
+     "created_unix": 1790886521
+    },
+    {
+     "id": "49926327",
+     "title": "Free hosted API for Laya, the open-weight decision model",
+     "points": 2,
+     "created_unix": 1790884623
+    },
+    {
+     "id": "49925879",
+     "title": "Apex, a coding model specialized in mobile and web with React",
+     "points": 5,
+     "created_unix": 1790882150
+    },
+    {
+     "id": "49925522",
+     "title": "Tell HN: Get the app to keep using Reddit",
+     "points": 6,
+     "created_unix": 1790880418
+    },
+    {
+     "id": "49925304",
+     "title": "Apedia",
+     "points": 1,
+     "created_unix": 1790879331
+    },
+    {
+     "id": "49924787",
+     "title": "Show HN: I built an app that scours the internet to create a daily news briefing",
+     "points": 2,
+     "created_unix": 1790876791
+    },
+    {
+     "id": "49924726",
+     "title": "View: Program that drew, in 3D, what Apollo astronauts would see out the window",
+     "points": 4,
+     "created_unix": 1790876531
+    },
+    {
+     "id": "49924275",
+     "title": "ParadeDB Search Performance Improvements",
+     "points": 69,
+     "created_unix": 1790874301
+    },
+    {
+     "id": "49923653",
+     "title": "Show HN: Bookidoro, Mac app that opens book pages during Pomodoro breaks",
+     "points": 3,
+     "created_unix": 1790871344
+    },
+    {
+     "id": "49923417",
+     "title": "Federal appeals court upholds Thomson Reuters' landmark AI copyright win",
+     "points": 4,
+     "created_unix": 1790870294
+    },
+    {
+     "id": "49923118",
+     "title": "BCBS blames AI as nearly $1B in questionable hospital charges appear",
+     "points": 2,
+     "created_unix": 1790869015
+    },
+    {
+     "id": "49922704",
+     "title": "Claude's Android App: Finding the Internal Settings",
+     "points": 2,
+     "created_unix": 1790867345
+    },
+    {
+     "id": "49922408",
+     "title": "Pete Hegseth appoints Elon Musk to US taskforce on future of warfare",
+     "points": 12,
+     "created_unix": 1790866177
+    },
+    {
+     "id": "49922074",
+     "title": "Amazon introduces a redesigned Kindle family",
+     "points": 55,
+     "created_unix": 1790864469
+    },
+    {
+     "id": "49921801",
+     "title": "Show HN: Helo – An email API from former Postmark folks",
+     "points": 15,
+     "created_unix": 1790863132
+    },
+    {
+     "id": "49921563",
+     "title": "Show HN: LongLink - Build and run custom business apps in Python",
+     "points": 4,
+     "created_unix": 1790862053
+    },
+    {
+     "id": "49921439",
+     "title": "Show HN: Behalf – Custom built apps by humans on your behalf for just 40/month",
+     "points": 2,
+     "created_unix": 1790861467
+    },
+    {
+     "id": "49921297",
+     "title": "Zenkai: A Zig App Launcher That Starts in 20ms Sometimes",
+     "points": 2,
+     "created_unix": 1790860719
+    },
+    {
+     "id": "49921262",
+     "title": "Show HN: I made a technical trivia quiz app graded by AI",
+     "points": 2,
+     "created_unix": 1790860552
+    },
+    {
+     "id": "49920858",
+     "title": "Blocking of unverified apps on Android starts in Brazil and other 3 countries",
+     "points": 2,
+     "created_unix": 1790858394
+    },
+    {
+     "id": "49920785",
+     "title": "The first fully implanted cochlear implant reaches patients",
+     "points": 110,
+     "created_unix": 1790857900
+    },
+    {
+     "id": "49920569",
+     "title": "Show HN: I want to use Apache Tika from Python, but I don't want to install Java",
+     "points": 1,
+     "created_unix": 1790856293
+    },
+    {
+     "id": "49920040",
+     "title": "Aurora PostgreSQL supports direct querying of Apache Iceberg and Parquet data",
+     "points": 4,
+     "created_unix": 1790851151
+    },
+    {
+     "id": "49919228",
+     "title": "Show HN: Ssgoi – Native app-like page transitions for mobile web",
+     "points": 2,
+     "created_unix": 1790843608
+    },
+    {
+     "id": "49919198",
+     "title": "SparkyDraw – Simple-to-use, all-device drawing web app for children",
+     "points": 1,
+     "created_unix": 1790843340
+    },
+    {
+     "id": "49919169",
+     "title": "Electrobun – cross-platform desktop apps, ships at about a megabyte",
+     "points": 3,
+     "created_unix": 1790843117
+    },
+    {
+     "id": "49919127",
+     "title": "One Auto API",
+     "points": 1,
+     "created_unix": 1790842826
+    },
+    {
+     "id": "49919009",
+     "title": "By far the best QA automation tool for iOS app?",
+     "points": 1,
+     "created_unix": 1790841752
+    },
+    {
+     "id": "49918958",
+     "title": "I built a WhatsApp client for Emacs without an API",
+     "points": 3,
+     "created_unix": 1790841228
+    },
+    {
+     "id": "49918403",
+     "title": "Blast from Past: Nokia Presentation \"Apple iPhone Was Launched\"",
+     "points": 3,
+     "created_unix": 1790836522
+    },
+    {
+     "id": "49918178",
+     "title": "Google, Apple and Amazon each meet EU officials more than any EU company",
+     "points": 6,
+     "created_unix": 1790834061
+    },
+    {
+     "id": "49918027",
+     "title": "Connection allowlists: Secure your web application's network access",
+     "points": 2,
+     "created_unix": 1790832314
+    },
+    {
+     "id": "49917080",
+     "title": "NOOP – Offline Whoop Companion App",
+     "points": 1,
+     "created_unix": 1790822506
+    },
+    {
+     "id": "49916792",
+     "title": "Pete Hegseth appoints Elon Musk to US taskforce on future of warfare",
+     "points": 15,
+     "created_unix": 1790820113
+    },
+    {
+     "id": "49916779",
+     "title": "Show HN: Paintlustrator – a free iPad app to draw and export SVGs",
+     "points": 1,
+     "created_unix": 1790820011
+    },
+    {
+     "id": "49916630",
+     "title": "Prompt Injection Firewall for AI APIs and Agent Tool Calls",
+     "points": 1,
+     "created_unix": 1790818418
+    },
+    {
+     "id": "49916434",
+     "title": "Apple App Store knows more about me than I like",
+     "points": 1,
+     "created_unix": 1790816518
+    },
+    {
+     "id": "49916224",
+     "title": "No More Drugstore Head Shots: Passport Applications Go Digital",
+     "points": 5,
+     "created_unix": 1790814334
+    },
+    {
+     "id": "49916168",
+     "title": "Ask HN: Realistic approach to making roon[0] more compact/portable?",
+     "points": 1,
+     "created_unix": 1790813983
+    },
+    {
+     "id": "49915702",
+     "title": "Appeal of Surveillance Tech CEO's Meritless Lawsuit Against Journalist Fails",
+     "points": 10,
+     "created_unix": 1790810074
+    },
+    {
+     "id": "49915530",
+     "title": "Apple's first employee: The remarkable odyssey of Bill Fernandez (2014)",
+     "points": 2,
+     "created_unix": 1790808801
+    },
+    {
+     "id": "49914899",
+     "title": "Jev predicts every plate appearance of the 2026 MLB postseason",
+     "points": 2,
+     "created_unix": 1790804767
+    },
+    {
+     "id": "49914880",
+     "title": "A Cold War Spy Satellite Named After Farrah Fawcett Just Blew Apart in Orbit",
+     "points": 25,
+     "created_unix": 1790804634
+    },
+    {
+     "id": "49914048",
+     "title": "Aurora PostgreSQL now supports querying of Apache Iceberg and Parquet data",
+     "points": 15,
+     "created_unix": 1790800669
+    },
+    {
+     "id": "49913897",
+     "title": "Show HN: EtherPK – a notes app where any concept is a Kanban Board (from tasks)",
+     "points": 1,
+     "created_unix": 1790799988
+    },
+    {
+     "id": "49913313",
+     "title": "Aurora PostgreSQL now supports direct query of Apache Iceberg and Parquet data",
+     "points": 2,
+     "created_unix": 1790797237
+    },
+    {
+     "id": "49913190",
+     "title": "AI broke the job application. What replaces it?",
+     "points": 2,
+     "created_unix": 1790796380
+    },
+    {
+     "id": "49912499",
+     "title": "Reddit is killing RSS feeds and ending public API access because of AI bots",
+     "points": 47,
+     "created_unix": 1790792601
+    },
+    {
+     "id": "49912155",
+     "title": "How Much Would You Pay to Prevent the AI Apocalypse?",
+     "points": 1,
+     "created_unix": 1790790697
+    },
+    {
+     "id": "49912062",
+     "title": "Show HN: Let's Chat – A retro mIRC-style web chat app",
+     "points": 1,
+     "created_unix": 1790790226
+    },
+    {
+     "id": "49911931",
+     "title": "Show HN: I built a free Burp/Caido alternative but, zero setup - API Testing",
+     "points": 32,
+     "created_unix": 1790789530
+    },
+    {
+     "id": "49911899",
+     "title": "Show HN: Honorfit – a pushup app blocker for your phone",
+     "points": 5,
+     "created_unix": 1790789411
+    },
+    {
+     "id": "49911766",
+     "title": "Apple's HomePad smart home hub launching on Oct 13 with iMac G4 design",
+     "points": 3,
+     "created_unix": 1790788751
+    },
+    {
+     "id": "49911523",
+     "title": "Show HN: An OSS text to CAD MCP and API",
+     "points": 3,
+     "created_unix": 1790787590
+    },
+    {
+     "id": "49911512",
+     "title": "AI API pricing index -September 2026",
+     "points": 2,
+     "created_unix": 1790787549
+    },
+    {
+     "id": "49911359",
+     "title": "Building a Personal Super App",
+     "points": 1,
+     "created_unix": 1790786976
+    },
+    {
+     "id": "49911352",
+     "title": "We Rebuilt Our API Back End Without Breaking Customer Integrations",
+     "points": 1,
+     "created_unix": 1790786966
+    },
+    {
+     "id": "49911073",
+     "title": "Show HN: WattzGOAT – an intentionally vulnerable web app for security training",
+     "points": 3,
+     "created_unix": 1790785912
+    },
+    {
+     "id": "49910963",
+     "title": "LLM gave you an answer. Should your application trust it?",
+     "points": 1,
+     "created_unix": 1790785450
+    },
+    {
+     "id": "49910030",
+     "title": "DoorDash opens US waitlists for AI ordering agent and bulk-order API",
+     "points": 1,
+     "created_unix": 1790781037
+    },
+    {
+     "id": "49909925",
+     "title": "Show HN: BreachProbe, find out if your app leaks its database",
+     "points": 4,
+     "created_unix": 1790780437
+    },
+    {
+     "id": "49909720",
+     "title": "Show HN: An App that names each cell in a spreadsheet",
+     "points": 1,
+     "created_unix": 1790779587
+    },
+    {
+     "id": "49909695",
+     "title": "Show HN: Riffle – Switch between windows of the current Mac app with Option-Tab",
+     "points": 6,
+     "created_unix": 1790779450
+    },
+    {
+     "id": "49909648",
+     "title": "Show HN: Lathoa, a math app for kids where the AI is wrong on purpose",
+     "points": 54,
+     "created_unix": 1790779137
+    },
+    {
+     "id": "49909555",
+     "title": "Show HN: Singapore MRT announcements app – Built for my son",
+     "points": 3,
+     "created_unix": 1790778766
+    },
+    {
+     "id": "49909169",
+     "title": "Apple's Reference Image tech that \"sets a new standard for verifiable\" photos",
+     "points": 1,
+     "created_unix": 1790777060
+    },
+    {
+     "id": "49909135",
+     "title": "Show HN: AtLeast – an Apple Watch timer that goes silent when you're done",
+     "points": 1,
+     "created_unix": 1790776934
+    },
+    {
+     "id": "49909091",
+     "title": "Apple's New CEO Seeks to Make Company Run Faster and Leane",
+     "points": 1,
+     "created_unix": 1790776750
+    },
+    {
+     "id": "49908899",
+     "title": "Bank of America says Meta's Muse a new risk for Apple's services revenue",
+     "points": 1,
+     "created_unix": 1790775966
+    },
+    {
+     "id": "49908808",
+     "title": "Apple Pass Designer",
+     "points": 2,
+     "created_unix": 1790775603
+    },
+    {
+     "id": "49908502",
+     "title": "ADLX 2.0: Extending graphics control to AI agents and agentic apps",
+     "points": 1,
+     "created_unix": 1790774078
+    },
+    {
+     "id": "49907855",
+     "title": "Data Is the Application",
+     "points": 2,
+     "created_unix": 1790770932
+    },
+    {
+     "id": "49907492",
+     "title": "Show HN: Mowgli, an AI design canvas for apps and websites",
+     "points": 1,
+     "created_unix": 1790768537
+    },
+    {
+     "id": "49907136",
+     "title": "What Is OpenAI's Decisions API?",
+     "points": 1,
+     "created_unix": 1790765930
+    },
+    {
+     "id": "49907071",
+     "title": "Apple Is Finally Ready to Enter Its Next Big Category: The Smart Home",
+     "points": 1,
+     "created_unix": 1790765427
+    },
+    {
+     "id": "49906892",
+     "title": "\"Apple engineer\" builds GitHub AI torture chamber to inflict \"pain\" on models",
+     "points": 29,
+     "created_unix": 1790764111
+    },
+    {
+     "id": "49906433",
+     "title": "OpenAI apologises for Medicare breach, shelves next gen ChatGPT",
+     "points": 1,
+     "created_unix": 1790760430
+    },
+    {
+     "id": "49906432",
+     "title": "Singapore govt dating app uses Gale-Shapley stable marriage algorithm",
+     "points": 468,
+     "created_unix": 1790760424
+    },
+    {
+     "id": "49905965",
+     "title": "A chiral aperiodic monotile with Fibonacci monodromy [pdf]",
+     "points": 1,
+     "created_unix": 1790756494
+    },
+    {
+     "id": "49905897",
+     "title": "Preparing your website or app for Black Friday",
+     "points": 1,
+     "created_unix": 1790755729
+    },
+    {
+     "id": "49905528",
+     "title": "NASA has a Dragon dilemma, and there appear to be no good answers",
+     "points": 4,
+     "created_unix": 1790752755
+    },
+    {
+     "id": "49905038",
+     "title": "Interferometric Synthetic Aperture Radar Drone",
+     "points": 1,
+     "created_unix": 1790748687
+    },
+    {
+     "id": "49904968",
+     "title": "Instapaper API v2",
+     "points": 3,
+     "created_unix": 1790748125
+    },
+    {
+     "id": "49904946",
+     "title": "Decision API – compare and call decision models through one API",
+     "points": 4,
+     "created_unix": 1790748012
+    },
+    {
+     "id": "49904705",
+     "title": "DeepSeek API vs. OpenRouter latency, measured daily",
+     "points": 1,
+     "created_unix": 1790745937
+    },
+    {
+     "id": "49904560",
+     "title": "Studlark AI Group Study SaaS Application",
+     "points": 2,
+     "created_unix": 1790744724
+    },
+    {
+     "id": "49904408",
+     "title": "Tesla takes on $30B in credit as it approaches unprofitability",
+     "points": 161,
+     "created_unix": 1790743057
+    },
+    {
+     "id": "49904397",
+     "title": "I built a visual music app",
+     "points": 3,
+     "created_unix": 1790742956
+    },
+    {
+     "id": "49903918",
+     "title": "A value-based approach to mathematics",
+     "points": 1,
+     "created_unix": 1790737716
+    },
+    {
+     "id": "49903233",
+     "title": "Important Update About My Apps and Apple Developer Account",
+     "points": 5,
+     "created_unix": 1790731476
+    },
+    {
+     "id": "49902960",
+     "title": "Ask HNs: where can I get a valuation of my application?",
+     "points": 1,
+     "created_unix": 1790729256
+    },
+    {
+     "id": "49902852",
+     "title": "Show HN: InfiniHash App Store – compliance tools built end-to-end by AI agents",
+     "points": 1,
+     "created_unix": 1790728499
+    },
+    {
+     "id": "49902540",
+     "title": "Show HN: ApexHierarchy – one power scale for people, companies and institutions",
+     "points": 1,
+     "created_unix": 1790726411
+    },
+    {
+     "id": "49902538",
+     "title": "Apple pressured to explain Trump role in ICE-tracking app removals",
+     "points": 5,
+     "created_unix": 1790726391
+    },
+    {
+     "id": "49902333",
+     "title": "Halo: Combat Evolved on Apple Silicon",
+     "points": 1,
+     "created_unix": 1790724972
+    },
+    {
+     "id": "49902289",
+     "title": "Forum, a Dedicated App for Facebook Groups",
+     "points": 2,
+     "created_unix": 1790724631
+    },
+    {
+     "id": "49901950",
+     "title": "OpenAI Decisions API",
+     "points": 1,
+     "created_unix": 1790722655
+    },
+    {
+     "id": "49901185",
+     "title": "Show HN: 5 Early users to get 90% off for life to test calories counter app",
+     "points": 1,
+     "created_unix": 1790718653
+    },
+    {
+     "id": "49900868",
+     "title": "CodeCrab – Local-first desktop app for AI code reviews",
+     "points": 4,
+     "created_unix": 1790717235
+    },
+    {
+     "id": "49900731",
+     "title": "Apple CEO John Ternus is reportedly planning layoffs as memory chip costs rise",
+     "points": 11,
+     "created_unix": 1790716663
+    },
+    {
+     "id": "49900344",
+     "title": "Show HN: Web server that lets you build iOS & Android offline apps like BitChat",
+     "points": 3,
+     "created_unix": 1790715208
+    },
+    {
+     "id": "49900172",
+     "title": "Looking for beta testers – companion app for musicians' followers",
+     "points": 1,
+     "created_unix": 1790714533
+    },
+    {
+     "id": "49899467",
+     "title": "Data Is the Application · Ma.ttias.be",
+     "points": 1,
+     "created_unix": 1790711979
+    },
+    {
+     "id": "49899435",
+     "title": "Americans will be able to apply for their first passport online in 2027",
+     "points": 10,
+     "created_unix": 1790711864
+    },
+    {
+     "id": "49899399",
+     "title": "Turn off and restrict access to Apple Intelligence features on Mac",
+     "points": 1,
+     "created_unix": 1790711681
+    },
+    {
+     "id": "49899312",
+     "title": "Abusing the iPhone Duo Hinge API to Play Flappy Bird",
+     "points": 1,
+     "created_unix": 1790711335
+    },
+    {
+     "id": "49899204",
+     "title": "I Built an iPhone App in Four Days with Anthropic's Frontier Model",
+     "points": 1,
+     "created_unix": 1790710794
+    },
+    {
+     "id": "49899198",
+     "title": "Trovelo – Private Travel App",
+     "points": 1,
+     "created_unix": 1790710770
+    },
+    {
+     "id": "49898221",
+     "title": "OpenAI officially allows using ChatGPT subscriptions with 3rd party apps",
+     "points": 2,
+     "created_unix": 1790706841
+    },
+    {
+     "id": "49898157",
+     "title": "AmpleGCG: Learning a Universal Generative Model for Jailbreaking",
+     "points": 1,
+     "created_unix": 1790706569
+    },
+    {
+     "id": "49897785",
+     "title": "Computer Use in the Agents API",
+     "points": 1,
+     "created_unix": 1790705284
+    },
+    {
+     "id": "49897726",
+     "title": "CRISPR-edited bananas that resist turning brown approved in UK and 10 countries",
+     "points": 5,
+     "created_unix": 1790705100
+    },
+    {
+     "id": "49897587",
+     "title": "OpenAI Launches Decisions API",
+     "points": 7,
+     "created_unix": 1790704690
+    },
+    {
+     "id": "49897257",
+     "title": "DeepSeek Harness Desktop App Ready in Preview",
+     "points": 2,
+     "created_unix": 1790703625
+    },
+    {
+     "id": "49897254",
+     "title": "I built the only multi-agent Document Intelligence application. (with MCP)",
+     "points": 2,
+     "created_unix": 1790703620
+    },
+    {
+     "id": "49896979",
+     "title": "OpenAI Answers TypeSafe's Jev with a Decision API Built on Luna",
+     "points": 7,
+     "created_unix": 1790702820
+    },
+    {
+     "id": "49896651",
+     "title": "Show HN: Iiveg.app – Find vegan food, restaurants and cosmetics around the world",
+     "points": 3,
+     "created_unix": 1790701846
+    },
+    {
+     "id": "49896625",
+     "title": "Apple patches CoreGraphics zero-day already exploited in targeted attacks",
+     "points": 1,
+     "created_unix": 1790701735
+    },
+    {
+     "id": "49896385",
+     "title": "Dissecting House of Apple 2 on modern glibc",
+     "points": 1,
+     "created_unix": 1790700790
+    },
+    {
+     "id": "49896285",
+     "title": "Platform for coding agents to build hosted apps with data, auth, and automations",
+     "points": 1,
+     "created_unix": 1790700460
+    },
+    {
+     "id": "49896220",
+     "title": "Apple Reportedly Planned to Replace 5k Support Employees with AI",
+     "points": 3,
+     "created_unix": 1790700185
+    },
+    {
+     "id": "49896171",
+     "title": "NUVACORE (fmr Apple/Qualcomm/Nuvia eng) share flexible CPU core design approach",
+     "points": 1,
+     "created_unix": 1790700014
+    },
+    {
+     "id": "49896104",
+     "title": "$10k to build open source apps for family and caregiving",
+     "points": 2,
+     "created_unix": 1790699683
+    },
+    {
+     "id": "49895704",
+     "title": "OpenAI apologizes to Australia after its AI agents breached government sites",
+     "points": 1,
+     "created_unix": 1790698029
+    },
+    {
+     "id": "49894828",
+     "title": "Oracle Extends Fusion Agentic Applications with Introduction of Fusion Claw",
+     "points": 1,
+     "created_unix": 1790695069
+    },
+    {
+     "id": "49894815",
+     "title": "Apple's New CEO Moves to Overhaul Company to Run Faster and Leaner",
+     "points": 6,
+     "created_unix": 1790695024
+    },
+    {
+     "id": "49894784",
+     "title": "Show HN: ProgressCove, calm and smart to-do app with Home Assistant integration",
+     "points": 1,
+     "created_unix": 1790694925
+    },
+    {
+     "id": "49894668",
+     "title": "Singularity – design a data model, get the REST API and the MCP server",
+     "points": 2,
+     "created_unix": 1790694583
+    },
+    {
+     "id": "49894667",
+     "title": "Show HN: Squidbrake – self-hosted approval gateway for AI agent tool calls",
+     "points": 1,
+     "created_unix": 1790694582
+    },
+    {
+     "id": "49894662",
+     "title": "Enforce positive security with Cloudflare Application Profiles",
+     "points": 1,
+     "created_unix": 1790694578
+    },
+    {
+     "id": "49894276",
+     "title": "You probably won't be able to sideload APKs on Amazon's next Fire TV Stick 4K",
+     "points": 1,
+     "created_unix": 1790693261
+    },
+    {
+     "id": "49893972",
+     "title": "I5h: Build a Rust Web App and Prove Its Behavior with Lean 4",
+     "points": 1,
+     "created_unix": 1790692257
+    },
+    {
+     "id": "49893702",
+     "title": "Show HN: We built a way for web apps to message users' phones without SMS",
+     "points": 7,
+     "created_unix": 1790691309
+    },
+    {
+     "id": "49893509",
+     "title": "America.gov",
+     "points": 780,
+     "created_unix": 1790690697
+    },
+    {
+     "id": "49893492",
+     "title": "Show HN: The Other Apple – Apple in the EU vs. the US, Feature by Feature",
+     "points": 1,
+     "created_unix": 1790690623
+    },
+    {
+     "id": "49893235",
+     "title": "Historical Stock Prices API: Python, JavaScript and Curl Quickstart",
+     "points": 2,
+     "created_unix": 1790689801
+    },
+    {
+     "id": "49893215",
+     "title": "Why browsers need a native API for open-weight models",
+     "points": 1,
+     "created_unix": 1790689721
+    },
+    {
+     "id": "49893006",
+     "title": "Show HN: Check whether a job posting is still real before you apply",
+     "points": 1,
+     "created_unix": 1790688878
+    },
+    {
+     "id": "49892760",
+     "title": "The days of the online job application are OVER",
+     "points": 1,
+     "created_unix": 1790687905
+    },
+    {
+     "id": "49892708",
+     "title": "Show HN: Gangway, self-hosted artifacts and apps from folders, PRs, and agents",
+     "points": 1,
+     "created_unix": 1790687692
+    },
+    {
+     "id": "49892561",
+     "title": "Jeb: Turn any OpenAI API into a decision model",
+     "points": 1,
+     "created_unix": 1790687176
+    },
+    {
+     "id": "49892519",
+     "title": "Show HN: Whisker – Build native iOS, Android, web and desktop apps in Rust",
+     "points": 1,
+     "created_unix": 1790687013
+    },
+    {
+     "id": "49892045",
+     "title": "Show HN: NotchMind – a native Mac app that puts the MacBook notch to work",
+     "points": 2,
+     "created_unix": 1790684819
+    },
+    {
+     "id": "49891784",
+     "title": "GeekyAnts reports top-10 placement in Clutch's financial app developer rankings",
+     "points": 3,
+     "created_unix": 1790683569
+    },
+    {
+     "id": "49891032",
+     "title": "Show HN: MadeToPost – I built a tool for making visuals for my apps",
+     "points": 1,
+     "created_unix": 1790678908
+    },
+    {
+     "id": "49890698",
+     "title": "Chatting App from Future Generation",
+     "points": 1,
+     "created_unix": 1790676307
+    },
+    {
+     "id": "49890623",
+     "title": "Microsoft Lost the API War (2004)",
+     "points": 2,
+     "created_unix": 1790675781
+    },
+    {
+     "id": "49890546",
+     "title": "Apple in Colour. In an age of beige, Apple went all in on colour",
+     "points": 3,
+     "created_unix": 1790675271
+    },
+    {
+     "id": "49890515",
+     "title": "Tesla FSD Supervised now approved in Croatia",
+     "points": 1,
+     "created_unix": 1790674974
+    },
+    {
+     "id": "49890278",
+     "title": "What if an MMO played like an API?",
+     "points": 1,
+     "created_unix": 1790673005
+    }
+   ]
+  },
+  "@CircleCI": {
+   "name": "CircleCI",
+   "wiki_article": "CircleCI",
+   "wiki_daily": {
+    "2026-08-31": 24.0,
+    "2026-09-01": 23.0,
+    "2026-09-02": 23.0,
+    "2026-09-03": 29.0,
+    "2026-09-04": 33.0,
+    "2026-09-05": 10.0,
+    "2026-09-06": 19.0,
+    "2026-09-07": 18.0,
+    "2026-09-08": 18.0,
+    "2026-09-09": 29.0,
+    "2026-09-10": 19.0,
+    "2026-09-11": 21.0,
+    "2026-09-12": 10.0,
+    "2026-09-13": 10.0,
+    "2026-09-14": 30.0,
+    "2026-09-15": 28.0,
+    "2026-09-16": 44.0,
+    "2026-09-17": 41.0,
+    "2026-09-18": 31.0,
+    "2026-09-19": 10.0,
+    "2026-09-20": 21.0,
+    "2026-09-21": 27.0,
+    "2026-09-22": 25.0,
+    "2026-09-23": 34.0,
+    "2026-09-24": 36.0,
+    "2026-09-25": 31.0,
+    "2026-09-26": 21.0,
+    "2026-09-27": 9.0,
+    "2026-09-28": 25.0,
+    "2026-09-29": 39.0,
+    "2026-09-30": 25.0,
+    "2026-10-01": 20.0,
+    "2026-10-02": 34.0,
+    "2026-10-03": 15.0,
+    "2026-10-04": 8.0,
+    "2026-10-05": 20.0,
+    "2026-10-06": 31.0,
+    "2026-10-07": 32.0,
+    "2026-10-08": 28.0,
+    "2026-10-09": 32.0,
+    "2026-10-10": 6.0,
+    "2026-10-11": 14.0,
+    "2026-10-12": 22.0,
+    "2026-10-13": 32.0,
+    "2026-10-14": 19.0
+   },
+   "hn_stories": [
+    {
+     "id": "50020545",
+     "title": "Show HN: CircleIt – Circle something on a web page, your coding agent fixes it",
+     "points": 1,
+     "created_unix": 1791553838
+    },
+    {
+     "id": "49983202",
+     "title": "Is This a Joke CircleCI?",
+     "points": 2,
+     "created_unix": 1791316370
+    },
+    {
+     "id": "49894463",
+     "title": "PocketCI – Monitor your CircleCI builds from your iPhone",
+     "points": 1,
+     "created_unix": 1790693893
+    },
+    {
+     "id": "49757929",
+     "title": "Seeing Circles, Sines, and Signals",
+     "points": 77,
+     "created_unix": 1789754381
+    },
+    {
+     "id": "49585561",
+     "title": "Musk's Inner Circle Is Pouring Cash into Making Psychedelics Mainstream",
+     "points": 8,
+     "created_unix": 1788695058
+    },
+    {
+     "id": "49579804",
+     "title": "Elon Musk's Inner Circle Is Pouring Cash into Making Psychedelics Mainstream",
+     "points": 4,
+     "created_unix": 1788636402
+    }
+   ]
+  },
+  "@ClickHouseDB": {
+   "name": "ClickHouse",
+   "wiki_article": "ClickHouse",
+   "wiki_daily": {
+    "2026-08-31": 375.0,
+    "2026-09-01": 405.0,
+    "2026-09-02": 342.0,
+    "2026-09-03": 283.0,
+    "2026-09-04": 263.0,
+    "2026-09-05": 250.0,
+    "2026-09-06": 138.0,
+    "2026-09-07": 276.0,
+    "2026-09-08": 258.0,
+    "2026-09-09": 260.0,
+    "2026-09-10": 260.0,
+    "2026-09-11": 327.0,
+    "2026-09-12": 275.0,
+    "2026-09-13": 89.0,
+    "2026-09-14": 235.0,
+    "2026-09-15": 303.0,
+    "2026-09-16": 285.0,
+    "2026-09-17": 308.0,
+    "2026-09-18": 255.0,
+    "2026-09-19": 126.0,
+    "2026-09-20": 581.0,
+    "2026-09-21": 288.0,
+    "2026-09-22": 255.0,
+    "2026-09-23": 249.0,
+    "2026-09-24": 235.0,
+    "2026-09-25": 240.0,
+    "2026-09-26": 117.0,
+    "2026-09-27": 136.0,
+    "2026-09-28": 233.0,
+    "2026-09-29": 264.0,
+    "2026-09-30": 308.0,
+    "2026-10-01": 297.0,
+    "2026-10-02": 199.0,
+    "2026-10-03": 239.0,
+    "2026-10-04": 89.0,
+    "2026-10-05": 229.0,
+    "2026-10-06": 241.0,
+    "2026-10-07": 236.0,
+    "2026-10-08": 268.0,
+    "2026-10-09": 236.0,
+    "2026-10-10": 138.0,
+    "2026-10-11": 169.0,
+    "2026-10-12": 312.0,
+    "2026-10-13": 300.0,
+    "2026-10-14": 279.0
+   },
+   "hn_stories": [
+    {
+     "id": "50104741",
+     "title": "OLTP is expensive, you can ClickHouse it",
+     "points": 13,
+     "created_unix": 1792076647
+    },
+    {
+     "id": "50063600",
+     "title": "Show HN: Chkit – Schema, migrations and backfills for ClickHouse (like Drizzle)",
+     "points": 9,
+     "created_unix": 1791842154
+    },
+    {
+     "id": "50049003",
+     "title": "ClickHouse C – Talk to ClickHouse using its native binary protocol",
+     "points": 48,
+     "created_unix": 1791760109
+    },
+    {
+     "id": "50045644",
+     "title": "Show HN: A Tailscale identity-aware gateway for Postgres and ClickHouse",
+     "points": 2,
+     "created_unix": 1791739983
+    },
+    {
+     "id": "50025866",
+     "title": "ClickHouse outcompresses Parquet: Surprises from our migration",
+     "points": 4,
+     "created_unix": 1791575841
+    },
+    {
+     "id": "50006760",
+     "title": "Show HN: Pivot – fast analytics on Iceberg, 2x+ faster than ClickHouse / DuckDB",
+     "points": 16,
+     "created_unix": 1791472122
+    },
+    {
+     "id": "50005013",
+     "title": "Pivot – Real-time analytics on Iceberg, faster than ClickHouse on benchmarks",
+     "points": 3,
+     "created_unix": 1791462512
+    },
+    {
+     "id": "50003665",
+     "title": "Does ClickHouse need its own storage format?",
+     "points": 2,
+     "created_unix": 1791451606
+    },
+    {
+     "id": "49977499",
+     "title": "Why Databricks can't match ClickHouse Cloud for real-time analytics",
+     "points": 2,
+     "created_unix": 1791290205
+    },
+    {
+     "id": "49976047",
+     "title": "ClickHouse Database Management GUI: Tables, SQL, and Schemas",
+     "points": 4,
+     "created_unix": 1791277677
+    },
+    {
+     "id": "49966316",
+     "title": "Pivot – Fast ClickHouse alternative on iceberg / deltalake, written in Rust",
+     "points": 3,
+     "created_unix": 1791214866
+    },
+    {
+     "id": "49964173",
+     "title": "Pivot – Real-time analytics on Iceberg and Delta, faster than ClickHouse",
+     "points": 1,
+     "created_unix": 1791204503
+    },
+    {
+     "id": "49937913",
+     "title": "The definitive guide to ClickHouse query optimization",
+     "points": 1,
+     "created_unix": 1790971179
+    },
+    {
+     "id": "49920937",
+     "title": "BigQuery to ClickHouse at 15M Call Minutes a Day",
+     "points": 1,
+     "created_unix": 1790858955
+    },
+    {
+     "id": "49920565",
+     "title": "David Wheeler: pg_ClickHouse and chdb updates: Encoding, nesting, and types",
+     "points": 1,
+     "created_unix": 1790856263
+    },
+    {
+     "id": "49911659",
+     "title": "Oliver  beats ClickHouse",
+     "points": 2,
+     "created_unix": 1790788167
+    },
+    {
+     "id": "49910999",
+     "title": "Pg_ClickHouse and chdb updates: encoding, nesting, and types",
+     "points": 1,
+     "created_unix": 1790785615
+    },
+    {
+     "id": "49898822",
+     "title": "How We Made Object Storage Faster Than ClickHouse for Log Search",
+     "points": 1,
+     "created_unix": 1790709101
+    },
+    {
+     "id": "49870432",
+     "title": "Oliver Beats ClickHouse",
+     "points": 2,
+     "created_unix": 1790540388
+    },
+    {
+     "id": "49832961",
+     "title": "We Built a Data Warehouse Using ClickHouse",
+     "points": 2,
+     "created_unix": 1790267072
+    },
+    {
+     "id": "49758767",
+     "title": "We Built a Data Warehouse Using ClickHouse",
+     "points": 2,
+     "created_unix": 1789758304
+    },
+    {
+     "id": "49752363",
+     "title": "ClickHouse permission system has a trivial bypass",
+     "points": 3,
+     "created_unix": 1789727330
+    },
+    {
+     "id": "49745640",
+     "title": "ClickHouse's New TimeSeries Engine: Drop-In Prometheus Replacement",
+     "points": 2,
+     "created_unix": 1789674578
+    },
+    {
+     "id": "49708076",
+     "title": "ClickHouse as a Streaming HTTP API",
+     "points": 1,
+     "created_unix": 1789449872
+    },
+    {
+     "id": "49699321",
+     "title": "Walshadow – Replicate PostgreSQL Rows into ClickHouse from Physical WAL",
+     "points": 2,
+     "created_unix": 1789402294
+    },
+    {
+     "id": "49697337",
+     "title": "WalShadow: Sub-second Postgres replication to ClickHouse from physical WAL",
+     "points": 4,
+     "created_unix": 1789395643
+    },
+    {
+     "id": "49681340",
+     "title": "Rawtree – A ClickHouse Fork by Tinybird",
+     "points": 2,
+     "created_unix": 1789287302
+    },
+    {
+     "id": "49660791",
+     "title": "WalShadow: Sub-second Postgres replication to ClickHouse from physical WAL",
+     "points": 63,
+     "created_unix": 1789142949
+    },
+    {
+     "id": "49646322",
+     "title": "Sub-second Postgres replication to ClickHouse from physical WAL",
+     "points": 9,
+     "created_unix": 1789057363
+    },
+    {
+     "id": "49614115",
+     "title": "Moving to Graviton 5 halved our ClickHouse query latency",
+     "points": 2,
+     "created_unix": 1788890521
+    },
+    {
+     "id": "49601138",
+     "title": "I've operated petabyte-scale ClickHouse clusters for 5 years",
+     "points": 246,
+     "created_unix": 1788804304
+    },
+    {
+     "id": "49567974",
+     "title": "Pipelined SQL in ClickHouse 26.8",
+     "points": 1,
+     "created_unix": 1788544656
+    },
+    {
+     "id": "49547142",
+     "title": "ClickHouse vs. OpenObserve for Logs, Metrics and Traces (2026)",
+     "points": 2,
+     "created_unix": 1788422063
+    },
+    {
+     "id": "49539662",
+     "title": "ClickGap: Autonomous QA for ClickHouse",
+     "points": 1,
+     "created_unix": 1788370655
+    },
+    {
+     "id": "49526910",
+     "title": "ClickHouse Welcomes RunReveal",
+     "points": 7,
+     "created_unix": 1788291171
+    },
+    {
+     "id": "49516673",
+     "title": "Release Release v26.8.1.2041-LTS · ClickHouse/ClickHouse",
+     "points": 2,
+     "created_unix": 1788224256
+    }
+   ],
+   "gdelt_daily": {
+    "2026-08-31": 3.0,
+    "2026-09-01": 0.0,
+    "2026-09-02": 0.0,
+    "2026-09-03": 0.0,
+    "2026-09-04": 0.0,
+    "2026-09-05": 0.0,
+    "2026-09-06": 0.0,
+    "2026-09-07": 2.0,
+    "2026-09-08": 0.0,
+    "2026-09-09": 0.0,
+    "2026-09-10": 0.0,
+    "2026-09-11": 0.0,
+    "2026-09-12": 0.0,
+    "2026-09-13": 0.0,
+    "2026-09-20": 0.0,
+    "2026-09-21": 0.0,
+    "2026-09-22": 1.0,
+    "2026-09-23": 1.0,
+    "2026-09-24": 7.0,
+    "2026-09-25": 0.0,
+    "2026-09-27": 0.0,
+    "2026-09-28": 0.0,
+    "2026-09-29": 2.0,
+    "2026-09-30": 2.0,
+    "2026-10-01": 3.0,
+    "2026-10-02": 0.0,
+    "2026-10-06": 0.0,
+    "2026-10-08": 0.0,
+    "2026-10-10": 0.0,
+    "2026-10-15": 0.0,
+    "2026-10-16": 0.0
+   }
+  }
+ },
+ "days": {},
+ "errors": [
+  "gdelt @AmpCode: GDELT returned non-JSON for '\"Amp\"': 'The specified phrase is too short.\\n'",
+  "gdelt @CircleCI: HTTP 429 from api.gdeltproject.org for https://api.gdeltproject.org/api/v2/doc/doc?query=%22CircleCI%22&mode=timelinevolraw&format=json&startdatetime=2026083100"
+ ]
+}

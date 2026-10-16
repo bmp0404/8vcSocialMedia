@@ -15,6 +15,7 @@ import time
 import urllib.parse
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
+from email.utils import parsedate_to_datetime
 from typing import Protocol
 
 from harness.context import snowflake
@@ -72,12 +73,47 @@ class XPost:
         return d
 
 
+@dataclass
+class XUser:
+    """An account as seen at `fetched_at` (for example, one reposter of a post)."""
+
+    handle: str
+    fetched_at: str
+    followers: int | None = None
+    following: int | None = None
+    statuses: int | None = None
+    joined: datetime | None = None
+    verified: bool | None = None
+    description: str | None = None
+
+    def to_dict(self) -> dict:
+        d = asdict(self)
+        d["joined"] = self.joined.isoformat() if self.joined else None
+        return d
+
+
+@dataclass
+class ReplySample:
+    """Replies merged from both of X's sort orders, with how much of the thread they cover."""
+
+    replies: list[XPost]
+    reply_count: int  # the post's own reply counter at fetch time
+    fetched_at: str
+
+    @property
+    def coverage(self) -> float | None:
+        """Unique replies sampled / replies X reports. None when the post has no replies."""
+        return min(len(self.replies) / self.reply_count, 1.0) if self.reply_count else None
+
+
 class XReader(Protocol):
     def status(self, status_id: str) -> XPost: ...
 
     def profile_statuses(self, handle: str, limit: int = 20) -> list[XPost]: ...
 
-    def conversation(self, status_id: str) -> list[XPost]: ...
+    def conversation(self, status_id: str, ranking_mode: str = "likes") -> list[XPost]: ...
+
+    def reposters(self, status_id: str, max_pages: int = 1) -> list[XUser]: ...
 
 
 def _parse(raw: dict, fetched_at: str) -> XPost:
@@ -173,12 +209,59 @@ class FxTwitterReader:
                 break
         return posts[:limit]
 
-    def conversation(self, status_id: str, max_age_s=_READER_DEFAULT) -> list[XPost]:
-        """The first page of replies (about 35), in X's relevance order, not time order.
+    def conversation(self, status_id: str, ranking_mode: str = "likes", max_age_s=_READER_DEFAULT) -> list[XPost]:
+        """One page of replies (about 32-35), ranked by `likes` (X's default) or `recency` (newest first).
 
-        Each reply carries its author's follower count. fxtwitter ignores the
-        bottom cursor for conversations (checked 2026-10-15: `cursor=` 404s and
-        `c=` returns page one again), so deeper pages are not available here.
+        Each reply carries its author's follower count. The bottom cursor 404s
+        for conversations (checked 2026-10-15), so only the first page of each
+        order is reachable. The likes order favours early replies, so a curve
+        built from it alone is biased toward an early spike; use `replies()`.
         """
-        data, fetched_at = self._get(f"/2/conversation/{int(status_id)}", max_age_s)
+        if ranking_mode not in ("likes", "recency"):
+            raise ValueError(f"ranking_mode must be likes or recency, not {ranking_mode!r}")
+        path = f"/2/conversation/{int(status_id)}"
+        if ranking_mode == "recency":
+            path += "?ranking_mode=recency"
+        data, fetched_at = self._get(path, max_age_s)
         return [_parse(r, fetched_at) for r in data.get("replies") or []]
+
+    def replies(self, status_id: str, max_age_s=_READER_DEFAULT) -> ReplySample:
+        """Both sort orders merged and de-duplicated. Covers every reply on posts with up to ~65."""
+        top = self.conversation(status_id, "likes", max_age_s)
+        new = self.conversation(status_id, "recency", max_age_s)
+        merged = {r.id: r for r in top + new if r.author_handle}
+        post = self.status(status_id, max_age_s)
+        return ReplySample(replies=list(merged.values()), reply_count=post.replies, fetched_at=post.fetched_at)
+
+    def reposters(self, status_id: str, max_pages: int = 1, max_age_s=_READER_DEFAULT) -> list[XUser]:
+        """Accounts that reposted, up to 100 per page, roughly largest follower count first.
+
+        Reposts carry no timestamps. The ordering was observed on one post
+        (Deno, 2026-10-15), so do not rely on it being exact.
+        """
+        users: list[XUser] = []
+        cursor = None
+        for _ in range(max_pages):
+            path = f"/2/status/{int(status_id)}/reposts?count=100"
+            if cursor:
+                path += "&cursor=" + urllib.parse.quote(cursor)
+            data, fetched_at = self._get(path, max_age_s)
+            batch = data.get("results") or []
+            for u in batch:
+                joined = u.get("joined")
+                users.append(
+                    XUser(
+                        handle=u.get("screen_name") or "",
+                        fetched_at=fetched_at,
+                        followers=u.get("followers"),
+                        following=u.get("following"),
+                        statuses=u.get("statuses"),
+                        joined=parsedate_to_datetime(joined) if joined else None,
+                        verified=(u.get("verification") or {}).get("verified"),
+                        description=u.get("description"),
+                    )
+                )
+            cursor = (data.get("cursor") or {}).get("bottom")
+            if not batch or not cursor:
+                break
+        return users

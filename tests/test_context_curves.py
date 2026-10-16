@@ -85,12 +85,23 @@ def test_step_jump_after_small_spike():
 
 
 def test_multi_wave_spike_then_gradual_reignition():
-    w1, w2 = exp_cum(500, 45), gamma_cum(1500, 90, start=1200)
+    # Second wave peaks ~11.6 h after the first: outside the 20-28 h circadian window.
+    w1, w2 = exp_cum(500, 45), gamma_cum(1500, 90, start=600)
     assert shape_of(snaps_from(lambda m: w1(m) + w2(m))) == "multi_wave"
 
 
-def test_insufficient_when_total_too_small():
-    assert shape_of(snaps_from(exp_cum(10, 30))) == "insufficient"
+def test_second_peak_a_day_later_is_circadian_echo():
+    # Second wave peaks at ~24 h (1380 + 90 min): the audience's next day, not news.
+    w1, w2 = exp_cum(500, 45), gamma_cum(1500, 90, start=1380)
+    assert shape_of(snaps_from(lambda m: w1(m) + w2(m))) == "circadian_echo"
+
+
+def test_stillborn_when_observed_but_tiny():
+    assert shape_of(snaps_from(exp_cum(10, 30))) == "stillborn"
+
+
+def test_insufficient_beats_stillborn_when_observed_under_an_hour():
+    assert shape_of(snaps_from(exp_cum(5, 30), hours=0.75)) == "insufficient"
 
 
 def test_insufficient_when_observed_under_an_hour():
@@ -185,6 +196,33 @@ def test_find_waves_merges_peaks_without_a_deep_trough():
 def test_find_waves_requires_minimum_gap():
     v = [10, 0, 10, 0]
     assert find_waves(v, 15, P) == [0]
+
+
+def _views_snaps(views_at, eng_at, minutes):
+    return [Snapshot("1", T0 + timedelta(minutes=m), eng_at(m), 0, 0, 0, views=views_at(m)) for m in minutes]
+
+
+def test_view_surge_low_conversion_flags_promoted_reach():
+    # 100 views/min with 2% conversion, then 2,000 views/min converting at 0.1%.
+    mins = list(range(15, 181, 15))
+    views = lambda m: 100 * m if m <= 120 else 12000 + 2000 * (m - 120)  # noqa: E731
+    eng = lambda m: round(0.02 * min(m, 120) * 100 + (0.001 * 2000 * (m - 120) if m > 120 else 0))  # noqa: E731
+    inf = detect(T0, _views_snaps(views, eng, mins))
+    assert "view_surge_low_conversion" in inf.flags
+    assert inf.stats["view_surge"]["view_rate_ratio"] == 20.0
+
+
+def test_view_surge_that_converts_is_not_flagged():
+    mins = list(range(15, 181, 15))
+    views = lambda m: 100 * m if m <= 120 else 12000 + 2000 * (m - 120)  # noqa: E731
+    eng = lambda m: round(0.02 * views(m))  # noqa: E731
+    assert "view_surge_low_conversion" not in detect(T0, _views_snaps(views, eng, mins)).flags
+
+
+def test_slow_start_against_author_baseline():
+    snaps = snaps_from(exp_cum(100, 30))
+    assert "slow_start" in detect(T0, snaps, baseline_60=500).flags
+    assert "slow_start" not in detect(T0, snaps, baseline_60=50).flags
 
 
 def test_classify_shape_uses_snapshot_floor():
