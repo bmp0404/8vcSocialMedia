@@ -20,9 +20,17 @@ class LLM:
         raise NotImplementedError
 
     def complete_json(self, system: str, prompt: str, mock: Callable[[], Any] | None = None) -> Any:
-        """Ask for JSON and parse it. `mock` supplies canned output for the offline backend."""
-        text = self.complete(system + "\n\nRespond with JSON only, no prose.", prompt)
-        return parse_json(text)
+        """Ask for JSON and parse it, asking once more if the answer isn't JSON. `mock` supplies
+        canned output for the offline backend. One malformed orient answer on 2026-10-15 killed a
+        live round after four minutes of observing, so a single retry is cheaper than the rerun."""
+        system = system + "\n\nRespond with JSON only, no prose."
+        text = self.complete(system, prompt)
+        try:
+            return parse_json(text)
+        except ValueError as e:
+            print(f"[llm] answer wasn't JSON ({e}); asking once more")
+            retry = f"{prompt}\n\nYour last answer wasn't valid JSON ({e}). Answer again with only the JSON."
+            return parse_json(self.complete(system, retry))
 
 
 class AnthropicLLM(LLM):
@@ -72,10 +80,13 @@ def parse_json(text: str) -> Any:
     try:
         return json.loads(text)
     except json.JSONDecodeError:
-        match = re.search(r"(\{.*\}|\[.*\])", text, re.S)
-        if not match:
+        # Take the first JSON value and ignore what follows it. A greedy {.*} match spanned two
+        # objects in one live orient answer and failed with "Extra data".
+        starts = [i for i in (text.find("{"), text.find("[")) if i >= 0]
+        if not starts:
             raise ValueError(f"LLM did not return JSON: {text[:200]}")
-        return json.loads(match.group(1))
+        value, _ = json.JSONDecoder().raw_decode(text, min(starts))
+        return value
 
 
 def get_llm(provider: str | None = None) -> LLM:
