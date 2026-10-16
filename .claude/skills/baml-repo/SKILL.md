@@ -1,6 +1,6 @@
 ---
 name: baml-repo
-description: Rules for BAML in this repo (eval/baml_src, eval/baml_sdk, harness/post_judge) and for deciding whether to move an LLM call to BAML. Use when editing a .baml file, regenerating baml_sdk, changing the judge, or proposing to migrate a harness LLM call. Read baml-core first for the language itself.
+description: Rules for BAML in this repo (eval/baml_src, the generated baml_sdk/ at the repo root, harness/post_judge) and for deciding whether to move an LLM call to BAML. Use when editing a .baml file, regenerating baml_sdk, changing the judge, or proposing to migrate a harness LLM call. Read baml-core first for the language itself.
 ---
 
 # BAML in this repo
@@ -10,9 +10,9 @@ The repo runs BAML v1: `baml-bridge` and toolchain 0.22.2, with the generated pa
 ## Setup
 
 - Bump `baml-bridge` in `pyproject.toml` and `BAML_VERSION` together. The runtime has to match the toolchain.
-- After every `.baml` edit, run `BAML_VERSION=0.22.2 baml generate --directory eval`, then `git add -f eval/baml_sdk`. The generator writes an ignore-all `.gitignore`, and stale bytecode keeps serving the old prompt.
-- Never edit `eval/baml_sdk` by hand, because the next generate overwrites it.
-- To detect drift, compare `eval/baml_sdk/_baml_sources.py` with `eval/baml_src`. Don't byte-diff `_inlinedbaml.py`: its bytecode embeds the absolute path of the machine that generated it, so it changes with no source change.
+- After every `.baml` edit, run `BAML_VERSION=0.22.2 baml generate --directory eval`, then `git add -f baml_sdk`. The project lives in `eval/`, but the generator writes the package to the repo root. The generator writes an ignore-all `.gitignore`, and stale bytecode keeps serving the old prompt.
+- Never edit `baml_sdk/` by hand, because the next generate overwrites it.
+- To detect drift, compare `baml_sdk/_baml_sources.py` with `eval/baml_src`. Don't byte-diff `_inlinedbaml.py`: its bytecode embeds the absolute path of the machine that generated it, so it changes with no source change.
 - After a toolchain bump, rerun `BAML_VERSION=<v> baml agent install --project eval` and move the skill to `.claude/skills/baml-core/`. The CLI refuses agent runs when the skill doesn't match.
 
 ## Types and parsing
@@ -58,3 +58,7 @@ Migrating replaces a hand-written "Return JSON" line with `ctx.output_format()`,
   - the qualify panel: runtime keys, and its AUC was measured on the current prompt
   - iterate's frozen instruments: changing them breaks ledger comparability
   - plain-string writers
+
+## One project per process
+
+Keep every BAML function in the single project at `eval/baml_src`. The bridge loads one runtime per Python process, and every project generates a package named `baml_sdk`, so a second project's functions fail with `BamlPanic: Function not found` once the first is loaded. The engine runs orient and the judge in the same process, so they have to share one project. `baml.toml` rejects `[dependencies]`.
