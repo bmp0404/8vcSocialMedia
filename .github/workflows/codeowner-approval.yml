@@ -1,0 +1,35 @@
+name: codeowner-approval
+
+# Reruns on every review so an owner's approval clears the check without a new push.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: codeowner-approval-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  codeowner-approval:
+    runs-on: ubuntu-latest
+    steps:
+      # Read CODEOWNERS and the script from the base branch, so a pull request can't change its own rules.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: .github
+      # The pull request that adds this check runs before main has the script, so it passes.
+      - run: |
+          if [ -f .github/scripts/codeowner_check.py ]; then
+            python3 .github/scripts/codeowner_check.py
+          else
+            echo "main has no codeowner_check.py yet, so this check passes."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
