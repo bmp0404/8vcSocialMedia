@@ -17,13 +17,13 @@ PROVIDER = os.getenv("HARNESS_PROVIDER", "mock").lower()
 MODEL = os.getenv("HARNESS_MODEL", "")
 SOURCES = [s.strip() for s in os.getenv("HARNESS_SOURCES", "sample").split(",") if s.strip()]
 
-# Mission profiles. mission/profiles/<name>/ holds one brand's mission.md, observe.toml, panel.json and
-# reply_framing.json, plus an optional takes.json. HARNESS_PROFILE picks the profile; use_profile() switches
+# Mission profiles. mission/profiles/<name>/ holds one brand's mission.md, observe.toml, panel.json,
+# reply_framing.json and prompts.toml (the brand wording the action prompts insert), plus an optional takes.json. HARNESS_PROFILE picks the profile; use_profile() switches
 # it for a block, so one process can work for two brands. Every reader of these files goes through
 # profile_file(), which raises ProfileError naming the path when a profile or file is missing.
 PROFILES_DIR = ROOT / "mission" / "profiles"
 DEFAULT_PROFILE = "wnba"
-PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json")
+PROFILE_FILES = ("mission.md", "observe.toml", "panel.json", "reply_framing.json", "prompts.toml")
 # Each points one profile file somewhere else, for tests and one-off runs; it applies to the active profile.
 FILE_OVERRIDES = {"observe.toml": "HARNESS_OBSERVE_CONFIG", "panel.json": "HARNESS_PANEL",
                   "reply_framing.json": "HARNESS_REPLY_FRAMING"}

@@ -22,13 +22,13 @@ from urllib.parse import urlparse
 
 from harness import config
 from harness.llm import LLM
-from harness.minds import corpus, gate, routing, thread, veto, writer
+from harness.minds import brand, corpus, gate, routing, thread, veto, writer
 from harness.minds.schema import POST_LANE, REPLY_LANE, ActionSchemaError, Offer, parse_call, parse_plan
 from harness.minds.settings import ActionConfig, GateLimits
 from harness.models import Action, Narrative
 from harness.xtext import MAX_WEIGHTED_CHARS, weighted_length
 
-PLAN_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. For each candidate post, decide whether the account should reply. Reply only where a person who follows these subjects would plausibly jump in. Abstain where any reply risks reading as cruel, opportunistic or off-mission (injury news needs care), with reason off_mission or mute_risk. In "intent", say in a few words what a good reply would do. You don't write the reply.
+PLAN_SYSTEM = """You run a small account on X. The mission below sets its subjects and tone. For each candidate post, decide whether the account should reply. Reply only where a person who follows these subjects would plausibly jump in. Abstain where any reply risks reading as cruel, opportunistic or off-mission ({plan_care}), with reason off_mission or mute_risk. In "intent", say in a few words what a good reply would do. You don't write the reply.
 
 MISSION:
 {mission}"""
@@ -150,7 +150,7 @@ def plan_targets(llm: LLM, mission: str, lessons: str, targets: list[dict]) -> t
             'Return JSON {"plans": [{"target_url": "...", "tool": "reply" or "abstain", "side": "own|rival|neutral", "intent": "...", '
             '"reason": "off_mission|mute_risk|no_angle (abstain only)", "detail": "..."}]} with one entry per post.')
     try:
-        out = llm.complete_json(PLAN_SYSTEM.format(mission=mission), user,
+        out = llm.complete_json(PLAN_SYSTEM.format(mission=mission, plan_care=brand.text("plan_care")), user,
                                 mock=lambda: {"plans": [{"target_url": t["url"], "tool": "reply", "side": "own", "intent": "mock"}
                                                         for t in targets]})
         return parse_plan(out, offer), ""
@@ -280,7 +280,8 @@ def answer_target(llm: LLM, mission: str, facts: str, t: dict, cfg: ActionConfig
             method, note = "styled", str(e)
             routing.warn(f"continuation unavailable ({e}); replies fall back to the styled prompt")
     if method in ("styled", "banter"):
-        texts = writer.styled_replies(llm, mission, author, post, page, cfg, angle=writer.BANTER_ANGLE if banter else "")
+        texts = writer.styled_replies(llm, mission, author, post, page, cfg,
+                                      angle=brand.text("rival_angle") if banter else "")
     # The page hides handles; the gate's context keeps the real ones, so a draft may @ a real replier.
     known = " ".join(f"@{r['author']}" for r in replies if r.get("author"))
     context = (f"POST by @{author}:\n{post}\n\nTHREAD:\n" + "\n".join(f"- {r}" for r in page)
@@ -478,7 +479,7 @@ def post_lane(llm: LLM, mission: str, narratives: list[Narrative], chorus: list[
         top = max(narratives, key=lambda n: n.relevance * n.velocity)
         decisions.append(Decision(
             POST_LANE, top.id, "ask_human",
-            question=(f"{top.title}. Got a take, a clip or a detail only a real fan would know? Add it to "
+            question=(f"{top.title}. Got a take, a clip or {brand.text('ask_detail')}? Add it to "
                       f"mission/profiles/{config.profile_name()}/takes.json; the harness picks the timing and "
                       "posts your words as written."),
             candidates=angles[:3],

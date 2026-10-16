@@ -1,0 +1,10 @@
+# Brand wording the action prompts insert (harness/minds/brand.py). Every key is required.
+# Written from this profile's mission.md, which treats other tools as colleagues. Nothing here was
+# measured; the wnba values are the ones the action experiments ran with.
+
+caption_example = "the new release reads your whole repo before it plans. finally"
+plan_care = "outages, layoffs and security incidents need care"
+side_rule = "it disparages another tool or makes a claim about one the post doesn't support (contrasting approaches is fine)"
+risk_people = "a developer, founder, maintainer or reporter"
+rival_angle = "This post is from another tool's account. Reply as a colleague would: a concrete take or a friendly riff, never a dig at their product."
+ask_detail = "a detail only someone who uses these tools every day would know"

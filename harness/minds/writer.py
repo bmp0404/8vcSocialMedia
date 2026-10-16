@@ -20,7 +20,7 @@ from pathlib import Path
 
 from harness import config
 from harness.llm import LLM
-from harness.minds import routing
+from harness.minds import brand, routing
 from harness.minds.settings import ActionConfig
 
 # Handles for the reply the model writes. Plain, not themed, so the code stays brand-agnostic.
@@ -35,14 +35,10 @@ MISSION:
 {mission}"""
 
 CAPTION_SYSTEM = """You caption posts for a small account on X that shares other people's media and news. The mission below sets its subjects and tone.
-A caption reads like a text to a friend: under {max_chars} characters, lowercase is fine. It has to make sense on its own, even if the link preview never loads, so give your reaction together with the one fact it reacts to ("aliyah had knee surgery and still made all-star. absurd"). Don't credit the source or add a link; that gets added for you. No hashtags, no em dashes, no emoji strings, don't sound like a brand. Never add a fact, name or number the source doesn't contain.
+A caption reads like a text to a friend: under {max_chars} characters, lowercase is fine. It has to make sense on its own, even if the link preview never loads, so give your reaction together with the one fact it reacts to ("{caption_example}"). Don't credit the source or add a link; that gets added for you. No hashtags, no em dashes, no emoji strings, don't sound like a brand. Never add a fact, name or number the source doesn't contain.
 
 MISSION:
 {mission}"""
-
-
-BANTER_ANGLE = ("This post is about a rival of the account. Reply from the account's side with banter at the rival's "
-                "take or team: a jab, never cheering them, never insulting a person.")
 
 
 class WriterUnavailable(RuntimeError):
@@ -137,7 +133,8 @@ def captions(llm: LLM, mission: str, source: str, cfg: ActionConfig) -> list[str
     user = (f"SOURCE:\n{source}\n\nWrite {cfg.caption_samples} different captions. "
             'Return JSON: {"captions": ["..."]}')
     out = routing.on_model(llm, cfg.styled_model, "the caption writer").complete_json(
-        CAPTION_SYSTEM.format(mission=mission, max_chars=cfg.caption_max_chars), user,
+        CAPTION_SYSTEM.format(mission=mission, max_chars=cfg.caption_max_chars,
+                              caption_example=brand.text("caption_example")), user,
         mock=lambda: {"captions": [f"mock caption {MOCK_WORDS[i % len(MOCK_WORDS)]}" for i in range(cfg.caption_samples)]},
     )
     return [_first_line(x) for x in out.get("captions", []) if isinstance(x, str)][: cfg.caption_samples]

@@ -1,0 +1,15 @@
+# Brand wording the action prompts insert (harness/minds/brand.py). Every key is required.
+# These are the strings the prompts held before profiles, so the wnba prompts are unchanged.
+
+# The one example in the caption writer's prompt (writer.CAPTION_SYSTEM).
+caption_example = "aliyah had knee surgery and still made all-star. absurd"
+# Which news the reply planner treats with care (lanes.PLAN_SYSTEM).
+plan_care = "injury news needs care"
+# The veto's off_mission rule about the account's side (veto.VETO_SYSTEM).
+side_rule = "it sincerely cheers or congratulates a rival (banter or a jab at a rival is fine)"
+# The people the veto's risk rule names (veto.VETO_SYSTEM).
+risk_people = "a player, coach, reporter or fan"
+# The styled writer's angle on a post the planner labels rival (writer.styled_replies).
+rival_angle = "This post is about a rival of the account. Reply from the account's side with banter at the rival's take or team: a jab, never cheering them, never insulting a person."
+# What the question to a person asks for (lanes.post_lane).
+ask_detail = "a detail only a real fan would know"

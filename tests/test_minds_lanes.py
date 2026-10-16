@@ -6,7 +6,7 @@ import pytest
 
 from harness import config
 from harness.llm import LLM, MockLLM
-from harness.minds import decide, lanes, writer
+from harness.minds import brand, decide, lanes, writer
 from harness.minds.settings import ActionConfig
 from harness.models import Action, Narrative
 
@@ -429,7 +429,7 @@ def test_rival_thread_banters_with_the_styled_writer():
     actions, _ = run(llm, [narrative([target()])])
     (a,) = [a for a in actions if a.type == "reply"]
     assert (a.draft_meta["method"], a.draft_meta["side"]) == ("banter", "rival")
-    assert any(writer.BANTER_ANGLE in p for p in prompts)
+    assert any(brand.text("rival_angle") in p for p in prompts)
 
 
 def test_rival_thread_can_abstain():

@@ -3,7 +3,7 @@
 import pytest
 
 from harness import config, memory, memstore
-from harness.minds import writer
+from harness.minds import brand, writer
 from harness.models import Action
 from harness.qualify import load_panel
 from harness.sources.watch import load_watch
@@ -47,7 +47,7 @@ def test_a_profile_name_cannot_leave_the_profiles_folder(monkeypatch):
 
 
 @pytest.mark.parametrize("name", PROFILES)
-def test_every_profile_has_four_files_that_load(name):
+def test_every_profile_has_its_files_and_they_load(name):
     with config.use_profile(name):
         assert config.mission().strip()
         watch = load_watch()
@@ -55,6 +55,7 @@ def test_every_profile_has_four_files_that_load(name):
         assert watch.reply_targets.accounts
         assert load_panel()
         writer.load_framing()  # raises on a malformed file; None is allowed
+        assert set(brand.wording()) == set(brand.KEYS)
 
 
 def test_profiles_differ_where_the_brand_does():
@@ -106,3 +107,31 @@ def test_runs_belong_to_the_profile_they_were_made_for(tmp_path, monkeypatch):
         legacy = conn.execute("INSERT INTO runs (started_at, provider, sources) VALUES ('t', 'mock', '')").lastrowid
     assert memory.profile_run_ids("wnba") == {wnba, legacy}
     assert memory.profile_run_ids("devtools") == {devtools}
+
+
+def test_brand_wording_differs_by_profile_and_is_strict(tmp_path, monkeypatch):
+    with config.use_profile("wnba"):
+        wnba = brand.wording()
+    with config.use_profile("devtools"):
+        devtools = brand.wording()
+    assert wnba["caption_example"] == "aliyah had knee surgery and still made all-star. absurd"
+    assert all(wnba[k] != devtools[k] for k in brand.KEYS)
+    assert not any("rival" in v.lower() or "fan" in v.lower() for v in devtools.values())
+    bad = tmp_path / "prompts.toml"
+    bad.write_text('caption_example = "x"\nside_rule = ""\n', encoding="utf-8")
+    monkeypatch.setattr(config, "profile_file", lambda name, *a: bad)
+    with pytest.raises(ValueError, match=r"missing \['ask_detail', 'plan_care', 'risk_people', 'rival_angle'\]"):
+        brand.wording()
+
+
+def test_action_prompts_carry_the_active_profiles_wording():
+    from harness.minds import lanes, veto
+    from harness.minds import writer as w
+
+    with config.use_profile("devtools"):
+        words = brand.wording()
+        assert words["side_rule"] in veto.VETO_SYSTEM.format(lane="reply", mission="M", **{
+            k: words[k] for k in ("side_rule", "risk_people")})
+    for template, key in ((lanes.PLAN_SYSTEM, "plan_care"), (w.CAPTION_SYSTEM, "caption_example"),
+                          (veto.VETO_SYSTEM, "side_rule"), (veto.VETO_SYSTEM, "risk_people")):
+        assert "{" + key + "}" in template
