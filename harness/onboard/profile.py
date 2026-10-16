@@ -76,6 +76,7 @@ class Draft:
     left_out: list[str] = field(default_factory=list)
     keywords: list[str] = field(default_factory=list)
     models: list[dict] = field(default_factory=list)  # filled by the CLI from modelrec
+    staff: set[str] = field(default_factory=set)  # lowercased handles whose bio names the account
     sources: dict[str, dict] = field(default_factory=dict)  # id -> {"url", "text", "label"}
 
     def page_texts(self) -> dict[str, str]:
@@ -255,6 +256,7 @@ def draft(handle: str, profile: str, *, reader: XReader, llm: LLM, site: str | N
     ranked = history.rank_accounts(history.engagements(tl), exclude=(handle,))
     d = Draft(handle, profile, site, today or datetime.now(timezone.utc).date(), read_log, tl, base, ex, ranked,
               history.watchlist(ranked))
+    d.staff = history.bio_mentions(statuses, handle)
     if site:
         d.pages, d.site_log = read_site(site, get)
         for page in d.pages:
@@ -416,7 +418,12 @@ def render_report(d: Draft) -> str:
             "| # | Account | Why | Example posts |", "| --- | --- | --- | --- |"]
     for n, c in enumerate(d.watch, 1):
         examples = " ".join(f"[{i}](https://x.com/{d.handle}/status/{i})" for i in c.evidence)
-        out.append(f"| {n} | @{c.handle} | {c.why()} | {examples} |")
+        staff = f"; bio mentions @{d.handle}" if c.handle.lower() in d.staff else ""
+        out.append(f"| {n} | @{c.handle} | {c.why()}{staff} | {examples} |")
+    flagged = sum(c.handle.lower() in d.staff for c in d.watch)
+    if flagged:
+        out += ["", f"{flagged} of these accounts have a bio that mentions @{d.handle}, which usually means its own "
+                "staff. The account already amplifies them; decide whether the watcher should draft replies to them."]
     if not d.watch:
         out.append("| | none qualified | The watcher refuses a profile whose watch list is empty; add accounts by hand. | |")
     below = [c for c in d.ranked if c not in d.watch][:10]

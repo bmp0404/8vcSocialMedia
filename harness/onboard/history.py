@@ -288,6 +288,16 @@ def rank_accounts(found: list[Engagement], exclude: tuple[str, ...] = ()) -> lis
     return sorted(out, key=lambda c: (-c.events, -len(c.kinds), -c.last.timestamp(), c.handle.lower()))
 
 
+def bio_mentions(statuses: list[XPost], handle: str, name: str = "") -> set[str]:
+    """Lowercased handles of the authors whose bio, as any status in the read shows it, names the account by @handle
+    or by `name`. On @supabase's live read its founders and staff topped the watch list, and a bio that says
+    "@supabase" is the cheapest sign of that; the report flags them for a person to decide."""
+    marks = {"@" + handle.lower().lstrip("@")} | ({name.lower()} if name else set())
+    return {p.author_handle.lower() for p in statuses
+            if p.author_description and any(m in p.author_description.lower() for m in marks)
+            and not _same(p.author_handle, handle)}
+
+
 def watchlist(ranked: list[Candidate], max_n: int = WATCH_MAX, min_events: int = WATCH_MIN_EVENTS) -> list[Candidate]:
     """The cut: candidates with at least `min_events` posts, at most `max_n` of them, in rank order."""
     return [c for c in ranked if c.events >= min_events][:max_n]

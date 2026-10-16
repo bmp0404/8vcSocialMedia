@@ -177,6 +177,14 @@ def test_ranking_counts_posts_then_kinds_then_recency_then_handle():
     assert [c.handle for c in history.watchlist(ranked, max_n=24, min_events=2)] == ["ZED", "bee", "cat", "ant", "dog"]
 
 
+def test_bio_mentions_flag_accounts_whose_bio_names_the_brand():
+    staff = XPost(**(post("their news", author="dana", repost=True, n=1).__dict__ | {"author_description": "eng @Acme"}))
+    other = XPost(**(post("hello", author="eli", repost=True, n=2).__dict__ | {"author_description": "I like acme-ish things"}))
+    own = XPost(**(post("ours", n=3).__dict__ | {"author_description": "We are @acme"}))
+    assert history.bio_mentions([staff, other, own], "acme") == {"dana"}
+    assert history.bio_mentions([staff, other, own], "acme", name="acme-ish") == {"dana", "eli"}
+
+
 def test_most_common_spelling_wins():
     E, t = history.Engagement, READ
     ranked = history.rank_accounts([E("Vercel", "mention", "1", t), E("vercel", "mention", "2", t),
