@@ -133,10 +133,18 @@ class GradeTests(unittest.TestCase):
         self.assertEqual(request.url, "https://example.com/v1/messages")
         self.assertEqual(request.headers["authorization"], "Bearer fixture-token")
 
+    def test_claude_code_is_default(self):
+        with patch.dict("os.environ", {}, clear=True):
+            with patch("harness.post_judge.judge.GradePost", return_value=grade(self.refs)) as judge:
+                result = grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
+        judge.assert_called_once_with(self.candidate, self.refs, provider="claude_code", model="sonnet")
+        self.assertEqual(result.judge_provider, "claude_code")
+        self.assertEqual(result.judge_model, "sonnet")
+
     def test_invalid_provider_fails_before_call(self):
         with patch.dict("os.environ", {"HARNESS_JUDGE_PROVIDER": "unknown"}):
             with patch("harness.post_judge.judge.GradePost") as judge:
-                with self.assertRaisesRegex(ValueError, "must be openai or anthropic"):
+                with self.assertRaisesRegex(ValueError, "must be claude_code, openai, or anthropic"):
                     grade_with_references(self.candidate, self.refs, dataset_sha256="hash")
                 judge.assert_not_called()
 

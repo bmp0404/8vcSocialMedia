@@ -45,6 +45,11 @@ class PostGrade {
 }
 
 function judge_client(provider: string, model: string) -> ai.Client {
+    if (provider == "claude_code") {
+        return claude_code.ClaudeCodeClient.new(
+            model = model, permission_mode = "default", harness_tools = [], timeout_ms = 120000,
+        );
+    }
     if (provider == "anthropic") {
         let base_url = baml.env.get("ANTHROPIC_BASE_URL");
         if let token: string = baml.env.get("ANTHROPIC_AUTH_TOKEN") {
@@ -61,7 +66,7 @@ function judge_client(provider: string, model: string) -> ai.Client {
 }
 
 function GradePost(candidate: CandidatePost, references: ReferencePost[],
-                   provider: string = "openai", model: string = "gpt-4.1-mini") -> PostGrade {
+                   provider: string = "claude_code", model: string = "sonnet") -> PostGrade {
     client: judge_client(provider, model)
     prompt: `
         You evaluate a proposed social post using historical examples and the account mission.

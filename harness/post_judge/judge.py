@@ -66,14 +66,14 @@ def grade_with_references(candidate: CandidatePost, references: list[ReferencePo
         raise ValueError("Reference IDs must be unique")
     if any(normalized_text(p.text) == normalized_text(candidate.text) for p in references):
         raise ValueError("Candidate text must not appear in the reference pool")
-    provider = os.getenv("HARNESS_JUDGE_PROVIDER", "openai").strip().lower()
-    if provider not in {"openai", "anthropic"}:
-        raise ValueError("HARNESS_JUDGE_PROVIDER must be openai or anthropic")
+    provider = os.getenv("HARNESS_JUDGE_PROVIDER", "claude_code").strip().lower()
+    if provider not in {"claude_code", "openai", "anthropic"}:
+        raise ValueError("HARNESS_JUDGE_PROVIDER must be claude_code, openai, or anthropic")
     model = os.getenv("HARNESS_JUDGE_MODEL", "").strip()
     if not model:
         if provider == "anthropic":
             raise ValueError("Set HARNESS_JUDGE_MODEL to your Anthropic or gateway model ID")
-        model = "gpt-4.1-mini"
+        model = "sonnet" if provider == "claude_code" else "gpt-4.1-mini"
     grade = GradePost(candidate, references, provider=provider, model=model)
     score = validate_grade(grade, references)
     return Evaluation(judge_provider=provider, judge_model=model,

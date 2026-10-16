@@ -17,3 +17,15 @@ test "judge output parses into rubric" {
     assert.equal(result.clarity.score, 4);
     assert.equal(result.comparisons.length(), 2)
 }
+
+
+test "Claude Code judge has no harness tools" {
+    let judge = judge_client("claude_code", "sonnet");
+    if let cli: claude_code.ClaudeCodeClient = judge {
+        assert.equal(cli.model, "sonnet");
+        assert.equal(cli.harness_tools.length(), 0);
+        assert.equal(cli.permission_mode, "default")
+    } else {
+        assert.is_true(false)
+    }
+}

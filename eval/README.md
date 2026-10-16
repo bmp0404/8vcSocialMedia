@@ -29,24 +29,30 @@ Inspect the selected comparisons without making a model request:
 uv run python -m harness.post_judge eval/examples/candidate.json --dry-run
 ```
 
-Set `OPENAI_API_KEY` in your environment or `.env`, then grade one candidate:
+Install Claude Code and authenticate it with `claude auth login`, then grade one candidate:
 
 ```sh
 uv run python -m harness.post_judge eval/examples/candidate.json --output out/post-grade.json
 ```
 
-The judge defaults to OpenAI `gpt-4.1-mini`. Set `HARNESS_JUDGE_PROVIDER=anthropic` and
-`HARNESS_JUDGE_MODEL` to your Anthropic or gateway model ID to use Anthropic instead.
-Use `ANTHROPIC_API_KEY`, or the team's `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` gateway
-configuration. Token authentication sends an Authorization bearer header and the token as
-`x-api-key` for compatibility with the BAML Anthropic client. Verify that your gateway accepts
-these headers. `OPENAI_BASE_URL` is also supported. Request construction is tested offline;
-real provider and gateway authentication still needs a configured key.
+The default provider is BAML's `claude_code.ClaudeCodeClient`, using the authenticated local
+`claude` executable and the `sonnet` model alias. Set `HARNESS_JUDGE_MODEL` to choose another
+Claude Code model. No separate API key is needed for this client. BAML passes the output schema
+through Claude Code's native `--json-schema` option. Harness tools are disabled and the client
+uses normal permission mode with a 120-second timeout.
 
-`HARNESS_JUDGE_MODEL` can override the OpenAI model too. Judge settings are independent of
-`HARNESS_PROVIDER` and `HARNESS_MODEL`.
-This command makes one paid model request. There is no mock quality score. The offline tests use
-explicit fixtures and do not establish that the judge predicts engagement.
+The CLI makes a model request through your Claude Code account. There is no mock quality score.
+Offline tests use explicit fixtures and do not establish that the judge predicts engagement.
+
+Direct API clients remain optional. Set `HARNESS_JUDGE_PROVIDER=openai` to use `OPENAI_API_KEY`
+and optional `OPENAI_BASE_URL`, with `gpt-4.1-mini` as the default model. Set
+`HARNESS_JUDGE_PROVIDER=anthropic` and `HARNESS_JUDGE_MODEL` to your Anthropic or gateway model ID
+to use `ANTHROPIC_API_KEY`, or `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN`. Token authentication
+sends a bearer Authorization header and the token as `x-api-key`. Verify that your gateway
+accepts these headers. Direct API request construction is tested offline; real gateway
+authentication remains unverified.
+
+Judge settings are independent of `HARNESS_PROVIDER` and `HARNESS_MODEL`.
 
 A candidate JSON object has `text`, `mission`, `context`, and `lane`. The lane is `post`, `reply`,
 or `quote`. Put evidence supporting factual claims and the reply-parent text in `context`.
