@@ -269,3 +269,66 @@ def test_paired_difference_for_a_relative_predictor_uses_only_pairs_from_one_cal
     b = {p.id: Prediction(s) for p, s in zip(posts, [1, 0, 0, 1])}
     assert backtest.paired_difference(posts, a, b, n_boot=20, seed=0, relative=True)["value"] == 0.5
     assert backtest.paired_difference(posts, a, b, n_boot=20, seed=0)["value"] == 0.25
+
+
+def fake_judge_api(calls):
+    """Stands in for harness.post_judge and baml_sdk, recording what the adapters send."""
+    import hashlib  # noqa: F401 - the adapter hashes the dataset file
+    from pathlib import Path
+
+    ref = lambda i, perf, day: SimpleNamespace(  # noqa: E731
+        id=f"ref{i}", date=f"2026-10-{day:02d}", performance=perf, category=perf, engagement=i,
+        model_copy=lambda update, i=i, day=day: SimpleNamespace(id=f"ref{i}", date=f"2026-10-{day:02d}", **update))
+
+    def select_references(pool, text, per_class, before, exclude_ids):
+        calls.append(("select", before, frozenset(exclude_ids)))
+        return [ref(1, "Successful", 1), ref(2, "Poor", 2)]
+
+    def grade_with_references(candidate, refs, dataset_sha256):
+        calls.append(("grade", candidate.mission, [r.performance for r in refs]))
+        return SimpleNamespace(score_100=40, grade=SimpleNamespace(confidence="Low"), references=refs,
+                               judge_provider="anthropic", judge_model="m")
+
+    def rank_candidates(candidates, refs, dataset_sha256):
+        calls.append(("rank", [c.id for c in candidates]))
+        ranked = [SimpleNamespace(candidate_id=c.id, score=90 - 10 * i) for i, c in enumerate(candidates)]
+        return SimpleNamespace(ranking=SimpleNamespace(ranked=ranked))
+
+    return SimpleNamespace(
+        CandidatePost=lambda **kw: SimpleNamespace(**kw), RankingCandidate=lambda **kw: SimpleNamespace(**kw),
+        dataset=Path(__file__), grade_with_references=grade_with_references,
+        judge_settings=lambda: ("anthropic", "m"), rank_candidates=rank_candidates,
+        load_references=lambda path: [], select_references=select_references)
+
+
+def test_judge_adapters_use_a_rolling_origin_and_no_handle(monkeypatch):
+    from harness.evals import predictors
+
+    calls = []
+    monkeypatch.setattr(predictors, "_post_judge_api", lambda: fake_judge_api(calls))
+    p = post(1, day=10)
+    out = predictors.from_post_judge().predict([p])
+    assert out[p.id].score == 0.4 and out[p.id].detail["judge_model"] == "m"
+    assert ("select", date(2026, 10, 10), frozenset({p.id})) in calls
+    assert ("grade", predictors.MISSION, ["Successful", "Poor"]) in calls
+    assert "@a" not in predictors.MISSION
+
+    calls.clear()
+    chunk = [post(1, day=12), post(2, day=10)]
+    ranked = predictors.from_post_judge_rank().predict(chunk)
+    assert set(ranked) == {chunk[0].id, chunk[1].id}
+    assert calls[0] == ("select", date(2026, 10, 10), frozenset({chunk[0].id, chunk[1].id}))
+    assert sum(c[0] == "rank" for c in calls) == 2  # forward and reverse
+
+
+def test_shuffled_memory_keeps_the_references_but_permutes_labels(monkeypatch):
+    from harness.evals import predictors
+
+    calls = []
+    monkeypatch.setattr(predictors, "_post_judge_api", lambda: fake_judge_api(calls))
+    labels = set()
+    for i in range(12):
+        calls.clear()
+        predictors.from_post_judge(memory="shuffled").predict([post(i, day=10)])
+        labels.add(tuple(next(c for c in calls if c[0] == "grade")[2]))
+    assert labels == {("Successful", "Poor"), ("Poor", "Successful")}
