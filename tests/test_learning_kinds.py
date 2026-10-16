@@ -2,6 +2,7 @@
 
 import importlib.util
 import re
+from dataclasses import replace
 
 import pytest
 
@@ -110,9 +111,8 @@ def test_real_memstore_round_trip(item, tmp_path, monkeypatch):
     from harness.learning.memstore_adapter import MemstoreAdapter
 
     store = MemstoreAdapter()
-    if isinstance(item, Lesson):  # the store refuses a lesson whose evidence it can't find
-        for ep in samples()[:1]:
-            save(store, ep)
+    if isinstance(item, (Reflection, Lesson)):  # the store refuses either one when it can't find a cited episode
+        save(store, replace(samples()[0], id="post-1"))
     save(store, item)
     [back] = [m for m in store.list_memories(item.KIND) if m.id == item.id]
     assert load(back) == item

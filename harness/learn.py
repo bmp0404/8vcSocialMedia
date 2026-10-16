@@ -8,6 +8,7 @@ test, so the minds keep reading the same file they read today.
 from harness import config, memory
 from harness.learning import reviews
 from harness.learning.kinds import save
+from harness.learning.memstore_adapter import MemstoreAdapter
 from harness.learning.ranking import HOME, render_lessons, today_utc
 from harness.learning.reflect import reflect
 from harness.learning.settings import load_settings
@@ -38,6 +39,10 @@ def learn(llm: LLM, store=None) -> str | None:
     settings = load_settings()
     settings.reflect.require_boost_flags = False
     settings.reflect.label_source = "review"
+    if isinstance(store, MemstoreAdapter):
+        # Reflections cite drafts as ep-<action id> episodes, and Krish's store refuses a reflection or lesson
+        # whose cited episodes it can't find. His round_end writes those episodes, and nothing else calls it.
+        store.write_run_episodes(sorted({r["run_id"] for r in rows if r["review"] or r["metrics"]}))
     reflect(episodes, llm, store, definition=REVIEW_DEFINITION, domain=HOME, settings=settings.reflect,
             key=reviews.by_narrative)
     text = render_lessons(store, today_utc(), settings.recall)

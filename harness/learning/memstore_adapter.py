@@ -106,9 +106,28 @@ class MemstoreAdapter:
             note = self.ms.load(hit["id"])
             if note is None:
                 raise KeyError(f"memstore.search returned {hit['id']!r} but load() can't find it")
-            if (note.meta or {}).get("record"):
+            if written_by_learning(note):
                 out.append(from_note(note, float(hit.get("score", 0.0))))
         return out
 
     def list_memories(self, kind: str | None = None) -> list[Memory]:
-        return [from_note(n) for n in self.ms.list_notes(kind) if (n.meta or {}).get("record")]
+        return [from_note(n) for n in self.ms.list_notes(kind) if written_by_learning(n)]
+
+    def write_run_episodes(self, run_ids: list[int]) -> list[str]:
+        """His round_end for each run: one ep-<action id> episode per draft, carrying its review and outcome.
+
+        round_end picks its store by provider; config.PROVIDER is the one write_note resolves, so both land in
+        the same store.
+        """
+        from harness import config
+
+        return [nid for run_id in run_ids for nid in self.ms.round_end(run_id, provider=config.PROVIDER)]
+
+
+def written_by_learning(note) -> bool:
+    """True for a note this package wrote, which carries `record`.
+
+    config.lessons() keeps these out of prompt_block(): memory/lessons.md already lists this package's lessons
+    with their held-out results, and its procedures and episodes belong to one mind or one narrative.
+    """
+    return bool((note.meta or {}).get("record"))

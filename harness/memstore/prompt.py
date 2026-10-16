@@ -1,5 +1,7 @@
 """Memory rendered as prompt text for the minds. Read-only."""
 
+from collections.abc import Callable
+
 from harness.memstore.note import Note
 from harness.memstore.search import iter_notes, search
 
@@ -45,14 +47,20 @@ def _confidence(note: Note) -> float:
         return 0.0
 
 
-def prompt_block(max_chars: int = 6000) -> str:
-    """All procedures, then confident well-evidenced lessons, capped. Returns "" when empty; never raises."""
+def prompt_block(max_chars: int = 6000, exclude: Callable[[Note], bool] | None = None) -> str:
+    """All procedures, then confident well-evidenced lessons, capped. Returns "" when empty; never raises.
+
+    `exclude` drops notes that reach the prompt another way, so none appears twice.
+    """
     try:
-        procedures = sorted(iter_notes(["procedure"]), key=lambda n: n.id)
+        keep = (lambda n: not exclude(n)) if exclude else (lambda n: True)
+        procedures = sorted((n for n in iter_notes(["procedure"]) if keep(n)), key=lambda n: n.id)
         lessons = [
             n
             for n in iter_notes(["lesson"])
-            if _confidence(n) >= LESSON_MIN_CONFIDENCE and len(n.meta.get("evidence") or []) >= LESSON_MIN_EVIDENCE
+            if keep(n)
+            and _confidence(n) >= LESSON_MIN_CONFIDENCE
+            and len(n.meta.get("evidence") or []) >= LESSON_MIN_EVIDENCE
         ]
         lessons.sort(key=_confidence, reverse=True)
         blocks = [f"### {n.title} ({n.type}, {n.id})\n{n.body.strip()}" for n in procedures + lessons]
